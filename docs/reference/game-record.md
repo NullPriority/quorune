@@ -1237,6 +1237,13 @@ Replay rebuilds the witness and terminal draw from accepted target and priority
 commands. Historical checkpoints omit the field and keep their original rule
 behavior. Projection leaves the witness in the authoritative record.
 
+An ordered mana activation can retain an `input` object with its
+`ability_id`, `cost_option`, and exact colored or colorless `payment`.
+It pays the current activation's price before that step produces mana.
+The top-level `payment` pays the enclosing spell, ability, or resolution
+instruction after the activation steps. Replay uses the same ordered
+provenance spends and revalidates each compiled mode.
+
 Version-three fixed-color or fixed-card-type Protection fragments add a required
 `exempt_aura_incarnation` for one granting Aura. CardProgram attached definitions
 carry the closed source marker; live evaluation binds the current source

@@ -54,6 +54,15 @@ def _payment_mana_sources(host, seat, spend_context, exclude_sources, preserve_s
     return sources
 
 
+def _plan_funding(host, seat, sources, spend_context):
+    if not any(mode.price for source in sources for mode in source.modes):
+        return None
+    from .mana_planning import ManaPlanFunding
+    from .mana_provenance import PlanningManaPool
+
+    return ManaPlanFunding(PlanningManaPool.capture(host.state.players[seat]), host._mana_restriction_allows, spend_context)
+
+
 def _activate_payment_sources(host, seat, activations, response, spend_context, preserve_source_id):
     selections=response.get('_mana_replacement_selections')
     protection = {"preserve_source_id": preserve_source_id} if preserve_source_id is not None else {}
@@ -81,7 +90,7 @@ def pay_for_cost(
             reserve=normalize_mana_bundle(response.get('reserve')),
             starting_pool=host._spendable_mana_pool(seat,spend_context),
             snow_required=snow_required,starting_snow_pool=host._snow_mana_pool(seat,spend_context),
-            spending_policy=spending_policy,
+            spending_policy=spending_policy,funding=_plan_funding(host,seat,sources,spend_context),
         )
         activations = plan.activations
         _activate_payment_sources(host, seat, activations, response, spend_context, preserve_source_id)
@@ -125,6 +134,7 @@ def cost_is_affordable(
             {key:int(requirements.get(key,0)) for key in ('GENERIC','W','U','B','R','G','C')},sources,
             starting_pool=host._spendable_mana_pool(seat,spend_context),snow_required=snow_required,
             starting_snow_pool=host._snow_mana_pool(seat,spend_context),spending_policy=spending_policy,
+            funding=_plan_funding(host,seat,sources,spend_context),
         )
         return True
     except ManaPlanError:

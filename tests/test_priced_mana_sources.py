@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -55,6 +56,155 @@ class PricedManaSourceRuntimeTests(unittest.TestCase):
         for viewer in 'ABD':self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+viewer,full=True)))
         self.assertIn(private.ref,json.dumps(session.packet('pilot:C',full=True)))
         return self.replay(session,load=True)
+
+    def hybrid_input(self, session, source, color):
+        ability, = [ability for ability in session.engine._activated_abilities(source) if ability.mana_cost_options]
+        option, = [option for option in ability.mana_cost_options if option.requirements[color]]
+        return {"ability_id": ability.ability_id, "cost_option": option.option_id, "payment": {color: 1}}
+
+    def test_hybrid_filter_chooses_input_and_output_independently_and_consumes_undo_history(self):
+        session = self.session(820010)
+        source = self.add(session.engine, "Fetid Heath", ref="hybrid-explicit")
+        plains = self.add(session.engine, "Generic Bound Plains", ref="hybrid-seed")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        seed, = [row["id"] for row in rows if row["id"].startswith("activate:" + plains.ref + ":")]
+        result = session.act("pilot:A", {"action_id": seed})
+        self.assertTrue(result.ok, result.summary)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertTrue(any(row.get("action") == "undo_mana" for row in rows))
+        cost = self.hybrid_input(session, source, "W")
+        action = "activate:" + source.ref + ":" + cost["ability_id"]
+        self.assertIn(action, {row["id"] for row in rows})
+        command = {"action_id": action, "cost_option": cost["cost_option"], "mana_output": {"B": 2}, "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        for principal, submitted in (("pilot:D", command), ("pilot:A", {**command, "mana_output": {"G": 2}})):
+            self.assertFalse(session.act(principal, submitted).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertFalse(session.state.stack)
+        self.assertEqual({"B": 2}, {key: value for key, value in session.state.players["A"].mana_pool.items() if value})
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row.get("action") == "undo_mana" for row in rows))
+        self.private_replay(session, private)
+
+    def test_auto_and_explicit_plans_chain_filters_and_reject_a_bad_later_input_atomically(self):
+        session = self.session(820011)
+        plains = self.add(session.engine, "Generic Bound Plains", ref="chain-seed")
+        first = self.add(session.engine, "Fetid Heath", ref="chain-first")
+        second = self.add(session.engine, "Twilight Mire", ref="chain-second")
+        spell = self.add(session.engine, "Elvish Warrior", zone="hand", ref="chain-spell")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        for card in (first, second, spell):
+            self.assert_closed(session, card)
+        self.prepare(session)
+        self.checkpoint(session)
+        manual = self.replay(session, load=True)
+        action = "cast:" + spell.ref
+        offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(action, {row["id"] for row in offered})
+
+        first_input = self.hybrid_input(manual, first, "W")
+        second_input = self.hybrid_input(manual, second, "B")
+        prefix = [{"source": plains.ref, "bundle": {"W": 1}},
+                  {"source": first.ref, "bundle": {"B": 2}, "input": first_input}]
+        final = {"source": second.ref, "bundle": {"G": 2}, "input": second_input}
+        command = {"action_id": action, "pay": "manual", "payment": {"G": 2}}
+        before = authoritative_state_hash(manual.state)
+        for invalid in ({key: value for key, value in final.items() if key != "input"},
+                        {**final, "input": {**second_input, "payment": {"W": 1}}}):
+            result = manual.act("pilot:A", {**command, "mana": [*prefix, invalid]})
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(before, authoritative_state_hash(manual.state))
+
+        for game, accepted in ((manual, {**command, "mana": [*prefix, final]}),
+                               (session, {"action_id": action, "pay": "auto"})):
+            result = game.act("pilot:A", accepted)
+            self.assertTrue(result.ok, result.summary)
+            self.assertTrue(all(game.state.cards[card.object_id].tapped for card in (plains, first, second)))
+            self.assertEqual([plains.ref, first.ref, second.ref], [
+                event.details["source"] for event in game.state.events if event.code == "mana.produce"
+            ])
+            self.assertEqual(1, sum(game.state.players["A"].mana_pool.values()))
+            self.assertEqual(0, game.state.players["A"].mana_pool["G"])
+            game = self.private_replay(game, private)
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual("battlefield", game.state.cards[spell.object_id].zone)
+            self.private_replay(game, private)
+
+    def test_unseeded_filters_cannot_fund_each_other_or_their_own_tap(self):
+        session = self.session(820012)
+        first = self.add(session.engine, "Fetid Heath", ref="unseeded-first")
+        second = self.add(session.engine, "Twilight Mire", ref="unseeded-second")
+        spell = self.add(session.engine, "Elvish Warrior", zone="hand", ref="unseeded-spell")
+        self.prepare(session)
+        self.checkpoint(session)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        ids = {row["id"] for row in rows}
+        self.assertNotIn("cast:" + spell.ref, ids)
+        before = authoritative_state_hash(session.state)
+        for source, color in ((first, "W"), (second, "B")):
+            price = self.hybrid_input(session, source, color)
+            self.assertEqual(1, sum(value.startswith("activate:" + source.ref + ":") for value in ids))
+            command = {"action_id": "activate:" + source.ref + ":" + price["ability_id"],
+                       "cost_option": price["cost_option"], "mana_output": {color: 2}, "pay": "auto"}
+            self.assertFalse(session.act("pilot:A", command).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_creature_spell_only_mana_cannot_seed_a_filter_for_that_spell(self):
+        session = self.session(820013)
+        producer = self.add(session.engine, "Ancient Ziggurat", ref="restricted-seed")
+        source = self.add(session.engine, "Twilight Mire", ref="restricted-filter")
+        spell = self.add(session.engine, "Elvish Warrior", zone="hand", ref="restricted-spell")
+        self.assert_closed(session, producer)
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        seed, = [row["id"] for row in rows if row["id"].startswith("activate:" + producer.ref + ":")]
+        result = session.act("pilot:A", {"action_id": seed, "mana_choice": "B"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, session.engine._restricted_mana("A")["creature_spell_only"]["B"])
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertNotIn("cast:" + spell.ref, {row["id"] for row in rows})
+        before = authoritative_state_hash(session.state)
+        cost = self.hybrid_input(session, source, "B")
+        command = {"action_id": "cast:" + spell.ref, "pay": "manual", "payment": {"G": 2},
+                   "mana": [{"source": source.ref, "bundle": {"G": 2}, "input": cost}]}
+        self.assertFalse(session.act("pilot:A", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.replay(session, load=True)
+
+    def test_resolving_optional_payment_can_use_the_same_filter_chain(self):
+        session = self.session(820014)
+        plains = self.add(session.engine, "Generic Bound Plains", ref="resolution-seed")
+        first = self.add(session.engine, "Fetid Heath", ref="resolution-first")
+        second = self.add(session.engine, "Twilight Mire", ref="resolution-second")
+        artifact = self.add(session.engine, "Lifecrafter's Bestiary", ref="resolution-payment-source")
+        creature = self.add(session.engine, "Phyrexian Walker", zone="hand", ref="resolution-creature")
+        for card in (first, second, artifact, creature):
+            self.assert_closed(session, card)
+        self.prepare(session)
+        self.checkpoint(session)
+        before = len(session.state.players["A"].zones["hand"])
+        self.cast(session, "A", creature)
+        decision = self.resolve(session)
+        self.assertIsNotNone(decision)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assertFalse(any(session.state.cards[card.object_id].tapped for card in (plains, first, second)))
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(all(session.state.cards[card.object_id].tapped for card in (plains, first, second)))
+        self.assertEqual(before, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual("battlefield", session.state.cards[creature.object_id].zone)
+        self.replay(session, load=True)
 
     def filtering_fixture(self,name,seed,*,mana=None):
         session=self.session(seed);source=self.add(session.engine,name)
@@ -146,3 +296,37 @@ class PricedManaSourceRuntimeTests(unittest.TestCase):
         method='test_original_prism_cannot_filter_green_from_zero_mana_for_an_automatic_cast'
         with patch('quorune.mana_source_discovery._mana_plan_cost_is_supported',return_value=True):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+
+
+class OrderedHybridManaPlannerTests(unittest.TestCase):
+    def test_filter_input_uses_its_own_spending_context_and_consumes_snow_provenance(self):
+        from quorune.activation_mana_cost import ActivationManaCostOption
+        from quorune.mana import ManaMode, ManaModePrice, ManaPlanError, ManaSource, auto_plan_payment
+        from quorune.mana_planning import ManaPlanFunding
+        from quorune.mana_provenance import PlanningManaPool, add_mana
+        from quorune.replacement.immutable import FrozenMap
+
+        price = ManaModePrice("ab2", ActivationManaCostOption("black", FrozenMap({"B": 1})), "activation", None)
+        filter_source = ManaSource("filter", "F", "Filter", (ManaMode({"G": 2}, price=price),))
+        def allows(restriction, context):
+            return (restriction, context) == ("activation-only", "activation")
+
+        pool = PlanningManaPool.capture(SimpleNamespace(mana_pool={}, stats={}))
+        add_mana(pool, {"B": 1}, snow=True, restriction="activation-only")
+        funding = ManaPlanFunding(pool, allows, "spell")
+        plan = auto_plan_payment({"G": 2}, [filter_source], funding=funding)
+        self.assertEqual({"B": 1}, plan.activations[0]["input"]["payment"])
+        self.assertEqual(2, plan.payment["G"])
+        self.assertEqual(1, pool.mana_pool["B"])
+        intermediate = ManaSource("seed", "S", "Seed", (
+            ManaMode({"B": 1}, restriction="activation-only", conditional=True, intermediate_only=True),
+        ))
+        unseeded = ManaPlanFunding(PlanningManaPool.capture(SimpleNamespace(mana_pool={}, stats={})), allows, "spell")
+        plan = auto_plan_payment({"G": 2}, [filter_source, intermediate], funding=unseeded)
+        self.assertEqual(["seed", "filter"], [step["source"] for step in plan.activations])
+        with self.assertRaises(ManaPlanError):
+            auto_plan_payment({"G": 1}, [filter_source], funding=funding, snow_required=1)
+        add_mana(pool, {"C": 1}, snow=True)
+        plan = auto_plan_payment({"G": 1}, [filter_source], funding=funding, snow_required=1,
+                                 starting_pool={"C": 1}, starting_snow_pool={"C": 1})
+        self.assertEqual(1, plan.snow_payment["C"])

@@ -5,7 +5,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .abilities import ActivatedAbility
 from .errors import GameRuleError
 from .haste import summoning_sickness_prohibits_tap_or_untap_cost
-from .mana import ManaMode
+from .mana import ManaMode, ManaStepInput
 from .mana_ability_runtime import (
     mana_output_for_ability,
     payable_mana_modes,
@@ -17,7 +17,7 @@ from .mana_undo import (
     ReversibleManaActivation,
 )
 from .mana_mode_effects import apply_mana_mode_effects
-from .util import normalize_mana_bundle
+from .util import normalize_mana_bundle, pay_mana_from_pool
 from .tap_state import set_permanent_tapped
 from .mana_source_discovery import mana_plan_abilities
 
@@ -74,6 +74,10 @@ class ManaActivationHost(Protocol):
     def _mana_restriction_allows(
         self, restriction: str, spend_context: str | None
     ) -> bool: ...
+
+    def _spendable_mana_pool(self, seat: str, spend_context: str | None) -> dict[str, int]: ...
+
+    def _apply_mana_spend(self, seat: str, spent: Mapping[str, int], spend_context: str | None) -> None: ...
 
 
 def complete_mana_activation(
@@ -244,12 +248,15 @@ def _selected_plan_mode(
     allow_conditional: bool,
     spend_context: str | None,
     tap_source: bool,
+    input_payment: ManaStepInput | None = None,
 ) -> tuple[ManaMode, str | None]:
+    price_key = input_payment.key if input_payment else None
     mode = next(
         (
             value
             for value in modes
             if normalize_mana_bundle(value.bundle) == bundle and value.tap_source==tap_source
+            and (value.price.key if value.price else None) == price_key
         ),
         None,
     )
@@ -284,6 +291,20 @@ def _selected_plan_mode(
             f"{card.printed_name}'s selected mana mode requires an explicit condition"
         )
     return mode, compiled
+
+
+def _commit_plan_input(host, seat, mode, input_payment):
+    if mode.price is None:
+        return
+    price = mode.price
+    try:
+        _, spent = pay_mana_from_pool(
+            host._spendable_mana_pool(seat, price.spend_context), price.option.requirements,
+            payment=input_payment.payment, spending_policy=price.spending_policy,
+        )
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._apply_mana_spend(seat, spent, price.spend_context)
 
 
 def _commit_plan_mode(
@@ -387,6 +408,10 @@ def complete_mana_plan_activations(
             from .mana import mana_modes_preserving_source
 
             modes = mana_modes_preserving_source(modes)
+        try:
+            input_payment = ManaStepInput.from_dict(activation["input"]) if "input" in activation else None
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
         mode, restriction = _selected_plan_mode(
             host,
             seat,
@@ -396,7 +421,9 @@ def complete_mana_plan_activations(
             allow_conditional=bool(activation.get("allow_conditional")),
             spend_context=spend_context,
             tap_source=tap_source,
+            input_payment=input_payment,
         )
+        _commit_plan_input(host, seat, mode, input_payment)
         _commit_plan_mode(
             host,
             seat,

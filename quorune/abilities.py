@@ -40,7 +40,7 @@ from .ability_line_normalization import forecast_cost_without_source_reveal
 from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
 from .creature_subtypes import canonical_creature_subtype
-from .fixed_mana_abilities import FixedManaMode
+from .fixed_mana_abilities import FixedManaMode, supports_hybrid_filter_price
 from .mana_restrictions import (
     canonical_mana_spend_restriction,
     legacy_mana_spend_restriction_for_tail,
@@ -487,11 +487,12 @@ def _validate_ability_sequences_and_scalars(ability: ActivatedAbility) -> None:
     if len(option_ids) != len(set(option_ids)):
         raise ValueError("activation mana-cost option ids must be unique")
     if ability.mana_cost_options and (
-        ability.complex_symbols or ability.mana_ability
+        ability.complex_symbols or (ability.mana_ability and not supports_hybrid_filter_price(
+            ability, ability.mana_cost_options, ability.fixed_mana_outputs
+        ))
     ):
         raise ValueError(
-            "typed activation mana-cost options cannot retain complex symbols "
-            "or describe a mana ability"
+            "typed mana costs require normalized symbols and a closed price"
         )
     if not isinstance(ability.activation_conditions, tuple) or any(
         not isinstance(condition, ActivationCondition)

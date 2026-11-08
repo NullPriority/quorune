@@ -78,6 +78,15 @@ def payable_activation_mana_options(host, seat, source, ability, *, targets=None
     return tuple(result.values())
 
 
+def targetless_activation_prices(host, seat, source, ability):
+    """Current alternatives before affordability, including typed modifiers."""
+    from ...activation_mana_cost import current_activation_mana_options
+
+    raw = current_activation_cost_modifiers(host, seat, source, ability)
+    witness, = activation_modifier_witnesses(host, seat, source, ability, raw, targets=())
+    return current_activation_mana_options(host, seat, ability, source, modifiers=witness.modifiers)
+
+
 def select_activation_mana_option(host, seat, source, ability, requested_id, *, targets=None):
     from ...activation_mana_cost import select_activation_mana_option as owned_option
     raw = current_activation_cost_modifiers(host, seat, source, ability)

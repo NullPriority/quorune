@@ -44,6 +44,7 @@ class AssistRuntimeTests(unittest.TestCase):
             "bound-effect-program-cards.json", "fixed-mana-result-cards.json",
             "counter-replacement-cards.json", "assist-payment-cards.json",
             "fixed-self-cost-surface-cards.json", "state-based-destination-cards.json",
+            "priced-mana-source-cards.json",
         )], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -187,6 +188,52 @@ class AssistRuntimeTests(unittest.TestCase):
         spenders = current_turn_history_events(session.state.turn_history,
             turn_sequence=session.state.turn_sequence, kind="spell_mana_spent")
         self.assertEqual([("B", 1), ("A", 3)], [(event.actor, event.amount) for event in spenders])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_assist_helper_can_pay_a_filter_input_inside_its_own_mana_window(self):
+        session = self.session(820021)
+        spell = self.add(session.engine, "Bring Down", zone="hand")
+        target = self.add(session.engine, "Ancient Brontodon", seat="C")
+        seed = self.add(session.engine, "Generic Bound Plains", seat="B", ref="assist-filter-seed")
+        source = self.add(session.engine, "Fetid Heath", seat="B", ref="assist-filter")
+        for card in (spell, target, seed, source):
+            self.assert_normal_admission(session, card)
+        self.prepare(session, mana={"W": 1, "C": 1})
+        self.checkpoint(session)
+        action = self._cast_offer(session, spell)
+        self._act(session, "A", action["id"], targets=[target.ref], assist_helper="B", pay="auto")
+        self._frame(session, "helper_mana")
+        rows = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal_actions"]
+        self.assertFalse(any("input" in row.get("assist_step", {}) for row in rows))
+        self._plan_mana(session, "B", seed, "W")
+        rows = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal_actions"]
+        option, = [row for row in rows if row.get("assist_step", {}).get("source") == source.ref
+                   and row["assist_step"]["bundle"] == {"B": 2}]
+        step = option["assist_step"]
+        self.assertEqual({"W": 1}, step["input"]["payment"])
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"action_id": "choose",
+            "assist_step": {**step, "input": {**step["input"], "payment": {"B": 1}}}})
+        self.assertFalse(denied.ok, denied.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self._act(session, "B", option["id"])
+        frame = self._frame(session, "helper_mana")
+        self.assertEqual({"W": 1}, dict(frame.plans[-1].input.payment))
+        self.assertFalse(session.state.cards[seed.object_id].tapped)
+        self.assertFalse(session.state.cards[source.object_id].tapped)
+        session = self.replay(session, load=True)
+        self._act(session, "B", "assist:finish-mana")
+        self._act(session, "A", "assist:finish-mana")
+        self._act(session, "B", "assist:contribute", assist_amount=2)
+        self._act(session, "A", "assist:pay")
+        self.assertTrue(session.state.cards[seed.object_id].tapped)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual(0, sum(session.state.players["B"].mana_pool.values()))
+        stack, = session.state.stack
+        self.assertEqual({"W": 1, "B": 2, "C": 1},
+                         {color: amount for color, amount in stack.mana_spent_counts.to_dict()["amounts"].items() if amount})
         self.assertIsNone(self.resolve(session))
         self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
         self.replay(session, load=True)

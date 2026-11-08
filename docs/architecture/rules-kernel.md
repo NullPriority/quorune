@@ -636,11 +636,15 @@ source may be tapped or newly controlled; tap-symbol abilities retain their
 ordinary restrictions. The source can contribute once and its sacrifice uses
 the canonical zone-cost owner. Additional costs and choices outside this
 bounded form require explicit activation.
-Mana abilities with a separate mana payment also require explicit activation.
-The source/output-only automatic plan cannot pay that price. Discovery and
-plan commitment exclude the same paid mode while retaining any free mode on
-the same permanent. Explicit activation still pays the complete price through
-the normal proposal and payment owners before producing mana.
+Fixed hybrid tap filters contribute a priced mode to the same planner. The
+planner searches an ordered sequence of distinct sources and applies each
+input and output to an isolated copy of the canonical mana provenance.
+Restrictions and spending permissions are evaluated in each activation's
+context. Snow mana spent as an input leaves the available snow pool.
+Commit checks the current ability and cost option, spends the exact declared
+input, then taps the source and produces mana. A manual plan provides the
+same ordered steps. Other separately priced forms use explicit activation.
+See [ADR 0163](../adr/0163-ordered-hybrid-mana-payments.md).
 
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that

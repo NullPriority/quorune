@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import re
 
 from ...errors import GameRuleError
+from ...mana import ManaStepInput
 from ...replacement.immutable import FrozenMap, thaw_value
 from .assist_costs import ASSIST_HELPER_FIELD
 
@@ -51,11 +52,14 @@ class AssistManaStep:
     bundle: FrozenMap
     tap_source: bool
     replacements: FrozenMap = FrozenMap({})
+    input: ManaStepInput | None = None
 
     def __post_init__(self):
         if (type(self.seat) is not str or not self.seat or type(self.source) is not str or not self.source
                 or type(self.tap_source) is not bool or not isinstance(self.replacements, Mapping)):
             raise GameRuleError("Assist mana activation is malformed")
+        if self.input is not None and (not isinstance(self.input, ManaStepInput) or not self.tap_source):
+            raise GameRuleError("Assist input requires a typed priced tap step")
         for event_id, selections in self.replacements.items():
             if (type(event_id) is not str or not event_id or not isinstance(selections, (list, tuple))
                     or not selections or any(not ((type(value) is str and value) or isinstance(value, Mapping))
@@ -66,10 +70,21 @@ class AssistManaStep:
 
     @classmethod
     def from_dict(cls, value):
-        return cls(**_closed_mapping(value, _STEP_FIELDS, "Assist mana activation fields changed"))
+        has_input = isinstance(value, Mapping) and "input" in value
+        fields = _STEP_FIELDS | {"input"} if has_input else _STEP_FIELDS
+        data = dict(_closed_mapping(value, fields, "Assist mana activation fields changed"))
+        if has_input:
+            try:
+                data["input"] = ManaStepInput.from_dict(data["input"])
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+        return cls(**data)
 
     def activation(self):
-        return {"source": self.source, "bundle": thaw_value(self.bundle), "tap_source": self.tap_source}
+        result = {"source": self.source, "bundle": thaw_value(self.bundle), "tap_source": self.tap_source}
+        if self.input is not None:
+            result["input"] = self.input.to_dict()
+        return result
 
     def to_dict(self):
         return {"seat": self.seat, **self.activation(), "replacements": thaw_value(self.replacements)}

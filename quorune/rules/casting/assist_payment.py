@@ -7,6 +7,8 @@ from dataclasses import dataclass, replace
 
 from ...cost_payments import ExactManaReplacementReplay
 from ...errors import GameRuleError
+from ...mana import ManaStepInput
+from ...mana_planning import available_mode_payments
 from ...mana_mode_effects import mana_damage_event_belongs_to_payment, mana_sacrifice_payment_event_id
 from ...replacement.immutable import FrozenMap, thaw_value
 from ...replacement.ordering import ReplacementChoiceRequired, replacement_choice_payload
@@ -85,13 +87,16 @@ def _available_steps(host, seat, spend_context, excluded):
         if source.object_id in excluded:
             continue
         for mode in source.modes:
-            if mode.requires_choice or (mode.conditional and not (
+            if mode.requires_choice or (mode.conditional and not mode.intermediate_only and not (
                 mode.restriction and host._mana_restriction_allows(mode.restriction, spend_context)
             )):
                 continue
-            step = AssistManaStep(seat, source.ref, mode.bundle, mode.tap_source)
-            identity = (step.source, tuple(sorted(step.bundle.items())), step.tap_source)
-            modes.setdefault(identity, (step, source.name))
+            for payment in available_mode_payments(mode, host.state.players[seat], host._mana_restriction_allows):
+                step_input = ManaStepInput(*mode.price.key, payment) if mode.price else None
+                step = AssistManaStep(seat, source.ref, mode.bundle, mode.tap_source, input=step_input)
+                input_key = (*step_input.key, tuple(sorted(step_input.payment.items()))) if step_input else None
+                identity = (step.source, tuple(sorted(step.bundle.items())), step.tap_source, input_key)
+                modes.setdefault(identity, (step, source.name))
     return tuple(modes.values())
 
 

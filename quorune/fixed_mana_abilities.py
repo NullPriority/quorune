@@ -13,6 +13,7 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping
 
+from .activation_mana_cost import ActivationManaCostOption
 from .activation_usage import ActivationLimit
 from .activation_condition_model import (
     ActivationCondition,
@@ -149,6 +150,37 @@ class FixedManaMode:
         return cls.from_bundle(bundle)
 
 
+def _fixed_hybrid_filter_modes(options, modes) -> bool:
+    if not isinstance(options, tuple) or not isinstance(modes, tuple) or len(options) != 2 or len(modes) != 3:
+        return False
+    colors = []
+    for option in options:
+        if not isinstance(option, ActivationManaCostOption) or option.life_payment or option.snow_payment:
+            return False
+        entries = [(color, amount) for color, amount in option.requirements.items() if amount]
+        if len(entries) != 1 or entries[0][0] not in "WUBRG" or entries[0][1] != 1:
+            return False
+        colors.append(entries[0][0])
+    left, right = colors
+    if left == right or len({option.option_id for option in options}) != 2:
+        return False
+    expected = ({left: 2}, {left: 1, right: 1}, {right: 2})
+    return all(isinstance(mode, FixedManaMode) for mode in modes) and all(
+        any(mode.bundle == normalize_mana_bundle(bundle) for mode in modes) for bundle in expected
+    )
+
+
+def supports_hybrid_filter_price(ability, options, modes) -> bool:
+    return (ability.mana_ability and ability.tap_source and ability.zones == ("battlefield",)
+            and not any((sum(ability.mana.values()), ability.untap_source, ability.sacrifice_source,
+                ability.exile_source, ability.discard_source, ability.life_payment, ability.energy_payment,
+                ability.random_discard_payment, ability.choices, ability.sorcery_speed, ability.activation_limit,
+                ability.activation_conditions, ability.mana_spend_restriction, ability.fixed_mana_result,
+                ability.source_counter_removal_cost, ability.loyalty_delta is not None, ability.target_schema,
+                ability.generic_reduction_per_legendary_creature, ability.uncompiled_costs))
+            and _fixed_hybrid_filter_modes(options, modes))
+
+
 @dataclass(frozen=True, slots=True)
 class FixedActivatedManaAbilitySpec:
     ability_id: str
@@ -167,6 +199,7 @@ class FixedActivatedManaAbilitySpec:
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     result: FixedManaResultSpec | None = None
     choices: tuple[Any,...] = ()
+    mana_cost_options: tuple[ActivationManaCostOption, ...] = ()
 
     def _validate_choices(self):
         if not isinstance(self.choices,tuple):raise FixedManaAbilityError('Fixed mana choices must be immutable')
@@ -235,6 +268,13 @@ class FixedActivatedManaAbilitySpec:
             raise FixedManaAbilityError(
                 "Fixed mana ability output modes must be unique"
             )
+        if self.mana_cost_options and (
+            not isinstance(self.mana_cost_options, tuple) or not self.tap_source or any(mana.values())
+            or any((self.sacrifice_source, self.life_payment, self.choices, self.activation_limit,
+                    self.activation_conditions, self.spend_restriction, self.result, self.source_counter_removal_cost))
+            or not _fixed_hybrid_filter_modes(self.mana_cost_options, self.modes)
+        ):
+            raise FixedManaAbilityError("Priced fixed mana requires a closed hybrid tap filter")
         if self.spend_restriction is not None and (
             not valid_mana_spend_restriction(self.spend_restriction)
         ):
@@ -284,6 +324,8 @@ class FixedActivatedManaAbilitySpec:
         if self.result is not None:
             value['result']=self.result.to_dict()
         if self.choices:value['choices']=[choice.to_dict() for choice in self.choices]
+        if self.mana_cost_options:
+            value["mana_cost_options"] = [option.to_dict() for option in self.mana_cost_options]
         if self.activation_limit is not None:
             value["activation_limit"] = self.activation_limit.value
         if self.activation_conditions:
@@ -326,6 +368,10 @@ class FixedActivatedManaAbilitySpec:
         if 'result' in value:
             expected.add('result')
         if 'choices' in value:expected.add('choices')
+        if "mana_cost_options" in value:
+            expected.add("mana_cost_options")
+            if not isinstance(value["mana_cost_options"], list) or not value["mana_cost_options"]:
+                raise FixedManaAbilityError("Declared hybrid filter prices must be a nonempty array")
         _exact_fields(value, expected, field="fixed mana ability")
         mana_cost = value["mana_cost"]
         modes = value["modes"]
@@ -387,6 +433,7 @@ class FixedActivatedManaAbilitySpec:
             ),
             result=FixedManaResultSpec.from_dict(value['result']) if 'result' in value else None,
             choices=tuple(CostChoice.from_dict(choice) for choice in raw_choices),
+            mana_cost_options=tuple(ActivationManaCostOption.from_dict(option) for option in value.get("mana_cost_options", ())),
         )
 
     def to_activated_ability(self) -> Any:
@@ -411,6 +458,7 @@ class FixedActivatedManaAbilitySpec:
             source_counter_removal_cost=self.source_counter_removal_cost,
             fixed_mana_result=self.result,
             choices=self.choices,
+            mana_cost_options=self.mana_cost_options,
         )
 
 
@@ -603,6 +651,7 @@ def compile_fixed_activated_mana_ability(
         source_counter_removal_cost=ability.source_counter_removal_cost,
         result=result,
         choices=tuple(ability.choices),
+        mana_cost_options=ability.mana_cost_options,
     )
 
 

@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, replace
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .activation_mana_cost import ActivationManaCostOption
+    from .mana_planning import ManaPlanFunding
+    from .mana_spending_model import ManaSpendingPolicy
 
 from .carddb import CardRecord
 from .intrinsic_basic_land_mana import BASIC_LAND_MANA
+from .replacement.immutable import FrozenMap, thaw_value
 from .util import (
     mana_cost_to_vector,
     normalize_mana_bundle,
@@ -26,6 +32,47 @@ _DYNAMIC_OUTPUT_MARKERS = (
 
 
 @dataclass(frozen=True, slots=True)
+class ManaModePrice:
+    ability_id: str
+    option: ActivationManaCostOption
+    spend_context: str
+    spending_policy: ManaSpendingPolicy | None
+
+    @property
+    def key(self) -> tuple[str, str]:
+        return self.ability_id, self.option.option_id
+
+
+@dataclass(frozen=True, slots=True)
+class ManaStepInput:
+    ability_id: str
+    cost_option: str
+    payment: FrozenMap
+
+    def __post_init__(self):
+        if any(type(value) is not str or not value for value in (self.ability_id, self.cost_option)):
+            raise ValueError("A priced mana step requires an ability and cost option")
+        if (not isinstance(self.payment, Mapping) or not self.payment
+                or any(type(color) is not str or color not in MANA_COLORS or type(amount) is not int or amount <= 0
+                       for color, amount in self.payment.items())):
+            raise ValueError("A priced mana step requires an exact positive payment")
+        object.__setattr__(self, "payment", FrozenMap(self.payment))
+
+    @property
+    def key(self):
+        return self.ability_id, self.cost_option
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {"ability_id", "cost_option", "payment"}:
+            raise ValueError("A priced mana step needs a closed input object")
+        return cls(value["ability_id"], value["cost_option"], value["payment"])
+
+    def to_dict(self):
+        return {"ability_id": self.ability_id, "cost_option": self.cost_option, "payment": thaw_value(self.payment)}
+
+
+@dataclass(frozen=True, slots=True)
 class ManaMode:
     bundle: dict[str, int]
     conditional: bool = False
@@ -33,6 +80,8 @@ class ManaMode:
     side_effects: tuple[dict[str, Any], ...] = ()
     requires_choice: bool = False
     tap_source: bool = True
+    price: ManaModePrice | None = None
+    intermediate_only: bool = False
 
     def __post_init__(self) -> None:
         if type(self.tap_source) is not bool:
@@ -52,6 +101,8 @@ class ManaMode:
             payload["choice"] = True
         if not self.tap_source:
             payload['tap'] = False
+        if self.price is not None:
+            payload["price"] = {"ability_id": self.price.ability_id, **self.price.option.compact()}
         return payload
 
 
@@ -520,6 +571,7 @@ def auto_plan_payment(
     snow_required: int = 0,
     starting_snow_pool: dict[str, int] | None = None,
     spending_policy: Any | None = None,
+    funding: ManaPlanFunding | None = None,
 ) -> ManaPlan:
     """Find a deterministic one-activation-per-source payment plan.
 
@@ -546,12 +598,14 @@ def auto_plan_payment(
 
     # DFS chooses at most one mode per source.  Commander boards are small enough
     # for this bounded search; pruning keeps it practical.
+    sources = tuple(sources)
     grouped: list[tuple[ManaSource, list[ManaMode]]] = []
     for source in sources:
         modes = [
             mode
             for mode in source.modes
-            if not mode.requires_choice and (allow_conditional or not mode.conditional)
+            if mode.price is None and not mode.intermediate_only
+            and not mode.requires_choice and (allow_conditional or not mode.conditional)
         ]
         if modes:
             grouped.append((source, modes))
@@ -568,28 +622,30 @@ def auto_plan_payment(
         spending_policy=spending_policy,
     )
     if best is None:
-        raise ManaPlanError("No conservative mana plan can satisfy the declared cost")
+        if funding is None:
+            raise ManaPlanError("No conservative mana plan can satisfy the declared cost")
+        from .mana_planning import ordered_mana_selection
 
-    pool = normalize_mana_bundle(starting_pool)
-    snow_pool = normalize_mana_bundle(starting_snow_pool)
-    activations: list[dict[str, Any]] = []
-    for source, mode in best:
-        for color, amount in mode.bundle.items():
-            pool[color] += amount
-            if source.snow:
-                snow_pool[color] += amount
-        activations.append(
-            {
-                "source": source.object_id,
-                "source_ref": source.ref,
-                "bundle": {k: v for k, v in mode.bundle.items() if v},
-                "side_effects": list(mode.side_effects),
-                "conditional": mode.conditional,
-                "restriction": mode.restriction,
-            }
-        )
-        if not mode.tap_source:
-            activations[-1]['tap_source'] = False
+        def can_pay(pool, snow_pool):
+            return _snow_payment_option(
+                pool, snow_pool, fixed_need=fixed_need, generic_need=generic_need,
+                reserve=reserve, snow_required=snow_required, spending_policy=spending_policy,
+            ) is not None
+
+        ordered = ordered_mana_selection(sources, funding, can_pay, allow_conditional=allow_conditional)
+        if ordered is None:
+            raise ManaPlanError("No conservative mana plan can satisfy the declared cost")
+        steps, pool, snow_pool = ordered
+    else:
+        pool = dict(starting_pool)
+        snow_pool = dict(starting_snow_pool)
+        for source, mode in best:
+            for color, amount in mode.bundle.items():
+                pool[color] += amount
+                if source.snow:
+                    snow_pool[color] += amount
+        steps = [(source, mode, {}) for source, mode in best]
+    activations = [_mana_plan_step(source, mode, payment) for source, mode, payment in steps]
 
     snow_payment = _snow_payment_option(
         pool,
@@ -632,3 +688,19 @@ def auto_plan_payment(
         payment=payment,
         snow_payment=snow_payment,
     )
+
+
+def _mana_plan_step(source, mode, payment):
+    activation = {
+        "source": source.object_id,
+        "source_ref": source.ref,
+        "bundle": {color: amount for color, amount in mode.bundle.items() if amount},
+        "side_effects": list(mode.side_effects),
+        "conditional": mode.conditional,
+        "restriction": mode.restriction,
+    }
+    if not mode.tap_source:
+        activation["tap_source"] = False
+    if mode.price is not None:
+        activation["input"] = ManaStepInput(*mode.price.key, payment).to_dict()
+    return activation

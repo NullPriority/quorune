@@ -7,6 +7,7 @@ import re
 
 from ..abilities import ActivatedAbility
 from ..activation_mana_cost import ActivationManaCostOption, fixed_complex_activation_mana_options
+from ..fixed_mana_abilities import fixed_mana_modes_from_effect, supports_hybrid_filter_price
 from ..replacement.immutable import FrozenMap
 from ..util import mana_cost_to_vector
 
@@ -41,8 +42,7 @@ def fixed_complex_activation_mana_cost(
 ) -> ActivatedAbility:
     ability = fixed_alternative_activation_mana_cost(ability)
     if (
-        ability.mana_ability
-        or not ability.complex_symbols
+        not ability.complex_symbols
         or ability.uncompiled_costs
         or ability.choices
         or ability.generic_reduction_per_legendary_creature
@@ -54,6 +54,11 @@ def fixed_complex_activation_mana_cost(
     )
     if not options:
         return ability
+    if ability.mana_ability:
+        modes = fixed_mana_modes_from_effect(ability.effect_text)
+        if modes is None or not supports_hybrid_filter_price(ability, options, modes):
+            return ability
+        return replace(ability, complex_symbols=(), mana_cost_options=options, fixed_mana_outputs=modes)
     return replace(
         ability,
         complex_symbols=(),
