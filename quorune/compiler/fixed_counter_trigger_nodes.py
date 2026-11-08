@@ -178,6 +178,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_combat_damage_player_or_planeswalker",
         "source_combat_damage_player_or_battle",
         "opponent_dealt_noncombat_damage",
+        "controller_sacrifices_source_or_another",
         *{
             f"{actor}_sacrifices_{subject}"
             for actor in ("controller", "opponent", "player")
@@ -192,6 +193,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
                 "enchantment",
                 "permanent",
                 "artifact_or_creature",
+                "qualified_permanent",
             )
         },
         *{

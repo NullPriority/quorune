@@ -20,7 +20,7 @@ def graveyard_self_return_binding(text,*,card_name,compile_binding):
     if 'one or more' in split['head'].casefold():return None
     base=compile_binding(split['head']+', draw a card.')
     if base is None or base.public_state_condition is not None:return None
-    if base.event.value not in {'step.begin','spell.cast','land.enter','permanent.enter','creature.enter','artifact.enter','enchantment.enter'}:return None
+    if base.event.value not in {'step.begin','spell.cast','land.enter','permanent.enter','creature.enter','artifact.enter','enchantment.enter','permanent.sacrificed'}:return None
     if any(word in split['head'].casefold() for word in ('enchanted','equipped','this creature','this artifact','this enchantment')):return None
     condition=base.event_condition
     def owner_relative(value):

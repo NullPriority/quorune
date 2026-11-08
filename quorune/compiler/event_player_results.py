@@ -46,7 +46,7 @@ def _occurrence_player(event,condition,variant,subject):
         elif event=='creature.becomes_blocked' and variant in {'this_creature_becomes_blocked','this_creature_becomes_blocked_by_creature'}:player='$context.defending_player'
         elif event=='creature.unblocked' and variant=='source_attacks_unblocked':player='$context.defending_player'
         else:return None
-    elif event=='card.discarded':player='$context.previous_controller'
+    elif event in {'card.discarded', 'permanent.sacrificed'}:player='$context.previous_controller'
     elif event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}:player='$context.controller'
     elif event=='creature.dies':player='$context.previous_controller'
     elif event in {LAND_PLAY_EVENT,'spell.cast','card.drawn','player.scried','player.surveilled'}:
@@ -124,9 +124,11 @@ def _zone_damage_controller(binding, kind):
 
 
 def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
-    match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|defending player|that "
+    match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|them|defending player|that "
                        r"(?P<kind>artifact|creature|enchantment|land|permanent)['’]s controller)\.?",body,re.I)
     if match is None:return None
+    if match["subject"].casefold() == "them" and binding.event.value != "permanent.sacrificed":
+        return None
     received = (match['kind'] is not None and match['kind'].casefold() == 'creature'
                 and is_creature_receiving_event(binding.event.value, binding.event_condition))
     kind = match['kind'].casefold() if match['kind'] is not None else None

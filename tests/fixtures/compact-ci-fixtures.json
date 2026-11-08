@@ -797,6 +797,7 @@
     "tests/fixtures/qualified-quantity-cards.json",
     "tests/fixtures/qualified-quantity-retention-cards.json",
     "tests/fixtures/qualified-regeneration-cards.json",
+    "tests/fixtures/qualified-sacrifice-cards.json",
     "tests/fixtures/qualified-spell-ordinal-cards.json",
     "tests/fixtures/quantified-counter-target-cards.json",
     "tests/fixtures/quantified-target-keyword-cards.json",

@@ -4774,8 +4774,8 @@ graveyard entry or departure predicates; controller Cycling; source damage to
 a player or a planeswalker or battle; opponent noncombat damage; and exact
 one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
-and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
-sacrifice, source-token damage, and unrepresented chosen forms remain residual.
+and cause-preserving zone occurrences. Unrepresented first-time and aggregate
+sacrifice predicates, source-token damage, and chosen forms remain residual.
 Controlled token entry keeps singular and one-or-more subjects distinct. Both
 read the same committed token and controller facts, including noncreature
 tokens. Only the one-or-more descriptor coalesces entries within a simultaneous
@@ -4825,6 +4825,17 @@ discard retains its cause after a visible destination replacement. Noncreature,
 nonland discard requires both type exclusions. The existing current ability,
 APNAP, source-incarnation and counter transaction owners execute the result;
 no aggregate or per-turn limiter is inferred.
+
+Qualified sacrifice subscriptions accept fixed artifact subtypes and their
+single-object unions, creature subtypes, token status, and controller-turn
+filters. A named source alternative uses the source incarnation even if its
+type changes. An explicit once-each-turn limit uses the existing departure
+usage claim. The grouped wording composes with that limit for fixed results
+whose inputs are independent of which permanent matched. A sacrifice can
+also supply the previously controlling player to a fixed result or trigger
+the observer's source return from its graveyard.
+An explicit source name in an Explore result binds the source through the
+existing single-Explore instruction and its incarnation-aware resolution.
 
 An already closed public subscription also composes with one mandatory fixed
 positive source-counter instruction through

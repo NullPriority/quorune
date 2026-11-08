@@ -5,12 +5,15 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
+from ..creature_subtypes import canonical_creature_subtype
 from ..rules.event_subscriptions import (
     FixedEventSubscription, LAND_PLAY_EVENT, fixed_event_subscription_condition,
 )
+from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from .fixed_public_event_trigger_bindings import (
     FixedPublicEventBindingSpec,
     _all_conditions,
+    _source_subject,
     _spec,
 )
 
@@ -32,18 +35,19 @@ _PUBLIC_LAND_PLAY_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _PUBLIC_SACRIFICE_TRIGGER = re.compile(
-    r"^Whenever (?P<actor>you|an opponent|a player) "
+    r"^(?:When|Whenever) (?P<actor>you|an opponent|a player) "
     r"(?P<verb>sacrifice|sacrifices) "
-    r"(?P<another>another )?"
-    r"(?P<object>a Clue|a Food|a Blood token|a token|a land|a creature|"
-    r"an artifact|an enchantment|a permanent|an artifact or creature|"
-    r"another creature or artifact|Clue|Food|Blood token|token|land|creature|"
-    r"artifact|enchantment|permanent), (?P<body>.+)$",
+    r"(?P<object>[^,]+?)(?P<turn> during your turn)?, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_SACRIFICE_TRIGGER = re.compile(
     r"^When you sacrifice this (?P<object>Aura|artifact|creature), "
     r"(?P<body>.+)$",
+    re.IGNORECASE,
+)
+_SOURCE_OR_OTHER_SACRIFICE_TRIGGER = re.compile(
+    r"^(?:When|Whenever) you sacrifice (?P<source>.+?) or another "
+    r"(?P<type>artifact|creature|permanent), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _PUBLIC_DISCARD_TRIGGER = re.compile(
@@ -194,8 +198,51 @@ def _public_land_play_spec(material_line: str) -> FixedPublicEventBindingSpec | 
     )
 
 
+def _sacrifice_types(field: str, *values: str) -> dict[str, Any]:
+    return {"field": field, "op": "contains_any", "value": list(values)}
+
+
+def _sacrifice_subject(subject: str) -> tuple[str, tuple[Mapping[str, Any], ...]] | None:
+    token = {"field": "token", "op": "truthy", "value": True}
+    if subject in {"clue", "food"}:
+        return subject, (_sacrifice_types("subtypes", subject),)
+    if subject == "blood token":
+        return "blood_token", (_sacrifice_types("subtypes", "blood"), token)
+    if subject == "token":
+        return subject, (token,)
+    if subject in {"artifact or creature", "creature or artifact"}:
+        return "artifact_or_creature", (_sacrifice_types("types", "artifact", "creature"),)
+    if subject in {"artifact", "creature", "enchantment", "land"}:
+        return subject, (_sacrifice_types("types", subject),)
+    if subject == "permanent":
+        return subject, ()
+    if subject == "nontoken permanent":
+        return "qualified_permanent", ({"field": "token", "op": "eq", "value": False},)
+    if subject == "noncreature token":
+        return "qualified_permanent", (token, {"not": _sacrifice_types("types", "creature")})
+    token_only = subject.endswith(" token")
+    subtype_text = subject.removesuffix(" token")
+    subtypes = subtype_text.replace(" or a ", " or ").replace(" or an ", " or ").split(" or ")
+    if (
+        1 <= len(subtypes) <= 2 and len(set(subtypes)) == len(subtypes)
+        and set(subtypes) <= ARTIFACT_SUBTYPES and (len(subtypes) == 1 or not token_only)
+    ):
+        return "qualified_permanent", (
+            _sacrifice_types("types", "artifact"),
+            _sacrifice_types("subtypes", *subtypes),
+            *((token,) if token_only else ()),
+        )
+    creature_type = canonical_creature_subtype(subtype_text)
+    if creature_type is not None:
+        return "qualified_permanent", (
+            _sacrifice_types("subtypes", creature_type),
+            *((token,) if token_only else ()),
+        )
+    return None
+
+
 def _public_sacrifice_spec(
-    material_line: str,
+    material_line: str, *, card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
     source = _SOURCE_SACRIFICE_TRIGGER.fullmatch(material_line)
     if source is not None:
@@ -216,66 +263,41 @@ def _public_sacrifice_spec(
                 }
             ),
         )
+    source_or_other = _SOURCE_OR_OTHER_SACRIFICE_TRIGGER.fullmatch(material_line)
+    if source_or_other is not None and (
+        source_or_other["source"].casefold() in {"this artifact", "this permanent"}
+        or _source_subject(source_or_other["source"], card_name=card_name)
+    ):
+        kind = source_or_other["type"].casefold()
+        subject = (
+            {"any": [
+                {"field": "card", "op": "eq", "value": "$source.ref"},
+                _sacrifice_types("types", kind),
+            ]}
+            if kind != "permanent"
+            else None
+        )
+        return _spec(
+            "permanent.sacrificed", "controller_sacrifices_source_or_another", source_or_other["body"],
+            "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+            condition=_all_conditions(_actor_condition("you", field="previous_controller"), subject),
+        )
     match = _PUBLIC_SACRIFICE_TRIGGER.fullmatch(material_line)
     if match is None:
         return None
     actor = " ".join(match.group("actor").casefold().split())
+    if (actor == "you") != (match["verb"].casefold() == "sacrifice"):
+        return None
     raw_object = " ".join(match.group("object").casefold().split())
-    exclude_source = bool(match.group("another")) or raw_object.startswith(
-        "another "
-    )
+    exclude_source = raw_object.startswith("another ")
     if not exclude_source and not raw_object.startswith(("a ", "an ")):
         return None
     subject = raw_object.removeprefix("a ").removeprefix("an ")
     subject = subject.removeprefix("another ")
-    conditions: list[Mapping[str, Any] | None] = [
-        _actor_condition(actor, field="previous_controller"),
-        {"field": "card", "op": "ne", "value": "$source.ref"}
-        if exclude_source
-        else None,
-    ]
-    if subject in {"clue", "food"}:
-        conditions.append(
-            {
-                "field": "subtypes",
-                "op": "contains_any",
-                "value": [subject],
-            }
-        )
-    elif subject == "blood token":
-        conditions.extend(
-            (
-                {
-                    "field": "subtypes",
-                    "op": "contains_any",
-                    "value": ["blood"],
-                },
-                {"field": "token", "op": "truthy", "value": True},
-            )
-        )
-    elif subject == "token":
-        conditions.append(
-            {"field": "token", "op": "truthy", "value": True}
-        )
-    elif subject in {"artifact or creature", "creature or artifact"}:
-        conditions.append(
-            {
-                "field": "types",
-                "op": "contains_any",
-                "value": ["artifact", "creature"],
-            }
-        )
-        subject = "artifact_or_creature"
-    elif subject in {"artifact", "creature", "enchantment", "land"}:
-        conditions.append(
-            {
-                "field": "types",
-                "op": "contains_any",
-                "value": [subject],
-            }
-        )
-    elif subject != "permanent":
+    predicate = _sacrifice_subject(subject)
+    if predicate is None:
         return None
+    subject_variant, subject_terms = predicate
     actor_variant = {
         "you": "controller",
         "an opponent": "opponent",
@@ -283,11 +305,16 @@ def _public_sacrifice_spec(
     }[actor]
     return _spec(
         "permanent.sacrificed",
-        f"{actor_variant}_sacrifices_{subject.replace(' ', '_')}",
+        f"{actor_variant}_sacrifices_{subject_variant}",
         match.group("body"),
         "fixed-counter-public-zone-trigger-v1",
         "trigger-event-normalized-zone-change",
-        condition=_all_conditions(*conditions),
+        condition=_all_conditions(
+            _actor_condition(actor, field="previous_controller"),
+            {"field": "card", "op": "ne", "value": "$source.ref"} if exclude_source else None,
+            *subject_terms,
+            {"field": "source_controller_is_active_player", "op": "eq", "value": True} if match["turn"] else None,
+        ),
     )
 
 
@@ -565,14 +592,14 @@ def _public_entry_zone_spec(
 
 
 def _public_zone_spec(
-    material_line: str,
+    material_line: str, *, card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
     return (
         _public_token_zone_spec(material_line)
         or _public_controlled_departure_spec(material_line)
         or _public_entry_zone_spec(material_line)
         or _graveyard_departure_spec(material_line)
-        or _public_sacrifice_spec(material_line)
+        or _public_sacrifice_spec(material_line, card_name=card_name)
         or _public_discard_spec(material_line)
     )
 
@@ -802,7 +829,6 @@ def fixed_public_action_event_binding_spec(
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one bounded action/result occurrence without compiling its body."""
 
-    del card_name
     return (
         _public_attack_spec(material_line)
         or _public_land_play_spec(material_line)
@@ -811,7 +837,7 @@ def fixed_public_action_event_binding_spec(
         or _public_waterbend_spec(material_line)
         or _public_library_action_spec(material_line)
         or _public_damage_spec(material_line)
-        or _public_zone_spec(material_line)
+        or _public_zone_spec(material_line, card_name=card_name)
         or _public_cycle_spec(material_line)
     )
 

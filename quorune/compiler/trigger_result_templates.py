@@ -2,6 +2,9 @@ from __future__ import annotations
 
 """Existing typed result leaves bound to one normalized trigger occurrence."""
 
+import re
+
+from ..rules.source_references import SourceReferenceSpec
 from .target_announcement_bindings import target_announcement_result, target_announcement_bound_result
 from .tap_state_event_bindings import tap_state_bound_result
 from .scalar_effect_amounts import scalar_effect_amount_template
@@ -26,6 +29,11 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         transformation = fixed_self_transform_effect_template(body, card_name=card_name, triggered=True)
         if transformation is not None:
             return transformation, False
+        named_explore = re.fullmatch(r"(?P<source>.+?) explores\.?", body, re.IGNORECASE)
+        if named_explore is not None and SourceReferenceSpec(card_name).matches(named_explore["source"]):
+            from .explore_templates import single_explore_effect_template
+
+            return single_explore_effect_template("This permanent explores.").compiled(), False
     if _allow_payment:
         from .source_sacrifice_payments import normalized_source_sacrifice_payment_text
         body=normalized_source_sacrifice_payment_text(binding,body,card_name=card_name)

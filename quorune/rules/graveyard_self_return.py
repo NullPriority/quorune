@@ -33,6 +33,7 @@ def graveyard_self_return_runtime_dependencies(program):
             for child in value:visit(child)
     visit(program.effects)
     if found and (program.active_zone!='graveyard' or program.event not in {
-            'step.begin','spell.cast','land.enter','permanent.enter','creature.enter','artifact.enter','enchantment.enter'}):
+            'step.begin','spell.cast','land.enter','permanent.enter','creature.enter','artifact.enter','enchantment.enter',
+            'permanent.sacrificed'}):
         raise ValueError('Triggered source return requires its represented graveyard event envelope')
     return (GRAVEYARD_SELF_RETURN_CAPABILITY,) if found else ()

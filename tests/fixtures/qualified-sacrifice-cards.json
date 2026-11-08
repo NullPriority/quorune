@@ -1,0 +1,552 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Treasure",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Captain Lannery Storm",
+      "oracle_id": "235bf0ba-658c-463f-b112-7478ba27bd7b",
+      "oracle_text": "Haste\nWhenever Captain Lannery Storm attacks, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nWhenever you sacrifice a Treasure, Captain Lannery Storm gets +1/+0 until end of turn.",
+      "power": "2",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2024-04-19",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Pirate"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Partner with",
+        "Training",
+        "First strike",
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{R}",
+      "name": "Jenny Flint",
+      "oracle_id": "d57adf99-972a-43fe-9ba2-2b01e673252f",
+      "oracle_text": "Partner with Madame Vastra\nFirst strike\nTraining (Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature.)\nWhenever you sacrifice a Clue or Food, put a +1/+1 counter on another target creature you control.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-10-13",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Detective"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Blood Hypnotist",
+      "oracle_id": "32845ed6-2328-462e-be3a-579589748588",
+      "oracle_text": "This creature can't block.\nWhenever you sacrifice one or more Blood tokens, target creature can't block this turn. This ability triggers only once each turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": "3",
+      "type_line": "Creature — Vampire"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{B}",
+      "name": "Curious Cadaver",
+      "oracle_id": "cc5370e0-a0e6-4958-a6f2-093a3868b575",
+      "oracle_text": "Flying\nWhen you sacrifice a Clue, return this card from your graveyard to your hand.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": "1",
+      "type_line": "Creature — Zombie Detective"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Vengeful Tracker",
+      "oracle_id": "fe540a23-0357-44fa-8e1c-0a5c2a04cb01",
+      "oracle_text": "Whenever an opponent sacrifices an artifact, this creature deals 2 damage to them.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": "2",
+      "type_line": "Creature — Human Detective"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{B}",
+      "name": "Tolls of War",
+      "oracle_id": "5d1d9914-3ef2-45c5-b1cb-cb85d2f7394c",
+      "oracle_text": "When this enchantment enters, create a Clue token. (It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice a permanent during your turn, create a 1/1 white Ally creature token. This ability triggers only once each turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Treasure",
+        "Menace"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Kingpin, Wilson Fisk",
+      "oracle_id": "062ffa63-1985-4409-b3ad-d42407ee755a",
+      "oracle_text": "Menace\nWhenever you sacrifice Kingpin or another creature, create two Treasure tokens. This ability triggers only once each turn. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": "3",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": "6",
+      "type_line": "Legendary Creature — Human Villain"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Krark-Clan Ironworks",
+      "oracle_id": "68e1f7e0-a9b3-437f-8086-0c0cb85f2880",
+      "oracle_text": "Sacrifice an artifact: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2004-06-04",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Generic Clue Food Artifact",
+      "oracle_id": "00000000-0000-4000-8000-000000701211",
+      "oracle_text": "",
+      "type_line": "Artifact — Clue Food"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Generic Blood Artifact",
+      "oracle_id": "00000000-0000-4000-8000-000000701212",
+      "oracle_text": "",
+      "type_line": "Artifact — Blood"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If you sacrifice Treasures to cast Captain Lannery Storm, its last ability won't trigger for those Treasures.",
+      "oracle_id": "235bf0ba-658c-463f-b112-7478ba27bd7b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Captain Lannery Storm's last ability triggers whenever you sacrifice a Treasure for any reason, not just to activate a Treasure's mana ability.",
+      "oracle_id": "235bf0ba-658c-463f-b112-7478ba27bd7b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can activate the mana ability of a Treasure even if you have nothing to spend that mana on.",
+      "oracle_id": "235bf0ba-658c-463f-b112-7478ba27bd7b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "The second ability represented by the \"partner with [name]\" keyword modifies the rules for deck construction in the Commander variant and has no function outside of that variant. If a legendary creature card with \"partner with [name]\" is designated as your commander, the named legendary creature card can also be designated as your commander.",
+      "oracle_id": "d57adf99-972a-43fe-9ba2-2b01e673252f",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature's training ability has triggered, destroying the other attacking creature or reducing its power won't stop the creature with training from getting a +1/+1 counter.",
+      "oracle_id": "d57adf99-972a-43fe-9ba2-2b01e673252f",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Partner with [name]\" represents two abilities. The first is a triggered ability: \"When this permanent enters the battlefield, target player may search their library for a card named [name], reveal it, put it into their hand, then shuffle.\"",
+      "oracle_id": "d57adf99-972a-43fe-9ba2-2b01e673252f",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature's training ability triggers only when both that creature and a creature with greater power are declared as attackers. Increasing a creature's power after attackers are declared won't cause a training ability to trigger.",
+      "oracle_id": "d57adf99-972a-43fe-9ba2-2b01e673252f",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Note that the target player searches their library (which may be affected by effects such as that of Stranglehold) and that the card they find is revealed, even though these words aren't included in the ability's reminder text.",
+      "oracle_id": "d57adf99-972a-43fe-9ba2-2b01e673252f",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't sacrifice a Blood token to pay multiple costs.",
+      "oracle_id": "32845ed6-2328-462e-be3a-579589748588",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a Blood token, it means any artifact token with the subtype Blood, even if it has gained other subtypes.",
+      "oracle_id": "32845ed6-2328-462e-be3a-579589748588",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some triggered abilities trigger \"whenever you sacrifice a Blood token.\" These abilities trigger regardless of why you sacrificed that Blood token.",
+      "oracle_id": "32845ed6-2328-462e-be3a-579589748588",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some abilities trigger \"whenever you sacrifice a Clue\". Those abilities trigger whenever you sacrifice a Clue for any reason, not just to activate a Clue's activated ability.",
+      "oracle_id": "cc5370e0-a0e6-4958-a6f2-093a3868b575",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clue is an artifact type. Even though it appears on some cards with other permanent types, it's never a creature type, a land type, or anything but an artifact type.",
+      "oracle_id": "cc5370e0-a0e6-4958-a6f2-093a3868b575",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't sacrifice a Clue to pay multiple costs. For example, you can't sacrifice a Clue token to activate its own ability and also to activate Alquist Proft, Master Sleuth's ability.",
+      "oracle_id": "cc5370e0-a0e6-4958-a6f2-093a3868b575",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some spells and abilities that investigate may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Clue tokens.",
+      "oracle_id": "cc5370e0-a0e6-4958-a6f2-093a3868b575",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a Clue, it means any Clue artifact, not just a Clue artifact token. For example, you can sacrifice Wrench to pay for Alquist Proft, Master Sleuth's activated ability.",
+      "oracle_id": "cc5370e0-a0e6-4958-a6f2-093a3868b575",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creating a Clue token this way isn't the same thing as investigating. Notably, an ability that triggers whenever you investigate won't trigger because of creating a Clue token this way.",
+      "oracle_id": "5d1d9914-3ef2-45c5-b1cb-cb85d2f7394c",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clue tokens are artifact tokens with \"{2}, Sacrifice this token: Draw a card.\"",
+      "oracle_id": "5d1d9914-3ef2-45c5-b1cb-cb85d2f7394c",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset with generic artifact subject controls"
+}

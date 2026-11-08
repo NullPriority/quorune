@@ -13,6 +13,11 @@ from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, append_residual
 
 _LIMIT = re.compile(r"(?P<body>.+) This ability triggers only once each turn\.", re.IGNORECASE)
+_SACRIFICE_GROUP = re.compile(
+    r"(?P<head>(?:When|Whenever) you sacrifice) one or more (?P<other>other )?"
+    r"(?P<subject>[^,]+?)(?P<turn> during your turn)?, (?P<result>.+)",
+    re.IGNORECASE,
+)
 
 
 def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callable[..., OracleNode | None],
@@ -22,10 +27,30 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
         return None
     inner_arguments = dict(arguments)
     private_residuals = []
-    inner_arguments.update(line=match["body"], material_line=match["body"], residuals=private_residuals)
+    material = match["body"]
+    group = _SACRIFICE_GROUP.fullmatch(material)
+    if group is not None:
+        plural = group["subject"].casefold()
+        if not plural.endswith("s"):
+            return None
+        subject = plural.removesuffix("s")
+        article = "another" if group["other"] else "a"
+        material = f"{group['head']} {article} {subject}{group['turn'] or ''}, {group['result']}"
+    inner_arguments.update(line=match["body"], material_line=material, residuals=private_residuals)
     node = compile_inner(**inner_arguments)
     if node is None or not node.exact or node.kind != "triggered_ability" or node.active_zone != "battlefield":
         return None
+    if group is not None:
+        # The existing usage claim suppresses every later matching sacrifice.
+        # These fixed results never read an individual sacrificed object.
+        if node.event != "permanent.sacrificed" or len(node.effects) != 1:
+            return None
+        effect = node.effects[0]
+        if not (
+            effect.get("op") == "grant_declaration_restriction_until_end_of_turn"
+            or effect.get("op") == "damage_each_opponent" and type(effect.get("amount")) is int
+        ):
+            return None
     if supported_trigger_limit_subscriptions(node.event,node.event_condition):limit=TriggerLimitSpec()
     elif departure_trigger_limit_event(node.event,node.event_condition):limit=TriggerLimitSpec(2,source_scope='event_incarnation')
     else:return None

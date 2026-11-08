@@ -10,6 +10,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session, pass_current
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from quorune.attachments import attach_objects
 from quorune.carddb import CardDatabase, CardRecord
@@ -55,7 +56,7 @@ from quorune.compiler.fixed_counter_trigger_nodes import (
 from quorune.compiler.target_effect_corpus_assurance import (
     TargetEffectCorpusCollector,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.engine import TURN_STEPS
 from quorune.kicker import KICKER_CAST_OPTION_ID
 from quorune.impulse_access import temporary_play_permission_is_current
@@ -3941,6 +3942,219 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         self.assertFalse(
             any(item.semantic_key == program.key for item in engine.state.stack)
         )
+
+
+class QualifiedSacrificeRuntimeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "qualified-sacrifices.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/qualified-sacrifice-cards.json",
+            ROOT / "tests/fixtures/activated-self-transform-cards.json",
+            ROOT / "tests/fixtures/source-explore-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Qualified sacrifices",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    def token(self, engine, seat, name):
+        ref, = engine.create_token(
+            seat, name=name, characteristics={"type_line": f"Token Artifact — {name}"},
+            reason="Prepare the sacrifice witness",
+        )
+        return engine._resolve_object(seat, ref, zones={"battlefield"})
+
+    def sacrifice(self, session, seat, altar, card):
+        self.priority(session, seat)
+        packet = session.packet("pilot:" + seat, full=True)
+        action, = [row for row in packet["decision"]["legal_actions"]
+                   if row["id"].startswith(f"activate:{altar.ref}:")]
+        result = session.act("pilot:" + seat, {"action_id": action["id"], "cost_cards": [card.ref]})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_grouped_sacrifice_requires_its_printed_limit_and_clear_qualifiers(self):
+        from quorune.oracle_ir import compile_oracle_card
+
+        original = self.db.lookup("Blood Hypnotist", fuzzy=False)
+        for text in (
+            "Whenever you sacrifice one or more Blood tokens, target creature can't block this turn.",
+            "Whenever you sacrifice a Clue or a Food token, draw a card.",
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(
+                    replace(original, oracle_text=text), capability_registry=self.registry,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+
+    def test_actual_clue_food_union_and_sacrifice_actor_use_committed_facts(self):
+        session = self.session(70121101)
+        engine = session.engine
+        captain = self.add(engine, "Captain Lannery Storm")
+        jenny = self.add(engine, "Jenny Flint")
+        tracker = self.add(engine, "Vengeful Tracker", seat="B")
+        ironworks = self.add(engine, "Krark-Clan Ironworks")
+        foreign_ironworks = self.add(engine, "Krark-Clan Ironworks", seat="B", ref="foreign-ironworks")
+        dual = self.add(engine, "Generic Clue Food Artifact", seat="C")
+        engine.change_control(dual.object_id, "A", reason="Prepare borrowed Clue and Food artifact")
+        recipient = self.add(engine, "Generic Bound Body")
+        treasure = self.token(engine, "A", "Treasure")
+        foreign_treasure = self.token(engine, "B", "Treasure")
+        for card in (captain, jenny, tracker, ironworks):
+            self.assert_closed(session, card)
+        self.prepare(session)
+        life = session.state.players["A"].life
+        owner_life = session.state.players["C"].life
+        power = engine._numeric_stat(captain.object_id, "power")
+        self.assertEqual(("C", "A"), (dual.owner, dual.controller))
+        self.checkpoint(session)
+
+        self.sacrifice(session, "B", foreign_ironworks, foreign_treasure)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(power, engine._numeric_stat(captain.object_id, "power"))
+        self.assertEqual(life, session.state.players["A"].life)
+
+        self.sacrifice(session, "A", ironworks, dual)
+        self.until(session, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "semantic.target")
+        before = authoritative_state_hash(session.state)
+        bad = session.act("pilot:A", {"action_id": "choose", "targets": [jenny.ref]})
+        self.assertFalse(bad.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.target(session, "A", [recipient.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[recipient.object_id].counters["+1/+1"])
+        self.assertEqual(life - 2, session.state.players["A"].life)
+        self.assertEqual(owner_life, session.state.players["C"].life)
+        self.assertEqual(power, session.engine._numeric_stat(captain.object_id, "power"))
+
+        self.sacrifice(session, "A", ironworks, treasure)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(life - 4, session.state.players["A"].life)
+        self.assertEqual(power + 1, session.engine._numeric_stat(captain.object_id, "power"))
+        self.replay(session, load=True)
+
+    def test_actual_blood_limit_and_graveyard_clue_return_keep_distinct_subjects(self):
+        session = self.session(70121102)
+        engine = session.engine
+        hypnotist = self.add(engine, "Blood Hypnotist")
+        cadaver = self.add(engine, "Curious Cadaver", zone="graveyard")
+        ironworks = self.add(engine, "Krark-Clan Ironworks")
+        card = self.add(engine, "Generic Blood Artifact")
+        blocker = self.add(engine, "Generic Bound Body", seat="B")
+        first = self.token(engine, "A", "Blood")
+        second = self.token(engine, "A", "Blood")
+        clue = self.token(engine, "A", "Clue")
+        for source in (hypnotist, cadaver):
+            self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+
+        self.sacrifice(session, "A", ironworks, card)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[cadaver.object_id].zone)
+        self.sacrifice(session, "A", ironworks, clue)
+        item, = session.state.stack
+        self.assertEqual(cadaver.object_id, item.source_object_id)
+        self.assertFalse(item.targets)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[cadaver.object_id].zone)
+
+        self.sacrifice(session, "A", ironworks, first)
+        self.target(session, "A", [blocker.ref])
+        item, = session.state.stack
+        self.assertEqual(hypnotist.object_id, item.source_object_id)
+        self.assertEqual([blocker.ref], item.targets)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.sacrifice(session, "A", ironworks, second)
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_actual_tolls_requires_its_controllers_turn_and_one_use(self):
+        session = self.session(70121103)
+        engine = session.engine
+        tolls = self.add(engine, "Tolls of War")
+        ironworks = self.add(engine, "Krark-Clan Ironworks")
+        first = self.add(engine, "Generic Clue Food Artifact", ref="tolls-first")
+        second = self.add(engine, "Generic Clue Food Artifact", ref="tolls-second")
+        third = self.add(engine, "Generic Clue Food Artifact", ref="tolls-third")
+        self.assert_closed(session, tolls)
+        self.prepare(session)
+        self.checkpoint(session)
+
+        self.sacrifice(session, "A", ironworks, first)
+        self.assertIsNone(self.resolve(session))
+        self.sacrifice(session, "A", ironworks, second)
+        self.assertIsNone(self.resolve(session))
+        self.until(session, lambda current: current.state.active_player == "B")
+        self.sacrifice(session, "A", ironworks, third)
+        self.assertIsNone(self.resolve(session))
+        ally, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertIn("ally", session.engine._type_parts(session.engine._effective_card_data(ally)["type_line"])[1])
+        self.replay(session, load=True)
+
+    def test_actual_astrid_explores_with_last_known_controller_after_departure(self):
+        session = self.session(70121105)
+        engine = session.engine
+        astrid = self.add(engine, "Astrid Peth")
+        ironworks = self.add(engine, "Krark-Clan Ironworks")
+        bounce = self.add(engine, "Unsummon", seat="B", zone="hand")
+        food = self.token(engine, "A", "Food")
+        treasure = self.token(engine, "A", "Treasure")
+        self.assert_closed(session, astrid)
+        self.prepare(session)
+        session.state.players["B"].mana_pool["U"] = 1
+        library = len(session.state.players["A"].zones["library"])
+        hand = len(session.state.players["A"].zones["hand"])
+        private = session.state.cards[session.state.players["C"].zones["hand"][0]].ref
+        self.checkpoint(session)
+
+        self.sacrifice(session, "A", ironworks, treasure)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(library, len(session.state.players["A"].zones["library"]))
+        self.sacrifice(session, "A", ironworks, food)
+        item, = session.state.stack
+        self.assertEqual(astrid.object_id, item.source_object_id)
+        self.cast(session, "B", bounce, [astrid.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[astrid.object_id].zone)
+        self.assertEqual(library - 1, len(session.state.players["A"].zones["library"]))
+        self.assertEqual(hand + 2, len(session.state.players["A"].zones["hand"]))
+        self.assertNotIn(private, json.dumps(session.packet("pilot:B", full=True)))
+        self.replay(session, load=True)
+
+    def test_actual_kingpin_sacrificing_the_source_uses_departure_incarnation(self):
+        session = self.session(70121104)
+        engine = session.engine
+        kingpin = self.add(engine, "Kingpin, Wilson Fisk")
+        altar = self.add(engine, "Ashnod's Altar")
+        self.assert_closed(session, kingpin)
+        self.prepare(session)
+        self.checkpoint(session)
+        prior_identity = kingpin.logical_object_id
+
+        self.sacrifice(session, "A", altar, kingpin)
+        item, = session.state.stack
+        self.assertEqual(kingpin.object_id, item.source_object_id)
+        self.assertEqual(prior_identity, item.context["event_source_trigger_usage"]["logical_object_id"])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        treasures = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(2, len(treasures))
+        self.assertTrue(all("treasure" in session.engine._type_parts(
+            session.engine._effective_card_data(card)["type_line"],
+        )[1] for card in treasures))
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":
