@@ -1349,6 +1349,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         PREPARED_POWER_DAMAGE_CAPABILITY: PREPARED_POWER_DAMAGE_MECHANIC,
         PREPARATION_RESULT_CAPABILITY: PREPARATION_RESULT_MECHANIC,
         'library.order.fixed_controller':'fixed-controller-top-order',
+        'library.order.fixed_hand_to_top': 'fixed-hand-to-library-top',
         'permanent.untap.fixed_land_choice':'fixed-untargeted-land-untap',
         'library.shuffle.fixed_controller':'fixed-controller-shuffle',
         'trigger.state.fixed_public_condition':'fixed-public-state-trigger',
@@ -1365,9 +1366,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
-        "library.select.fixed_controller": (
-            FIXED_LIBRARY_SELECTION_MECHANIC
-        ),
+        "library.select.fixed_controller": FIXED_LIBRARY_SELECTION_MECHANIC,
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         RING_TEMPTATION_CAPABILITY: RING_MECHANIC,
         CHAMPION_CAPABILITY: CHAMPION_MECHANIC,

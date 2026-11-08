@@ -3,6 +3,10 @@ from collections.abc import Mapping
 
 from ..library_order_model import (
     FixedTopLibraryOrderSpec,
+    FixedHandTopOrderSpec,
+    HAND_TOP_ORDER_OPERATION,
+    HAND_TOP_ORDER_CAPABILITY,
+    HAND_TOP_ORDER_MECHANIC,
     TOP_ORDER_OPERATION,
     TOP_ORDER_CAPABILITY,
     TOP_ORDER_MECHANIC,
@@ -23,6 +27,9 @@ def fixed_library_order_capabilities(*, effects, target_schema, mechanic_ids):
         if effect.get('op') == TOP_ORDER_OPERATION and TOP_ORDER_MECHANIC in mechanic_ids:
             FixedTopLibraryOrderSpec.from_effect(effect)
             return (TOP_ORDER_CAPABILITY,) if effect['player'] == '$controller' else ()
+        if effect.get("op") == HAND_TOP_ORDER_OPERATION and HAND_TOP_ORDER_MECHANIC in mechanic_ids:
+            FixedHandTopOrderSpec.from_effect(effect)
+            return (HAND_TOP_ORDER_CAPABILITY,) if effect["player"] == "$controller" else ()
         if effect.get('op') == SHUFFLE_OPERATION and SHUFFLE_MECHANIC in mechanic_ids:
             validate_fixed_shuffle_effect(effect)
             return (SHUFFLE_CAPABILITY,) if effect['player'] == '$controller' else ()
@@ -39,6 +46,11 @@ def library_order_payload_dependencies(value):
         if value['player'] != '$controller':
             raise ValueError('Top order program requires reserved controller')
         return (TOP_ORDER_CAPABILITY,)
+    if value.get("op") == HAND_TOP_ORDER_OPERATION:
+        FixedHandTopOrderSpec.from_effect(value)
+        if value["player"] != "$controller":
+            raise ValueError("Hand-to-top order program requires reserved controller")
+        return (HAND_TOP_ORDER_CAPABILITY,)
     if value.get('op') == SHUFFLE_OPERATION:
         validate_fixed_shuffle_effect(value)
         if value['player'] != '$controller':

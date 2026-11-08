@@ -77,6 +77,21 @@ handling retain their existing stack and effect owners. Variable counts,
 another player's library and unrepresented sibling results remain residuals.
 See [ADR 0131](../adr/0131-typed-private-library-ordering.md).
 
+## Fixed hand to library top
+
+A fixed put-back instruction privately offers a controller's current hand.
+When it follows a draw instruction, the hand snapshot comes after all draws
+and their replacements. The choice requires the printed number of cards, or
+every card when fewer are available, in top-first order. An empty hand needs
+no choice. Each offered reference is pinned to its current logical incarnation.
+
+The simultaneous zone owner validates every selected card and destination
+replacement before committing any movement. Cards that actually go to the
+library retain the chosen relative order. Only the controller receives the
+choice and its order. Opponents see ordinary hand and library counts and any
+destination that becomes public. A pending private selection or destination
+replacement resumes through the existing Game Record continuation.
+
 ## Mill result counts
 
 The existing Mill preparation owner consumes a nonnegative resolved integer.

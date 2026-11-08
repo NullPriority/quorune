@@ -1,7 +1,9 @@
 """Actual entry, land, activated, optional and spell ordering compositions."""
+import json
 import unittest
 from dataclasses import replace
 import top_order_fixture as fixtures
+from quorune.record import authoritative_state_hash
 
 
 class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
@@ -66,3 +68,175 @@ class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
                     if cap not in p.capability_dependencies:continue
                     deps=tuple(c for c in p.capability_dependencies if c!=cap);q=replace(p,coverage=[],capability_dependencies=deps,capability_closure=self.registry.closure(deps,profile='commander_review').to_dict() if deps else None);b=bind_semantic_program_runtime(q,capability_registry=self.registry,profile='commander_review');self.assertFalse(b['strict']);self.assertIn('capability:undeclared_runtime_dependency:'+cap,b['blockers']);checked+=1
         self.assertEqual(4,checked)
+
+
+    def _choose_hand_top(self, session, refs):
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        self.assertEqual(("pilot:A",), tuple(session.pending_principals()))
+        decision = session.packet("pilot:A", full=True)["decision"]
+        schema = decision["ctx"]["legal_actions"][0]["choice_schema"]
+        self.assertEqual("top_to_bottom", schema["order"])
+        self.assertEqual(len(refs), schema.get("minimum", 1))
+        self.assertEqual(len(refs), schema.get("maximum", 1))
+        self.assertLessEqual(set(refs), set(schema["legal_refs"]))
+        form = decision["legal_actions"][0]["form"]
+        field = next(value for value in form["fields"] if value["name"] == "cards")
+        self.assertTrue(field["ordered"])
+        self.assertEqual("top_to_bottom", field["order"])
+        before = authoritative_state_hash(session.state)
+        invalid = [("pilot:B", refs), ("pilot:A", []),
+                   ("pilot:A", [*refs[:-1], "foreign-hand"])]
+        if len(refs) > 1:
+            invalid.append(("pilot:A", [refs[0]] * len(refs)))
+        for principal, cards in invalid:
+            rejected = session.act(principal, {"action_id": "choose", "cards": cards})
+            self.assertFalse(rejected.ok, rejected.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        accepted = session.act("pilot:A", {"action_id": "choose", "cards": refs})
+        self.assertTrue(accepted.ok, accepted.summary)
+        return session
+
+    def test_actual_brainstorm_chooses_a_private_post_draw_subset_and_replays_order(self):
+        session = self.session(401_830_001)
+        source = self.add(session.engine, "Brainstorm", zone="hand")
+        old = self.add(session.engine, "Memnite", zone="hand", ref="brainstorm-old-hand")
+        drawn = self.top_cards(session)[:3]
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "hand" for card in drawn))
+        refs = [drawn[-1].ref, old.ref]
+        for seat in "BCD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            for ref in refs:
+                self.assertNotIn(json.dumps(ref), json.dumps(packet))
+        session = self._choose_hand_top(session, refs)
+        self.settle(session)
+        self.assertEqual(refs, self.top_refs(session, 2))
+        self.assertEqual(session.state.cards[old.object_id].zone_timestamp,
+                         session.state.cards[drawn[-1].object_id].zone_timestamp)
+        self.assertEqual("hand", session.state.cards[drawn[0].object_id].zone)
+        for seat in "BCD":
+            packet = json.dumps(session.packet("pilot:" + seat, full=True))
+            for ref in refs:
+                self.assertNotIn(json.dumps(ref), packet)
+        self.replay(session, load=True)
+
+    def test_actual_brainstone_pays_before_draw_and_resumes_a_private_commander_replacement(self):
+        session = self.session(401_830_002)
+        engine = session.engine
+        source = self.add(engine, "Brainstone", zone="hand")
+        player = session.state.players["A"]
+        commander_id = player.zones["command"].pop()
+        commander = session.state.cards[commander_id]
+        commander.zone = "hand"
+        commander.known_to = ["A"]
+        commander.revealed_to = []
+        player.zones["hand"].append(commander_id)
+        chosen = self.top_cards(session)[0]
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source, reserve={"C": 2})
+        self.settle(session)
+        self.priority(session, "A")
+        offer = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                     if row["id"].startswith(f"activate:{source.ref}:"))
+        result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        session = self._choose_hand_top(session, [commander.ref, chosen.ref])
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual(("pilot:A",), tuple(session.pending_principals()))
+        for card in (commander, chosen):
+            self.assertEqual("hand", session.state.cards[card.object_id].zone)
+        for seat in "BCD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn(json.dumps(chosen.ref), json.dumps(packet))
+        session = self.replay(session, load=True)
+        ctx = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        option = next(row for row in ctx["options"] if not row.get("decline"))
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": option["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.settle(session)
+        self.assertEqual("command", session.state.cards[commander_id].zone)
+        self.assertEqual([chosen.ref], self.top_refs(session, 1))
+        self.replay(session, load=True)
+
+    def test_actual_blocked_draw_still_puts_back_the_only_hand_card(self):
+        session = self.session(401_830_003)
+        engine = session.engine
+        player = session.state.players["A"]
+        for object_id in tuple(player.zones["hand"]):
+            engine.move_card(object_id, "graveyard", log=False)
+        source = self.add(engine, "Brainstorm", zone="hand")
+        previous = self.add(engine, "Divination", zone="hand")
+        restriction = self.add(engine, "Spirit of the Labyrinth", seat="B")
+        drawn = self.top_cards(session)[0]
+        for card in (source, previous, restriction):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 2, "U": 2})
+        self.checkpoint(session)
+        self.cast_for(session, "A", previous, reserve={"U": 1})
+        self.settle(session)
+        self.assertEqual({source.object_id, drawn.object_id}, set(player.zones["hand"]))
+        before = len(player.zones["library"])
+        self.cast_for(session, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(before, len(player.zones["library"]))
+        session = self._choose_hand_top(session, [drawn.ref])
+        self.settle(session)
+        self.assertEqual([], session.state.players["A"].zones["hand"])
+        self.assertEqual([drawn.ref], self.top_refs(session, 1))
+        self.replay(session, load=True)
+
+    def test_actual_riverwise_augur_resolves_draw_before_private_top_order(self):
+        session = self.session(401_830_004)
+        source = self.add(session.engine, "Riverwise Augur", zone="hand")
+        drawn = self.top_cards(session)[:3]
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3, "U": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "hand" for card in drawn))
+        refs = [drawn[1].ref, drawn[0].ref]
+        session = self._choose_hand_top(session, refs)
+        self.settle(session)
+        self.assertEqual(refs, self.top_refs(session, 2))
+        self.replay(session)
+
+
+    def test_actual_brainstorm_keeps_put_back_after_a_resumed_dredge(self):
+        session = self.session(401_830_005)
+        source = self.add(session.engine, "Brainstorm", zone="hand")
+        dredger = self.add(session.engine, "Dakmor Salvage", zone="graveyard", ref="brainstorm-dredger")
+        top = self.top_cards(session)
+        self.assert_closed(session, source)
+        self.assert_closed(session, dredger)
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertEqual("draw.replacement", self.resolve(session).kind)
+        self.assertEqual([card.ref for card in top], self.top_refs(session, 5))
+        session = self.replay(session, load=True)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        dredge = next(row for row in options if "Dredge" in row["label"])
+        accepted = session.act("pilot:A", {"action_id": "choose", "choice": dredge["id"]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "graveyard" for card in top[:2]))
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "hand" for card in top[2:4]))
+        self.assertEqual("hand", session.state.cards[dredger.object_id].zone)
+        refs = [top[3].ref, dredger.ref]
+        session = self._choose_hand_top(session, refs)
+        self.settle(session)
+        self.assertEqual(refs, self.top_refs(session, 2))
+        self.replay(session, load=True)

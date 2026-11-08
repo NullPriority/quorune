@@ -47326,6 +47326,97 @@
     {
       "applicability": {
         "exclusions": [
+          "Variable counts",
+          "Hand-to-library costs",
+          "Another player or bottom placement"
+        ],
+        "inputs": [
+          "fixed active controller instruction",
+          "current private hand and logical incarnations",
+          "ordered exact-size subset"
+        ],
+        "outputs": [
+          "one atomic top-destination batch",
+          "controller-private order and decision replay"
+        ],
+        "summary": "Place a fixed ordered subset of the controller hand on top using the simultaneous zone owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The ordered result derives its dependency from its exact payload, including inside a sequence and after removing coverage metadata.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.order.fixed_hand_to_top",
+      "implementation_components": [
+        "quorune.library_order_model.FixedHandTopOrderSpec",
+        "quorune.compiler.fixed_top_order_templates.fixed_top_order_template",
+        "quorune.rules.library_order_shapes.library_order_payload_dependencies",
+        "quorune.semantic_choices.fixed_top_order.FixedHandTopOrderingHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Inverting the batch input order fails the selected-order witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_brainstorm_chooses_a_private_post_draw_subset_and_replays_order",
+        "test_actual_brainstone_pays_before_draw_and_resumes_a_private_commander_replacement",
+        "test_actual_blocked_draw_still_puts_back_the_only_hand_card",
+        "test_actual_riverwise_augur_resolves_draw_before_private_top_order",
+        "test_actual_brainstorm_keeps_put_back_after_a_resumed_dredge"
+      ],
+      "multiplayer_tests": [
+        "test_actual_brainstorm_chooses_a_private_post_draw_subset_and_replays_order",
+        "test_actual_brainstone_pays_before_draw_and_resumes_a_private_commander_replacement"
+      ],
+      "negative_tests": [
+        "test_hand_top_pins_the_private_subset_and_current_incarnations",
+        "test_fixed_draw_and_hand_top_order_lower_and_bind_independently",
+        "test_actual_blocked_draw_still_puts_back_the_only_hand_card"
+      ],
+      "official_rules": [
+        "400.7",
+        "401.4",
+        "608.2c",
+        "608.2d",
+        "609.3",
+        "903.9b"
+      ],
+      "positive_tests": [
+        "test_hand_top_pins_the_private_subset_and_current_incarnations",
+        "test_fixed_draw_and_hand_top_order_lower_and_bind_independently",
+        "test_actual_brainstorm_chooses_a_private_post_draw_subset_and_replays_order",
+        "test_actual_riverwise_augur_resolves_draw_before_private_top_order"
+      ],
+      "privacy_tests": [
+        "test_actual_brainstorm_chooses_a_private_post_draw_subset_and_replays_order",
+        "test_actual_brainstone_pays_before_draw_and_resumes_a_private_commander_replacement"
+      ],
+      "replay_tests": [
+        "test_actual_brainstorm_chooses_a_private_post_draw_subset_and_replays_order",
+        "test_actual_brainstone_pays_before_draw_and_resumes_a_private_commander_replacement",
+        "test_actual_blocked_draw_still_puts_back_the_only_hand_card",
+        "test_actual_riverwise_augur_resolves_draw_before_private_top_order",
+        "test_actual_brainstorm_keeps_put_back_after_a_resumed_dredge"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Scry 0 as an event",
           "multiple players instructed to Scry simultaneously",
           "unrepresented dynamic or variable Scry counts",
