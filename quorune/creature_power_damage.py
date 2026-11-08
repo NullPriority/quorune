@@ -19,6 +19,9 @@ from .creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
+    OCCURRENCE_POWER_DAMAGE_CONTEXT,
+    OCCURRENCE_POWER_DAMAGE_VERSION,
+    occurrence_power_damage_in,
 )
 
 
@@ -72,6 +75,10 @@ def capture_creature_power_damage_source_lki(
 
     if not creature_power_damage_needs_source_lki(effects):
         return None
+    return _capture_power_lki(host, source, characteristics=characteristics)
+
+
+def _capture_power_lki(host, source, *, characteristics=None):
     effective = (
         dict(characteristics)
         if characteristics is not None
@@ -130,6 +137,56 @@ def capture_creature_power_damage_source_lki(
     }
 
 
+def occurrence_creature_power_snapshot(host, card, *, characteristics=None):
+    snapshot = _capture_power_lki(host, card, characteristics=characteristics)
+    if snapshot is None:
+        raise CreaturePowerDamageError("Occurrence creature power is unavailable")
+    if card.face_down:
+        snapshot["source"]["oracle_id"] = None
+    return snapshot
+
+
+def with_occurrence_power_departure(host, card, characteristics):
+    if (card.zone != "battlefield" or not any(any(occurrence_power_damage_in(program.effects))
+                                            for program in host.semantics.programs_for_event("creature.dies"))
+            or "creature" not in host._type_parts(str(characteristics.get("type_line") or ""))[0]):
+        return characteristics
+    return {**characteristics, OCCURRENCE_POWER_DAMAGE_CONTEXT: occurrence_creature_power_snapshot(
+        host, card, characteristics=characteristics,
+    )}
+
+
+def validate_occurrence_power_snapshot(context, snapshot):
+    from .replacement.immutable import thaw_value
+
+    ref = context.get("card")
+    identity = context.get("card_object_identity")
+    raw = thaw_value(snapshot)
+    value = _source_lki_value(ref, raw)
+    if (value is None or not isinstance(identity, str)
+            or value[1].logical_object_id != identity or value[1].object_id != identity.rpartition("@")[0]
+            or value[1].zone != "battlefield"):
+        raise CreaturePowerDamageError("Occurrence power damage lost its original public incarnation")
+    return raw, value[1]
+
+
+def occurrence_power_trigger_context(host, program, event, context, departure_characteristics):
+    if not any(occurrence_power_damage_in(program.effects)):
+        return {}
+    identity = context.get("card_object_identity")
+    object_id, _, _ = identity.rpartition("@") if isinstance(identity, str) else ("", "", "")
+    if event == "creature.dies":
+        data = (departure_characteristics or {}).get(object_id, {})
+        snapshot = data.get(OCCURRENCE_POWER_DAMAGE_CONTEXT)
+    else:
+        card = host.state.cards.get(object_id)
+        if card is None or card.zone != "battlefield" or card.phased_out or card.logical_object_id != identity:
+            raise CreaturePowerDamageError("Occurrence power damage requires the entering permanent")
+        snapshot = occurrence_creature_power_snapshot(host, card)
+    raw, _source = validate_occurrence_power_snapshot(context, snapshot)
+    return {OCCURRENCE_POWER_DAMAGE_CONTEXT: raw}
+
+
 def creature_power_damage_source_available(
     host: Any,
     source: Any,
@@ -161,6 +218,7 @@ def _source_value(
     *,
     ref: str,
     lki: Mapping[str, Any] | None,
+    public_only: bool = False,
 ) -> tuple[int, DamageSourceSnapshot] | None:
     current = _card_by_ref(host, ref)
     lki_value = _source_lki_value(ref, lki)
@@ -175,11 +233,12 @@ def _source_value(
             if 'creature' in host._type_parts(str(effective.get('type_line') or ''))[0]:
                 return None
             power = 0
-        return power, source_snapshot(
+        snapshot = source_snapshot(
             host,
             card.ref,
             controller=card.controller,
         )
+        return power, replace(snapshot, oracle_id=None) if public_only and card.face_down else snapshot
     return lki_value
 
 
@@ -258,6 +317,8 @@ def _instruction(
         multiplier = creature_power_damage_multiplier(effect)
     except (TypeError, ValueError) as exc:
         raise CreaturePowerDamageError(str(exc)) from exc
+    if effect.get("schema_version") == OCCURRENCE_POWER_DAMAGE_VERSION and effect.get("source_lki") is None:
+        raise CreaturePowerDamageError("Occurrence power damage requires its sealed source")
     return kind, source_ref, target_ref, must_be_creature, multiplier
 
 
@@ -294,6 +355,7 @@ def resolve_creature_power_damage(
             host,
             ref=source_ref,
             lki=effect.get("source_lki"),
+            public_only=effect.get("schema_version") == OCCURRENCE_POWER_DAMAGE_VERSION,
         )
         if source_value is None:
             return ()

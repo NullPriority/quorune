@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from .model import CardInstance, StackItem
+from .creature_power_damage_model import OCCURRENCE_POWER_DAMAGE_CONTEXT
 from .saga_progression import dispatch_saga_entry_chapters
 from .shared_creature_type_model import canonical_creature_types
 from .trigger_processing import enqueue_trigger_batch
@@ -146,12 +147,23 @@ def dispatch_zone_change_occurrence(
     for event in events:
         context = event.context
         if event.source_timing == "before":
+            characteristics = departure_source_characteristics
+            if event.kind == "creature.dies":
+                snapshot = occurrence.previous_characteristics.get(OCCURRENCE_POWER_DAMAGE_CONTEXT)
+                if snapshot is not None:
+                    characteristics = {
+                        **characteristics,
+                        occurrence.object_id: {
+                            **characteristics.get(occurrence.object_id, {}),
+                            OCCURRENCE_POWER_DAMAGE_CONTEXT: snapshot,
+                        },
+                    }
             host._dispatch_semantic_event(
                 event.kind,
                 context,
                 sources=departure_sources,
                 source_zones=departure_source_zones,
-                source_characteristics=departure_source_characteristics,
+                source_characteristics=characteristics,
                 trigger_batch=pending,
             )
         else:

@@ -5,6 +5,10 @@ from __future__ import annotations
 import re
 from ..damage_recipient_model import DAMAGE_PERMANENT_OBJECT, DAMAGE_PERMANENT_VARIANT
 from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
+from ..creature_power_damage_model import (
+    CREATURE_POWER_DAMAGE_MECHANIC, CREATURE_POWER_DAMAGE_OPERATION,
+    OCCURRENCE_POWER_DAMAGE_LKI, OCCURRENCE_POWER_DAMAGE_SOURCE, OCCURRENCE_POWER_DAMAGE_VERSION,
+)
 from ..received_damage_model import RECEIVED_DAMAGE_EVENT, RECEIVED_COMBAT_DAMAGE_EVENT
 from .received_damage_bindings import RECEIVED_PERMANENT_VARIANTS
 
@@ -13,6 +17,26 @@ _EVENT_NEXT_UNTAP = re.compile(
     r"Tap that creature(?: and it|\. (?:That creature|It)) doesn['’]t untap during "
     r"its controller['’]s next untap step\.", re.I,
 )
+_OCCURRENCE_POWER_DAMAGE = re.compile(r"(?:It|That creature) deals damage equal to its power to (?P<target>[^.]+)\.", re.I)
+
+
+def occurrence_power_damage_result(binding, body):
+    from .damage_templates import source_pronoun_damage_effect_template
+    from ..rules.creature_power_damage_capability_shapes import occurrence_power_damage_event_is_closed
+
+    match = _OCCURRENCE_POWER_DAMAGE.fullmatch(body)
+    if match is None or not occurrence_power_damage_event_is_closed(binding.event.value, binding.active_zone):
+        return None
+    target = source_pronoun_damage_effect_template(f"It deals 1 damage to {match['target']}.")
+    if target is None or target.target_schema is None:
+        return None
+    instruction = {
+        "op": CREATURE_POWER_DAMAGE_OPERATION, "schema_version": OCCURRENCE_POWER_DAMAGE_VERSION,
+        "kind": "bite", "source": OCCURRENCE_POWER_DAMAGE_SOURCE, "source_lki": OCCURRENCE_POWER_DAMAGE_LKI,
+        "target": "$target.0", "target_must_be_creature": target.target_schema.get("types_any") == ["creature"],
+    }
+    return ("occurrence-creature-power-damage-v1", (instruction,), target.target_schema,
+            (*target.mechanics, CREATURE_POWER_DAMAGE_MECHANIC)), True
 
 
 def entry_permanent_result(binding, body):

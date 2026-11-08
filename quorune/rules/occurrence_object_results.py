@@ -31,6 +31,9 @@ def _permanent_occurrence_subscriptions(program):
 
 
 def occurrence_object_runtime_dependencies(program):
+    from .creature_power_damage_capability_shapes import occurrence_power_damage_runtime_dependencies
+    if required := occurrence_power_damage_runtime_dependencies(program):
+        return required
     from .combat_removal_shapes import combat_removal_runtime_dependencies
     combat_removal = combat_removal_runtime_dependencies(program)
     if combat_removal:

@@ -27,6 +27,7 @@ from .attachment_references import (
 from .creature_power_damage import (
     capture_creature_power_damage_source_lki,
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
+    occurrence_power_trigger_context,
 )
 from .errors import GameRuleError
 from .increment_model import CONDITION_FIELD as INCREMENT_CONDITION_FIELD
@@ -1360,7 +1361,8 @@ def _program_trigger_ability_is_present(program, characteristics):
             or program_has_current_ability_fragments(program, characteristics))
 
 
-def _new_semantic_trigger_item(host, *, source, program, event, context, active_zone, characteristics):
+def _new_semantic_trigger_item(host, *, source, program, event, context, active_zone, characteristics,
+                               departure_characteristics=None):
     """Construct one occurrence with source-pinned context before batching."""
     ref = host._next_ref("S")
     stack_context = _semantic_trigger_context(
@@ -1369,6 +1371,9 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
     )
     from .drawing.miracle_triggers import miracle_trigger_context
     try:
+        stack_context.update(occurrence_power_trigger_context(
+            host, program, event, context, departure_characteristics,
+        ))
         stack_context.update(miracle_trigger_context(
             source=source, program=program, event=event, context=context, trigger_ref=ref,
         ))
@@ -1483,6 +1488,7 @@ def dispatch_semantic_event(
             item = _new_semantic_trigger_item(
                 host, source=source, program=program, event=event, context=context,
                 active_zone=active_zone, characteristics=characteristics,
+                departure_characteristics=source_characteristics,
             )
             if (
                 trigger_batch is not None

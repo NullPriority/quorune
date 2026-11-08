@@ -88,6 +88,14 @@ replace the original source. A represented battlefield noncreature has no
 power and contributes numeric zero under CR 208.3 and 107.2. Fight still requires
 both current creatures; it never substitutes a departed participant's power.
 
+An entry or creature-death trigger can bind the occurrence object as its damage
+source. Target legality uses the ability source, while damage prevention and
+lifelink use the occurrence source. A live entrant supplies its current power
+and characteristics. A departure refreshes its snapshot before any member of
+the batch moves, and a dies trigger starts with that predeparture information.
+The snapshot follows the original incarnation through target choices,
+optional payments, and replay.
+
 Prepared one-way damage uses ordinary fixed characteristic or counter effects
 before reading the targeted creature's current effective power. Counter
 replacement and prohibition therefore affect the later amount. Both target

@@ -1323,3 +1323,10 @@ binding infers the fixed-multiple capability from these fields; removing a
 program annotation cannot remove that requirement. Source and target identity,
 current-power timing, replacement continuations and damage attribution retain
 the existing record owners.
+
+Version-three occurrence power damage stores `occurrence_power_damage_lki`
+with the originating public event's card reference and incarnation. The same
+snapshot carries the signed power and damage-source facts. Entry starts with
+the current incarnation and pins its final battlefield facts on departure.
+A dies trigger starts with the predeparture snapshot. Existing ability-source
+and fixed-multiple descriptors retain their record formats.

@@ -593,6 +593,7 @@ class ZoneTransitionOwner:
         semantic_events: bool,
     ) -> ZoneDepartureSnapshot:
         from .conditional_exile_model import source_conditional_bindings
+        from .creature_power_damage import with_occurrence_power_departure
         attachments = tuple(
             self.state.cards[attachment_id].ref
             for attachment_id in card.attachments
@@ -604,7 +605,10 @@ class ZoneTransitionOwner:
             card,
         )
         characteristics = (
-            with_zone_event_numerics(self.host, card, _damage_source_characteristics(self.host, card))
+            with_occurrence_power_departure(
+                self.host, card,
+                with_zone_event_numerics(self.host, card, _damage_source_characteristics(self.host, card)),
+            )
             if semantic_events
             else {}
         )
@@ -1313,6 +1317,7 @@ class ZoneTransitionOwner:
         source_snapshot: DepartureTriggerSnapshot,
     ) -> tuple[CardInstance, ZoneDepartureSnapshot]:
         from .conditional_exile_model import source_conditional_bindings
+        from .creature_power_damage import with_occurrence_power_departure
         return (
             card,
             ZoneDepartureSnapshot(
@@ -1320,7 +1325,9 @@ class ZoneTransitionOwner:
                 controller=card.controller,
                 logical_object_id=card.logical_object_id,
                 conditional_returns=source_conditional_bindings(card) if card.zone == 'battlefield' else (),
-                characteristics=copy.deepcopy(current_zone_event_characteristics(self.host,card)),
+                characteristics=with_occurrence_power_departure(
+                    self.host, card, copy.deepcopy(current_zone_event_characteristics(self.host, card)),
+                ),
                 counters=dict(card.counters),
                 attachments=tuple(
                     self.state.cards[attachment_id].ref

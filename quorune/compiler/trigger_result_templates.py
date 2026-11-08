@@ -93,8 +93,8 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .attack_event_results import qualified_attack_characteristic_result
     attack_result=qualified_attack_characteristic_result(binding,body,effect_template=effect_template,card_name=card_name)
     if attack_result is not None:return attack_result
-    from .occurrence_object_results import occurrence_object_result
-    occurrence=occurrence_object_result(binding,body,effect_template=effect_template,card_name=card_name)
+    from .occurrence_object_results import occurrence_object_result, occurrence_power_damage_result
+    occurrence=occurrence_power_damage_result(binding,body) or occurrence_object_result(binding,body,effect_template=effect_template,card_name=card_name)
     if occurrence is not None:return occurrence
     from .event_counter_results import public_event_counter_set_result
     counter_set=public_event_counter_set_result(binding,body,effect_template=effect_template,card_name=card_name,accepted_variants=source_counter_variants)

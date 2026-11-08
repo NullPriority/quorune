@@ -11,8 +11,13 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
     CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,
+    OCCURRENCE_POWER_DAMAGE_LKI,
+    OCCURRENCE_POWER_DAMAGE_SOURCE,
+    OCCURRENCE_POWER_DAMAGE_VERSION,
     creature_power_damage_multiplier,
+    occurrence_power_damage_in,
 )
+from ..replacement.immutable import thaw_value
 
 
 _ATTACHED_CREATURE = {
@@ -123,6 +128,47 @@ def _source_is_closed(source: object) -> bool:
     return source == "$source" or source == _ATTACHED_CREATURE
 
 
+def occurrence_power_damage_event_is_closed(event, active_zone):
+    return active_zone == "battlefield" and event in {"creature.enter", "creature.dies", "permanent.enter"}
+
+
+def _occurrence_power_damage_capabilities(effect, target_schema, mechanics):
+    from .damage_capability_shapes import fixed_damage_node_capabilities
+
+    schema = thaw_value(target_schema)
+    if not isinstance(schema, Mapping) or type(effect.get("schema_version")) is not int:
+        return ()
+    expected = {
+        "op": CREATURE_POWER_DAMAGE_OPERATION, "schema_version": OCCURRENCE_POWER_DAMAGE_VERSION,
+        "kind": "bite", "source": OCCURRENCE_POWER_DAMAGE_SOURCE, "source_lki": OCCURRENCE_POWER_DAMAGE_LKI,
+        "target": "$target.0", "target_must_be_creature": schema.get("types_any") == ["creature"],
+    }
+    if effect != expected or type(effect.get("target_must_be_creature")) is not bool:
+        return ()
+    damage = fixed_damage_node_capabilities(
+        effects=({"op": "damage", "source": "$source", "target": "$target.0", "amount": 1},),
+        target_schema=schema, mechanic_ids=mechanics,
+    )
+    if not damage:
+        return ()
+    return tuple(sorted({CREATURE_POWER_DAMAGE_CAPABILITY, "resolution.event_object.fixed_result", *damage}))
+
+
+def occurrence_power_damage_runtime_dependencies(program):
+    leaves = tuple(occurrence_power_damage_in(program.effects))
+    if not leaves:
+        return ()
+    if (len(leaves) != 1 or "one_or_more_event_batch" in program.coverage
+            or not occurrence_power_damage_event_is_closed(program.event, program.active_zone)):
+        raise ValueError("Occurrence power damage requires one closed entry or death event")
+    owners = _occurrence_power_damage_capabilities(
+        leaves[0], program.target_schema, ("cr-115-targets", "cr-120-damage"),
+    )
+    if not owners:
+        raise ValueError("Occurrence power damage lost its event source or declared target")
+    return (*owners, "trigger.event.normalized_zone_change")
+
+
 def fixed_creature_power_damage_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -139,6 +185,8 @@ def fixed_creature_power_damage_node_capabilities(
     }.issubset(mechanics) or len(effects) not in {1, 2}:
         return ()
     effect = effects[-1]
+    if effect.get("schema_version") == OCCURRENCE_POWER_DAMAGE_VERSION:
+        return _occurrence_power_damage_capabilities(effect, target_schema, mechanics) if len(effects) == 1 else ()
     try:
         multiplier = creature_power_damage_multiplier(effect)
     except (TypeError, ValueError):
