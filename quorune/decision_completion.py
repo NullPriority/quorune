@@ -6,9 +6,11 @@ from .errors import GameRuleError
 from .aura import complete_aura_entry_choice
 from .replacement_decisions import complete_replacement_order_choice
 from .trigger_processing import complete_trigger_order_decision
+from .trigger_targeting import record_linked_loop_decision
 
 
 def dispatch_completed_decision(host,decision):
+    record_linked_loop_decision(host.state, decision)
     kind=decision.kind
     if kind=='mulligan.declare':host._complete_mulligan_declaration(decision)
     elif kind=='mulligan.bottom':host._complete_mulligan_bottom(decision)

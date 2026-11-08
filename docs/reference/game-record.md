@@ -1231,6 +1231,12 @@ selections as public Aura and attachment references in `chosen_attachments`.
 The suspended instruction stays bound to the original trigger and the current
 Aura's exile incarnation.
 
+New games carry an internal `mandatory_linked_loop` witness with schema
+version one. It holds one comparison digest and the current trigger cursor.
+Replay rebuilds the witness and terminal draw from accepted target and priority
+commands. Historical checkpoints omit the field and keep their original rule
+behavior. Projection leaves the witness in the authoritative record.
+
 Version-three fixed-color or fixed-card-type Protection fragments add a required
 `exempt_aura_incarnation` for one granting Aura. CardProgram attached definitions
 carry the closed source marker; live evaluation binds the current source

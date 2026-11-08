@@ -54,7 +54,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         return 'domain'
     if relative=='quorune/state_based_legend_choices.py':return 'rules'
     if relative=='quorune/created_token_cleanup_model.py':return 'domain'
-    if relative=='quorune/turn_skip_model.py':return 'domain'
+    if relative in {'quorune/turn_skip_model.py', 'quorune/mandatory_loop_model.py'}:return 'domain'
     if relative in {'quorune/earthbend_model.py', 'quorune/suspect_model.py'}:return 'domain'
     if relative in {'quorune/dungeon_catalog.py', 'quorune/dungeon_progress.py', 'quorune/next_turn_effect.py'}:return 'domain'
     if relative == 'quorune/apnap_object_payment.py':return 'domain'
@@ -1118,6 +1118,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
         "quorune/turn_skip_model.py",
+        "quorune/mandatory_loop_model.py",
         "quorune/turn_skip_replacements.py",
     }:
         return "turn_priority_and_decisions"

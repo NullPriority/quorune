@@ -504,6 +504,102 @@
       "released_at": "2023-08-04",
       "toughness": null,
       "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Faceless Butcher",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "oracle_text": "When this creature enters, exile another target creature.\nWhen this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "3",
+      "type_line": "Creature — Nightmare Horror"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Faceless Devourer",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nWhen this creature enters, exile another target creature with shadow.\nWhen this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2021-03-19",
+      "toughness": "1",
+      "type_line": "Creature — Nightmare Horror"
     }
   ],
   "rulings": [
@@ -649,6 +745,66 @@
       "comment": "Having shroud will prevent the creature from being targeted by Aura spells, but it does not remove any Auras that are already attached to the creature or stop Auras from being moved to the creature by some other method.",
       "oracle_id": "093a20e5-ff14-41c7-b16c-1f745ddf6942",
       "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Faceless Butcher exiles a token creature, the token will cease to exist after being exiled. It won’t return to the battlefield because of the second ability.",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Faceless Butcher’s first ability isn’t optional. If no other players control any creatures and you do, you must choose a creature you control as the target.",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Faceless Butcher exiles a second Faceless Butcher, and then a third Faceless Butcher comes along and exiles the first one, the second one will return to the battlefield. If there are no other creatures on the battlefield, the second will exile the third one, returning the first one, and so on. If no one can stop the loop, the game will be a draw.",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist. Once the exiled creature returns, it's considered a new object with no relation to the object that it was.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Three Faceless Devourers entering the battlefield at separate times with no other creatures with shadow on the battlefield will result in an infinite loop. The game ends in a draw unless a player somehow interrupts the loop.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Faceless Devourer leaves the battlefield before its first triggered ability has resolved, its last ability triggers. This ability does nothing when it resolves. Then its first ability resolves and exiles the target creature indefinitely.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature has been blocked, that creature remains blocked and will deal and be dealt combat damage even if it gains or loses shadow or if the blocking creature gains or loses shadow.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Multiple instances of shadow on the same creature are redundant.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
       "source": "wotc"
     }
   ]

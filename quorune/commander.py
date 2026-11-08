@@ -17,6 +17,7 @@ from .model import (
     PlayerState,
     TurnHistory,
 )
+from .mandatory_loop_model import MandatoryLinkedLoopWatch
 
 
 COMMANDER_DAMAGE_IDENTITY_VERSION = 2
@@ -311,6 +312,7 @@ def initial_commander_state(
         current_turn=None,
         last_normal_turn_player=None,
         departed_turn_boundary_version=1,
+        mandatory_linked_loop=MandatoryLinkedLoopWatch(),
         commander_damage_identity_version=(
             COMMANDER_DAMAGE_IDENTITY_VERSION
         ),

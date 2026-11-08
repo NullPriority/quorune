@@ -166,6 +166,20 @@ class LinkedExileReturnCompilerTests(unittest.TestCase):
 
 
 class LinkedExileReturnRuntimeContractTests(unittest.TestCase):
+    def test_loop_witness_retains_one_anchor_and_rejects_malformed_history(self):
+        from quorune.mandatory_loop_model import MandatoryLinkedLoopWatch
+
+        witness = MandatoryLinkedLoopWatch()
+        for index, digest in enumerate(("a" * 64, "b" * 64, "c" * 64, "a" * 64, "b" * 64, "c" * 64)):
+            witness, repeated = witness.observe(digest, f"trigger-{index}")
+            self.assertFalse(repeated)
+            self.assertEqual(witness, MandatoryLinkedLoopWatch.from_dict(witness.to_dict()))
+        self.assertFalse(witness.observe("a" * 64, "trigger-5")[1])
+        self.assertTrue(witness.observe("a" * 64, "trigger-6")[1])
+        for change in ({"schema_version": True}, {"stride": 3}, {"distance": 4}, {"cursor": None}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                MandatoryLinkedLoopWatch.from_dict({**witness.to_dict(), **change})
+
     def test_source_placeholder_excludes_absent_and_reentered_incarnations(self):
         from quorune.semantic_runtime.values import resolve_semantic_value
         card=SimpleNamespace(object_id="source",ref="SOURCE",logical_object_id="new",zone="battlefield",phased_out=False)
@@ -312,6 +326,129 @@ class LinkedAbilityExileNativeTests(InheritedNativeFixture, unittest.TestCase):
         cls.deck = DeckDefinition("Linked ability exile", [
             DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 24),
         ], ["Generic Bound Commander"])
+
+    def linked_loop(self, name, seed, *, interrupt=False, alternative=False, historical=False):
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        from quorune.linked_ability_exile_state import record_linked_ability_exile
+        from quorune.linked_exile_return_model import ExiledObjectIdentity
+
+        session = self.session(seed)
+        held = self.add(session.engine, name, seat="A", zone="exile", ref="loop-held")
+        holder = self.add(session.engine, name, seat="B", ref="loop-holder")
+        entrant = self.add(session.engine, name, seat="C", zone="hand", ref="loop-entrant")
+        removal = self.add(session.engine, "Disenchant", seat="C", zone="hand", ref="loop-interruption") if interrupt else None
+        other = self.add(session.engine, "Generic Bound Body", seat="D", ref="loop-alternative") if alternative else None
+        self.assert_closed(session, entrant)
+        return_program, = session.engine.semantics.programs_for_oracle(
+            holder.oracle_id, active_zone="battlefield", event="permanent.leave.self",
+        )
+        # Start after the second owner's entry has already established its link.
+        record_linked_ability_exile(
+            session.engine, source=ContinuousObjectIdentity(holder.object_id, holder.logical_object_id),
+            ability_pair=return_program.effects[0]["binding_id"],
+            objects=(ExiledObjectIdentity(held.object_id, held.ref, held.logical_object_id),),
+        )
+        if historical:
+            session.state.mandatory_linked_loop = None
+        self.prepare(session, actor="C", active="C", mana={"C": 6, "W": 4, "B": 4})
+        self.checkpoint(session)
+        self.cast(session, "C", entrant)
+        return session, removal, other
+
+    def advance_linked_loop(self, session):
+        for _ in range(24):
+            session.engine.pump()
+            if session.state.game_over or not session.state.stack and not session.state.pending_trigger_batches:
+                return None
+            decision = session.state.pending_decision
+            if decision.kind != "priority":
+                return decision
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("The linked sequence did not reach its next decision")
+
+    def choose_loop_target(self, session, decision, *, excluded=None, target=None):
+        self.assertIsNotNone(decision)
+        self.assertEqual("semantic.target", decision.kind)
+        actor, = decision.actors
+        refs = session.packet("pilot:" + actor, full=True)["decision"]["ctx"]["target_schema"]["legal_refs"]
+        if target is None:
+            target, = [ref for ref in refs if ref != excluded]
+        self.assertIn(target, refs)
+        result = session.act("pilot:" + actor, {"action_id": "choose", "targets": [target]})
+        self.assertTrue(result.ok, result.summary)
+
+    def assert_loop_draw(self, session):
+        for _ in range(12):
+            decision = self.advance_linked_loop(session)
+            if session.state.game_over:
+                break
+            self.choose_loop_target(session, decision)
+        self.assertTrue(session.state.game_over)
+        self.assertTrue(session.state.draw)
+        self.assertIsNone(session.state.winner)
+        self.assertIsNone(session.state.pending_decision)
+        self.assertIsNone(session.state.priority_player)
+        self.assertEqual(["A", "B", "C", "D"], session.state.active_seats())
+        self.assertEqual(1, sum(event.code == "game.draw" for event in session.state.events))
+        self.replay(session, load=True)
+
+    def test_mandatory_ring_loop_draws_after_resume_and_a_legal_response_can_interrupt(self):
+        session, removal, _other = self.linked_loop("Oblivion Ring", 104040101, interrupt=True)
+        self.choose_loop_target(session, self.advance_linked_loop(session))
+        decision = self.advance_linked_loop(session)
+        self.assertEqual("semantic.target", decision.kind)
+        self.assertIsNotNone(session.state.mandatory_linked_loop.cursor)
+        resumed = self.replay(session, load=True)
+        interrupted = self.replay(session, load=True)
+        source = interrupted.state.cards[interrupted.state.stack[-1].source_object_id]
+        self.choose_loop_target(interrupted, interrupted.state.pending_decision)
+        self.cast(interrupted, "C", removal, [source.ref])
+        self.assertIsNone(self.advance_linked_loop(interrupted))
+        self.assertFalse(interrupted.state.game_over)
+        self.assertIsNone(interrupted.state.mandatory_linked_loop.cursor)
+        self.replay(interrupted, load=True)
+        self.assert_loop_draw(resumed)
+
+    def test_mandatory_creature_exile_loop_draws_under_distinct_owners(self):
+        for index, name in enumerate(("Faceless Butcher", "Faceless Devourer")):
+            with self.subTest(name=name):
+                session, _removal, _other = self.linked_loop(name, 104040102 + index * 10)
+                self.assert_loop_draw(session)
+
+    def test_optional_exile_loop_keeps_offering_decline(self):
+        session, _removal, _other = self.linked_loop("Fiend Hunter", 104040103)
+        for index in range(8):
+            self.choose_loop_target(session, self.advance_linked_loop(session))
+            decision = self.advance_linked_loop(session)
+            self.assertIsNotNone(decision)
+            self.assertEqual("semantic.choice", decision.kind)
+            actor, = decision.actors
+            result = session.act("pilot:" + actor, {
+                "action_id": "choose", "choice": "decline" if index == 7 else "apply",
+            })
+            self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.advance_linked_loop(session))
+        self.assertFalse(session.state.game_over)
+        self.assertIsNone(session.state.mandatory_linked_loop.cursor)
+        self.replay(session, load=True)
+
+    def test_another_legal_target_leaves_the_loop_avoidable(self):
+        session, _removal, alternative = self.linked_loop("Oblivion Ring", 104040104, alternative=True)
+        for _ in range(7):
+            self.choose_loop_target(session, self.advance_linked_loop(session), excluded=alternative.ref)
+        self.choose_loop_target(session, self.advance_linked_loop(session), target=alternative.ref)
+        self.assertIsNone(self.advance_linked_loop(session))
+        self.assertFalse(session.state.game_over)
+        self.assertEqual("exile", session.state.cards[alternative.object_id].zone)
+
+    def test_historical_v3_without_the_witness_preserves_its_command_behavior(self):
+        session, _removal, _other = self.linked_loop("Oblivion Ring", 104040105, historical=True)
+        for _ in range(8):
+            self.choose_loop_target(session, self.advance_linked_loop(session))
+        self.assertFalse(session.state.game_over)
+        self.assertNotIn("mandatory_linked_loop", session.state.to_dict(include_ephemeral=False))
+        self.replay(session, load=True)
 
     def test_journey_early_departure_returns_nothing_and_entry_still_checks_the_old_target(self):
         session = self.session(607020101)

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Literal, Mapping
 from .composition_storage import PermanentCompositionStorage
 from .creature_subtypes import canonical_creature_subtype
+from .mandatory_loop_model import MandatoryLinkedLoopWatch
 
 from .damage_modifier_state import (
     DamagePreventionShield,
@@ -1184,6 +1185,8 @@ class GameState:
     unearth_leave_replacement_version: int | None = 1
     counter_quantity_provenance_version: int | None = 1
     departed_turn_boundary_version: int | None = None
+    # Absence retains historical Game Record v3 behavior.
+    mandatory_linked_loop: MandatoryLinkedLoopWatch | None = None
 
     @staticmethod
     def _effect_destruction_replacement_version(value: Any) -> int | None:
@@ -1309,6 +1312,7 @@ class GameState:
             **({'token_copy_value_version':self.token_copy_value_version} if self.token_copy_value_version is not None else {}),
             **({"predefined_token_name_version": token_names} if token_names is not None else {}),
             **self._turn_schedule_fields(),
+            **({"mandatory_linked_loop": self.mandatory_linked_loop.to_dict()} if self.mandatory_linked_loop is not None else {}),
             "active_player": self.active_player,
             "priority_player": self.priority_player,
             "priority_passes": list(self.priority_passes),
@@ -1372,6 +1376,8 @@ class GameState:
     def from_dict(cls, data: dict[str, Any]) -> "GameState":
         return cls(
             departed_turn_boundary_version=cls._departed_turn_boundary_version(data.get("departed_turn_boundary_version")),
+            mandatory_linked_loop=(MandatoryLinkedLoopWatch.from_dict(data["mandatory_linked_loop"])
+                                   if "mandatory_linked_loop" in data else None),
             legend_rule_choice_version=legend_rule_choice_version(data.get('legend_rule_choice_version')),
             effect_destruction_replacement_version=cls._effect_destruction_replacement_version(
                 data.get("effect_destruction_replacement_version")

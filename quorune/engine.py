@@ -355,6 +355,7 @@ from .state_based_actions import (
     evaluate_state_based_actions,
 )
 from .state_based_execution import (
+    commit_game_draw,
     synchronize_state_based_observers,
     commit_state_based_principal_changes,
     commit_state_based_counter_removals,
@@ -6791,11 +6792,7 @@ class CommanderEngine(
             self.permissions.invalidate_current()
             self._log(remaining[0], "game.win", f"{remaining[0]} won the game.", importance=3, changed_players=remaining)
         elif not remaining:
-            self.state.game_over = True
-            self.state.draw = True
-            self.state.priority_player = None
-            self.permissions.invalidate_current()
-            self._log(None, "game.draw", "All remaining players lost simultaneously.", importance=3)
+            commit_game_draw(self, reason="All remaining players lost simultaneously.")
         elif self.state.priority_player in unique:
             self.state.priority_player = self._next_active_after(unique[-1])
         from .transform_timestamp_order import reconcile_transform_timestamp_order_after_departure
