@@ -1,4 +1,7 @@
-"""Versioned transform timestamps with historical Game Record absence."""
+"""Versioned transform timestamps and observations with historical absence."""
+
+
+TRANSFORM_EVENT = "permanent.transforms"
 
 
 def transform_timestamp_version(value):
@@ -13,6 +16,12 @@ def modal_dfc_transform_version(value: int | None) -> int | None:
         return None
     if type(value) is not int or value != 1:
         raise ValueError("Unsupported modal double-faced transform version")
+    return value
+
+
+def transform_event_characteristics_version(value):
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError("Unsupported transform event characteristics version")
     return value
 
 

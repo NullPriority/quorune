@@ -8,6 +8,8 @@ from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT
 PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         'source_attacks_unblocked',
+        "source_transforms_into",
+        "controlled_permanent_transforms_into",
         DAMAGE_PERMANENT_VARIANT,
         'source_damage_death_history',
         'public_anywhere_graveyard_card',

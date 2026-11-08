@@ -4,6 +4,9 @@ from enum import Enum
 from ..rules.event_subscriptions import LAND_PLAY_EVENT
 
 
+from ..transform_timestamp_model import TRANSFORM_EVENT
+
+
 class FixedCounterTriggerEvent(str, Enum):
     """Closed normalized event families accepted by this compiler slice."""
 
@@ -23,6 +26,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CONTROLLER_CARD_DRAW = "card.drawn"
     CONTROLLER_SECOND_DRAW = "card.second_draw"
     PERMANENT_ENTER = "permanent.enter"
+    PERMANENT_TRANSFORMS = TRANSFORM_EVENT
     ARTIFACT_ENTER = "artifact.enter"
     CREATURE_ENTER = "creature.enter"
     ENCHANTMENT_ENTER = "enchantment.enter"

@@ -231,6 +231,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_enters_or_is_turned_face_up",
         "source_enters_or_deals_combat_damage_to_a_player",
         "source_enters_or_becomes_monstrous",
+        "source_transform_pair",
         "source_artifact_enters_and_is_sacrificed",
         "enchanted_creature_attacks_or_blocks",
         "source_attacks_or_blocks_with_controlled_dinosaur",

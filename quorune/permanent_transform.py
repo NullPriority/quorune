@@ -13,13 +13,14 @@ from .day_night_model import (
 )
 from .model import CardInstance, StackItem
 from .trigger_processing import enqueue_trigger_batch
-from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version, ordered_transform_cards
+from .transform_timestamp_model import (
+    TRANSFORM_EVENT, modal_dfc_transform_version, ordered_transform_cards, transform_timestamp_version,
+)
 from .defined_token_faces import defined_token_definition
 from .rules.composition_faces import PreparedCompositionTransform
 
 
 TRANSFORM_OPERATION = "transform"
-TRANSFORM_EVENT = "permanent.transforms"
 
 
 class PermanentTransformError(ValueError):
@@ -367,6 +368,18 @@ def commit_transform_batch(
     owns_batch = trigger_batch is None
     waiting = trigger_batch if trigger_batch is not None else []
     sources = host._semantic_event_sources(zones={"battlefield"})
+    characteristics = {}
+    if getattr(host.state, "transform_event_characteristics_version", None) == 1:
+        from .characteristic_evaluation import type_parts
+
+        for result in results:
+            data = host._effective_card_data(host.state.cards[result.object_id])
+            types, subtypes, _ = type_parts(str(data.get("type_line") or ""))
+            characteristics[result.object_id] = {
+                "transformed_name": str(data.get("name") or ""),
+                "types": sorted(types),
+                "subtypes": sorted(subtypes),
+            }
     for result in results:
         host._dispatch_semantic_event(
             TRANSFORM_EVENT,
@@ -380,6 +393,7 @@ def commit_transform_batch(
                 "to_face": result.current_face,
                 "transform_count": result.transform_count,
                 "reason": reason,
+                **characteristics.get(result.object_id, {}),
             },
             sources=sources,
             trigger_batch=waiting,

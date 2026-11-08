@@ -1340,6 +1340,260 @@
       "released_at": "2020-11-20",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{B}",
+          "name": "Blightreaper Thallid",
+          "oracle_text": "{3}{G/P}: Transform this creature. Activate only as a sorcery. ({G/P} can be paid with either {G} or 2 life.)",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature — Fungus"
+        },
+        {
+          "colors": [
+            "B",
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Blightsower Thallid",
+          "oracle_text": "When this creature transforms into Blightsower Thallid or dies, create a 1/1 green Phyrexian Saproling creature token.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature — Phyrexian Fungus"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B} // ",
+      "name": "Blightreaper Thallid // Blightsower Thallid",
+      "oracle_id": "ea405cb4-a21b-4a26-98f3-251e65ea2aef",
+      "oracle_text": "Blightreaper Thallid: {3}{G/P}: Transform this creature. Activate only as a sorcery. ({G/P} can be paid with either {G} or 2 life.)\n//\nBlightsower Thallid: When this creature transforms into Blightsower Thallid or dies, create a 1/1 green Phyrexian Saproling creature token.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Creature — Fungus // Creature — Phyrexian Fungus"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}",
+      "name": "Cult of the Waxing Moon",
+      "oracle_id": "4ea5409e-9b39-434c-bdb8-8c798128f199",
+      "oracle_text": "Whenever a permanent you control transforms into a non-Human creature, create a 2/2 green Wolf creature token.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2016-04-08",
+      "toughness": "4",
+      "type_line": "Creature — Human Shaman"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Incubate",
+        "Transform"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Norn's Inquisitor",
+      "oracle_id": "89a59a6d-e9d4-405c-8518-4da86dae30d1",
+      "oracle_text": "When this creature enters, incubate 2. (Create an Incubator token with two +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)\nWhenever a permanent you control transforms into a Phyrexian, put a +1/+1 counter on it.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "1",
+      "type_line": "Creature — Phyrexian Knight"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}",
+          "name": "Brutal Cathar",
+          "oracle_text": "Whenever this creature enters or transforms into Brutal Cathar, exile target creature an opponent controls until this creature leaves the battlefield.\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature — Human Soldier Werewolf"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Moonrage Brute",
+          "oracle_text": "First strike\nWard—Pay 3 life.\nNightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature — Werewolf"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Daybound",
+        "First strike",
+        "Ward",
+        "Nightbound"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W} // ",
+      "name": "Brutal Cathar // Moonrage Brute",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "oracle_text": "Brutal Cathar: Whenever this creature enters or transforms into Brutal Cathar, exile target creature an opponent controls until this creature leaves the battlefield.\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)\n//\nMoonrage Brute: First strike\nWard—Pay 3 life.\nNightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-09-24",
+      "toughness": null,
+      "type_line": "Creature — Human Soldier Werewolf // Creature — Werewolf"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1534,6 +1788,132 @@
       "comment": "If Wayward Disciple dies at the same time as another creature you control, Wayward Disciple's ability triggers once for the other creature as well as once for itself.",
       "oracle_id": "e2fc5069-374b-4feb-acd9-976ddf90e504",
       "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A permanent transforms into a non-Human creature if it transforms and is a creature without the creature type Human after transforming, regardless of whether it was a Human creature (or a creature at all) before it transformed. For example, Westvale Abbey and Thraben Gargoyle will both cause Cult of the Waxing Moon’s ability to trigger when they transform.",
+      "oracle_id": "4ea5409e-9b39-434c-bdb8-8c798128f199",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A non-Human creature that’s put onto the battlefield transformed, such as Skin Shedder, will not cause Cult of the Waxing Moon’s ability to trigger.",
+      "oracle_id": "4ea5409e-9b39-434c-bdb8-8c798128f199",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last ability of Norn's Inquisitor will trigger if a permanent you control transforms in either direction, going from front face up to back face up or vice versa, as long as it's a Phyrexian after doing so.",
+      "oracle_id": "89a59a6d-e9d4-405c-8518-4da86dae30d1",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Only transforming double-faced permanents (including transforming double-faced cards and Incubator tokens) can transform. A face-up permanent turning face down doesn't count as transforming, nor does a face-down permanent turning face up.",
+      "oracle_id": "89a59a6d-e9d4-405c-8518-4da86dae30d1",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it's neither day nor night, and a creature with daybound and a creature with nightbound somehow appear on the battlefield at the same time, it becomes day. The creature with nightbound will transform.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Double-faced permanents with daybound transform to their nightbound faces as it becomes night. Similarly, double-faced permanents with nightbound transform to their daybound faces as it becomes day. This happens immediately and is not a state-based action. It happens any time it becomes day or night, not just during the untap step.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature token is exiled, it ceases to exist. It won't be returned to the battlefield.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Before a player untaps their permanents during the untap step, the game checks to see if the day/night designation should change.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The exiled card returns to the battlefield immediately after this creature leaves the battlefield. Nothing happens between the two events, including state-based actions. The two creatures aren't on the battlefield at the same time. For example, if the returning creature is a Clone, it can't enter the battlefield as a copy of Brutal Cathar or Moonrage Brute.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it is night, permanents with daybound that enter the battlefield without being cast will enter with their nightbound faces up.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Day and night are designations that the game itself can have. The game starts as neither. Once the game becomes day (or less commonly, night), the game will be exactly one of them—day or night—going back and forth for the rest of the game.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Brutal Cathar's ability creates two one-shot effects: one that exiles the creature when the ability resolves, and another that returns the exiled card to the battlefield immediately after Brutal Cathar (or Moonrage Brute) leaves the battlefield.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming permanent doesn't leave the battlefield as it transforms. If Brutal Cathar transforms into Moonrage Brute, the exiled cards remain exiled. If it transforms with its triggered ability on the stack, that ability will still exile the target creature.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it is night, and the active player of the previous turn cast two or more spells during their turn, it becomes day.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Moonrage Brute leaving the battlefield will also cause the exiled card to return to the battlefield.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with daybound during night, that spell will be front face up (that is, daybound face up) on the stack. However, it will enter the battlefield with its back face up (that is, with its nightbound face up). It won't enter with its daybound face up and then transform.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if Brutal Cathar's owner leaves the game, the exiled card will return to the battlefield. Because the one-shot effect that returns the card isn't an ability that goes on the stack, it won't cease to exist along with the leaving player's spells and abilities on the stack.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it is day, and the active player of the previous turn cast no spells during their turn, it becomes night.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Permanents with daybound and nightbound can't transform via any means other than their daybound and nightbound abilities. Notably, older cards such as Moonmist that instruct a player to transform permanents don't affect permanents with daybound or nightbound.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Brutal Cathar leaves the battlefield before its enters-the-battlefield/transforms-into ability resolves, the target creature won't be exiled.",
+      "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
+      "published_at": "2021-09-24",
       "source": "wotc"
     }
   ],

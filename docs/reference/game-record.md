@@ -298,6 +298,12 @@ a transform when the other face is a permanent. Archived checkpoints without
 the marker retain the previous physical modal eligibility and their recorded
 hashes. The marker uses the same strict manifest and checkpoint agreement.
 
+Current checkpoints also carry `transform_event_characteristics_version`
+with value `1`. The manifest mirrors it. The committed transform event
+includes the public name, card types and subtypes after the full face-change
+batch. A historical checkpoint without the marker retains its original
+event and state shapes during replay.
+
 Current ordinary turn-up actions independently pin
 `face_status_timestamp_version: 1`. The zone owner assigns a fresh timestamp
 before face-up observers run. Absence retains the prior ordinary timestamp even

@@ -1135,6 +1135,75 @@ def _source_any_damage_spec(material_line, *, card_name):
         match['body'],template,RECEIVED_DAMAGE_MECHANIC if receiving else 'trigger-event-normalized-damage',condition=condition)
 
 
+def _transform_into_spec(material_line, *, card_name):
+    if " transforms into " not in material_line.casefold():
+        return None
+    match = re.fullmatch(
+        r"(?:When|Whenever) (?P<subject>.+?) (?P<entry>enters or )?"
+        r"transforms into (?P<result>[^,]+?)(?P<death> or dies)?, (?P<body>.+)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    from ..rules.transform_capability_shapes import PERMANENT_TRANSFORM_CAPABILITY_ID
+    from ..transform_timestamp_model import TRANSFORM_EVENT
+
+    result = match["result"]
+    companion = match["entry"] or match["death"]
+    mechanics = "trigger-event-normalized-public-action"
+    if match["subject"].casefold() == "this permanent" or _source_subject(match["subject"], card_name=card_name):
+        if (match["entry"] and match["death"]
+                or re.match(r"a(?:n)?\s|any\s", result, re.I)
+                or re.search(r"\bor\b", result, re.I)):
+            return None
+        source = {"field": "card", "op": "eq", "value": "$source.ref"}
+        condition = _all_conditions(
+            source, {"field": "transformed_name", "op": "eq", "value": result},
+        )
+        if companion:
+            from ..rules.event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition
+
+            other_event = "permanent.enter" if match["entry"] else "creature.dies"
+            return _spec(
+                TRANSFORM_EVENT, "source_transform_pair", match["body"],
+                "fixed-counter-source-transform-pair-trigger-v1", mechanics,
+                condition=fixed_event_subscription_condition((
+                    FixedEventSubscription(TRANSFORM_EVENT, condition),
+                    FixedEventSubscription(other_event, source),
+                )),
+                capabilities=(
+                    PERMANENT_TRANSFORM_CAPABILITY_ID,
+                    "trigger.event.normalized_zone_change",
+                    "trigger.subscription.fixed_multi_event",
+                ),
+            )
+        return _spec(
+            TRANSFORM_EVENT, "source_transforms_into", match["body"],
+            "fixed-counter-source-transforms-into-trigger-v1", mechanics,
+            condition=condition, capabilities=(PERMANENT_TRANSFORM_CAPABILITY_ID,),
+        )
+    if companion or match["subject"].casefold() != "a permanent you control":
+        return None
+    subject = re.fullmatch(r"an? (?P<quality>.+)", result, re.I)
+    if subject is None:
+        return None
+    excluded = re.fullmatch(r"non-(.+) creature", subject["quality"], re.I)
+    subtype = canonical_creature_subtype(excluded[1] if excluded else subject["quality"])
+    if subtype is None:
+        return None
+    subtype_condition = {"field": "subtypes", "op": "contains_any", "value": [subtype]}
+    condition = _all_conditions(
+        {"field": "controller", "op": "eq", "value": "$source.controller"},
+        {"field": "types", "op": "contains_any", "value": ["creature"]} if excluded else None,
+        {"not": subtype_condition} if excluded else subtype_condition,
+    )
+    return _spec(
+        TRANSFORM_EVENT, "controlled_permanent_transforms_into", match["body"],
+        "fixed-counter-controlled-transforms-into-trigger-v1", mechanics,
+        condition=condition, capabilities=(PERMANENT_TRANSFORM_CAPABILITY_ID,),
+    )
+
+
 def fixed_public_event_binding_spec(
     material_line: str,
     *,
@@ -1156,6 +1225,7 @@ def fixed_public_event_binding_spec(
     return (
         _anywhere_graveyard_spec(material_line)
         or _source_any_damage_spec(material_line,card_name=card_name)
+        or _transform_into_spec(material_line, card_name=card_name)
         or _class_level_spec(material_line)
         or _public_spell_action_spec(material_line, card_name=card_name)
         or _attachment_event_spec(material_line)

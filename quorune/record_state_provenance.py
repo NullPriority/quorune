@@ -56,6 +56,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
            if getattr(state, "modal_dfc_transform_version", None) is not None else {}),
+        **({"transform_event_characteristics_version": state.transform_event_characteristics_version}
+           if getattr(state, "transform_event_characteristics_version", None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
         **({"split_permanent_face_values_version": state.split_permanent_face_values_version}
            if getattr(state, "split_permanent_face_values_version", None) is not None else {}),
@@ -145,7 +147,9 @@ def validate_state_versions(
         raise ValueError("Target announcement timing provenance does not match the initial checkpoint")
     if read_printed_mana_cost_version(format_value) != getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None):
         raise ValueError("Printed mana cost authority provenance does not match the initial checkpoint")
-    from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version
+    from .transform_timestamp_model import (
+        modal_dfc_transform_version, transform_event_characteristics_version, transform_timestamp_version,
+    )
     timestamp=format_value.get('transform_timestamp_version',0)
     if (type(timestamp) is not int or timestamp not in {0,1}
             or timestamp!=(transform_timestamp_version(getattr(state,'transform_timestamp_version',None)) or 0)):
@@ -162,6 +166,12 @@ def validate_state_versions(
         and (type(split_face_version) is not int or split_face_version != 1)
     ):
         raise ValueError("Split permanent face value provenance does not match the initial checkpoint")
+    transform_characteristics = format_value.get("transform_event_characteristics_version", 0)
+    if (type(transform_characteristics) is not int or transform_characteristics not in {0, 1}
+            or transform_characteristics != (transform_event_characteristics_version(
+                getattr(state, "transform_event_characteristics_version", None),
+            ) or 0)):
+        raise ValueError("Transform event characteristics provenance does not match the initial checkpoint")
     from .face_status_timestamp_model import face_status_timestamp_version
     face_status=format_value.get('face_status_timestamp_version',0)
     if (type(face_status) is not int or face_status not in {0,1}

@@ -3606,8 +3606,16 @@ The existing intervening-condition and optional-effect owners govern
 the printed timing and choice. Two pending instructions with the same
 count can transform once. A source that leaves the battlefield becomes
 a different incarnation. Unrepresented spell-count conditions, compound
-results, Convert instructions, explicit day or night effects, and
-transform-into effects remain material residuals.
+results, Convert instructions and explicit day or night effects remain
+material residuals.
+
+Named source transformation triggers and fixed controlled subtype
+predicates use the committed transform event. Its name and type facts
+describe the layered permanent after the whole batch. The compiler binds
+the source or controller before lowering the result through the existing
+effect owner. A printed entry or death arm uses its own subscription in the
+same ability. A counter on the transformed permanent uses its sealed
+battlefield incarnation.
 
 `compiler/emblem_nodes.py` lowers a complete emblem creator with independently
 closed, typeless command-source children. Characteristic static and triggered

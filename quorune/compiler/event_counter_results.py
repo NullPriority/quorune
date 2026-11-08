@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-"""Whole fixed counter result on one typed entry occurrence."""
+"""Whole fixed counter result on one typed public occurrence."""
 
 import re
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
+from ..transform_timestamp_model import TRANSFORM_EVENT
 
 EVENT_COUNTER_CAPABILITY='counter.producer.fixed_event_object'
 EVENT_COUNTER_MECHANIC='fixed-entry-event-object-counter'
@@ -75,7 +76,8 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     action=(binding.event.value=='creature.attacks' and (binding.variant.startswith('public_attack_') or binding.variant=='singular_qualified_attack')
         or binding.event.value=='damage.dealt' and binding.variant.startswith('public_deals_'))
     tap=binding.event.value in {'permanent.tap','permanent.untap'} and binding.variant in {'public_tap_state_transition','source_public_tap_state_transition'}
-    if not entry and not action and not tap:return None
+    transform = binding.event.value == TRANSFORM_EVENT and binding.variant == "controlled_permanent_transforms_into"
+    if not (entry or action or tap or transform):return None
     if binding.variant.startswith('one_or_more') or binding.variant in {'aggregated_zone_event','independent_dual_event'}:return None
     match=re.fullmatch(r'(?P<head>Put .+? counters? on) (?P<ref>it|that creature|that artifact|that permanent)\.',body,re.I)
     if match is None:return None

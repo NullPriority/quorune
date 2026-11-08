@@ -97,7 +97,10 @@ def _event_query_runtime_requirements(program):
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
     from ..saddle import saddle_activation_runtime_dependencies, saddled_attack_runtime_dependencies
     from ..rules.entry_permanent_results import entry_animation_runtime_dependencies
-    from ..rules.transform_capability_shapes import triggered_source_transform_runtime_dependencies
+    from ..rules.transform_capability_shapes import (
+        PERMANENT_TRANSFORM_CAPABILITY_ID, triggered_source_transform_runtime_dependencies,
+    )
+    from ..transform_timestamp_model import TRANSFORM_EVENT
     from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
     from ..rules.block_characteristics import qualified_block_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
@@ -162,6 +165,10 @@ def _event_query_runtime_requirements(program):
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
         required.update(counter_placement_event_dependencies(program, subscriptions))
+        if program.event == TRANSFORM_EVENT or (
+            subscriptions is not None and subscriptions.subscription_for(TRANSFORM_EVENT) is not None
+        ):
+            required.add(PERMANENT_TRANSFORM_CAPABILITY_ID)
         if program.event == LAND_PLAY_EVENT or (
             subscriptions is not None and subscriptions.subscription_for(LAND_PLAY_EVENT) is not None
         ):
