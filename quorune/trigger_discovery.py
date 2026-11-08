@@ -1514,7 +1514,7 @@ def dispatch_semantic_event(
                 commit_trigger_usage(usage.live_source, ability_id=program.ability_id,
                                      turn_sequence=host.state.turn_sequence)
             triggered.append(item)
-            if program.trigger_limit is None:
+            if program.trigger_limit is None or usage.allows_multipliers:
                 triggered.extend(
                     trigger_multiplier_copies(
                         host,

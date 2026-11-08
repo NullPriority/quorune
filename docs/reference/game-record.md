@@ -347,6 +347,13 @@ the fact. Unknown scopes, malformed claims and missing authority reject; declare
 runtime provenance remains exact. See
 [ADR 0158](../adr/0158-event-incarnation-trigger-usage.md).
 
+Trigger-limit schema three uses the same pending source identity for an
+optional result. The controller's accepted choice records one
+`trigger_optional_result_used` fact in the current turn history. Its actor,
+source incarnation and ability program remain bound through save/load and
+stack copying. A declined or unavailable choice adds no usage fact. Turn
+rollover clears the fact with the rest of the current turn history.
+
 The `permanent.timestamp_order` decision retains a schema-one closed transform
 request and continuation. Current subjects, expected transform counts, turn/step
 context, collected controller permutations and held triggers survive save/load.

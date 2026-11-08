@@ -90,6 +90,7 @@ PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
 PLAYER_COUNTERS_FIELD = "counters"
 
 TurnHistoryEventKind = Literal[
+    "trigger_optional_result_used",
     "crime_committed",
     "spell_mana_spent",
     "spell_cast",
@@ -169,6 +170,12 @@ class TurnHistoryEvent:
                 or type(self.amount) is not int or self.amount!=1 or self.object_incarnation is not None
                 or self.target_object_incarnation is not None or self.types or self.origin is not None):
             raise ValueError('Crime history requires one completed player action and its exact stack identity')
+        if self.kind == 'trigger_optional_result_used' and (
+            any(type(value) is not str or not value for value in (self.actor, self.object_incarnation, self.target))
+            or self.target_kind != 'ability_program' or self.target_object_incarnation is not None
+            or self.types or self.origin is not None or type(self.amount) is not int or self.amount != 0
+        ):
+            raise ValueError('Optional result usage requires its controller, source incarnation and ability program')
         if self.kind=='spell_mana_spent' and (
                 type(self.actor) is not str or not self.actor or type(self.amount) is not int or self.amount<=0
                 or any(value is not None for value in (self.object_incarnation,self.target,self.target_kind,

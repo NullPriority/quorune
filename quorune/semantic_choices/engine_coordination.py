@@ -853,6 +853,13 @@ class SemanticChoiceCoordinationMixin:
             )
         except SemanticChoiceError as exc:
             raise GameRuleError(str(exc)) from exc
+        if continuation.effect.get('op') == 'offer_optional_effect' and completion.prepend_effects:
+            from ..rules.trigger_limits import commit_optional_result_usage
+
+            try:
+                commit_optional_result_usage(self, item, seat)
+            except (ValueError, TypeError) as exc:
+                raise GameRuleError(str(exc)) from exc
         try:
             continue_semantic_completion(
                 self,

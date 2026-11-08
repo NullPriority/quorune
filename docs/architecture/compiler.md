@@ -794,6 +794,15 @@ departure/death events with an event-incarnation usage promise. It derives
 ordinary and departure usage capabilities independently of body capabilities;
 the old descriptor cannot acquire the new authority. See
 [ADR 0158](../adr/0158-event-incarnation-trigger-usage.md).
+A printed optional result limited to once each turn uses schema three. The
+compiler closes the trigger and its optional instruction before admitting the
+limit. Draw, life gain, discover, spell copying and a required discard with a
+closed consequence can use this form. The choice handler records acceptance
+in the current-turn journal for the captured source incarnation and ability.
+Declining or reaching an unavailable choice leaves the allowance open. Once
+used, the ability skips both later triggers and pending optional results from
+the same incarnation. A returned permanent has its own allowance, and a stack
+copy retains the original ability's usage identity.
 Nested subscriptions, repeated normalized events,
 mixed active zones, and unrepresented prefixes remain residual. Qualified
 public subjects may similarly subscribe to entry and death or departure using

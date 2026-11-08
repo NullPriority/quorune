@@ -76655,6 +76655,90 @@
     {
       "applicability": {
         "exclusions": [
+          "trigger-occurrence quotas and first-occurrence history conditions",
+          "unsupported event subscriptions, targetful choices and unrepresented optional results"
+        ],
+        "inputs": [
+          "source-spanned optional result and use-limit suffix",
+          "current turn and captured source incarnation and program identity",
+          "accepted controller choice and the independently closed result"
+        ],
+        "outputs": [
+          "one committed result use per source ability each turn",
+          "later trigger and pending result suppression after use",
+          "shared use identity across stack copies"
+        ],
+        "summary": "Schema three preserves qualifying triggered occurrences until the controller chooses the optional result. The current-turn journal carries the original source and ability identity across source departures and stack copies."
+      },
+      "blockers": [],
+      "dependencies": [
+        "effect.choice.optional_fixed",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "The typed usage descriptor independently requires its capability. Missing authority, invalid source claims, and unsupported result shapes fail admission or resolution.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.usage.once_per_turn_optional_result",
+      "implementation_components": [
+        "quorune.compiler.trigger_limit_nodes.limited_trigger_node",
+        "quorune.rules.trigger_limits.validate_program_trigger_limit",
+        "quorune.rules.trigger_limits.trigger_usage_plan",
+        "quorune.rules.trigger_limits.commit_optional_result_usage",
+        "quorune.semantic_runtime.executor.prepare_stack_resolution_effect"
+      ],
+      "implementation_mutation_rationale": "Omitting the usage journal commit leaves an earlier pending trigger able to offer its optional result. The native counter-placement witness detects the extra choice.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_terrasymbiosis_spends_one_use_for_departed_source_and_resets_on_return",
+        "test_terrasymbiosis_impossible_draw_keeps_the_use_available",
+        "test_cosmic_crucible_checks_event_spell_and_shares_pending_use"
+      ],
+      "multiplayer_tests": [
+        "test_terrasymbiosis_spends_one_use_for_departed_source_and_resets_on_return"
+      ],
+      "negative_tests": [
+        "test_optional_use_descriptor_and_withdrawal_are_closed",
+        "test_terrasymbiosis_impossible_draw_keeps_the_use_available"
+      ],
+      "official_rules": [
+        "113.7a",
+        "121.2b",
+        "400.7",
+        "603.2",
+        "603.3a",
+        "608.2c",
+        "608.2d",
+        "707.10b"
+      ],
+      "positive_tests": [
+        "test_optional_use_descriptor_and_withdrawal_are_closed",
+        "test_terrasymbiosis_spends_one_use_for_departed_source_and_resets_on_return"
+      ],
+      "privacy_tests": [
+        "test_terrasymbiosis_spends_one_use_for_departed_source_and_resets_on_return"
+      ],
+      "replay_tests": [
+        "test_terrasymbiosis_spends_one_use_for_departed_source_and_resets_on_return",
+        "test_cosmic_crucible_checks_event_spell_and_shares_pending_use"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "random or variable skip counts",
           "interruption of a started boundary",
           "unrepresented sibling effects"

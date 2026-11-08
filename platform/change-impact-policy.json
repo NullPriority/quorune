@@ -3097,6 +3097,8 @@
         "quorune/rules/trigger_limits.py",
         "quorune/activation_usage.py",
         "quorune/trigger_discovery.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/semantic_choices/engine_coordination.py",
         "tests/fixtures/limited-event-triggers.json"
       ],
       "test_modules": [

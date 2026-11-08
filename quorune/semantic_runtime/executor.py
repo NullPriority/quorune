@@ -834,6 +834,23 @@ def _synchronize_instruction_observers(sink):
         reconcile_soulbond_pairs(sink)
 
 
+def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool:
+    child, = effect['effects']
+    actor = effect['player']
+    operation = child['op']
+    if operation == 'draw':
+        from .draw_restrictions import current_draw_permission
+
+        return current_draw_permission(host, actor).allows_complete_draw(child['count'])
+    if operation == 'life' and child['delta'] > 0:
+        from .life_prohibitions import collect_life_gain_permissions
+
+        return collect_life_gain_permissions(host).allows_gain(actor)
+    if operation == 'offer_optional_mana_payment':
+        return bool(host.state.players[actor].zones['hand'])
+    return True
+
+
 def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -> dict[str, Any] | None:
     """Resolve one available instruction without changing its position in the program."""
     from ..card_overrides import normalize_game_record_v3_effect
@@ -854,7 +871,19 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
     except ValueError as exc:
         raise SemanticNodeError(str(exc)) from exc
+    optional_usage = None
+    if raw_effect.get('op') == 'offer_optional_effect':
+        from ..rules.trigger_limits import optional_result_usage_available, optional_result_usage_binding
+
+        try:
+            optional_usage = optional_result_usage_binding(host, scoped_item)
+            if optional_usage is not None and not optional_result_usage_available(host.state, optional_usage):
+                return None
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, scoped_item))
+    if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
+        return None
     if raw_effect.get('op') == 'offer_optional_effect' and unavailable_optional_combat_removal(host, raw_effect, effect):
         return None
     if raw_effect.get("players") == "$targets":
