@@ -17,6 +17,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import protection_specs
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.fixed_target_effect_sequences import (
@@ -31,11 +32,12 @@ from quorune.continuous_effect_state import (
     resolution_effect_source,
 )
 from quorune.continuous_effects import ContinuousOperation, Layer
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.protection import ProtectionVerdict, protection_verdict_for_ref
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
+from quorune.resolution_characteristic_model import FIXED_TARGET_COLOR_CAPABILITY, decode_fixed_target_color
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.rules.temporary_target_interaction_shapes import (
     temporary_target_interaction_node_capabilities,
@@ -657,6 +659,204 @@ class TemporaryTargetInteractionRuntimeTests(unittest.TestCase):
         self.assertEqual(0, plain.regeneration_shields)
         self.assertTrue(plain.tapped)
         self.assertEqual(before, engine._numeric_stat(plain.object_id, "power"))
+
+
+class FixedTargetColorTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "fixed-target-color.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json", FIXTURE_PATH], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Fixed color witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def activate(self, session, source, ability, target):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        action, = [row for row in actions if row["id"] == f"activate:{source.ref}:{ability}"]
+        result = session.act("pilot:A", {"action_id": action["id"], "targets": [target], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+
+    def colors(self, session, card):
+        return tuple(session.engine._effective_card_data(session.state.cards[card.object_id])["colors"])
+
+    def test_fixed_target_color_shape_and_runtime_authority(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.fixed_target_color import fixed_target_color_template
+        text = "Target spell or permanent becomes colorless."
+        ir = compile_oracle_card(record(text), capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effect, = ir.faces[0].nodes[0].effects
+        self.assertEqual((), decode_fixed_target_color(effect)[1])
+        for altered in ({"colors": ["WU"]}, {"colors": ["W", "U"]}, {"card": "$source"},
+                        {"schema_version": 14.0}, {"duration": "until_next_turn"}):
+            with self.subTest(altered=altered), self.assertRaises(ValueError):
+                decode_fixed_target_color({**effect, **altered})
+        for unsupported in ("Target creature becomes white in addition to its other colors.",
+                            "Target spell or permanent becomes a color of your choice."):
+            self.assertIsNone(fixed_target_color_template(unsupported))
+        with patch("quorune.compiler.resolution_effect_templates.fixed_target_color_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(record(text), capability_registry=self.registry).status)
+
+        session = self.session(105301)
+        moonlace = self.add(session.engine, "Moonlace", zone="hand")
+        program, = [row for row in session.engine.semantics.programs_for_oracle(moonlace.oracle_id) if row.effects]
+        for removed in (FIXED_TARGET_COLOR_CAPABILITY, "target.revalidate_resolution"):
+            dependencies = tuple(cap for cap in program.capability_dependencies if cap != removed)
+            altered = replace(program, capability_dependencies=dependencies,
+                capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertIn("capability:undeclared_runtime_dependency:" + removed, binding["blockers"])
+
+    def test_moonlace_keeps_permanent_spell_color_through_entry_and_resets_on_blink(self):
+        session = self.session(105302)
+        engine = session.engine
+        tails = self.add(engine, "Eight-and-a-Half-Tails")
+        bear = self.add(engine, "Grizzly Bears", zone="hand")
+        moonlace = self.add(engine, "Moonlace", zone="hand")
+        blink = self.add(engine, "Cloudshift", zone="hand")
+        self.add(engine, "Generic Bound Plains", ref="color-blink-plains")
+        self.add(engine, "Generic Bound Plains", ref="color-spare-plains")
+        self.add(engine, "Island", ref="color-moonlace-island")
+        engine.move_card(session.state.players["A"].zones["hand"][0], "library", log=False, semantic_events=False)
+        self.assert_closed(session, moonlace)
+        self.assert_closed(session, tails)
+        self.prepare(session, mana={"C": 1, "G": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", bear)
+        spell = session.state.stack[-1]
+        initial_identity = session.state.cards[bear.object_id].logical_object_id
+        self.cast(session, "A", moonlace, [spell.ref])
+        self.resolve_top(session)
+        self.assertEqual((), self.colors(session, bear))
+        self.activate(session, tails, "ab2", spell.ref)
+        self.resolve_top(session)
+        self.assertEqual(("W",), self.colors(session, bear))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        entered = session.state.cards[bear.object_id]
+        self.assertEqual(("battlefield", initial_identity), (entered.zone, entered.logical_object_id))
+        self.assertEqual(("W",), self.colors(session, bear))
+        self.assertEqual("{1}{G}", session.engine._effective_card_data(entered)["mana_cost"])
+        self.until(session, lambda game: game.state.active_player == "B" and game.state.phase == "precombat_main")
+        self.assertEqual((), self.colors(session, bear))
+        self.cast(session, "A", blink, [bear.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(initial_identity, session.state.cards[bear.object_id].logical_object_id)
+        self.assertEqual(("G",), self.colors(session, bear))
+        self.replay(session, load=True)
+
+    def test_white_recolor_revalidates_original_spell_and_copy_uses_its_own_color(self):
+        session = self.session(105303)
+        engine = session.engine
+        tails = self.add(engine, "Eight-and-a-Half-Tails")
+        original_target = self.add(engine, "Generic Bound Body", ref="original-bolt-target")
+        copy_target = self.add(engine, "Generic Bound Body", ref="copy-bolt-target")
+        bolt = self.add(engine, "Lightning Bolt", seat="B", zone="hand")
+        self.add(engine, "Mountain", seat="B")
+        twincast = self.add(engine, "Twincast", zone="hand")
+        moonlace = self.add(engine, "Moonlace", zone="hand", ref="color-copy-moonlace")
+        self.add(engine, "Island", ref="color-copy-island-one")
+        self.add(engine, "Island", ref="color-copy-island-two")
+        self.add(engine, "Island", ref="color-copy-island-three")
+        self.prepare(session, mana={"C": 4, "W": 2})
+        self.checkpoint(session)
+        self.cast(session, "B", bolt, [original_target.ref])
+        original_spell = session.state.stack[-1]
+        for target in (original_target, copy_target):
+            self.activate(session, tails, "ab1", target.ref)
+            self.resolve_top(session)
+        self.activate(session, tails, "ab2", original_spell.ref)
+        self.resolve_top(session)
+        self.assertEqual(("W",), self.colors(session, bolt))
+        self.cast(session, "A", twincast, [original_spell.ref])
+        decision = self.resolve(session)
+        self.assertIsNotNone(decision)
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "targets": [copy_target.ref]})
+        self.assertTrue(result.ok, result.summary)
+        copy = next(item for item in session.state.stack if item.kind == "spell_copy")
+        self.assertEqual(["R"], session.engine._target_snapshot(copy.ref)["colors"])
+        recolored_copy = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(0, session.state.cards[original_target.object_id].marked_damage)
+        self.assertEqual(3, session.state.cards[copy_target.object_id].marked_damage)
+        self.replay(session, load=True)
+        self.cast(recolored_copy, "A", moonlace, [original_spell.ref])
+        self.resolve_top(recolored_copy)
+        self.assertEqual([], recolored_copy.engine._target_snapshot(original_spell.ref)["colors"])
+        self.activate(recolored_copy, tails, "ab2", copy.ref)
+        self.resolve_top(recolored_copy)
+        self.assertEqual(["W"], recolored_copy.engine._target_snapshot(copy.ref)["colors"])
+        self.assertIsNone(self.resolve(recolored_copy))
+        self.assertEqual(3, recolored_copy.state.cards[original_target.object_id].marked_damage)
+        self.assertEqual(0, recolored_copy.state.cards[copy_target.object_id].marked_damage)
+        self.assertFalse(any(event.code == "stack.resolve" and event.details.get("stack") == copy.ref
+                             for event in recolored_copy.state.events))
+        self.replay(recolored_copy, load=True)
+
+    def test_recolored_permanent_spell_copy_keeps_its_color_as_the_same_token(self):
+        session = self.session(105305)
+        engine = session.engine
+        bear = self.add(engine, "Grizzly Bears", zone="hand")
+        moonlace = self.add(engine, "Moonlace", zone="hand")
+        self.add(engine, "Island", ref="color-token-copy-island")
+        self.prepare(session, mana={"C": 1, "G": 1})
+        self.cast(session, "A", bear)
+        original = session.state.stack[-1]
+        copied = engine._copy_stack_item(controller="A", target=original, targets=[], target_groups={},
+                                         reason="Permanent spell copy setup")
+        self.prepare(session)
+        self.checkpoint(session)
+        self.cast(session, "A", moonlace, [copied.ref])
+        self.resolve_top(session)
+        self.assertEqual([], session.engine._target_snapshot(copied.ref)["colors"])
+        self.assertEqual(["G"], session.engine._target_snapshot(original.ref)["colors"])
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        token = session.state.cards[copied.card_object_id]
+        self.assertTrue(token.is_token)
+        self.assertEqual("battlefield", token.zone)
+        self.assertEqual((), self.colors(session, token))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(("G",), self.colors(session, bear))
+        self.replay(session, load=True)
+
+    def test_colored_face_down_permanent_exposes_its_color_and_keeps_its_identity_private(self):
+        session = self.session(105304)
+        engine = session.engine
+        tails = self.add(engine, "Eight-and-a-Half-Tails")
+        hidden = self.add(engine, "Grizzly Bears", seat="B", ref="color-face-down-permanent")
+        hidden.face_down = True
+        hidden.known_to = ["B"]
+        hidden.revealed_to = ["B"]
+        thoughtlace = self.add(engine, "Thoughtlace", zone="hand")
+        self.add(engine, "Island", ref="color-thoughtlace-island")
+        self.prepare(session, mana={"C": 1, "W": 1})
+        self.checkpoint(session)
+        self.activate(session, tails, "ab1", tails.ref)
+        ability = session.state.stack[-1]
+        self.priority(session, "A")
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": f"cast:{thoughtlace.ref}", "targets": [ability.ref], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.cast(session, "A", thoughtlace, [hidden.ref])
+        self.assertIsNone(self.resolve(session))
+        for seat in "ACD":
+            packet = session.packet("pilot:" + seat, full=True)
+            packet_text = json.dumps(packet)
+            self.assertIn(hidden.ref, packet_text)
+            self.assertNotIn(hidden.printed_name, packet_text)
+            self.assertNotIn(hidden.oracle_id[:8], packet_text)
+            self.assertNotIn(hidden.object_id, packet_text)
+        self.assertEqual(("U",), self.colors(session, hidden))
+        packet = session.packet("pilot:C", full=True)
+        self.assertIn('"colors": ["U"]', json.dumps(packet))
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":

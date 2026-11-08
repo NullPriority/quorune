@@ -2976,6 +2976,13 @@ identity independently of the Haste grant and delayed trigger. A move already
 going to exile can return the card as a new incarnation. Unsupported timings,
 recipient references, and additional riders remain residual.
 
+`compiler/fixed_target_color.py` lowers one fixed color setting on a spell or
+permanent. Version fourteen records the color and the duration independently
+of mana symbols. Both target categories share the ordinary target offer and
+resolution revalidation. The layer-five journal follows the same permanent
+spell through entry, including a spell copy that becomes a token. Copy target
+selection uses the copy's own copiable values.
+
 `compiler/reanimation_entry_counter_templates.py` composes that scalar target
 with one fixed numeric or ordinary keyword counter instruction. Version-three
 `reanimate` retains the original announced target snapshot and supplies typed

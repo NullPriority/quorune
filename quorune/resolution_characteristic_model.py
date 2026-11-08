@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .continuous_effects import ContinuousOperation, Layer
+from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from .object_predicate import ObjectQuerySpec
@@ -17,6 +17,10 @@ PERMANENT_CHARACTERISTIC_CAPABILITY = (
     "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
 )
 CHARACTERISTIC_OPERATION = "apply_source_characteristics_until_end_of_turn"
+FIXED_TARGET_COLOR_VERSION = 14
+FIXED_TARGET_COLOR_MECHANIC = "fixed-target-color-setting"
+FIXED_TARGET_COLOR_CAPABILITY = "zone.object.fixed_resolution_color"
+FIXED_TARGET_COLOR_ZONES = ("battlefield", "stack")
 SUBTYPE_GRANT_INSTRUCTION_VERSION = 12
 FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION})
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
@@ -37,6 +41,31 @@ Szat Tamiyo Tasha Teferi Teyo Tezzeret Tibalt Tyvar Ugin Urza Venser Vivien
 Vraska Vronos Will Windgrace Wrenn Xenagos Yanggu Yanling Zariel
 Adventure Arcane Lesson Omen Trap Siege
 """.split()))
+
+
+def fixed_target_color_schema() -> dict[str, Any]:
+    return {"zones": ["stack", "battlefield"], "categories": ["spell", "permanent"], "count": 1}
+
+
+def decode_fixed_target_color(effect: Mapping[str, Any], *, materialized: bool = False):
+    fields = {"op", "schema_version", "card", "colors", "duration"}
+    allowed = fields | ({"_runtime_source", "reason"} if materialized else set())
+    if (not isinstance(effect, Mapping) or not fields <= set(effect) <= allowed
+            or effect["op"] != CHARACTERISTIC_OPERATION
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != FIXED_TARGET_COLOR_VERSION):
+        raise ValueError("Fixed target color requires its closed versioned instruction")
+    reference = effect["card"]
+    if (type(reference) is not str or not reference
+            or (reference.startswith("$") if materialized else reference != "$target.0")):
+        raise ValueError("Fixed target color requires its declared spell or permanent")
+    raw_colors = effect["colors"]
+    if (not isinstance(raw_colors, (list, tuple)) or len(raw_colors) > 1
+            or any(type(color) is not str or color not in tuple("WUBRG") for color in raw_colors)):
+        raise ValueError("Fixed target color requires one printed color or colorless")
+    duration = effect["duration"]
+    if type(duration) is not str or duration not in ("zone_object", "until_end_of_turn"):
+        raise ValueError("Fixed target color has an unsupported duration")
+    return reference, tuple(raw_colors), ContinuousEffectDuration(duration)
 
 
 @dataclass(frozen=True, slots=True)

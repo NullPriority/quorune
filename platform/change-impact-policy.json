@@ -3201,6 +3201,7 @@
     {
       "id": "temporary-target-interaction-contract",
       "patterns": [
+        "quorune/compiler/fixed_target_color.py",
         "quorune/compiler/temporary_target_interactions.py",
         "quorune/effect_runtime/temporary_target_interactions.py",
         "quorune/rules/temporary_target_interactions.py",

@@ -13,7 +13,7 @@ import random
 from typing import Any, Iterable, Mapping, Sequence
 
 from . import control_history
-from .continuous_effect_state import expire_linked_departure_exile
+from .continuous_effect_state import expire_zone_departure_effects
 from .token_creation import token_copy_snapshot
 from .attachments import (
     attach_objects,
@@ -243,6 +243,7 @@ class ZoneTransitionOwner:
             storage=prepared.storage
             if self.next_timestamp()!=prepared.timestamp:raise StateInvariantError('Merge timestamp changed during commitment')
             self._depart_stack_object(incoming,preserve_resolving=False)
+            expire_zone_departure_effects(self.state, incoming)
             from .game_object_store import GameObjectStore
             GameObjectStore(self.host).commit(removals=(incoming.object_id,))
             root.permanent_composition=storage
@@ -284,13 +285,13 @@ class ZoneTransitionOwner:
         )
         if not creates_new_object:
             return
-        if origin == "battlefield":
-            expire_linked_departure_exile(self.state, card)
+        stack_to_battlefield = origin == "stack" and destination == "battlefield"
+        if origin in {"battlefield", "stack"} and not stack_to_battlefield:
+            expire_zone_departure_effects(self.state, card)
         self.host._remove_object_from_combat(
             card,
             reason=f"zone change to {destination}",
         )
-        stack_to_battlefield = origin == "stack" and destination == "battlefield"
         if not stack_to_battlefield:
             card.zone_change_counter += 1
         card.zone_timestamp = (

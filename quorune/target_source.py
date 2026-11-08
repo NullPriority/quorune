@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from .characteristic_evaluation import type_parts
 from .errors import GameRuleError
+from .protection import ProtectionSource
 
 TARGETING_SOURCE_CONTEXT='targeting_source_characteristics'
 
@@ -18,6 +19,7 @@ class TargetingSource:
     subtypes: frozenset[str] | None=None
     source_controller: str | None=None
     spell_owner: str | None=None
+    protection_source: ProtectionSource | None = None
 
     def __post_init__(self):
         if self.kind not in {'spell','ability'}:raise ValueError('Targeting source kind must be explicit')
@@ -32,11 +34,17 @@ class TargetingSource:
         if self.colors is not None and not self.colors.issubset(set('WUBRG')):raise ValueError('Targeting colors must be canonical')
         if any(v!=v.casefold() for values in (self.card_types,self.subtypes) if values is not None for v in values):
             raise ValueError('Targeting types must be canonical')
+        if self.protection_source is not None and (
+            self.kind != "spell" or not isinstance(self.protection_source, ProtectionSource)
+            or self.protection_source.colors != self.colors
+        ):
+            raise ValueError("Copied targeting protection requires the spell's typed source characteristics")
 
     @classmethod
-    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None):
+    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None,protection_source=None):
         types,subtypes,_=type_parts(str(value.get('type_line') or ''))
-        return cls(kind,frozenset(str(v).upper() for v in value.get('colors',())),frozenset(types),frozenset(subtypes),controller,spell_owner)
+        return cls(kind, frozenset(str(v).upper() for v in value.get('colors',())), frozenset(types),
+                   frozenset(subtypes), controller, spell_owner, protection_source)
 
 
 @dataclass(frozen=True,slots=True)
@@ -158,5 +166,24 @@ def spell_copy_targeting_source(host,template):
         return TargetingSource.from_characteristics("spell", template[CAST_TEXT_COPY_CHARACTERISTICS],
             controller=actor, spell_owner=actor)
     card=host.state.cards.get(str(template.get('card_object_id') or ''))
-    if card is not None:return spell_targeting_source(host,card)
+    if card is not None:
+        from .continuous_effect_state import fixed_target_color_effects
+        if fixed_target_color_effects(host.state, card):
+            from .selection.exile_cast import mana_value_of_cost
+            actor = template.get("controller")
+            characteristics = host._spell_copy_characteristics(card)
+            mana_value = mana_value_of_cost(str(characteristics.get("mana_cost") or ""),
+                                          x_value=int(template.get("x_value") or 0))
+            return TargetingSource.from_characteristics("spell", characteristics,
+                controller=actor, spell_owner=actor,
+                protection_source=ProtectionSource.from_characteristics({**characteristics, "mana_value": mana_value}))
+        return spell_targeting_source(host,card)
     return TargetingSource('spell')
+
+
+def stack_copy_targeting_source(host, item, *, controller):
+    card = host.state.cards.get(item.card_object_id or "")
+    if item.kind in {"spell", "spell_copy"} and card is not None and card.zone == "stack":
+        return spell_copy_targeting_source(host, {"card_object_id": card.object_id,
+            "controller": controller, "x_value": item.x_value})
+    return stack_targeting_source(host, item)

@@ -19,7 +19,9 @@ from .casting_additional_cost_groups import (
 )
 from ..compiler.creature_subtypes import canonical_creature_subtype
 from ..compiler.direct_target import DirectPermanentTargetSpec
-from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION, FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS
+from ..resolution_characteristic_model import (
+    CHARACTERISTIC_OPERATION, FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS, FIXED_TARGET_COLOR_VERSION,
+)
 from ..defender_permission import DEFENDER_RULE_VERSION
 from ..compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
@@ -1018,6 +1020,10 @@ def fixed_source_characteristics_node_capabilities(
            and effect.get('op') == CHARACTERISTIC_OPERATION for effect in effects):
         from .defender_permission_effect import temporary_defender_permission_capabilities
         return temporary_defender_permission_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+    if any(effect.get('op') == CHARACTERISTIC_OPERATION
+           and effect.get('schema_version') == FIXED_TARGET_COLOR_VERSION for effect in effects):
+        from .resolution_characteristic_shapes import fixed_target_color_node_capabilities
+        return fixed_target_color_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(effect.get('op') == CHARACTERISTIC_OPERATION
            and type(effect.get('schema_version')) is int
            and effect['schema_version'] in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS for effect in effects):

@@ -11,7 +11,7 @@ from .characteristic_evaluation import evaluate_card_characteristics
 from .choice_forms import build_action_form
 from .attachments import attachment_target_ref
 from .commander import commander_damage_source
-from .continuous_effect_state import active_resolution_effects
+from .continuous_effect_state import active_resolution_effects, is_fixed_target_color_effect
 from .counter_state import player_counter_snapshot
 from .omen import omen_characteristic_face
 from .rules.face_characteristic_values import current_face_mana_value
@@ -326,6 +326,7 @@ class StateProjector:
                 "p": evaluated.get("power"),
                 "q": evaluated.get("toughness"),
                 "k": list(evaluated.get("keywords") or []),
+                "colors": list(evaluated.get("colors") or []),
                 "_characteristic_override": characteristic_override,
             }
         )
@@ -333,6 +334,9 @@ class StateProjector:
 
     def _obj(self, card: CardInstance, principal: str, *, public_hand: bool = False) -> dict[str, Any]:
         visible = (public_hand and card.zone == 'hand') or self._card_visible(card, principal)
+        public_characteristics = card.zone in {"battlefield", "stack"}
+        resolution_effects = active_resolution_effects(self.state, card) if visible or public_characteristics else ()
+        effective = None
         obj: dict[str, Any] = {"id": card.ref}
         if visible and card.object_kind == "emblem":
             obj["n"] = str(
@@ -352,7 +356,7 @@ class StateProjector:
                 obj["n"] = effective["n"]
             characteristic_override = bool(
                 effective.get("_characteristic_override")
-                or active_resolution_effects(self.state, card)
+                or resolution_effects
                 or card.annotations.get("copy_overrides")
                 or card.annotations.get("continuous_add_types")
                 or card.annotations.get("continuous_add_subtypes")
@@ -376,6 +380,8 @@ class StateProjector:
                     obj["face"] = effective["face"]
         else:
             obj["n"] = "?"
+        if public_characteristics and any(is_fixed_target_color_effect(effect) for effect in resolution_effects):
+            obj["colors"] = (effective if effective is not None else self._effective(card))["colors"]
         if card.tapped:
             obj["tap"] = 1
         if card.face_down:

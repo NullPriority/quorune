@@ -6,7 +6,7 @@ from .token_creation_queries import (
     token_creation_choice_facts,
 )
 
-from ..target_source import stack_targeting_source
+from ..target_source import stack_copy_targeting_source, stack_targeting_source
 from ..ring_state import materialized_ring_choice_plans
 
 from dataclasses import replace
@@ -295,9 +295,12 @@ class SemanticChoiceCoordinationMixin:
         public_schema: Mapping[str, Any] | None = None
         from ..target_source import TargetingSource
         copy_source_ref=None if bound_source is not None else self._stack_source_ref(target_item)
-        acting_copy_source=(TargetingSource.from_characteristics('spell',bound_source.characteristics,controller=validation_actor)
-            if bound_source is not None else stack_targeting_source(self,target_item))
         if operation == "copy_stack_item":
+            acting_copy_source = (
+                TargetingSource.from_characteristics('spell', bound_source.characteristics, controller=validation_actor)
+                if bound_source is not None
+                else stack_copy_targeting_source(self, target_item, controller=validation_actor)
+            )
             public_schema = copy_target_public_schema(
                 self, validation_actor, raw_schema, target_item.modes,
                 list(target_item.targets), dict(target_item.context.get("target_groups") or {}),

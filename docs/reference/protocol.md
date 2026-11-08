@@ -81,6 +81,11 @@ its canonical hash, current revision, visible definitions/events, and current
 decision. A delta names the exact base hash, resulting view hash, patch, event
 tail, and current decision.
 
+A spell or permanent with an active fixed color setting carries a public
+`colors` array. An empty array represents colorless. The color field uses the
+current layer result and is visible on a face-down object under its existing
+anonymous reference.
+
 A client must:
 
 1. apply a delta only when its `base` equals the local view hash;

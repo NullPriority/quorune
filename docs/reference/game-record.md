@@ -953,6 +953,13 @@ replacement applies to destinations other than exile. The one-shot delayed
 trigger retains its own source and subject independently. Version-four
 reanimation decodes its original Haste and scheduled departure fields.
 
+A fixed target color instruction uses schema fourteen. Its existing layer-five
+journal entry locks one object across the stack and battlefield. A permanent
+spell and the permanent it becomes retain the same locked identity. Cleanup
+expires end-of-turn entries, and a new zone incarnation ends that object's
+entry. These entries affect current characteristics independently of copiable
+values.
+
 A resolved all-able-blocker requirement uses the additive exact
 `schema_version: 3` shape. Its `requirement` field replaces `restriction` and
 contains the historical self-scoped typed requirement payload. It locks exactly

@@ -93,6 +93,7 @@ from .temporary_target_interactions import temporary_target_interaction_effect_t
 from .source_keyword_choices import source_keyword_choice_template
 from .source_protection_choices import source_protection_choice_template
 from .source_fixed_protection import source_fixed_protection_template
+from .fixed_target_color import fixed_target_color_template
 
 
 CompiledEffectTemplate = tuple[
@@ -152,6 +153,9 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    color = fixed_target_color_template(text)
+    if color is not None:
+        return color
     detain = fixed_detain_effect_template(text)
     if detain is not None:
         return detain

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from ..target_source import TargetingSource, stack_targeting_source
 from ..characteristic_read_frames import characteristic_read_method
+from ..continuous_effect_state import fixed_target_color_effects
 
 import copy
 from typing import Any, Mapping, Protocol, Sequence
@@ -353,6 +354,8 @@ class TargetSelectionOwnerMixin:
                             "colors": [],
                             "mana_value": 0,
                         }
+                        if zone == "battlefield" and fixed_target_color_effects(self.state, card):
+                            data["colors"] = self._effective_card_data(card).get("colors", [])
                     else:
                         data = self._effective_card_data(card)
                     rows.append(

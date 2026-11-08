@@ -2,12 +2,15 @@ from __future__ import annotations
 
 """Dispatch versioned temporary characteristics to their coherent owners."""
 
-from ..resolution_characteristic_model import FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS
+from ..resolution_characteristic_model import FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS, FIXED_TARGET_COLOR_VERSION
 from ..defender_permission import DEFENDER_RULE_VERSION
 
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     version=effect.get('schema_version')
+    if version == FIXED_TARGET_COLOR_VERSION:
+        from ..continuous_effect_state import apply_fixed_target_color
+        return True, apply_fixed_target_color(host, effect, actor=actor, reason=reason)
     if version == 12:
         from ..continuous_effect_state import apply_power_toughness_switch
         return True, apply_power_toughness_switch(host, effect, actor=actor, reason=reason)

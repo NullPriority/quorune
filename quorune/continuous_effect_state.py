@@ -26,6 +26,7 @@ from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
 from .defender_permission import DefenderAttackPermission
 from .object_predicate import ObjectQuerySpec
+from .resolution_characteristic_model import FIXED_TARGET_COLOR_ZONES, decode_fixed_target_color
 from .next_turn_effect import NEXT_TURN_EFFECT_FIELD
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
 from .keyword_prohibition import prepare_resolution_keyword_exclusions
@@ -391,6 +392,33 @@ def apply_target_characteristics(host,effect,*,actor,reason):
     return tuple(refs)
 
 
+def apply_fixed_target_color(host, effect, *, actor, reason):
+    from .errors import GameRuleError
+
+    try:
+        reference, colors, duration = decode_fixed_target_color(effect, materialized=True)
+        source = ResolutionEffectSource.from_effect(effect)
+    except (ValueError, TypeError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    item = next((candidate for candidate in host.state.stack if candidate.ref == reference), None)
+    if item is None:
+        card = host._resolve_object(actor, reference, zones={"battlefield"})
+    else:
+        card = host.state.cards.get(item.card_object_id or "")
+        if item.kind not in {"spell", "spell_copy"} or card is None or card.zone != "stack":
+            raise GameRuleError("Fixed target color requires a current spell or permanent")
+    operation = ContinuousOperation("set_colors", colors) if colors else ContinuousOperation("remove_all_colors")
+    applied = create_resolution_continuous_effect(host, source=source, targets=(card,),
+        layer=Layer.COLOR, sublayer="5", operations=(operation,), duration=duration,
+        zones=FIXED_TARGET_COLOR_ZONES)
+    if applied is None:
+        raise GameRuleError("Fixed target color requires the continuous-effect journal")
+    host._log(actor, "effect.color", f"The color of {reference} changed.",
+        {"target": reference, "colors": list(colors), "duration": duration.value},
+        changed_objects=[card.object_id], importance=1)
+    return applied
+
+
 def create_resolution_continuous_effect(
     host: ContinuousEffectStateHost,
     *,
@@ -403,6 +431,7 @@ def create_resolution_continuous_effect(
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
     expires_on_next_turn_of: str | None = None,
+    zones: tuple[str, ...] = ("battlefield",),
 ) -> ContinuousEffect | None:
     """Commit one immutable effect whose current affected set is locked."""
 
@@ -428,7 +457,7 @@ def create_resolution_continuous_effect(
         operations=tuple(operations),
         origin=ContinuousEffectOrigin.RESOLUTION,
         duration=duration,
-        applies=ObjectQuerySpec(zones=("battlefield",)),
+        applies=ObjectQuerySpec(zones=zones),
         locked_objects=identities,
         expires_on_next_turn_of=expires_on_next_turn_of,
     )
@@ -595,6 +624,15 @@ def active_resolution_effects(
     )
 
 
+def is_fixed_target_color_effect(effect: ContinuousJournalEffect) -> bool:
+    return (isinstance(effect, ContinuousEffect) and effect.layer is Layer.COLOR
+            and effect.applies is not None and effect.applies.zones == FIXED_TARGET_COLOR_ZONES)
+
+
+def fixed_target_color_effects(state: Any, card: Any) -> tuple[ContinuousEffect, ...]:
+    return tuple(effect for effect in active_resolution_effects(state, card) if is_fixed_target_color_effect(effect))
+
+
 def active_resolution_declaration_rule_effects(
     state: Any,
     card: Any,
@@ -623,13 +661,15 @@ def active_resolution_declaration_rule_effects(
     )
 
 
-def expire_linked_departure_exile(state: Any, card: Any) -> None:
+def expire_zone_departure_effects(state: Any, card: Any) -> None:
     journal = state.continuous_effects
     if not journal:
         return
     identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
-    journal[:] = [effect for effect in journal
-                  if not isinstance(effect, ResolvedLinkedDepartureExile) or effect.subject != identity]
+    journal[:] = [effect for effect in journal if not (
+        isinstance(effect, ResolvedLinkedDepartureExile) and effect.subject == identity
+        or is_fixed_target_color_effect(effect) and identity in effect.locked_objects
+    )]
 
 
 def expire_end_of_turn_continuous_effects(state: Any) -> int:

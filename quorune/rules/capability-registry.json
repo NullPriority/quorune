@@ -82208,6 +82208,96 @@
     {
       "applicability": {
         "exclusions": [
+          "variable colors or added colors",
+          "nonspell stack objects",
+          "unrepresented target groups and durations"
+        ],
+        "inputs": [
+          "one legal public spell or permanent",
+          "one fixed color or colorless",
+          "one of the two represented durations"
+        ],
+        "outputs": [
+          "one incarnation-bound layer-five setting",
+          "current spell, permanent, and protection views",
+          "public color with ordinary face-down privacy"
+        ],
+        "summary": "Set the target's color in layer five. Preserve permanent-spell continuity, independent copiable values, cleanup, and the new-object boundary."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Withholding either the fixed color declaration or target revalidation from the exact compiled program fails independent runtime binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.object.fixed_resolution_color",
+      "implementation_components": [
+        "quorune.compiler.fixed_target_color.fixed_target_color_template",
+        "quorune.rules.resolution_characteristic_shapes.fixed_target_color_node_capabilities",
+        "quorune.continuous_effect_state.apply_fixed_target_color",
+        "quorune.target_source.stack_copy_targeting_source"
+      ],
+      "implementation_mutation_rationale": "Removing the closed compiler leaf leaves the colorless instruction unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_moonlace_keeps_permanent_spell_color_through_entry_and_resets_on_blink",
+        "test_recolored_permanent_spell_copy_keeps_its_color_as_the_same_token",
+        "test_white_recolor_revalidates_original_spell_and_copy_uses_its_own_color"
+      ],
+      "multiplayer_tests": [
+        "test_white_recolor_revalidates_original_spell_and_copy_uses_its_own_color"
+      ],
+      "negative_tests": [
+        "test_fixed_target_color_shape_and_runtime_authority",
+        "test_colored_face_down_permanent_exposes_its_color_and_keeps_its_identity_private"
+      ],
+      "official_rules": [
+        "105.3",
+        "400.7",
+        "400.7a",
+        "608.2b",
+        "608.3f",
+        "611.2a",
+        "611.2c",
+        "613.1e",
+        "613.7b",
+        "702.16b",
+        "707.2",
+        "707.10f"
+      ],
+      "positive_tests": [
+        "test_moonlace_keeps_permanent_spell_color_through_entry_and_resets_on_blink",
+        "test_recolored_permanent_spell_copy_keeps_its_color_as_the_same_token",
+        "test_white_recolor_revalidates_original_spell_and_copy_uses_its_own_color"
+      ],
+      "privacy_tests": [
+        "test_colored_face_down_permanent_exposes_its_color_and_keeps_its_identity_private"
+      ],
+      "replay_tests": [
+        "test_moonlace_keeps_permanent_spell_color_through_entry_and_resets_on_blink",
+        "test_recolored_permanent_spell_copy_keeps_its_color_as_the_same_token",
+        "test_white_recolor_revalidates_original_spell_and_copy_uses_its_own_color",
+        "test_colored_face_down_permanent_exposes_its_color_and_keeps_its_identity_private"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "shield,stun,unknown counter rules or a keyword without its closed gameplay owner",
           "variable or conditional amounts,plural reanimation and linked result riders",
           "a new incarnation substituted for the original selected target"

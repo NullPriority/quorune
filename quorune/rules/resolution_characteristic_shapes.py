@@ -8,10 +8,45 @@ from ..object_predicate import ObjectQuerySpec
 from ..next_turn_effect import next_turn_effect_dependencies
 from ..source_tap_effect import source_tap_effect_dependencies
 from ..resolution_characteristic_model import (
+    CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC,
+    FIXED_TARGET_COLOR_VERSION, decode_fixed_target_color, fixed_target_color_schema,
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
     FixedResolutionModifierSpec, fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
+
+
+def fixed_target_color_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if (len(effects) != 1 or target_schema != fixed_target_color_schema()
+            or not {FIXED_TARGET_COLOR_MECHANIC, "cr-611-continuous-effects", "cr-115-targets"} <= set(mechanic_ids)):
+        return ()
+    try:
+        decode_fixed_target_color(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return (FIXED_TARGET_COLOR_CAPABILITY, "target.revalidate_resolution")
+
+
+def fixed_target_color_runtime_dependencies(program):
+    required = set()
+
+    def visit(value):
+        if isinstance(value, Mapping):
+            if value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == FIXED_TARGET_COLOR_VERSION:
+                owners = fixed_target_color_node_capabilities(effects=(value,), target_schema=program.target_schema,
+                    mechanic_ids=(FIXED_TARGET_COLOR_MECHANIC, "cr-611-continuous-effects", "cr-115-targets"))
+                if not owners:
+                    raise ValueError("Fixed target color lacks complete target and layer authority")
+                required.update(owners)
+                return
+            for child in value.values():
+                visit(child)
+        elif isinstance(value, (list, tuple)):
+            for child in value:
+                visit(child)
+
+    visit(program.effects)
+    return tuple(sorted(required))
 
 
 def fixed_resolution_characteristic_set_is_closed(query: ObjectQuerySpec) -> bool:

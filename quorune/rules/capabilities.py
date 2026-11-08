@@ -64,6 +64,7 @@ from .public_zone_move_capability_shapes import (
 )
 from .reanimation_capability_shapes import fixed_target_reanimation_covered_mechanics, fixed_target_reanimation_node_capabilities
 from .reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC
+from ..resolution_characteristic_model import FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC
 from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
@@ -553,6 +554,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         FIXED_NEXT_TURN_DRAW_CAPABILITY,
     ),
     DELAYED_OBJECT_MECHANIC: (DELAYED_OBJECT_CAPABILITY,),
+    FIXED_TARGET_COLOR_MECHANIC: (FIXED_TARGET_COLOR_CAPABILITY,),
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
@@ -560,6 +562,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'shared-target-set-result-sequence',
         'fixed-target-entry-counter-reanimation',
         REANIMATION_FOLLOWUP_MECHANIC,
+        FIXED_TARGET_COLOR_MECHANIC,
         'fixed-per-player-target-set',
         'fixed-controller-top-order',
         'fixed-untargeted-land-untap',
@@ -1414,6 +1417,16 @@ def _return_to_hand_covered_mechanics(supplied: set[str]) -> set[str]:
     return covered
 
 
+_CONTINUOUS_EFFECT_MECHANIC_OWNERS = frozenset({
+    "continuous.power_toughness.fixed_anthem",
+    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+    "continuous.resolution.declaration_rules_until_end_of_turn",
+    "combat.declaration.source_block_pair",
+    "continuous.resolution.fixed_keyword_zone_object",
+    FIXED_TARGET_COLOR_CAPABILITY,
+})
+
+
 def capability_covered_mechanics(
     dependencies: Iterable[str],
 ) -> tuple[str, ...]:
@@ -1485,15 +1498,7 @@ def capability_covered_mechanics(
         covered.add("cr-119-life")
     if "trigger.placement.apnap" in supplied:
         covered.add("cr-603-handling-triggered-abilities")
-    if supplied.intersection(
-        {
-            "continuous.power_toughness.fixed_anthem",
-            "continuous.resolution.fixed_characteristics_until_end_of_turn",
-            "continuous.resolution.declaration_rules_until_end_of_turn",
-            "combat.declaration.source_block_pair",
-            "continuous.resolution.fixed_keyword_zone_object",
-        }
-    ):
+    if supplied.intersection(_CONTINUOUS_EFFECT_MECHANIC_OWNERS):
         covered.add("cr-611-continuous-effects")
     if "combat.declaration.typed_components" in supplied:
         covered.update(
