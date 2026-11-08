@@ -1095,6 +1095,7 @@
       "id": "linked-reanimation-haste-and-departure",
       "patterns": [
         "quorune/compiler/reanimation_followup_templates.py",
+        "quorune/linked_departure_exile_model.py",
         "quorune/rules/reanimation_followup.py",
         "quorune/rules/reanimation_capability_shapes.py",
         "quorune/rules/reanimation_entry_counters.py",

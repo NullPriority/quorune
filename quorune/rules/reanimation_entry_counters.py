@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from ..reanimation_entry_counters import (REANIMATION_ENTRY_COUNTER_CAPABILITY,
     REANIMATION_ENTRY_COUNTER_MECHANIC,validate_reanimation_entry_effect)
 from ..keyword_counters import keyword_counter_mechanic
-from .reanimation_followup import REANIMATION_FOLLOWUP_MECHANIC, REANIMATION_FOLLOWUP_VERSION
+from .reanimation_followup import REANIMATION_FOLLOWUP_MECHANIC, REANIMATION_FOLLOWUP_VERSIONS
 from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities, FIXED_TARGET_REANIMATION_MECHANIC
 
 
@@ -43,7 +43,7 @@ def reanimation_entry_counter_runtime_dependencies(program):
                 if not owned:raise ValueError('Entry-counter reanimation lacks its closed target and counter shape')
                 required.update(owned)
             elif value.get('op') == 'reanimate' and (
-                value.get('schema_version') == REANIMATION_FOLLOWUP_VERSION or 'followup' in value
+                value.get('schema_version') in REANIMATION_FOLLOWUP_VERSIONS or 'followup' in value
             ):
                 owned = fixed_target_reanimation_node_capabilities(effects=(value,), target_schema=program.target_schema,
                     mechanic_ids=(FIXED_TARGET_REANIMATION_MECHANIC, 'cr-115-targets', REANIMATION_FOLLOWUP_MECHANIC))

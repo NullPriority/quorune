@@ -72,6 +72,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/unblocked_attacker_model.py':return 'domain'
     if relative in {'quorune/damage_recipient_model.py', 'quorune/damage_death_exile_model.py'}:
         return 'domain'
+    if relative == 'quorune/linked_departure_exile_model.py':
+        return 'domain'
     if relative=='quorune/delayed_object_actions.py':return 'semantics'
     if relative=='quorune/reanimation_entry_counters.py':return 'semantics'
     if relative in {
@@ -592,6 +594,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 def _owner(relative: str, layer: str) -> str:
     if relative in {'quorune/damage_death_exile_model.py', 'quorune/rules/damage_death_exile.py'}:
         return 'damage'
+    if relative == 'quorune/linked_departure_exile_model.py':
+        return 'zone_transitions'
     if relative in {'quorune/legend_rule_model.py', 'quorune/rules/legend_rule.py',
                     'quorune/state_based_legend_model.py', 'quorune/state_based_legend_choices.py'}:
         return 'state_based_actions'

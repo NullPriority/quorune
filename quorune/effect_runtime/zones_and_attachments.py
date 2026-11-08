@@ -33,6 +33,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
 from ..target_protection_engine_adapter import protection_verdict_for_ref
 from ..protection import ProtectionVerdict
+from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
 
@@ -813,7 +814,7 @@ def _apply_reanimate(
     reason: str,
 ) -> Any:
     followup = None
-    if effect.get("schema_version") == 4:
+    if effect.get("schema_version") in REANIMATION_FOLLOWUP_VERSIONS:
         from ..continuous_effect_state import ResolutionEffectSource
         from ..rules.reanimation_followup import current_linked_subject, validate_reanimation_followup
 

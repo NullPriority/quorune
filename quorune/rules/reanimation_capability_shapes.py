@@ -11,7 +11,7 @@ from ..compiler.reanimation_templates import (
 from ..effect_contracts import REANIMATE_OPERATION
 from .reanimation_followup import (
     REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC,
-    REANIMATION_FOLLOWUP_VERSION, battlefield_entry_followup_capabilities, validate_reanimation_followup,
+    REANIMATION_FOLLOWUP_VERSIONS, battlefield_entry_followup_capabilities, validate_reanimation_followup,
 )
 from ..targets import TargetGroup
 from ..target_numeric import (
@@ -68,7 +68,7 @@ def fixed_target_reanimation_node_capabilities(
         base = {"op": REANIMATE_OPERATION, "card": move["card"], "controller": move["controller"], "tapped": True}
         required = fixed_target_reanimation_node_capabilities(effects=(base,), target_schema=target_schema, mechanic_ids=mechanics)
         return (*required, ATTACKING_CARD_ENTRY_CAPABILITY, "target.revalidate_resolution") if required else ()
-    if len(effects) == 1 and effects[0].get('op') == REANIMATE_OPERATION and effects[0].get('schema_version') == REANIMATION_FOLLOWUP_VERSION:
+    if len(effects) == 1 and effects[0].get('op') == REANIMATE_OPERATION and effects[0].get('schema_version') in REANIMATION_FOLLOWUP_VERSIONS:
         return _reanimation_followup_capabilities(effects[0], target_schema=target_schema, mechanics=mechanics)
     if len(effects) == 1 and effects[0].get('schema_version') == 2:
         from ..event_card_return import (EVENT_BATTLEFIELD_RETURN_MECHANIC,
@@ -170,6 +170,8 @@ def _reanimation_followup_capabilities(effect, *, target_schema, mechanics):
     try:
         followup = validate_reanimation_followup(effect)
     except (ValueError, TypeError):
+        return ()
+    if followup.exile_on_leave and (target_schema is None or "min" in target_schema):
         return ()
     base = {key: value for key, value in effect.items() if key not in {"schema_version", "followup"}}
     required = fixed_target_reanimation_node_capabilities(effects=(base,),

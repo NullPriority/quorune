@@ -2964,9 +2964,17 @@ shared resolution-time target revalidation, typed Aura-entry, destination-
 replacement, and canonical zone-transition owners. Numeric graveyard targets
 use the same exact current-characteristic boundary as battlefield targeting;
 unrepresentable characteristic-defining or cyclic values fail closed. Fixed
-plural forms compose through the homogeneous target-set owner. Mass,
-untargeted non-source, delayed, linked-result, unrepresented entry-rider, variable, copied,
-granted, hidden-origin, and compound forms remain material residuals.
+plural forms compose through the homogeneous target-set owner. Mass and
+untargeted non-source returns, variable selections, hidden origins, copied or
+granted behavior, and unrepresented compound riders remain residual.
+
+`compiler/reanimation_followup_templates.py` composes one targeted return with
+Haste and one typed end-step departure. Version five adds a mandatory exile
+replacement for any later nonexile departure of that returned incarnation. The
+replacement uses ordinary affected-player ordering and keeps its own source
+identity independently of the Haste grant and delayed trigger. A move already
+going to exile can return the card as a new incarnation. Unsupported timings,
+recipient references, and additional riders remain residual.
 
 `compiler/reanimation_entry_counter_templates.py` composes that scalar target
 with one fixed numeric or ordinary keyword counter instruction. Version-three

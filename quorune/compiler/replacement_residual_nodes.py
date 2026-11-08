@@ -8,6 +8,7 @@ from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_MECHANIC
 from ..turn_skip_model import TURN_SKIP_MECHANIC
 from .ir_model import OracleNode,append_residual
 from .kicked_self_replacement_templates import is_fixed_spell_self_replacement
+from .reanimation_followup_templates import fixed_reanimation_followup_template
 
 
 _REPLACEMENT_MARKERS=re.compile(r'\b(instead|as .+ enters|enters .+ with|skip)\b',re.I)
@@ -32,6 +33,9 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
         return None
     if spell and is_fixed_spell_self_replacement(material_line,source_name,
             compile_effect,has_faces=has_faces):
+        return None
+    linked_reanimation = fixed_reanimation_followup_template(material_line) if spell else None
+    if linked_reanimation is not None and linked_reanimation.followup.exile_on_leave:
         return None
     if spell and re.search(r"\bskip\b", material_line, re.I):
         if TURN_SKIP_MECHANIC in compile_effect(material_line, card_name=source_name)[3]:

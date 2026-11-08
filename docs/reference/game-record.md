@@ -946,6 +946,13 @@ incarnation or a live public creature query with an empty locked list.
 Its duration expires at end of turn. Older rule schemas and temporary
 Defender instruction schema three retain their replay encodings.
 
+Version-five linked reanimation adds the `exile_on_leave` rider. The
+`resolution_linked_departure_exile` journal record retains the source and one
+battlefield incarnation until that object changes zones. Its ordinary
+replacement applies to destinations other than exile. The one-shot delayed
+trigger retains its own source and subject independently. Version-four
+reanimation decodes its original Haste and scheduled departure fields.
+
 A resolved all-able-blocker requirement uses the additive exact
 `schema_version: 3` shape. Its `requirement` field replaces `restriction` and
 contains the historical self-scoped typed requirement payload. It locks exactly

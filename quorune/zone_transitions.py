@@ -13,6 +13,7 @@ import random
 from typing import Any, Iterable, Mapping, Sequence
 
 from . import control_history
+from .continuous_effect_state import expire_linked_departure_exile
 from .token_creation import token_copy_snapshot
 from .attachments import (
     attach_objects,
@@ -283,6 +284,8 @@ class ZoneTransitionOwner:
         )
         if not creates_new_object:
             return
+        if origin == "battlefield":
+            expire_linked_departure_exile(self.state, card)
         self.host._remove_object_from_combat(
             card,
             reason=f"zone change to {destination}",

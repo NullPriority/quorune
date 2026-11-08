@@ -24,6 +24,7 @@ from .temporary_cast_rule_model import EFFECT_KIND as CAST_RESTRICTION_KIND,Reso
 from .source_block_pair_model import SOURCE_BLOCK_PAIR_EFFECT_KIND, ResolvedSourceBlockPair
 from .library_search_model import LIBRARY_SEARCH_TEMP_KIND,ResolvedLibrarySearchProhibition
 from .damage_death_exile_model import DAMAGE_DEATH_EXILE_KIND, ResolvedDamageDeathExile
+from .linked_departure_exile_model import LINKED_DEPARTURE_EXILE_KIND, ResolvedLinkedDepartureExile
 from .source_untap_rule_model import SOURCE_UNTAP_RESTRAINT_KIND, ResolvedSourceUntapRestraint
 
 
@@ -263,6 +264,7 @@ class ResolutionDeclarationRuleEffect:
 
 ContinuousJournalEffect: TypeAlias = (
     ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule | ResolvedBlockCapacityRule | ResolvedCastRestriction | ResolvedSourceBlockPair | ResolvedLibrarySearchProhibition | ResolvedDamageDeathExile | ResolvedSourceUntapRestraint
+    | ResolvedLinkedDepartureExile
 )
 
 
@@ -276,6 +278,8 @@ def continuous_journal_effect_from_dict(
             return ResolvedSourceUntapRestraint.from_dict(value)
         if value['effect_kind'] == DAMAGE_DEATH_EXILE_KIND:
             return ResolvedDamageDeathExile.from_dict(value)
+        if value['effect_kind'] == LINKED_DEPARTURE_EXILE_KIND:
+            return ResolvedLinkedDepartureExile.from_dict(value)
         if value['effect_kind']==LIBRARY_SEARCH_TEMP_KIND:return ResolvedLibrarySearchProhibition.from_dict(value)
         if value['effect_kind'] == SOURCE_BLOCK_PAIR_EFFECT_KIND:return ResolvedSourceBlockPair.from_dict(value)
         if value['effect_kind']==CAST_RESTRICTION_KIND:return ResolvedCastRestriction.from_dict(value)

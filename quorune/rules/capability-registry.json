@@ -82305,7 +82305,7 @@
       "applicability": {
         "exclusions": [
           "hidden or unordered entry choices",
-          "independent leave-the-battlefield replacement riders",
+          "departure replacements with a different destination, subject, or timing",
           "arbitrary granted abilities",
           "unbounded or repeated delayed departures"
         ],
@@ -82317,9 +82317,10 @@
         "outputs": [
           "immutable continuous effect on the returned incarnation",
           "one source-pinned delayed exile, sacrifice, or owner hand return",
+          "an ordinary exile replacement on the exact returned incarnation when the complete linked rider is present",
           "existing replacement and APNAP coordination"
         ],
-        "summary": "Apply a closed haste grant and one end-step departure only after the selected graveyard target enters the battlefield. The delayed trigger retains the creating controller and source separately from the returned incarnation. Temporary haste and a fixed power modifier expire at cleanup. The delayed departure uses the existing zone owner and checks current control for sacrifice."
+        "summary": "Apply a closed haste grant and one end-step departure after the selected graveyard target enters the battlefield. The delayed trigger retains the creating controller and source separately from the returned incarnation. Temporary haste and a fixed power modifier expire at cleanup. The version-five leave rider uses ordinary replacement ordering and expires when the returned incarnation changes zones."
       },
       "blockers": [],
       "dependencies": [
@@ -82339,6 +82340,8 @@
         "quorune.rules.reanimation_capability_shapes.fixed_target_reanimation_node_capabilities",
         "quorune.rules.reanimation_followup.commit_battlefield_entry_followup",
         "quorune.rules.reanimation_followup.linked_departure_intent",
+        "quorune.rules.reanimation_followup.linked_departure_exile_replacements",
+        "quorune.linked_departure_exile_model.ResolvedLinkedDepartureExile",
         "quorune.zone_transitions.ZoneTransitionOwner.move_card"
       ],
       "implementation_mutation_rationale": "The omission witness withdraws the linked compiler production and detects the resulting material residuals.",
@@ -82347,7 +82350,10 @@
         "test_goryos_vengeance_captures_one_incarnation_through_delayed_trigger_reload",
         "test_puppeteer_clique_waits_for_its_controllers_end_step_and_keeps_indefinite_haste",
         "test_macabre_mockery_cleanup_precedes_the_later_sacrifice_and_control_still_matters",
-        "test_greasefang_grants_haste_to_a_vehicle_then_returns_it_to_its_owner"
+        "test_greasefang_grants_haste_to_a_vehicle_then_returns_it_to_its_owner",
+        "test_gruesome_encore_binds_opponents_card_and_skips_its_blinked_incarnation",
+        "test_moira_and_teshar_schedule_one_departure_from_a_multitraited_historic_cast",
+        "test_whip_replacement_survives_source_departure_and_countered_delayed_trigger"
       ],
       "multiplayer_tests": [
         "test_puppeteer_clique_waits_for_its_controllers_end_step_and_keeps_indefinite_haste",
@@ -82374,6 +82380,8 @@
         "608.2c",
         "611.2a",
         "611.2c",
+        "614.1a",
+        "616.1e",
         "701.21a",
         "702.10",
         "702.26b"
@@ -82408,7 +82416,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {

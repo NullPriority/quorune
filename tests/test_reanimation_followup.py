@@ -14,6 +14,7 @@ from test_granted_skulk import record
 
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
+from quorune.linked_departure_exile_model import ResolvedLinkedDepartureExile
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, validate_reanimation_followup
 from quorune.record import authoritative_state_hash
@@ -24,6 +25,7 @@ from scripts.build_test_database import build_fixture_database
 
 TEXT = ("Return target legendary creature card from your graveyard to the battlefield. "
     "That creature gains haste. Exile it at the beginning of the next end step.")
+LEAVE_EXILE = " If it would leave the battlefield, exile it instead of putting it anywhere else."
 
 
 class ReanimationFollowupCompilerTests(unittest.TestCase):
@@ -35,16 +37,30 @@ class ReanimationFollowupCompilerTests(unittest.TestCase):
         effect, = node.effects
         self.assertEqual(TEXT, node.text)
         self.assertEqual("exile", validate_reanimation_followup(effect).departure)
+        self.assertFalse(validate_reanimation_followup(effect).exile_on_leave)
         self.assertIn(REANIMATION_FOLLOWUP_CAPABILITY, node.capability_dependencies)
         self.assertIn("continuous.resolution.fixed_keyword_zone_object", node.capability_dependencies)
         for text in (TEXT.replace("gains haste", "gains an ability"),
             TEXT.replace("the next end step", "the next upkeep"),
-            TEXT + " If it would leave the battlefield, exile it instead of putting it anywhere else."):
+            TEXT + LEAVE_EXILE.replace("If it", "If another creature"),
+            TEXT.replace("Return target", "Return up to one target") + LEAVE_EXILE,
+            TEXT.replace("the next end step", "your next end step") + LEAVE_EXILE):
             with self.subTest(text=text):
                 other = compile_oracle_card(record(text, "Instant"), capability_registry=registry)
                 self.assertNotEqual("exact", other.status)
         for change in ({"schema_version": True}, {"card": "$source"}, {"tapped": 0},
             {"followup": {**effect["followup"], "power_boost": True}}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                validate_reanimation_followup({**effect, **change})
+
+        linked = compile_oracle_card(record(TEXT + LEAVE_EXILE, "Instant"), capability_registry=registry)
+        self.assertEqual("exact", linked.status, linked.material_residuals)
+        effect, = linked.faces[0].nodes[0].effects
+        self.assertEqual(5, effect["schema_version"])
+        self.assertTrue(validate_reanimation_followup(effect).exile_on_leave)
+        for change in ({"schema_version": 4},
+                       {"followup": {**effect["followup"], "exile_on_leave": 1}},
+                       {"followup": {**effect["followup"], "departure": "sacrifice"}}):
             with self.subTest(change=change), self.assertRaises(ValueError):
                 validate_reanimation_followup({**effect, **change})
 
@@ -251,4 +267,106 @@ class ReanimationFollowupNativeTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         self.assertEqual("hand", session.state.cards[vehicle.object_id].zone)
         self.assertIn(vehicle.object_id, session.state.players[vehicle.owner].zones["hand"])
+        self.replay(session, load=True)
+
+    def test_whip_replacement_survives_source_departure_and_countered_delayed_trigger(self):
+        session = self.session(6030705)
+        engine = session.engine
+        whip = self.add(engine, "Whip of Erebos")
+        target = self.add(engine, "Generic Bound Body", zone="graveyard", ref="whip-returned-body")
+        foreign = self.add(engine, "Generic Bound Body", seat="C", zone="graveyard", ref="whip-ineligible-body")
+        disenchant = self.add(engine, "Disenchant", seat="B", zone="hand")
+        bounce = self.add(engine, "Unsummon", seat="B", zone="hand")
+        stifle = self.add(engine, "Stifle", zone="hand")
+        self.add(engine, "Plains", seat="B")
+        self.add(engine, "Plains", seat="B", ref="whip-second-plains")
+        self.add(engine, "Island", seat="B", ref="whip-bounce-mana")
+        self.add(engine, "Island", seat="B", ref="whip-extra-bounce-mana")
+        self.add(engine, "Island", ref="whip-stifle-mana")
+        self.assert_closed(session, whip)
+        self.prepare(session, mana={"B": 2, "C": 2})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        activation, = [action for action in actions if action["id"].startswith(f"activate:{whip.ref}:")]
+        command = {"action_id": activation["id"], "pay": "auto"}
+        self.reject(session, "A", **command, targets=[foreign.ref])
+        accepted = session.act("pilot:A", {**command, "targets": [target.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        target = session.state.cards[target.object_id]
+        self.assertTrue(self.has_haste(session, target))
+        rule, = [effect for effect in session.state.continuous_effects if isinstance(effect, ResolvedLinkedDepartureExile)]
+        self.assertEqual((whip.ref, target.logical_object_id), (rule.source_id, rule.subject.logical_object_id))
+        self.assertEqual(rule, ResolvedLinkedDepartureExile.from_dict(rule.to_dict()))
+
+        self.cast(session, "B", disenchant, [whip.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[whip.object_id].zone)
+        self.until(session, lambda game: game.state.step == "end_step" and bool(game.state.stack))
+        session = self.replay(session, load=True)
+        trigger, = session.state.stack
+        self.assertEqual((whip.object_id, "A"), (trigger.source_object_id, trigger.controller))
+        self.cast(session, "A", stifle, [trigger.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertIn(rule, session.state.continuous_effects)
+        self.assertFalse(any(effect.active for effect in session.state.delayed_triggers))
+        self.cast(session, "B", bounce, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[target.object_id].zone)
+        self.assertNotIn(rule, session.state.continuous_effects)
+        self.replay(session, load=True)
+
+    def test_gruesome_encore_binds_opponents_card_and_skips_its_blinked_incarnation(self):
+        session = self.session(6030706)
+        engine = session.engine
+        spell = self.add(engine, "Gruesome Encore", zone="hand")
+        blink = self.add(engine, "Cloudshift", zone="hand")
+        target = self.add(engine, "Generic Bound Body", seat="B", zone="graveyard", ref="encore-foreign-body")
+        friendly = self.add(engine, "Generic Bound Body", zone="graveyard", ref="encore-own-body")
+        self.add(engine, "Plains", ref="encore-blink-mana")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"B": 1, "C": 2})
+        self.checkpoint(session)
+        self.reject(session, "A", action_id=f"cast:{spell.ref}", pay="auto", targets=[friendly.ref])
+        self.cast(session, "A", spell, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        target = session.state.cards[target.object_id]
+        self.assertEqual(("B", "A", "battlefield"), (target.owner, target.controller, target.zone))
+        self.assertTrue(self.has_haste(session, target))
+        original = target.logical_object_id
+        self.cast(session, "A", blink, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(original, session.state.cards[target.object_id].logical_object_id)
+        self.assertFalse(self.has_haste(session, target))
+        self.assertFalse(any(isinstance(effect, ResolvedLinkedDepartureExile) for effect in session.state.continuous_effects))
+        self.until(session, lambda game: game.state.step == "end_step" and bool(game.state.stack))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_moira_and_teshar_schedule_one_departure_from_a_multitraited_historic_cast(self):
+        session = self.session(6030707)
+        engine = session.engine
+        source = self.add(engine, "Moira and Teshar")
+        historic = self.add(engine, "Whip of Erebos", zone="hand")
+        target = self.add(engine, "Sol Ring", zone="graveyard")
+        land = self.add(engine, "Plains", zone="graveyard")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"B": 2, "C": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", historic)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        self.reject(session, "A", action_id="choose", targets=[land.ref])
+        result = session.act("pilot:A", {"action_id": "choose", "targets": [target.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        trigger, = session.state.delayed_triggers
+        self.assertEqual((source.object_id, "A"), (trigger.source_object_id, trigger.controller))
+        self.until(session, lambda game: game.state.step == "end_step" and bool(game.state.stack))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[target.object_id].zone)
+        self.assertFalse(any(isinstance(effect, ResolvedLinkedDepartureExile) for effect in session.state.continuous_effects))
         self.replay(session, load=True)

@@ -48,6 +48,7 @@ from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
 from ..rules.finality_counters import finality_counter_replacement
 from ..rules.damage_death_exile import damage_death_exile_replacements
+from ..rules.reanimation_followup import linked_departure_exile_replacements
 from ..zone_trigger_events import ZoneTransitionKind
 from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -586,6 +587,7 @@ def collect_zone_change_replacement_effects(
     )
     registry = default_zone_change_replacement_registry()
     effects = list(damage_death_exile_replacements(host.state))
+    effects.extend(linked_departure_exile_replacements(host.state))
     unearth_version = getattr(host.state, "unearth_leave_replacement_version", None)
     for source in candidates:
         active_zone = (

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .damage_death_exile_model import ResolvedDamageDeathExile
+from .linked_departure_exile_model import ResolvedLinkedDepartureExile
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -180,7 +181,8 @@ def commit_continuous_effect(
 
     if not isinstance(
         effect,
-        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint),
+        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint,
+         ResolvedLinkedDepartureExile),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -619,6 +621,15 @@ def active_resolution_declaration_rule_effects(
             and object_matches_query(query_row, effect.live_query)
         )
     )
+
+
+def expire_linked_departure_exile(state: Any, card: Any) -> None:
+    journal = state.continuous_effects
+    if not journal:
+        return
+    identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+    journal[:] = [effect for effect in journal
+                  if not isinstance(effect, ResolvedLinkedDepartureExile) or effect.subject != identity]
 
 
 def expire_end_of_turn_continuous_effects(state: Any) -> int:
