@@ -68,23 +68,24 @@ def temporary_defender_permission_capabilities(*,effects,target_schema,mechanic_
     return tuple(sorted(dependencies))
 
 
-def resolved_defender_permission_runtime_dependencies(program):
-    """Infer the resolved rule's authority from the executable descriptor."""
+def temporary_defender_permission_runtime_dependencies(program):
+    """Infer temporary Defender authority from the executable descriptor."""
     required: set[str] = set()
 
     def visit(value):
         if isinstance(value, Mapping):
-            if value.get("op") == DEFENDER_TEMPORARY_OPERATION and value.get("schema_version") == DEFENDER_RULE_VERSION:
+            if (value.get("op") == DEFENDER_TEMPORARY_OPERATION
+                    and value.get("schema_version") in (3, DEFENDER_RULE_VERSION)):
                 predicate = value.get("predicate")
                 targeted = value.get("card") == "$target.0" or (
                     isinstance(predicate, Mapping) and predicate.get("controller") == "$target.0"
                 )
                 owners = temporary_defender_permission_capabilities(
                     effects=(value,), target_schema=program.target_schema if targeted else None,
-                    mechanic_ids=program.coverage,
+                    mechanic_ids=(DEFENDER_TEMPORARY_MECHANIC,),
                 )
                 if not owners:
-                    raise ValueError("Resolved Defender permission lacks complete rule closure")
+                    raise ValueError("Temporary Defender permission lacks complete rule closure")
                 required.update(owners)
                 return
             for child in value.values():

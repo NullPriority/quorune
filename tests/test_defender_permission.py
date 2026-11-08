@@ -16,7 +16,9 @@ import test_bound_effect_programs as witnesses
 from unittest.mock import patch
 from quorune.ability_fragments import ability_fragment_from_dict, ability_fragment_to_dict
 from quorune.defender import defender_prohibits_attack
-from quorune.defender_permission import DEFENDER_RULE_CAPABILITY, DEFENDER_RULE_VERSION, DefenderAttackPermission
+from quorune.defender_permission import (
+    DEFENDER_RULE_CAPABILITY, DEFENDER_RULE_VERSION, DEFENDER_TEMPORARY_CAPABILITY, DefenderAttackPermission,
+)
 from quorune.compiler.defender_permission_templates import static_defender_permission_handler
 from quorune.compiler.defender_permission_templates import temporary_defender_permission_template
 from quorune.semantic_runtime.conditional_continuous import ConditionalDefenderPermissionHandler
@@ -251,6 +253,23 @@ class DefenderPermissionRuntimeTests(unittest.TestCase):
         engine.move_card(source.object_id,'graveyard',log=False);engine.move_card(source.object_id,'battlefield',log=False)
         source.acquired_control_turn_count=-1
         self.assertTrue(defender_prohibits_attack(engine._effective_card_data(source)))
+
+    def test_actual_legacy_activation_requires_its_declared_permission_owner(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+
+        engine = self.session(288017).engine
+        source = self.add(engine, 'Krotiq Nestguard')
+        program, = [candidate for candidate in engine.semantics.programs_for_oracle(source.oracle_id)
+                    if any(effect.get('schema_version') == 3 for effect in candidate.effects)]
+        self.assertTrue(bind_semantic_program_runtime(
+            program, capability_registry=self.registry, profile='commander_review',
+        )['strict'])
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != DEFENDER_TEMPORARY_CAPABILITY)
+        incomplete = replace(program, capability_dependencies=dependencies,
+                             capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+        binding = bind_semantic_program_runtime(incomplete, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict'])
+        self.assertIn('capability:undeclared_runtime_dependency:' + DEFENDER_TEMPORARY_CAPABILITY, binding['blockers'])
 
     def test_temporary_permission_journal_mutant_is_killed(self):
         from quorune.rules import defender_permission_effect as owner

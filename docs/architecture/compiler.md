@@ -2084,6 +2084,8 @@ the end-of-turn declaration journal and evaluate current public membership,
 including later entrants and control changes. Fixed characteristics in the
 same instruction retain their resolution-time recipients. A source-bound
 compound permission uses the same journal with its exact source incarnation.
+Runtime binding derives the required capabilities from each version's typed
+effect before admission.
 Linked riders and defending-player history retain separate ownership.
 
 Self permissions conditioned on current power or toughness use a separate
