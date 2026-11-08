@@ -1217,8 +1217,20 @@ class GameState:
             ),
         }
 
+    def _event_version_fields(self) -> dict[str, int]:
+        versions = {
+            "qualified_attack_facts_version": qualified_attack_facts_version(self.qualified_attack_facts_version),
+            "permanent_event_state_version": permanent_event_state_version(self.permanent_event_state_version),
+            "battle_cry_resolution_version": battle_cry_resolution_version(self.battle_cry_resolution_version),
+            "ninjutsu_band_retention_version": ninjutsu_band_retention_version(self.ninjutsu_band_retention_version),
+            "unearth_leave_replacement_version": unearth_leave_replacement_version(self.unearth_leave_replacement_version),
+            "block_characteristics_version": block_characteristics_version(self.block_characteristics_version),
+            "unblocked_attacker_event_version": unblocked_attacker_event_version(self.unblocked_attacker_event_version),
+        }
+        return {name: version for name, version in versions.items() if version is not None}
+
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
-        unearth_replacement = unearth_leave_replacement_version(self.unearth_leave_replacement_version)
+        event_versions = self._event_version_fields()
         legend_rule_choice_version(self.legend_rule_choice_version)
         effect_destruction_version = self._effect_destruction_replacement_version(
             self.effect_destruction_replacement_version
@@ -1239,12 +1251,6 @@ class GameState:
         stack_resolution_authority_version(self.stack_resolution_authority_version)
         token_copy_value_version(self.token_copy_value_version)
         token_names = predefined_token_name_version(self.predefined_token_name_version)
-        qualified_attack_facts_version(self.qualified_attack_facts_version)
-        permanent_event_state_version(self.permanent_event_state_version)
-        battle_cry_resolution_version(self.battle_cry_resolution_version)
-        ninjutsu_bands = ninjutsu_band_retention_version(self.ninjutsu_band_retention_version)
-        block_characteristics_version(self.block_characteristics_version)
-        unblocked_attacker_event_version(self.unblocked_attacker_event_version)
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
         ):
@@ -1277,13 +1283,7 @@ class GameState:
             ),
             **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
-            **({'qualified_attack_facts_version':self.qualified_attack_facts_version} if self.qualified_attack_facts_version is not None else {}),
-            **({'permanent_event_state_version':self.permanent_event_state_version} if self.permanent_event_state_version is not None else {}),
-            **({'battle_cry_resolution_version':self.battle_cry_resolution_version} if self.battle_cry_resolution_version is not None else {}),
-            **({'ninjutsu_band_retention_version':ninjutsu_bands} if ninjutsu_bands is not None else {}),
-            **({"unearth_leave_replacement_version": unearth_replacement} if unearth_replacement is not None else {}),
-            **({'block_characteristics_version':self.block_characteristics_version} if self.block_characteristics_version is not None else {}),
-            **({'unblocked_attacker_event_version':self.unblocked_attacker_event_version} if self.unblocked_attacker_event_version is not None else {}),
+            **event_versions,
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
             **(
                 {"effect_destruction_replacement_version": effect_destruction_version}
