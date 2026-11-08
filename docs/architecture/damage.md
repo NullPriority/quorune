@@ -205,7 +205,7 @@ life, placement, removal, and permanent-result batch unchanged.
 Damage results preserve each committed life gain and loss as a distinct turn
 history fact, including simultaneous changes that cancel in the final total.
 The life state owner validates the entire plan and writes each player's final
-total once. The history facts also inform the inherent speed trigger.
+total once. The inherent speed trigger examines the same committed losses.
 
 The life and damage planners share an immutable gain-permission snapshot.
 Current trusted battlefield abilities supply global or opponent prohibitions,
