@@ -5021,6 +5021,7 @@
       "id": "reflexive-payment-promoted-consumers",
       "patterns": [
         "quorune/compiler/creature_power_damage_templates.py",
+        "quorune/compiler/fixed_public_multi_event_bindings.py",
         "quorune/compiler/occurrence_object_results.py",
         "quorune/compiler/reflexive_payment_templates.py",
         "quorune/compiler/source_self_effect_templates.py",

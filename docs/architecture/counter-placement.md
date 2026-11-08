@@ -17,6 +17,13 @@ matching occurrence per subject and kind; singular subscriptions consume one
 `counter.single_put` occurrence per actual counter. Requested quantities,
 removed counters, zero results and state-based counter annihilation do not
 manufacture put events.
+Active singular wording filters that occurrence by the placing player. A
+printed once-per-turn restriction applies after the placing player and
+recipient have qualified. Runtime admission derives counter-event authority
+from the declared event.
+Grouped subscriptions for a named kind can read the final amount for their
+qualifying recipient through the committed-event scalar owner. Admission
+associates that quantity with the named grouped placement event.
 An unqualified one-or-more-counters subscription consumes only the first kind
 in that subject's simultaneous placement, so a multi-kind instruction does not
 duplicate its trigger.

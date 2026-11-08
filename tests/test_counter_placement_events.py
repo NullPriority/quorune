@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.oracle_ir import compile_oracle_card
@@ -40,6 +41,9 @@ class CounterPlacementEventCompilerTests(unittest.TestCase):
             ('Whenever one or more +1/+1 counters are put on this creature, draw a card.','counter.put'),
             ('Whenever you put one or more -1/-1 counters on a creature, create a 1/1 green Snake creature token with deathtouch.','counter.put'),
             ('Whenever you put one or more counters on a creature you don\'t control, draw a card.','counter.put'),
+            ('Whenever you put a counter on a creature you control, draw a card.', 'counter.single_put'),
+            ('Whenever you put one +1/+1 counter on another creature, draw a card.', 'counter.single_put'),
+            ('Whenever you put one or more -1/-1 counters on a creature, create that many 1/1 black Insect creature tokens.', 'counter.put'),
             ('Whenever one or more +1/+1 counters are put on another non-Hydra creature you control, put a +1/+1 counter on this creature.','counter.put')]:
             with self.subTest(text=text):
                 ir=compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
@@ -56,11 +60,16 @@ class CounterPlacementEventCompilerTests(unittest.TestCase):
         for text in ('When the tenth +1/+1 counter is put on this creature, draw a card.',
             'Whenever a time counter is removed from this card while it\'s exiled, draw a card.',
             'Whenever one or more +1/+1 counters are put on this creature for the first time each turn, draw a card.',
+            'Whenever you put a +1/+1 counters on a creature, draw a card.',
             'Whenever you put one or more +1/+1 counters on one or more creatures, draw a card.'):
             self.assertIsNone(counter_placement_event_binding_spec(text,card_name='Generic Counter Observer'))
         text='Whenever one or more +1/+1 counters are put on this creature, you win the game.'
         ir=compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry())
         self.assertNotEqual('exact',ir.status)
+        for incomplete in ('Whenever you put a +1/+1 counter on a creature, draw that many cards.',
+                           'Whenever you put one or more counters on a creature, draw that many cards.'):
+            ir = compile_oracle_card(query_record(incomplete), capability_registry=load_default_capability_registry())
+            self.assertNotEqual('exact', ir.status)
 
 
 class CounterPlacementEventRuntimeTests(unittest.TestCase):
@@ -79,6 +88,9 @@ class CounterPlacementEventRuntimeTests(unittest.TestCase):
     ready=witnesses.BoundEffectProgramRuntimeTests.ready
     checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
+    prepare = InheritedNativeFixture.prepare
+    cast = InheritedNativeFixture.cast
+    assert_closed = InheritedNativeFixture.assert_closed
 
     def order_triggers(self,session):
         while session.state.pending_decision is not None and session.state.pending_decision.kind=='trigger.order':
@@ -338,6 +350,68 @@ class CounterPlacementEventRuntimeTests(unittest.TestCase):
         with patch.object(owner,'dispatch_prepared_counter_events',return_value=None):
             with self.assertRaises(AssertionError):self.test_actual_fathom_and_herd_distinguish_replaced_quantity_from_one_occurrence()
 
+    def test_active_singular_placement_uses_the_caster_through_replacement_and_turn_limits(self):
+        session = self.session(122824001)
+        ant_man = self.add(session.engine, "Ant-Man, Colony Commander")
+        knight = self.add(session.engine, "Knight of Wundagore")
+        own = self.add(session.engine, "Generic Bound Body", ref="own-counter-recipient")
+        foreign = self.add(session.engine, "Generic Bound Body", seat="B", ref="foreign-counter-recipient")
+        doubler = self.add(session.engine, "Branching Evolution", seat="B")
+        opponent_spell = self.add(session.engine, "Battlegrowth", seat="B", zone="hand", ref="opponent-placement")
+        self_spell = self.add(session.engine, "Battlegrowth", zone="hand", ref="self-placement")
+        foreign_spell = self.add(session.engine, "Battlegrowth", zone="hand", ref="foreign-placement")
+        self.add(session.engine, "Forest", seat="B", ref="opponent-payment")
+        for card in (ant_man, knight, doubler, opponent_spell):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"G": 3})
+        self.checkpoint(session)
+
+        self.cast(session, "B", opponent_spell, [own.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[own.object_id].counters.get("+1/+1"))
+        self.assertFalse(session.state.cards[knight.object_id].counters)
+        self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+
+        self.cast(session, "A", self_spell, [knight.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[knight.object_id].counters.get("+1/+1"))
+        insects = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(1, len(insects))
+        self.assertEqual("A", insects[0].controller)
+
+        session = self.replay(session, load=True)
+        self.cast(session, "A", foreign_spell, [foreign.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, session.state.cards[foreign.object_id].counters.get("+1/+1"))
+        self.assertEqual(2, session.state.cards[knight.object_id].counters.get("+1/+1"))
+        self.assertEqual(1, sum(card.is_token and card.zone == "battlefield" for card in session.state.cards.values()))
+        self.replay(session, load=True)
+
+    def test_active_singular_any_counter_preserves_recipient_controller(self):
+        session = self.session(122824002)
+        watcher = self.add(session.engine, "Mikey & Leo, Chaos & Order")
+        own = self.add(session.engine, "Generic Bound Body", ref="own-scar-recipient")
+        foreign = self.add(session.engine, "Generic Bound Body", seat="B", ref="foreign-scar-recipient")
+        first = self.add(session.engine, "Scar", zone="hand", ref="scar-foreign")
+        second = self.add(session.engine, "Scar", zone="hand", ref="scar-own")
+        self.assert_closed(session, watcher)
+        self.assert_closed(session, first)
+        self.prepare(session, mana={"B": 3, "R": 3})
+        self.checkpoint(session)
+        draws = len(session.state.players["A"].draw_history)
+        for spell, target, expected_draws in ((first, foreign, draws), (second, own, draws + 1)):
+            actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            offer = next(action for action in actions if action["id"] == f"cast:{spell.ref}")
+            black = next(option for option in offer["cost_options"] if option["requirements"]["B"] == 1)
+            result = session.act("pilot:A", {
+                "action_id": offer["id"], "cost_option": black["id"], "targets": [target.ref], "pay": "auto",
+            })
+            self.assertTrue(result.ok, result.summary)
+            self.assertIsNone(self.resolve(session))
+            self.assertEqual(1, session.state.cards[target.object_id].counters.get("-1/-1"))
+            self.assertEqual(expected_draws, len(session.state.players["A"].draw_history))
+        self.replay(session, load=True)
+
     def test_existing_singular_subscription_derives_placement_runtime_authority(self):
         from quorune.card_programs import bind_semantic_program_runtime
 
@@ -355,6 +429,77 @@ class CounterPlacementEventRuntimeTests(unittest.TestCase):
         bound = bind_semantic_program_runtime(withdrawn, capability_registry=self.registry, profile="commander_review")
         self.assertFalse(bound["strict"])
         self.assertIn(f"capability:undeclared_runtime_dependency:{capability}", bound["blockers"])
+
+    def test_grouped_counter_quantity_drives_damage_and_repeated_investigation(self):
+        session = self.session(122824004)
+        casey = self.add(session.engine, "Casey Jones, Back Alley Brute")
+        lonis = self.add(session.engine, "Lonis, Genetics Expert")
+        self.add(session.engine, "Branching Evolution")
+        foreign = self.add(session.engine, "Generic Bound Body", seat="B")
+        opponent = self.add(session.engine, "Battlegrowth", seat="B", zone="hand", ref="grouped-opponent")
+        outside = self.add(session.engine, "Battlegrowth", zone="hand", ref="grouped-foreign-target")
+        actual = self.add(session.engine, "Battlegrowth", zone="hand", ref="grouped-owned-target")
+        self.add(session.engine, "Forest", seat="B", ref="grouped-opponent-mana")
+        for card in (casey, lonis):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"G": 3})
+        self.checkpoint(session)
+        life = session.state.players["B"].life
+
+        def clues():
+            return sum(card.is_token and card.zone == "battlefield" and
+                       "clue" in session.engine._effective_type_parts(card)[1]
+                       for card in session.state.cards.values())
+
+        self.cast(session, "B", opponent, [lonis.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, clues())
+        self.assertEqual(life, session.state.players["B"].life)
+        self.cast(session, "A", outside, [foreign.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, clues())
+        self.assertEqual(life, session.state.players["B"].life)
+
+        self.cast(session, "A", actual, [lonis.ref])
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "targets": ["A"]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        selected = session.act("pilot:A", {"action_id": "choose", "targets": ["B"]})
+        self.assertTrue(selected.ok, selected.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(4, session.state.cards[lonis.object_id].counters.get("+1/+1"))
+        self.assertEqual(4, clues())
+        self.assertEqual(life - 2, session.state.players["B"].life)
+        self.replay(session, load=True)
+
+    def test_nest_reads_grouped_wither_counters_before_the_recipient_dies(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+
+        session = self.session(122824005)
+        nest = self.add(session.engine, "Nest of Scarabs")
+        target = self.add(session.engine, "Grizzly Bears", seat="B")
+        blast = self.add(session.engine, "Puncture Blast", zone="hand")
+        for card in (nest, blast):
+            self.assert_closed(session, card)
+        witness, = (entry for entry in session.engine.semantics.programs_for_oracle(nest.oracle_id)
+                    if entry.event == "counter.put")
+        unnamed = {"all": [clause for clause in witness.event_condition["all"] if clause.get("field") != "counter"]}
+        for malformed in (replace(witness, event="counter.single_put"), replace(witness, event_condition=unnamed)):
+            rejected = bind_semantic_program_runtime(malformed, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(rejected["strict"])
+            self.assertTrue(any("Counter amounts require a grouped placement event" in reason for reason in rejected["blockers"]))
+
+        self.prepare(session, mana={"C": 3, "R": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", blast, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        insects = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(3, len(insects))
+        self.assertTrue(all(card.controller == "A" for card in insects))
+        self.replay(session, load=True)
 
 
 if __name__=='__main__':unittest.main()

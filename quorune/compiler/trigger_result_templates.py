@@ -7,7 +7,7 @@ import re
 from ..rules.source_references import SourceReferenceSpec
 from .target_announcement_bindings import target_announcement_result, target_announcement_bound_result
 from .tap_state_event_bindings import tap_state_bound_result
-from .scalar_effect_amounts import scalar_effect_amount_template
+from .scalar_effect_amounts import trigger_scalar_effect_amount_template
 from .token_copy_templates import token_copy_recipe_template
 from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
 from .fixed_entry_return_requirements import fixed_entry_return_effect_template
@@ -199,9 +199,8 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     event_result = tap_state_bound_result(binding, body, effect_template=effect_template, card_name=card_name)
     if event_result is not None:
         return event_result
-    scalar = scalar_effect_amount_template(
-        body, source_name=card_name, event=binding.event.value,
-        source_event=binding.variant.startswith('source_'),
+    scalar = trigger_scalar_effect_amount_template(
+        body, source_name=card_name, binding=binding,
         compile_fixed=lambda text: effect_template(text, card_name=card_name),
     )
     if scalar is not None:

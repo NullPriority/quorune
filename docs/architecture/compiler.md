@@ -5259,6 +5259,11 @@ trigger. The child also accepts a controlled subtype as a power-damage source
 target, including a Kindred permanent. Effects with a different target chooser
 require their own binding.
 
+An entry and scheduled-step pair can share a targeted linked return. The
+linked instruction supplies the returned card reference. A reflexive payment
+defers that link and its target to the child frame, while each subscription
+keeps its own occurrence predicate.
+
 Target-effect corpus assurance recognizes the Expend trigger wrapper while
 independently recompiling its target result. The printed threshold, player
 relation and event must still match the typed event binding, and the wrapper's

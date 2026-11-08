@@ -96,7 +96,7 @@
       "produced_mana": [],
       "released_at": "2022-04-29",
       "toughness": "1",
-      "type_line": "Creature \u2014 Human Wizard"
+      "type_line": "Creature — Human Wizard"
     },
     {
       "cmc": 5.0,
@@ -192,7 +192,7 @@
       "produced_mana": [],
       "released_at": "2018-06-08",
       "toughness": "4",
-      "type_line": "Creature \u2014 Elf Advisor"
+      "type_line": "Creature — Elf Advisor"
     },
     {
       "cmc": 2.0,
@@ -241,7 +241,7 @@
       "produced_mana": [],
       "released_at": "2026-01-23",
       "toughness": "2",
-      "type_line": "Legendary Creature \u2014 Human Cleric"
+      "type_line": "Legendary Creature — Human Cleric"
     },
     {
       "cmc": 5.0,
@@ -288,7 +288,7 @@
       "produced_mana": [],
       "released_at": "2021-06-18",
       "toughness": "4",
-      "type_line": "Creature \u2014 Beast"
+      "type_line": "Creature — Beast"
     },
     {
       "cmc": 3.0,
@@ -337,7 +337,7 @@
       "produced_mana": [],
       "released_at": "2021-06-18",
       "toughness": "2",
-      "type_line": "Creature \u2014 Treefolk"
+      "type_line": "Creature — Treefolk"
     },
     {
       "cmc": 1.0,
@@ -649,7 +649,7 @@
       "produced_mana": [],
       "released_at": "2024-06-14",
       "toughness": "3",
-      "type_line": "Creature \u2014 Horror",
+      "type_line": "Creature — Horror",
       "mana_value": 0
     },
     {
@@ -737,8 +737,542 @@
       "produced_mana": [],
       "released_at": "2024-06-14",
       "toughness": "1",
-      "type_line": "Creature \u2014 Human",
+      "type_line": "Creature — Human",
       "mana_value": 0
+    },
+    {
+      "oracle_id": "b0ed9fbe-324d-467a-a326-c6f85a4c688a",
+      "name": "Ant-Man, Colony Commander",
+      "mana_cost": "{1}{G}{U}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Rogue Hero",
+      "oracle_text": "Whenever Ant-Man attacks, you may pay {1}. When you do, put a +1/+1 counter on target creature.\nWhenever you put a +1/+1 counter on a creature, create a 1/1 green Insect creature token. This ability triggers only once each turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "39145960-a212-46b4-addb-4b187f6bf6fd",
+      "name": "Knight of Wundagore",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Cat Knight Villain",
+      "oracle_text": "Trample\nWhenever you put a +1/+1 counter on another creature, put a +1/+1 counter on this creature. This ability triggers only once each turn.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a86117c1-b83d-4350-9a10-a23b7e67e1bd",
+      "name": "Mikey & Leo, Chaos & Order",
+      "mana_cost": "{G/W}{G/W}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Mutant Ninja Turtle",
+      "oracle_text": "Whenever you put a counter on a creature you control, draw a card. This ability triggers only once each turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "650bf82e-7f83-470c-bf4a-34281bfe9341",
+      "name": "Battlegrowth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Put a +1/+1 counter on target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "4eafe158-abff-43e9-aeae-596430c5ce21",
+      "name": "Scar",
+      "mana_cost": "{B/R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Put a -1/-1 counter on target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1f21cf59-6390-44b4-ab2e-ef290dfd8c85",
+      "name": "Nest of Scarabs",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever you put one or more -1/-1 counters on a creature, create that many 1/1 black Insect creature tokens.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-04-28",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "name": "Lonis, Genetics Expert",
+      "mana_cost": "{1}{G/U}{G/U}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Snake Elf Detective",
+      "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhenever one or more +1/+1 counters are put on Lonis, investigate that many times.\nWhenever you sacrifice a Clue, put a +1/+1 counter on another target creature you control.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Evolve",
+        "Investigate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ab9ff8e9-0ffa-4ccf-a4bf-8505079616f6",
+      "name": "Casey Jones, Back Alley Brute",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Berserker",
+      "oracle_text": "Menace\nWhenever Casey Jones attacks, put a +1/+1 counter on target attacking creature.\nWhenever you put one or more +1/+1 counters on a creature you control, Casey Jones deals that much damage to target opponent.",
+      "power": "4",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e296581d-01ac-43bf-898c-2edb4c81bcbe",
+      "name": "Puncture Blast",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Wither (This deals damage to creatures in the form of -1/-1 counters.)\nPuncture Blast deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Wither"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -868,6 +1402,90 @@
       "oracle_id": "fb084141-cb80-479e-b5d4-114c1f31eb6c",
       "published_at": "2018-06-08",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "1f21cf59-6390-44b4-ab2e-ef290dfd8c85",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If an effect has you put more -1/-1 counters on a creature than it has toughness, you’ll put all of those counters on it and create that many Insects, even if that makes its toughness a negative number."
+    },
+    {
+      "oracle_id": "1f21cf59-6390-44b4-ab2e-ef290dfd8c85",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If a creature with wither or infect deals damage to a creature, the controller of the creature with wither or infect puts that many -1/-1 counters on the second creature."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If a creature enters the battlefield with +1/+1 counters on it, consider those counters when determining if evolve will trigger. For example, a 1/1 creature that enters the battlefield with two +1/+1 counters on it will cause the evolve ability of a 2/2 creature to trigger."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "When comparing the stats of the two creatures for evolve, you always compare power to power and toughness to toughness."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Some spells and abilities that investigate may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Clue tokens."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Clue to pay multiple costs. For example, you can't sacrifice a Clue token to activate its own ability and also to activate Alquist Proft, Master Sleuth's ability."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Clue is an artifact type. Even though it appears on some cards with other permanent types, it's never a creature type, a land type, or anything but an artifact type."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If evolve triggers, the stat comparison will happen again when the ability tries to resolve. If neither stat of the new creature is greater, the ability will do nothing. If the creature that entered the battlefield leaves the battlefield before evolve tries to resolve, use its last known power and toughness to compare the stats."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Some abilities trigger \"whenever you sacrifice a Clue\". Those abilities trigger whenever you sacrifice a Clue for any reason, not just to activate a Clue's activated ability."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If multiple creatures enter the battlefield at the same time, evolve may trigger multiple times, although the stat comparison will take place each time one of those abilities tries to resolve. For example, if you control a 2/2 creature with evolve and two 3/3 creatures enter the battlefield, evolve will trigger twice. The first ability will resolve and put a +1/+1 counter on the creature with evolve. When the second ability tries to resolve, neither the power nor the toughness of the new creature is greater than that of the creature with evolve, so that ability does nothing."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If an effect refers to a Clue, it means any Clue artifact, not just a Clue artifact token. For example, you can sacrifice Wrench to pay for Alquist Proft, Master Sleuth's activated ability."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Whenever a creature enters the battlefield under your control, check its power and toughness against the power and toughness of the creature with evolve. If neither stat of the new creature is greater, evolve won't trigger at all."
+    },
+    {
+      "oracle_id": "52d8e492-b7b7-4ad4-8f1f-5c50993e55e0",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "When comparing the stats as the evolve ability resolves, it's possible that the stat that's greater changes from power to toughness or vice versa. If this happens, the ability will still resolve and you'll put a +1/+1 counter on the creature with evolve. For example, if you control a 2/2 creature with evolve and a 1/3 creature enters the battlefield under your control, it toughness is greater so evolve will trigger. In response, the 1/3 creature gets +2/-2. When the evolve trigger tries to resolve, its power is greater. You'll put a +1/+1 counter on the creature with evolve."
+    },
+    {
+      "oracle_id": "e296581d-01ac-43bf-898c-2edb4c81bcbe",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "This is the only instant or sorcery spell that has wither. It works like anything else with wither: If it deals damage to a creature, the damage results in -1/-1 counters; if it deals damage to a player or planeswalker, the damage behaves normally."
     }
   ],
   "schema_version": 1,

@@ -14,6 +14,7 @@ from ..scalar_effect_amount_model import (
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec, PublicQueryAmountError
 from ..rules.source_references import SourceReferenceSpec
 from ..counter_names import normalized_counter_name
+from ..counter_placement_event_model import COUNTER_PLACEMENT_EVENT, counter_placement_condition_names_kind
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..public_history_query_model import PublicHistoryQuerySpec
 from .declared_effect_amounts import declared_effect_amount_template, _result_slot
@@ -22,7 +23,10 @@ from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
 _ZONE_EVENTS = {"permanent.enter", "artifact.enter", "creature.enter", "creature.dies",
                 "permanent.leave", "permanent.graveyard", "artifact.graveyard"}
-_AMOUNT_EVENTS = {"life.gained", "damage.dealt", "damage.dealt.self", "combat.damage.player", "damage.received", "combat.damage.received"}
+_AMOUNT_EVENTS = {
+    "life.gained", "damage.dealt", "damage.dealt.self", "combat.damage.player",
+    "damage.received", "combat.damage.received", COUNTER_PLACEMENT_EVENT,
+}
 _HISTORY = {
     "the amount of life you gained this turn": "life_gained",
     "the amount of life you lost this turn": "life_lost",
@@ -253,6 +257,17 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
         additional=(*additional,CAST_MANA_VALUE_MECHANIC)
     return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
+
+
+def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
+    """Bind the scalar result to the quantities supplied by this subscription."""
+    event = binding.event.value
+    if event == COUNTER_PLACEMENT_EVENT and not counter_placement_condition_names_kind(binding.event_condition):
+        event = None
+    return scalar_effect_amount_template(
+        text, source_name=source_name, compile_fixed=compile_fixed, event=event,
+        source_event=binding.variant.startswith("source_"),
+    )
 
 
 def source_scalar_effect_amount_template(text,*,source_name,event,compile_fixed):

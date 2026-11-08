@@ -22,6 +22,25 @@ import test_self_public_zone_casting as zone_actions
 
 
 class ReflexivePaymentCompilerTests(unittest.TestCase):
+    def test_paired_entry_and_step_allow_a_local_linked_target(self):
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+
+        head = "When this enchantment enters and at the beginning of your end step, "
+        body = ("you may pay {1}{W}. When you do, exile target creature you control, "
+                "then return that card to the battlefield under its owner's control.")
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record(head + body, "Enchantment"), capability_registry=registry,
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
+        self.assertEqual(("permanent.enter", "step.begin"), tuple(child.event for child in subscriptions.subscriptions))
+        self.assertIsNone(node.target_schema)
+        self.assertIsNotNone(node.effects[0]["reflexive_program"]["target_schema"])
+        unsupported = compile_oracle_card(record(head + "put a +1/+1 counter on that creature.", "Enchantment"),
+                                          capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", unsupported.status)
+
     def test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads(self):
         from copy import deepcopy
         from quorune.oracle_ir import _contextual_effect_templates
@@ -559,3 +578,63 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
         bound = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile="commander_review")
         self.assertFalse(bound["strict"])
         self.assertIn(f"capability:undeclared_runtime_dependency:{capability}", bound["blockers"])
+
+    def test_quantum_entanglement_pays_and_targets_after_each_independent_occurrence(self):
+        from quorune.turn_step_owner import TURN_STEPS
+
+        session = self.session(603824001)
+        source = self.add(session.engine, "Quantum Entanglement", zone="hand")
+        other_entry = self.add(session.engine, "Honden of Infinite Rage", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", ref="quantum-owned-target")
+        foreign = self.add(session.engine, "Generic Bound Body", seat="B", ref="quantum-foreign-target")
+        for index in range(4):
+            self.add(session.engine, "Generic Bound Plains", ref=f"quantum-plains-{index}")
+        self.assert_closed(session, source)
+        self.assert_closed(session, other_entry)
+        self.prepare(session, mana={"C": 7, "W": 4, "R": 2})
+        session.state.phase, session.state.step = "postcombat_main", "main"
+        session.state.phase_index = TURN_STEPS.index(("postcombat_main", "main"))
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        self.assertEqual("permanent.enter", session.state.stack[-1].context["event"])
+        self.pay_for_targeted_child(session)
+        before = authoritative_state_hash(session.state)
+        wrong = session.act("pilot:A", {"action_id": "choose", "targets": [foreign.ref]})
+        self.assertFalse(wrong.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        original = session.state.cards[target.object_id].logical_object_id
+        self.choose(session, targets=[target.ref])
+        self.assertIsNone(self.resolve(session))
+        first_return = session.state.cards[target.object_id].logical_object_id
+        self.assertNotEqual(original, first_return)
+
+        self.cast(session, "A", other_entry)
+        self.assertIsNone(self.resolve(session))
+        self.advance_to(session, "semantic.choice")
+        self.assertEqual(("ending", "end_step"), (session.state.phase, session.state.step))
+        self.assertEqual("step.begin", session.state.stack[-1].context["event"])
+        session = self.replay(session, load=True)
+        self.pay_for_targeted_child(session)
+        self.choose(session, targets=[target.ref])
+        self.assertIsNone(self.resolve(session))
+        second_return = session.state.cards[target.object_id].logical_object_id
+        self.assertNotIn(second_return, {original, first_return})
+        self.replay(session, load=True)
+
+        opponent_turn = self.session(603824002)
+        self.add(opponent_turn.engine, "Quantum Entanglement")
+        self.add(opponent_turn.engine, "Generic Bound Body", ref="opposing-turn-eligible-target")
+        self.prepare(opponent_turn, actor="B", active="B")
+        opponent_turn.state.phase, opponent_turn.state.step = "postcombat_main", "main"
+        opponent_turn.state.phase_index = TURN_STEPS.index(("postcombat_main", "main"))
+        self.checkpoint(opponent_turn)
+        for _ in range(8):
+            if opponent_turn.state.step == "end_step":
+                break
+            result = opponent_turn.act(opponent_turn.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("end_step", opponent_turn.state.step)
+        self.assertFalse(opponent_turn.state.stack)
+        self.assertEqual("priority", opponent_turn.state.pending_decision.kind)
+        self.replay(opponent_turn, load=True)
