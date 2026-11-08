@@ -70257,14 +70257,20 @@
       "implementation_mutation_rationale": "Focused event-dispatch and compiler mutations suppress the public occurrence or its typed binding; the draw-trigger and exact CardProgram assertions reject both survivors.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_draw_and_second_draw_counter_triggers_share_one_batch"
+        "test_draw_and_second_draw_counter_triggers_share_one_batch",
+        "test_opponent_second_draw_composes_prep_counter_draw_and_graveyard_return",
+        "test_any_player_second_draw_includes_the_controller_once"
       ],
       "multiplayer_tests": [
-        "test_draw_and_second_draw_counter_triggers_share_one_batch"
+        "test_draw_and_second_draw_counter_triggers_share_one_batch",
+        "test_opponent_second_draw_composes_prep_counter_draw_and_graveyard_return",
+        "test_any_player_second_draw_includes_the_controller_once"
       ],
       "negative_tests": [
         "test_normalized_player_result_events_are_strict_public_values",
-        "test_adjacent_event_and_effect_variants_remain_material"
+        "test_adjacent_event_and_effect_variants_remain_material",
+        "test_public_second_draw_scopes_bind_the_committed_event_and_graveyard_owner",
+        "test_any_player_second_draw_includes_the_controller_once"
       ],
       "official_rules": [
         "121.1",
@@ -70275,13 +70281,19 @@
       ],
       "positive_tests": [
         "test_normalized_player_result_events_are_strict_public_values",
-        "test_draw_counter_triggers_use_public_normalized_events"
+        "test_draw_counter_triggers_use_public_normalized_events",
+        "test_public_second_draw_scopes_bind_the_committed_event_and_graveyard_owner",
+        "test_opponent_second_draw_composes_prep_counter_draw_and_graveyard_return",
+        "test_any_player_second_draw_includes_the_controller_once"
       ],
       "privacy_tests": [
-        "test_draw_counter_triggers_use_public_normalized_events"
+        "test_draw_counter_triggers_use_public_normalized_events",
+        "test_opponent_second_draw_composes_prep_counter_draw_and_graveyard_return"
       ],
       "replay_tests": [
-        "test_player_result_counter_replacement_is_private_and_replays_exactly"
+        "test_player_result_counter_replacement_is_private_and_replays_exactly",
+        "test_opponent_second_draw_composes_prep_counter_draw_and_graveyard_return",
+        "test_any_player_second_draw_includes_the_controller_once"
       ],
       "required_evidence": [
         "positive",

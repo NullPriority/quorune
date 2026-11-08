@@ -240,3 +240,103 @@ class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
         self.settle(session)
         self.assertEqual(refs, self.top_refs(session, 2))
         self.replay(session, load=True)
+
+
+    def test_opponent_second_draw_composes_prep_counter_draw_and_graveyard_return(self):
+        from quorune.preparation_model import PREPARED_FIELD, PreparedDesignation
+
+        session = self.session(121_832_001)
+        engine = session.engine
+        mastermind = self.add(engine, "Faerie Mastermind", zone="hand")
+        dusk = self.add(engine, "Defacing Duskmage")
+        widow = self.add(engine, "Black Widow, Agile Avenger")
+        detective = self.add(engine, "Dogged Detective", zone="graveyard")
+        first = self.add(engine, "Reach Through Mists", seat="B", zone="hand")
+        brainstorm = self.add(engine, "Brainstorm", seat="B", zone="hand")
+        for index in range(2):
+            self.add(engine, "Island", seat="B", ref=f"ordinal-island-{index}")
+        for source in (mastermind, dusk, widow, detective, first, brainstorm):
+            self.assert_closed(session, source)
+        programs = [p for p in engine.semantics.programs_for_oracle(mastermind.oracle_id)
+                    if p.event == "card.second_draw"]
+        self.assertEqual(1, len(programs))
+        self.assertTrue(programs[0].provenance["authored_by"].startswith("oracle-ir-v"))
+        self.prepare(session, mana={"C": 1, "U": 1})
+        self.checkpoint(session)
+
+        self.cast_for(session, "B", first)
+        self.assertIsNone(self.resolve(session))
+        turn = str(session.state.turn_sequence)
+        b_player = session.state.players["B"]
+        self.assertEqual(1, b_player.stats["cards_drawn_by_turn"][turn])
+        self.cast_for(session, "A", mastermind)
+        self.assertIsNone(self.resolve(session))
+        a_draws = session.state.players["A"].stats.get("cards_drawn_by_turn", {}).get(turn, 0)
+
+        before = set(b_player.zones["hand"])
+        self.cast_for(session, "B", brainstorm)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("pilot:B",), tuple(session.pending_principals()))
+        self.assertEqual(4, b_player.stats["cards_drawn_by_turn"][turn])
+        self.assertFalse(any(item.source_object_id in {source.object_id for source in (mastermind, dusk, widow, detective)}
+                             for item in session.state.stack))
+        drawn = [session.state.cards[oid].ref for oid in b_player.zones["hand"] if oid not in before]
+        self.assertEqual(3, len(drawn))
+        foreign = session.packet("pilot:A", full=True)
+        self.assertIsNone(foreign["decision"])
+        for ref in drawn:
+            self.assertNotIn(json.dumps(ref), json.dumps(foreign))
+        session = self.replay(session, load=True)
+        accepted = session.act("pilot:B", {"action_id": "choose", "cards": [drawn[2], drawn[0]]})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+        self.assertEqual("trigger.order", session.state.pending_decision.kind)
+        self.assertEqual(("pilot:A",), tuple(session.pending_principals()))
+        triggers = [item for batch in session.state.pending_trigger_batches for item in batch.items]
+        self.assertCountEqual([card.object_id for card in (mastermind, dusk, widow, detective)],
+                              [item.source_object_id for item in triggers])
+        ctx = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        ordered = session.act("pilot:A", {"action_id": "order", "triggers": [row["id"] for row in ctx["triggers"]]})
+        self.assertTrue(ordered.ok, ordered.summary)
+        pending = self.resolve(session)
+        self.assertEqual("semantic.choice", pending.kind)
+        self.assertEqual(("pilot:A",), tuple(session.pending_principals()))
+        self.assertEqual("graveyard", session.state.cards[detective.object_id].zone)
+        applied = session.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(applied.ok, applied.summary)
+        self.settle(session)
+        self.assertEqual("hand", session.state.cards[detective.object_id].zone)
+        self.assertEqual(1, session.state.cards[widow.object_id].counters.get("+1/+1"))
+        designation = PreparedDesignation.from_dict(session.state.cards[dusk.object_id].annotations[PREPARED_FIELD])
+        self.assertEqual("Vandal's Edit", session.engine.display_name(designation.copy_id))
+        self.assertEqual(a_draws + 2, session.state.players["A"].stats["cards_drawn_by_turn"][turn])
+        self.replay(session, load=True)
+
+    def test_any_player_second_draw_includes_the_controller_once(self):
+        session = self.session(121_832_002)
+        king = self.add(session.engine, "King T'Challa", zone="hand")
+        mastermind = self.add(session.engine, "Faerie Mastermind")
+        brainstorm = self.add(session.engine, "Brainstorm", zone="hand")
+        drawn = self.top_cards(session)
+        for source in (king, mastermind, brainstorm):
+            self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "W": 1, "U": 2})
+        self.checkpoint(session)
+        offer = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                     if row["id"] == f"cast:{king.ref}")
+        cast = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "reserve": {"U": 1}})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[king.object_id].zone)
+        self.assertEqual("King T'Challa", session.state.cards[king.object_id].active_face)
+        turn = str(session.state.turn_sequence)
+        before = session.state.players["A"].stats.get("cards_drawn_by_turn", {}).get(turn, 0)
+        self.assertEqual(0, before)
+        self.cast_for(session, "A", brainstorm)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        session = self._choose_hand_top(session, [drawn[2].ref, drawn[0].ref])
+        self.assertEqual(1, self.trigger_count(session, king))
+        self.assertEqual(0, self.trigger_count(session, mastermind))
+        self.settle(session)
+        self.assertEqual(4, session.state.players["A"].stats["cards_drawn_by_turn"][turn])
+        self.replay(session, load=True)

@@ -109,6 +109,10 @@ _OPPONENT_CARD_DRAW_TRIGGER = re.compile(
     r"^Whenever an opponent draws a card, (?P<body>.+)$",
     re.IGNORECASE,
 )
+_PUBLIC_SECOND_DRAW_TRIGGER = re.compile(
+    r"^Whenever (?P<scope>an opponent|a player) draws their second card each turn, (?P<body>.+)$",
+    re.IGNORECASE,
+)
 _HEROIC_TRIGGER = re.compile(
     r"^Whenever you cast a spell that targets (?P<subject>.+?), "
     r"(?P<body>.+)$",
@@ -1103,6 +1107,18 @@ def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
             face_up.group("body"),
             "fixed-counter-public-face-up-trigger-v1",
             "trigger-event-normalized-public-action",
+        )
+    second_draw = _PUBLIC_SECOND_DRAW_TRIGGER.fullmatch(material_line)
+    if second_draw is not None:
+        opponent = second_draw["scope"].casefold() == "an opponent"
+        condition = (
+            {"field": "player", "op": "ne", "value": "$source.controller"}
+            if opponent else {"field": "draw_ordinal", "op": "eq", "value": 2}
+        )
+        return _spec(
+            "card.second_draw", "opponent_second_draw" if opponent else "any_player_second_draw",
+            second_draw["body"], "fixed-counter-public-second-draw-trigger-v1",
+            "trigger-event-normalized-card-draw", condition=condition,
         )
     opponent_draw = _OPPONENT_CARD_DRAW_TRIGGER.fullmatch(material_line)
     if opponent_draw is not None:

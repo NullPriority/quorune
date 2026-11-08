@@ -1,9 +1,10 @@
 """An existing event head with a source-self graveyard-to-hand result."""
 import re
 from dataclasses import replace
-from ..life_change import FIRST_LIFE_GAIN_EVENT
 from ..rules.source_references import SourceReferenceSpec
-from ..rules.graveyard_self_return import GRAVEYARD_SELF_RETURN_CAPABILITY,GRAVEYARD_SELF_RETURN_VERSION
+from ..rules.graveyard_self_return import (
+    GRAVEYARD_SELF_RETURN_CAPABILITY, GRAVEYARD_SELF_RETURN_EVENTS, GRAVEYARD_SELF_RETURN_VERSION,
+)
 
 
 def _return_body(body,card_name,*,optional):
@@ -21,7 +22,8 @@ def graveyard_self_return_binding(text,*,card_name,compile_binding):
     if 'one or more' in split['head'].casefold():return None
     base=compile_binding(split['head']+', draw a card.')
     if base is None or base.public_state_condition is not None:return None
-    if base.event.value not in {'step.begin','spell.cast','land.enter','permanent.enter','creature.enter','artifact.enter','enchantment.enter','permanent.sacrificed',FIRST_LIFE_GAIN_EVENT}:return None
+    if base.event.value not in GRAVEYARD_SELF_RETURN_EVENTS:
+        return None
     if any(word in split['head'].casefold() for word in ('enchanted','equipped','this creature','this artifact','this enchantment')):return None
     condition=base.event_condition
     def owner_relative(value):

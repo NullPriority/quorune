@@ -104,6 +104,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-public-designation-trigger-v1",
         "fixed-counter-public-multi-event-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
+        "fixed-counter-public-second-draw-trigger-v1",
         "fixed-counter-entry-return-public-zone-trigger-v1",
         "fixed-counter-heroic-spell-cast-trigger-v1",
         "fixed-counter-magecraft-spell-action-trigger-v1",

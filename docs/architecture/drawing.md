@@ -64,11 +64,17 @@ The internal resolving-hand permission does not create an ordinary hand casting
 method. A card that leaves and returns to hand cannot reuse the older trigger.
 
 After an ordinary draw commits, `player_result_events.py` derives one immutable
-public occurrence with the drawer, controller-relative ordinal, and own-draw-
+public occurrence with the drawer, per-player ordinal, and own-draw-
 step facts. It dispatches the ordinary draw, exact second draw, and represented
 draw-except-first-draw-step events in one trigger batch without exposing the
 drawn object's identity. A prevented draw, an empty-library attempt, or a
 replacement result that is not a draw emits no such occurrence.
+
+Compiled second-draw triggers can match the controller, an opponent, or any
+player. The ordinal belongs to the drawing player and advances only on a
+committed draw. An opponent-relative return from the graveyard uses the source's
+owner. Existing controller-only and reviewed programs retain their event
+conditions.
 
 `drawing/coordinator.py` iteratively drains individual events and queued
 instructions, discovers trusted runtime instruction-count and individual

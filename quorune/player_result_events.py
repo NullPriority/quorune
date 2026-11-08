@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
-from .life_change import FIRST_LIFE_GAIN_EVENT, LifeChangeRecord
+from .life_change import FIRST_LIFE_GAIN_EVENT, LifeChangeRecord, first_life_gain_runtime_dependencies
 from .model import StackItem
 from .replacement.immutable import FrozenMap
 from .trigger_processing import enqueue_trigger_batch
@@ -129,6 +129,19 @@ class LifeGainEvent:
 
     def semantic_context(self) -> FrozenMap:
         return FrozenMap({"player": self.player, "amount": self.amount})
+
+
+def player_result_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
+    """Bind the committed draw and life results used by a typed program."""
+    required = first_life_gain_runtime_dependencies(program, subscriptions)
+    if program.event == "card.second_draw" and program.provenance.get("template_id") in {
+        "fixed-counter-public-second-draw-trigger-v1",
+        "fixed-typed-effect-public-second-draw-trigger-v1",
+        "fixed-counter-graveyard-self-return-v1",
+        "fixed-typed-effect-graveyard-self-return-v1",
+    }:
+        return (*required, "trigger.event.normalized_card_draw")
+    return required
 
 
 def dispatch_card_draw_event(
