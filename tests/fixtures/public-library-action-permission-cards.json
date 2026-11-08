@@ -7,7 +7,9 @@
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{2}",
       "name": "Generic Library Look Permission",
@@ -26,7 +28,9 @@
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{2}",
       "name": "Generic Library Reveal Permission",
@@ -45,7 +49,9 @@
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{3}",
       "name": "Generic Library Action Permission",
@@ -64,7 +70,9 @@
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{3}",
       "name": "Generic Additional Land Permission",
@@ -83,7 +91,9 @@
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{3}",
       "name": "Generic Two Additional Lands Permission",
@@ -97,12 +107,18 @@
     },
     {
       "cmc": 2.0,
-      "color_identity": ["G"],
-      "colors": ["G"],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{1}{G}",
       "name": "Generic Library-Top Creature",
@@ -121,21 +137,1002 @@
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "",
       "name": "Generic Library-Top Land",
       "oracle_id": "00000000-0000-4000-8000-000116310007",
       "oracle_text": "{T}: Add {C}.",
       "power": null,
-      "produced_mana": ["C"],
+      "produced_mana": [
+        "C"
+      ],
       "released_at": "2026-01-01",
       "toughness": null,
       "type_line": "Land"
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "name": "The Reality Chip",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Legendary Artifact Creature — Equipment Jellyfish",
+      "oracle_text": "You may look at the top card of your library any time.\nAs long as The Reality Chip is attached to a creature, you may play lands and cast spells from the top of your library.\nReconfigure {2}{U} ({2}{U}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "0",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Reconfigure"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2ca9e6e5-5eec-4593-8816-5c4317c79eb0",
+      "name": "Summoning Materia",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "You may look at the top card of your library any time.\nAs long as this Equipment is attached to a creature, you may cast creature spells from the top of your library.\nEquipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\"\nEquip {2}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
+      "name": "Verge Rangers",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Scout Ranger",
+      "oracle_text": "First strike\nYou may look at the top card of your library any time.\nAs long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "First strike"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9e774188-caa1-4b62-b9cc-547f8e444b7f",
+      "name": "Augur of Autumn",
+      "mana_cost": "{1}{G}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Druid",
+      "oracle_text": "You may look at the top card of your library any time.\nYou may play lands from the top of your library.\nCoven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Coven"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "name": "Realmwalker",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "Changeling (This card is every creature type.)\nAs this creature enters, choose a creature type.\nYou may look at the top card of your library any time.\nYou may cast creature spells of the chosen type from the top of your library.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Changeling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "927fb139-0493-48be-8cc4-2c7d854d6a55",
+      "name": "Radha, Heart of Keld",
+      "mana_cost": "{1}{R}{G}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Elf Warrior",
+      "oracle_text": "During your turn, Radha has first strike.\nYou may look at the top card of your library any time, and you may play lands from the top of your library.\n{4}{R}{G}: Radha gets +X/+X until end of turn, where X is the number of lands you control.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "df9409e6-bd6d-4b5b-b807-fcf347ee940a",
+      "name": "Glarb, Calamity's Augur",
+      "mana_cost": "{B}{G}{U}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Frog Wizard Noble",
+      "oracle_text": "Deathtouch\nYou may look at the top card of your library any time.\nYou may play lands and cast spells with mana value 4 or greater from the top of your library.\n{T}: Surveil 2.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Surveil",
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "6e880df6-fc00-43d2-a9c8-f575f40b78c6",
+      "name": "Stone Rain",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy target land.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-07-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Elvish Mystic",
+      "oracle_id": "3f3b2c10-21f8-4e13-be83-4ef3fa36e123",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-08-14",
+      "toughness": "1",
+      "type_line": "Creature — Elf Druid"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Battlegrowth",
+      "oracle_id": "650bf82e-7f83-470c-bf4a-34281bfe9341",
+      "oracle_text": "Put a +1/+1 counter on target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2003-10-02",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Reach Through Mists",
+      "oracle_id": "c81ca8ff-92f3-481e-82f7-0673b6c74ea0",
+      "oracle_text": "Draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-03-31",
+      "toughness": null,
+      "type_line": "Instant — Arcane"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{R}",
+      "name": "Blaze",
+      "oracle_id": "0596920f-9946-42f4-a03b-24aab67f9f1b",
+      "oracle_text": "Blaze deals X damage to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-06-08",
+      "toughness": null,
+      "type_line": "Sorcery"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
-  "rulings": [],
+  "rulings": [
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Once you cast a spell from the top of your library, causing The Reality Chip to no longer be attached to a creature will have no effect on that spell."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The top card of your library is still in your library and not in your hand. You can't discard cards from the top of your library (for example, to activate their channel abilities)."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "You must pay all costs and follow all timing rules for cards played from the top of your library this way. For example, you may play a land this way only while the stack is empty during one of your own main phases, and only if you haven't played a land yet this turn."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "2ca9e6e5-5eec-4593-8816-5c4317c79eb0",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "You must follow all normal timing rules for spells cast using the second ability and must pay all costs for spells cast this way. To cast a spell this way, you may choose to pay any alternative costs or optional additional costs the spell may have (such as a kicker cost). You must pay any mandatory additional costs."
+    },
+    {
+      "oracle_id": "2ca9e6e5-5eec-4593-8816-5c4317c79eb0",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The top card of your library isn't in your hand, so you can't cycle it, discard it, or activate any of its abilities that could be activated from your hand."
+    },
+    {
+      "oracle_id": "2ca9e6e5-5eec-4593-8816-5c4317c79eb0",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you cast the top card of your library, you can't look at the next one until you're done paying for that spell."
+    },
+    {
+      "oracle_id": "2ca9e6e5-5eec-4593-8816-5c4317c79eb0",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Summoning Materia lets you look at the top card of your library whenever you want (with one restriction—see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand."
+    },
+    {
+      "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Verge Rangers doesn't allow you to play additional lands."
+    },
+    {
+      "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Verge Rangers lets you look at the top card of your library whenever you want (with one restriction; see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand."
+    },
+    {
+      "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you play a land from the top of your library and it has a replacement effect that requires you to make a decision (such as that of Temple Garden), you must make that decision without knowing the next card of your library."
+    },
+    {
+      "oracle_id": "9e774188-caa1-4b62-b9cc-547f8e444b7f",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "The top card of your library isn't in your hand, so you can't suspend it, cycle it, discard it, or activate any of its activated abilities."
+    },
+    {
+      "oracle_id": "9e774188-caa1-4b62-b9cc-547f8e444b7f",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "You still pay all costs for that spell, including additional costs. You may also pay alternative costs."
+    },
+    {
+      "oracle_id": "9e774188-caa1-4b62-b9cc-547f8e444b7f",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "Augur of Autumn doesn't change the times when you can play a land card from the top of your library. You can play a land only during your main phase when you have priority and the stack is empty. Doing so counts as your land play for the turn."
+    },
+    {
+      "oracle_id": "9e774188-caa1-4b62-b9cc-547f8e444b7f",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "While you have three creatures with different powers, Augur of Autumn allows you to cast the top card of your library if it's a creature card, it's your main phase, and the stack is empty. If that creature card has flash, you'll be able to cast it any time you could cast an instant, even on an opponent's turn."
+    },
+    {
+      "oracle_id": "9e774188-caa1-4b62-b9cc-547f8e444b7f",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "Essentially, Augur of Autumn lets you play with the top card of your library revealed only to you. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand. You may look at the top card of your library whenever you want, even if you don't have priority. This action doesn't use the stack."
+    },
+    {
+      "oracle_id": "9e774188-caa1-4b62-b9cc-547f8e444b7f",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If the top card of your library changes during the process of casting a spell or activating an ability, you can't look at the new top card until the process of casting the spell or activating the ability ends (all targets are chosen, all costs are paid, and so on)."
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you cast a spell from the top of your library, you can't look at the next one until you're done paying for that spell."
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You can look at the top card of your library whenever you want (with one restriction; see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand."
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You must choose an existing creature type, such as Elk or Advisor. You can't choose card types (e.g., artifact) or supertypes (e.g., snow)."
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Realmwalker doesn't change when you can cast creature spells. Normally, this means during your main phase when the stack is empty, although flash may change this."
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If Realmwalker is somehow on the battlefield with no choice having been made for it, you may still look at the top card of your library any time. You won't be able to cast any creature spells from the top of your library, even if they have no creature types."
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The top card of your library isn't in your hand, so you can't foretell it, discard it, or activate any of its activated abilities."
+    },
+    {
+      "oracle_id": "b81eaa2f-0554-41c6-bdf6-d1cb73b8f56f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You'll still pay all costs for the spell, including additional costs. You may also pay alternative costs if any are available."
+    },
+    {
+      "oracle_id": "df9409e6-bd6d-4b5b-b807-fcf347ee940a",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If the top card of your library has {X} in its mana cost, you must choose a value of X that makes that spell's mana value 4 or greater in order to cast it."
+    },
+    {
+      "oracle_id": "df9409e6-bd6d-4b5b-b807-fcf347ee940a",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you cast a spell from the top of your library, you can't look at the next one until you're done paying for that spell."
+    },
+    {
+      "oracle_id": "df9409e6-bd6d-4b5b-b807-fcf347ee940a",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "You can look at the top card of your library whenever you want (with one restriction; see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand."
+    },
+    {
+      "oracle_id": "df9409e6-bd6d-4b5b-b807-fcf347ee940a",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "You must pay all costs and follow all timing rules for lands played and spells cast from the top of your library this way."
+    }
+  ],
   "schema_version": 1,
   "source": "Generic public library action-permission fixtures"
 }

@@ -1,4 +1,4 @@
-"""Casting source placement, prospective prices, and immediate triggers."""
+"""Casting source authority, prospective prices, and immediate triggers."""
 from collections import ChainMap
 from dataclasses import dataclass, replace
 from types import MappingProxyType
@@ -6,6 +6,30 @@ from ...cast_source_placement_model import cast_source_placement_version
 from .public_conditions import prospective_cost_condition_view
 from ...characteristic_read_frames import CharacteristicReadHost as _ProspectiveCharacteristicReadHost
 from ...characteristic_read_frames import CharacteristicStateView
+
+
+def revalidate_cast_source(host, proposal, details, response):
+    """Resolve the exact declared source and recheck any live library access."""
+    from .model import CastProposalError
+
+    card = host._resolve_object(proposal.seat, proposal.card_ref, zones={proposal.origin}, owned_only=False)
+    if card.object_id != proposal.object_id or card.zone != proposal.origin:
+        raise CastProposalError('The casting source changed after proposal construction', reason='stale_source')
+    record = host.card_record(card)
+    if record is None:
+        raise CastProposalError('The casting card record is unavailable')
+    if card.zone == 'library':
+        from ...morph import FACE_DOWN_CAST_METHODS
+        from .face_queries import selected_cast_card_view, validate_library_top_cast_commit
+
+        method = details.get('cast_method')
+        view = selected_cast_card_view(host, card, proposal.face, method)
+        try:
+            validate_library_top_cast_commit(host, proposal.seat, view, details['selected_cost_option'], response,
+                face_down=method in FACE_DOWN_CAST_METHODS)
+        except ValueError as exc:
+            raise CastProposalError(str(exc), reason='stale_library_top_permission') from exc
+    return card, record, host.semantics.get(proposal.semantic_key)
 
 
 @dataclass(frozen=True,slots=True)

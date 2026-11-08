@@ -5935,6 +5935,28 @@
       ]
     },
     {
+      "id": "qualified-library-top-action-contract",
+      "patterns": [
+        "quorune/compiler/action_permission_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/rules/casting/source_placement.py",
+        "quorune/rules/zone_action_permissions.py",
+        "quorune/semantic_runtime/action_permissions.py",
+        "tests/fixtures/public-library-action-permission-cards.json",
+        "tests/test_static_action_permissions.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_cast_source_placement",
+        "test_delivery_interaction_boundaries",
+        "test_reconfigure",
+        "test_static_action_permissions"
+      ]
+    },
+    {
       "id": "opening-hand-battlefield-contract",
       "patterns": [
         "quorune/aura/decisions.py",

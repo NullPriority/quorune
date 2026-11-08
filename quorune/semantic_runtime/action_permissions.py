@@ -3,9 +3,11 @@ from ..entry_copy import copiable_oracle_id
 
 """Typed controller-wide permissions discovered from active CardPrograms."""
 
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, replace
 from enum import StrEnum
 from functools import lru_cache
+from math import ceil
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
@@ -13,6 +15,9 @@ from ..card_program_faces import program_matches_face
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..library_search_model import LibrarySearchRuleSpec
 from ..object_query import ObjectQueryResult, object_matches_query
+from ..public_characteristic_aggregate_model import (
+    CONTROLLED_CREATURES_POWER_QUERY, PublicCharacteristicAggregateSpec,
+)
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
     RuntimeComponentRegistry,
@@ -34,6 +39,9 @@ LIBRARY_TOP_VISIBILITY_HANDLER_ID = (
     "permission.action.library-top-visibility.v1"
 )
 LIBRARY_TOP_ACTION_HANDLER_ID = "permission.action.library-top-action.v1"
+QUALIFIED_LIBRARY_TOP_HANDLER_ID = 'permission.action.library-top-action.v2'
+QUALIFIED_LIBRARY_TOP_CAPABILITY = 'library.action.top.qualified'
+LIBRARY_TOP_MANA_VALUE_CAPABILITY = 'library.action.top.mana_value'
 ADDITIONAL_LAND_PLAY_HANDLER_ID = "permission.action.additional-land-play.v1"
 OPENING_HAND_BATTLEFIELD_HANDLER_ID = "permission.action.opening-hand-battlefield.v1"
 OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
@@ -66,6 +74,28 @@ class ActionPermissionScope(StrEnum):
     ALL_PLAYERS = "all_players"
 
 
+class LibraryTopQualifier(StrEnum):
+    ATTACHED_TO_CREATURE = 'attached_to_creature'
+    DISTINCT_CREATURE_POWERS = 'distinct_creature_powers'
+    OPPONENT_MORE_LANDS = 'opponent_more_lands'
+    CHOSEN_CREATURE_TYPE = 'chosen_creature_type'
+    MINIMUM_SPELL_MANA_VALUE = 'minimum_spell_mana_value'
+
+
+_DISTINCT_POWER = PublicCharacteristicAggregateSpec(
+    'power', 'distinct_count', 'source_controller', CONTROLLED_CREATURES_POWER_QUERY, schema_version=2,
+)
+_BATTLEFIELD_LAND = ObjectQuerySpec(zones=('battlefield',), types_all=('land',))
+
+
+def library_top_qualifier_capabilities(qualifier: LibraryTopQualifier) -> tuple[str, ...]:
+    additional = {
+        LibraryTopQualifier.DISTINCT_CREATURE_POWERS: _DISTINCT_POWER.capability_dependencies,
+        LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE: (LIBRARY_TOP_MANA_VALUE_CAPABILITY,),
+    }
+    return (QUALIFIED_LIBRARY_TOP_CAPABILITY, *additional.get(qualifier, ()))
+
+
 @dataclass(frozen=True, slots=True)
 class ActionPermissionSourceContext:
     source_ref: str
@@ -88,6 +118,8 @@ class StaticActionPermission:
     additional_land_plays: int = 0
     opening_reveal_spec: OpeningRevealSpec | None = None
     library_search_rule: LibrarySearchRuleSpec | None = None
+    library_top_qualifier: LibraryTopQualifier | None = None
+    minimum_spell_mana_value: int | None = None
 
     def __post_init__(self):
         if self.kind is ActionPermissionKind.LIBRARY_SEARCH_RULE and not isinstance(self.library_search_rule,LibrarySearchRuleSpec):
@@ -288,6 +320,7 @@ class LibraryTopActionHandler:
         self,
         descriptor: Mapping[str, Any],
     ) -> tuple[tuple[ObjectQuerySpec, ...], tuple[ObjectQuerySpec, ...]]:
+        qualifier = self.qualifier(descriptor)
         exact_fields(
             descriptor,
             {
@@ -296,18 +329,13 @@ class LibraryTopActionHandler:
                 "event",
                 "land_queries",
                 "spell_queries",
+                *({'qualifier'} if qualifier is not None else ()),
+                *({'minimum_spell_mana_value'} if qualifier is LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE else ()),
             },
             field="Library-top action handler",
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Library-top action handler ID mismatch")
-        if (
-            type(descriptor["schema_version"]) is not int
-            or descriptor["schema_version"] != self.schema_version
-        ):
-            raise SemanticNodeError(
-                "Unsupported library-top action schema version"
-            )
         if descriptor["event"] != self.event:
             raise SemanticNodeError(
                 f"Library-top action handler must use {self.event}"
@@ -341,6 +369,14 @@ class LibraryTopActionHandler:
             raise SemanticNodeError(
                 "Library-top spell queries must exclude the land type"
             )
+        if qualifier is LibraryTopQualifier.CHOSEN_CREATURE_TYPE and (
+            land_queries or spell_queries != (ObjectQuerySpec(types_all=('creature',), excluded_types=('land',)),)
+        ):
+            raise SemanticNodeError('Chosen-type library access requires its closed creature spell query')
+        if qualifier is LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE:
+            amount = descriptor['minimum_spell_mana_value']
+            if not spell_queries or type(amount) is not int or not 1 <= amount <= 99:
+                raise SemanticNodeError('Library-top mana value requires a bounded positive spell threshold')
         if (
             len(land_queries) != len({repr(query) for query in land_queries})
             or len(spell_queries)
@@ -350,6 +386,17 @@ class LibraryTopActionHandler:
                 "Library-top action queries must be unique"
             )
         return land_queries, spell_queries
+
+    def qualifier(self, descriptor: Mapping[str, Any]) -> LibraryTopQualifier | None:
+        version = descriptor.get('schema_version')
+        if type(version) is not int or version != self.schema_version:
+            raise SemanticNodeError('Unsupported library-top action schema version')
+        if version == 1:
+            return None
+        try:
+            return LibraryTopQualifier(descriptor.get('qualifier'))
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError('Unknown qualified library-top action') from exc
 
     def lower(
         self,
@@ -366,8 +413,29 @@ class LibraryTopActionHandler:
                 source_semantic_key=context.source_semantic_key,
                 top_land_queries=land_queries,
                 top_spell_queries=spell_queries,
+                library_top_qualifier=self.qualifier(descriptor),
+                minimum_spell_mana_value=descriptor.get('minimum_spell_mana_value'),
             ),
         )
+
+
+_QUALIFIED_LIBRARY_TOP_HANDLER = LibraryTopActionHandler(handler_id=QUALIFIED_LIBRARY_TOP_HANDLER_ID, schema_version=2,
+    capability_dependencies=('library.action.top.static', QUALIFIED_LIBRARY_TOP_CAPABILITY))
+
+
+def qualified_library_top_runtime_dependencies(program: Any) -> tuple[str, ...]:
+    if program.event != ACTION_PERMISSION_EVENT:
+        return ()
+    required = set()
+    handler = _QUALIFIED_LIBRARY_TOP_HANDLER
+    for descriptor in program.handlers:
+        if descriptor.get('handler_id') != handler.handler_id:
+            continue
+        handler.validate(descriptor)
+        if program.active_zone != 'battlefield' or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage:
+            raise SemanticNodeError('Qualified library access requires its current battlefield ability')
+        required.update(library_top_qualifier_capabilities(handler.qualifier(descriptor)))
+    return tuple(sorted(required))
 
 
 @dataclass(frozen=True, slots=True)
@@ -469,6 +537,7 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
             ),
             LibraryTopVisibilityHandler(),
             LibraryTopActionHandler(),
+            _QUALIFIED_LIBRARY_TOP_HANDLER,
             AdditionalLandPlayHandler(),
         )
     )
@@ -588,46 +657,100 @@ def _is_owned_library_top(
     )
 
 
-def controller_has_library_top_land_permission(
+def _opponent_controls_more_lands(host: ActionPermissionHost, player: str) -> bool:
+    counts = Counter(card.controller for card in host.state.cards.values()
+        if card.zone == 'battlefield' and not card.phased_out
+        and object_matches_query(host._public_object_query_result(card), _BATTLEFIELD_LAND))
+    return any(counts[seat] > counts[player] for seat in host.active_seats if seat != player)
+
+
+def _bound_library_top_queries(host: ActionPermissionHost, permission: StaticActionPermission, *, spell: bool):
+    queries = permission.top_spell_queries if spell else permission.top_land_queries
+    qualifier = permission.library_top_qualifier
+    if not queries or qualifier in {None, LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE}:
+        return queries
+    if qualifier is LibraryTopQualifier.OPPONENT_MORE_LANDS:
+        return queries if _opponent_controls_more_lands(host, permission.player) else ()
+    if qualifier is LibraryTopQualifier.DISTINCT_CREATURE_POWERS:
+        from ..public_characteristic_aggregates import current_public_characteristic_aggregate
+
+        amount = current_public_characteristic_aggregate(host, permission.player, _DISTINCT_POWER)
+        return queries if amount >= 3 else ()
+    source = next((card for card in host.state.cards.values()
+        if card.ref == permission.source_ref and card.logical_object_id == permission.source_logical_object_id), None)
+    if source is None:
+        return ()
+    if qualifier is LibraryTopQualifier.ATTACHED_TO_CREATURE:
+        from ..attachments import attached_object_identity
+
+        attached = attached_object_identity(host.state.cards, source)
+        if attached is None:
+            return ()
+        recipient = host._public_object_query_result(host.state.cards[attached.object_id])
+        return queries if 'creature' in recipient.types else ()
+    from ..rules.chosen_type_events import chosen_type_event_value
+
+    chosen = chosen_type_event_value(source)
+    return tuple(replace(query, subtypes_all=(chosen,)) for query in queries) if chosen is not None else ()
+
+
+def _matching_library_top_permissions(
     host: ActionPermissionHost,
     player: str,
     card: Any,
-) -> bool:
+    *,
+    spell: bool,
+) -> tuple[StaticActionPermission, ...]:
     if not _is_owned_library_top(host, player, card):
-        return False
-    queries = tuple(
-        query
-        for permission in controller_action_permissions(host, player)
-        if permission.kind is ActionPermissionKind.LIBRARY_TOP_ACTION
-        for query in permission.top_land_queries
-    )
-    if not queries:
-        return False
-    row = host._public_object_query_result(card)
-    return any(
-        object_matches_query(row, query) for query in queries
-    )
+        return ()
+    matching = []
+    row = None
+    for permission in controller_action_permissions(host, player):
+        if permission.kind is not ActionPermissionKind.LIBRARY_TOP_ACTION:
+            continue
+        queries = _bound_library_top_queries(host, permission, spell=spell)
+        if not queries:
+            continue
+        if row is None:
+            row = host._public_object_query_result(card)
+        if any(object_matches_query(row, query) for query in queries):
+            matching.append(permission)
+    return tuple(matching)
 
 
-def controller_has_library_top_spell_permission(
-    host: ActionPermissionHost,
-    player: str,
-    card: Any,
-) -> bool:
-    if not _is_owned_library_top(host, player, card):
-        return False
-    queries = tuple(
-        query
-        for permission in controller_action_permissions(host, player)
-        if permission.kind is ActionPermissionKind.LIBRARY_TOP_ACTION
-        for query in permission.top_spell_queries
-    )
-    if not queries:
-        return False
-    row = host._public_object_query_result(card)
-    return any(
-        object_matches_query(row, query) for query in queries
-    )
+def controller_has_library_top_land_permission(host: ActionPermissionHost, player: str, card: Any) -> bool:
+    return bool(_matching_library_top_permissions(host, player, card, spell=False))
+
+
+def controller_library_top_spell_minimum_x(
+    host: ActionPermissionHost, player: str, card: Any, *, face_down: bool = False,
+) -> int | None:
+    """Read the lowest announced X any matching static permission would accept."""
+    matching = _matching_library_top_permissions(host, player, card, spell=True)
+    if not matching:
+        return None
+    threshold = min(permission.minimum_spell_mana_value or 0 for permission in matching)
+    if threshold == 0:
+        return 0
+    if face_down:
+        return None
+    from ..rules.casting.face_queries import current_printed_cast_mana_cost
+    from ..selection.exile_cast import mana_value_of_cost
+    from ..util import parse_mana_symbols
+
+    record = host.card_record(card)
+    if record is None:
+        return None
+    mana_cost = current_printed_cast_mana_cost(host, card, record)
+    missing = threshold - mana_value_of_cost(mana_cost)
+    if missing <= 0:
+        return 0
+    symbols = parse_mana_symbols(mana_cost).count('X')
+    return ceil(missing / symbols) if symbols else None
+
+
+def controller_has_library_top_spell_permission(host: ActionPermissionHost, player: str, card: Any) -> bool:
+    return controller_library_top_spell_minimum_x(host, player, card) is not None
 
 
 def additional_land_play_permission_slots(

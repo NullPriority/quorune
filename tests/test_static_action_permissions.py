@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
 
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import StaticComponentSpec
 from quorune.card_programs import compile_card_program
-from quorune.carddb import CardRecord
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.action_permission_templates import (
     static_action_permission_handler,
 )
@@ -22,8 +24,9 @@ from quorune.continuous_effects import (
     Layer,
 )
 from quorune.model import CardInstance
-from quorune.oracle_ir import register_generated_programs
-from quorune.record import checkpoint_envelope, replay_record
+from quorune.deck import DeckDefinition, DeckEntry
+from quorune.oracle_ir import generated_programs, register_generated_programs
+from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.rules.land_play_permissions import (
     reset_additional_land_play_permissions,
 )
@@ -33,11 +36,13 @@ from quorune.semantic_runtime.action_permissions import (
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID,
     ADDITIONAL_LAND_PLAY_HANDLER_ID,
     LIBRARY_TOP_ACTION_HANDLER_ID,
+    LIBRARY_TOP_MANA_VALUE_CAPABILITY,
     LIBRARY_TOP_VISIBILITY_HANDLER_ID,
     LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
     LAND_PLAY_ACCOUNTING_STAT,
     USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT,
     ActionPermissionKind,
+    QUALIFIED_LIBRARY_TOP_CAPABILITY,
     additional_land_play_permission_slots,
     controller_action_permissions,
     default_action_permission_registry,
@@ -45,6 +50,7 @@ from quorune.semantic_runtime.action_permissions import (
     land_play_permission_options,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from scripts.build_test_database import build_fixture_database
 
 
 class _NoRulingsDatabase:
@@ -404,6 +410,53 @@ class PublicLibraryActionPermissionCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises((AssertionError, ValueError)):
                 assert_exact()
+
+    def test_qualified_library_top_descriptors_and_dependencies_are_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+
+        cases = (
+            ('As long as this Equipment is attached to a creature, you may cast creature spells from the top of your library.', 'attached_to_creature'),
+            ('As long as an opponent controls more lands than you, you may play lands from the top of your library.', 'opponent_more_lands'),
+            ('Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.', 'distinct_creature_powers'),
+            ('You may cast creature spells of the chosen type from the top of your library.', 'chosen_creature_type'),
+            ('You may play lands and cast spells with mana value 4 or greater from the top of your library.', 'minimum_spell_mana_value'),
+        )
+        registry = default_action_permission_registry()
+        for index, (text, qualifier) in enumerate(cases):
+            with self.subTest(qualifier=qualifier):
+                record = _permanent(text, suffix=116_312_010 + index)
+                compiled = self.compile(record)
+                self.assertEqual((), compiled.residuals)
+                program, = generated_programs(_NoRulingsDatabase(), record, trust_level='trusted',
+                    capability_registry=self.capabilities, capability_profile='commander_review')
+                descriptor, = program.handlers
+                self.assertEqual((2, qualifier), (descriptor['schema_version'], descriptor['qualifier']))
+                registry.validate(descriptor)
+                self.assertTrue(bind_semantic_program_runtime(program, capability_registry=self.capabilities,
+                    profile='commander_review')['strict'])
+                required = [QUALIFIED_LIBRARY_TOP_CAPABILITY]
+                if qualifier == 'minimum_spell_mana_value':
+                    required.append(LIBRARY_TOP_MANA_VALUE_CAPABILITY)
+                    with self.assertRaises(SemanticNodeError):
+                        registry.validate({**descriptor, 'minimum_spell_mana_value': True})
+                for capability in required:
+                    deps = tuple(value for value in program.capability_dependencies if value != capability)
+                    withdrawn = replace(program, capability_dependencies=deps,
+                        capability_closure=self.capabilities.closure(deps, profile='commander_review').to_dict())
+                    result = bind_semantic_program_runtime(withdrawn, capability_registry=self.capabilities,
+                        profile='commander_review')
+                    self.assertFalse(result['strict'])
+                    self.assertIn('capability:undeclared_runtime_dependency:' + capability, result['blockers'])
+                with self.assertRaises(SemanticNodeError):
+                    registry.validate({**descriptor, 'qualifier': 'unknown'})
+        foreign = 'As long as Another Equipment is attached to a creature, you may cast spells from the top of your library.'
+        self.assertTrue(self.compile(_permanent(foreign, suffix=116_312_018), trust_level='provisional').residuals)
+        compound = _permanent('You may look at the top card of your library any time, and you may play lands from the top of your library.',
+            suffix=116_312_019)
+        program, = generated_programs(_NoRulingsDatabase(), compound, trust_level='trusted',
+            capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertEqual((LIBRARY_TOP_VISIBILITY_HANDLER_ID, LIBRARY_TOP_ACTION_HANDLER_ID),
+            tuple(row['handler_id'] for row in program.handlers))
 
 
 class StaticActionPermissionRuntimeTests(unittest.TestCase):
@@ -1395,6 +1448,226 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
             "known_top",
             session.packet("pilot:B", full=True)["state"]["players"]["B"],
         )
+
+
+class QualifiedLibraryTopNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'qualified-library-top.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures' / name for name in (
+            'bound-effect-program-cards.json', 'public-library-action-permission-cards.json',
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Qualified library top', [DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
+
+    def add_top(self, session, name, ref='qualified-top'):
+        card = self.add(session.engine, name, zone='library', ref=ref)
+        card.known_to = []
+        card.revealed_to = []
+        return card
+
+    def actions(self, session, seat='A'):
+        packet = session.packet('pilot:' + seat, full=True)
+        return (packet.get('decision') or {}).get('ctx', {}).get('legal', {}).get('actions', ())
+
+    def offer(self, session, card, kind):
+        return next((row for row in self.actions(session) if row.get('kind') == kind and row.get('card') == card.ref), None)
+
+    def known_top(self, session, seat='A'):
+        packet = session.packet('pilot:' + seat, full=True)
+        return [row['id'] for row in packet['state']['players']['A'].get('known_top', ())]
+
+    def take(self, session, action, **response):
+        self.assertIsNotNone(action)
+        result = session.act('pilot:A', {'action_id': action['id'], **response})
+        self.assertTrue(result.ok, result.summary)
+
+    def attach(self, session, source, bearer, suffix):
+        self.priority(session, 'A')
+        action = next((row for row in self.actions(session) if row['id'].startswith('activate:' + source.ref + ':')
+            and (not suffix or row['id'].endswith(suffix))), None)
+        self.take(session, action, targets=[bearer.ref], pay='auto')
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(bearer.object_id, session.state.cards[source.object_id].attached_to)
+
+    def test_reality_chip_reconfigures_and_stops_offering_after_attachment_leaves(self):
+        session = self.session(826101)
+        source = self.add(session.engine, 'The Reality Chip')
+        bearer = self.add(session.engine, 'Grizzly Bears', ref='reconfigure-bearer')
+        later = self.add_top(session, 'Grizzly Bears', 'later-library-creature')
+        spell = self.add_top(session, 'Grizzly Bears', 'first-library-creature')
+        land = self.add_top(session, 'Forest')
+        bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 6, 'U': 1, 'G': 2})
+        session.state.players['B'].mana_pool.update({'U': 1})
+        self.checkpoint(session)
+        self.assertEqual([land.ref], self.known_top(session))
+        self.assertEqual([], self.known_top(session, 'B'))
+        self.assertIsNone(self.offer(session, land, 'play_land'))
+        self.attach(session, source, bearer, '-reconfigure-attach')
+        self.take(session, self.offer(session, land, 'play_land'))
+        self.assertEqual('battlefield', session.state.cards[land.object_id].zone)
+        self.cast(session, 'A', spell)
+        self.cast(session, 'B', bounce, [bearer.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
+        self.assertIsNone(session.state.cards[source.object_id].attached_to)
+        self.priority(session, 'A')
+        self.assertEqual([later.ref], self.known_top(session))
+        self.assertIsNone(self.offer(session, later, 'cast'))
+        self.replay(session, load=True)
+
+    def test_summoning_materia_only_casts_creatures_while_equipped(self):
+        for seed, name in enumerate(('Grizzly Bears', 'Lightning Bolt'), 826102):
+            with self.subTest(name=name):
+                session = self.session(seed)
+                source = self.add(session.engine, 'Summoning Materia')
+                bearer = self.add(session.engine, 'Grizzly Bears', ref='materia-bearer')
+                spell = self.add_top(session, name)
+                self.assert_closed(session, source)
+                self.prepare(session, mana={'C': 5, 'G': 4, 'R': 3})
+                self.checkpoint(session)
+                self.assertEqual([spell.ref], self.known_top(session))
+                self.assertIsNone(self.offer(session, spell, 'cast'))
+                self.attach(session, source, bearer, '')
+                if name == 'Grizzly Bears':
+                    self.cast(session, 'A', spell)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
+                else:
+                    self.assertIsNone(self.offer(session, spell, 'cast'))
+                self.replay(session)
+
+    def test_verge_rangers_compares_one_opponent_and_rechecks_live_land_counts(self):
+        session = self.session(826104)
+        source = self.add(session.engine, 'Verge Rangers')
+        own = self.add(session.engine, 'Forest')
+        self.add(session.engine, 'Forest', seat='B', ref='first-opponent-land')
+        self.add(session.engine, 'Forest', seat='C', ref='second-opponent-land')
+        rain = self.add(session.engine, 'Stone Rain', zone='hand')
+        top = self.add_top(session, 'Forest')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 2, 'R': 1})
+        self.checkpoint(session)
+        self.assertEqual([top.ref], self.known_top(session))
+        self.assertIsNone(self.offer(session, top, 'play_land'))
+        self.cast(session, 'A', rain, [own.ref])
+        self.assertIsNone(self.resolve(session))
+        self.take(session, self.offer(session, top, 'play_land'))
+        self.assertEqual('battlefield', session.state.cards[top.object_id].zone)
+        self.assertEqual([], self.known_top(session, 'C'))
+        self.replay(session)
+
+    def test_augur_requires_three_current_distinct_powers_for_top_spell(self):
+        session = self.session(826105)
+        source = self.add(session.engine, 'Augur of Autumn')
+        bear = self.add(session.engine, 'Grizzly Bears', ref='coven-two-power')
+        self.add(session.engine, 'Elvish Mystic')
+        growth = self.add(session.engine, 'Battlegrowth', zone='hand')
+        spell = self.add_top(session, 'Grizzly Bears', 'coven-spell')
+        land = self.add_top(session, 'Forest')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 2, 'G': 2})
+        self.checkpoint(session)
+        self.take(session, self.offer(session, land, 'play_land'))
+        self.assertIsNone(self.offer(session, spell, 'cast'), 'Two distinct powers cannot satisfy Coven')
+        self.cast(session, 'A', growth, [bear.ref])
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, 'A', spell)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
+        self.replay(session)
+
+    def test_qualified_permission_condition_omission_is_detected(self):
+        with mock.patch('quorune.semantic_runtime.action_permissions._bound_library_top_queries',
+                side_effect=lambda _host, permission, *, spell: permission.top_spell_queries if spell else permission.top_land_queries):
+            with self.assertRaisesRegex(AssertionError, 'Two distinct powers cannot satisfy Coven'):
+                self.test_augur_requires_three_current_distinct_powers_for_top_spell()
+
+    def test_realmwalker_uses_the_chosen_type_on_the_actual_creature_spell(self):
+        session = self.session(826106)
+        source = self.add(session.engine, 'Realmwalker', zone='hand')
+        draw = self.add(session.engine, 'Reach Through Mists', zone='hand')
+        elf = self.add_top(session, 'Elvish Mystic', 'chosen-library-elf')
+        bear = self.add_top(session, 'Grizzly Bears', 'not-chosen-library-bear')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 4, 'G': 4, 'U': 4})
+        self.checkpoint(session)
+        self.assertEqual([], self.known_top(session))
+        self.cast(session, 'A', source)
+        decision = self.resolve(session)
+        self.assertEqual('replacement.order', decision.kind)
+        ctx = session.packet('pilot:A', full=True)['decision']['ctx']
+        choice = next(row for row in ctx['options'] if row['id'].endswith(':elf'))
+        self.take(session, {'id': 'choose'}, replacement=choice['id'])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([bear.ref], self.known_top(session))
+        self.assertIsNone(self.offer(session, bear, 'cast'))
+        self.cast(session, 'A', draw)
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, 'A', elf)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('battlefield', session.state.cards[elf.object_id].zone)
+        self.replay(session)
+
+    def test_radha_looks_and_plays_one_land_through_the_ordinary_quota(self):
+        session = self.session(826107)
+        source = self.add(session.engine, 'Radha, Heart of Keld')
+        next_land = self.add_top(session, 'Forest', 'second-radha-land')
+        top = self.add_top(session, 'Forest', 'first-radha-land')
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.assertEqual([top.ref], self.known_top(session))
+        action = self.offer(session, top, 'play_land')
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:D', {'action_id': action['id']}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.take(session, action)
+        self.assertEqual([next_land.ref], self.known_top(session))
+        self.assertIsNone(self.offer(session, next_land, 'play_land'))
+        self.replay(session, load=True)
+
+    def test_glarb_announces_a_payable_x_that_meets_spell_mana_value(self):
+        session = self.session(826108)
+        source = self.add(session.engine, "Glarb, Calamity's Augur")
+        cheap = self.add_top(session, 'Lightning Bolt', 'ineligible-next-spell')
+        spell = self.add_top(session, 'Blaze', 'announced-x-library-spell')
+        land = self.add_top(session, 'Forest')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 4, 'R': 2})
+        self.checkpoint(session)
+        self.take(session, self.offer(session, land, 'play_land'))
+        self.assertEqual([spell.ref], self.known_top(session))
+        self.assertEqual([], self.known_top(session, 'B'))
+        action = self.offer(session, spell, 'cast')
+        self.assertIsNotNone(action)
+        option = next(row for row in action['cost_options'] if 'x' in row.get('choice_schema', {}))
+        bounds = option['choice_schema']['x']
+        self.assertEqual(3, bounds['minimum'], 'The mana-value gate must set the actual minimum X')
+        self.assertGreaterEqual(bounds['maximum'], 3)
+        command = {'action_id': action['id'], 'cost_option': option['id'], 'targets': ['B'], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A', {**command, 'x': 2}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', {**command, 'x': 3})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(3, session.state.stack[-1].x_value)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(37, session.state.players['B'].life)
+        self.assertEqual([cheap.ref], self.known_top(session))
+        self.assertFalse(session.engine._compiled_zone_cast_permission('A', session.state.cards[cheap.object_id]))
+        self.assertIsNone(self.offer(session, cheap, 'cast'))
+        self.replay(session, load=True)
+
+    def test_glarb_mana_value_gate_omission_is_detected(self):
+        with mock.patch('quorune.semantic_runtime.action_permissions.controller_library_top_spell_minimum_x', return_value=0):
+            with self.assertRaisesRegex(AssertionError, 'The mana-value gate must set the actual minimum X'):
+                self.test_glarb_announces_a_payable_x_that_meets_spell_mana_value()
 
 
 if __name__ == "__main__":

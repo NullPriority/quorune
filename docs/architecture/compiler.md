@@ -4213,12 +4213,18 @@ fixed public land or spell predicates for the controller's current library
 top, and one or two additional land plays on each controller turn. Library
 spell predicates always exclude lands, while historic, Snow, type, subtype,
 colorless, and bounded public keyword forms use the shared object-query model.
+A single look-and-play sentence emits both ordinary permission descriptors
+under one source ability. Qualified top access can require a live creature
+attachment, three distinct controlled creature powers, one opponent with more
+lands, or the source incarnation's chosen creature type. A fixed minimum
+spell mana value uses the selected face's mana cost and binds the minimum
+announced X through the ordinary casting choice.
 Runtime action, activation, projection, and land-quota queries consume only
 those trusted typed descriptors and the shared current layer-6 component
-boundary. Chosen or dynamic predicates, linked costs or results, non-top or
-opponent-library access, conditional or temporary permissions, targeted
-forms, wider land-play counts, and ordinary haste wording remain
-source-spanned residual material.
+boundary. Other dynamic predicates, linked costs or results, non-top or
+opponent-library access, temporary permissions, targeted forms, wider
+land-play counts, and ordinary haste wording remain source-spanned residual
+material.
 
 Static cast-timing descriptors preserve the exact “Aura spells with enchant
 creature” qualification as the existing typed Enchant spec. Offer and commit

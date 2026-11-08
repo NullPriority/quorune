@@ -623,7 +623,12 @@ controlled-creature activation through the existing as-though-haste owner,
 current-library-top visibility and fixed land or spell access, or a fixed
 number of additional land plays. Library access revalidates the exact current
 top identity and cycle-safe effective public characteristics for both offers
-and commands. Projection distinguishes a controller-private look from a
+and commands. Qualified actions use the source's live attachment, chosen type,
+or controller-relative battlefield facts. A fixed spell mana-value threshold
+reads the selected spell face and its announced X. The cost owner previews
+payable values from the required minimum, preserves independent source grants,
+and revalidates the selected X before placing the spell. Projection
+distinguishes a controller-private look from a
 public reveal and exposes no deeper library object. Additional-land components
 contribute to the current total allowance, while a versioned turn ledger counts
 successful ordinary land plays independently of source provenance. Removing,

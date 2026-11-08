@@ -17,13 +17,18 @@ from ..semantic_runtime.action_permissions import (
     LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
     OPENING_HAND_BATTLEFIELD_HANDLER_ID,
     OPENING_HAND_BATTLEFIELD_CAPABILITY,
+    QUALIFIED_LIBRARY_TOP_HANDLER_ID,
     ActionPermissionKind,
     ActionPermissionScope,
+    LibraryTopQualifier,
     LibraryTopVisibility,
+    library_top_qualifier_capabilities,
 )
 
 
-ActionPermissionHandlerTemplate = tuple[str, Mapping[str, Any], str]
+ActionPermissionHandlerTemplate = tuple[
+    str, Mapping[str, Any] | tuple[Mapping[str, Any], ...], str | tuple[str, ...],
+]
 
 
 _PLAY_LANDS_FROM_GRAVEYARD = re.compile(
@@ -83,6 +88,21 @@ _GARRUK_REMINDER = (
     "You still pay the spell's costs.)"
 )
 _HISTORIC_REMINDER = " (Artifacts, legendaries, and Sagas are historic.)"
+_TOP_LAND_REMINDER = " (You can play a land this way only if you have an available land play remaining.)"
+_LOOK_AND_PLAY_LIBRARY_TOP = re.compile(
+    r"You may look at the top card of your library any time, and you may play lands from the top of your library\.?",
+    re.I,
+)
+_ATTACHED_TOP_ACTION = re.compile(r"As long as (?P<source>.+?) is attached to a creature, (?P<body>you may .+)", re.I)
+_COVEN_TOP_ACTION = re.compile(
+    r"(?:Coven — )?As long as you control three or more creatures with different powers, (?P<body>you may .+)", re.I,
+)
+_OPPONENT_MORE_LANDS_TOP_ACTION = re.compile(r"As long as an opponent controls more lands than you, (?P<body>you may .+)", re.I)
+_CHOSEN_TYPE_TOP_CAST = re.compile(r"You may cast creature spells of the chosen type from the top of your library\.?", re.I)
+_MINIMUM_MANA_VALUE_TOP_CAST = re.compile(
+    r"You may (?P<lands>play lands and )?cast spells with mana value (?P<amount>[1-9][0-9]?) or greater "
+    r"from the top of your library\.?", re.I,
+)
 
 
 def _descriptor(
@@ -256,6 +276,8 @@ def _static_mana_spending_handler(normalized: str) -> ActionPermissionHandlerTem
 
 def static_action_permission_handler(
     text: str,
+    *,
+    source_name: str | None = None,
 ) -> ActionPermissionHandlerTemplate | None:
     """Lower one closed controller/public action-permission sentence."""
 
@@ -323,6 +345,52 @@ def static_action_permission_handler(
             },
             "land.play.additional.static",
         )
+    if _LOOK_AND_PLAY_LIBRARY_TOP.fullmatch(normalized) is not None:
+        return ('look-and-play-library-top-v1', (
+            _library_visibility_descriptor(LibraryTopVisibility.CONTROLLER, ActionPermissionScope.CONTROLLER),
+            _library_action_descriptor(land_queries=(_query(types_all=('land',)),)),
+        ), ('library.visibility.top.static', 'library.action.top.static'))
+    return _qualified_library_top_action_handler(normalized, source_name) or _library_top_action_handler(normalized)
+
+
+def _qualified_library_top_action_handler(normalized: str, source_name: str | None):
+    text = normalized.removesuffix(_TOP_LAND_REMINDER)
+    if (numeric := _MINIMUM_MANA_VALUE_TOP_CAST.fullmatch(text)) is not None:
+        qualifier = LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE
+        descriptor = _library_action_descriptor(
+            land_queries=(_query(types_all=('land',)),) if numeric['lands'] else (),
+            spell_queries=(_spell_query(),),
+        )
+        return ('mana-value-library-top-action-v2', {**descriptor, 'handler_id': QUALIFIED_LIBRARY_TOP_HANDLER_ID,
+            'schema_version': 2, 'qualifier': qualifier.value,
+            'minimum_spell_mana_value': int(numeric['amount'])},
+            ('library.action.top.static', *library_top_qualifier_capabilities(qualifier)))
+    attached = _ATTACHED_TOP_ACTION.fullmatch(text)
+    if attached is not None:
+        source = attached['source']
+        if not (re.fullmatch(r'this (?:equipment|artifact|enchantment|creature|permanent)', source, re.I)
+                or source_name and SourceReferenceSpec(source_name).matches(source)):
+            return None
+        qualifier, body = LibraryTopQualifier.ATTACHED_TO_CREATURE, attached['body']
+    elif (coven := _COVEN_TOP_ACTION.fullmatch(text)) is not None:
+        qualifier, body = LibraryTopQualifier.DISTINCT_CREATURE_POWERS, coven['body']
+    elif (lands := _OPPONENT_MORE_LANDS_TOP_ACTION.fullmatch(text)) is not None:
+        qualifier, body = LibraryTopQualifier.OPPONENT_MORE_LANDS, lands['body']
+    elif _CHOSEN_TYPE_TOP_CAST.fullmatch(text) is not None:
+        qualifier = LibraryTopQualifier.CHOSEN_CREATURE_TYPE
+        body = 'You may cast creature spells from the top of your library.'
+    else:
+        return None
+    compiled = _library_top_action_handler(body)
+    if compiled is None:
+        return None
+    _template, descriptor, capability = compiled
+    return ('qualified-library-top-action-v2', {**descriptor, 'handler_id': QUALIFIED_LIBRARY_TOP_HANDLER_ID,
+            'schema_version': 2, 'qualifier': qualifier.value},
+            (capability, *library_top_qualifier_capabilities(qualifier)))
+
+
+def _library_top_action_handler(normalized: str):
     if normalized.endswith(_GARRUK_REMINDER):
         normalized = normalized[: -len(_GARRUK_REMINDER)]
     if normalized.endswith(_HISTORIC_REMINDER):

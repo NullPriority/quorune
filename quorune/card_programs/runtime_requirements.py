@@ -370,6 +370,9 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_attached_keyword:invalid:{exc}')
     try:required.update(temporary_cast_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_cast_restriction:invalid:{exc}')
+    from ..semantic_runtime.action_permissions import qualified_library_top_runtime_dependencies
+    try:required.update(qualified_library_top_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_qualified_library_top:invalid:{exc}')
     try:required.update(random_graveyard_return_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_random_graveyard_return:invalid:{exc}')
     _terminal_spell_move_requirements(program, required, blockers)

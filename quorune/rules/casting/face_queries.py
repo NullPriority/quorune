@@ -3,6 +3,13 @@ from __future__ import annotations
 """Read-only prospective face views shared by cast offers and cost legality."""
 
 from dataclasses import replace
+from functools import partial
+from typing import Any, Mapping, TYPE_CHECKING
+
+from ..action_proposals import CastCostOption
+
+if TYPE_CHECKING:
+    from .costs import CastCostHost
 
 
 def prospective_cast_card(host,card,face_name=None):
@@ -79,6 +86,87 @@ def selected_cast_card_view(host,card,face_name=None,cast_method=None):
     from .characteristic_methods import characteristic_cast_view
     view=prospective_cast_card(host,card,face_name)
     return characteristic_cast_view(host,view,host.card_record(view),cast_method)[0]
+
+
+def _static_library_top_minimum_x(host, seat, card, *, face_down):
+    if card.zone != 'library':
+        return 0
+    permission = host._temporary_play_permission(seat, card)
+    if permission is not None and permission.get('allow_spell', True):
+        return 0
+    from ...semantic_runtime.action_permissions import controller_library_top_spell_minimum_x
+
+    return controller_library_top_spell_minimum_x(host, seat, card, face_down=face_down)
+
+
+def build_cast_cost_options(
+    host: CastCostHost,
+    seat: str,
+    card: Any,
+    program: Any,
+    *,
+    response: Mapping[str, Any] | None = None,
+    hint: bool,
+    force_without_mana_cost: bool = False,
+    alternative_base: Mapping[str, Any] | None = None,
+    cast_type_line: str | None = None,
+    suppress_source_costs: bool = False,
+    resolving_exile_authority: bool = False,
+) -> tuple[CastCostOption, ...]:
+    """Offer the selected face's payable choices under its current zone permission."""
+    from .costs import _cast_cost_options_for_submission
+    from .source_placement import casting_affordability_host
+
+    host = casting_affordability_host(host, card)
+    submission = dict(response or {})
+    build = partial(_cast_cost_options_for_submission, host, seat, card, program,
+        hint=hint, force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
+        cast_type_line=cast_type_line, suppress_source_costs=suppress_source_costs,
+        resolving_exile_authority=resolving_exile_authority)
+    minimum = _static_library_top_minimum_x(host, seat, card, face_down=suppress_source_costs)
+    if not (hint and minimum and submission.get('x') is None):
+        return build(submission, minimum_library_x=minimum)
+    static = build({**submission, 'x': minimum}, minimum_library_x=minimum, source_grant_only=False)
+    from .turn_cast_grants import current_turn_cast_grants
+
+    if not current_turn_cast_grants(host, seat, card, cast_type_line=cast_type_line):
+        return static
+    grants = build(submission, minimum_library_x=minimum, source_grant_only=True)
+    return (*static, *grants)
+
+
+def bind_library_top_cost_option(option, submission, *, has_x, minimum, source_grant_only):
+    if minimum == 0:
+        return option
+    from ..turn_cast_grant_model import TURN_CAST_GRANT_FIELD
+
+    source_grant = TURN_CAST_GRANT_FIELD in option
+    if source_grant_only is not None and source_grant != source_grant_only:
+        return None
+    if source_grant:
+        return option
+    announced = submission.get('x')
+    if (minimum is None or not has_x or option.get('x_value_policy') is not None
+            or type(announced) is not int or announced < minimum):
+        return None
+    return {**option, 'library_top_minimum_x': minimum, 'library_top_announced_x': announced}
+
+
+def validate_library_top_cast_commit(host, seat, card, option, response, *, face_down=False):
+    from ..turn_cast_grant_model import TURN_CAST_GRANT_FIELD
+
+    if card.zone != 'library' or TURN_CAST_GRANT_FIELD in option:
+        return
+    minimum = _static_library_top_minimum_x(host, seat, card, face_down=face_down)
+    if minimum is None:
+        raise ValueError('The current library-top permission is unavailable')
+    recorded = option.get('library_top_minimum_x', 0)
+    if type(recorded) is not int or recorded != minimum:
+        raise ValueError('The library-top mana-value requirement changed')
+    if minimum:
+        announced = response.get('x')
+        if type(announced) is not int or announced < minimum or announced != option.get('library_top_announced_x'):
+            raise ValueError('The announced X cannot satisfy the library-top permission')
 
 
 def cast_offer_id(card,record,face,cast_method=None):

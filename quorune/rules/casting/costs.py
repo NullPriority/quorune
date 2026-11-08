@@ -5,6 +5,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
+from .face_queries import build_cast_cost_options
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
 from .additional_zone_costs import select_zone_change_additional_cost
 from ...casting_payment_keywords import (
@@ -1110,12 +1111,13 @@ def _maximum_affordable_x_with_mechanics(
     mechanics: Sequence[Mapping[str, Any]],
     *,
     spend_context: Any,
+    minimum: int = 0,
     limit: int = 100,
     reserved_cards: Sequence[Any] = (),
     targeted_cost: Mapping[str, Any] | None = None,
 ) -> int:
     maximum = -1
-    for value in range(limit + 1):
+    for value in range(minimum, limit + 1):
         printed, _ = host._compiled_printed_cost_options(
             seat,
             card,
@@ -1408,6 +1410,7 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     elif x_value_policy is not None:
         return None
     elif has_x:
+        minimum_x = option.get('library_top_minimum_x', 0)
         maximum = _maximum_affordable_x_with_mechanics(
             host,
             seat,
@@ -1415,14 +1418,16 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             program,
             mechanics,
             spend_context=spend_context,
+            minimum=minimum_x,
             reserved_cards=reserved_cards,
             targeted_cost=target_cost_for_x_preview(option),
         )
         from .target_cardinality import target_count_preview_maximum
         maximum = target_count_preview_maximum(option, maximum)
-        if maximum < 0:
+        if maximum < minimum_x:
             return None
-        choice_schema["x"] = {"type": "integer", "minimum": 0, "maximum": maximum}
+        choice_schema["x"] = {"type": "integer", "minimum": minimum_x, "maximum": maximum,
+            **({'default': minimum_x} if minimum_x else {})}
     if not _apply_additional_costs(
         host,
         seat,
@@ -1468,25 +1473,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     return CastCostOption.from_dict(option)
 
 
-def build_cast_cost_options(
-    host: CastCostHost,
-    seat: str,
-    card: Any,
-    program: Any,
-    *,
-    response: Mapping[str, Any] | None = None,
-    hint: bool,
-    force_without_mana_cost: bool = False,
-    alternative_base: Mapping[str, Any] | None = None,
-    cast_type_line: str | None = None,
-    suppress_source_costs: bool = False,
-    resolving_exile_authority: bool = False,
-) -> tuple[CastCostOption, ...]:
-    """Return immutable, currently payable server-authoritative cost choices."""
-
-    from .source_placement import casting_affordability_host
-    host=casting_affordability_host(host,card)
-    submission = dict(response or {})
+def _cast_cost_options_for_submission(host, seat, card, program, submission, *, hint, force_without_mana_cost,
+        alternative_base, cast_type_line, suppress_source_costs, resolving_exile_authority,
+        minimum_library_x, source_grant_only=None):
     initial = _initial_options(
         host,
         seat,
@@ -1515,7 +1504,12 @@ def build_cast_cost_options(
             expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
     declared_cost_x=bool(announced_additional_cost_dependencies(getattr(program,'cost_schema',None))) if not target_mana_x else False
     result = []
+    from .face_queries import bind_library_top_cost_option
     for option in expanded:
+        option = bind_library_top_cost_option(option, submission, has_x=has_x, minimum=minimum_library_x,
+            source_grant_only=source_grant_only)
+        if option is None:
+            continue
         from .target_cardinality import bind_target_count_option
         option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x,
             target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))

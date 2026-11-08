@@ -181,25 +181,6 @@ class _AdditionalCostCommit:
     paid_creature_stats: PaidCreatureStatSnapshot | None = None
 
 
-def _revalidate_source(host: CastCommitHost, proposal: CastProposal) -> tuple[Any, Any, Any]:
-    card = host._resolve_object(
-        proposal.seat,
-        proposal.card_ref,
-        zones={proposal.origin},
-        owned_only=False,
-    )
-    if card.object_id != proposal.object_id or card.zone != proposal.origin:
-        raise CastProposalError(
-            "The casting source changed after proposal construction",
-            reason="stale_source",
-        )
-    record = host.card_record(card)
-    if record is None:
-        raise CastProposalError("The casting card record is unavailable")
-    program = host.semantics.get(proposal.semantic_key)
-    return card, record, program
-
-
 def _commit_tap_costs(
     host: CastCommitHost, proposal: CastProposal, card: Any
 ) -> list[Any]:
@@ -1426,8 +1407,9 @@ def _commit_cast_costs_and_stack(
 ) -> bool:
     """Commit one revalidated cast proposal through authoritative owners."""
 
-    card, record, program = _revalidate_source(host, proposal)
+    from .source_placement import revalidate_cast_source
     details = dict(thaw_json(proposal.details))
+    card, record, program = revalidate_cast_source(host, proposal, details, response)
     from ..prototype import revalidate_prototype_cast
     try:revalidate_prototype_cast(host,card,details)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_prototype_contract') from exc

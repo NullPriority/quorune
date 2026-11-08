@@ -10832,7 +10832,7 @@
         "quorune.semantic_runtime.public_alternative_costs.FixedPublicAlternativeCostHandler",
         "quorune.compiled_public_alternative_costs.compiled_fixed_public_alternative_cost_specs",
         "quorune.rules.casting.alternative_costs.with_fixed_public_alternative_costs",
-        "quorune.rules.casting.costs.build_cast_cost_options",
+        "quorune.rules.casting.face_queries.build_cast_cost_options",
         "quorune.rules.casting.commit.commit_cast",
         "quorune.life_state.apply_life_changes",
         "quorune.damage.commit_prepared_damage_batch",
@@ -46556,6 +46556,158 @@
       ],
       "replay_tests": [
         "test_land_play_from_graveyard_replays_exactly"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "A fixed minimum spell mana value on an owned library-top permission determines the payable announced X range using the selected spell cost.",
+        "exclusions": [
+          "target-dependent X thresholds and unrepresented mana or alternative costs"
+        ],
+        "inputs": [
+          "minimum spell mana value",
+          "selected spell face and declared mana X",
+          "ordinary payable options and independent source permissions"
+        ],
+        "outputs": [
+          "minimum X on the existing cast choice",
+          "atomic rejection of insufficient X",
+          "ordinary paid spell with its announced X"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.action.top.qualified"
+      ],
+      "dependency_fail_closed_rationale": "The typed descriptor independently requires its capability and its current battlefield source boundary.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.action.top.mana_value",
+      "implementation_components": [
+        "quorune.semantic_runtime.action_permissions.controller_library_top_spell_minimum_x",
+        "quorune.rules.casting.costs.build_cast_cost_options",
+        "quorune.rules.casting.face_queries.validate_library_top_cast_commit"
+      ],
+      "implementation_mutation_rationale": "Removing the shared minimum-X query offers X below the printed mana-value gate. The native cast offer witness detects the missing lower bound.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_glarb_announces_a_payable_x_that_meets_spell_mana_value"
+      ],
+      "multiplayer_tests": [
+        "test_glarb_announces_a_payable_x_that_meets_spell_mana_value"
+      ],
+      "negative_tests": [
+        "test_glarb_announces_a_payable_x_that_meets_spell_mana_value",
+        "test_qualified_library_top_descriptors_and_dependencies_are_closed"
+      ],
+      "official_rules": [
+        "202.3e",
+        "401.5",
+        "601.2b",
+        "601.3b"
+      ],
+      "positive_tests": [
+        "test_glarb_announces_a_payable_x_that_meets_spell_mana_value"
+      ],
+      "privacy_tests": [
+        "test_glarb_announces_a_payable_x_that_meets_spell_mana_value"
+      ],
+      "replay_tests": [
+        "test_glarb_announces_a_payable_x_that_meets_spell_mana_value"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Qualified current library-top actions use live attachment, distinct creature power, individual opposing land count, or source chosen-type facts.",
+        "exclusions": [
+          "temporary grants, opponent libraries, and unsupported qualifiers",
+          "missing live attachment or chosen-type identity"
+        ],
+        "inputs": [
+          "compiler-pinned qualifier and fixed query",
+          "current source incarnation and controller",
+          "authoritative current library top and public characteristics"
+        ],
+        "outputs": [
+          "qualified ordinary cast or land-play permission",
+          "unchanged independent controller-only look"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.action.top.static"
+      ],
+      "dependency_fail_closed_rationale": "The typed descriptor independently requires its capability and its current battlefield source boundary.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.action.top.qualified",
+      "implementation_components": [
+        "quorune.compiler.action_permission_templates.static_action_permission_handler",
+        "quorune.semantic_runtime.action_permissions.LibraryTopActionHandler",
+        "quorune.semantic_runtime.action_permissions.qualified_library_top_runtime_dependencies",
+        "quorune.semantic_runtime.action_permissions._bound_library_top_queries"
+      ],
+      "implementation_mutation_rationale": "Ignoring the qualifier offers a real top creature with only two distinct controlled powers. The native Coven case detects the improper offer.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_reality_chip_reconfigures_and_stops_offering_after_attachment_leaves",
+        "test_augur_requires_three_current_distinct_powers_for_top_spell",
+        "test_summoning_materia_only_casts_creatures_while_equipped",
+        "test_verge_rangers_compares_one_opponent_and_rechecks_live_land_counts",
+        "test_realmwalker_uses_the_chosen_type_on_the_actual_creature_spell"
+      ],
+      "multiplayer_tests": [
+        "test_reality_chip_reconfigures_and_stops_offering_after_attachment_leaves"
+      ],
+      "negative_tests": [
+        "test_qualified_library_top_descriptors_and_dependencies_are_closed"
+      ],
+      "official_rules": [
+        "109.5",
+        "305.2",
+        "401.5",
+        "601.2",
+        "604.1",
+        "611.3a",
+        "613.1f"
+      ],
+      "positive_tests": [
+        "test_qualified_library_top_descriptors_and_dependencies_are_closed",
+        "test_reality_chip_reconfigures_and_stops_offering_after_attachment_leaves"
+      ],
+      "privacy_tests": [
+        "test_reality_chip_reconfigures_and_stops_offering_after_attachment_leaves"
+      ],
+      "replay_tests": [
+        "test_reality_chip_reconfigures_and_stops_offering_after_attachment_leaves"
       ],
       "required_evidence": [
         "positive",
