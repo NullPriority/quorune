@@ -7,9 +7,10 @@ import re
 from typing import Any, Mapping
 
 from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
-    CHARACTERISTIC_OPERATION, PERMANENT_CHARACTERISTIC_MECHANIC,
+    CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_CHOICE_VERSION, PERMANENT_CHARACTERISTIC_MECHANIC,
     SUBTYPE_GRANT_INSTRUCTION_VERSION, FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec,
 )
 from ..rules.source_references import SourceReferenceSpec
@@ -22,6 +23,47 @@ from .public_state_queries import fixed_characteristic_battlefield_query_subject
 _BASE = re.compile(r"(?P<subject>.+?) (?:has|have) base power and toughness (?P<p>\d+)/(?P<t>\d+)(?P<tail>.*)",re.I)
 _ANIMATE = re.compile(r"(?P<subject>.+?) becomes? (?:an? )?(?:(?P<p>\d+)/(?P<t>\d+) (?P<description>.+)|(?P<base_description>.+?) with base power and toughness (?P<bp>\d+)/(?P<bt>\d+))(?P<tail>.*)",re.I)
 _PLAYER_SET_SCHEMA = {"zones":["player"],"categories":["player"],"player_relation":"any","count":1}
+_CHOSEN_SUBTYPE = re.compile(
+    r"(?P<subject>.+?) becomes (?:the|a) creature type of your choice until end of turn\.", re.I,
+)
+_CHOSEN_SUBTYPE_PREFIX = re.compile(
+    r"Choose a creature type(?: other than (?P<excluded>[^.]+))?\. "
+    r"(?P<subject>.+?) becomes that type until end of turn\.", re.I,
+)
+
+
+def _chosen_subtype_template(text, *, source_is_permanent, source_attachment_relation):
+    normalized = text.strip().removeprefix("• ")
+    prefix = _CHOSEN_SUBTYPE_PREFIX.fullmatch(normalized)
+    match = prefix or _CHOSEN_SUBTYPE.fullmatch(normalized)
+    if match is None:
+        return None
+    excluded = canonical_creature_subtype(prefix["excluded"]) if prefix and prefix["excluded"] else None
+    if prefix and prefix["excluded"] and excluded is None:
+        return None
+    subject = match["subject"].casefold()
+    schema = None
+    mechanics = ("cr-611-continuous-effects",)
+    if subject in {"this creature", "this permanent"} and source_is_permanent is True:
+        selection = {"card": "$source.zone_object"}
+    elif subject == "enchanted creature" and source_attachment_relation is AttachmentReferenceKind.ENCHANTED:
+        reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+        selection = {"card": reference.to_dict()}
+    elif subject in {"target creature", "another target creature"}:
+        spec = direct_permanent_target_spec(subject)
+        if spec is None:
+            return None
+        schema = spec.to_target_schema()
+        selection = {"card": "$target.0"}
+        mechanics = (*mechanics, "cr-115-targets")
+    elif prefix and subject in {"each creature", "each creature you control"}:
+        selection = {"predicate": ObjectQuerySpec(zones=("battlefield",), types_all=("creature",),
+            controller="$controller" if subject.endswith("you control") else None).to_dict()}
+    else:
+        return None
+    effect = {"op": "choose_creature_type", "schema_version": CHOSEN_SUBTYPE_CHOICE_VERSION,
+              "excluded": excluded, **selection}
+    return "chosen-creature-type-setting-v1", (effect,), schema, mechanics
 
 
 def fixed_attached_stat_effect_template(text: str, *, source_attachment_relation: AttachmentReferenceKind | None):
@@ -68,8 +110,13 @@ def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,
 def fixed_resolution_characteristics_effect_template(
     text: str, *, source_name: str, source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
+    source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
+    chosen = _chosen_subtype_template(text, source_is_permanent=source_is_permanent,
+                                     source_attachment_relation=source_attachment_relation)
+    if chosen is not None:
+        return chosen
     from .power_toughness_switch import power_toughness_switch_effect_template
     switch = power_toughness_switch_effect_template(text, source_name=source_name,
         source_is_permanent=source_is_permanent, source_card_types=source_card_types)

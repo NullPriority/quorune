@@ -1659,6 +1659,16 @@ replaces only creature subtypes under CR 205.1b. An explicit "still" or
 descriptors retain their historical operation path. Copy, dynamic/chosen values, text/control,
 attached-object subjects, declarations, quoted grants, conditional/optional
 instructions, unsupported keywords, and other durations remain residual.
+
+The temporary creature-type choice accepts the source, the source Aura's
+enchanted creature, one declared creature target, or the closed sets of all
+creatures and creatures the resolving player controls. The resolving controller
+chooses from the pinned creature-type vocabulary, with the printed exclusion
+when present. Its layer-four result replaces the creature subtype family,
+preserves other subtype families and abilities, and applies until cleanup.
+The result follows the selected incarnations. Creatures entering after a
+set instruction resolves keep their own types.
+
 `compiler/temporary_keyword_removal_templates.py` adds an explicit
 schema-11 variant to the same temporary-characteristic operation. It combines
 represented fixed keyword removals, optional fixed grants and integral P/T

@@ -47,7 +47,14 @@ def fixed_resolution_characteristic_set_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Own one fixed, resolution-locked public characteristic set."""
+    """Own one fixed or chosen resolution-locked public characteristic result."""
+
+    if len(effects) == 1 and isinstance(effects[0], Mapping) and effects[0].get("op") == "choose_creature_type":
+        from .resolution_characteristic_shapes import temporary_creature_type_node_capabilities
+
+        return temporary_creature_type_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (

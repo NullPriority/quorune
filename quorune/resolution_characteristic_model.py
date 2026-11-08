@@ -9,6 +9,7 @@ from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, L
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from .object_predicate import ObjectQuerySpec
+from .replacement.immutable import thaw_value
 from .source_tap_effect import SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
 
 
@@ -22,7 +23,11 @@ FIXED_TARGET_COLOR_MECHANIC = "fixed-target-color-setting"
 FIXED_TARGET_COLOR_CAPABILITY = "zone.object.fixed_resolution_color"
 FIXED_TARGET_COLOR_ZONES = ("battlefield", "stack")
 SUBTYPE_GRANT_INSTRUCTION_VERSION = 12
-FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION})
+CHOSEN_SUBTYPE_SETTING_VERSION = 15
+CHOSEN_SUBTYPE_CHOICE_VERSION = 2
+FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
+    2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
+})
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
 # Every non-retaining animation in this closed model sets Creature alone.
 # Remove subtypes correlated with the lost types, not retained creature types.
@@ -221,9 +226,59 @@ class FixedResolutionModifierSpec:
         return ((Layer.POWER_TOUGHNESS, "7c", (operation,)),)
 
 
+@dataclass(frozen=True, slots=True)
+class FixedResolutionSubtypeSettingSpec:
+    subtype: str
+
+    def __post_init__(self):
+        if type(self.subtype) is not str or canonical_creature_subtype(self.subtype) != self.subtype:
+            raise ValueError("A subtype setting requires one canonical creature type")
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {"subtype"}:
+            raise ValueError("The creature subtype setting is malformed")
+        return cls(value["subtype"])
+
+    def layer_operations(self):
+        return ((Layer.TYPE, "4", (ContinuousOperation("set_creature_subtype", self.subtype),)),)
+
+
+def decode_temporary_creature_type_choice(effect, *, resolved=False):
+    """Validate the choice and its one typed resolution subject."""
+    fields = {"op", "schema_version", "excluded"}
+    if (not isinstance(effect, Mapping) or set(effect) not in (fields | {"card"}, fields | {"predicate"})
+            or effect["op"] != "choose_creature_type"
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != CHOSEN_SUBTYPE_CHOICE_VERSION):
+        raise ValueError("Temporary creature type choices use a closed versioned instruction")
+    excluded = effect["excluded"]
+    if excluded is not None and canonical_creature_subtype(excluded) != excluded:
+        raise ValueError("Creature type exclusion is outside the pinned vocabulary")
+    if "predicate" in effect:
+        query = ObjectQuerySpec.from_dict(effect["predicate"])
+        if (query != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), controller=query.controller)
+                or query.to_dict() != thaw_value(effect["predicate"])
+                or not resolved and query.controller not in (None, "$controller")):
+            raise ValueError("Creature type choice requires all creatures or the controller's creatures")
+        return query, excluded
+    card = effect["card"]
+    if type(card) is str:
+        if resolved and card and not card.startswith("$"):
+            return card, excluded
+        if not resolved and card in {"$source.zone_object", "$target.0"}:
+            return card, excluded
+    if not resolved and isinstance(card, Mapping):
+        from .attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+
+        reference = AttachmentReferenceSpec.from_dict(card)
+        if reference == AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2):
+            return reference, excluded
+    raise ValueError("Creature type choice requires its original source, target, or enchanted object")
+
+
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any],
-) -> tuple[FixedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
@@ -245,6 +300,8 @@ def fixed_resolution_characteristic_instruction(
         if "card" not in value:
             raise ValueError("Fixed subtype grants require a single object")
         spec = FixedResolutionSubtypeGrantSpec.from_dict(value["characteristics"])
+    elif version == CHOSEN_SUBTYPE_SETTING_VERSION:
+        spec = FixedResolutionSubtypeSettingSpec.from_dict(value["characteristics"])
     else:
         spec = FixedResolutionCharacteristicsSpec.from_dict(value["characteristics"])
     if "card" in value:

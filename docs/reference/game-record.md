@@ -517,6 +517,13 @@ intent. Save/load resumes that unpaid work without checking or charging the
 already-committed resource again. Continuations without this field retain
 their existing decoding and validation path.
 
+A version-two temporary creature-type choice stores the resolving controller,
+the printed type exclusion, and either the selected object's incarnation or
+the closed public set. The response is checked against the pinned creature
+types. Completion records the selection and commits a layer-four operation
+through the fixed characteristic journal. Older designation choices retain
+their saved effect and designation codec.
+
 Random own-graveyard return instructions serialize a version-one closed subject
 descriptor and fixed or declared-X count. They use the existing seed, stack
 reference and instruction-pointer identity with a separate random-return

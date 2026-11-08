@@ -469,6 +469,13 @@ def _apply_operation(
         state.ability_fragments=[]
         state.activated_abilities=[]
         return
+    if op == "set_creature_subtype":
+        from .creature_subtypes import canonical_creature_subtype
+
+        if any(kind.casefold() in {"creature", "kindred"} for kind in state.card_types):
+            state.subtypes = {word for word in state.subtypes if canonical_creature_subtype(word) is None}
+            state.subtypes.add(value.title())
+        return
     if op in {"set_types", "add_types", "remove_types"}:
         target = (
             "card_types"

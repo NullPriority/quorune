@@ -4,7 +4,13 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping
 
+from ..continuous_effect_model import ContinuousObjectIdentity
+from ..creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
+from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
+from ..resolution_characteristic_model import (
+    CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_SETTING_VERSION, decode_temporary_creature_type_choice,
+)
 from ..semantic_runtime.intents import (
     AddManaIntent,
     RecordChoiceIntent,
@@ -12,6 +18,7 @@ from ..semantic_runtime.intents import (
 )
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
+    AutoContinue,
     ScalarChoice,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
@@ -227,21 +234,30 @@ class ChooseCreatureTypeHandler:
     capability_dependencies: tuple[str, ...] = ()
     continuation_fields: tuple[str, ...] = (
         "apply_as_subtype",
+        "schema_version",
+        "excluded",
+        "card",
+        "predicate",
         "_choice_actor",
+        "_recipient",
         "_source_ref",
     )
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = (
         "prompt",
         "legal_actions.choice_schema.type",
+        "legal_actions.choice_schema.legal_values",
     )
     mutation_path: tuple[str, ...] = (
         "SetCardDesignationIntent",
         "CommanderEngine.set_card_designation_intent",
+        "RecordChoiceIntent",
+        "apply_fixed_resolution_characteristics",
     )
     replay_fixture: str = "semantic-choice-scalar-creature-type"
     test_modules: tuple[str, ...] = (
         "tests.test_semantic_choice_characterization",
+        "tests.test_fixed_source_characteristic_effects",
     )
 
     def prepare(
@@ -249,6 +265,8 @@ class ChooseCreatureTypeHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if "schema_version" in effect:
+            return _prepare_temporary_creature_type(effect, context)
         if type(effect.get("apply_as_subtype", False)) is not bool:
             raise SemanticChoiceError(
                 "Creature-type subtype application must be boolean"
@@ -282,6 +300,8 @@ class ChooseCreatureTypeHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        if "schema_version" in continuation.effect:
+            return _complete_temporary_creature_type(continuation, response, query)
         creature_type = str(
             response.get("creature_type") or response.get("choice") or ""
         ).strip()
@@ -305,6 +325,78 @@ class ChooseCreatureTypeHandler:
                 ),
             )
         )
+
+
+def _temporary_type_selection(effect, actor):
+    try:
+        subject, excluded = decode_temporary_creature_type_choice(effect, resolved=True)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    if isinstance(subject, ObjectQuerySpec) and subject.controller not in (None, actor):
+        raise SemanticChoiceError("The creature set no longer belongs to the resolving controller")
+    return subject, excluded
+
+
+def _creature_type_recipient(query, ref):
+    card = query.object(ref, zones=("battlefield",))
+    if card is None or card.phased_out:
+        return None
+    return ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+
+
+def _prepare_temporary_creature_type(effect, context):
+    subject, excluded = _temporary_type_selection(effect, context.actor)
+    identity = _creature_type_recipient(context.query, subject) if isinstance(subject, str) else None
+    if isinstance(subject, str) and identity is None:
+        return SemanticChoicePreparation(
+            request=None, continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue(reason="The original creature type recipient is unavailable"),
+        )
+    options = tuple(sorted(value.title() for value in CREATURE_SUBTYPES if value != excluded))
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt="Choose a creature type.",
+            choice=ScalarChoice(field_name="creature_type", value_type="creature_type", legal_values=options,
+                                nonempty=True, max_length=48),
+            public_context=FrozenMap({"stack": context.stack_ref, "operation": "choose_creature_type"}),
+        ),
+        continuation_effect=FrozenMap({**effect, "_choice_actor": context.actor,
+                                       "_recipient": identity.to_dict() if identity else None}),
+    )
+
+
+def _complete_temporary_creature_type(continuation, response, query):
+    effect = dict(continuation.effect)
+    if not {"_choice_actor", "_recipient"} <= set(effect):
+        raise SemanticChoiceError("A temporary creature type choice lost its continuation facts")
+    actor = effect.pop("_choice_actor")
+    recipient = effect.pop("_recipient")
+    item = query.stack_object(continuation.stack_ref)
+    if item is None or actor != item.controller or actor not in query.active_seats:
+        raise SemanticChoiceError("The creature type chooser no longer controls the resolving item")
+    subject, excluded = _temporary_type_selection(effect, actor)
+    fields = {"action", "action_id", "reason", "choice_schema", "label", "creature_type", "choice"}
+    choices = [response[key] for key in ("creature_type", "choice") if key in response]
+    subtype = canonical_creature_subtype(choices[0]) if len(choices) == 1 else None
+    if set(response) - fields or subtype is None or subtype == excluded:
+        raise SemanticChoiceError("Choose one legal creature type")
+    chosen = RecordChoiceIntent(actor=actor, event_code="semantic.option.chosen",
+        message=f"{actor} chose {subtype.title()}.", details=FrozenMap({"stack": continuation.stack_ref, "creature_type": subtype}))
+    if isinstance(subject, str):
+        try:
+            original = ContinuousObjectIdentity.from_dict(recipient)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError("The original creature type recipient is malformed") from exc
+        if _creature_type_recipient(query, subject) != original:
+            return SemanticChoiceCompletion(intents=(chosen,))
+        selection = {"card": subject}
+    else:
+        if recipient is not None:
+            raise SemanticChoiceError("A creature set cannot retain an individual recipient")
+        selection = {"predicate": subject.to_dict()}
+    result = {"op": CHARACTERISTIC_OPERATION, "schema_version": CHOSEN_SUBTYPE_SETTING_VERSION,
+              "characteristics": {"subtype": subtype}, **selection}
+    return SemanticChoiceCompletion(intents=(chosen,), prepend_effects=(FrozenMap(result),))
 
 
 @dataclass(frozen=True, slots=True)

@@ -7,6 +7,7 @@ import tempfile
 import unittest
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
@@ -23,7 +24,7 @@ from quorune.resolution_characteristic_model import (
 from quorune.continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.errors import GameRuleError
 from quorune.model import CardInstance, CombatState
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
@@ -285,6 +286,26 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                     layers.append(ContinuousEffect(effect_id='delta',source_id='counter',layer=Layer.POWER_TOUGHNESS,sublayer='7c',timestamp=2,operations=(ContinuousOperation('modify_power_toughness',(counter_delta,counter_delta)),)))
                     actual=evaluate_continuous_effects(state,layers).characteristics
                     self.assertEqual(base_power+counter_delta,actual['power'])
+
+    def test_chosen_creature_type_replaces_only_its_subtype_family(self):
+        operation = ContinuousOperation("set_creature_subtype", "wizard")
+        effect = ContinuousEffect(
+            effect_id="chosen-type", source_id="source", layer=Layer.TYPE, sublayer="4",
+            timestamp=1, operations=(operation,),
+        )
+        self.assertEqual(effect, ContinuousEffect.from_dict(effect.to_dict()))
+        for extra_type, expected in (
+            ("Creature", {"Food", "Wizard"}), ("Kindred", {"Food", "Wizard"}), (None, {"Food"}),
+        ):
+            with self.subTest(extra_type=extra_type):
+                types = {"Artifact", extra_type} if extra_type else {"Artifact"}
+                subtypes = {"Food", "Golem"} if extra_type else {"Food"}
+                state = CharacteristicState("Subject", card_types=types, subtypes=subtypes)
+                result = evaluate_continuous_effects(state, [effect]).characteristics
+                self.assertEqual(types, set(result["card_types"]))
+                self.assertEqual(expected, set(result["subtypes"]))
+        with self.assertRaises(ContinuousEffectError):
+            ContinuousOperation("set_creature_subtype", "forest")
 
     def test_fixed_animation_type_retention_mutant_is_killed(self):
         from unittest.mock import patch
@@ -1593,6 +1614,196 @@ class TemporarySourceKeywordRuntimeTests(unittest.TestCase):
                 accepted = session.act("pilot:B", {"a": "block", "blk": blocks})
                 self.assertTrue(accepted.ok, accepted.summary)
                 self.replay(session, load=True)
+
+
+class ChosenCreatureTypeNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "temporary-creature-types.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "temporary-source-keyword-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Temporary creature type",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 24)],
+            ["Generic Bound Commander"],
+        )
+
+    def activate_type(self, session, source, targets=()):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(action for action in actions if action["id"].startswith(f"activate:{source.ref}:"))
+        result = session.act("pilot:A", {"action_id": offer["id"], "targets": list(targets), "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("priority", session.state.pending_decision.kind)
+        self.assertEqual(list(targets), session.state.stack[-1].targets)
+
+    def type_options(self, session):
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+        actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        return next(action for action in actions if action["id"] == "choose")["choice_schema"]["legal_values"]
+
+    def choose_type(self, session, value):
+        result = session.act("pilot:A", {"action_id": "choose", "creature_type": value})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+
+    @staticmethod
+    def subtypes(session, card):
+        return session.engine._effective_type_parts(session.state.cards[card.object_id])[1]
+
+    def test_mistform_wall_choice_expires_and_cannot_follow_source_reentry(self):
+        session = self.session(611821001)
+        source = self.add(session.engine, "Mistform Wall")
+        hand = session.state.players["A"].zones["hand"]
+        session.engine.move_card(hand[0], "library")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        printed = self.subtypes(session, source)
+        self.assertIn("defender", session.engine._combat_keywords(source))
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "W": 1})
+        self.checkpoint(session)
+        self.activate_type(session, source)
+        reentry = self.replay(session, load=True)
+
+        options = self.type_options(session)
+        self.assertIn("Wall", options)
+        self.assertIn("Time Lord", options)
+        before = authoritative_state_hash(session.state)
+        for actor, value in (("B", "Wizard"), ("A", "Forest")):
+            self.assertFalse(session.act(f"pilot:{actor}", {"action_id": "choose", "creature_type": value}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        self.choose_type(session, "Wizard")
+        current = session.state.cards[source.object_id]
+        self.assertEqual({"wizard"}, self.subtypes(session, source))
+        self.assertNotIn("defender", session.engine._combat_keywords(current))
+        self.assertNotIn("chosen_creature_type", current.annotations)
+        turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence != turn)
+        self.assertEqual(printed, self.subtypes(session, source))
+        self.assertIn("defender", session.engine._combat_keywords(session.state.cards[source.object_id]))
+        self.replay(session, load=True)
+
+        original = reentry.state.cards[source.object_id].logical_object_id
+        self.cast(reentry, "A", blink, [source.ref])
+        self.resolve_top(reentry)
+        self.assertNotEqual(original, reentry.state.cards[source.object_id].logical_object_id)
+        self.assertIsNone(self.resolve(reentry))
+        self.assertEqual(printed, self.subtypes(reentry, source))
+        self.replay(reentry, load=True)
+
+    def test_unnatural_selection_keeps_declared_target_and_excludes_wall(self):
+        session = self.session(611821002)
+        source = self.add(session.engine, "Unnatural Selection")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        blink = self.add(session.engine, "Cloudshift", seat="B", zone="hand")
+        self.add(session.engine, "Generic Bound Plains", seat="B", ref="blink-payment")
+        printed = self.subtypes(session, target)
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        self.activate_type(session, source, [target.ref])
+        reentry = self.replay(session, load=True)
+
+        options = self.type_options(session)
+        self.assertNotIn("Wall", options)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "creature_type": "wall"}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.choose_type(session, "Wizard")
+        self.assertEqual({"wizard"}, self.subtypes(session, target))
+        self.replay(session, load=True)
+
+        self.cast(reentry, "B", blink, [target.ref])
+        self.resolve_top(reentry)
+        self.assertIsNone(self.resolve(reentry))
+        self.assertEqual(printed, self.subtypes(reentry, target))
+        self.replay(reentry, load=True)
+
+    def test_mistform_mask_uses_attachment_last_known_information_after_departure(self):
+        session = self.session(611821003)
+        aura = self.add(session.engine, "Mistform Mask", zone="hand")
+        target = self.add(session.engine, "Universal Automaton", seat="B")
+        destroy = self.add(session.engine, "Disenchant", zone="hand")
+        self.assert_closed(session, aura)
+        self.prepare(session, mana={"C": 4, "W": 1, "U": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", aura, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertGreater(len(self.subtypes(session, target)), 300)
+        self.activate_type(session, session.state.cards[aura.object_id])
+        self.cast(session, "A", destroy, [session.state.cards[aura.object_id].ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[aura.object_id].zone)
+        self.assertIn("Time Lord", self.type_options(session))
+        self.choose_type(session, "Time Lord")
+        current = session.state.cards[target.object_id]
+        types, subtypes, _ = session.engine._effective_type_parts(current)
+        self.assertEqual({"artifact", "creature"}, types)
+        self.assertEqual({"time lord"}, subtypes)
+        self.replay(session, load=True)
+
+    def test_standardize_and_wakecaster_lock_current_group(self):
+        for activated in (False, True):
+            with self.subTest(activated=activated):
+                session = self.session(611821004 + activated)
+                source = self.add(session.engine, "Mistform Wakecaster" if activated else "Standardize",
+                                  zone="battlefield" if activated else "hand")
+                source.acquired_control_turn_count = -1
+                own = self.add(session.engine, "Generic Bound Body", ref="own-creature")
+                foreign = self.add(session.engine, "Generic Bound Body", seat="B", ref="foreign-creature")
+                later = self.add(session.engine, "Phyrexian Walker", zone="hand")
+                foreign_printed = self.subtypes(session, foreign)
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 2, "U": 2})
+                self.checkpoint(session)
+                if activated:
+                    ability, = (ability for ability in session.engine._activated_abilities(source) if ability.tap_source)
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    offer = next(action for action in actions
+                                 if action["id"] == f"activate:{source.ref}:{ability.ability_id}")
+                    accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertTrue(session.state.cards[source.object_id].tapped)
+                else:
+                    self.cast(session, "A", source)
+                self.assertEqual([], session.state.stack[-1].targets)
+                self.assertEqual(activated, "Wall" in self.type_options(session))
+                self.choose_type(session, "Dragon")
+                self.assertEqual({"dragon"}, self.subtypes(session, own))
+                self.assertEqual(foreign_printed if activated else {"dragon"}, self.subtypes(session, foreign))
+                self.cast(session, "A", later)
+                self.assertIsNone(self.resolve(session))
+                self.assertNotIn("dragon", self.subtypes(session, later))
+                self.assertEqual({"dragon"}, self.subtypes(session, own))
+                self.replay(session, load=True)
+
+    def test_trickery_charm_modal_target_and_resolution_type_are_separate(self):
+        session = self.session(611821006)
+        spell = self.add(session.engine, "Trickery Charm", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered = next(action for action in actions if action["id"] == f"cast:{spell.ref}")
+        cast = session.act("pilot:A", {
+            "action_id": offered["id"], "modes": ["mode_2"], "targets": [target.ref], "pay": "auto",
+        })
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("priority", session.state.pending_decision.kind)
+        self.assertIn("Wall", self.type_options(session))
+        self.choose_type(session, "Wizard")
+        self.assertEqual({"wizard"}, self.subtypes(session, target))
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":

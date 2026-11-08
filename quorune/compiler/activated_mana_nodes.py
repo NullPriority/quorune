@@ -312,6 +312,7 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    "choose_creature_type",
     COMBAT_REMOVAL_OPERATION,
     "life_loss_then_gain_actual",
     'discover',

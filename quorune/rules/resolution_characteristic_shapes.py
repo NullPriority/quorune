@@ -4,14 +4,16 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from ..object_predicate import ObjectQuerySpec
+from ..attachment_references import ATTACHMENT_INFORMATION_CAPABILITY, AttachmentReferenceSpec
+from ..object_predicate import ObjectQuerySpec, object_query_capabilities
 from ..next_turn_effect import next_turn_effect_dependencies
 from ..source_tap_effect import source_tap_effect_dependencies
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC,
     FIXED_TARGET_COLOR_VERSION, decode_fixed_target_color, fixed_target_color_schema,
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
-    FixedResolutionModifierSpec, fixed_resolution_characteristic_instruction,
+    FixedResolutionModifierSpec, FixedResolutionSubtypeSettingSpec, decode_temporary_creature_type_choice,
+    fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
 
@@ -56,11 +58,51 @@ def fixed_resolution_characteristic_set_is_closed(query: ObjectQuerySpec) -> boo
     return not query.keywords_none and fixed_resolution_characteristic_query_is_closed(symbolic,target_schema=None)
 
 
+def temporary_creature_type_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if len(effects) != 1 or "cr-611-continuous-effects" not in mechanic_ids:
+        return ()
+    try:
+        selection, _excluded = decode_temporary_creature_type_choice(effects[0])
+    except (TypeError, ValueError, KeyError):
+        return ()
+    required = {PERMANENT_CHARACTERISTIC_CAPABILITY, "continuous.resolution.fixed_characteristics_until_end_of_turn"}
+    if selection == "$target.0":
+        from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities
+
+        if ("cr-115-targets" not in mechanic_ids or not direct_permanent_target_schema_is_closed(target_schema)
+                or (target_schema.get("types_any") != ["creature"] and "creature" not in target_schema.get("types_all", ()))):
+            return ()
+        required.update(("target.revalidate_resolution", *direct_target_predicate_capabilities(target_schema)))
+    elif target_schema is not None:
+        return ()
+    elif isinstance(selection, ObjectQuerySpec):
+        required.update(object_query_capabilities(selection))
+    elif isinstance(selection, AttachmentReferenceSpec):
+        required.add(ATTACHMENT_INFORMATION_CAPABILITY)
+    return tuple(sorted(required))
+
+
+def temporary_creature_type_runtime_dependencies(program):
+    effects = program.effects
+    chosen = [effect for effect in effects if effect.get("op") == "choose_creature_type" and "schema_version" in effect]
+    if not chosen:
+        return ()
+    required = temporary_creature_type_node_capabilities(
+        effects=effects, target_schema=program.target_schema,
+        mechanic_ids=("cr-611-continuous-effects", "cr-115-targets"),
+    )
+    if not required:
+        raise ValueError("A temporary creature type choice requires its complete subject and layer owners")
+    return required
+
+
 def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema: Any, mechanic_ids: Any) -> tuple[str, ...]:
     mechanics=set(mechanic_ids)
     if PERMANENT_CHARACTERISTIC_MECHANIC not in mechanics or 'cr-611-continuous-effects' not in mechanics or len(effects)!=1:return ()
     try:spec,selection=fixed_resolution_characteristic_instruction(effects[0])
     except (TypeError,ValueError,KeyError):return ()
+    if isinstance(spec, FixedResolutionSubtypeSettingSpec):
+        return ()
     dependencies={PERMANENT_CHARACTERISTIC_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn',
                   *next_turn_effect_dependencies(effects[0]), *source_tap_effect_dependencies(effects[0])}
     if isinstance(spec, FixedResolutionModifierSpec):
