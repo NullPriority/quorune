@@ -148,7 +148,8 @@ def occurrence_creature_power_snapshot(host, card, *, characteristics=None):
 
 def with_occurrence_power_departure(host, card, characteristics):
     if (card.zone != "battlefield" or not any(any(occurrence_power_damage_in(program.effects))
-                                            for program in host.semantics.programs_for_event("creature.dies"))
+                                            for event in ("creature.dies", "creature.dies.self")
+                                            for program in host.semantics.programs_for_event(event))
             or "creature" not in host._type_parts(str(characteristics.get("type_line") or ""))[0]):
         return characteristics
     return {**characteristics, OCCURRENCE_POWER_DAMAGE_CONTEXT: occurrence_creature_power_snapshot(

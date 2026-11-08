@@ -18,6 +18,7 @@ from ..creature_power_damage_model import (
     occurrence_power_damage_in,
 )
 from ..replacement.immutable import thaw_value
+from ..creature_subtypes import canonical_creature_subtype
 
 
 _ATTACHED_CREATURE = {
@@ -28,7 +29,7 @@ _ATTACHED_CREATURE = {
 }
 
 
-def _creature_group(group: object, *, group_id: str) -> bool:
+def _creature_group(group: object, *, group_id: str, allow_subtype_only: bool = False) -> bool:
     if not isinstance(group, Mapping):
         return False
     value = dict(group)
@@ -38,9 +39,11 @@ def _creature_group(group: object, *, group_id: str) -> bool:
         return False
     if value.pop("categories", None) != ["permanent"]:
         return False
-    if value.pop("types_any", None) != ["creature"]:
+    types = value.pop("types_any", None)
+    if types != ["creature"] and (types is not None or not allow_subtype_only):
         return False
-    if value.pop("controller_relation", None) not in {
+    relation = value.pop("controller_relation", None)
+    if relation not in {
         "any",
         "opponent",
         "you",
@@ -76,6 +79,12 @@ def _creature_group(group: object, *, group_id: str) -> bool:
     if combat not in {None, "attacking", "blocking"}:
         return False
     exclusion = value.pop("source_exclusion", None)
+    if types is None:
+        return (
+            relation == "you" and count == 1 and minimum is None and maximum is None
+            and subtypes is not None and canonical_creature_subtype(subtypes[0]) == subtypes[0]
+            and all(term is None for term in (colors, state, combat, exclusion)) and not value
+        )
     return exclusion in {None, True} and not value
 
 
@@ -158,11 +167,21 @@ def occurrence_power_damage_runtime_dependencies(program):
     leaves = tuple(occurrence_power_damage_in(program.effects))
     if not leaves:
         return ()
+    target_schema = program.target_schema
+    event = program.event
+    if len(program.effects) == 1 and "reflexive_program" in program.effects[0]:
+        from .reflexive_payment_shapes import reflexive_payment_parts
+
+        payment, consequence = reflexive_payment_parts(program.effects[0])
+        if payment.kind not in {"mana", "energy"} or target_schema is not None:
+            raise ValueError("Reflexive occurrence power damage requires its fixed payment before its own target")
+        target_schema = consequence.target_schema
+        event = event.removesuffix(".self")
     if (len(leaves) != 1 or "one_or_more_event_batch" in program.coverage
-            or not occurrence_power_damage_event_is_closed(program.event, program.active_zone)):
+            or not occurrence_power_damage_event_is_closed(event, program.active_zone)):
         raise ValueError("Occurrence power damage requires one closed entry or death event")
     owners = _occurrence_power_damage_capabilities(
-        leaves[0], program.target_schema, ("cr-115-targets", "cr-120-damage"),
+        leaves[0], target_schema, ("cr-115-targets", "cr-120-damage"),
     )
     if not owners:
         raise ValueError("Occurrence power damage lost its event source or declared target")
@@ -252,7 +271,7 @@ def fixed_creature_power_damage_node_capabilities(
     if direct:
         if lki is not None or target != "$target.1" or len(groups) != 2:
             return ()
-        if not _creature_group(groups[0], group_id="fighter"):
+        if not _creature_group(groups[0], group_id="fighter", allow_subtype_only=kind == "bite"):
             return ()
     else:
         if not _source_is_closed(source) or target != "$target.0" or len(groups) != 1:

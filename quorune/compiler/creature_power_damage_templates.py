@@ -36,7 +36,7 @@ _SOURCE_FIGHT = re.compile(
     re.IGNORECASE,
 )
 _DIRECT_BITE = re.compile(
-    rf"^(?P<first>Target {_QUALITY} you control) deals damage equal to (?P<multiple>twice )?its "
+    r"^(?P<first>Target .+? you control) deals damage equal to (?P<multiple>twice )?its "
     r"power to (?P<second>any other target|any target|"
     rf"another target {_QUALITY}|target {_QUALITY}|target creature or planeswalker)"
     r"(?P<relation> you don't control| an opponent controls)?\.?$",
@@ -110,8 +110,13 @@ def _creature_group(
     optional: bool = False,
     state_counter: bool = False,
     source_exclusion: bool = False,
+    allow_subtype_only: bool = False,
 ) -> dict[str, Any] | None:
     fields = _quality_fields(quality)
+    if fields is None and allow_subtype_only:
+        subtype = canonical_creature_subtype(quality)
+        if subtype is not None:
+            fields = {"subtypes_any": [subtype]}
     if fields is None:
         return None
     result: dict[str, Any] = {
@@ -383,6 +388,7 @@ def _direct_bite(
         group_id="fighter",
         quality=first_quality,
         relation="you",
+        allow_subtype_only=True,
     )
     other = "another target" in match.group("second").casefold() or (
         match.group("second").casefold() == "any other target"

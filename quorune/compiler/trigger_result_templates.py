@@ -50,8 +50,18 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         combat_removal = optional_blocked_combat_removal_template(binding, body)
         if combat_removal is not None:
             return combat_removal, True
-    return _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
+    result = _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
         _allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=_allow_optional)
+    if result[0][0] is not None or not _allow_payment:
+        return result
+    from .reflexive_payment_templates import binding_aware_reflexive_payment_template
+
+    return binding_aware_reflexive_payment_template(
+        body, compile_result=lambda child: binding_effect_template(
+            binding, child, card_name=card_name, effect_template=effect_template,
+            source_counter_variants=source_counter_variants, _allow_payment=False,
+        ),
+    ) or result
 
 
 def _binding_result_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):

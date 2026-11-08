@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from typing import Mapping
-from ..reflexive_trigger_model import REFLEXIVE_PAYMENT_CAPABILITY, REFLEXIVE_PAYMENT_MECHANIC, ReflexiveTriggerProgram
+from ..reflexive_trigger_model import (
+    BOUND_REFLEXIVE_PROGRAM_VERSION, REFLEXIVE_PAYMENT_CAPABILITY, REFLEXIVE_PAYMENT_MECHANIC, ReflexiveTriggerProgram,
+)
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
 from ..replacement.immutable import thaw_value
 from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
@@ -19,14 +21,63 @@ def reflexive_payment_parts(effect):
     if (('cost' in effect) != (payment.kind == 'mana')
             or payment.kind == 'mana' and dict(effect['cost']) != dict(payment.requirements)):
         raise ValueError('Reflexive payment mana identity changed')
-    return payment, ReflexiveTriggerProgram.from_dict(effect['reflexive_program'])
+    program = ReflexiveTriggerProgram.from_dict(effect['reflexive_program'])
+    if program.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION and payment.kind not in {'mana', 'energy'}:
+        raise ValueError('Bound reflexive triggers require one fixed mana or energy payment')
+    return payment, program
 
 
 def reflexive_program_capabilities(program):
     from .fixed_effect_payment_shapes import fixed_payment_result_capabilities
-    return fixed_payment_result_capabilities(effects=tuple(thaw_value(effect) for effect in program.effects),
-        target_schema=thaw_value(program.target_schema) if program.target_schema is not None else None,
-        mechanic_ids=program.mechanic_ids)
+
+    effects = tuple(thaw_value(effect) for effect in program.effects)
+    schema = thaw_value(program.target_schema)
+    owned = fixed_payment_result_capabilities(effects=effects, target_schema=schema, mechanic_ids=program.mechanic_ids)
+    if owned or program.schema_version != BOUND_REFLEXIVE_PROGRAM_VERSION:
+        return owned
+    from .linked_exile_return_shapes import linked_exile_return_node_capabilities
+    from .role_token_shapes import role_token_node_capabilities
+
+    mechanics = set(program.mechanic_ids)
+    return (
+        linked_exile_return_node_capabilities(effects=effects, target_schema=schema, mechanic_ids=mechanics)
+        or role_token_node_capabilities(effects=effects, target_schema=schema, mechanics=mechanics)
+        or _live_count_result_capabilities(effects, schema, mechanics)
+    )
+
+
+def _live_count_result_capabilities(effects, schema, mechanics):
+    from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+    from ..compiler.declared_effect_amounts import declared_amount_dependencies
+    from ..compiler.public_query_effect_amounts import (
+        PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, public_query_amount_shape_context,
+    )
+    from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY, PublicQueryAmountSpec
+    from .fixed_effect_payment_shapes import fixed_payment_result_capabilities
+
+    if len(effects) != 1 or PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
+        return ()
+    field = {'damage': 'amount', 'mill': 'count', 'place_counters': 'amount'}.get(effects[0].get('op'))
+    if field is None:
+        return ()
+    try:
+        amount = PublicQueryAmountSpec.from_dict(effects[0][field])
+    except (KeyError, TypeError, ValueError):
+        return ()
+    quantity = amount.quantity
+    if (not isinstance(quantity, CharacteristicQuantitySpec) or quantity.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
+            or quantity.query is None or quantity.query.zones != ('battlefield',)
+            or quantity.counter_name is not None or amount.coefficient != 1):
+        return ()
+    shape = public_query_amount_shape_context(effects, mechanics, target_schema=schema)
+    if shape is None:
+        return ()
+    projected, fixed_mechanics = shape
+    owned = fixed_payment_result_capabilities(effects=projected, target_schema=schema, mechanic_ids=fixed_mechanics)
+    if not owned:
+        return ()
+    dependencies = declared_amount_dependencies(mechanics, effects=effects)
+    return tuple(sorted({*owned, *dependencies, PUBLIC_QUERY_AMOUNT_CAPABILITY}))
 
 
 def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids):
@@ -63,4 +114,7 @@ def reflexive_payment_runtime_dependencies(program):
     )
     if not owned:
         raise ValueError('Reflexive payment requires a closed cost and an independently owned child')
+    _, child = reflexive_payment_parts(effects[0])
+    if child.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION and not program.ability_id.startswith('trigger:'):
+        raise ValueError('Bound reflexive payments require an admitted creating trigger')
     return owned

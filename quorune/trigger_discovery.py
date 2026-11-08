@@ -1370,7 +1370,13 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
         active_zone=active_zone, source_characteristics=characteristics,
     )
     from .drawing.miracle_triggers import miracle_trigger_context
+    from .reflexive_trigger_model import bound_reflexive_has_targets
+    from .target_source import BOUND_TARGETING_SOURCE_VERSION, capture_targeting_source, TARGETING_SOURCE_CONTEXT
     try:
+        if bound_reflexive_has_targets(program.effects):
+            stack_context[TARGETING_SOURCE_CONTEXT] = capture_targeting_source(
+                host, source, characteristics=characteristics, zone=active_zone, schema_version=BOUND_TARGETING_SOURCE_VERSION,
+            ).to_dict()
         stack_context.update(occurrence_power_trigger_context(
             host, program, event, context, departure_characteristics,
         ))

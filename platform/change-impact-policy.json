@@ -5020,11 +5020,17 @@
     {
       "id": "reflexive-payment-promoted-consumers",
       "patterns": [
+        "quorune/compiler/creature_power_damage_templates.py",
+        "quorune/compiler/occurrence_object_results.py",
         "quorune/compiler/reflexive_payment_templates.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
         "quorune/reflexive_trigger_model.py",
         "quorune/rules/reflexive_payment_shapes.py",
         "quorune/rules/reflexive_triggers.py",
         "quorune/semantic_choices/reflexive_payment.py",
+        "quorune/target_source.py",
+        "quorune/target_protection_engine_adapter.py",
         "tests/fixtures/reflexive-payment-cards.json"
       ],
       "test_modules": [

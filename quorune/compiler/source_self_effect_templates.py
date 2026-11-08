@@ -31,10 +31,33 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         event={'enters':'permanent.enter','dies':'creature.dies','leaves the battlefield':'permanent.leave'}[event_phrase],
         compile_fixed=lambda text:effect_template(text,card_name=card_name)) or source_self_contextual_effect_template(
             body,card_name=card_name,event_phrase=event_phrase,compile_effect=effect_template)
-    template,effects,schema,mechanics=compiled if compiled is not None else effect_template(body,card_name=card_name)
+    if compiled is None:
+        compiled = effect_template(body, card_name=card_name)
+        if compiled[0] is None:
+            compiled = _source_self_reflexive_payment(body, card_name=card_name,
+                event_phrase=event_phrase, effect_template=effect_template) or compiled
+    template,effects,schema,mechanics=compiled
     if condition is not None:mechanics=tuple(dict.fromkeys((*mechanics,SOURCE_ENTRY_CAST_MECHANIC)))
     if condition is not None and condition.get('origin')=='hand':mechanics=(*mechanics,SOURCE_ENTRY_CAST_HAND_MECHANIC)
     return template,effects,schema,mechanics,condition
+
+
+def _source_self_reflexive_payment(body, *, card_name, event_phrase, effect_template):
+    from .occurrence_object_results import occurrence_power_damage_body
+    from .reflexive_payment_templates import reflexive_payment_template
+
+    def compile_child(text):
+        if event_phrase in {'enters', 'dies'}:
+            source = SourceReferenceSpec(card_name).regex_pattern
+            subject = re.match(rf'^(?:it|this creature|{source}) (?=deals damage equal to its power to )', text, re.I)
+            if subject is not None:
+                power = occurrence_power_damage_body('It ' + text[subject.end():])
+                if power is not None:
+                    return power
+        return source_self_contextual_effect_template(text, card_name=card_name, event_phrase=event_phrase,
+            compile_effect=effect_template) or effect_template(text, card_name=card_name)
+
+    return reflexive_payment_template(body, compile_effect=compile_child, bound_trigger=True)
 
 
 _SOURCE_EVENT = re.compile(

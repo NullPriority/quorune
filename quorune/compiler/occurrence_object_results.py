@@ -20,12 +20,11 @@ _EVENT_NEXT_UNTAP = re.compile(
 _OCCURRENCE_POWER_DAMAGE = re.compile(r"(?:It|That creature) deals damage equal to its power to (?P<target>[^.]+)\.", re.I)
 
 
-def occurrence_power_damage_result(binding, body):
+def occurrence_power_damage_body(body):
     from .damage_templates import source_pronoun_damage_effect_template
-    from ..rules.creature_power_damage_capability_shapes import occurrence_power_damage_event_is_closed
 
     match = _OCCURRENCE_POWER_DAMAGE.fullmatch(body)
-    if match is None or not occurrence_power_damage_event_is_closed(binding.event.value, binding.active_zone):
+    if match is None:
         return None
     target = source_pronoun_damage_effect_template(f"It deals 1 damage to {match['target']}.")
     if target is None or target.target_schema is None:
@@ -36,7 +35,17 @@ def occurrence_power_damage_result(binding, body):
         "target": "$target.0", "target_must_be_creature": target.target_schema.get("types_any") == ["creature"],
     }
     return ("occurrence-creature-power-damage-v1", (instruction,), target.target_schema,
-            (*target.mechanics, CREATURE_POWER_DAMAGE_MECHANIC)), True
+            (*target.mechanics, CREATURE_POWER_DAMAGE_MECHANIC))
+
+
+def occurrence_power_damage_result(binding, body):
+    from ..rules.creature_power_damage_capability_shapes import occurrence_power_damage_event_is_closed
+
+    if occurrence_power_damage_event_is_closed(binding.event.value, binding.active_zone):
+        compiled = occurrence_power_damage_body(body)
+        if compiled is not None:
+            return compiled, True
+    return None
 
 
 def entry_permanent_result(binding, body):

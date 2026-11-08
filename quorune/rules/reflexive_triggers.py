@@ -6,10 +6,34 @@ from copy import deepcopy
 
 from ..errors import GameRuleError
 from ..model import StackItem
-from ..reflexive_trigger_model import ReflexiveTriggerProgram
+from ..reflexive_trigger_model import BOUND_REFLEXIVE_PROGRAM_VERSION, ReflexiveTriggerProgram
 from ..replacement.immutable import FrozenMap
 from ..trigger_processing import enqueue_trigger_batch
 from .reflexive_payment_shapes import reflexive_program_capabilities
+
+
+def _bound_reflexive_context(parent, consequence, source_id):
+    from ..creature_power_damage import validate_occurrence_power_snapshot
+    from ..creature_power_damage_model import OCCURRENCE_POWER_DAMAGE_CONTEXT, occurrence_power_damage_in
+    from ..target_source import BOUND_TARGETING_SOURCE_VERSION, TARGETING_SOURCE_CONTEXT, TargetingSourceBinding
+
+    result = {}
+    try:
+        if consequence.target_schema is not None:
+            source = TargetingSourceBinding.from_dict(parent.context.get(TARGETING_SOURCE_CONTEXT))
+            if source.schema_version != BOUND_TARGETING_SOURCE_VERSION or source.object_id != source_id:
+                raise ValueError('Reflexive targets lost their original ability source')
+            result[TARGETING_SOURCE_CONTEXT] = source.to_dict()
+            result['source_logical_object_id'] = source.logical_object_id
+        if any(occurrence_power_damage_in(consequence.effects)):
+            snapshot, occurrence = validate_occurrence_power_snapshot(
+                parent.context, parent.context.get(OCCURRENCE_POWER_DAMAGE_CONTEXT),
+            )
+            result.update(card=occurrence.ref, card_object_identity=occurrence.logical_object_id)
+            result[OCCURRENCE_POWER_DAMAGE_CONTEXT] = snapshot
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return result
 
 
 def enqueue_reflexive_trigger(host, intent):
@@ -28,6 +52,8 @@ def enqueue_reflexive_trigger(host, intent):
     context = {key: deepcopy(value) for key, value in parent.context.items()
                if key.startswith('source_') or key in retained}
     source_id = parent.source_object_id or parent.card_object_id
+    if consequence.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION:
+        context.update(_bound_reflexive_context(parent, consequence, source_id))
     source = host.state.cards.get(source_id)
     if source is not None:
         if not context.get('source_logical_object_id'):

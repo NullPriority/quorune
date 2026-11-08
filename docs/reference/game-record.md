@@ -1330,3 +1330,11 @@ snapshot carries the signed power and damage-source facts. Entry starts with
 the current incarnation and pins its final battlefield facts on departure.
 A dies trigger starts with the predeparture snapshot. Existing ability-source
 and fixed-multiple descriptors retain their record formats.
+
+Payment schema four can carry a version-two reflexive child program. A
+targeted child retains version-two `targeting_source_characteristics` for the
+creating ability's incarnation, including its mana value for protection
+checks. An occurrence-power child also retains its event card
+reference, logical identity, and `occurrence_power_damage_lki` snapshot. The
+child's own target declaration and any resolution-time count remain deferred
+to its stack frame. Version one reads the legacy child schema.

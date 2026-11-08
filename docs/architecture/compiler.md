@@ -5254,8 +5254,10 @@ pronoun as the source of power-based damage to one declared target. A
 graveyard-origin entry checks the origin and the graveyard owner separately
 from the entering permanent's controller. The existing resolution payment
 wrapper keeps the target announcement before an explicit `If you do` result.
-Reflexive triggers and effects with a different target chooser remain residual
-at this production.
+A fixed reflexive payment binds the same occurrence to its later child
+trigger. The child also accepts a controlled subtype as a power-damage source
+target, including a Kindred permanent. Effects with a different target chooser
+require their own binding.
 
 Target-effect corpus assurance recognizes the Expend trigger wrapper while
 independently recompiling its target result. The printed threshold, player

@@ -69,10 +69,10 @@ def target_protection_verdict_for_row(
         if isinstance(card, CardInstance)
         else {"keywords": []}
     )
-    copy_source = getattr(acting_source, "protection_source", None)
+    bound_source = getattr(acting_source, "protection_source", None)
     verdict = ProtectionVerdict.ALLOWED
     if isinstance(card, CardInstance):
-        verdict = (protection_verdict(characteristics, copy_source) if copy_source is not None
+        verdict = (protection_verdict(characteristics, bound_source) if bound_source is not None
                    else protection_verdict_for_ref(host, characteristics, source_ref))
     snapshot = TargetProtectionSnapshot(
         acting_controller=acting_controller,
@@ -80,7 +80,7 @@ def target_protection_verdict_for_row(
         target_is_player=target_is_player,
         source_qualities=acting_source,
         target_keywords=(current_player_target_keywords(host,protected_controller) if target_is_player else normalized_characteristic_keywords(characteristics)),
-        source_colors=(copy_source.colors if copy_source is not None else frozenset(host._source_colors_for_ref(source_ref))),
+        source_colors=(bound_source.colors if bound_source is not None else frozenset(host._source_colors_for_ref(source_ref))),
         controller_hexproof_colors=frozenset(
             str(value).strip().upper()
             for value in (

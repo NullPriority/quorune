@@ -511,6 +511,14 @@ Source damage in these frames uses the shared current/last-known source owner;
 a departed source's controller and keywords remain independent of the
 controller of the reflexive ability.
 
+Bound child programs derive payment and consequence requirements during
+runtime admission. Version two carries the creating ability's targeting source
+into the later frame. An occurrence-power child also carries its original
+entrant or dying creature. The departure owner refreshes that snapshot in
+either frame. Linked returns and Role creation use their own target owners,
+and controller-scoped battlefield quantities are evaluated when the child
+result applies.
+
 Fixed delayed object actions retain the original incarnation of their source,
 a sealed blocking counterpart or a damaged creature when the creating ability
 resolves. The existing delayed-trigger
