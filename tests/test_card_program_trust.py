@@ -124,7 +124,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 ('Target creature loses shadow until end of turn.\nDraw a card.', 'Instant',
                  'runtime_temporary_keyword_removal:invalid:'),
                 ('You may exert this creature as it attacks. When you do, target creature gets +X/+X until end of turn, where X is the number of counters on permanents you control.',
-                 'Creature — Human', 'capability:undeclared_runtime_dependency:quantity_expression.public_counter_total')):
+                 'Creature — Human', None)):
             with self.subTest(text=text):
                 record = replace(_bolt(), name='Generic Admission Witness', type_line=kind,
                                  oracle_text=text, power='2' if kind.startswith('Creature') else None,
@@ -136,15 +136,21 @@ class CardProgramTrustTests(unittest.TestCase):
                     semantic_registry=SemanticRegistry(), capability_registry=self.capabilities,
                     capability_profile='commander_review')
                 trust = program.trust_closure
-                self.assertEqual('unresolved', trust['trust_basis'])
-                self.assertFalse(trust['strict_capability_ready'])
-                self.assertTrue(any(blocker in value for value in trust['blockers']), trust)
                 binding = bind_card_program_runtime(program, capability_registry=self.capabilities,
                                                     profile='commander_review')
-                self.assertFalse(binding['strict_capability_ready'])
+                closed = blocker is None
+                self.assertEqual('capability_closed' if closed else 'unresolved', trust['trust_basis'])
+                self.assertEqual(closed, trust['strict_capability_ready'])
+                self.assertEqual(closed, binding['strict_capability_ready'])
+                if closed:
+                    self.assertFalse(trust['blockers'], trust)
+                    self.assertTrue(any('quantity_expression.public_counter_total' in row['declared_capabilities']
+                                        for row in binding['ability_bindings']), binding)
+                else:
+                    self.assertTrue(any(blocker in value for value in trust['blockers']), trust)
                 collector.observe(record, program)
-        self.assertEqual({'unresolved':2}, dict(collector.trust_bases))
-        self.assertEqual({'untrusted':2}, dict(collector.statuses))
+        self.assertEqual({'unresolved': 1, 'capability_closed': 1}, dict(collector.trust_bases))
+        self.assertEqual({'untrusted': 1, 'trusted': 1}, dict(collector.statuses))
 
     def test_reviewed_pack_is_compatibility_not_capability_closed(self):
         program = SemanticRegistry().card_program_for_oracle(
