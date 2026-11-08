@@ -44,8 +44,13 @@ def copied_entry_preview(card: Any, prepared: Any):
         return None
     if not isinstance(values, Mapping) or COPIABLE_ORACLE_FIELD not in values:
         raise ValueError('Prepared copy entry requires retained copiable values')
-    return replace(card, annotations={**card.annotations, 'copy_overrides':dict(values)},
+    from .shared_type_doors import SharedTypeDoors, copied_room_door_ids
+    preview = replace(card, annotations={**card.annotations, 'copy_overrides':dict(values)},
         active_face=values.get(COPIABLE_FACE_FIELD))
+    copied_doors = copied_room_door_ids(values)
+    if copied_doors is not None:
+        preview.shared_type_doors = SharedTypeDoors(copied_doors, printed=False)
+    return preview
 
 
 def serialize_prepared_copy_entry(prepared):

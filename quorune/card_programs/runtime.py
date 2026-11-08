@@ -708,6 +708,7 @@ def _continuous_programs_for_source(
         isinstance(copy_overrides, Mapping)
         and "ability_fragments" in copy_overrides
     )
+    from ..card_program_faces import room_program_face_is_active
     programs = {
         program.key: program
         for program in (
@@ -719,7 +720,7 @@ def _continuous_programs_for_source(
                 event="characteristics.evaluate",
             )
         )
-        if not program.provenance.get('granted_only')
+        if not program.provenance.get('granted_only') and room_program_face_is_active(source, program)
     }
     programs.update(
         {

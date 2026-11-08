@@ -782,6 +782,11 @@ The independent `split_permanent_face_values_version: 1` marker binds the
 current battlefield mana value and colors for a shared-type split permanent
 with one active face. Initial checkpoint and manifest must agree. Records
 without the marker replay with their original split permanent values.
+Version two also binds the shared-type split door lifecycle. A current
+battlefield object stores its ordered door identities and unlocked designations.
+Paid unlock offers bind one door to the current incarnation. A copied form
+stores both copiable door definitions separately from these designations.
+Version-one records use their single active-face characteristic view.
 
 Current runtime-trust provenance also identifies a core permanent-spell copy's
 empty resolution through its pinned spell record. It retains the copy-specific

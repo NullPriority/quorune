@@ -18832,6 +18832,34 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/room_copy_values.py",
+      "layer": "rules",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/room_unlock.py",
+      "layer": "rules",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/scheduled_player_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -24449,6 +24477,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/shared_type_doors.py",
+      "layer": "domain",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/soulbond_model.py",
       "layer": "domain",
       "owning_subsystem": "permanent_designations",
@@ -26121,5 +26161,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "9a9f83d349dbb5c3b8d5bc57f57d396ff94115beb6b999f137638370fcc21d2b"
+  "fingerprint": "f75fa1239203f9a894288f8277059af33e2b4dc575dfb7e08c8a4fef8a0dd2b4"
 }

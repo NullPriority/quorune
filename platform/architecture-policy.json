@@ -176,6 +176,7 @@
       "quorune/mana_activation.py": "activated mana ability and reversible activation transaction owner",
       "quorune/mana_provenance.py": "typed snow-source and spending-restriction mana provenance mutation owner",
       "quorune/optional_untap.py": "retained physical untap choice and controller continuation owner",
+      "quorune/rules/room_unlock.py": "typed shared type line door unlock and occurrence owner using canonical mana payment and priority",
       "quorune/permanent_designations.py": "typed identity-pinned noncopiable permanent-designation mutation owner",
       "quorune/permanent_exile.py": "typed identity-pinned permanent-exile transaction delegating mutation to the canonical zone-change owner",
       "quorune/permanent_transform.py": "typed CR 701.27 active-face/transform-count owner with versioned timestamp assignment through the canonical zone clock",

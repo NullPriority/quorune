@@ -42,6 +42,10 @@ def _custom_activated_abilities(
     characteristics = dict(defined_token_characteristic_values(card))
     if DEFINED_TOKEN_FACES_FIELD in characteristics:
         characteristics = defined_token_current_characteristics(card, characteristics)
+    from .shared_type_doors import SHARED_TYPE_COPY_FIELD
+    if SHARED_TYPE_COPY_FIELD in characteristics:
+        from .rules.room_copy_values import room_copy_characteristics
+        characteristics = room_copy_characteristics(card, characteristics)
     if "activated_abilities" not in characteristics:
         return None
     raw = characteristics.get("activated_abilities", ())
@@ -70,6 +74,8 @@ def compiled_activated_abilities(
     if record is None:
         return ()
     expected_face = _face_id(record, card)
+    from .card_program_faces import current_shared_type_doors, room_program_face_is_active
+    doors = current_shared_type_doors(card)
     face_ids = tuple(
         str(face.get("name") or "front") for face in getattr(record, "faces", ())
     )
@@ -99,7 +105,10 @@ def compiled_activated_abilities(
             if face == "back" and len(face_ids) == 2
             else face
         )
-        if normalized_face and normalized_face != expected_face:
+        if doors is not None:
+            if not room_program_face_is_active(card, program):
+                continue
+        elif normalized_face and normalized_face != expected_face:
             continue
         if not program_source_is_current(host.card_db, program):
             continue

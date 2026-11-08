@@ -187,6 +187,14 @@ def dispatch_zone_change_occurrence(
             read_ahead_chapter=occurrence.read_ahead_chapter,
             trigger_batch=pending,
         )
+    if occurrence.origin == "stack" and occurrence.destination == "battlefield" and card.shared_type_doors is not None:
+        from .rules.room_unlock import collect_room_unlock_events
+        from .shared_type_doors import SharedTypeDoors
+
+        after = card.shared_type_doors
+        collect_room_unlock_events(
+            host, card, SharedTypeDoors(after.faces), after, actor=card.controller, trigger_batch=pending,
+        )
     if owns_trigger_batch:
         enqueue_trigger_batch(host, pending)
 

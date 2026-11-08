@@ -219,7 +219,7 @@
           "const": "commander_review"
         },
         "split_permanent_face_values_version": {
-          "const": 1,
+          "enum": [1, 2],
           "type": "integer"
         },
         "starting_life": {

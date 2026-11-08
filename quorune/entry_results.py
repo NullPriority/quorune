@@ -54,6 +54,11 @@ def commit_prepared_copy_values(prepared,card,*,error_type):
         if not isinstance(copy_values, Mapping) or COPIABLE_ORACLE_FIELD not in copy_values:
             raise error_type('Prepared entry copy values are malformed')
         card.annotations['copy_overrides'] = thaw_value(copy_values)
+        from .shared_type_doors import SharedTypeDoors, copied_room_door_ids
+        copied_doors = copied_room_door_ids(copy_values)
+        if copied_doors is not None:
+            printed = card.shared_type_doors is not None and card.shared_type_doors.printed
+            card.shared_type_doors = SharedTypeDoors(copied_doors, printed=printed)
 
         from .entry_copy import COPIABLE_FACE_FIELD
         from .defined_token_faces import defined_token_definition

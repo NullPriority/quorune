@@ -168,7 +168,7 @@ def validate_state_versions(
     if (
         split_face_version != getattr(state, split_face_field, None)
         or split_face_field in format_value
-        and (type(split_face_version) is not int or split_face_version != 1)
+        and (type(split_face_version) is not int or split_face_version not in {1, 2})
     ):
         raise ValueError("Split permanent face value provenance does not match the initial checkpoint")
     transform_characteristics = format_value.get("transform_event_characteristics_version", 0)

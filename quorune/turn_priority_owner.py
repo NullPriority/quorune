@@ -20,6 +20,7 @@ from .model import DecisionGroup, GameState, YieldPolicy
 from .semantic_runtime.action_permissions import land_play_permission_options
 from .rules.action_catalog import action_offer_signature_facts
 from .trigger_processing import start_delayed_trigger_batch
+from .shared_type_doors import shared_type_doors_enabled
 from .turn_priority_model import (
     PriorityGrantPlan,
     PriorityPassPlan,
@@ -206,6 +207,7 @@ class TurnPriorityDecisionOwner:
                 "turn_face_up",
                 "suspend",
                 "stage_cast_lifecycle",
+                *(("unlock_room",) if shared_type_doors_enabled(self.state) else ()),
                 "undo_mana",
                 "concede",
             ],
@@ -236,6 +238,7 @@ class TurnPriorityDecisionOwner:
             "turn_face_up",
             "suspend",
             "stage_cast_lifecycle",
+            "unlock_room",
         }:
             execute_mana_choice_capable_priority_action(
                 self.host,

@@ -290,6 +290,14 @@ class StateProjector:
             "keywords": data["k"],
             "colors": data.pop("colors", []),
         }
+        if card.shared_type_doors is not None and not card.face_down:
+            from .carddb_characteristics import base_card_characteristics
+            from .card_program_faces import current_shared_type_doors
+            doors = current_shared_type_doors(card)
+            if doors is not None:
+                base = base_card_characteristics(card, self.card_db.by_oracle_id(card.oracle_id))
+                data.pop("face", None)
+                data["room_doors"] = {"locked": list(doors.locked), "unlocked": list(doors.unlocked)}
         evaluated = (
             dict(self.characteristic_resolver(card))
             if self.characteristic_resolver is not None
@@ -363,7 +371,9 @@ class StateProjector:
                 or card.annotations.get("until_end_of_turn")
                 or card.temporary_keywords
             )
-            if card.active_face or effective.get("face") is not None or characteristic_override:
+            if "room_doors" in effective:
+                obj["room_doors"] = effective["room_doors"]
+            if card.active_face or effective.get("face") is not None or characteristic_override or "room_doors" in effective:
                 obj["m"] = effective.get("m", "")
                 obj["t"] = effective.get("t", "")
                 obj["o"] = truncate(

@@ -749,6 +749,18 @@ face, the battlefield view derives mana value and colors from that face
 under CR 202.2, 202.3, and 709.5. The ordinary target-legality query reads
 the same values.
 
+The current shared-type split permanent mode stores ordered door designations
+on the battlefield incarnation. Cast entry unlocks the selected half. Other
+entry paths establish both halves locked. Current names, mana cost, colors,
+and printed abilities derive from the unlocked halves while the shared type
+line remains. Copiable values carry both door definitions independently from
+the object's unlocked designations.
+
+Paid unlock uses the ordinary priority capability, mana affordability and
+payment owners. The action changes the permanent in place. The separate
+door and full-unlock occurrences enter the ordinary trigger batch. An unlock
+as part of cast entry shares that batch with the enchantment entry occurrence.
+
 Current face-down copy reads use the existing layer-1b values and an anonymous
 copiable source. Listed Ward remains part of those values; the hidden printed
 name, type, cost, activation catalog and mana-production index do not. Copy

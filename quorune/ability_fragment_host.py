@@ -33,7 +33,15 @@ class AbilityFragmentHostMixin:
             return self._effective_card_data(card,maximum_layer=Layer.COPY)
         record=self.card_record(card)
         base=self._compiled_base_characteristics(card,record,error_type=GameRuleError)
-        return copiable_card_characteristics(card,record,base)
+        from .rules.room_copy_values import capture_room_copy_faces, room_copy_characteristics
+        from .shared_type_doors import SHARED_TYPE_COPY_FIELD
+        result = copiable_card_characteristics(card, record, base)
+        if SHARED_TYPE_COPY_FIELD in result:
+            return room_copy_characteristics(card, result)
+        faces = capture_room_copy_faces(self, card, record)
+        if faces:
+            result[SHARED_TYPE_COPY_FIELD] = faces
+        return result
 
     def _spell_copy_characteristics(self,card):
         from .token_copy_faces import spell_copy_characteristics

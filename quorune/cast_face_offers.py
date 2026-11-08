@@ -63,7 +63,7 @@ def cast_face_offers_version(value):
 def split_permanent_face_values_version(value: object) -> int | None:
     if value is None:
         return None
-    if type(value) is not int or value != 1:
+    if type(value) is not int or value not in {1, 2}:
         raise ValueError("Unsupported split permanent face value version")
     return value
 

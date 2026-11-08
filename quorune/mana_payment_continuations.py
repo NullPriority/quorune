@@ -62,6 +62,7 @@ def issue_mana_payment_replacement_choice(
         "turn_face_up",
         "suspend",
         "stage_cast_lifecycle",
+        "unlock_room",
     }:
         raise ReplacementEffectError(
             "Only represented priority actions have resumable mana payments"
@@ -155,6 +156,7 @@ def execute_mana_choice_capable_priority_action(
         "turn_face_up",
         "suspend",
         "stage_cast_lifecycle",
+        "unlock_room",
     }:
         raise ValueError(
             "Only represented priority actions may suspend mana payment"
@@ -206,6 +208,9 @@ def execute_mana_choice_capable_priority_action(
                     seat=seat,
                     response=payload,
                 )
+            elif action == "unlock_room":
+                from .rules.room_unlock import commit_room_unlock
+                commit_room_unlock(host, seat=seat, response=payload)
             else:
                 commit_staged_cast_lifecycle(
                     host,

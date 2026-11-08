@@ -50,6 +50,7 @@ from .transform_timestamp_model import (
     modal_dfc_transform_version, transform_event_characteristics_version, transform_timestamp_version,
 )
 from .face_status_timestamp_model import face_status_timestamp_version
+from .shared_type_doors import SHARED_TYPE_DOORS_VERSION, SharedTypeDoors
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION, characteristic_query_boundary_version
@@ -455,6 +456,7 @@ class CardInstance:
     tapped: bool = False
     face_down: bool = False
     active_face: str | None = None
+    shared_type_doors: SharedTypeDoors | None = None
     # CR 701.27f pins activated/triggered transform instructions to the
     # number of face changes observed when the ability was put on the stack.
     # Zero is omitted from historical Game Record v3 payloads.
@@ -535,6 +537,10 @@ class CardInstance:
             raise ValueError(
                 "Only a commander may carry zone-choice state"
             )
+        if self.shared_type_doors is not None and (
+            not isinstance(self.shared_type_doors, SharedTypeDoors) or self.zone != "battlefield"
+        ):
+            raise ValueError("Door designations require a battlefield object")
         if self.phasing_record is not None and (
             not isinstance(self.phasing_record, PhasingRecord) or self.phased_out is not True or self.zone != "battlefield"
         ):
@@ -639,6 +645,10 @@ class CardInstance:
             payload.pop("acquired_control_timestamp")
         if not self.transform_count:
             payload.pop("transform_count")
+        if self.shared_type_doors is None:
+            payload.pop("shared_type_doors")
+        else:
+            payload["shared_type_doors"] = self.shared_type_doors.to_dict()
         return payload
 
     @classmethod
@@ -648,6 +658,8 @@ class CardInstance:
             payload['permanent_composition']=PermanentCompositionStorage.from_dict(payload['permanent_composition'])
         if "source_continuity" in payload:
             payload["source_continuity"] = SourceContinuityHistory.from_dict(payload["source_continuity"])
+        if "shared_type_doors" in payload:
+            payload["shared_type_doors"] = SharedTypeDoors.from_dict(payload["shared_type_doors"])
         if "phasing_record" in payload:
             payload["phasing_record"] = PhasingRecord.from_dict(payload["phasing_record"])
         payload["goaded_by"] = [
@@ -1190,7 +1202,7 @@ class GameState:
     modal_dfc_transform_version: int | None = 1
     transform_event_characteristics_version: int | None = 1
     face_status_timestamp_version: int | None = 1
-    split_permanent_face_values_version: int | None = 1
+    split_permanent_face_values_version: int | None = SHARED_TYPE_DOORS_VERSION
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
     characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION

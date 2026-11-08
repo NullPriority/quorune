@@ -189,10 +189,16 @@ def capture_prospective_entry_characteristics(
     *,
     card: Any,
     enter_face: str | None,
+    battlefield_entry: bool = True,
 ) -> tuple[Mapping[str, Any], str]:
     """Snapshot printed entry characteristics before replacement ordering."""
 
     prospective_card = copy.deepcopy(card)
+    from .shared_type_doors import shared_type_doors_enabled, shared_type_entry_doors
+    if battlefield_entry and shared_type_doors_enabled(getattr(host, "state", None)):
+        prospective_card.shared_type_doors = shared_type_entry_doors(
+            host.state, card, host.card_record(card), enter_face=enter_face,
+        )
     if enter_face is not None:
         prospective_card.active_face = enter_face
     characteristics = host._effective_card_data(

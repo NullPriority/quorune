@@ -281,6 +281,10 @@ class CharacteristicEvaluationHostMixin:
         base: Mapping[str, Any],
     ) -> tuple[Any, ...]:
         copy_overrides = card.annotations.get("copy_overrides")
+        from .shared_type_doors import SHARED_TYPE_COPY_FIELD
+        if isinstance(copy_overrides, Mapping) and SHARED_TYPE_COPY_FIELD in copy_overrides:
+            from .rules.room_copy_values import room_copy_characteristics
+            copy_overrides = room_copy_characteristics(card, copy_overrides)
         fragments = (
             copy_overrides.get("ability_fragments", ())
             if isinstance(copy_overrides, Mapping)

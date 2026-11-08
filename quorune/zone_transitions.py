@@ -469,7 +469,9 @@ class ZoneTransitionOwner:
         ):
             self._log_prevented_token(card, origin, requested_destination, log=log)
             return card
-        entry_characteristics, destination_type_line = self._entry_characteristics(card, enter_face, manifest_entry)
+        entry_characteristics, destination_type_line = self._entry_characteristics(
+            card, enter_face, manifest_entry, destination == "battlefield",
+        )
         if (
             destination == "battlefield"
             and card.is_card_object
@@ -493,7 +495,8 @@ class ZoneTransitionOwner:
         from .entry_copy import copied_entry_preview
         copied = copied_entry_preview(card, replacement)
         if copied is not None:
-            entry_characteristics = dict(replacement.event.payload['entry_copy'])
+            from .rules.room_copy_values import room_copy_characteristics
+            entry_characteristics = room_copy_characteristics(copied, replacement.event.payload["entry_copy"])
             destination_type_line = str(entry_characteristics['type_line'])
             aura_enchant_spec = self.host._compiled_enchant_spec(copied)
         prospective_protector = prospective_battle_entry_protector(
@@ -557,11 +560,13 @@ class ZoneTransitionOwner:
             manifest_entry=manifest_entry,
         )
 
-    def _entry_characteristics(self, card, enter_face, manifest_entry):
+    def _entry_characteristics(self, card, enter_face, manifest_entry, battlefield_entry):
         if manifest_entry:
             return ({'name': '', 'type_line': 'Creature', 'mana_cost': '', 'mana_value': 0,
                 'text': '', 'colors': [], 'keywords': [], 'ability_fragments': [], 'power': '2', 'toughness': '2'}, 'Creature')
-        return capture_prospective_entry_characteristics(self.host, card=card, enter_face=enter_face)
+        return capture_prospective_entry_characteristics(
+            self.host, card=card, enter_face=enter_face, battlefield_entry=battlefield_entry,
+        )
 
     def _prepare_entry_replacement(self, card, destination, *, controller, entry_characteristics,
             tapped, entry_pay_life, transition_kind, replacement_selections, prepared_replacement, manifest_entry):
@@ -649,6 +654,7 @@ class ZoneTransitionOwner:
         already_detached: bool = False,
     ) -> None:
         card = plan.card
+        shared_type_doors = self._prepared_entry_doors(plan, enter_face)
         if type(already_detached) is not bool:raise StateInvariantError('Detached membership flag must be boolean')
         if already_detached and any(card.object_id in ids for player in self.state.players.values() for ids in player.zones.values()):
             raise StateInvariantError('Detached physical object still has live zone membership')
@@ -677,6 +683,7 @@ class ZoneTransitionOwner:
             zone_timestamp=zone_timestamp,
         )
         card.zone = plan.destination
+        card.shared_type_doors = shared_type_doors
         if plan.manifest_entry and plan.destination == 'battlefield':
             from .zone_object_state import mark_card_manifested
             mark_card_manifested(card, controller=controller or card.owner)
@@ -701,6 +708,15 @@ class ZoneTransitionOwner:
                 plan,
                 reveal_to=reveal_to,
             )
+
+    def _prepared_entry_doors(self, plan, enter_face):
+        if plan.destination != "battlefield" or plan.manifest_entry:
+            return None
+        from .shared_type_doors import shared_type_entry_doors
+
+        return shared_type_entry_doors(
+            self.state, plan.card, self.host.card_record(plan.card), enter_face=enter_face,
+        )
 
     def _enter_battlefield(
         self,

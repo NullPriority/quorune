@@ -189,6 +189,12 @@ def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCop
     if exception.creature_subtypes is not None or exception.card_types is not None:
         keywords = [value for value in keywords if str(value).casefold() != "changeling"]
     result["keywords"] = list(dict.fromkeys((*keywords, *exception.add_keywords)))
+    from .shared_type_doors import SHARED_TYPE_COPY_EXCEPTIONS, SHARED_TYPE_COPY_FIELD
+    if SHARED_TYPE_COPY_FIELD in result:
+        previous = result.get(SHARED_TYPE_COPY_EXCEPTIONS, ())
+        if not isinstance(previous, (list, tuple)):
+            raise TokenCopyRecipeError("Shared type copy exceptions must be an array")
+        result[SHARED_TYPE_COPY_EXCEPTIONS] = [*deepcopy(previous), exception.to_dict()]
     from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD, DEFINED_TOKEN_COPY_EXCEPTIONS_FIELD
     if DEFINED_TOKEN_FACES_FIELD in result:
         previous = result.get(DEFINED_TOKEN_COPY_EXCEPTIONS_FIELD, ())

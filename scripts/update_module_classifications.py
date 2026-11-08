@@ -92,6 +92,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/transform_timestamp_model.py':return 'domain'
     if relative=='quorune/face_status_timestamp_model.py':return 'domain'
     if relative=='quorune/face_down_characteristics_model.py':return 'domain'
+    if relative == "quorune/shared_type_doors.py":
+        return "domain"
     if relative=='quorune/composition_batch_order_model.py':return 'domain'
     if relative=='quorune/commander_damage_identity_model.py':return 'domain'
     if relative=='quorune/composition_commander_replacement_model.py':return 'domain'
@@ -594,6 +596,10 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative in {
+        "quorune/shared_type_doors.py", "quorune/rules/room_unlock.py", "quorune/rules/room_copy_values.py",
+    }:
+        return "zones_and_object_identity"
     if relative in {'quorune/damage_death_exile_model.py', 'quorune/rules/damage_death_exile.py'}:
         return 'damage'
     if relative == 'quorune/linked_departure_exile_model.py':

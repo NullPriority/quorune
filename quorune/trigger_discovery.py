@@ -984,6 +984,9 @@ def _event_programs_for_source(
         copied_programs=copiable_source_trigger_programs(host,characteristics,active_zone)
         if copied_programs is not None:programs=copied_programs
         elif source.permanent_composition is not None:programs=[]
+    from .card_program_faces import current_shared_type_doors, room_program_face_is_active
+    if current_shared_type_doors(source) is not None:
+        programs = [program for program in programs if room_program_face_is_active(source, program)]
     for granted in granted_triggered_specs(
         canonical_ability_fragments(
             characteristics.get("ability_fragments", ())

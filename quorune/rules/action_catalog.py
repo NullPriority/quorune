@@ -27,6 +27,7 @@ from ..morph import FACE_DOWN_CAST_METHODS
 from .morph_actions import build_turn_face_up_offers
 from ..suspend import build_suspend_offer
 from .staged_cast_lifecycles import build_staged_cast_offer
+from .room_unlock import build_room_unlock_offers
 
 
 class ActionCatalogHost(Protocol):
@@ -383,6 +384,17 @@ def _staged_cast_offers(
     return refs, offers
 
 
+def _room_unlock_offers(host: ActionCatalogHost, seat: str) -> list[dict[str, Any]]:
+    from ..shared_type_doors import shared_type_doors_enabled
+    if not shared_type_doors_enabled(host.state):
+        return []
+    return [
+        offer.to_dict()
+        for object_id in host.state.players[seat].zones["battlefield"]
+        for offer in build_room_unlock_offers(host, seat, host.state.cards[object_id])
+    ]
+
+
 @characteristic_read_method
 def build_priority_action_catalog(
     host: ActionCatalogHost, seat: str
@@ -397,6 +409,7 @@ def build_priority_action_catalog(
     turn_face_up, turn_face_up_offers = _turn_face_up_offers(host, seat)
     suspend, suspend_offers = _suspend_offers(host, seat)
     staged_cast, staged_cast_offers = _staged_cast_offers(host, seat)
+    room_unlocks = _room_unlock_offers(host, seat)
     actions = priority_actions_with_mana_undo(host.state, seat)
     actions.extend(land_offers)
     actions.extend(cast_offers)
@@ -404,13 +417,14 @@ def build_priority_action_catalog(
     actions.extend(turn_face_up_offers)
     actions.extend(suspend_offers)
     actions.extend(staged_cast_offers)
+    actions.extend(room_unlocks)
     actions.append(_concede_offer(host, seat))
     return {
         "cast": castable,
         "lands": lands,
         "abilities": abilities,
         "mana_abilities": mana_abilities,
-        "special_actions": [*turn_face_up, *suspend, *staged_cast],
+        "special_actions": [*turn_face_up, *suspend, *staged_cast, *(row["card"] for row in room_unlocks)],
         "actions": actions,
         "diagnostic": {
             "unpayable": [
