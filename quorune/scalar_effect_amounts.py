@@ -257,6 +257,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             raise PublicQueryAmountError(str(exc)) from exc
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
+    elif spec.origin is ScalarAmountOrigin.HISTORY_COUNT:
+        from .public_history_query_model import public_history_query_value
+
+        amount = public_history_query_value(host.state, item.controller, spec.history_count)
     else:
         reference=_reference(host,item,spec)
         if spec.counter_name is not None:

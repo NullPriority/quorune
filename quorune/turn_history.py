@@ -23,6 +23,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         crime_history_version=history.crime_history_version,
         committed_occurrence_history_version=history.committed_occurrence_history_version,
         damage_life_history_version=history.damage_life_history_version,
+        permanent_death_history_version=history.permanent_death_history_version,
     )
 
 

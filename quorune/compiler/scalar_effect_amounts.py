@@ -14,6 +14,8 @@ from ..scalar_effect_amount_model import (
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec, PublicQueryAmountError
 from ..rules.source_references import SourceReferenceSpec
 from ..counter_names import normalized_counter_name
+from ..creature_subtypes import canonical_creature_subtype_surface
+from ..public_history_query_model import PublicHistoryQuerySpec
 from .declared_effect_amounts import declared_effect_amount_template, _result_slot
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
@@ -99,6 +101,53 @@ def _counted_history_result(text: str) -> tuple[str, ScalarEffectAmountSpec] | N
     return body, ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY, history_fact=fact)
 
 
+def _death_history_count(subject: str) -> ScalarEffectAmountSpec | None:
+    match = re.fullmatch(r"(?P<quality>.+?) that died(?P<controlled> under your control)? this turn", subject, re.I)
+    if match is None:
+        return None
+    quality = match["quality"].casefold()
+    relation = "controller" if match["controlled"] else "any_player"
+    if quality in {"creature", "creatures"}:
+        if relation == "any_player":
+            return ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY, history_fact="creatures_died")
+        query = PublicHistoryQuerySpec("creature_died", relation=relation)
+    elif quality in {"nontoken creature", "nontoken creatures"}:
+        query = PublicHistoryQuerySpec(
+            "permanent_died", relation=relation, types_all=("creature",), schema_version=3, token=False,
+        )
+    elif (subtype := canonical_creature_subtype_surface(quality)) is not None:
+        query = PublicHistoryQuerySpec(
+            "permanent_died", relation=relation, schema_version=3, creature_subtype=subtype,
+        )
+    else:
+        return None
+    return ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY_COUNT, schema_version=10, history_count=query)
+
+
+def _counted_death_result(text: str, *, source_event: bool) -> tuple[str, ScalarEffectAmountSpec, int] | None:
+    if source_event and (damage := re.fullmatch(
+        r"It deals damage to any target equal to the number of (?P<subject>.+?)\.", text, re.I,
+    )) is not None:
+        producer = _death_history_count(damage["subject"])
+        return ("It deals X damage to any target.", producer, 1) if producer is not None else None
+    match = re.fullmatch(r"(?P<result>.+?) for each (?P<subject>.+?)\.", text, re.I)
+    if match is None or (producer := _death_history_count(match["subject"])) is None:
+        return None
+    result = match["result"]
+    if re.fullmatch(r"Draw a card", result, re.I):
+        return "Draw X cards.", producer, 1
+    if (token := re.fullmatch(r"Create (?:a|an|one) (?P<definition>.+? token)", result, re.I)) is not None:
+        return f"Create X {token['definition']}s.", producer, 1
+    if (life := re.fullmatch(r"(?:You )?gain (?P<amount>[12]) life", result, re.I)) is not None:
+        return "You gain X life.", producer, int(life["amount"])
+    counter = re.fullmatch(
+        r"Put (?:a|an|one) (?P<name>[a-z0-9+/-]+) counter on (?P<receiver>.+)", result, re.I,
+    )
+    if counter is not None:
+        return f"Put X {counter['name']} counters on {counter['receiver']}.", producer, 1
+    return None
+
+
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
@@ -132,6 +181,9 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         body, quantity = 'Draw X cards.', ''
     elif (counted_history := _counted_history_result(normalized)) is not None:
         body, producer = counted_history
+        quantity = ""
+    elif (death_result := _counted_death_result(normalized, source_event=source_event)) is not None:
+        body, producer, multiplier = death_result
         quantity = ""
     elif (each:=re.fullmatch(r'(?P<head>Draw a card|(?:You |Target player |Target opponent )?gain 1 life|Create (?:a|one) .+? token) for each (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+?)\.',normalized,re.I)) is not None:
         body=re.sub(r'^Draw a card$','Draw X cards',each['head'],flags=re.I)
@@ -176,9 +228,13 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         return None
     if producer is None:
         history_fact = _HISTORY.get(" ".join(quantity.casefold().split()))
-        producer = (ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY, history_fact=history_fact)
-                    if history_fact else _characteristic(quantity, source_name=source_name, body=body,
-                        schema=fixed[2], event=event, source_event=source_event))
+        if history_fact:
+            producer = ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY, history_fact=history_fact)
+        elif (death_subject := re.fullmatch(r"the number of (.+)", quantity, re.I)) is not None:
+            producer = _death_history_count(death_subject[1])
+        if producer is None:
+            producer = _characteristic(quantity, source_name=source_name, body=body,
+                schema=fixed[2], event=event, source_event=source_event)
     if producer is None:
         return None
     identity = "scalar:x:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24] if definition else None

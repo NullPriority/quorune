@@ -1027,6 +1027,7 @@
       "test_nested_entry_copy",
       "test_paid_graveyard_casts",
       "test_paid_sacrifice_creature_stats",
+      "test_permanent_death_amounts",
       "test_prevention_trigger_stack",
       "test_printed_protection_lists",
       "test_public_cost_subjects",

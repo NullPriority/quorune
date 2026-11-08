@@ -271265,6 +271265,123 @@
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_library_positions_target_revalidation_and_replay"
         ]
       ]
+    },
+    {
+      "common": {
+        "applicability_note": "Original death-count results consume committed public facts. Qualified and legacy journal modes retain independent replay behavior.",
+        "capability_id": "zone.turn_history.permanent_death",
+        "official_rule_ids": [
+          "111.6",
+          "205.3m",
+          "608.2h",
+          "608.2i",
+          "700.4",
+          "730.2d",
+          "730.3"
+        ],
+        "supported_profiles": [
+          "traditional",
+          "commander_duel",
+          "commander_review"
+        ]
+      },
+      "references": [
+        [
+          27770,
+          "interaction",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
+        ],
+        [
+          27771,
+          "interaction",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
+        ],
+        [
+          27772,
+          "interaction",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
+        ],
+        [
+          27773,
+          "multiplayer",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
+        ],
+        [
+          27774,
+          "multiplayer",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
+        ],
+        [
+          27775,
+          "mutation",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_permanent_death_dependency_is_inferred_and_subtype_mutation_is_killed"
+        ],
+        [
+          27776,
+          "negative",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
+        ],
+        [
+          27777,
+          "negative",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
+        ],
+        [
+          27778,
+          "negative",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_legacy_missing_permanent_death_mode_replays_without_new_facts"
+        ],
+        [
+          27779,
+          "negative",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_permanent_death_dependency_is_inferred_and_subtype_mutation_is_killed"
+        ],
+        [
+          27780,
+          "negative",
+          "tests.test_permanent_death_amounts.PermanentDeathFactTests.test_qualified_facts_require_exact_mode_shape_and_current_turn"
+        ],
+        [
+          27781,
+          "positive",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
+        ],
+        [
+          27782,
+          "positive",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
+        ],
+        [
+          27783,
+          "positive",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
+        ],
+        [
+          27784,
+          "privacy",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
+        ],
+        [
+          27785,
+          "replay",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
+        ],
+        [
+          27786,
+          "replay",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
+        ],
+        [
+          27787,
+          "replay",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
+        ],
+        [
+          27788,
+          "replay",
+          "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_legacy_missing_permanent_death_mode_replays_without_new_facts"
+        ]
+      ]
     }
   ],
   "storage_schema_version": 1

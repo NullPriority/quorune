@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal, Mapping
 from .composition_storage import PermanentCompositionStorage
+from .creature_subtypes import canonical_creature_subtype
 
 from .damage_modifier_state import (
     DamagePreventionShield,
@@ -94,6 +95,7 @@ TurnHistoryEventKind = Literal[
     "card_discarded",
     "creature_attacked",
     "creature_died",
+    "permanent_died",
     "permanent_sacrificed",
     "player_damaged",
     "player_gained_life",
@@ -128,8 +130,28 @@ class TurnHistoryEvent:
     types: tuple[str, ...] = ()
     amount: int = 0
     origin: str | None = None
+    creature_subtypes: tuple[str, ...] | None = None
+    token: bool | None = None
 
     def __post_init__(self):
+        if self.kind == "permanent_died":
+            if (type(self.actor) is not str or not self.actor
+                or type(self.object_incarnation) is not str or not self.object_incarnation
+                or type(self.token) is not bool
+                or not isinstance(self.types, tuple)
+                or any(type(value) is not str or not value or value != value.casefold() for value in self.types)
+                or self.types != tuple(sorted(set(self.types)))
+                or not isinstance(self.creature_subtypes, tuple)
+                or any(type(value) is not str or canonical_creature_subtype(value) != value
+                       for value in self.creature_subtypes)
+                or self.creature_subtypes != tuple(sorted(set(self.creature_subtypes)))
+                or any(value is not None for value in (
+                    self.target, self.target_kind, self.target_object_incarnation, self.origin,
+                ))
+                or type(self.amount) is not int or self.amount != 0):
+                raise ValueError("Permanent death history requires its sealed departure facts")
+        elif self.creature_subtypes is not None or self.token is not None:
+            raise ValueError("Only permanent deaths carry subtype and token history")
         if self.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS and (
             type(self.actor) is not str or not self.actor
             or type(self.object_incarnation) is not str or not self.object_incarnation
@@ -161,13 +183,25 @@ class TurnHistoryEvent:
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["types"] = list(self.types)
+        if self.kind == "permanent_died":
+            payload["creature_subtypes"] = list(self.creature_subtypes)
+        else:
+            payload.pop("creature_subtypes")
+            payload.pop("token")
         if self.origin is None:payload.pop("origin")
         return payload
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "TurnHistoryEvent":
         payload = dict(data)
-        payload["types"] = tuple(str(value) for value in payload.get("types", ()))
+        if payload.get("kind") == "permanent_died":
+            if not isinstance(payload.get("types"), (list, tuple)):
+                raise ValueError("Permanent death history requires explicit card types")
+            payload["types"] = tuple(payload["types"])
+        else:
+            payload["types"] = tuple(str(value) for value in payload.get("types", ()))
+        if isinstance(payload.get("creature_subtypes"), list):
+            payload["creature_subtypes"] = tuple(payload["creature_subtypes"])
         return cls(**payload)
 
 
@@ -196,6 +230,7 @@ class TurnHistory:
     crime_history_version: int | None = None
     committed_occurrence_history_version: int | None = None
     damage_life_history_version: int | None = None
+    permanent_death_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -217,6 +252,9 @@ class TurnHistory:
         damage_life_version = self.damage_life_history_version
         if damage_life_version is not None and (type(damage_life_version) is not int or damage_life_version != 1):
             raise ValueError("Unsupported damage life history version")
+        death_version = self.permanent_death_history_version
+        if death_version is not None and (type(death_version) is not int or death_version != 1):
+            raise ValueError("Unsupported permanent death history version")
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
@@ -228,6 +266,8 @@ class TurnHistory:
             raise ValueError('Crime facts require complete initial-action history')
         if occurrence_version is None and any(event.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS for event in self.events):
             raise ValueError("Committed occurrence facts require complete history")
+        if death_version is None and any(event.kind == "permanent_died" for event in self.events):
+            raise ValueError("Permanent death facts require complete history")
         previous_absent = self.previous_turn_sequence is None
         if previous_absent != (self.previous_active_player is None):
             raise ValueError(
@@ -271,6 +311,8 @@ class TurnHistory:
                if self.committed_occurrence_history_version is not None else {}),
             **({"damage_life_history_version": 1}
                if self.damage_life_history_version is not None else {}),
+            **({"permanent_death_history_version": 1}
+               if self.permanent_death_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -310,6 +352,7 @@ class TurnHistory:
             crime_history_version=data.get("crime_history_version"),
             committed_occurrence_history_version=data.get("committed_occurrence_history_version"),
             damage_life_history_version=data.get("damage_life_history_version"),
+            permanent_death_history_version=data.get("permanent_death_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

@@ -11,6 +11,7 @@ from .query_effect_amount_model import PublicQueryAmountError
 from .counter_names import normalized_counter_name
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .multikicker_model import FixedManaMultikickerSpec
+from .public_history_query_model import PublicHistoryQuerySpec
 
 SCALAR_AMOUNT_KIND = "scalar_effect_amount"
 SCALAR_AMOUNT_CAPABILITY = "quantity_expression.scalar_effect_amount"
@@ -35,6 +36,7 @@ class ScalarAmountOrigin(StrEnum):
     EVENT_OBJECT = "event_object_characteristic"
     EVENT_AMOUNT = "committed_event_amount"
     HISTORY = "public_turn_history"
+    HISTORY_COUNT = "public_turn_history_count"
 
 
 CHARACTERISTICS = frozenset({"power", "toughness", "mana_value"})
@@ -57,10 +59,20 @@ class ScalarEffectAmountSpec:
     aggregate: PublicCharacteristicAggregateSpec | None = None
     multikicker: FixedManaMultikickerSpec | None = None
     target_group: str | None = None
+    history_count: PublicHistoryQuerySpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6,7,8,9}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6,7,8,9,10}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version == 10) != (self.origin is ScalarAmountOrigin.HISTORY_COUNT):
+            raise PublicQueryAmountError("History counts require their explicit scalar version")
+        if self.schema_version == 10:
+            if (not isinstance(self.history_count, PublicHistoryQuerySpec)
+                or self.history_count.event not in {"creature_died", "permanent_died"}
+                or self.history_count.reduction != "count"):
+                raise PublicQueryAmountError("Death amounts require a typed history count")
+        elif self.history_count is not None:
+            raise PublicQueryAmountError("This scalar origin cannot carry a history count")
         if (self.schema_version == 9) != (self.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE):
             raise PublicQueryAmountError('Paid sacrifice stats require their explicit scalar version')
         if self.schema_version == 9 and (self.characteristic not in ('power', 'toughness') or self.binding_id is not None):
@@ -126,7 +138,12 @@ class ScalarEffectAmountSpec:
                 "history_fact": self.history_fact, **({"counter_name":self.counter_name} if self.schema_version==2 else {}),
                 **({'aggregate':self.aggregate.to_dict()} if self.schema_version==3 else {}),
                 **({'multikicker':self.multikicker.to_dict()} if self.schema_version==5 else {}),
-                **({'target_group':self.target_group} if self.schema_version==7 else {})}
+                **({'target_group':self.target_group} if self.schema_version==7 else {}),
+                **({"history_count": self.history_count.to_dict()} if self.history_count is not None else {})}
+
+    @property
+    def history_count_capabilities(self) -> tuple[str, ...]:
+        return self.history_count.capability_dependencies if self.history_count is not None else ()
 
     def to_dict(self) -> dict[str, Any]:
         return {"kind": SCALAR_AMOUNT_KIND, "schema_version": self.schema_version,
@@ -144,6 +161,8 @@ class ScalarEffectAmountSpec:
             fields.add('multikicker')
         if isinstance(value,Mapping) and value.get('schema_version')==7:
             fields.add('target_group')
+        if isinstance(value, Mapping) and value.get("schema_version") == 10:
+            fields.add("history_count")
         if not isinstance(value, Mapping) or set(value) != fields or value.get("kind") != SCALAR_AMOUNT_KIND:
             raise PublicQueryAmountError("Scalar amount fields are incomplete or unknown")
         try:
@@ -153,8 +172,11 @@ class ScalarEffectAmountSpec:
         try:
             multikicker = FixedManaMultikickerSpec.from_dict(value['multikicker']) if value['schema_version']==5 else None
             aggregate=PublicCharacteristicAggregateSpec.from_dict(value['aggregate']) if value['schema_version']==3 else None
+            history_count = PublicHistoryQuerySpec.from_dict(value["history_count"]) if value["schema_version"] == 10 else None
             return cls(origin=origin, characteristic=value["characteristic"], history_fact=value["history_fact"],
-                       coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],counter_name=value.get('counter_name'),aggregate=aggregate,multikicker=multikicker,target_group=value.get('target_group'))
+                       coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],
+                       counter_name=value.get("counter_name"), aggregate=aggregate, multikicker=multikicker,
+                       target_group=value.get("target_group"), history_count=history_count)
         except (TypeError,ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
 

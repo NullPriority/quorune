@@ -111,6 +111,14 @@ pins the mode from the initial checkpoint. Records that omit it retain the
 historical net life transitions from damage. The mode persists when the
 turn history resets.
 
+The optional `turn_history.permanent_death_history_version` is `1` in
+current games. Each committed battlefield-to-graveyard permanent departure
+records its previous controller, incarnation, card types, creature subtypes
+and token status. A merged permanent contributes one fact. Turn rollover
+clears the facts and retains the mode. Older checkpoints omit the marker and
+continue to record only their existing history facts. The initial checkpoint
+and record manifest must agree on the mode.
+
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
 during replay. The mode survives journal reset and turn rollover. A

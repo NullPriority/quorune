@@ -7,6 +7,7 @@ from typing import Any, Protocol
 
 from .model import CardInstance, StackItem
 from .saga_progression import dispatch_saga_entry_chapters
+from .shared_creature_type_model import canonical_creature_types
 from .trigger_processing import enqueue_trigger_batch
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
@@ -51,6 +52,8 @@ class ZoneTriggerProcessingHost(Protocol):
         actor: str,
         object_incarnation: str,
         types: set[str],
+        creature_subtypes: tuple[str, ...] | None = None,
+        token: bool | None = None,
     ) -> None: ...
 
 @dataclass(frozen=True, slots=True)
@@ -192,6 +195,17 @@ def record_zone_change_history(
         host._record_turn_history('card_arrived_graveyard',actor=occurrence.owner,
             object_incarnation=occurrence.current_logical_object_id,types=types,origin=occurrence.origin)
     normalized = tuple(events or normalized_zone_trigger_events(occurrence))
+    if getattr(history, "permanent_death_history_version", None) == 1:
+        for event in normalized:
+            if event.kind == "permanent.graveyard":
+                host._record_turn_history(
+                    "permanent_died",
+                    actor=occurrence.previous_controller,
+                    object_incarnation=occurrence.previous_logical_object_id,
+                    types=set(event.context["types"]),
+                    creature_subtypes=canonical_creature_types(event.context["subtypes"]),
+                    token=occurrence.token,
+                )
     previous_types = set(
         str(value)
         for event in normalized

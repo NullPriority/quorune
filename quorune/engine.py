@@ -605,6 +605,8 @@ class CommanderEngine(
         types: Iterable[str] = (),
         amount: int = 0,
         origin: str | None = None,
+        creature_subtypes: tuple[str, ...] | None = None,
+        token: bool | None = None,
     ) -> None:
         """Append one authoritative current-turn look-back fact.
 
@@ -628,6 +630,8 @@ class CommanderEngine(
                 target_kind=target_kind,
                 target_object_incarnation=target_object_incarnation,
                 types=tuple(sorted({str(value).casefold() for value in types})),
+                creature_subtypes=creature_subtypes,
+                token=token,
                 amount=max(0, int(amount)),
             )
         )

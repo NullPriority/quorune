@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from collections.abc import Mapping
 
+from .creature_subtypes import canonical_creature_subtype
 from .model import COMMITTED_OCCURRENCE_HISTORY_KINDS
 
 PUBLIC_HISTORY_QUERY_CAPABILITY='condition.history.fixed_public_query'
@@ -10,8 +11,10 @@ COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrenc
 TOKEN_CREATION_FACT = "controller_tokens_created_this_turn"
 SPELL_ORIGIN_HISTORY_CAPABILITY='condition.history.spell_origin'
 GRAVEYARD_TYPE_HISTORY_CAPABILITY='condition.history.graveyard_card_types'
+PERMANENT_DEATH_HISTORY_CAPABILITY = "zone.turn_history.permanent_death"
 _EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
-    'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard'}) | COMMITTED_OCCURRENCE_HISTORY_KINDS
+    'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard',
+    'permanent_died'}) | COMMITTED_OCCURRENCE_HISTORY_KINDS
 _TYPES=frozenset({'artifact','battle','creature','enchantment','instant','kindred','land','planeswalker','sorcery'})
 
 
@@ -25,9 +28,12 @@ class PublicHistoryQuerySpec:
     reduction:str='count'
     schema_version:int=1
     origin:str|None=None
+    creature_subtype: str | None = None
+    token: bool | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2}:raise ValueError('Public history query version must be1 or2')
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+            raise ValueError("Unsupported public history query version")
         if self.event not in _EVENTS or self.relation not in {'controller','any_player','opponents'}:raise ValueError('Unknown history event or principal relation')
         if self.reduction not in {'count','sum_amount','max_player_amount'}:raise ValueError('Unknown history reduction')
         life=self.event in {'player_gained_life','player_lost_life'}
@@ -52,16 +58,33 @@ class PublicHistoryQuerySpec:
             if type(self.origin) is not str or self.origin not in origins:raise ValueError('History origin requires one closed cast or arrival zone')
         if (self.schema_version==2)!=(typed_arrival or self.origin is not None):
             raise ValueError('Qualified history queries require version2; version1 keeps its original fields')
+        if (self.schema_version == 3) != (self.event == "permanent_died"):
+            raise ValueError("Permanent death queries require their explicit version")
+        if self.schema_version == 3:
+            if self.creature_subtype is None and self.token is None:
+                raise ValueError("Permanent death queries require a subtype or token predicate")
+            if self.creature_subtype is not None and canonical_creature_subtype(self.creature_subtype) != self.creature_subtype:
+                raise ValueError("Death queries require a canonical creature subtype")
+            if self.token is not None and type(self.token) is not bool:
+                raise ValueError("Death queries require a Boolean token predicate")
+        elif self.creature_subtype is not None or self.token is not None:
+            raise ValueError("Only permanent death queries can filter subtype or token status")
 
     def to_dict(self):
         return {'schema_version':self.schema_version,'event':self.event,'relation':self.relation,'types_all':list(self.types_all),
             'types_any':list(self.types_any),'excluded_types':list(self.excluded_types),'reduction':self.reduction,
-            **({'origin':self.origin} if self.schema_version==2 else {})}
+            **({'origin':self.origin} if self.schema_version==2 else {}),
+            **({"creature_subtype": self.creature_subtype, "token": self.token} if self.schema_version == 3 else {})}
 
     @classmethod
     def from_dict(cls,value):
-        if not isinstance(value,Mapping) or set(value)!={'schema_version','event','relation','types_all','types_any','excluded_types','reduction'}|(
-                {'origin'} if value.get('schema_version')==2 else set()):
+        fields = {'schema_version','event','relation','types_all','types_any','excluded_types','reduction'}
+        version = value.get("schema_version") if isinstance(value, Mapping) else None
+        if version == 2:
+            fields.add("origin")
+        elif version == 3:
+            fields.update(("creature_subtype", "token"))
+        if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError('Public history queries have a closed field set')
         return cls(**dict(value))
 
@@ -69,6 +92,7 @@ class PublicHistoryQuerySpec:
     def capability_dependencies(self):
         return (PUBLIC_HISTORY_QUERY_CAPABILITY,
             *((COMMITTED_OCCURRENCE_HISTORY_CAPABILITY,) if self.event in COMMITTED_OCCURRENCE_HISTORY_KINDS else ()),
+            *((PERMANENT_DEATH_HISTORY_CAPABILITY,) if self.event == "permanent_died" else ()),
             *((SPELL_ORIGIN_HISTORY_CAPABILITY,) if self.event=='spell_cast' and self.origin is not None else ()),
             *((GRAVEYARD_TYPE_HISTORY_CAPABILITY,) if self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types)) else ()))
 
@@ -78,6 +102,8 @@ def matching_public_history_events(state,controller,spec):
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
     if spec.event in COMMITTED_OCCURRENCE_HISTORY_KINDS and history.committed_occurrence_history_version != 1:
+        return None
+    if spec.event == "permanent_died" and history.permanent_death_history_version != 1:
         return None
     if spec.event=='permanent_left' and history.departure_history_version!=1:return None
     if spec.event=='card_arrived_graveyard' and history.arrival_history_version!=1:return None
@@ -95,6 +121,10 @@ def matching_public_history_events(state,controller,spec):
             if event.origin!=spec.origin:continue
         types=set(event.types)
         if not set(spec.types_all)<=types or spec.types_any and types.isdisjoint(spec.types_any) or not types.isdisjoint(spec.excluded_types):continue
+        if spec.token is not None and event.token is not spec.token:
+            continue
+        if spec.creature_subtype is not None and spec.creature_subtype not in event.creature_subtypes:
+            continue
         matched.append(event)
     return tuple(matched)
 

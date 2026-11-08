@@ -3977,6 +3977,13 @@ actual graveyard arrivals. The existing intervening-condition owner rechecks
 them on resolution. Unrepresented descent counts and other temporal ranges
 remain residual.
 
+Death-count results use the same public history query at resolution. Scalar
+schema ten binds a controller-scoped creature count or a qualified permanent
+count to an existing result slot. Qualified queries read subtype and token
+status from the permanent's committed departure and independently require
+`zone.turn_history.permanent_death`. The prior unqualified creature count
+retains its earlier scalar encoding.
+
 Qualified first-through-fourth spell triggers extend the existing
 `FixedSpellCastSubject` owner with a typed matching-history ordinal. Card-type
 and represented origin filters select each caster's committed casts; only
