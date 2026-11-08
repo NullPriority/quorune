@@ -732,6 +732,12 @@ omit it. A checkpoint without the execution marker retains historical
 no-count casting, so later replay does not add payment fields to its hashes.
 The decoder rejects malformed versions, Boolean counts and copy-owned facts.
 
+Current games pin `unearth_leave_replacement_version: 1` in the initial
+checkpoint and record manifest. A later battlefield departure includes the
+incarnation's Unearth replacement in the ordinary replacement choice. Unmarked
+checkpoints use the historical Unearth priority and omit the marker from state
+hashes.
+
 Current games also pin `ability_source_information_version: 1`. Every nonmana
 activation captures its original source before costs, and every triggered
 ability captures its source when created, including abilities without targets.

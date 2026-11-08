@@ -12230,7 +12230,7 @@
     },
     {
       "common": {
-        "applicability_note": "Compose graveyard activation, canonical mana, stack resolution, zone movement, Haste, the leave replacement, delayed-trigger placement, public projection, and exact replay.",
+        "applicability_note": "Choose either applicable ordinary departure replacement after Unearth. Dauthi's choice adds its void counter and the affected incarnation is exiled once. Verify save and replay for both choices.",
         "capability_id": "activation.unearth.fixed_mana",
         "official_rule_ids": [
           "602.1",
@@ -12248,13 +12248,13 @@
         [
           1236,
           "interaction",
-          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_unearth_offer_resolution_haste_and_delayed_exile_replay"
+          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_current_unearthed_leave_offers_both_destination_replacements"
         ]
       ]
     },
     {
       "common": {
-        "applicability_note": "Apply the incarnation-bound Unearth self-replacement before a competing opponent graveyard-destination replacement and prove the competing effect never consumes the event.",
+        "applicability_note": "Compose graveyard activation, canonical mana, stack resolution, zone movement, Haste, the leave replacement, delayed-trigger placement, public projection, and exact replay.",
         "capability_id": "activation.unearth.fixed_mana",
         "official_rule_ids": [
           "602.1",
@@ -12272,7 +12272,31 @@
         [
           1237,
           "interaction",
-          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_unearthed_leave_replacement_precedes_competing_destination"
+          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_unearth_offer_resolution_haste_and_delayed_exile_replay"
+        ]
+      ]
+    },
+    {
+      "common": {
+        "applicability_note": "Offer the affected permanent's controller both public departure replacements in four-player state. Reject a different principal and an unoffered option without changing state.",
+        "capability_id": "activation.unearth.fixed_mana",
+        "official_rule_ids": [
+          "602.1",
+          "602.2",
+          "702.84",
+          "702.84a"
+        ],
+        "supported_profiles": [
+          "traditional",
+          "commander_duel",
+          "commander_review"
+        ]
+      },
+      "references": [
+        [
+          1238,
+          "multiplayer",
+          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_current_unearthed_leave_offers_both_destination_replacements"
         ]
       ]
     },
@@ -12294,33 +12318,9 @@
       },
       "references": [
         [
-          1238,
-          "multiplayer",
-          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_unearth_offer_resolution_haste_and_delayed_exile_replay"
-        ]
-      ]
-    },
-    {
-      "common": {
-        "applicability_note": "Resolve the affected object's mandatory self-replacement correctly while an opponent controls another applicable public zone replacement in four-player state.",
-        "capability_id": "activation.unearth.fixed_mana",
-        "official_rule_ids": [
-          "602.1",
-          "602.2",
-          "702.84",
-          "702.84a"
-        ],
-        "supported_profiles": [
-          "traditional",
-          "commander_duel",
-          "commander_review"
-        ]
-      },
-      "references": [
-        [
           1239,
           "multiplayer",
-          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_unearthed_leave_replacement_precedes_competing_destination"
+          "tests.test_unearth_rules.OrdinaryUnearthRuntimeTests.test_unearth_offer_resolution_haste_and_delayed_exile_replay"
         ]
       ]
     },
@@ -126502,12 +126502,12 @@
         [
           12197,
           "interaction",
-          "tests.test_finality_counters.FinalityCounterOwnerTests.test_existing_unearth_self_replacement_keeps_its_priority_over_finality"
+          "tests.test_finality_counters.FinalityCounterOwnerTests.test_finality_competes_with_other_replacements_and_does_not_gain_self_replacement_priority"
         ],
         [
           12198,
           "interaction",
-          "tests.test_finality_counters.FinalityCounterOwnerTests.test_finality_competes_with_other_replacements_and_does_not_gain_self_replacement_priority"
+          "tests.test_finality_counters.FinalityCounterOwnerTests.test_unearth_and_finality_use_checkpointed_replacement_order"
         ],
         [
           12199,

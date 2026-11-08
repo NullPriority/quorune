@@ -1073,6 +1073,12 @@ class GameConfig:
         return cls(**data)
 
 
+def unearth_leave_replacement_version(value: Any) -> int | None:
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError("Unsupported Unearth leave replacement version")
+    return value
+
+
 @dataclass(slots=True)
 class GameState:
     game_id: str
@@ -1175,6 +1181,7 @@ class GameState:
     unblocked_attacker_event_version: int | None = 1
     legend_rule_choice_version: int | None = 1
     effect_destruction_replacement_version: int | None = 1
+    unearth_leave_replacement_version: int | None = 1
     counter_quantity_provenance_version: int | None = 1
     departed_turn_boundary_version: int | None = None
 
@@ -1208,6 +1215,7 @@ class GameState:
         }
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
+        unearth_replacement = unearth_leave_replacement_version(self.unearth_leave_replacement_version)
         legend_rule_choice_version(self.legend_rule_choice_version)
         effect_destruction_version = self._effect_destruction_replacement_version(
             self.effect_destruction_replacement_version
@@ -1270,6 +1278,7 @@ class GameState:
             **({'permanent_event_state_version':self.permanent_event_state_version} if self.permanent_event_state_version is not None else {}),
             **({'battle_cry_resolution_version':self.battle_cry_resolution_version} if self.battle_cry_resolution_version is not None else {}),
             **({'ninjutsu_band_retention_version':ninjutsu_bands} if ninjutsu_bands is not None else {}),
+            **({"unearth_leave_replacement_version": unearth_replacement} if unearth_replacement is not None else {}),
             **({'block_characteristics_version':self.block_characteristics_version} if self.block_characteristics_version is not None else {}),
             **({'unblocked_attacker_event_version':self.unblocked_attacker_event_version} if self.unblocked_attacker_event_version is not None else {}),
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
@@ -1366,6 +1375,9 @@ class GameState:
             legend_rule_choice_version=legend_rule_choice_version(data.get('legend_rule_choice_version')),
             effect_destruction_replacement_version=cls._effect_destruction_replacement_version(
                 data.get("effect_destruction_replacement_version")
+            ),
+            unearth_leave_replacement_version=unearth_leave_replacement_version(
+                data.get("unearth_leave_replacement_version")
             ),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
             target_announcement_timing_version=read_target_announcement_timing_version(data),

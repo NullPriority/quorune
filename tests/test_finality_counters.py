@@ -14,9 +14,9 @@ class FinalityCounterOwnerTests(unittest.TestCase):
         for key,value in changes.items():setattr(card,key,value)
         return card
 
-    def effects(self,card):
+    def effects(self,card,*,unearth_version=1):
         host=SimpleNamespace(active_seats=tuple('ABCD'),card_record=lambda source:None,
-            state=SimpleNamespace(continuous_effects=()),
+            state=SimpleNamespace(continuous_effects=(),unearth_leave_replacement_version=unearth_version),
             semantics=SimpleNamespace(runtime_handler_programs_for_oracle=lambda *args,**kwargs:()))
         return collect_zone_change_replacement_effects(host,sources=(card,))
 
@@ -58,11 +58,20 @@ class FinalityCounterOwnerTests(unittest.TestCase):
             event=apply_replacement(choice,effects,selected)
             self.assertEqual(destination,event.payload['destination']);self.assertIsNone(replacement_choice(event,effects))
 
-    def test_existing_unearth_self_replacement_keeps_its_priority_over_finality(self):
-        card=self.card(unearthed=True);effects=self.effects(card);choice=replacement_choice(self.event(card),effects)
-        self.assertEqual(1,len(choice.options));self.assertTrue(choice.options[0].startswith('rule:unearth:'))
-        changed=apply_replacement(choice,effects,choice.options[0]);self.assertEqual('exile',changed.payload['destination'])
-        self.assertIsNone(replacement_choice(changed,effects))
+    def test_unearth_and_finality_use_checkpointed_replacement_order(self):
+        card = self.card(unearthed=True)
+        event = self.event(card)
+        for version in (1, None):
+            with self.subTest(version=version):
+                effects = self.effects(card, unearth_version=version)
+                choice = replacement_choice(event, effects)
+                self.assertEqual('B', choice.chooser)
+                self.assertEqual(2 if version else 1, len(choice.options))
+                self.assertTrue(any(option.startswith('rule:unearth:') for option in choice.options))
+                for option in choice.options:
+                    changed = apply_replacement(choice, effects, option)
+                    self.assertEqual('exile', changed.payload['destination'])
+                    self.assertIsNone(replacement_choice(changed, effects))
 
     def test_finality_collection_omission_mutation_is_killed(self):
         from unittest.mock import patch

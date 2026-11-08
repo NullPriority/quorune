@@ -586,6 +586,7 @@ def collect_zone_change_replacement_effects(
     )
     registry = default_zone_change_replacement_registry()
     effects = list(damage_death_exile_replacements(host.state))
+    unearth_version = getattr(host.state, "unearth_leave_replacement_version", None)
     for source in candidates:
         active_zone = (
             source_zones.get(source.object_id, source.zone)
@@ -598,7 +599,8 @@ def collect_zone_change_replacement_effects(
             or source.controller not in host.active_seats
         ):
             continue
-        for replacement in (unearthed_leave_replacement(source),finality_counter_replacement(source)):
+        for replacement in (unearthed_leave_replacement(source, version=unearth_version),
+                            finality_counter_replacement(source)):
             if replacement is not None:effects.append(replacement)
         record = host.card_record(source)
         if record is None:

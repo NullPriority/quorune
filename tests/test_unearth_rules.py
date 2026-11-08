@@ -13,7 +13,7 @@ from quorune.carddb import CardDatabase
 from quorune.compiler import unearth_nodes as unearth_nodes_module
 from quorune.deck import DeckLoader
 from quorune.haste import has_effective_haste, summoning_sickness_prohibits_attack
-from quorune.model import CardInstance
+from quorune.model import CardInstance, DecisionGroup
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import (
     authoritative_state_hash,
@@ -30,6 +30,7 @@ from quorune.semantic_runtime.unearth import (
     UnearthEffectHandler,
 )
 from quorune.semantics import SemanticRegistry
+from quorune.session import CommanderSession
 from quorune.unearth import (
     compile_ordinary_unearth_ability,
     OrdinaryUnearthAbilitySpec,
@@ -54,6 +55,7 @@ def focused_card_database(directory: str) -> CardDatabase:
     build_fixture_database(
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
+            ROOT / "tests" / "fixtures" / "bound-effect-program-cards.json",
             FIXTURE_PATH,
             PARTIAL_FIXTURE_PATH,
         ],
@@ -360,10 +362,13 @@ class OrdinaryUnearthRuntimeTests(unittest.TestCase):
         engine.pump()
 
     @staticmethod
-    def resolve_stack_with_passes(session) -> None:
+    def resolve_stack_with_passes(session) -> DecisionGroup | None:
         for _ in range(12):
+            decision = session.state.pending_decision
+            if decision is not None and decision.kind != "priority":
+                return decision
             if not session.engine.state.stack:
-                return
+                return None
             principal = session.pending_principals()[0]
             result = session.act(principal, {"action_id": "pass"})
             if not result.ok:
@@ -456,6 +461,7 @@ class OrdinaryUnearthRuntimeTests(unittest.TestCase):
 
     def test_unearthed_leave_replacement_precedes_competing_destination(self):
         session = self.session(70284002, players=4)
+        session.state.unearth_leave_replacement_version = None
         engine = session.engine
         card = self.add_card(session, name="Dregscape Zombie", ref="UNE2")
         voidwalker = self.add_card(
@@ -489,6 +495,7 @@ class OrdinaryUnearthRuntimeTests(unittest.TestCase):
         )
 
         session = self.session(70284003, players=4)
+        session.state.unearth_leave_replacement_version = None
         engine = session.engine
         card = self.add_card(session, name="Dregscape Zombie", ref="UNE3")
         self.add_card(
@@ -512,6 +519,64 @@ class OrdinaryUnearthRuntimeTests(unittest.TestCase):
             if event.code == "replacement.apply"
         )
         self.assertNotEqual(card.ref, replacement.details["source"])
+
+    def test_current_unearthed_leave_offers_both_destination_replacements(self):
+        session = self.session(70284009)
+        engine = session.engine
+        zombie = self.add_card(session, name="Dregscape Zombie", ref="unearthed-zombie")
+        voidwalker = self.add_card(session, name="Dauthi Voidwalker", ref="opposing-voidwalker",
+                                  seat="A", zone="battlefield")
+        murder = self.add_card(session, name="Murder", ref="destroy-unearthed-zombie", zone="hand")
+        engine.state.players["B"].mana_pool.update({"B": 3, "C": 1})
+        self.prepare_main(session)
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+
+        actions = session.packet("pilot:B", full=True)["decision"]["legal_actions"]
+        unearth, = [action for action in actions if action["id"].startswith(f"activate:{zombie.ref}:")]
+        result = session.act("pilot:B", {"action_id": unearth["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve_stack_with_passes(session))
+        self.assertEqual(("battlefield", True), (zombie.zone, zombie.unearthed))
+
+        actions = session.packet("pilot:B", full=True)["decision"]["legal_actions"]
+        cast, = [action for action in actions if action["id"] == f"cast:{murder.ref}"]
+        result = session.act("pilot:B", {"action_id": cast["id"], "pay": "auto", "targets": [zombie.ref]})
+        self.assertTrue(result.ok, result.summary)
+        decision = self.resolve_stack_with_passes(session)
+        self.assertIsNotNone(decision)
+        self.assertEqual("replacement.order", decision.kind)
+        self.assertIsNone(session.packet("pilot:A", full=True)["decision"])
+        options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual(2, len(options))
+        self.assertEqual(1, sum(option["id"].startswith("rule:unearth:") for option in options))
+        pending_hash = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "replacement": options[0]["id"]}).ok)
+        self.assertFalse(session.act("pilot:B", {"action_id": "choose", "replacement": "unoffered"}).ok)
+        self.assertEqual(pending_hash, authoritative_state_hash(session.state))
+
+        with tempfile.TemporaryDirectory() as directory:
+            pending = Path(directory) / "pending-departure"
+            session.save(pending)
+            for index, option in enumerate(options):
+                with self.subTest(option=option["id"]):
+                    resumed = CommanderSession.load(self.db, pending)
+                    self.assertEqual(1, resumed.state.unearth_leave_replacement_version)
+                    self.assertEqual(pending_hash, authoritative_state_hash(resumed.state))
+                    result = resumed.act("pilot:B", {"action_id": "choose", "replacement": option["id"]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertIsNone(self.resolve_stack_with_passes(resumed))
+                    departed = resumed.state.cards[zombie.object_id]
+                    chose_unearth = option["id"].startswith("rule:unearth:")
+                    self.assertEqual(("exile", False, 0 if chose_unearth else 1),
+                                     (departed.zone, departed.unearthed, departed.counters.get("void", 0)))
+                    applied = [event.details["source"] for event in resumed.state.events
+                               if event.code == "replacement.apply" and event.details["object"] == zombie.ref]
+                    self.assertEqual([zombie.ref if chose_unearth else voidwalker.ref], applied)
+                    record = Path(directory) / f"chosen-{index}"
+                    resumed.save(record)
+                    replay = replay_record(record, self.db, verify=True)
+                    self.assertTrue(replay["ok"], replay)
+                    self.assertEqual(authoritative_state_hash(resumed.state), replay["final_state_hash"])
 
     def test_countered_or_stale_unearth_activation_leaves_card_in_graveyard(self):
         session = self.session(70284004, players=2)

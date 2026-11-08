@@ -4825,13 +4825,13 @@
       "implementation_mutation_rationale": "test_unearth_dependency_and_compiler_mutations_fail_closed removes the closed node production and independently blocks each required capability, proving exact runtime admission disappears.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_unearthed_leave_replacement_precedes_competing_destination",
+        "test_current_unearthed_leave_offers_both_destination_replacements",
         "test_control_change_phasing_and_returned_incarnation_are_isolated",
         "test_unearth_offer_resolution_haste_and_delayed_exile_replay"
       ],
       "multiplayer_tests": [
         "test_unearth_offer_resolution_haste_and_delayed_exile_replay",
-        "test_unearthed_leave_replacement_precedes_competing_destination"
+        "test_current_unearthed_leave_offers_both_destination_replacements"
       ],
       "negative_tests": [
         "test_nonordinary_unearth_costs_remain_residual",
@@ -39583,7 +39583,7 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_finality_competes_with_other_replacements_and_does_not_gain_self_replacement_priority",
-        "test_existing_unearth_self_replacement_keeps_its_priority_over_finality",
+        "test_unearth_and_finality_use_checkpointed_replacement_order",
         "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
         "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
         "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"

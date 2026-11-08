@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
+from .model import unearth_leave_replacement_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
 from .printed_mana_cost_model import (
     PRINTED_MANA_COST_VERSION_FIELD,
@@ -28,10 +29,12 @@ def format_state_versions(state: Any) -> dict[str, int]:
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     stack_authority = stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None))
     departed_turns = getattr(state, "departed_turn_boundary_version", None)
+    unearth = unearth_leave_replacement_version(getattr(state, "unearth_leave_replacement_version", None))
     return {
         **({'legend_rule_choice_version': legend} if legend is not None else {}),
         **({"stack_resolution_authority_version": stack_authority} if stack_authority is not None else {}),
         **({"departed_turn_boundary_version": departed_turns} if departed_turns is not None else {}),
+        **({"unearth_leave_replacement_version": unearth} if unearth is not None else {}),
         "commander_damage_identity_version": commander_damage_identity_version(
             state.commander_damage_identity_version
         ),
@@ -193,6 +196,11 @@ def validate_state_versions(
     from .permanent_event_state_model import permanent_event_state_version
     from .battle_cry_resolution_model import battle_cry_resolution_version
     from .banding_model import ninjutsu_band_retention_version
+
+    if unearth_leave_replacement_version(format_value.get("unearth_leave_replacement_version")) != getattr(
+        state, "unearth_leave_replacement_version", None,
+    ):
+        raise ValueError("Unearth replacement provenance does not match the initial checkpoint")
     battle_cry=format_value.get('battle_cry_resolution_version',0)
     if (type(battle_cry) is not int or battle_cry not in {0,1}
             or battle_cry!=(battle_cry_resolution_version(getattr(state,'battle_cry_resolution_version',None)) or 0)):

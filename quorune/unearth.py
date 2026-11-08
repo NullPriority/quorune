@@ -9,7 +9,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .abilities import ActivatedAbility
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .continuous_effect_state import ResolutionEffectSource
-from .model import CardInstance
+from .model import CardInstance, unearth_leave_replacement_version
 from .replacement.immutable import FrozenMap, freeze_value, thaw_value
 from .replacement.model import ReplacementClass, ReplacementEffect
 from .replacement.operations import SetField
@@ -217,18 +217,22 @@ def ordinary_unearth_handler_descriptor(
     }
 
 
-def unearthed_leave_replacement(card: CardInstance) -> ReplacementEffect | None:
-    """Return the mandatory CR 702.84a self-replacement for one incarnation."""
+def unearthed_leave_replacement(
+    card: CardInstance, *, version: int | None,
+) -> ReplacementEffect | None:
+    """Return the mandatory CR 702.84a replacement for one incarnation."""
 
     if not isinstance(card, CardInstance) or not card.unearthed:
         return None
     if card.zone != "battlefield" or card.object_kind != "card":
         raise UnearthError("Unearthed designation requires a battlefield card")
+    replacement_class = (ReplacementClass.OTHER if unearth_leave_replacement_version(version) == 1
+                         else ReplacementClass.SELF_REPLACEMENT)
     return ReplacementEffect(
         effect_id=f"rule:unearth:{card.logical_object_id}",
         source_id=card.ref,
         event_kind="zone.change",
-        replacement_class=ReplacementClass.SELF_REPLACEMENT,
+        replacement_class=replacement_class,
         conditions={
             "origin": {"eq": "battlefield"},
             "destination": {"not_in": ["exile"]},

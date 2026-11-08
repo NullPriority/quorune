@@ -838,10 +838,13 @@ activation descriptor, and `generic.unearth.v1` lowers its return and delayed-
 exile results to one typed intent. Runtime admission requires the compiler's
 complete-card certificate, then uses the shared activation proposal and commit
 owners. Resolution delegates the card move, zone-object Haste grant, public
-noncopiable designation, self-replacement, delayed trigger, and CR 400.7 reset
-to their canonical owners. Countered, stale, partial-card, copied, granted,
-multiface, and nonordinary-cost variants fail closed without interpreting
-Oracle or reminder prose.
+noncopiable designation, destination replacement, delayed trigger, and CR 400.7
+reset to their canonical owners. In current games the affected permanent's
+controller chooses among applicable ordinary replacements for a later
+departure. A move already headed to exile bypasses the Unearth replacement.
+Unmarked records use the historical Unearth priority. Countered, stale,
+partial-card, copied, granted, multiface, and nonordinary-cost variants fail
+closed without interpreting Oracle or reminder prose.
 
 `casting.kicker.fixed-mana.v1` owns one single fixed ordinary-mana Kicker cost
 descriptor. It contributes an optional additional total-cost branch only when
