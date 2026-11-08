@@ -288,21 +288,24 @@ def reviewed_effect_template_composition(
     )
     if query_amount is not None:
         return query_amount
+    def compile_fixed_amount(body):
+        return reviewed_effect_template_composition(
+            body, source_name=source_name, compile_atomic=compile_atomic,
+            compile_fixed=compile_fixed, allow_declarations=False,
+        )
+
     if allow_declarations:
-        scalar = scalar_effect_amount_template(text, source_name=source_name,
-            compile_fixed=lambda body: reviewed_effect_template_composition(
-                body, source_name=source_name, compile_atomic=compile_atomic,
-                compile_fixed=compile_fixed, allow_declarations=False))
+        scalar = scalar_effect_amount_template(
+            text, source_name=source_name, compile_fixed=compile_fixed_amount,
+        )
         if scalar is not None:
             return scalar
-        declared = declared_effect_amount_template(
-            text, source_name=source_name, cast_x_available=cast_x_available,
-            forbid_public_x=forbid_public_x,
-            compile_fixed=lambda body: reviewed_effect_template_composition(
-                body, source_name=source_name, compile_atomic=compile_atomic,
-                compile_fixed=compile_fixed, allow_declarations=False,
-            ),
+        compile_amount = partial(
+            declared_effect_amount_template, source_name=source_name,
+            cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
+            compile_fixed=compile_fixed_amount,
         )
+        declared = compile_amount(text)
         if declared is not None:
             return declared
     query_counters = ordered_quantity_sequence_template(text, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed)
@@ -310,7 +313,9 @@ def reviewed_effect_template_composition(
     from .announced_target_sets import announced_target_clause_compiler
     sequence = fixed_effect_clause_sequence_template(
         normalized_blight_sequence(text),
-        compile_clause=announced_target_clause_compiler(compile_atomic) if cast_x_available else compile_atomic,
+        compile_clause=announced_target_clause_compiler(
+            compile_atomic, compile_amount=compile_amount if allow_declarations else None,
+        ) if cast_x_available else compile_atomic,
     )
     if sequence is not None:
         return sequence.compiled()

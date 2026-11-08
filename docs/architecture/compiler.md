@@ -4506,8 +4506,14 @@ component registry. Battlefield permanent predicates, public graveyard
 creature-card mana values, and creature or blue spell predicates retain their
 separate target domains. The compiler does not turn private zones, nested
 antecedents, colored reductions or unresolved effect siblings into support.
-Announced-cardinality recognition safely declines sequence components that
-lack its required whole-ability event and identity context.
+Announced-cardinality recognition requires the whole ability's event and
+identity context. The fixed clause sequence can combine one mana-announced
+target set with an independently typed result using the same paid X. The
+target-count owner validates its own bound while the amount owner checks the
+result slot. Quoted token children retain their separate capability closure.
+The follow-up uses the announced value even when fewer targets are affected.
+If every chosen target becomes illegal, the resolution owner skips both
+clauses. A spell cast with zero targets can still resolve its other clause.
 
 Printed Increment uses `compiler/increment_nodes.py` and independent
 source-spanned instance identities. The normalized cast event carries the

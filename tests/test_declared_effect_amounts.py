@@ -196,8 +196,14 @@ class DeclaredEffectAmountCompilerTests(unittest.TestCase):
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
         from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
 
-        records = [replace(generic_spell(text),oracle_id=f"fixture:declared-measure-{index}")
-            for index,text in enumerate(("Draw X cards.","Draw X cards.\nDraw a card if you control a land."))]
+        texts = (
+            "Draw X cards.",
+            "Draw X cards.\nDraw a card if you control a land with an unrepresented ability.",
+        )
+        records = [
+            replace(generic_spell(text), oracle_id=f"fixture:declared-measure-{index}")
+            for index, text in enumerate(texts)
+        ]
         with mock.patch("quorune.compiler.effect_template_composition.declared_effect_amount_template",return_value=None):
             baseline = [analyze_card_unlocks(self.compile(row),program=None,program_error=None,
                 capabilities=self.capabilities,profile="commander_review") for row in records]

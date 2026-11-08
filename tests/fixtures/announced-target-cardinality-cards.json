@@ -648,6 +648,290 @@
       "released_at": "2002-05-27",
       "toughness": null,
       "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{U}{B}",
+      "name": "Malicious Advice",
+      "oracle_id": "14c1adf8-950b-4f64-9c84-956a623448f4",
+      "oracle_text": "Tap X target artifacts, creatures, and/or lands. You lose X life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2001-02-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{X}{R}",
+      "name": "Release the Gremlins",
+      "oracle_id": "3b583358-d0d5-4f53-b06c-c6439156e684",
+      "oracle_text": "Destroy X target artifacts. Create X 2/2 red Gremlin creature tokens.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{4}{B}",
+      "name": "Dregs of Sorrow",
+      "oracle_id": "8126e60b-cf3d-4bf0-bfb5-f1e914d3e20e",
+      "oracle_text": "Destroy X target nonblack creatures. Draw X cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-11-07",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{B}{B}",
+      "name": "Shattered Crypt",
+      "oracle_id": "77bef290-7229-420a-a5c6-8c1b6fea63df",
+      "oracle_text": "Return X target creature cards from your graveyard to your hand. You lose X life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1997-06-09",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Darksteel Citadel",
+      "oracle_id": "8dc067bf-f78f-4ac4-b6e7-b305c42cf0bc",
+      "oracle_text": "Indestructible\n{T}: Add {C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Artifact Land"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Walking Corpse",
+      "oracle_id": "fea95888-e16a-4209-9cd4-623f7f4d2f67",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Zombie"
     }
   ],
   "rulings": [
@@ -757,6 +1041,36 @@
       "comment": "If you choose zero targets, you’ll just scry 1 when the spell resolves. However, if you choose at least one target and all of Glimpse the Sun God’s targets are illegal as it tries to resolve, the spell won’t resolve and none of its effects will happen. You won’t scry in that case.",
       "oracle_id": "87cc3a67-b4f0-41f0-9e34-745ef23aa479",
       "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can target an artifact with indestructible. It won\u2019t be destroyed, and you\u2019ll still create X Gremlin tokens.",
+      "oracle_id": "3b583358-d0d5-4f53-b06c-c6439156e684",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact becomes an illegal target for Release the Gremlins, it won\u2019t change the number of tokens created. However, if every target artifact becomes an illegal target, Release the Gremlins doesn\u2019t resolve and no tokens are created.",
+      "oracle_id": "3b583358-d0d5-4f53-b06c-c6439156e684",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X is limited by the number of artifacts that you can target. You can\u2019t target the same artifact more than once.",
+      "oracle_id": "3b583358-d0d5-4f53-b06c-c6439156e684",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "X can be zero.",
+      "oracle_id": "8126e60b-cf3d-4bf0-bfb5-f1e914d3e20e",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although Darksteel Citadel is an artifact, it can't be cast as a spell. Playing it follows the normal rules for playing a land.",
+      "oracle_id": "8dc067bf-f78f-4ac4-b6e7-b305c42cf0bc",
+      "published_at": "2014-07-18",
       "source": "wotc"
     }
   ]

@@ -723,7 +723,7 @@ def public_query_amount_shape_context(
             return public_query_amount_shape_context(*scalar)
         return scalar
     if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics:
-        return declared_amount_shape_context(effects, mechanics)
+        return declared_amount_shape_context(effects, mechanics, target_schema=target_schema)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
         return tuple(effects), set(mechanics)
     if len(effects) > 1 and (composed := _composed_query_shape_context(effects, mechanics)) is not None:

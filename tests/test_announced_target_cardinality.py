@@ -98,9 +98,16 @@ class AnnouncedTargetCardinalityRuntimeTests(unittest.TestCase):
         self.assertEqual(1,len(programs));self.assertEqual('exile',programs[0].destination)
         from quorune.compiler.announced_target_sets import announced_target_set_effect_template
         self.assertIsNone(announced_target_set_effect_template(self.db.lookup('Wildest Dreams').oracle_text))
-        for name in ('Divergent Equation','Pest Infestation'):
-            source=self.add(session.engine,name,zone='hand')
-            self.assertFalse(self.binding(session,source)['strict_capability_ready'],name)
+        from quorune.oracle_ir import compile_oracle_card
+        from test_declared_effect_amounts import generic_spell
+
+        source = self.add(session.engine, 'Divergent Equation', zone='hand')
+        self.assertFalse(self.binding(session, source)['strict_capability_ready'])
+        linked = generic_spell(
+            'Tap X target creatures. Draw a card for each creature tapped this way.',
+            mana_cost='{X}{U}',
+        )
+        self.assertNotEqual('exact', compile_oracle_card(linked, capability_registry=self.registry).status)
 
     def test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not(self):
         for x in (0,1):
@@ -483,3 +490,175 @@ class AnnouncedTargetCardinalityRuntimeTests(unittest.TestCase):
         session=self.replay(session,load=True);self.assertIsNone(self.resolve(session))
         self.assertTrue(all(session.state.cards[c.object_id].tapped for c in taxed+other))
         self.private_replay(session,private)
+
+    def test_original_malicious_advice_uses_announced_x_after_one_target_leaves(self):
+        session = self.session(729227)
+        source = self.add(session.engine, 'Malicious Advice', zone='hand')
+        gone = self.add(session.engine, 'Generic Bound Body', seat='B', ref='advice-gone')
+        land = self.add(session.engine, 'Generic Bound Plains', seat='D', ref='advice-land')
+        murder = self.add(session.engine, 'Murder', seat='B', zone='hand')
+        private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        session.state.players['B'].mana_pool.update({'B': 2, 'C': 1})
+        self.prepare(session, mana={'U': 1, 'B': 1, 'C': 2})
+        self.checkpoint(session)
+        self.assertTrue(self.binding(session, source)['strict_capability_ready'])
+        offer = self.action(session, source)
+        self.assertEqual('x', offer['target_schema']['groups'][0]['count_from'])
+        command = {'action_id': offer['id'], 'x': 2, 'targets': [gone.ref, land.ref], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B', command).ok)
+        self.assertFalse(session.act('pilot:A', {**command, 'targets': [gone.ref, gone.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(2, session.state.stack[-1].x_value)
+        self.assertEqual(40, session.state.players['A'].life)
+        self.assertFalse(any(session.state.players['A'].mana_pool.values()))
+
+        self.cast(session, 'B', murder, [gone.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('graveyard', session.state.cards[gone.object_id].zone)
+        self.assertTrue(session.state.cards[land.object_id].tapped)
+        self.assertEqual([38, 40, 40, 40], [session.state.players[seat].life for seat in 'ABCD'])
+        self.private_replay(session, private)
+
+    def test_original_shattered_crypt_returns_own_targets_and_loses_x_life(self):
+        session = self.session(729228)
+        source = self.add(session.engine, 'Shattered Crypt', zone='hand')
+        own = [self.add(session.engine, 'Generic Bound Body', zone='graveyard', ref=f'crypt-{i}')
+               for i in range(2)]
+        foreign = self.add(session.engine, 'Generic Bound Body', seat='B', zone='graveyard', ref='crypt-foreign')
+        self.prepare(session, mana={'B': 2, 'C': 2})
+        self.checkpoint(session)
+        self.assertTrue(self.binding(session, source)['strict_capability_ready'])
+        offer = self.action(session, source)
+        self.assertNotIn(foreign.ref, offer['target_schema']['legal_refs'])
+        command = {'action_id': offer['id'], 'x': 2, 'targets': [card.ref for card in own], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A', {**command, 'targets': [own[0].ref, foreign.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(40, session.state.players['A'].life)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(all(session.state.cards[card.object_id].zone == 'hand' for card in own))
+        self.assertEqual('graveyard', session.state.cards[foreign.object_id].zone)
+        self.assertEqual(38, session.state.players['A'].life)
+        self.replay(session, load=True)
+
+    def test_original_release_the_gremlins_uses_x_instead_of_destroyed_count(self):
+        session = self.session(729229)
+        source = self.add(session.engine, 'Release the Gremlins', zone='hand')
+        durable = self.add(session.engine, 'Darksteel Citadel', seat='B')
+        fragile = self.add(session.engine, 'Generic Bound Mentor', seat='D')
+        self.prepare(session, mana={'R': 1, 'C': 4})
+        self.checkpoint(session)
+        self.assertTrue(self.binding(session, source)['strict_capability_ready'])
+        offer = self.action(session, source)
+        accepted = session.act('pilot:A', {
+            'action_id': offer['id'], 'x': 2, 'targets': [durable.ref, fragile.ref], 'pay': 'auto',
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(2, session.state.stack[-1].x_value)
+        self.assertFalse(any(session.state.players['A'].mana_pool.values()))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('battlefield', session.state.cards[durable.object_id].zone)
+        self.assertEqual('graveyard', session.state.cards[fragile.object_id].zone)
+        tokens = [card for card in session.state.cards.values()
+                  if card.is_token and card.zone == 'battlefield' and card.controller == 'A']
+        self.assertEqual(['Gremlin Token', 'Gremlin Token'], [card.printed_name for card in tokens])
+        self.replay(session, load=True)
+
+    def test_original_dregs_of_sorrow_filters_black_and_draws_privately(self):
+        session = self.session(729230)
+        source = self.add(session.engine, 'Dregs of Sorrow', zone='hand')
+        targets = [self.add(session.engine, 'Generic Bound Body', seat=seat, ref=f'dregs-{seat}')
+                   for seat in 'BD']
+        black = self.add(session.engine, 'Walking Corpse', seat='C')
+        top = session.state.players['A'].zones['library'][-2:]
+        self.prepare(session, mana={'B': 1, 'C': 6})
+        self.checkpoint(session)
+        self.assertTrue(self.binding(session, source)['strict_capability_ready'])
+        offer = self.action(session, source)
+        self.assertNotIn(black.ref, offer['target_schema']['legal_refs'])
+        accepted = session.act('pilot:A', {
+            'action_id': offer['id'], 'x': 2, 'targets': [card.ref for card in targets], 'pay': 'auto',
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(all(session.state.cards[card.object_id].zone == 'graveyard' for card in targets))
+        self.assertEqual('battlefield', session.state.cards[black.object_id].zone)
+        self.assertEqual(set(top), set(session.state.players['A'].zones['hand']) & set(top))
+        for seat in 'BCD':
+            packet = json.dumps(session.packet(f'pilot:{seat}', full=True))
+            for object_id in top:
+                self.assertNotIn(session.state.cards[object_id].ref, packet)
+        self.replay(session, load=True)
+
+    def test_original_pest_infestation_distinguishes_zero_chosen_from_all_illegal(self):
+        for choose_target in (False, True):
+            with self.subTest(choose_target=choose_target):
+                session = self.session(729231 + choose_target)
+                source = self.add(session.engine, 'Pest Infestation', zone='hand')
+                artifact = self.add(session.engine, 'Generic Bound Mentor', seat='D')
+                murder = self.add(session.engine, 'Murder', seat='B', zone='hand')
+                session.state.players['B'].mana_pool.update({'B': 2, 'C': 1})
+                self.prepare(session, mana={'G': 1, 'C': 4})
+                self.checkpoint(session)
+                self.assertTrue(self.binding(session, source)['strict_capability_ready'])
+                offer = self.action(session, source)
+                accepted = session.act('pilot:A', {
+                    'action_id': offer['id'], 'x': 2,
+                    'targets': [artifact.ref] if choose_target else [], 'pay': 'auto',
+                })
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertFalse(any(session.state.players['A'].mana_pool.values()))
+                self.assertEqual(2, session.state.stack[-1].x_value)
+                if choose_target:
+                    self.cast(session, 'B', murder, [artifact.ref])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                pests = [card for card in session.state.cards.values()
+                         if card.is_token and card.zone == 'battlefield' and card.controller == 'A']
+                self.assertEqual(['Pest Token'] * (0 if choose_target else 4), [card.printed_name for card in pests])
+                self.assertEqual(40, session.state.players['A'].life)
+                if not choose_target:
+                    self.cast(session, 'B', murder, [pests[0].ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual(41, session.state.players['A'].life)
+                self.replay(session, load=True)
+
+    def test_mixed_x_sequence_validates_the_symbolic_target_and_result_slots_separately(self):
+        from quorune.compiler.declared_effect_amounts import declared_amount_shape_context
+
+        session = self.session(729233)
+        source = self.add(session.engine, 'Malicious Advice', zone='hand')
+        program, = session.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertTrue(bind_semantic_program_runtime(
+            program, capability_registry=self.registry, profile='commander_review',
+        )['strict'])
+        mechanics = set(program.coverage)
+        target, result = program.effects
+        projected, _ = declared_amount_shape_context(
+            program.effects, mechanics, target_schema=program.target_schema,
+        )
+        self.assertEqual(target, projected[0])
+        self.assertEqual(2, projected[1]['amount'])
+        for broken in (
+            ({**target, 'maximum_targets': result['amount'] | {'coefficient': 2}}, result),
+            (target, {**result, 'player': result['amount']}),
+        ):
+            self.assertIsNone(declared_amount_shape_context(
+                broken, mechanics, target_schema=program.target_schema,
+            ))
+        for capability in ('target.cardinality.mana_announced_x', 'quantity_expression.declared_effect_amount'):
+            with self.subTest(capability=capability):
+                dependencies = tuple(key for key in program.capability_dependencies if key != capability)
+                incomplete = replace(program, capability_dependencies=dependencies,
+                    capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+                binding = bind_semantic_program_runtime(
+                    incomplete, capability_registry=self.registry, profile='commander_review',
+                )
+                self.assertFalse(binding['strict'])
+                self.assertIn(f'capability:undeclared_runtime_dependency:{capability}', binding['blockers'])
