@@ -48,6 +48,131 @@
       "type_line": "Sorcery"
     },
     {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Ashnod's Altar",
+      "oracle_id": "4d18bcba-a346-445e-a182-6cc30b7e066d",
+      "oracle_text": "Sacrifice a creature: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Autumnal Gloom",
+          "oracle_text": "{B}: Mill a card.\nDelirium \u2014 At the beginning of your end step, if there are four or more card types among cards in your graveyard, transform this enchantment.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Ancient of the Equinox",
+          "oracle_text": "Trample, hexproof",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Treefolk"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Delirium",
+        "Transform",
+        "Hexproof",
+        "Trample",
+        "Mill"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G} // ",
+      "name": "Autumnal Gloom // Ancient of the Equinox",
+      "oracle_id": "245aa786-d607-414f-ab55-b003b2b9faf4",
+      "oracle_text": "Autumnal Gloom: {B}: Mill a card.\nDelirium \u2014 At the beginning of your end step, if there are four or more card types among cards in your graveyard, transform this enchantment.\n//\nAncient of the Equinox: Trample, hexproof",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-04-08",
+      "toughness": null,
+      "type_line": "Enchantment // Creature \u2014 Treefolk"
+    },
+    {
       "card_faces": [
         {
           "colors": [
@@ -272,6 +397,105 @@
       "released_at": "2012-02-03",
       "toughness": null,
       "type_line": "Creature \u2014 Human // Creature \u2014 Vampire"
+    },
+    {
+      "card_faces": [],
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Cremate",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "oracle_text": "Exile target card from a graveyard.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Desperate Farmer",
+          "oracle_text": "Lifelink\nWhen another creature you control dies, transform this creature.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Human Peasant"
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Depraved Harvester",
+          "oracle_text": "Lifelink",
+          "power": "4",
+          "toughness": "3",
+          "type_line": "Creature \u2014 Human Knight"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B} // ",
+      "name": "Desperate Farmer // Depraved Harvester",
+      "oracle_id": "60d591f6-6d84-45d2-9d78-a2ef07a3e403",
+      "oracle_text": "Desperate Farmer: Lifelink\nWhen another creature you control dies, transform this creature.\n//\nDepraved Harvester: Lifelink",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Peasant // Creature \u2014 Human Knight"
     },
     {
       "cmc": 1.0,
@@ -552,6 +776,98 @@
       "type_line": "Creature \u2014 Human Cleric // Creature \u2014 Human Cleric"
     },
     {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Swamp"
+    },
+    {
       "card_faces": [
         {
           "colors": [],
@@ -621,6 +937,83 @@
       "released_at": "2016-04-08",
       "toughness": null,
       "type_line": "Artifact Creature \u2014 Gargoyle // Artifact Creature \u2014 Gargoyle Horror"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{W}",
+          "name": "Thraben Sentry",
+          "oracle_text": "Vigilance\nWhenever another creature you control dies, you may transform this creature.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Human Soldier"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Thraben Militia",
+          "oracle_text": "Trample",
+          "power": "5",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Human Soldier"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Transform",
+        "Trample"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W} // ",
+      "name": "Thraben Sentry // Thraben Militia",
+      "oracle_id": "9636073e-e361-4d2a-92f6-5fe049e5eb23",
+      "oracle_text": "Thraben Sentry: Vigilance\nWhenever another creature you control dies, you may transform this creature.\n//\nThraben Militia: Trample",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-09-30",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Soldier // Creature \u2014 Human Soldier"
     },
     {
       "card_faces": [
@@ -982,6 +1375,36 @@
       "source": "wotc"
     },
     {
+      "comment": "Because you consider only the characteristics of a double-faced card's front face while it's not on the battlefield, the types of its back face won't be counted for delirium.",
+      "oracle_id": "245aa786-d607-414f-ab55-b003b2b9faf4",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some rare cases, you can have a token or a copy of a spell in your graveyard at the moment that an object's delirium ability counts the card types among cards in your graveyard, before that token or copy ceases to exist. Because tokens and copies of spells are not cards, even if they are copies of cards, their types will never be counted.",
+      "oracle_id": "245aa786-d607-414f-ab55-b003b2b9faf4",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Most triggered delirium abilities use an intervening \"if\" clause. There must be four or more card types among cards in your graveyard in order for these abilities to trigger, otherwise they never trigger at all. There's no way to have the ability trigger if there aren't enough card types, even if you intend to raise that number in response to the triggered ability. The number of card types is checked again as the trigger resolves, and if it has become too low somehow, the ability does nothing. If which card types are in your graveyard changes but the quantity of card types stays the same (or increases), then the delirium triggered ability will still resolve.",
+      "oracle_id": "245aa786-d607-414f-ab55-b003b2b9faf4",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The card types in Magic are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Supertypes (such as legendary and basic) and subtypes (such as Human and Equipment) are not counted.",
+      "oracle_id": "245aa786-d607-414f-ab55-b003b2b9faf4",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The number of card types matters, not the number of cards. For example, Wicker Witch (an artifact creature) along with Catalog (an instant) and Chaplain's Blessing (a sorcery) will enable delirium.",
+      "oracle_id": "245aa786-d607-414f-ab55-b003b2b9faf4",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
       "comment": "You can tap any untapped Vampire you control, including one you haven't controlled continuously since the beginning of your most recent turn, to pay the cost of Chosen of Markov's activated ability. You must have controlled Chosen of Markov continuously since the beginning of your most recent turn, however.",
       "oracle_id": "29328bcb-e991-4095-9439-f493c8fa3f82",
       "published_at": "2011-01-22",
@@ -1006,6 +1429,12 @@
       "source": "wotc"
     },
     {
+      "comment": "If multiple creatures you control die simultaneously, Thraben Sentry's ability will trigger that many times. Only the first one to resolve will cause it to transform.",
+      "oracle_id": "9636073e-e361-4d2a-92f6-5fe049e5eb23",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
       "comment": "For more information on double-faced cards, see the Shadows over Innistrad mechanics article (http://magic.wizards.com/en/articles/archive/feature/shadows-over-innistrad-mechanics).",
       "oracle_id": "9b5cf592-8385-4115-b27a-98f42bdf6329",
       "published_at": "2016-07-13",
@@ -1021,6 +1450,18 @@
       "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
       "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
       "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target card is no longer in the graveyard when Cremate tries to resolve, it won't resolve and none of its effects will happen. You won't draw a card.",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must be able to target a card in a graveyard to cast Cremate.",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
       "source": "wotc"
     },
     {

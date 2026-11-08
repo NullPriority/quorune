@@ -21,6 +21,11 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         entry = entry_permanent_result(binding, body)
         if entry is not None:
             return entry
+    if binding.active_zone == "battlefield":
+        from .self_transform_templates import fixed_self_transform_effect_template
+        transformation = fixed_self_transform_effect_template(body, card_name=card_name, triggered=True)
+        if transformation is not None:
+            return transformation, False
     if _allow_payment:
         from .source_sacrifice_payments import normalized_source_sacrifice_payment_text
         body=normalized_source_sacrifice_payment_text(binding,body,card_name=card_name)

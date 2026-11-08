@@ -97,6 +97,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
     from ..saddle import saddle_activation_runtime_dependencies, saddled_attack_runtime_dependencies
     from ..rules.entry_permanent_results import entry_animation_runtime_dependencies
+    from ..rules.transform_capability_shapes import triggered_source_transform_runtime_dependencies
     from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
     from ..rules.block_characteristics import qualified_block_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
@@ -191,6 +192,7 @@ def _event_query_runtime_requirements(program):
         (qualified_attack_runtime_dependencies,program,'qualified_attack'),
         (saddle_activation_runtime_dependencies,program,'saddle_activation'),
         (entry_animation_runtime_dependencies,program,'entry_animation'),
+        (triggered_source_transform_runtime_dependencies,program,'triggered_source_transform'),
         (saddled_attack_runtime_dependencies,program,'saddled_attack'),
         (unblocked_attacker_runtime_dependencies,program,'unblocked_attacker'),
         (qualified_block_runtime_dependencies,program,'qualified_block'),

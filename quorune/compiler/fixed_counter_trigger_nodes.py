@@ -1153,9 +1153,9 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
-def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool) -> tuple[str, ...]:
+def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool, effect_mechanics=()) -> tuple[str, ...]:
     from .trigger_runtime_coverage import trigger_runtime_coverage
-    return trigger_runtime_coverage(binding, current_ability=current_ability,
+    return trigger_runtime_coverage(binding, current_ability=current_ability, effect_mechanics=effect_mechanics,
         qualified_zone_variant=QUALIFIED_ZONE_VARIANT,
         aggregated_zone_variant=AGGREGATED_ZONE_VARIANT,
         ability_word_public_event_variants=_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
@@ -1438,7 +1438,7 @@ def fixed_typed_event_effect_trigger_node(
         target_schema=target_schema,
         runtime_coverage=(
             *_event_runtime_coverage(
-                binding,
+                binding, effect_mechanics=body_mechanics,
                 current_ability=(
                     requires_current_ability
                     and (

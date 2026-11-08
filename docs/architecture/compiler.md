@@ -3600,11 +3600,14 @@ query, one bounded previous-turn summary, and the logical-object-aware
 transform operation. Printed fixed self-transform activations now use that
 same owner. Their ordinary activation costs are independently compiled, and
 the activation stack item pins source incarnation and transform count under
-CR 701.27f. Two queued activations with the same count can transform once;
-blinked sources invalidate the old instruction. Other steps or thresholds, arbitrary Transform or
-Convert instructions, explicit effects that set day or night, transform-into
-effects, copied or granted forms, and independently unsupported siblings
-remain material residuals.
+CR 701.27f. A fixed source Transform trigger on a normalized event uses
+the same owner and records the source incarnation and transform count.
+The existing intervening-condition and optional-effect owners govern
+the printed timing and choice. Two pending instructions with the same
+count can transform once. A source that leaves the battlefield becomes
+a different incarnation. Unrepresented spell-count conditions, compound
+results, Convert instructions, explicit day or night effects, and
+transform-into effects remain material residuals.
 
 `compiler/emblem_nodes.py` lowers a complete emblem creator with independently
 closed, typeless command-source children. Characteristic static and triggered

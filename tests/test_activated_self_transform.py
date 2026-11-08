@@ -5,6 +5,7 @@ import json,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.card_programs import bind_card_program_runtime
 from quorune.card_programs.adapters import compile_best_available_card_program
@@ -368,3 +369,122 @@ class ActivatedTransformRuntimeTests(unittest.TestCase):
     def test_omitting_selected_face_keyword_filter_mutant_is_killed(self):
         with patch('quorune.rules.current_face_keywords.current_printed_face_keywords',side_effect=lambda host,card,record,base:base.get('keywords',[])):
             with self.assertRaises(AssertionError):self.test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face()
+
+
+class TriggeredTransformRuntimeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "triggered-transform.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/activated-self-transform-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Triggered Transform", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def set_front_face(self, card):
+        card.active_face = str(self.db.by_oracle_id(card.oracle_id).faces[0]["name"])
+
+    def sacrifice(self, session, altar, creature):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        action, = [row for row in actions if row["id"].startswith(f"activate:{altar.ref}:")]
+        result = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [creature.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+
+    def test_actual_farmer_transforms_once_across_two_pending_deaths_and_replays(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.spell_history_transform_model import SPELL_HISTORY_TRANSFORM_COVERAGE
+
+        session = self.session(70127041)
+        engine = session.engine
+        farmer = self.add(engine, "Desperate Farmer // Depraved Harvester")
+        self.set_front_face(farmer)
+        altar = self.add(engine, "Ashnod's Altar")
+        first = self.add(engine, "Generic Bound Body", ref="first-farmer-death")
+        second = self.add(engine, "Generic Bound Body", ref="second-farmer-death")
+        self.assert_closed(session, farmer)
+        program = next(row for row in engine.semantics.programs_for_oracle(farmer.oracle_id)
+            if "fixed-triggered-source-transform" in row.coverage)
+        incomplete = replace(program, coverage=tuple(item for item in program.coverage
+            if item != SPELL_HISTORY_TRANSFORM_COVERAGE))
+        binding = bind_semantic_program_runtime(incomplete, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertTrue(any("runtime_triggered_source_transform" in value for value in binding["blockers"]))
+        self.prepare(session)
+        self.checkpoint(session)
+        self.sacrifice(session, altar, first)
+        self.sacrifice(session, altar, second)
+        identity = farmer.logical_object_id
+        self.assertEqual(2, len(session.state.stack))
+        for item in session.state.stack:
+            self.assertEqual(farmer.object_id, item.source_object_id)
+            self.assertEqual((identity, 0), (item.context["source_logical_object_id"], item.context["source_transform_count"]))
+            self.assertFalse(item.targets)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        result = session.state.cards[farmer.object_id]
+        self.assertEqual((identity, "Depraved Harvester", 1),
+            (result.logical_object_id, result.active_face, result.transform_count))
+        self.replay(session, load=True)
+
+    def test_actual_thraben_sentry_can_decline_or_apply_the_untargeted_transform(self):
+        for choice in ("decline", "apply"):
+            with self.subTest(choice=choice):
+                session = self.session(70127042 + (choice == "apply"))
+                engine = session.engine
+                sentry = self.add(engine, "Thraben Sentry // Thraben Militia")
+                self.set_front_face(sentry)
+                altar = self.add(engine, "Ashnod's Altar")
+                body = self.add(engine, "Generic Bound Body")
+                self.assert_closed(session, sentry)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.sacrifice(session, altar, body)
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                self.assertIsNone(session.packet("pilot:D", full=True)["decision"])
+                command = {"action_id": "choose", "choice": choice}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:D", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[sentry.object_id]
+                self.assertEqual(("Thraben Militia", 1) if choice == "apply" else ("Thraben Sentry", 0),
+                    (current.active_face, current.transform_count))
+                self.replay(session, load=True)
+
+    def test_actual_autumnal_gloom_rechecks_graveyard_types_at_resolution(self):
+        for remove_type in (False, True):
+            with self.subTest(remove_type=remove_type):
+                session = self.session(70127044 + remove_type)
+                engine = session.engine
+                source = self.add(engine, "Autumnal Gloom // Ancient of the Equinox")
+                self.set_front_face(source)
+                ring = self.add(engine, "Sol Ring", zone="graveyard")
+                self.add(engine, "Generic Bound Body", zone="graveyard")
+                self.add(engine, "Generic Bound Growth", zone="graveyard")
+                self.add(engine, "Generic Bound Plains", zone="graveyard")
+                response = self.add(engine, "Cremate", seat="B", zone="hand")
+                self.add(engine, "Swamp", seat="B")
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.until(session, lambda game: game.state.active_player == "A"
+                    and game.state.step == "end_step" and bool(game.state.stack))
+                item, = session.state.stack
+                self.assertEqual(source.object_id, item.source_object_id)
+                self.assertEqual(0, item.context["source_transform_count"])
+                if remove_type:
+                    self.cast_for(session, "B", response, [ring.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("exile", session.state.cards[ring.object_id].zone)
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[source.object_id]
+                self.assertEqual(("Autumnal Gloom", 0) if remove_type else ("Ancient of the Equinox", 1),
+                    (current.active_face, current.transform_count))
+                self.replay(session, load=True)

@@ -126,7 +126,10 @@ from .monarch_capability_shapes import (
     MONARCH_DESIGNATION_CAPABILITY,
     fixed_monarch_node_capabilities,
 )
-from .transform_capability_shapes import source_transform_node_capabilities
+from .transform_capability_shapes import (
+    TRIGGERED_SOURCE_TRANSFORM_MECHANIC,
+    source_transform_node_capabilities,
+)
 from .class_level_capability_shapes import class_level_node_capabilities
 from .library_search_capability_shapes import (
     PARTNER_WITH_SEARCH_MECHANIC_ID,
@@ -1422,7 +1425,7 @@ def capability_covered_mechanics(
     if "continuous.characteristics.changeling" in supplied:
         covered.add("changeling")
     if 'permanent.transform.face_change' in supplied:
-        covered.update({'fixed-activated-source-transform','cr-701-transform'})
+        covered.update({'fixed-activated-source-transform', TRIGGERED_SOURCE_TRANSFORM_MECHANIC, 'cr-701-transform'})
     if supplied.intersection({"target.public.player_or_damageable_permanent", "target.revalidate_resolution"}):
         covered.add("cr-115-targets")
     if "resolution.effect.fixed_homogeneous_target_set" in supplied:
