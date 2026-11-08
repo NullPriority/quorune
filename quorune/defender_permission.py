@@ -21,6 +21,14 @@ DEFENDER_ATTACHMENT_HANDLER = 'permission.attack.defender-current-attachment.v1'
 DEFENDER_ATTACHMENT_CAPABILITIES = (DEFENDER_PERMISSION_CAPABILITY, 'attachment.reference.current_or_lki')
 
 
+def is_temporary_defender_permission(effect: Mapping[str, Any]) -> bool:
+    return (
+        effect.get("op") == DEFENDER_TEMPORARY_OPERATION
+        and effect.get("schema_version") in (3, DEFENDER_RULE_VERSION)
+        and "characteristics" not in effect
+    )
+
+
 class DefenderAttachmentScope(StrEnum):
     ENCHANTED_OR_EQUIPPED_SOURCE = 'enchanted_or_equipped_source'
     EQUIPPED_CREATURE = 'equipped_creature'

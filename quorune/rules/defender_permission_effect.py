@@ -8,6 +8,7 @@ from ..defender_permission import (
     DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY,
     DEFENDER_RULE_CAPABILITY, DEFENDER_RULE_VERSION,
     DEFENDER_TEMPORARY_CAPABILITY, DEFENDER_TEMPORARY_MECHANIC, DEFENDER_TEMPORARY_OPERATION,
+    is_temporary_defender_permission,
 )
 from ..ability_fragments import ability_fragment_to_dict
 from ..continuous_effects import ContinuousOperation, Layer
@@ -74,8 +75,7 @@ def temporary_defender_permission_runtime_dependencies(program):
 
     def visit(value):
         if isinstance(value, Mapping):
-            if (value.get("op") == DEFENDER_TEMPORARY_OPERATION
-                    and value.get("schema_version") in (3, DEFENDER_RULE_VERSION)):
+            if is_temporary_defender_permission(value):
                 predicate = value.get("predicate")
                 targeted = value.get("card") == "$target.0" or (
                     isinstance(predicate, Mapping) and predicate.get("controller") == "$target.0"

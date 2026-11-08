@@ -26,7 +26,7 @@ def switch_target_schema() -> dict:
 
 def is_power_toughness_switch(value) -> bool:
     return (isinstance(value, Mapping) and value.get("op") == CHARACTERISTIC_OPERATION
-        and value.get("schema_version") == SWITCH_SCHEMA_VERSION)
+        and value.get("schema_version") == SWITCH_SCHEMA_VERSION and "characteristics" not in value)
 
 
 def decode_switch_recipient(value, *, resolved: bool = False):
