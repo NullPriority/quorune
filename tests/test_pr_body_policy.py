@@ -5,6 +5,7 @@ import subprocess
 import sys
 import unittest
 
+from quorune.work_selection_evidence import ADMISSION_RECOVERY_IDS
 from tests.common import ROOT
 from scripts.validate_pr_body import (
     EVIDENCE_CLASSES,
@@ -116,6 +117,25 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(PullRequestEvidenceError, "minimum of 500"):
             require_support_delivery_floor(evidence, catalog)
 
+    def test_support_floor_requires_exact_proof_for_admission_recovery(self) -> None:
+        catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 500}}}
+        scope = ["00000000-0000-4000-8000-000000000001"]
+        evidence = {
+            "cards": {"capability_closed": 1},
+            "source_metadata": {"bundle_id": None, ADMISSION_RECOVERY_IDS: scope},
+        }
+        with self.assertRaisesRegex(PullRequestEvidenceError, "lacks exact base/head proof"):
+            require_support_delivery_floor(evidence, catalog)
+        evidence["verified_admission_recovery_oracle_ids"] = scope
+        require_support_delivery_floor(evidence, catalog)
+        for mutation in (
+            {"cards": {"capability_closed": 2}},
+            {"source_metadata": {"bundle_id": "bundle:new-feature", ADMISSION_RECOVERY_IDS: scope}},
+            {"verified_admission_recovery_oracle_ids": ["00000000-0000-4000-8000-000000000002"]},
+        ):
+            with self.subTest(mutation=mutation), self.assertRaises(PullRequestEvidenceError):
+                require_support_delivery_floor({**evidence, **mutation}, catalog)
+
     def test_semantic_evidence_omits_internal_compiler_guard(self) -> None:
         catalog = json.loads(
             (ROOT / "platform" / "rules-subsystems.json").read_text(
@@ -124,6 +144,9 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
         )
 
         metadata = semantic_evidence_metadata(catalog)
+        recovery = catalog["work_selection"]["semantic_transition_declaration"].get(ADMISSION_RECOVERY_IDS)
+        if recovery is not None:
+            self.assertEqual(recovery, metadata.pop(ADMISSION_RECOVERY_IDS))
 
         self.assertEqual(
             {

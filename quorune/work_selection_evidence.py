@@ -3,6 +3,7 @@ from __future__ import annotations
 import gzip
 import json
 from pathlib import Path
+import re
 from typing import Any, Mapping, Sequence
 
 from .work_selection_common import (
@@ -45,6 +46,11 @@ _PENDING_LEGACY_FIELDS = _PENDING_COMMON_FIELDS | {
     "expected_complete_card_gain"
 }
 _PENDING_MEASURED_FIELDS = _PENDING_COMMON_FIELDS | {"measurement_id"}
+ADMISSION_RECOVERY_IDS = "admission_recovery_oracle_ids"
+ADMISSION_RECOVERY_BEFORE = ("exact", "untrusted", "unresolved")
+ADMISSION_RECOVERY_AFTER = ("exact", "trusted", "capability_closed")
+_ORACLE_ID = re.compile(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}")
+_PENDING_RECOVERY_FIELDS = _PENDING_LEGACY_FIELDS | {ADMISSION_RECOVERY_IDS}
 _RECEIPT_PATHS = {
     "coverage/card-program-coverage-commander.json",
     "coverage/oracle-coverage-commander.json",
@@ -133,6 +139,19 @@ _NON_HARVEST_NONPOSITIVE_FIELDS = {
     "actual_material_card_program_residual_reduction",
     "oracle_exact_ability_node_delta",
     "executable_trust_transition_delta",
+}
+_ADMISSION_RECOVERY_GAIN_FIELDS = {
+    "actual_complete_card_gain",
+    "actual_trusted_card_gain",
+    "actual_capability_closed_card_gain",
+    "executable_trust_transition_delta",
+}
+_ADMISSION_RECOVERY_ZERO_FIELDS = (
+    _NON_HARVEST_NONPOSITIVE_FIELDS - _ADMISSION_RECOVERY_GAIN_FIELDS
+) | {
+    "card_program_ability_record_delta",
+    "failed_card_delta",
+    "hard_construction_failure_delta",
 }
 COHORT_MEASUREMENT_SCHEMA_VERSION = 5
 COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v5"
@@ -538,12 +557,14 @@ def _validated_identity_list(value: Any, label: str) -> list[str]:
 
 
 def _validate_pending_transition(pending: Mapping[str, Any]) -> None:
+    fields = set(pending)
     hashes = pending.get("semantic_receipt_sha256")
     support_counts = pending.get("support_counts")
     if (
-        set(pending) not in (
+        fields not in (
             _PENDING_LEGACY_FIELDS,
             _PENDING_MEASURED_FIELDS,
+            _PENDING_RECOVERY_FIELDS,
         )
         or not str(pending.get("transition_id") or "")
         or pending.get("outcome_kind") not in {"harvest", "non_harvest"}
@@ -588,14 +609,14 @@ def _validate_pending_transition(pending: Mapping[str, Any]) -> None:
         and pending.get("non_harvest_reason") is None
         and (
             (
-                set(pending) == _PENDING_LEGACY_FIELDS
+                fields == _PENDING_LEGACY_FIELDS
                 and (
                     expected is None
                     or (type(expected) is int and expected >= 0)
                 )
             )
             or (
-                set(pending) == _PENDING_MEASURED_FIELDS
+                fields == _PENDING_MEASURED_FIELDS
                 and measurement_id
                 == "measurement:"
                 + str(pending.get("bundle_id") or "").split(":", 1)[-1]
@@ -604,7 +625,11 @@ def _validate_pending_transition(pending: Mapping[str, Any]) -> None:
     )
     reason = pending.get("non_harvest_reason")
     is_non_harvest = bool(
-        set(pending) == _PENDING_LEGACY_FIELDS
+        (
+            fields == _PENDING_LEGACY_FIELDS
+            or fields == _PENDING_RECOVERY_FIELDS
+            and valid_admission_recovery_ids(pending[ADMISSION_RECOVERY_IDS])
+        )
         and pending.get("bundle_id") is None
         and not candidates
         and not families
@@ -805,6 +830,60 @@ def non_harvest_metrics_are_conservative(
     )
 
 
+def valid_admission_recovery_ids(value: Any) -> bool:
+    return (
+        isinstance(value, list)
+        and bool(value)
+        and all(type(item) is str and _ORACLE_ID.fullmatch(item) for item in value)
+        and value == sorted(set(value))
+    )
+
+
+def admission_recovery_metrics_are_exact(metrics: Mapping[str, Any], oracle_ids: list[str]) -> bool:
+    """Validate the aggregate projection of a pure admission recovery."""
+    if not valid_admission_recovery_ids(oracle_ids):
+        return False
+    count = len(oracle_ids)
+    if any(
+        type(metrics.get(field)) is not int or metrics[field] != expected
+        for fields, expected in (
+            (_ADMISSION_RECOVERY_GAIN_FIELDS, count),
+            (_ADMISSION_RECOVERY_ZERO_FIELDS, 0),
+        )
+        for field in fields
+    ):
+        return False
+    oracle = metrics.get("oracle_status_delta")
+    program = metrics.get("card_program_status_delta")
+    transitions = metrics.get("executable_trust_transitions")
+    carriers = metrics.get("frontier_ability_carrier_delta")
+    transition = f"{ADMISSION_RECOVERY_BEFORE!r}->{ADMISSION_RECOVERY_AFTER!r}"
+    return (
+        isinstance(oracle, Mapping)
+        and "exact" in oracle
+        and all(type(value) is int and value == 0 for value in oracle.values())
+        and isinstance(program, Mapping)
+        and all(type(value) is int for value in program.values())
+        and {key: value for key, value in program.items() if value} == {
+            "trusted": count, "untrusted": -count,
+        }
+        and isinstance(transitions, Mapping)
+        and type(transitions.get("promoted")) is int
+        and type(transitions.get("regressed")) is int
+        and transitions == {"promoted": count, "regressed": 0, "by_transition": {transition: count}}
+        and type(transitions["by_transition"][transition]) is int
+        and isinstance(carriers, Mapping)
+        and carriers == {"additions": 0, "removals": 0, "reclassifications": 0}
+        and all(type(value) is int for value in carriers.values())
+    )
+
+
+def non_harvest_entry_metrics_are_valid(row: Mapping[str, Any]) -> bool:
+    if ADMISSION_RECOVERY_IDS in row:
+        return admission_recovery_metrics_are_exact(row, row[ADMISSION_RECOVERY_IDS])
+    return non_harvest_metrics_are_conservative(row)
+
+
 def _validate_non_harvest_history(rows: list[Any]) -> None:
     transition_ids: set[str] = set()
     for index, raw in enumerate(rows):
@@ -816,7 +895,7 @@ def _validate_non_harvest_history(rows: list[Any]) -> None:
         head = row.get("head_receipt")
         reason = row.get("non_harvest_reason")
         if (
-            set(row) != _NON_HARVEST_ENTRY_FIELDS
+            set(row) - {ADMISSION_RECOVERY_IDS} != _NON_HARVEST_ENTRY_FIELDS
             or fingerprint != stable_hash(unsigned)
             or not transition_id
             or transition_id in transition_ids
@@ -837,7 +916,7 @@ def _validate_non_harvest_history(rows: list[Any]) -> None:
             or not str(head.get("content_fingerprint") or "")
             or base.get("content_fingerprint")
             == head.get("content_fingerprint")
-            or not non_harvest_metrics_are_conservative(row)
+            or not non_harvest_entry_metrics_are_valid(row)
         ):
             raise WorkSelectionError(
                 "Non-harvest semantic transition history is invalid"

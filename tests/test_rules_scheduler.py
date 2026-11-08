@@ -44,8 +44,10 @@ from quorune.work_selection_bundles import (
     WorkSelectionBundleError,
 )
 from quorune.work_selection_evidence import (
+    ADMISSION_RECOVERY_IDS,
     _validate_cohort_row_shape,
     _validate_non_harvest_history,
+    _validate_pending_transition,
     _validate_transition_measurements,
     non_harvest_metrics_are_conservative,
     validate_harvest_forecast_correction,
@@ -62,6 +64,8 @@ from scripts.harvest_outcome_history import (
     _durable_main_tip,
     _latest_semantic_receipt,
     _non_harvest_content_entry,
+    _pending_non_harvest_declaration,
+    _pending_transition,
     _refresh_content_entry,
     _reclassify_unlanded_content_entry,
     _replace_unlanded_content_entry,
@@ -75,6 +79,7 @@ from scripts.harvest_outcome_history import (
     _validate_content_entry,
     _validate_non_harvest_content_entry,
     validated_semantic_transition_declaration,
+    validate_semantic_transition_source_identity,
     build_harvest_outcome_history,
     HarvestOutcomeHistoryError,
 )
@@ -83,6 +88,7 @@ from scripts.update_work_selection_cohort_measurements import (
     _completed_transition_measurement_is_current,
     _remote_git_blob,
     _durable_main_frontier,
+    _measurement_frontier_before_non_harvest_updates,
     _preserved_transition_is_current,
     _source_checkpoint_frontier,
     _transition_measurements,
@@ -334,6 +340,148 @@ class NonHarvestSupersessionTests(unittest.TestCase):
         with self.assertRaisesRegex(HarvestOutcomeHistoryError, "durable main"):
             _superseded_non_harvest_ids([row2], latest=latest,
                 durable=base, checkpoint=latest, landed_ids=set())
+
+
+class AdmissionRecoveryHistoryTests(unittest.TestCase):
+    recovered = "00000000-0000-4000-8000-000000000001"
+    unresolved = "00000000-0000-4000-8000-000000000002"
+    retained = "00000000-0000-4000-8000-000000000003"
+
+    def setUp(self):
+        from scripts.harvest_outcome_history import _report_specs
+
+        self.base = {
+            "compiler_version": "oracle-ir-v1",
+            "card_program_schema_version": 1,
+            "card_data_snapshot": {"oracle_source_sha256": "a" * 64},
+            "cards_considered": 3,
+            "blobs": {
+                path: {"git_blob_oid": "a" * 40, "raw_sha256": "a" * 64}
+                for path, _ in _report_specs()
+            },
+            "oracle_status_counts": {"exact": 3},
+            "card_program_status_counts": {"untrusted": 2, "trusted": 1},
+            "trusted_programs": 1,
+            "capability_closed_programs": 1,
+            "oracle_exact_ability_nodes": 3,
+            "card_program_ability_records": 3,
+            "oracle_material_residuals": 0,
+            "card_program_material_residuals": 0,
+            "failed_programs": 0,
+            "hard_construction_failures": 0,
+            "interaction_assurance": {},
+            "architecture": {},
+            "_card_states": {
+                self.recovered: ("exact", "untrusted", "unresolved"),
+                self.unresolved: ("exact", "untrusted", "unresolved"),
+                self.retained: ("exact", "trusted", "capability_closed"),
+            },
+            "_ability_carriers": {
+                (oracle_id, "front", "spell:1"): ("exact", "existing-result", "spell", True)
+                for oracle_id in (self.recovered, self.unresolved, self.retained)
+            },
+        }
+        self.head = deepcopy(self.base)
+        self.head["compiler_version"] = "oracle-ir-v2"
+        self.head["card_program_status_counts"] = {"untrusted": 1, "trusted": 2}
+        self.head["trusted_programs"] = self.head["capability_closed_programs"] = 2
+        self.head["_card_states"][self.recovered] = ("exact", "trusted", "capability_closed")
+        self.frontier_path = "coverage/card-unlock-frontier.json.gz"
+        self.head["blobs"][self.frontier_path] = {"git_blob_oid": "b" * 40, "raw_sha256": "b" * 64}
+        self.declaration = {
+            "transition_id": "fixture-admission-recovery",
+            "compiler_version": "oracle-ir-v2",
+            "bundle_id": None,
+            "candidate_ids": [],
+            "family_ids": [],
+            "capability_ids": [],
+            "expected_complete_card_gain": None,
+            "non_harvest_reason": "Restore admission to a previously compiled exact program.",
+            ADMISSION_RECOVERY_IDS: [self.recovered],
+        }
+
+    def test_existing_exact_program_recovery_binds_to_both_receipts(self):
+        declaration = validated_semantic_transition_declaration(self.declaration)
+        entry = _non_harvest_content_entry(declaration, base=self.base, head=self.head)
+        self.assertEqual([self.recovered], entry[ADMISSION_RECOVERY_IDS])
+        self.assertEqual(1, entry["actual_capability_closed_card_gain"])
+        self.assertEqual(0, entry["actual_exact_ability_gain"])
+        self.assertEqual(entry, _validate_non_harvest_content_entry(entry))
+        _validate_non_harvest_history([entry])
+        history = {
+            "entries": [{"head_receipt": entry["base_receipt"]}],
+            "non_harvest_transitions": [entry],
+        }
+        validate_semantic_transition_source_identity(self.declaration, history)
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "scope is immutable"):
+            validate_semantic_transition_source_identity(
+                {**self.declaration, ADMISSION_RECOVERY_IDS: [self.unresolved]}, history,
+            )
+        with mock.patch("scripts.update_work_selection_cohort_measurements.subprocess.run") as read_blob:
+            self.assertIsNone(_measurement_frontier_before_non_harvest_updates(
+                history, outcome_base_oid="b" * 40, expected_fingerprint="original-prediction",
+            ))
+        read_blob.assert_not_called()
+
+    def test_admission_recovery_rejects_other_changes_and_malformed_scope(self):
+        for scope in ([], [self.recovered, self.recovered], ["not-an-oracle-id"]):
+            with self.subTest(scope=scope), self.assertRaises(HarvestOutcomeHistoryError):
+                validated_semantic_transition_declaration({**self.declaration, ADMISSION_RECOVERY_IDS: scope})
+        with self.assertRaises(HarvestOutcomeHistoryError):
+            validated_semantic_transition_declaration({**self.declaration, "bundle_id": "bundle:feature"})
+        declaration = validated_semantic_transition_declaration(
+            {**self.declaration, ADMISSION_RECOVERY_IDS: [self.unresolved]},
+        )
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "exactly the declared"):
+            _non_harvest_content_entry(declaration, base=self.base, head=self.head)
+        declaration = validated_semantic_transition_declaration(self.declaration)
+        changed_carriers = dict(self.head["_ability_carriers"])
+        changed_carriers[(self.recovered, "front", "spell:1")] = ("exact", "new-result", "spell", True)
+        lost_support = dict(self.head["_card_states"])
+        lost_support[self.retained] = ("exact", "untrusted", "unresolved")
+        incomplete_base = dict(self.base["_card_states"])
+        incomplete_base[self.recovered] = ("partial", "untrusted", "unresolved")
+        for change in (
+            {"_ability_carriers": changed_carriers},
+            {"_card_states": lost_support},
+            {"oracle_material_residuals": 1},
+            {"hard_construction_failures": 1},
+            {"card_data_snapshot": {"oracle_source_sha256": "b" * 64}},
+        ):
+            with self.subTest(fields=tuple(change)), self.assertRaises(HarvestOutcomeHistoryError):
+                _non_harvest_content_entry(declaration, base=self.base, head={**self.head, **change})
+        with self.assertRaises(HarvestOutcomeHistoryError):
+            _non_harvest_content_entry(
+                declaration, base={**self.base, "_card_states": incomplete_base}, head=self.head,
+            )
+
+    def test_pending_admission_recovery_preserves_the_declared_scope(self):
+        current = {
+            "compiler_version": "oracle-ir-v2",
+            "card_program_schema_version": 1,
+            "semantic_receipt_sha256": {
+                path: "a" * 64 for path in (
+                    self.frontier_path,
+                    "coverage/card-program-coverage-commander.json",
+                    "coverage/oracle-coverage-commander.json",
+                )
+            },
+            "support_counts": {
+                "oracle_exact_cards": 3,
+                "trusted_card_programs": 2,
+                "capability_closed_card_programs": 2,
+                "oracle_material_residuals": 0,
+                "card_program_material_residuals": 0,
+                "card_program_ability_records": 3,
+                "hard_construction_failures": 0,
+            },
+        }
+        pending = _pending_transition(self.declaration, current=current)
+        _validate_pending_transition(pending)
+        self.assertEqual(
+            validated_semantic_transition_declaration(self.declaration),
+            _pending_non_harvest_declaration(pending),
+        )
 
 
 class CohortPrefilterTests(unittest.TestCase):
@@ -773,6 +921,8 @@ class RulesSchedulerSourcePolicyTests(unittest.TestCase):
             "expected_complete_card_gain": None,
             "non_harvest_reason": recorded["non_harvest_reason"],
         }
+        if ADMISSION_RECOVERY_IDS in recorded:
+            declaration[ADMISSION_RECOVERY_IDS] = recorded[ADMISSION_RECOVERY_IDS]
         catalog["work_selection"]["semantic_transition_declaration"] = declaration
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -4138,6 +4288,8 @@ class RulesSchedulerTests(unittest.TestCase):
         history=json.loads((ROOT/'coverage/harvest-outcome-history.json').read_text(encoding='utf-8'))
         path='coverage/card-unlock-frontier.json.gz'
         for entry in reversed(history['non_harvest_transitions']):
+            if ADMISSION_RECOVERY_IDS in entry:
+                continue
             before=entry['base_receipt']['blobs'][path]['git_blob_oid']
             after=entry['head_receipt']['blobs'][path]['git_blob_oid']
             if before==after:

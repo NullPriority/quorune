@@ -512,6 +512,7 @@
       "id": "semantic-transition-pr-evidence-contract",
       "patterns": [
         "platform/rules-subsystems.json",
+        "quorune/work_selection_evidence.py",
         "scripts/harvest_outcome_history.py",
         "scripts/pr_evidence.py",
         "scripts/validate_pr_body.py"

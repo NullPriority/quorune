@@ -16,6 +16,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from quorune.util import stable_json
+from quorune.work_selection_evidence import (
+    ADMISSION_RECOVERY_IDS,
+    valid_admission_recovery_ids,
+)
 from scripts.harvest_outcome_history import (
     _canonical_commit,
     _public_receipt,
@@ -23,11 +27,13 @@ from scripts.harvest_outcome_history import (
     _transition_metrics,
     HarvestOutcomeHistoryError,
     validated_semantic_transition_declaration,
+    verify_admission_recovery,
 )
 
 
 PR_EVIDENCE_SCHEMA_VERSION = 1
 DEFAULT_METADATA_PATH = "platform/rules-subsystems.json"
+_VERIFIED_ADMISSION_RECOVERY = "verified_admission_recovery_oracle_ids"
 _COMPILER_VERSION = re.compile(r"^oracle-ir-v(?P<version>\d+)$")
 _SEMANTIC_METADATA_FIELDS = frozenset(
     {
@@ -161,6 +167,18 @@ def require_support_delivery_floor(
         raise PullRequestEvidenceError("Support PRs require a minimum of 500 capability-closed cards")
     if type(actual) is not int:
         raise PullRequestEvidenceError("PR capability-closed card delta must be an integer")
+    if not isinstance(metadata, Mapping):
+        raise PullRequestEvidenceError("PR support delivery metadata is incomplete")
+    if ADMISSION_RECOVERY_IDS in metadata:
+        recovery = metadata[ADMISSION_RECOVERY_IDS]
+        if (
+            metadata.get("bundle_id") is not None
+            or not valid_admission_recovery_ids(recovery)
+            or evidence.get(_VERIFIED_ADMISSION_RECOVERY) != recovery
+            or actual != len(recovery)
+        ):
+            raise PullRequestEvidenceError("PR admission recovery lacks exact base/head proof")
+        return
     support_delivery = metadata.get("bundle_id") is not None or actual > 0
     if support_delivery and actual < minimum:
         raise PullRequestEvidenceError(
@@ -316,7 +334,9 @@ def build_pr_evidence(
             head_catalog,
             previous_catalog=base_catalog,
         )
+        declaration = head_catalog["work_selection"].get("semantic_transition_declaration")
     else:
+        declaration = metadata
         try:
             validated = validated_semantic_transition_declaration(metadata)
         except HarvestOutcomeHistoryError as exc:
@@ -328,7 +348,7 @@ def build_pr_evidence(
         source_metadata = validated
         source_metadata.setdefault("expected_complete_card_gain", None)
         source_metadata.setdefault("measurement_id", None)
-    if set(source_metadata) != _SEMANTIC_METADATA_FIELDS:
+    if set(source_metadata) - {ADMISSION_RECOVERY_IDS} != _SEMANTIC_METADATA_FIELDS:
         raise PullRequestEvidenceError("PR evidence source metadata is incomplete")
     candidate_ids = _sorted_ids(source_metadata["candidate_ids"], "candidate_ids")
     family_ids = _sorted_ids(source_metadata["family_ids"], "family_ids")
@@ -336,13 +356,23 @@ def build_pr_evidence(
         source_metadata["capability_ids"], "capability_ids"
     )
 
+    verified_recovery = None
     try:
         base_receipt = _receipt(repository, base_commit)
         head_receipt = _receipt(repository, head_commit)
         transition = _transition_metrics(base_receipt, head_receipt)
+        if ADMISSION_RECOVERY_IDS in source_metadata:
+            if declaration["compiler_version"] != head_receipt["compiler_version"]:
+                raise HarvestOutcomeHistoryError("Admission recovery compiler identity does not match the head")
+            verified_recovery = verify_admission_recovery(
+                source_metadata[ADMISSION_RECOVERY_IDS],
+                base=base_receipt,
+                head=head_receipt,
+                metrics=transition,
+            )
     except HarvestOutcomeHistoryError as exc:
         raise PullRequestEvidenceError(
-            "PR evidence corpus receipts are invalid"
+            f"PR evidence corpus receipts are invalid. {exc}"
         ) from exc
     base_audit = _git_json(
         repository, base_commit, "coverage/architecture-audit.json"
@@ -512,6 +542,8 @@ def build_pr_evidence(
             "head": _public_receipt(head_receipt)["blobs"],
         },
     }
+    if verified_recovery is not None:
+        payload[_VERIFIED_ADMISSION_RECOVERY] = verified_recovery
     payload["fingerprint"] = hashlib.sha256(
         stable_json(payload).encode("utf-8")
     ).hexdigest()
@@ -660,6 +692,10 @@ def pr_evidence_markdown_fields(evidence: Mapping[str, Any]) -> dict[str, str]:
 
 def render_pr_evidence_markdown(evidence: Mapping[str, Any]) -> str:
     fields = pr_evidence_markdown_fields(evidence)
+    if _VERIFIED_ADMISSION_RECOVERY in evidence:
+        fields["Verified admission recovery"] = (
+            f"`{len(evidence[_VERIFIED_ADMISSION_RECOVERY])}` existing exact programs"
+        )
     return "\n".join(
         [
             "## Generated base/head evidence",

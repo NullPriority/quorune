@@ -612,10 +612,20 @@ amortize corpus generation and complete certification across a larger delivery.
 Family probe thresholds remain diagnostic selection boundaries, while multiple
 mechanics can accumulate on one delivery branch. `PR / Plan` uses immutable
 base/head Commander receipts to require at least 500 net capability-closed
-cards for a declared support harvest or a positive support delta. Overlapping
+cards for a declared support harvest or a positive support delta without
+verified admission recovery. Overlapping
 families count once through the final corpus; support losses reduce the net
 gain. Ability counts, residual reductions and forecasts cannot substitute for
-this check. Non-harvest work retains the existing correctness-first workflow.
+this check.
+
+A defect batch can declare `admission_recovery_oracle_ids` on its non-harvest
+transition. The scheduler and `PR / Plan` verify the exact IDs against the
+same pinned base and head receipts. Every changed card must already have exact
+Oracle IR at the base and move from an untrusted program to a capability-closed
+program. The roster, ability carriers, ability counts, residual counts and
+failure counts must stay fixed. The history row binds the recovery to the two
+content receipts. A cohort forecast must use a current frontier after such a
+recovery. Other non-harvest work retains the existing correctness-first workflow.
 A `bounded_executable` declaration is rechecked against every current member
 occurrence, lowerable ability, card row, and material residual. Census drift
 returns it to `requires_bounded_cohort` rather than preserving a stale
