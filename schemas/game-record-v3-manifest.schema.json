@@ -201,6 +201,10 @@
         "review_profile": {
           "const": "commander_review"
         },
+        "split_permanent_face_values_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "starting_life": {
           "minimum": 1,
           "type": "integer"

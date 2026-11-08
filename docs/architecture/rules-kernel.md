@@ -727,6 +727,10 @@ snapshots derive the copy's mana value from the copied face's own mana cost;
 they do not copy the original's derived front-face value. A copy of a
 transforming back face therefore has mana value zero. Modal faces and split
 card stack and prospective views retain their separate selected-face rules.
+For a split permanent with a shared printed type line and a single active
+face, the battlefield view derives mana value and colors from that face
+under CR 202.2, 202.3, and 709.5. The ordinary target-legality query reads
+the same values.
 
 Current face-down copy reads use the existing layer-1b values and an anonymous
 copiable source. Listed Ward remains part of those values; the hidden printed

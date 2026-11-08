@@ -54,6 +54,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
            if getattr(state, "modal_dfc_transform_version", None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
+        **({"split_permanent_face_values_version": state.split_permanent_face_values_version}
+           if getattr(state, "split_permanent_face_values_version", None) is not None else {}),
         **({'face_down_characteristics_version':state.face_down_characteristics_version} if getattr(state,'face_down_characteristics_version',None) is not None else {}),
         **({'library_selection_knowledge_version':state.library_selection_knowledge_version} if getattr(state,'library_selection_knowledge_version',None) is not None else {}),
         **({'characteristic_query_boundary_version':state.characteristic_query_boundary_version} if getattr(state,'characteristic_query_boundary_version',None) is not None else {}),
@@ -147,6 +149,14 @@ def validate_state_versions(
     actual_modal_transform = modal_dfc_transform_version(getattr(state, "modal_dfc_transform_version", None)) or 0
     if type(modal_transform) is not int or modal_transform not in {0, 1} or modal_transform != actual_modal_transform:
         raise ValueError("Modal double-faced transform provenance does not match the initial checkpoint")
+    split_face_field = "split_permanent_face_values_version"
+    split_face_version = format_value.get(split_face_field)
+    if (
+        split_face_version != getattr(state, split_face_field, None)
+        or split_face_field in format_value
+        and (type(split_face_version) is not int or split_face_version != 1)
+    ):
+        raise ValueError("Split permanent face value provenance does not match the initial checkpoint")
     from .face_status_timestamp_model import face_status_timestamp_version
     face_status=format_value.get('face_status_timestamp_version',0)
     if (type(face_status) is not int or face_status not in {0,1}

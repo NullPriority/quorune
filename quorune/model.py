@@ -27,7 +27,13 @@ from .permanent_event_state_model import permanent_event_state_version
 from .battle_cry_resolution_model import battle_cry_resolution_version
 from .block_characteristic_model import block_characteristics_version
 from .unblocked_attacker_model import unblocked_attacker_event_version
-from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION, cast_face_offers_version, omen_resolution_binding
+from .cast_face_offers import (
+    CURRENT_CAST_FACE_OFFERS_VERSION,
+    cast_face_offers_version,
+    omen_resolution_binding,
+    selected_face_state_fields,
+    split_permanent_face_values_version,
+)
 from .cast_source_placement_model import cast_source_placement_version
 from .phasing_model import PhasingRecord, phasing_lifecycle_version
 from .printed_mana_cost_model import (
@@ -1105,6 +1111,7 @@ class GameState:
     transform_timestamp_version: int | None = 1
     modal_dfc_transform_version: int | None = 1
     face_status_timestamp_version: int | None = 1
+    split_permanent_face_values_version: int | None = 1
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
     characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION
@@ -1160,7 +1167,6 @@ class GameState:
             self.counter_quantity_provenance_version
         )
         ability_source_information_version(self.ability_source_information_version)
-        cast_face_offers_version(self.cast_face_offers_version)
         cast_source_placement_version(self.cast_source_placement_version)
         phasing_version = phasing_lifecycle_version(self.phasing_lifecycle_version)
         explore_action_version(self.explore_action_version)
@@ -1226,7 +1232,7 @@ class GameState:
                 {"counter_quantity_provenance_version": counter_provenance_version}
                 if counter_provenance_version is not None else {}
             ),
-            **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
+            **selected_face_state_fields(self.cast_face_offers_version, self.split_permanent_face_values_version),
             **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
             **({"phasing_lifecycle_version": phasing_version} if phasing_version is not None else {}),
             **printed_mana_cost_format_fields(self.printed_mana_cost_version),
@@ -1317,6 +1323,9 @@ class GameState:
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),
             modal_dfc_transform_version=modal_dfc_transform_version(data.get("modal_dfc_transform_version")),
             face_status_timestamp_version=face_status_timestamp_version(data.get('face_status_timestamp_version')),
+            split_permanent_face_values_version=split_permanent_face_values_version(
+                data.get("split_permanent_face_values_version"),
+            ),
             face_down_characteristics_version=face_down_characteristics_version(data.get('face_down_characteristics_version')),
             library_selection_knowledge_version=library_selection_knowledge_version(data.get('library_selection_knowledge_version')),
             characteristic_query_boundary_version=characteristic_query_boundary_version(data.get('characteristic_query_boundary_version')),

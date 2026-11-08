@@ -114,6 +114,9 @@ class AbilityFragmentHostMixin:
             record,
             cast_face_version=getattr(getattr(self, "state", None), "cast_face_offers_version", None),
             public_zone_front_faces=public_zone_front_faces,
+            split_permanent_face_values_version=getattr(
+                getattr(self, "state", None), "split_permanent_face_values_version", None,
+            ),
         )
         from .rules.station_symbols import compiled_station_symbols
         if compiled_station_symbols(self, card, record=record) is not None:

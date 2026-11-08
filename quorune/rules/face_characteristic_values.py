@@ -1,8 +1,21 @@
 from __future__ import annotations
 
-"""Printed face mana values for current spells and prospective casting rows."""
+"""Printed face values for current and prospective card characteristics."""
 
 from ..util import parse_mana_symbols
+
+
+def has_shared_permanent_type_line(record) -> bool:
+    """Recognize a split permanent through its two printed type lines."""
+    if record.layout != "split" or len(record.faces) != 2:
+        return False
+    left, right = record.faces
+    type_line = left.get("type_line")
+    return (
+        isinstance(type_line, str) and bool(type_line.strip())
+        and type_line == right.get("type_line")
+        and record.is_permanent_spell and not (record.is_instant or record.is_sorcery)
+    )
 
 
 def printed_face_mana_value(face):

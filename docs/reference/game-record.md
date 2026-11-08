@@ -725,6 +725,11 @@ Records with an absent marker retain
 their earlier face offers and resolution. The decoder rejects Boolean and
 unknown versions.
 
+The independent `split_permanent_face_values_version: 1` marker binds the
+current battlefield mana value and colors for a shared-type split permanent
+with one active face. Initial checkpoint and manifest must agree. Records
+without the marker replay with their original split permanent values.
+
 Current runtime-trust provenance also identifies a core permanent-spell copy's
 empty resolution through its pinned spell record. It retains the copy-specific
 fallback kind and original Oracle identity, independently of whether the

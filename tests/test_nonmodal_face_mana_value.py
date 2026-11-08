@@ -84,6 +84,42 @@ class NonmodalFaceManaValueTests(unittest.TestCase):
             base_card_characteristics(face_card(active_face=None), normal))['mana_value'])
 
 
+    def test_split_permanent_face_value_provenance_is_independent(self):
+        from quorune.model import GameConfig, GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        field = "split_permanent_face_values_version"
+        state = GameState(
+            game_id="split-face-value-fixture", config=GameConfig(), players={}, cards={},
+            deck_names={}, commander_oracle_ids={}, turn_order=[], current_turn=None,
+            last_normal_turn_player=None,
+        )
+        wire = state.to_dict()
+        self.assertEqual(1, wire[field])
+        self.assertEqual(wire, GameState.from_dict(wire).to_dict())
+        current = {"format": format_state_versions(state)}
+        self.assertEqual(1, current["format"][field])
+        validate_state_versions(current, state)
+        old = {key: value for key, value in wire.items() if key != field}
+        legacy = GameState.from_dict(old)
+        self.assertEqual(old, legacy.to_dict())
+        self.assertIsNone(legacy.split_permanent_face_values_version)
+        self.assertEqual(state.cast_face_offers_version, legacy.cast_face_offers_version)
+        historical = {"format": format_state_versions(legacy)}
+        self.assertNotIn(field, historical["format"])
+        validate_state_versions(historical, legacy)
+        for manifest, source in ((current, legacy), (historical, state)):
+            with self.assertRaises(ValueError):
+                validate_state_versions(manifest, source)
+        for invalid in (True, False, 0, 2, "1"):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    GameState.from_dict({**wire, field: invalid})
+                with self.assertRaises(ValueError):
+                    validate_state_versions({"format": {**current["format"], field: invalid}}, state)
+
+
+
 class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add = True
     session = actions.SpreeModeCostRuntimeTests.session
@@ -125,6 +161,56 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         self.resolve(session)
         return session.state.cards[card.object_id]
+
+
+    def test_cast_split_permanent_face_controls_battlefield_target_legality(self):
+        session = self.session(20203009)
+        pool = self.add(session.engine, "Bottomless Pool // Locker Room", zone="hand")
+        sauna = self.add(session.engine, "Roaring Furnace // Steaming Sauna", zone="hand")
+        decay = self.add(session.engine, "Abrupt Decay", seat="B", zone="hand")
+        self.assert_closed(session, decay)
+        session.state.players["B"].mana_pool.update({"B": 1, "G": 1})
+        self.prepare(session, mana={"U": 3, "C": 3})
+        self.checkpoint(session)
+
+        for source, name, cost, value in (
+            (pool, "Bottomless Pool", "{U}", 1),
+            (sauna, "Steaming Sauna", "{3}{U}{U}", 5),
+        ):
+            with self.subTest(face=name):
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offer = next(row for row in actions if row.get("card") == source.ref and row.get("face") == name)
+                self.assertEqual(cost, offer["cost"])
+                cast = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+                self.assertTrue(cast.ok, cast.summary)
+                self.assertEqual(value, session.engine._effective_card_data(session.state.cards[source.object_id])["mana_value"])
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[source.object_id]
+                self.assertEqual("battlefield", current.zone)
+                data = session.engine._effective_card_data(current)
+                self.assertEqual((name, cost, value, ["U"]),
+                                 (data["name"], data["mana_cost"], data["mana_value"], data["colors"]))
+
+        for _ in range(4):
+            if session.state.priority_player == "B":
+                break
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual("B", session.state.priority_player)
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        removal = next(row for row in actions if row.get("card") == decay.ref)
+        self.assertIn(pool.ref, removal["target_schema"]["legal_refs"])
+        self.assertNotIn(sauna.ref, removal["target_schema"]["legal_refs"])
+        self.reject(session, removal["id"], "B", targets=[sauna.ref], pay="auto")
+        self.reject(session, removal["id"], "C", targets=[pool.ref], pay="auto")
+        accepted = session.act("pilot:B", {"action_id": removal["id"], "targets": [pool.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[pool.object_id]
+        self.assertEqual("graveyard", current.zone)
+        self.assertEqual(6, session.engine._effective_card_data(current)["mana_value"])
+        self.assertEqual("battlefield", session.state.cards[sauna.object_id].zone)
+        self.replay(session, load=True)
 
     def test_actual_kessig_transform_keeps_one_mana_value(self):
         session = self.session(20203002)
