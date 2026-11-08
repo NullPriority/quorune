@@ -303,9 +303,13 @@ def _generated_node_is_independently_exact(node: Any) -> bool:
 
 
 def _generated_static_declaration(node: Any) -> bool:
+    from ..triggered_mana_model import FIXED_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT
+
     return bool(
         PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage
         or node.handlers
+        or (node.kind == "triggered_ability" and node.event == FIXED_TRIGGERED_MANA_EVENT
+            and tuple(node.capability_dependencies) == (FIXED_TRIGGERED_MANA_CAPABILITY,))
         or (
             node.kind == "keyword_ability"
             and node.capability_dependencies

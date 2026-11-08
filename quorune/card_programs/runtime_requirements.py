@@ -133,6 +133,7 @@ def _event_query_runtime_requirements(program):
     from ..source_entry_cast_information import source_entry_cast_program_dependencies
     from ..rules.graveyard_return_choices import graveyard_return_choice_runtime_dependencies
     from ..rules.scheduled_player_shapes import scheduled_player_departure_runtime_dependencies
+    from ..triggered_mana_model import fixed_triggered_mana_runtime_dependencies
     required,blockers=set(),set()
     from ..entry_x_amount_model import entry_x_amount_runtime_dependencies
     try:required.update(entry_x_amount_runtime_dependencies(program))
@@ -236,6 +237,7 @@ def _event_query_runtime_requirements(program):
         (source_entry_cast_program_dependencies,program,'source_entry_cast'),
         (graveyard_return_choice_runtime_dependencies,program,'graveyard_return_choice'),
         (scheduled_player_departure_runtime_dependencies,program,'scheduled_player_departure'),
+        (fixed_triggered_mana_runtime_dependencies,program,'fixed_triggered_mana'),
     ):
         try:required.update(resolver(value))
         except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')

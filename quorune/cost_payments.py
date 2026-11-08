@@ -55,7 +55,7 @@ def _payment_mana_sources(host, seat, spend_context, exclude_sources, preserve_s
 
 
 def _plan_funding(host, seat, sources, spend_context):
-    if not any(mode.price for source in sources for mode in source.modes):
+    if not any(mode.price or mode.triggered_mana for source in sources for mode in source.modes):
         return None
     from .mana_planning import ManaPlanFunding
     from .mana_provenance import PlanningManaPool

@@ -646,6 +646,15 @@ input, then taps the source and produces mana. A manual plan provides the
 same ordered steps. Other separately priced forms use explicit activation.
 See [ADR 0163](../adr/0163-ordered-hybrid-mana-payments.md).
 
+Fixed triggered mana observes a completed activation that paid its own tap
+symbol and produced mana. Current layer-six abilities select attached lands,
+qualifying permanents tapped by their controller, or lands of a specified type.
+Each qualifying ability adds its fixed bundle before priority. The funding and
+commit paths keep the bonus separate from the original output's spending
+restriction and snow provenance. Both paths account for providers removed by
+mana costs. The production owner recognizes one tap occurrence from the base
+activation, then records its separate bonus outputs.
+
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that
 has haste or has been controlled since the turn began. All choices validate

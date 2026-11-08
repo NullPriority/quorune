@@ -15,6 +15,8 @@ from .mana_ability_runtime import (
     typed_mana_modes_for_abilities,
 )
 from .rules.activation.conditions import activation_condition_status
+from .mana_restrictions import valid_mana_spend_restriction
+from .triggered_mana import fixed_mana_providers, modes_with_triggered_mana
 
 
 class ManaSourceDiscoveryHost(Protocol):
@@ -62,6 +64,8 @@ def _unrestricted_when_payable(
             continue
         if host._mana_restriction_allows(restriction, spend_context):
             result.append(replace(mode, conditional=False))
+        elif mode.triggered_mana and valid_mana_spend_restriction(restriction):
+            result.append(replace(mode, conditional=False, base_fundable=False))
         elif any(host._mana_restriction_allows(restriction, context) for context in intermediate_contexts):
             result.append(replace(mode, conditional=True, intermediate_only=True))
     return tuple(result)
@@ -119,6 +123,7 @@ def available_mana_sources(
 
     sources: list[ManaSource] = []
     recordless_sources: set[str] = set()
+    providers = fixed_mana_providers(host)
     for object_id in host.state.players[seat].zones["battlefield"]:
         card = host.state.cards[object_id]
         if card.controller != seat or card.phased_out:
@@ -142,7 +147,7 @@ def available_mana_sources(
                         object_id,
                         card.ref,
                         host.display_name(object_id),
-                        tuple(compiled_modes),
+                        modes_with_triggered_mana(host, seat, card, compiled_modes, providers),
                         snow="snow" in supertypes,
                     )
                 )
@@ -167,14 +172,15 @@ def available_mana_sources(
                     object_id,
                     card.ref,
                     host.display_name(object_id),
-                    modes,
+                    modes_with_triggered_mana(host, seat, card, modes, providers),
                     snow="snow" in supertypes,
                 )
             )
     intermediate = frozenset(mode.price.spend_context for source in sources for mode in source.modes if mode.price)
     result = []
     for source in sources:
-        modes = (source.modes if source.object_id in recordless_sources else _unrestricted_when_payable(
+        legacy_recordless = source.object_id in recordless_sources and not any(mode.triggered_mana for mode in source.modes)
+        modes = (source.modes if legacy_recordless else _unrestricted_when_payable(
             host, source.modes, spend_context=spend_context, intermediate_contexts=intermediate,
         ))
         if modes:

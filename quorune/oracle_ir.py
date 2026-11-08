@@ -178,7 +178,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v839"
+ORACLE_COMPILER_VERSION = "oracle-ir-v840"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1095,6 +1095,13 @@ def _activated_or_fixed_event_trigger_node(
     )
     if history_transform is not None:
         return history_transform
+    from .compiler.triggered_mana_nodes import fixed_triggered_mana_node
+    triggered_mana = fixed_triggered_mana_node(
+        node_id=node_id, line=line, material_line=material_line, span=span,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+    )
+    if triggered_mana is not None:
+        return triggered_mana
     from .compiler.room_bindings import own_door_binding
     return fixed_typed_event_effect_trigger_node(
         node_id=node_id, line=line, material_line=trigger_ability_word_material_line(material_line), span=span,

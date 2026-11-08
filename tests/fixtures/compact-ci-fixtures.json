@@ -616,6 +616,7 @@
     "tests/fixtures/fixed-token-creation-cards.json",
     "tests/fixtures/fixed-token-production-cards.json",
     "tests/fixtures/fixed-top-order-cards.json",
+    "tests/fixtures/fixed-triggered-mana-cards.json",
     "tests/fixtures/fixed-type-aura-protection-cards.json",
     "tests/fixtures/fixed-untap-participation-cards.json",
     "tests/fixtures/flashback-cards.json",

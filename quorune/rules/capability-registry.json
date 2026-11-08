@@ -51189,6 +51189,93 @@
     {
       "applicability": {
         "exclusions": [
+          "variable or chosen output",
+          "temporary trigger grants",
+          "ordinary tap events and other-permanent tap costs",
+          "nonmana riders"
+        ],
+        "inputs": [
+          "trusted current typed ability",
+          "own tap cost and positive base output",
+          "source type and attachment at the mana event"
+        ],
+        "outputs": [
+          "immediate independently sourced mana in the activating player pool",
+          "same base and bonus provenance in advertised and actual payment"
+        ],
+        "summary": "A current battlefield mana trigger adds its independent fixed bundle immediately after the producer finishes a positive own-tap activation. The tapped object can be an attached land, a qualifying permanent tapped by the ability controller, or a land of a specified type. The activating player receives the fixed output."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The production event and descriptor independently require the capability and reject ordinary stack timing and targets.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.triggered.fixed_output",
+      "implementation_components": [
+        "quorune.compiler.triggered_mana_nodes.fixed_triggered_mana_node",
+        "quorune.triggered_mana_model.FixedTriggeredManaSpec",
+        "quorune.triggered_mana_model.fixed_triggered_mana_runtime_dependencies",
+        "quorune.triggered_mana.fixed_mana_providers",
+        "quorune.triggered_mana.commit_triggered_mana",
+        "quorune.mana.ManaMode.funding_output",
+        "quorune.mana_planning.ordered_mana_selection"
+      ],
+      "implementation_mutation_rationale": "Omitting the production commit loses the two independent bonuses in the native land tap witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_wild_growth_funds_a_nonartifact_cast_from_restricted_base",
+        "test_original_wild_growth_bonus_can_fund_a_priced_mana_step",
+        "test_original_groundchuck_and_annie_share_immediate_mana_timing"
+      ],
+      "multiplayer_tests": [
+        "test_original_wild_growth_and_overgrowth_add_for_the_land_controller_immediately"
+      ],
+      "negative_tests": [
+        "test_original_wild_growth_snow_lots_and_ordinary_taps_stay_separate",
+        "test_fixed_mana_trigger_runtime_binding_rejects_wrong_event_and_missing_authority",
+        "test_original_wild_growth_requires_a_live_attachment_at_production"
+      ],
+      "official_rules": [
+        "106.3",
+        "106.12",
+        "106.12a",
+        "113.8",
+        "605.1b",
+        "605.3a",
+        "605.4a",
+        "107.4h"
+      ],
+      "positive_tests": [
+        "test_original_wild_growth_and_overgrowth_add_for_the_land_controller_immediately",
+        "test_original_controlled_and_global_triggers_use_type_and_base_output"
+      ],
+      "privacy_tests": [
+        "test_original_wild_growth_and_overgrowth_add_for_the_land_controller_immediately"
+      ],
+      "replay_tests": [
+        "test_original_wild_growth_and_overgrowth_add_for_the_land_controller_immediately",
+        "test_original_wild_growth_funds_a_nonartifact_cast_from_restricted_base",
+        "test_original_wild_growth_snow_lots_and_ordinary_taps_stay_separate",
+        "test_original_wild_growth_bonus_can_fund_a_priced_mana_step"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented quoted children",
           "non-characteristic static owners without command-zone participation",
           "activated emblem children",

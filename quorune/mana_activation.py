@@ -20,6 +20,7 @@ from .mana_mode_effects import apply_mana_mode_effects
 from .util import normalize_mana_bundle, pay_mana_from_pool
 from .tap_state import set_permanent_tapped
 from .mana_source_discovery import mana_plan_abilities
+from .triggered_mana import TapManaSource, commit_triggered_mana, tap_mana_source
 
 
 class ManaActivationHost(Protocol):
@@ -93,6 +94,7 @@ def complete_mana_activation(
     source_was_snow: bool,
     source_information=None,
     mana_payment=None,
+    trigger_source: TapManaSource | None = None,
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
@@ -156,8 +158,10 @@ def complete_mana_activation(
         changed_objects=[source.object_id, *paid_objects],
         changed_players=[seat],
     )
+    triggered = commit_triggered_mana(host, seat, trigger_source, bundle)
     reversible = bool(
         not host.state.pending_trigger_batches
+        and not triggered
         and ability.tap_source
         and ability.activation_limit is None
         and not sum(ability.mana.values())
@@ -319,6 +323,7 @@ def _commit_plan_mode(
     payment_id: str | None,
     replacement_selections_by_event: Mapping[str, Any] | None,
 ) -> None:
+    trigger_source = tap_mana_source(host, card, tap_source=mode.tap_source)
     cost_effects = tuple(
         effect for effect in mode.side_effects
         if effect.get("op") == "sacrifice_source"
@@ -361,6 +366,7 @@ def _commit_plan_mode(
         changed_objects=[card.object_id],
         changed_players=[seat],
     )
+    commit_triggered_mana(host, seat, trigger_source, bundle)
 
 
 def complete_mana_plan_activations(

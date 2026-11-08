@@ -19,9 +19,9 @@ class ManaPlanFunding:
     spend_context: str | None
 
 
-def _output_capacity(modes):
-    modes = tuple(modes)
-    return {color: max((mode.bundle.get(color, 0) for mode in modes), default=0) for color in MANA_COLORS}
+def _output_capacity(modes, *, base_allowed=lambda _mode: True):
+    outputs = tuple(mode.funding_output(base_fundable=base_allowed(mode))[0] for mode in modes)
+    return {color: max((output.get(color, 0) for output in outputs), default=0) for color in MANA_COLORS}
 
 
 def _optimistic_pool(pool, capacities):
@@ -68,11 +68,14 @@ def available_mode_payments(mode, pool, allows):
         yield bundle
 
 
-def _pool_after_step(pool, source, mode, payment, allows):
+def _pool_after_step(pool, source, mode, payment, allows, departed):
     next_pool = PlanningManaPool.capture(pool)
     if mode.price is not None:
         spend_mana(next_pool, payment, snow_payment=None, restriction_allows=allows, spend_context=mode.price.spend_context)
     add_mana(next_pool, mode.bundle, snow=source.snow, restriction=mode.restriction or None)
+    for output in mode.triggered_mana:
+        if output.survives(departed):
+            add_mana(next_pool, output.bundle.bundle, snow=output.snow)
     return next_pool
 
 
@@ -93,7 +96,8 @@ def ordered_mana_selection(
 ) -> tuple[list[tuple[ManaSource, ManaMode, dict[str, int]]], dict[str, int], dict[str, int]] | None:
     """Find a legal funding order, with one committed mode per source."""
     contexts = {mode.price.spend_context for source in sources for mode in source.modes if mode.price}
-    if not contexts:
+    triggered = any(mode.triggered_mana for source in sources for mode in source.modes)
+    if not contexts and not triggered:
         return None
     allows = funding.restriction_allows
     groups = tuple((source, tuple(mode for mode in source.modes
@@ -102,23 +106,24 @@ def ordered_mana_selection(
     seeds = {
         context: _optimistic_pool(
             spendable_mana_pool(funding.pool, restriction_allows=allows, spend_context=context),
-            (_output_capacity(mode for mode in modes if mode.price is None and
-                              (not mode.restriction or allows(mode.restriction, context))) for _source, modes in groups),
+            (_output_capacity((mode for mode in modes if mode.price is None),
+                base_allowed=lambda mode: not mode.restriction or allows(mode.restriction, context))
+             for _source, modes in groups),
         )
         for context in contexts
     }
-    if not any(mode.price and _can_fund(mode.price, seeds[mode.price.spend_context])
+    if not triggered and not any(mode.price and _can_fund(mode.price, seeds[mode.price.spend_context])
                for _source, modes in groups for mode in modes):
         return None
     capacities = tuple(_output_capacity(modes) for _source, modes in groups)
     failed = set()
 
-    def visit(pool, remaining, steps):
+    def visit(pool, remaining, steps, departed):
         spendable = spendable_mana_pool(pool, restriction_allows=allows, spend_context=funding.spend_context)
         snow = snow_mana_pool(pool, restriction_allows=allows, spend_context=funding.spend_context)
         if can_pay(spendable, snow):
             return list(steps), spendable, snow
-        key = remaining, tuple(pool.mana_pool[color] for color in MANA_COLORS), mana_provenance_lots(pool)
+        key = remaining, tuple(pool.mana_pool[color] for color in MANA_COLORS), mana_provenance_lots(pool), departed
         if key in failed:
             return None
         optimistic = _optimistic_pool(pool.mana_pool, (capacities[index] for index in remaining))
@@ -127,11 +132,12 @@ def ordered_mana_selection(
                 source, modes = groups[index]
                 for mode in modes:
                     for payment in available_mode_payments(mode, pool, allows):
-                        next_pool = _pool_after_step(pool, source, mode, payment, allows)
-                        selected = visit(next_pool, remaining - {index}, (*steps, (source, mode, payment)))
+                        next_pool = _pool_after_step(pool, source, mode, payment, allows, departed)
+                        next_departed = departed | {source.object_id} if mode.sacrifices_source else departed
+                        selected = visit(next_pool, remaining - {index}, (*steps, (source, mode, payment)), next_departed)
                         if selected is not None:
                             return selected
         failed.add(key)
         return None
 
-    return visit(funding.pool, frozenset(range(len(groups))), ())
+    return visit(funding.pool, frozenset(range(len(groups))), (), frozenset())

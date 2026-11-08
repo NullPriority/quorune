@@ -849,6 +849,8 @@ def _commit_activation_costs_and_stack(
     from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
     chosen_source_information = capture_chosen_color_mana_source(source, ability)
     from .payment_commit import commit_activation_payments, announce_targeted_activation
+    from ...triggered_mana import tap_mana_source
+    trigger_source = tap_mana_source(host, source, tap_source=ability.mana_ability and ability.tap_source)
     announcement = announce_targeted_activation(host,proposal,source,ability,response,attachment_snapshot,transmute_context)
     from ..target_announcements import announce_initial_target_triggers, dispatch_target_announcements
     initial_targets_announced = announce_initial_target_triggers(host, announcement)
@@ -894,6 +896,7 @@ def _commit_activation_costs_and_stack(
             source_was_snow=source_was_snow,
             source_information=mana_source_information or chosen_source_information,
             mana_payment=spent,
+            trigger_source=trigger_source,
         )
         return True
     item = _activation_stack_item(

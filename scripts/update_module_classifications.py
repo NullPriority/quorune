@@ -48,6 +48,8 @@ def _hash(value: Any) -> str:
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative == "quorune/announced_damage.py":
         return "rules"
+    if relative in {"quorune/triggered_mana.py", "quorune/triggered_mana_model.py"}:
+        return "rules"
     if relative == "quorune/source_tap_effect.py":
         return "domain"
     if relative in {'quorune/legend_rule_model.py', 'quorune/state_based_legend_model.py'}:
@@ -1004,6 +1006,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/mana_mode_effects.py",
         "quorune/mana_payment_continuations.py",
         "quorune/mana_undo.py",
+        "quorune/triggered_mana.py",
+        "quorune/triggered_mana_model.py",
         "quorune/semantic_runtime/color_set_mana_abilities.py",
     }:
         return "mana_rules"

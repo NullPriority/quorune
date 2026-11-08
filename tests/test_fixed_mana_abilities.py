@@ -769,6 +769,244 @@ class FixedManaResultRuntimeTests(unittest.TestCase):
         self.assertEqual(1,len(resumed.state.damage_prevention_shields));self.replay(resumed,load=True)
 
 
+class FixedTriggeredManaRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = FixedManaResultRuntimeTests.session
+    add = FixedManaResultRuntimeTests.add
+    checkpoint = FixedManaResultRuntimeTests.checkpoint
+    replay = FixedManaResultRuntimeTests.replay
+    ready = FixedManaResultRuntimeTests.ready
+
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'triggered-mana.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+                                ROOT / 'tests/fixtures/fixed-triggered-mana-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Fixed mana triggers', [DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def actions(self, session):
+        return session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+
+    def activate(self, session, source, **choices):
+        offer = next(action for action in self.actions(session) if action.get('source') == source.ref)
+        accepted = session.act('pilot:A', {'action_id': offer['id'], **choices})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def attach(self, session, aura, land):
+        from quorune.attachments import attach_objects
+
+        attach_objects(session.state.cards, aura, land, source_timestamp=aura.zone_timestamp,
+                       players=session.state.players)
+
+    def assert_closed(self, session, card):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        program = compile_best_available_card_program(self.db, self.db.lookup(card.printed_name),
+            semantic_registry=session.engine.semantics, capability_registry=self.registry,
+            capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+
+    def test_original_wild_growth_and_overgrowth_add_for_the_land_controller_immediately(self):
+        session = self.session(6054001)
+        land = self.add(session.engine, 'Island')
+        growth = self.add(session.engine, 'Wild Growth', seat='B')
+        overgrowth = self.add(session.engine, 'Overgrowth', seat='C')
+        private = self.add(session.engine, 'Generic Bound Body', seat='D', zone='hand')
+        for aura in (growth, overgrowth):
+            self.attach(session, aura, land)
+            self.assert_closed(session, aura)
+        offer, = self.ready(session, land)
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        command = {'action_id': offer['id'], 'mana_output': {'U': 1}}
+        self.assertFalse(session.act('pilot:B', command).ok)
+        self.assertFalse(session.act('pilot:A', {**command, 'mana_output': {'U': 1, 'G': 3}}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual((1, 3), tuple(session.state.players['A'].mana_pool[c] for c in 'UG'))
+        self.assertEqual([0, 0, 0], [sum(session.state.players[s].mana_pool.values()) for s in 'BCD'])
+        self.assertFalse(session.state.stack)
+        self.assertFalse(session.state.pending_trigger_batches)
+        self.assertFalse(any(action['action'] == 'undo_mana' for action in self.actions(session)))
+        self.assertEqual([growth.ref, overgrowth.ref], [e.details['source'] for e in session.state.events if e.code == 'mana.triggered'])
+        for seat in 'ABC':
+            self.assertNotIn(private.ref, json.dumps(session.packet(f'pilot:{seat}', full=True)))
+        self.replay(session, load=True)
+
+    def test_original_wild_growth_funds_a_nonartifact_cast_from_restricted_base(self):
+        session = self.session(6054002)
+        workshop = self.add(session.engine, "Mishra's Workshop")
+        aura = self.add(session.engine, 'Wild Growth', seat='B')
+        spell = self.add(session.engine, 'Giant Growth', zone='hand')
+        body = self.add(session.engine, 'Generic Bound Body', seat='C')
+        self.attach(session, aura, workshop)
+        self.assert_closed(session, aura)
+        self.ready(session, workshop)
+        self.checkpoint(session)
+        offer = next(action for action in self.actions(session) if action.get('card') == spell.ref)
+        command = {'action_id': offer['id'], 'targets': [body.ref]}
+        before = authoritative_state_hash(session.state)
+        denied = session.act('pilot:A', {**command, 'pay': 'manual', 'payment': {'C': 1},
+            'mana': [{'source': workshop.ref, 'bundle': {'C': 3}}]})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', {**command, 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[workshop.object_id].tapped)
+        self.assertEqual((3, 0), tuple(session.state.players['A'].mana_pool[c] for c in 'CG'))
+        self.assertEqual(0, sum(session.engine._spendable_mana_pool('A', spell_mana_spend_context('Instant')).values()))
+        self.assertEqual(['spell'], [item.kind for item in session.state.stack])
+        self.replay(session, load=True)
+
+    def test_original_wild_growth_snow_lots_and_ordinary_taps_stay_separate(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+
+        session = self.session(6054003)
+        snowy = self.add(session.engine, 'Snow-Covered Forest')
+        plain = self.add(session.engine, 'Forest')
+        aura = self.add(session.engine, 'Wild Growth', seat='B')
+        second = self.add(session.engine, 'Overgrowth', seat='B')
+        icy = self.add(session.engine, 'Icy Manipulator')
+        pillar = self.add(session.engine, 'Icebind Pillar')
+        target = self.add(session.engine, 'Generic Bound Body', seat='C')
+        self.attach(session, aura, snowy)
+        self.attach(session, second, plain)
+        session.state.players['A'].mana_pool['C'] = 1
+        self.ready(session, icy)
+        self.checkpoint(session)
+        self.activate(session, icy, targets=[plain.ref], pay='auto')
+        BoundEffectProgramRuntimeTests.resolve(self, session)
+        self.assertTrue(session.state.cards[plain.object_id].tapped)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        self.assertFalse(any(e.code == 'mana.triggered' for e in session.state.events))
+        self.activate(session, snowy)
+        self.assertEqual(2, session.state.players['A'].mana_pool['G'])
+        self.assertEqual([({'G': 1}, True)], [(dict(lot.bundle), lot.snow) for lot in mana_provenance_lots(session.state.players['A'])])
+        self.activate(session, pillar, targets=[target.ref], pay='auto')
+        self.assertEqual(1, session.state.players['A'].mana_pool['G'])
+        self.assertFalse(mana_provenance_lots(session.state.players['A']))
+        BoundEffectProgramRuntimeTests.resolve(self, session)
+        self.assertTrue(session.state.cards[target.object_id].tapped)
+        self.replay(session, load=True)
+
+    def test_original_controlled_and_global_triggers_use_type_and_base_output(self):
+        session = self.session(6054004)
+        leyline = self.add(session.engine, 'Leyline of Abundance')
+        bloom = self.add(session.engine, 'Vernal Bloom', seat='B')
+        monument = self.add(session.engine, 'Forsaken Monument')
+        tropical = self.add(session.engine, 'Tropical Island')
+        arbor = self.add(session.engine, 'Dryad Arbor')
+        arbor.acquired_control_turn_count = -1
+        ring = self.add(session.engine, 'Sol Ring')
+        for provider in (leyline, bloom, monument):
+            self.assert_closed(session, provider)
+        self.ready(session, tropical)
+        self.checkpoint(session)
+        blue = next(action for action in self.actions(session)
+            if action.get('source') == tropical.ref and '{U}' in action['label'])
+        result = session.act('pilot:A', {'action_id': blue['id'], 'mana_output': {'U': 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual((1, 1), tuple(session.state.players['A'].mana_pool[c] for c in 'UG'))
+        self.activate(session, arbor)
+        self.assertEqual(4, session.state.players['A'].mana_pool['G'])
+        self.activate(session, ring)
+        self.assertEqual(3, session.state.players['A'].mana_pool['C'])
+        self.assertEqual(4, sum(event.code == 'mana.triggered' for event in session.state.events))
+        self.replay(session, load=True)
+
+    def test_original_wild_growth_bonus_can_fund_a_priced_mana_step(self):
+        session = self.session(6054005)
+        island = self.add(session.engine, 'Snow-Covered Island')
+        thicket = self.add(session.engine, 'Fire-Lit Thicket')
+        aura = self.add(session.engine, 'Wild Growth', seat='B')
+        spell = self.add(session.engine, 'Lightning Bolt', zone='hand')
+        self.attach(session, aura, island)
+        self.ready(session, island)
+        self.checkpoint(session)
+        action = next(action for action in self.actions(session) if action.get('card') == spell.ref)
+        result = session.act('pilot:A', {'action_id': action['id'], 'targets': ['C'], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[island.object_id].tapped)
+        self.assertTrue(session.state.cards[thicket.object_id].tapped)
+        self.assertEqual(1, session.state.players['A'].mana_pool['U'])
+        self.assertEqual(2, sum(session.state.players['A'].mana_pool.values()))
+        self.assertEqual(1, sum(e.code == 'mana.triggered' for e in session.state.events))
+        self.replay(session, load=True)
+
+    def test_original_wild_growth_requires_a_live_attachment_at_production(self):
+        session = self.session(6054007)
+        vein = self.add(session.engine, 'Crystal Vein')
+        aura = self.add(session.engine, 'Wild Growth', seat='B')
+        self.attach(session, aura, vein)
+        actions = self.ready(session, vein)
+        self.checkpoint(session)
+        sacrifice = next(action for action in actions if action['ability'] == 'ab2')
+        result = session.act('pilot:A', {'action_id': sacrifice['id'], 'mana_output': {'C': 2}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('graveyard', session.state.cards[vein.object_id].zone)
+        self.assertEqual((2, 0), tuple(session.state.players['A'].mana_pool[c] for c in 'CG'))
+        self.assertFalse(any(e.code == 'mana.triggered' for e in session.state.events))
+        self.replay(session, load=True)
+
+    def test_original_groundchuck_and_annie_share_immediate_mana_timing(self):
+        session = self.session(6054008)
+        land = self.add(session.engine, 'Forest')
+        creature = self.add(session.engine, 'Groundchuck & Dirtbag')
+        enchantment = self.add(session.engine, 'Annie Joins Up')
+        self.assert_closed(session, creature)
+        self.assert_closed(session, enchantment)
+        self.ready(session, land)
+        self.checkpoint(session)
+        self.activate(session, land)
+        self.assertEqual(3, session.state.players['A'].mana_pool['G'])
+        self.assertEqual(2, sum(event.code == 'mana.triggered' for event in session.state.events))
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_fixed_mana_trigger_runtime_binding_rejects_wrong_event_and_missing_authority(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.triggered_mana_model import FIXED_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT
+
+        session = self.session(6054006)
+        growth = self.add(session.engine, 'Wild Growth')
+        self.assert_closed(session, growth)
+        program, = (program for program in session.engine.semantics.programs_for_oracle(growth.oracle_id)
+                    if program.event == FIXED_TRIGGERED_MANA_EVENT)
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != FIXED_TRIGGERED_MANA_CAPABILITY)
+        missing = replace(program, capability_dependencies=dependencies,
+            capability_closure=None)
+        wrong_event = replace(program, event='permanent.tap')
+        for mutated in (missing, wrong_event):
+            binding = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile='commander_review')
+            self.assertFalse(binding['strict'], binding['blockers'])
+        self.assertNotEqual('exact', compile_oracle_card(replace(self.db.lookup('Wild Growth'),
+            oracle_text='Enchant land\nWhenever enchanted land is tapped for mana, its controller adds one mana of any color.'),
+            capability_registry=self.registry, capability_profile='commander_review').status)
+
+    def test_fixed_mana_trigger_omission_is_detected_by_native_output(self):
+        with mock.patch('quorune.mana_activation.commit_triggered_mana', return_value=False):
+            with self.assertRaises(AssertionError):
+                self.test_original_wild_growth_and_overgrowth_add_for_the_land_controller_immediately()
+
+
 class FixedManaRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

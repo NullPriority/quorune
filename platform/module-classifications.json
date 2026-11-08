@@ -9057,6 +9057,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/triggered_mana_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/turn_cast_grants.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -25524,6 +25539,34 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/triggered_mana.py",
+      "layer": "rules",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/triggered_mana_model.py",
+      "layer": "rules",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/turn_counter_coordination.py",
       "layer": "rules",
       "owning_subsystem": "counter_placement",
@@ -26176,5 +26219,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "3d4a3081cbe155d028140a1e299de3562747f5529371becacc193eba1d7e3494"
+  "fingerprint": "581a4992e85fc8616b2f6912df52e63870df1c3c7b3be2e86fdc69785408d833"
 }
