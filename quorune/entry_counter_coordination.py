@@ -75,6 +75,7 @@ def prepare_resolving_entry_replacement(
     entry_card: Any | None = None
     entry_destination: str | None = None
     entry_characteristics: Mapping[str, Any] | None = None
+    prospective_name: str | None = None
     if item.context.get("copy_permanent_spell"):
         if not item.card_object_id:
             raise StateInvariantError(
@@ -92,6 +93,17 @@ def prepare_resolving_entry_replacement(
             entry_destination = (
                 destination or item.default_destination or "graveyard"
             )
+            if entry_destination == "battlefield":
+                from .entry_counters import capture_prospective_entry_characteristics
+                from .permanent_transform import trusted_daybound_entry_face
+
+                chosen_face = item.chosen_face
+                entry_face = trusted_daybound_entry_face(host, entry_card, prospective_face=chosen_face)
+                if entry_face != chosen_face:
+                    prospective_name = entry_face
+                    entry_characteristics, _ = capture_prospective_entry_characteristics(
+                        host, card=entry_card, enter_face=entry_face,
+                    )
     if entry_card is None or entry_destination is None:
         return ResolvingEntryPreparation(None, None)
     raw_amounts = item.context.get(DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT)
@@ -103,6 +115,7 @@ def prepare_resolving_entry_replacement(
                 destination=entry_destination,
                 destination_controller=item.controller,
                 mana_colors_spent=item.mana_colors_spent,
+                prospective_name=prospective_name,
             )
         )
         if frozen_amounts:

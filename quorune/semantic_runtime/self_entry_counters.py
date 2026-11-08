@@ -396,6 +396,7 @@ def dynamic_self_entry_counter_amounts(
     destination: str,
     destination_controller: str | None,
     mana_colors_spent: Sequence[str],
+    prospective_name: str | None = None,
 ) -> Mapping[str, int]:
     """Freeze one entering card's typed dynamic counter amounts."""
 
@@ -409,7 +410,7 @@ def dynamic_self_entry_counter_amounts(
         card=card,
         destination=destination,
         destination_controller=destination_controller,
-        prospective_name=str(card.active_face or ""),
+        prospective_name=prospective_name if prospective_name is not None else str(card.active_face or ""),
         mana_colors_spent=mana_colors_spent,
     )
 
