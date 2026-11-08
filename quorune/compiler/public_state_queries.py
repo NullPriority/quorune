@@ -1039,7 +1039,7 @@ def _graveyard_query_count_condition(
         re.IGNORECASE,
     )
     typed_count = re.fullmatch(
-        r"there are (?P<count>two|three|four|five|six|seven|eight|nine|ten|"
+        r"(?:there are|you have) (?P<count>two|three|four|five|six|seven|eight|nine|ten|"
         r"[0-9]+) or more (?P<quality>[A-Za-z][A-Za-z'/-]* |"
         r"instant and/or sorcery )?cards in "
         r"your graveyard",
@@ -1053,7 +1053,8 @@ def _graveyard_query_count_condition(
         if presence is not None
         else _fixed_condition_amount(typed_count.group("count"))
     )
-    assert amount is not None and amount > 0
+    if amount is None or amount <= 0:
+        return None
     quality = ((presence or typed_count).group("quality") or "").strip().casefold()
     fields: dict[str, Any] = {"zones": ("graveyard",), "token": False}
     if quality == "instant and/or sorcery":

@@ -19,6 +19,7 @@ from .public_state_queries import fixed_public_state_condition
 
 
 _LINKED_BRANCH_WORDS = re.compile(r"\b(?:instead|this way|that much|otherwise|if)\b", re.I)
+_COMPOUND_SUFFIX_RESULT = re.compile(r"\bthen\b|;", re.I)
 _OTHERWISE = ". Otherwise, "
 
 
@@ -84,11 +85,14 @@ def resolution_condition_template(
         if not otherwise.endswith(".") or _LINKED_BRANCH_WORDS.search(otherwise):
             return None
     parts = _leading_condition_parts(normalized)
-    if otherwise is not None and not parts:
+    standalone_suffix = not parts and otherwise is None
+    if not parts:
         parts = _suffix_condition_parts(normalized)
     candidates = []
     for prefix, condition_text, body in parts:
         if _LINKED_BRANCH_WORDS.search(body):
+            continue
+        if standalone_suffix and _COMPOUND_SUFFIX_RESULT.search(body):
             continue
         condition = fixed_public_state_condition(condition_text, source_name=source_name)
         if condition is None or not resolution_condition_is_closed(condition):
@@ -96,6 +100,8 @@ def resolution_condition_template(
         conditional = compile_component(body)
         mandatory = compile_component(prefix) if prefix else (None, (), None, ())
         if conditional[0] is None or not conditional[1] or conditional[2] is not None or (prefix and mandatory[0] is None):
+            continue
+        if standalone_suffix and len(conditional[1]) != 1:
             continue
         if not resolution_result_is_fixed(conditional[1], conditional[3]):
             continue

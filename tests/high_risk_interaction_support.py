@@ -581,13 +581,13 @@ _WITNESSES = {
         "Draw two cards, then discard a card.",
         "{4}{U}{U}",
     ),
-    "descend-upon-the-sinful": _Witness(
-        "Descend upon the Sinful",
-        "Sorcery",
-        "Exile all creatures.\n"
-        "Delirium — Create a 4/4 white Angel creature token with flying if "
-        "there are four or more card types among cards in your graveyard.",
-        "{4}{W}{W}",
+    "bazaar-of-wonders": _Witness(
+        "Bazaar of Wonders",
+        "World Enchantment",
+        "When this enchantment enters, exile all graveyards.\n"
+        "Whenever a player casts a spell, counter it if a card with the same name is in a graveyard "
+        "or a nontoken permanent with the same name is on the battlefield.",
+        "{3}{U}{U}",
     ),
     "sphinxs-insight": _Witness(
         "Sphinx's Insight",
@@ -1640,7 +1640,7 @@ _bind(
     MADNESS_AND_CHOICE_PAIRS[3],
 )
 _bind("madness-target-predicate", MADNESS_AND_CHOICE_PAIRS[4])
-_bind("descend-upon-the-sinful", PUBLIC_SET_AND_CHOICE_PAIRS[0])
+_bind("bazaar-of-wonders", PUBLIC_SET_AND_CHOICE_PAIRS[0])
 _bind("gideon-champion-of-justice", PUBLIC_SET_AND_CHOICE_PAIRS[1])
 _bind(
     "counter-cost-prevention-boundary",

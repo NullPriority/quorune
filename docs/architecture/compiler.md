@@ -764,6 +764,9 @@ draw-step triggers use the existing fixed step predicate. Fixed "additional
 card" wording lowers to an ordinary draw instruction; the turn's ordinary
 draw precedes trigger placement and the extra draw resolves through the stack.
 Existing public intervening conditions are checked at occurrence and resolution.
+The two fixed-count wordings for cards in your graveyard share one typed query
+over the trigger controller's graveyard. The query retains any printed card
+type or subtype restriction.
 The attacked-player life condition keeps the original player from the sealed
 attack assignment. Both checks compare that player's life with the ability
 controller's other opponents. The original defender's last known life remains
@@ -1299,7 +1302,9 @@ component's mechanics independently and checks the condition only when its
 printed instruction is reached. The shared public-query owner binds “you” to
 the resolving spell or ability controller, even when its source has left or
 changed controller. Only nontargeted results and independently closed prefixes
-are admitted. Bare subtype-presence conditions retain the battlefield permanent
+are admitted. A trailing “if” can guard a single independent result after any
+complete preceding sentences. That condition does not gate activation or
+trigger discovery. Bare subtype-presence conditions retain the battlefield permanent
 domain, including represented noncreature Kindred objects; an explicit creature
 noun retains its creature type restriction. Source-relative, attached-object,
 targeted-result, nested,

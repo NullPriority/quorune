@@ -14396,7 +14396,7 @@
         "zone.move.fixed_public_set"
       ],
       "interaction_order": 2,
-      "assertion": "Descend upon the Sinful compiles its fixed public creature-set exile while its conditional Delirium result remains material, so the complete CardProgram is unavailable at strict runtime admission."
+      "assertion": "Bazaar of Wonders compiles its fixed public graveyard-set exile while the conditional spell counter still requires linked spell identity and a cross-zone name predicate, so strict runtime admission rejects the complete CardProgram."
     },
     {
       "evidence_class": "interaction",

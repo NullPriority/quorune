@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "public_exact-list_card_data",
-  "source": "Constructed resolution-time public-condition and printed-order fixtures",
+  "source": "Pinned Oracle and constructed witnesses for public conditions and printed order",
   "cards": [
     {"oracle_id":"00000000-0000-4000-8100-000000000001","name":"Generic Condition Treasure Draw","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Create a Treasure token. If you control an artifact, draw a card.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8100-000000000002","name":"Generic Condition Death Draw","mana_cost":"{B}","cmc":1,"type_line":"Instant","oracle_text":"Destroy target creature. If a creature died this turn, draw a card.","colors":["B"],"color_identity":["B"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
@@ -222,6 +222,250 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "oracle_id": "e1c5bfae-07cb-4194-8a86-201503e17085",
+      "name": "Pit Keeper",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "When this creature enters, if you have four or more creature cards in your graveyard, you may return target creature card from your graveyard to your hand.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "faces": [],
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ed4cd3a1-688b-4c05-948d-39d3336e00c0",
+      "name": "Oversold Cemetery",
+      "mana_cost": "{1}{B}",
+      "type_line": "Enchantment",
+      "oracle_text": "At the beginning of your upkeep, if you have four or more creature cards in your graveyard, you may return target creature card from your graveyard to your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "faces": [],
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9cbf95f4-3510-420b-9355-645450f4493d",
+      "name": "Descend upon the Sinful",
+      "mana_cost": "{4}{W}{W}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile all creatures.\nDelirium — Create a 4/4 white Angel creature token with flying if there are four or more card types among cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Delirium"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "faces": [],
+      "cmc": 6.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "78afa295-c9f4-4a81-9f7b-5746a3cf6b31",
+      "name": "Inga Rune-Eyes",
+      "mana_cost": "{3}{U}",
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "When Inga Rune-Eyes enters, scry 3.\nWhen Inga Rune-Eyes dies, draw three cards if three or more creatures died this turn.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a2a40a19-8704-42fe-b9a6-5ae37c110303",
+      "name": "Idle Thoughts",
+      "mana_cost": "{3}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "{2}: Draw a card if you have no cards in hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -236,6 +480,66 @@
       "published_at": "2022-02-18",
       "source": "wotc",
       "comment": "The word “otherwise” in Gravelighter's triggered ability refers to whether or not a creature died this turn, not whether or not a card was drawn."
+    },
+    {
+      "oracle_id": "ed4cd3a1-688b-4c05-948d-39d3336e00c0",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Oversold Cemetery’s ability will check your graveyard as your upkeep begins, before any player has the opportunity to take any actions. If you have fewer than four creature cards in your graveyard at that time, the ability won’t trigger at all. If the ability does trigger, it will check again as it tries to resolve. If you have fewer than four creature cards in your graveyard at that point, the ability won’t have any effect."
+    },
+    {
+      "oracle_id": "9cbf95f4-3510-420b-9355-645450f4493d",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If you have three non-sorcery card types among cards in your graveyard at the time Descend upon the Sinful resolves, you won't get an Angel token. Descend upon the Sinful isn't put into your graveyard until after it's finished resolving."
+    },
+    {
+      "oracle_id": "9cbf95f4-3510-420b-9355-645450f4493d",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Because you consider only the characteristics of a double-faced card's front face while it's not on the battlefield, the types of its back face won't be counted for delirium."
+    },
+    {
+      "oracle_id": "9cbf95f4-3510-420b-9355-645450f4493d",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The number of card types matters, not the number of cards. For example, Wicker Witch (an artifact creature) along with Catalog (an instant) and Chaplain's Blessing (a sorcery) will enable delirium."
+    },
+    {
+      "oracle_id": "9cbf95f4-3510-420b-9355-645450f4493d",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If one of those creatures was enchanted, its Aura won't be put into a player's graveyard until after Descend upon the Sinful has finished resolving. If the controller of Descend upon the Sinful owned the Aura, it won't be in the graveyard in time to be counted for the delirium ability."
+    },
+    {
+      "oracle_id": "9cbf95f4-3510-420b-9355-645450f4493d",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "In some rare cases, you can have a token or a copy of a spell in your graveyard at the moment that an object's delirium ability counts the card types among cards in your graveyard, before that token or copy ceases to exist. Because tokens and copies of spells are not cards, even if they are copies of cards, their types will never be counted."
+    },
+    {
+      "oracle_id": "9cbf95f4-3510-420b-9355-645450f4493d",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The card types in Magic are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Supertypes (such as legendary and basic) and subtypes (such as Human and Equipment) are not counted."
+    },
+    {
+      "oracle_id": "78afa295-c9f4-4a81-9f7b-5746a3cf6b31",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The number of creatures that have died that turn is checked as the last ability resolves. Inga Rune-Eyes will count, as will creatures that die at the same time as Inga Rune-Eyes and creatures that die while that ability is on the stack but has not yet resolved."
+    },
+    {
+      "oracle_id": "78afa295-c9f4-4a81-9f7b-5746a3cf6b31",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The last ability will count any creature that died, no matter who controlled it."
+    },
+    {
+      "oracle_id": "a2a40a19-8704-42fe-b9a6-5ae37c110303",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "You can activate the ability whether or not you have any cards in your hand. However, you’ll draw a card only if your hand is empty when the ability resolves. (This card works differently than the _Tempest_(TM) card Fool’s Tome.)"
     }
   ]
 }
