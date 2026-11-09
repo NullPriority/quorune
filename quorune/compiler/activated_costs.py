@@ -4,6 +4,8 @@ import re
 from typing import Any, Sequence
 
 from ..abilities import ActivatedAbility, ActivationLimit, parse_activated_abilities
+from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
+from ..activation_cost_modifiers import ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY
 from ..activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
 from ..activation_usage import ACTIVATION_ONCE_PER_OBJECT_CAPABILITY
 from ..power_up_model import POWER_UP_CAPABILITY
@@ -47,14 +49,21 @@ def parse_compiled_activated_abilities(
         public_activation_material(line, card_name=card_name, keywords=keywords)[0]
         for line in oracle_text.splitlines()
     )
-    return parse_activated_abilities(card_name=card_name, oracle_text=material, keywords=keywords)
+    return _parse_compiled_activation_material(material, card_name=card_name, keywords=keywords)
 
 
 def parse_compiled_activation_line(
     line: str, *, card_name: str, keywords: Sequence[str],
 ) -> tuple[tuple[ActivatedAbility, ...], PublicActivationTiming | None]:
     material, timing = public_activation_material(line, card_name=card_name, keywords=keywords)
-    return parse_activated_abilities(card_name=card_name, oracle_text=material, keywords=keywords), timing
+    return _parse_compiled_activation_material(material, card_name=card_name, keywords=keywords), timing
+
+
+def _parse_compiled_activation_material(material, *, card_name, keywords):
+    from .public_quantity_activation_costs import compile_ability_local_mana_reduction
+
+    abilities = parse_activated_abilities(card_name=card_name, oracle_text=material, keywords=keywords)
+    return tuple(compile_ability_local_mana_reduction(ability, source_name=card_name) for ability in abilities)
 
 
 def activated_ability_cost_capabilities(
@@ -63,6 +72,8 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.ability_local_mana_reduction is not None:
+        additional.append(ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY)
     if ability.forecast:
         from ..forecast_model import FORECAST_CAPABILITY
         additional.append(FORECAST_CAPABILITY)
@@ -171,6 +182,8 @@ def activated_ability_cost(
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
+    if ability.ability_local_mana_reduction is not None:
+        result[ABILITY_LOCAL_MANA_REDUCTION_FIELD] = ability.ability_local_mana_reduction.to_dict()
     if ability.boast:result['boast']=True
     if ability.waterbend is not None:result['waterbend']=ability.waterbend.to_dict()
     if ability.mana_cost_options:

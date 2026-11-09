@@ -11,6 +11,7 @@ shape contract without importing that rules implementation.
 from typing import Any, Mapping
 
 
+ABILITY_LOCAL_MANA_REDUCTION_FIELD = "ability_local_mana_reduction"
 ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     {
         "schema_version",
@@ -48,7 +49,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {"announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", "source_counter_removal_cost", "waterbend"}
+    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (

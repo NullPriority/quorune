@@ -2154,6 +2154,96 @@
     {
       "applicability": {
         "exclusions": [
+          "hidden counts",
+          "variable or target-dependent reductions",
+          "unsupported sibling text"
+        ],
+        "inputs": [
+          "complete pinned ordinary battlefield activation",
+          "current controlled public battlefield or graveyard objects, distinct basic land types, or a named source counter"
+        ],
+        "outputs": [
+          "same typed generic cost for the offer and accepted command",
+          "unchanged colored and nonmana components",
+          "same ability's complete executable result"
+        ],
+        "summary": "Read a controlled public collection or current source counter once to reduce one printed ordinary battlefield activation by one generic mana per qualifying count."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.mana_cost.static_generic"
+      ],
+      "dependency_fail_closed_rationale": "A hidden query, an unrepresented body, or a cost that disagrees with its activation catalog withholds the typed reduction.",
+      "dependency_fail_closed_status": "passed",
+      "id": "activation.mana_cost.ability_local_public_count",
+      "implementation_components": [
+        "quorune.compiler.public_quantity_activation_costs.compile_ability_local_mana_reduction",
+        "quorune.semantic_runtime.activated_abilities.ability_local_mana_reduction_runtime_dependencies",
+        "quorune.rules.activation.cost_modifiers.current_activation_cost_modifiers",
+        "quorune.rules.activation.pricing.select_ordinary_activation_price"
+      ],
+      "implementation_mutation_rationale": "The original Pteramander witness detects omission of the current graveyard reduction.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
+        "test_actual_mobilized_district_keeps_the_price_on_its_animation",
+        "test_actual_source_counter_discount_locks_before_sacrifice",
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+      ],
+      "multiplayer_tests": [
+        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
+        "test_actual_mobilized_district_keeps_the_price_on_its_animation",
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+      ],
+      "negative_tests": [
+        "test_ability_local_discount_closes_only_its_cost_and_catalog",
+        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
+        "test_actual_mobilized_district_keeps_the_price_on_its_animation",
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+      ],
+      "official_rules": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "305.6",
+        "601.2f",
+        "602.2b"
+      ],
+      "positive_tests": [
+        "test_ability_local_discount_closes_only_its_cost_and_catalog",
+        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
+        "test_actual_mobilized_district_keeps_the_price_on_its_animation",
+        "test_actual_source_counter_discount_locks_before_sacrifice",
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+      ],
+      "privacy_tests": [
+        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee"
+      ],
+      "replay_tests": [
+        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
+        "test_actual_mobilized_district_keeps_the_price_on_its_animation",
+        "test_actual_source_counter_discount_locks_before_sacrifice",
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "text-defined X, spend-only restrictions and X-not-zero clauses",
           "variable target domains/cardinalities and unrepresented result bodies",
           "hybrid/Phyrexian/snow, variable nonmana, mana abilities and nonbattlefield variants"
@@ -85795,7 +85885,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 764,
+  "registry_version": 765,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

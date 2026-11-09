@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-"""Public source-power and controlled permanent-count activation reductions."""
+"""Public activation reductions from providers and ability-local counts."""
 
+from dataclasses import replace
 import re
 
 from ..activation_cost_modifiers import (FixedActivationCostModifierSpec, ACTIVATION_GENERIC_COST_EVENT,
-    PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_CAPABILITY)
+    PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_CAPABILITY,
+    validate_ability_local_mana_reduction)
+from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
 from ..rules.public_value_costs import public_value_cost_dependencies
 from ..object_predicate import ObjectQuerySpec
 from ..self_cast_reductions import (CastReductionMetric, CastReductionMetricKind,
@@ -13,6 +16,44 @@ from ..self_cast_reductions import (CastReductionMetric, CastReductionMetricKind
 from .public_value_costs import source_power_cost_metric
 from .public_state_queries import fixed_battlefield_query_subject
 from .activation_cost_modifier_templates import _modifier_subject
+from .query_characteristic_templates import query_characteristic_quantity
+
+
+_ABILITY_LOCAL_COUNT = re.compile(
+    r'\.\s+This ability costs \{1\} less to activate for each (?P<count>[^.]+)\.', re.I,
+)
+
+
+def _activation_discount_quantity(text, *, source_name):
+    material = ' '.join(text.casefold().split())
+    if re.fullmatch(r'instant (?:and|or|and/or) sorcery cards? in your graveyard', material):
+        query = ObjectQuerySpec(zones=('graveyard',), types_any=('instant', 'sorcery'), token=False)
+    elif material == 'legendary creature and planeswalker you control':
+        query = ObjectQuerySpec(zones=('battlefield',), types_any=('creature', 'planeswalker'),
+                                supertypes_all=('legendary',))
+    else:
+        return query_characteristic_quantity(text, source_name=source_name)
+    return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_ZONE, query=query)
+
+
+def compile_ability_local_mana_reduction(ability, *, source_name):
+    material = ability.effect_text
+    if (' less to activate for each ' not in material.casefold() or ability.mana_ability
+            or ability.zones != ('battlefield',) or ability.complex_symbols
+            or ability.mana_cost_options or ability.announced_x_symbols is not None
+            or not ability.mana.get('GENERIC')):
+        return ability
+    matches = tuple(_ABILITY_LOCAL_COUNT.finditer(material))
+    if len(matches) != 1:
+        return ability
+    match, = matches
+    quantity = _activation_discount_quantity(match['count'], source_name=source_name)
+    try:
+        validate_ability_local_mana_reduction(quantity)
+    except ValueError:
+        return ability
+    return replace(ability, effect_text=(material[:match.start() + 1] + material[match.end():]).strip(),
+                   generic_reduction_per_legendary_creature=0, ability_local_mana_reduction=quantity)
 
 
 def public_quantity_activation_cost_template(text, *, source_name):

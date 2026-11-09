@@ -5,6 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
+from .characteristic_fragments import (
+    CharacteristicQuantityReduction, CharacteristicQuantityScope, CharacteristicQuantitySpec,
+)
 from .object_predicate import ObjectQuerySpec
 from .target_cost_subject import TargetCostSubjectSpec
 from .power_up_model import reduce_power_up_requirements
@@ -14,6 +17,7 @@ from .replacement.immutable import FrozenMap, thaw_value
 ACTIVATION_GENERIC_COST_CAPABILITY = 'activation.mana_cost.static_generic'
 ACTIVATION_GENERIC_COST_HANDLER = 'modification.activation-cost.fixed-generic.v1'
 ACTIVATION_GENERIC_COST_EVENT = 'activation.mana_cost.modify'
+ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY = 'activation.mana_cost.ability_local_public_count'
 MANA_KEYS = ('GENERIC', 'W', 'U', 'B', 'R', 'G', 'C')
 
 
@@ -21,6 +25,20 @@ class ActivationManaCostData(Protocol):
     mana: Mapping[str, int]
     announced_x_symbols: int | None
     generic_reduction_per_legendary_creature: int
+
+
+def validate_ability_local_mana_reduction(quantity: CharacteristicQuantitySpec) -> None:
+    if (not isinstance(quantity, CharacteristicQuantitySpec) or quantity.multiplier != 1
+            or quantity.offset or quantity.exclude_attached_object):
+        raise ValueError('Ability-local mana reduction requires an unscaled public quantity')
+    if quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER and quantity.schema_version == 1:
+        return
+    if (quantity.scope is CharacteristicQuantityScope.CONTROLLER_ZONE and quantity.query is not None
+            and (quantity.schema_version == 1 and quantity.query.zones in {('battlefield',), ('graveyard',)}
+                or quantity.schema_version == 2 and not quantity.exclude_source
+                and quantity.reduction is CharacteristicQuantityReduction.DISTINCT_BASIC_LAND_TYPES)):
+        return
+    raise ValueError('Ability-local reduction requires a represented controlled or source count')
 
 
 def base_activation_requirements(

@@ -29,7 +29,8 @@ from .activation_condition_model import (
     activation_restriction_spec,
 )
 from .activation_restriction_composition import activation_restriction_from_effect
-from .activated_ability_descriptor import validate_activated_ability_descriptor
+from .activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD, validate_activated_ability_descriptor
+from .characteristic_fragments import CharacteristicQuantitySpec
 from .granted_activation_model import (
     GRANTING_ATTACHMENT_PAYMENT_FIELD, GrantingAttachmentPayment,
     validate_bound_granting_attachment_payment,
@@ -169,6 +170,7 @@ class ActivatedAbility:
     forecast: bool = False
     granting_attachment_payment: GrantingAttachmentPayment | None = None
     saddle_threshold: int | None = None
+    ability_local_mana_reduction: CharacteristicQuantitySpec | None = None
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
@@ -183,6 +185,14 @@ class ActivatedAbility:
         _validate_ability_sequences_and_scalars(self)
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
+        if self.ability_local_mana_reduction is not None:
+            from .activation_cost_modifiers import validate_ability_local_mana_reduction
+
+            validate_ability_local_mana_reduction(self.ability_local_mana_reduction)
+            if (self.mana_ability or self.zones != ("battlefield",) or self.mana_cost_options
+                    or self.complex_symbols or self.announced_x_symbols is not None
+                    or self.generic_reduction_per_legendary_creature or not self.mana.get("GENERIC")):
+                raise ValueError("Ability-local reductions require an ordinary fixed battlefield activation price")
         if self.saddle_threshold is not None:
             from .saddle import validate_saddle_ability
             validate_saddle_ability(self)
@@ -262,6 +272,8 @@ class ActivatedAbility:
             result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = self.granting_attachment_payment.to_dict()
         if self.saddle_threshold is not None:
             result["saddle_threshold"] = self.saddle_threshold
+        if self.ability_local_mana_reduction is not None:
+            result[ABILITY_LOCAL_MANA_REDUCTION_FIELD] = self.ability_local_mana_reduction.to_dict()
         return result
 
     @classmethod
@@ -269,6 +281,10 @@ class ActivatedAbility:
         value = validate_activated_ability_descriptor(value)
         return cls(
             ability_id=value["ability_id"],
+            ability_local_mana_reduction=(
+                CharacteristicQuantitySpec.from_dict(value[ABILITY_LOCAL_MANA_REDUCTION_FIELD])
+                if ABILITY_LOCAL_MANA_REDUCTION_FIELD in value else None
+            ),
             announced_x_symbols=value.get('announced_x_symbols'),
             boast=value.get('boast',False),
             reconfigure=value.get('reconfigure', False),

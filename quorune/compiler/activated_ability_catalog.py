@@ -7,6 +7,7 @@ import re
 from typing import Any, Iterable, Mapping
 
 from ..abilities import ActivatedAbility
+from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
 from ..carddb import CardRecord
 from ..card_programs.admission import CARD_PROGRAM_ADMISSION_FIELD, CompleteCardProgramAdmission
 from ..color_set_mana_abilities import (
@@ -291,6 +292,9 @@ def _catalog_ability_for_program(
         if len(matches) != 1:
             return None
         ability = matches[0]
+    if (ability.ability_local_mana_reduction is not None
+            and ABILITY_LOCAL_MANA_REDUCTION_FIELD not in (program.cost_schema or {})):
+        return None
     target_schema = (
         FrozenMap(program.target_schema)
         if program.target_schema is not None
@@ -396,7 +400,7 @@ def _catalog_provenance(
     references: tuple[SemanticProgram, ...],
     carrier_provenance: Mapping[str, Any] | None,
 ) -> Mapping[str, Any]:
-    if ability.announced_x_symbols is None:
+    if ability.announced_x_symbols is None and ability.ability_local_mana_reduction is None:
         return program.provenance
     reference = next((value for value in references if value.key == program.key), None)
     source = reference.provenance if reference is not None else carrier_provenance or {}
@@ -432,6 +436,8 @@ def _append_catalog_carriers(
     }
     for face_id, abilities in catalog.items():
         for ability in abilities:
+            if ability.ability_local_mana_reduction is not None:
+                continue  # This price requires its complete cost and effect program.
             if (
                 _ability_source_slot(
                     record,

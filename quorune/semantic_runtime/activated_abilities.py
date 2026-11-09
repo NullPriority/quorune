@@ -7,12 +7,35 @@ from functools import lru_cache
 from typing import Any, Mapping
 
 from ..abilities import ActivatedAbility
+from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
+from ..activation_cost_modifiers import (
+    ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY, validate_ability_local_mana_reduction,
+)
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
+from ..characteristic_fragments import CharacteristicQuantitySpec
+from ..replacement.immutable import thaw_value
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 
 
 ACTIVATED_ABILITY_CATALOG_HANDLER_ID = "activation.catalog.pinned.v1"
+
+
+def ability_local_mana_reduction_runtime_dependencies(program: Any) -> tuple[str, ...]:
+    cost = getattr(program, 'cost_schema', None) or {}
+    catalogs = [descriptor['ability'] for descriptor in program.handlers
+                if descriptor.get('handler_id') == ACTIVATED_ABILITY_CATALOG_HANDLER_ID]
+    field = ABILITY_LOCAL_MANA_REDUCTION_FIELD
+    if field not in cost and not any(field in ability for ability in catalogs):
+        return ()
+    if program.event != 'activate' or field not in cost:
+        raise ValueError('Ability-local reduction requires its activation cost schema')
+    quantity = CharacteristicQuantitySpec.from_dict(thaw_value(cost[field]))
+    validate_ability_local_mana_reduction(quantity)
+    if any(field not in ability or CharacteristicQuantitySpec.from_dict(thaw_value(ability[field])) != quantity
+           for ability in catalogs):
+        raise ValueError('Ability-local reduction differs between the catalog and activation cost')
+    return (ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,)
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,6 +86,8 @@ class ActivatedAbilityCatalogHandler:
             compiled = ActivatedAbility.from_dict(ability)
             if compiled.announced_x_symbols is not None and not required:
                 raise ValueError('Announced activation X requires complete-card admission')
+            if compiled.ability_local_mana_reduction is not None and not required:
+                raise ValueError('Ability-local mana reduction requires complete-card admission')
             if compiled.reconfigure and not required:
                 raise ValueError('Reconfigure requires complete-card admission')
             if compiled.saddle_threshold is not None and not required:
@@ -99,6 +124,7 @@ def activated_ability_catalog_descriptor(
     *, requires_complete_card_program: bool = False,
 ) -> dict[str, Any]:
     requires_complete_card_program = (requires_complete_card_program or ability.announced_x_symbols is not None
+        or ability.ability_local_mana_reduction is not None
         or ability.reconfigure or ability.saddle_threshold is not None)
     return {
         "handler_id": ACTIVATED_ABILITY_CATALOG_HANDLER_ID,
@@ -141,6 +167,7 @@ __all__ = [
     "ACTIVATED_ABILITY_CATALOG_HANDLER_ID",
     "ActivatedAbilityCatalogHandler",
     "ActivatedAbilityCatalogRegistry",
+    "ability_local_mana_reduction_runtime_dependencies",
     "activated_abilities_from_descriptors",
     "activated_ability_catalog_descriptor",
     "default_activated_ability_catalog_registry",

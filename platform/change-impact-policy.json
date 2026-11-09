@@ -9588,7 +9588,10 @@
     {
       "id": "public-value-cost-multipliers",
       "patterns": [
+        "quorune/activated_ability_descriptor.py",
         "quorune/activation_cost_modifiers.py",
+        "quorune/compiler/activated_ability_catalog.py",
+        "quorune/compiler/activated_costs.py",
         "quorune/compiler/cast_cost_modifier_templates.py",
         "quorune/compiler/public_cast_cost_modifiers.py",
         "quorune/compiler/public_quantity_activation_costs.py",
@@ -9599,6 +9602,7 @@
         "quorune/rules/public_value_costs.py",
         "quorune/self_cast_reductions.py",
         "quorune/semantic_runtime/activation_costs.py",
+        "quorune/semantic_runtime/activated_abilities.py",
         "tests/fixtures/public-value-cost-cards.json",
         "tests/test_public_value_costs.py"
       ],

@@ -324,6 +324,16 @@ accepted price. Generic reductions preserve colored and nonmana obligations.
 Variable adjustment amounts and hidden, temporal or numerical target predicates
 remain residuals. This production does not lower granted spell-tax abilities.
 
+The printed clause “This ability costs {1} less to activate for each …” binds
+one public quantity to the activated ability's cost and catalog descriptor.
+The ordinary activation pricing owner reads that quantity from the activator's
+public collection or the current source before paying the costs. It uses the
+same generic adjustment for offers and accepted commands, with colored and
+nonmana fees preserved. The represented readers count controlled permanents,
+graveyard cards, distinct basic land types, or one named counter on the source.
+The bound price applies to one ordinary battlefield activation, and the full
+effect and timing clauses still require complete-card admission.
+
 `compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
 face of a preparation card to closed inset instant or sorcery characteristics.
 The entry replacement and source-only preparation results require complete-card

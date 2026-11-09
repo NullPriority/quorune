@@ -23,6 +23,7 @@ from ..mana_spent_amounts import mana_color_amount_runtime_dependencies
 from ..rules.selected_counter_costs import selected_counter_runtime_dependencies
 from ..rules.activation.source_counter_choices import any_source_counter_runtime_dependencies
 from ..activation_mana_cost import activation_mana_option_runtime_dependencies
+from ..semantic_runtime.activated_abilities import ability_local_mana_reduction_runtime_dependencies
 from ..rules.source_keyword_choice_shapes import source_keyword_choice_runtime_dependencies
 from ..rules.source_protection_choice_shapes import source_protection_choice_runtime_dependencies
 from ..rules.source_fixed_protection_shapes import source_fixed_protection_runtime_dependencies
@@ -76,6 +77,10 @@ def nonmana_equip_runtime_dependencies(program):
 
 def _cost_metric_runtime_requirements(program):
     required, blockers = set(), set()
+    try:
+        required.update(ability_local_mana_reduction_runtime_dependencies(program))
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f'runtime_ability_local_mana_reduction:invalid:{exc}')
     for resolver, label in (
         (public_value_cost_dependencies, 'runtime_public_value_cost'),
         (self_cost_numeric_count_dependencies, 'runtime_self_cost_numeric_count'),
