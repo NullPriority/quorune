@@ -1215,6 +1215,7 @@ def _closed_effect_recognizers():
     from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
     from ..rules.library_order_shapes import is_closed_fixed_library_order_program
+    from ..rules.graveyard_card_targets import is_closed_opposing_graveyard_return_program
     from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
     from ..rules.counter_target_set_shapes import is_closed_quantified_counter_target_program
     from ..rules.any_number_target_shapes import is_closed_any_number_target_program
@@ -1232,6 +1233,7 @@ def _closed_effect_recognizers():
         is_closed_all_kind_counter_program,
         is_closed_quantified_counter_target_program,
         is_closed_any_number_target_program,
+        is_closed_opposing_graveyard_return_program,
         closed_fused_program,
         is_closed_library_search_prohibition_program,
         is_closed_announced_target_set_program,

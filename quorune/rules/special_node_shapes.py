@@ -63,6 +63,9 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if ALTERNATIVE_DISCARD_MECHANIC in mechanics:
         from .alternative_discard_shapes import alternative_discard_node_capabilities
         return alternative_discard_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    from .graveyard_card_targets import OPPOSING_GRAVEYARD_RETURN_MECHANIC, opposing_graveyard_return_sequence_capabilities
+    if OPPOSING_GRAVEYARD_RETURN_MECHANIC in mechanics:
+        return opposing_graveyard_return_sequence_capabilities(effects=effects, target_schema=target_schema)
     from ..compiler.target_set_result_sequences import TARGET_SET_SEQUENCE_MECHANIC
     if TARGET_SET_SEQUENCE_MECHANIC in mechanics:
         from .target_set_result_sequences import target_set_result_sequence_capabilities

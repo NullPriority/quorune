@@ -688,6 +688,9 @@
         "quorune/compiler/return_to_hand_templates.py",
         "quorune/rules/graveyard_card_targets.py",
         "quorune/rules/node_capability_shapes.py",
+        "quorune/rules/prevention_component_shapes.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/semantic_runtime/fixed_target_set_handlers.py",
         "tests/fixtures/targeted-graveyard-return-cards.json",
         "tests/fixtures/targeted-return-to-hand-cards.json"
       ],

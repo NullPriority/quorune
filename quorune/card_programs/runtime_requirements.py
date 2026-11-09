@@ -346,7 +346,7 @@ def _value_runtime_requirements(program):
 
 
 def _zone_move_runtime_requirements(program, required, blockers):
-    from ..rules.graveyard_card_targets import public_graveyard_return_runtime_dependencies
+    from ..rules.graveyard_card_targets import opposing_graveyard_return_runtime_dependencies, public_graveyard_return_runtime_dependencies
     from ..rules.public_zone_move_capability_shapes import triggered_source_exile_runtime_dependencies
 
     for resolver, label in (
@@ -355,6 +355,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (spell_self_bottom_runtime_dependencies, 'spell_self_bottom'),
         (triggered_source_exile_runtime_dependencies, 'triggered_source_exile'),
         (public_graveyard_return_runtime_dependencies, 'public_graveyard_return'),
+        (opposing_graveyard_return_runtime_dependencies, 'opposing_graveyard_return'),
     ):
         try:
             required.update(resolver(program))

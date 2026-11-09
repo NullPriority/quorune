@@ -110,6 +110,15 @@ independent instructions still resolve. This differs from choosing targets
 that all become illegal before resolution, where CR 608.2b stops the spell or
 ability. Nonempty batches retain their simultaneous owner and strict snapshots.
 
+An activation that returns cards from one opposing graveyard before an
+independent targeted result declares both groups before payment. The first
+group requires distinct cards from a single opponent. The second group
+retains its own target predicate and binds its result only to its surviving
+target. Resolution returns the surviving graveyard cards simultaneously to
+their owner's hand, then applies the second instruction through its existing
+owner. A damage-source choice occurs at that second instruction and requires
+a surviving prevention recipient.
+
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
 Direct permanent targets can combine unqualified card types and subtypes as
 flat alternatives, such as creature or Vehicle and Spirit or enchantment.

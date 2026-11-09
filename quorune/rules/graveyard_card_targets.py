@@ -554,6 +554,9 @@ class OwnGraveyardCardTargetSpec:
 
 
 GRAVEYARD_RETURN_OPERATION = "return_graveyard_card_to_owner_hand"
+OPPOSING_GRAVEYARD_RETURN_OPERATION = "return_opposing_graveyard_targets_to_owner_hand"
+OPPOSING_GRAVEYARD_RETURN_MECHANIC = "opposing-graveyard-return-then-targeted-result"
+OPPOSING_GRAVEYARD_RETURN_CAPABILITY = "card.return.opponent_graveyard_to_owner_hand"
 PUBLIC_GRAVEYARD_RETURN_VERSION = 3
 PUBLIC_GRAVEYARD_RETURN_CAPABILITY = "card.return.public_graveyard_to_owner_hand"
 PUBLIC_GRAVEYARD_RETURN_KINDS = (
@@ -566,6 +569,87 @@ PUBLIC_GRAVEYARD_RETURN_KINDS = (
 
 def public_graveyard_return_effect() -> dict[str, Any]:
     return {"op": GRAVEYARD_RETURN_OPERATION, "card": "$target.0", "schema_version": PUBLIC_GRAVEYARD_RETURN_VERSION}
+
+
+def opposing_graveyard_return_sequence(count, follower, follower_schema):
+    """Bind a fixed opposing-graveyard group and one independent target."""
+    from ..compiler.program_composition import _scope_component_target
+
+    if type(count) is not int or not 1 <= count <= 6 or not isinstance(follower_schema, Mapping):
+        raise GraveyardCardTargetError("Opposing graveyard return needs a fixed group and a second target")
+    if "id" in follower_schema or type(follower_schema.get("count")) is not int or follower_schema["count"] != 1:
+        raise GraveyardCardTargetError("The independent result needs one fixed target")
+    graveyard = PublicGraveyardCardTargetSpec(PublicGraveyardCardTargetKind.CARD, "opponent").to_target_schema()
+    graveyard.update(count=count, same_owner=True)
+    effects = (
+        {"op": OPPOSING_GRAVEYARD_RETURN_OPERATION, "cards": "$target_group.clause_0", "maximum_targets": count},
+        _scope_component_target(follower, 1),
+    )
+    schema = {"groups": [{"id": "clause_0", **graveyard}, {"id": "clause_1", **follower_schema}]}
+    return effects, schema
+
+
+def _opposing_graveyard_followup_capabilities(effect, schema):
+    from .counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
+    from .destruction_regeneration_capability_shapes import targeted_destruction_node_capabilities
+    from .prevention_component_shapes import fixed_chosen_source_damageable_capabilities
+    from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
+
+    owners = {
+        "destroy": (targeted_destruction_node_capabilities, "destroy"),
+        "reanimate": (fixed_target_reanimation_node_capabilities, "fixed-target-reanimation"),
+        "place_counters": (fixed_counter_placement_node_capabilities, "cr-122-counters"),
+        "choose_damage_source": (fixed_chosen_source_damageable_capabilities, "cr-615-prevention-effects"),
+    }
+    owner = owners.get(effect.get("op"))
+    if owner is None:
+        return ()
+    resolver, mechanic = owner
+    return resolver(effects=(effect,), target_schema=schema, mechanic_ids=(mechanic, "cr-115-targets"))
+
+
+def opposing_graveyard_return_sequence_capabilities(*, effects, target_schema):
+    """Check both independently owned groups against the executable roles."""
+    from ..compiler.program_composition import _component_target_roles_are_exact, _scope_component_target
+    from ..replacement.immutable import freeze_value, thaw_value
+
+    if (len(effects) != 2 or not all(isinstance(effect, Mapping) for effect in effects)
+            or effects[0].get("op") != OPPOSING_GRAVEYARD_RETURN_OPERATION
+            or not isinstance(target_schema, Mapping)):
+        return ()
+    try:
+        prefix, scoped_follower = thaw_value(freeze_value(effects))
+        schema = thaw_value(freeze_value(target_schema))
+        groups = schema.get("groups")
+        if not isinstance(groups, list) or len(groups) != 2 or not all(isinstance(group, Mapping) for group in groups):
+            return ()
+        if not _component_target_roles_are_exact(scoped_follower, 1):
+            return ()
+        follower = _scope_component_target(scoped_follower, 1, restore=True)
+        follower_schema = {key: value for key, value in groups[1].items() if key != "id"}
+        expected, expected_schema = opposing_graveyard_return_sequence(prefix.get("maximum_targets"), follower, follower_schema)
+        if (prefix, scoped_follower) != expected or schema != expected_schema:
+            return ()
+        second = _opposing_graveyard_followup_capabilities(follower, follower_schema)
+    except (TypeError, ValueError):
+        return ()
+    return (OPPOSING_GRAVEYARD_RETURN_CAPABILITY, "target.revalidate_resolution", *second) if second else ()
+
+
+def opposing_graveyard_return_runtime_dependencies(program):
+    if not any(effect.get("op") == OPPOSING_GRAVEYARD_RETURN_OPERATION for effect in program.effects):
+        return ()
+    required = opposing_graveyard_return_sequence_capabilities(effects=program.effects, target_schema=program.target_schema)
+    if getattr(program, "event", None) != "activate" or not required:
+        raise GraveyardCardTargetError("Opposing graveyard return requires its two closed activation target groups")
+    return required
+
+
+def is_closed_opposing_graveyard_return_program(program):
+    if OPPOSING_GRAVEYARD_RETURN_MECHANIC not in program.coverage or getattr(program, "event", None) != "activate":
+        return False
+    required = opposing_graveyard_return_sequence_capabilities(effects=program.effects, target_schema=program.target_schema)
+    return bool(required) and set(required).issubset(program.capability_dependencies)
 
 
 def public_graveyard_return_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:

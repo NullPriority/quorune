@@ -6744,6 +6744,96 @@
     {
       "applicability": {
         "exclusions": [
+          "mixed-owner graveyard groups",
+          "payment or conditional follow-up",
+          "unowned second results"
+        ],
+        "inputs": [
+          "one fixed opposing graveyard target group",
+          "one separate result target"
+        ],
+        "outputs": [
+          "simultaneous owner-hand returns",
+          "ordered independent result with its own surviving target"
+        ],
+        "summary": "Return surviving targets from one opposing graveyard to their owner's hand before resolving an independent targeted result."
+      },
+      "blockers": [],
+      "dependencies": [
+        "card.return.public_graveyard_to_owner_hand",
+        "target.revalidate_resolution",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The runtime proof derives the required capability from both executable target groups.",
+      "dependency_fail_closed_status": "passed",
+      "id": "card.return.opponent_graveyard_to_owner_hand",
+      "implementation_components": [
+        "quorune.compiler.return_to_hand_templates.opposing_graveyard_return_sequence_template",
+        "quorune.rules.graveyard_card_targets.opposing_graveyard_return_sequence_capabilities",
+        "quorune.rules.graveyard_card_targets.opposing_graveyard_return_runtime_dependencies",
+        "quorune.semantic_runtime.fixed_target_set_handlers.MoveFixedTargetSetHandler",
+        "quorune.semantic_runtime.direct_target_fields.bound_mutation_target_overrides"
+      ],
+      "implementation_mutation_rationale": "Removing the scoped activation template leaves the printed target groups unsupported.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_advocates_apply_independent_counter_reanimation_and_combat_results",
+        "test_original_nullmage_advocate_resolves_after_losing_part_or_all_of_return_group",
+        "test_original_shieldmage_advocate_returns_before_source_choice_and_skips_a_lost_recipient"
+      ],
+      "multiplayer_tests": [
+        "test_original_advocates_apply_independent_counter_reanimation_and_combat_results",
+        "test_original_nullmage_advocate_resolves_after_losing_part_or_all_of_return_group",
+        "test_original_shieldmage_advocate_returns_before_source_choice_and_skips_a_lost_recipient"
+      ],
+      "negative_tests": [
+        "test_opposing_graveyard_return_keeps_two_closed_target_roles",
+        "test_original_nullmage_advocate_resolves_after_losing_part_or_all_of_return_group",
+        "test_original_shieldmage_advocate_returns_before_source_choice_and_skips_a_lost_recipient"
+      ],
+      "official_rules": [
+        "115.1c",
+        "115.3",
+        "400.3",
+        "602.2b",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "609.7a"
+      ],
+      "positive_tests": [
+        "test_opposing_graveyard_return_keeps_two_closed_target_roles",
+        "test_original_advocates_apply_independent_counter_reanimation_and_combat_results",
+        "test_original_nullmage_advocate_resolves_after_losing_part_or_all_of_return_group",
+        "test_original_shieldmage_advocate_returns_before_source_choice_and_skips_a_lost_recipient"
+      ],
+      "privacy_tests": [
+        "test_original_nullmage_advocate_resolves_after_losing_part_or_all_of_return_group"
+      ],
+      "replay_tests": [
+        "test_original_advocates_apply_independent_counter_reanimation_and_combat_results",
+        "test_original_nullmage_advocate_resolves_after_losing_part_or_all_of_return_group",
+        "test_original_shieldmage_advocate_returns_before_source_choice_and_skips_a_lost_recipient"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "cards in another player's graveyard",
           "graveyard-to-battlefield reanimation",
           "top- or bottom-of-library destinations",

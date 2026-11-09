@@ -7,10 +7,13 @@ from typing import Any, Mapping
 
 from ..rules.graveyard_card_targets import (
     GraveyardCardTargetKind,
+    OPPOSING_GRAVEYARD_RETURN_MECHANIC,
     OwnGraveyardCardTargetSpec,
     PUBLIC_GRAVEYARD_RETURN_KINDS,
     PublicGraveyardCardTargetKind,
     PublicGraveyardCardTargetSpec,
+    opposing_graveyard_return_sequence,
+    opposing_graveyard_return_sequence_capabilities,
     public_graveyard_return_effect,
 )
 from .direct_target import (
@@ -185,6 +188,34 @@ _PUBLIC_GRAVEYARD_RETURN = re.compile(
     + r") from a graveyard to its owner['’]s hand\.?",
     re.IGNORECASE,
 )
+
+
+_OPPOSING_GRAVEYARD_RETURN = re.compile(
+    r"Return (?:(?P<count>two|three|four|five|six) target cards|target card) "
+    r"from an opponent['’]s graveyard to their hand\. (?P<follower>.+)",
+    re.IGNORECASE,
+)
+
+
+def opposing_graveyard_return_sequence_template(text, *, compile_result):
+    match = _OPPOSING_GRAVEYARD_RETURN.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    from .fixed_numbers import fixed_number
+
+    template, effects, schema, mechanics = compile_result(match["follower"])
+    if template is None or len(effects) != 1 or schema is None:
+        return None
+    try:
+        count = fixed_number(match["count"]) if match["count"] is not None else 1
+        effects, schema = opposing_graveyard_return_sequence(count, effects[0], schema)
+    except (TypeError, ValueError):
+        return None
+    if not opposing_graveyard_return_sequence_capabilities(effects=effects, target_schema=schema):
+        return None
+    return "opposing-graveyard-return-then-targeted-result-v1", effects, schema, tuple(
+        dict.fromkeys((OPPOSING_GRAVEYARD_RETURN_MECHANIC, "cr-115-targets", *mechanics)),
+    )
 
 
 def targeted_public_graveyard_return_to_hand_effect_template(

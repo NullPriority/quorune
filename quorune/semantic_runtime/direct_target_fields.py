@@ -32,6 +32,11 @@ def bound_mutation_target_overrides(host, effect, item, resolve_reference):
     field = _MUTATING_TARGET_FIELDS.get(effect.get('op'))
     if effect.get('op') == 'move' and GRAVEYARD_LIBRARY_TARGET_FIELD in effect:
         field = 'card'
+    if effect.get("op") == "choose_damage_source":
+        shield = effect.get("shield")
+        subject = shield.get("subject") if isinstance(shield, Mapping) else None
+        if isinstance(subject, str) and subject.startswith("$target_group.") and resolve_reference(subject) is None:
+            return {"target": None}
     reference = effect.get(field) if field is not None else None
     if not isinstance(reference, str) or not reference.startswith('$target'):
         return {}

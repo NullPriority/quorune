@@ -460,6 +460,7 @@ def _activated_effect_dependency_gate(
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
                 "temporary-source-protection-choice",
+                "opposing-graveyard-return-then-targeted-result",
             }.intersection(mechanics)
         )
         or (
@@ -664,6 +665,13 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    from .return_to_hand_templates import opposing_graveyard_return_sequence_template
+
+    graveyard_return = opposing_graveyard_return_sequence_template(
+        text, compile_result=lambda body: _compiled_activated_effect(body, card_name=card_name, effect_template=effect_template),
+    )
+    if graveyard_return is not None:
+        return graveyard_return
     allocation = fixed_announced_damage_template(text, card_name=card_name, allow_source_pronoun=True)
     if allocation is not None:
         return allocation
