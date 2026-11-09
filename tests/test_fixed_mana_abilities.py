@@ -997,9 +997,18 @@ class FixedTriggeredManaRuntimeTests(unittest.TestCase):
         for mutated in (missing, wrong_event):
             binding = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile='commander_review')
             self.assertFalse(binding['strict'], binding['blockers'])
-        self.assertNotEqual('exact', compile_oracle_card(replace(self.db.lookup('Wild Growth'),
-            oracle_text='Enchant land\nWhenever enchanted land is tapped for mana, its controller adds one mana of any color.'),
-            capability_registry=self.registry, capability_profile='commander_review').status)
+        original = self.db.lookup('Wild Growth')
+        one_color = 'Enchant land\nWhenever enchanted land is tapped for mana, its controller adds one mana of any color.'
+        options = dict(capability_registry=self.registry, capability_profile='commander_review')
+        chosen = compile_oracle_card(replace(original, oracle_text=one_color), **options)
+        self.assertEqual('exact', chosen.status, chosen.material_residuals)
+        from quorune.triggered_mana_model import CHOSEN_TRIGGERED_MANA_CAPABILITY
+        self.assertTrue(any(CHOSEN_TRIGGERED_MANA_CAPABILITY in node.capability_dependencies
+                            for face in chosen.faces for node in face.nodes))
+        dynamic = one_color.removesuffix('.') + ' that a land an opponent controls could produce.'
+        held = compile_oracle_card(replace(original, oracle_text=dynamic), **options)
+        self.assertNotEqual('exact', held.status)
+        self.assertTrue(held.material_residuals)
 
     def test_fixed_mana_trigger_omission_is_detected_by_native_output(self):
         with mock.patch('quorune.mana_activation.commit_triggered_mana', return_value=False):

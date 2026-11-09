@@ -557,7 +557,7 @@ class GraveyardReturnRuleTests(unittest.TestCase):
         with patch.object(
             return_module,
             "validate_graveyard_card_return_to_hand_plan",
-            lambda _host, _plan: None,
+            lambda _host, _plan, *, scope: None,
         ):
             with self.assertRaises(AssertionError):
                 assert_stale_rejected()
