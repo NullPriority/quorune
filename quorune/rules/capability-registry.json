@@ -62756,6 +62756,96 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented hidden identity predicates",
+          "unsupported modifiers to the payment result",
+          "unbound alternate payers and non-spell targets"
+        ],
+        "inputs": [
+          "one legal spell target",
+          "its current controller",
+          "one typed resolution-time generic amount",
+          "resolving controller and public game state"
+        ],
+        "outputs": [
+          "one frozen generic mana vector",
+          "existing pay or decline choice",
+          "canonical mana funding and counter attribution"
+        ],
+        "summary": "Evaluate a closed current quantity for the controller of the countering effect, then offer the legal target spell's controller the frozen generic payment."
+      },
+      "blockers": [],
+      "dependencies": [
+        "stack.counter.controller_payment"
+      ],
+      "dependency_fail_closed_rationale": "The operand, spell target and payer must all pass the versioned payment and target owners before the compiled effect is trusted.",
+      "dependency_fail_closed_status": "passed",
+      "id": "stack.counter.controller_quantity_payment",
+      "implementation_components": [
+        "quorune.compiler.counter_templates.targeted_controller_payment_template",
+        "quorune.rules.stack_controller_payment_cost.StackControllerPaymentCost",
+        "quorune.rules.stack_controller_payment_cost.bind_stack_controller_quantity_payment",
+        "quorune.rules.stack_controller_payment_shapes.stack_controller_payment_node_capabilities",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.semantic_choices.payments.OptionalPaymentHandler"
+      ],
+      "implementation_mutation_rationale": "The original graveyard-price witness sets different graveyard sizes for the countering player and payer. Reading the payer produces a different offered price.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_ixidors_will_freezes_price_through_mana_ability",
+        "test_original_rethink_reads_target_spell_x_and_skips_a_lost_target",
+        "test_original_spell_rupture_offers_zero_payment_and_decline"
+      ],
+      "multiplayer_tests": [
+        "test_original_controller_quantity_counterspells_use_printed_prices",
+        "test_original_rethink_reads_target_spell_x_and_skips_a_lost_target"
+      ],
+      "negative_tests": [
+        "test_public_controller_quantity_payment_rejects_open_operands",
+        "test_original_rethink_reads_target_spell_x_and_skips_a_lost_target"
+      ],
+      "official_rules": [
+        "107.1b",
+        "117.2e",
+        "118.5",
+        "202.3e",
+        "608.2b",
+        "608.2h",
+        "700.5",
+        "701.6a"
+      ],
+      "positive_tests": [
+        "test_original_controller_quantity_counterspells_use_printed_prices",
+        "test_original_ixidors_will_freezes_price_through_mana_ability",
+        "test_original_spell_rupture_offers_zero_payment_and_decline",
+        "test_original_rethink_reads_target_spell_x_and_skips_a_lost_target"
+      ],
+      "privacy_tests": [
+        "test_original_controller_quantity_counterspells_use_printed_prices"
+      ],
+      "replay_tests": [
+        "test_original_controller_quantity_counterspells_use_printed_prices",
+        "test_original_ixidors_will_freezes_price_through_mana_ability",
+        "test_original_rethink_reads_target_spell_x_and_skips_a_lost_target"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "counter unless a player pays or performs another action",
           "conditional, optional, modal, mass, multi-target, or linked-result counter clauses",
           "intrinsic alternate countered-spell destinations other than a represented zone replacement",
@@ -85455,7 +85545,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 761,
+  "registry_version": 762,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

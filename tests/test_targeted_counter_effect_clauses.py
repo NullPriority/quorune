@@ -158,6 +158,37 @@ class StackControllerPaymentCompilerTests(unittest.TestCase):
         self.assertIn("stack.counter.controller_payment", compiled.faces[0].nodes[0].capability_dependencies)
 
 
+    def test_public_controller_quantity_payment_rejects_open_operands(self):
+        from copy import deepcopy
+        from quorune.compiler.counter_templates import targeted_controller_payment_template
+        from quorune.rules.stack_controller_payment_shapes import stack_controller_payment_node_capabilities
+
+        text = "Counter target spell unless its controller pays {2} plus an additional {1} for each Faerie you control."
+        parsed = targeted_controller_payment_template(text, source_name=self.record(text).name)
+        self.assertIsNotNone(parsed)
+        _, effects, schema, mechanics = parsed.compiled()
+        self.assertEqual(3, effects[0]["schema_version"])
+        amount = effects[0]["cost"]["GENERIC"]["quantity"]
+        self.assertEqual(2, amount["offset"])
+        self.assertEqual(["faerie"], amount["query"]["subtypes_all"])
+        self.assertIn("stack.counter.controller_quantity_payment", stack_controller_payment_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=mechanics))
+        for field, value in (("player", "$controller"), ("stack", "$target.1"), ("schema_version", 2)):
+            with self.subTest(field=field):
+                forged = {**effects[0], field: value}
+                self.assertEqual((), stack_controller_payment_node_capabilities(
+                    effects=(forged,), target_schema=schema, mechanic_ids=mechanics))
+        altered = deepcopy(effects[0])
+        altered["cost"]["U"] = 1
+        self.assertEqual((), stack_controller_payment_node_capabilities(
+            effects=(altered,), target_schema=schema, mechanic_ids=mechanics))
+        for printed in (
+            "Counter target spell unless its controller pays {1} for each blue card in your hand.",
+            "Counter target activated ability unless its controller pays {1} for each card in your graveyard.",
+        ):
+            self.assertIsNone(targeted_controller_payment_template(printed, source_name=self.record(printed).name))
+
+
 class StackControllerPaymentChoiceIsolationTests(unittest.TestCase):
     def prepare(self, *, payable=True, generic=3, payer="B"):
         from quorune.compiler.counter_templates import targeted_controller_payment_template
@@ -303,7 +334,7 @@ class StackControllerPaymentActionTests(unittest.TestCase):
         engine.state.priority_player = None
         engine.state.priority_passes = []
         register_generated_programs(self.db, engine.semantics, tuple(self.db.iter_cards()),
-            trust_level="trusted", capability_registry=load_default_capability_registry(),
+            capability_registry=load_default_capability_registry(),
             capability_profile="commander_review", promote_exact_runtime_handlers=True,
             promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
             promote_exact_capability_declarations=True)
@@ -320,7 +351,8 @@ class StackControllerPaymentActionTests(unittest.TestCase):
         return card
 
     def assert_trusted(self, engine, card):
-        programs = engine.semantics.programs_for_oracle(card.oracle_id)
+        programs = tuple(program for program in engine.semantics.programs_for_oracle(card.oracle_id)
+                         if not program.ability_id.startswith("ability:catalog:"))
         self.assertTrue(programs, card.printed_name)
         self.assertTrue(all(engine.semantic_program_is_current_trusted(p) for p in programs), card.printed_name)
 
@@ -362,7 +394,7 @@ class StackControllerPaymentActionTests(unittest.TestCase):
 
     def setup(self, seed, *, source_name="Generic Fixed Controller Payment", x=None,
               resources=3, victim_name="Generic Payment Victim Creature", activated=False, mana_lands=0,
-              current_payer=None):
+              current_payer=None, arrange=None, controller_generic=None, victim_x=None, victim_blue=1):
         from quorune.record import checkpoint_envelope
         session = self.session(seed)
         engine = session.engine
@@ -376,14 +408,19 @@ class StackControllerPaymentActionTests(unittest.TestCase):
         engine.state.started = True
         engine.state.phase = "precombat_main"
         engine.state.step = "main"
-        engine.state.players["B"].mana_pool.update(U=1, C=resources)
-        engine.state.players["A"].mana_pool.update(U=1, C=x or 0)
+        engine.state.players["B"].mana_pool.update(U=victim_blue, C=resources)
+        engine.state.players["A"].mana_pool.update(U=1, C=controller_generic if controller_generic is not None else x or 0)
+        if arrange is not None:
+            arrange(session)
         engine._grant_priority("B")
         action = self.offer(session, "B", "cast:"+victim.ref)
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()
         session.decisions.clear()
-        result = session.act("pilot:B", {"action_id":action["id"], "pay":"auto"})
+        command = {"action_id":action["id"], "pay":"auto"}
+        if victim_x is not None:
+            command["x"] = victim_x
+        result = session.act("pilot:B", command)
         self.assertTrue(result.ok, result.summary)
         if current_payer is not None:
             # Minimal-state owner diagnostic, not a claimed implementation of
@@ -613,6 +650,183 @@ class StackControllerPaymentActionTests(unittest.TestCase):
         # Genuine archived payment commands cover the global provenance
         # boundary; the v1 counter payload control separately covers its
         # preserved isolated execution. Neither claims historical gameplay.
+
+
+    def _arrange_quantity_cards(self, entries):
+        def arrange(session):
+            for index, (name, seat, zone) in enumerate(entries):
+                self.add(session.engine, name, f"QUANTITY-{index}", seat=seat, zone=zone)
+        return arrange
+
+    def _expect_quantity_price(self, session, amount):
+        decision = self.until_choice(session)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        self.assertEqual(2, decision.continuation["effect"]["schema_version"])
+        offer = session.packet("pilot:B", full=True)["decision"]
+        self.assertEqual(amount, offer["ctx"]["cost"]["GENERIC"])
+        return offer
+
+    def test_original_controller_quantity_counterspells_use_printed_prices(self):
+        graveyards = (("Generic Payment Island", "A", "graveyard"),) * 2 + (
+            ("Generic Payment Island", "B", "graveyard"),) * 4
+        faeries = (("Faerie Seer", "A", "battlefield"), ("Faerie Seer", "B", "battlefield"))
+        artifacts = (("Darksteel Ingot", "A", "battlefield"), ("Darksteel Ingot", "B", "battlefield"))
+        cases = (
+            ("Rakshasa's Disdain", 2, graveyards),
+            ("Circular Logic", 2, graveyards),
+            ("Oppressive Will", None, (("Generic Fixed Controller Payment", "A", "hand"),)),
+            ("Override", 1, artifacts),
+            ("Spell Syphon", 1, faeries + artifacts),
+            ("Spell Stutter", 3, faeries),
+            ("Spell Rupture", 3, (("Generic Payment Victim Creature", "A", "battlefield"),
+                                   ("Glorious Anthem", "A", "battlefield"))),
+            ("Evasive Action", 2, (("Hallowed Fountain", "A", "battlefield"),
+                                   ("Generic Payment Island", "A", "battlefield"), ("Forest", "B", "battlefield"))),
+            ("Thassa's Rebuff", 2, faeries + (("Wind Drake", "A", "battlefield"),
+                                               ("Generic Payment Island", "A", "battlefield"))),
+        )
+        for index, (name, expected, entries) in enumerate(cases):
+            with self.subTest(name=name):
+                session, source, victim, target = self.setup(242_858_100 + index,
+                    source_name=name, resources=12, controller_generic=2,
+                    arrange=self._arrange_quantity_cards(entries))
+                amount = len(session.state.players["A"].zones["hand"]) if expected is None else expected
+                offer = self._expect_quantity_price(session, amount)
+                if expected is None:
+                    self.assertNotIn("QUANTITY-0", json.dumps(session.packet("pilot:B", full=True)))
+                    self.assertIsNone(session.packet("pilot:C", full=True)["decision"])
+                    self.replay(session)
+                self.assertEqual([True, False], offer["legal_actions"][0]["choice_schema"]["legal_values"])
+                result = session.act("pilot:B", {"action_id": "choose", "pay": False})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("graveyard", self.current(session, victim).zone)
+                self.assertEqual("graveyard", self.current(session, source).zone)
+                counter = next(event for event in session.state.events
+                    if event.code == "stack.counter" and event.details.get("stack") == target)
+                self.assertEqual("A", counter.actor)
+
+    def test_original_ixidors_will_freezes_price_through_mana_ability(self):
+        from quorune.record import authoritative_state_hash
+
+        entries = (("Faerie Seer", "A", "battlefield"), ("Generic Payment Sacrifice Wizard", "B", "battlefield"))
+        session, _, victim, target = self.setup(242_858_121, source_name="Ixidor's Will",
+            resources=3, controller_generic=2, arrange=self._arrange_quantity_cards(entries))
+        offer = self._expect_quantity_price(session, 4)
+        self.assertEqual([True, False], offer["legal_actions"][0]["choice_schema"]["legal_values"])
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:C", {"action_id": "choose", "pay": True}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.replay(session)
+        result = session.act("pilot:B", {"action_id": "choose", "pay": True})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards["stack-payment:QUANTITY-1"].zone)
+        self.assertEqual(0, session.state.players["B"].mana_pool["C"])
+        payment = next(event for event in session.state.events
+            if event.code == "counter.unless.paid" and event.details.get("stack") == target)
+        self.assertEqual(4, payment.details["cost"]["GENERIC"])
+        self.resolve_all(session)
+        self.assertEqual("battlefield", self.current(session, victim).zone)
+        self.replay(session)
+
+    def test_original_spell_rupture_offers_zero_payment_and_decline(self):
+        for paid in (False, True):
+            with self.subTest(paid=paid):
+                session, _, victim, _ = self.setup(242_858_132 + paid, source_name="Spell Rupture",
+                    resources=0, controller_generic=1)
+                offer = self._expect_quantity_price(session, 0)
+                self.assertEqual([True, False], offer["legal_actions"][0]["choice_schema"]["legal_values"])
+                result = session.act("pilot:B", {"action_id": "choose", "pay": paid})
+                self.assertTrue(result.ok, result.summary)
+                self.resolve_all(session)
+                self.assertEqual("battlefield" if paid else "graveyard", self.current(session, victim).zone)
+                self.replay(session)
+
+    def test_original_rethink_reads_target_spell_x_and_skips_a_lost_target(self):
+        def arrange(session):
+            self.add(session.engine, "Counterspell", "THIRD-COUNTER", seat="C")
+            session.state.players["C"].mana_pool["U"] = 2
+
+        for stale in (False, True):
+            with self.subTest(stale=stale):
+                session, source, victim, target = self.setup(242_858_140 + stale, source_name="Rethink",
+                    resources=6, victim_name="Mind Spring", victim_x=3, victim_blue=2,
+                    controller_generic=2, arrange=arrange)
+                if stale:
+                    while session.state.priority_player != "C":
+                        self.assertTrue(session.act(session.pending_principals()[0], {"action_id": "pass"}).ok)
+                    action = self.offer(session, "C", "cast:THIRD-COUNTER")
+                    accepted = session.act("pilot:C", {"action_id": action["id"], "targets": [target], "pay": "auto"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                else:
+                    self._expect_quantity_price(session, 5)
+                    accepted = session.act("pilot:B", {"action_id": "choose", "pay": False})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve_all(session)
+                self.assertEqual("graveyard", self.current(session, source).zone)
+                self.assertEqual("graveyard", self.current(session, victim).zone)
+                counter = next(event for event in session.state.events
+                    if event.code == "stack.counter" and event.details.get("stack") == target)
+                self.assertEqual("C" if stale else "A", counter.actor)
+                self.replay(session)
+
+
+    def test_original_countervailing_winds_uses_graveyard_price_and_cycles(self):
+        from quorune.record import checkpoint_envelope
+
+        graveyards = (("Generic Payment Island", "A", "graveyard"),) * 2 + (
+            ("Generic Payment Island", "B", "graveyard"),) * 4
+        session, source, victim, target = self.setup(242_858_161, source_name="Countervailing Winds",
+            resources=8, controller_generic=2, arrange=self._arrange_quantity_cards(graveyards))
+        self._expect_quantity_price(session, 2)
+        result = session.act("pilot:B", {"action_id": "choose", "pay": False})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", self.current(session, source).zone)
+        self.assertEqual("graveyard", self.current(session, victim).zone)
+        counter = next(event for event in session.state.events
+            if event.code == "stack.counter" and event.details.get("stack") == target)
+        self.assertEqual("A", counter.actor)
+        self.replay(session)
+
+        session = self.session(242_858_162)
+        engine = session.engine
+        source = self.add(engine, "Countervailing Winds", "CYCLER")
+        self.assert_trusted(engine, source)
+        session.state.active_player = "A"
+        session.state.started = True
+        session.state.phase = "precombat_main"
+        session.state.step = "main"
+        session.state.players["A"].mana_pool["C"] = 2
+        engine._grant_priority("A")
+        engine.pump()
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered = next(action for action in actions if action.get("source") == source.ref and action.get("from") == "hand")
+        self.assertEqual(1, offered["cost_summary"]["discard_self"])
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+        before = len(session.state.players["A"].zones["hand"])
+        result = session.act("pilot:A", {"action_id": offered["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", self.current(session, source).zone)
+        self.assertEqual(before - 1, len(session.state.players["A"].zones["hand"]))
+        self.resolve_all(session)
+        self.assertEqual(before, len(session.state.players["A"].zones["hand"]))
+        self.replay(session)
+
+    def test_public_controller_quantity_wrong_controller_mutant_is_killed(self):
+        from quorune.semantic_runtime.query_effect_amounts import resolve_public_query_amount
+
+        entries = (("Generic Payment Island", "A", "graveyard"),) * 2 + (
+            ("Generic Payment Island", "B", "graveyard"),) * 4
+        session, _, _, _ = self.setup(242_858_151, source_name="Countervailing Winds",
+            controller_generic=2, resources=8, arrange=self._arrange_quantity_cards(entries))
+
+        def read_payer(host, value, item):
+            return resolve_public_query_amount(host, value, replace(item, controller="B"))
+
+        with patch("quorune.semantic_runtime.values.resolve_public_query_amount", side_effect=read_payer):
+            with self.assertRaisesRegex(AssertionError, "2 != 4"):
+                self._expect_quantity_price(session, 2)
 
 
 class TargetedCounterTemplateTests(unittest.TestCase):

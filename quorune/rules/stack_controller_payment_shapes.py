@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .stack_controller_payment_cost import (
     STACK_CONTROLLER_PAYMENT_CAPABILITY, STACK_CONTROLLER_PAYMENT_MECHANIC,
+    STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
     compiled_stack_controller_payment_cost,
 )
 
@@ -20,6 +21,11 @@ def stack_controller_payment_node_capabilities(
     try:
         payment = compiled_stack_controller_payment_cost(effects[0])
     except (TypeError, ValueError, KeyError):
+        return ()
+    if payment.schema_version == STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION and (
+        target_schema is None or tuple(target_schema.get("zones", ())) != ("stack",)
+        or tuple(target_schema.get("categories", ())) != ("spell",)
+    ):
         return ()
     from .node_capability_shapes import targeted_counter_node_capabilities
     counter = targeted_counter_node_capabilities(
@@ -39,11 +45,22 @@ def is_closed_stack_controller_payment_program(program: Any) -> bool:
 
 def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]:
     """Revalidate the independent target roles of a composed payment clause."""
-    if STACK_CONTROLLER_PAYMENT_MECHANIC not in program.coverage:
+    quantity = any(effect.get("op") == "counter_unless_pay"
+                   and effect.get("schema_version") == STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION
+                   for effect in program.effects)
+    if STACK_CONTROLLER_PAYMENT_MECHANIC not in program.coverage and not quantity:
         return ()
     from ..compiler.program_composition import composed_spell_family_runtime_dependencies
 
-    return composed_spell_family_runtime_dependencies(
+    composed = composed_spell_family_runtime_dependencies(
         program, capability=STACK_CONTROLLER_PAYMENT_CAPABILITY,
         mechanic=STACK_CONTROLLER_PAYMENT_MECHANIC,
-    ) or ()
+    )
+    if composed is not None or not quantity:
+        return composed or ()
+    owned = stack_controller_payment_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not owned:
+        raise ValueError("Controller quantity payment requires its independently closed cost and spell target")
+    return owned

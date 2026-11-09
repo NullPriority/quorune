@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Any, Mapping
 
 from ..query_effect_amount_model import CastXAmountSpec
 from ..replacement.immutable import FrozenMap
-from ..rules.stack_controller_payment_cost import StackControllerPaymentCost, STACK_CONTROLLER_PAYMENT_MECHANIC
+from ..rules.stack_controller_payment_cost import (
+    MANA_PAYMENT_KEYS, STACK_CONTROLLER_PAYMENT_MECHANIC, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
+    StackControllerPaymentCost,
+)
 from ..util import mana_cost_to_vector
 
 from .direct_target import (
@@ -241,8 +244,8 @@ class TargetedControllerPaymentTemplate:
 
     def compiled(self):
         return (
-            f"counter-controller-payment-{self.counter.template_id.removeprefix('counter-target-').removesuffix('-v2')}-v2",
-            ({"op": "counter_unless_pay", "schema_version": 2,
+            f"counter-controller-payment-{self.counter.template_id.removeprefix('counter-target-').removesuffix('-v2')}-v{self.payment.schema_version}",
+            ({"op": "counter_unless_pay", "schema_version": self.payment.schema_version,
               "stack": "$target.0", "player": "$target.current_controller.0",
               "cost": self.payment.to_dict()},),
             self.counter.target_schema,
@@ -250,7 +253,71 @@ class TargetedControllerPaymentTemplate:
         )
 
 
-def targeted_controller_payment_template(text: str, *, cast_x_available: bool = False) -> TargetedControllerPaymentTemplate | None:
+
+_QUANTITY_PAYMENT_COUNT = re.compile(
+    r"(?:\{(?P<base>[1-9][0-9]*)\} plus an additional )?"
+    r"\{(?P<multiplier>[1-9][0-9]*)\} for each (?P<subject>.+)",
+    re.I,
+)
+_QUANTITY_PAYMENT_X = re.compile(r"\{X\}, where X is (?P<value>.+)", re.I)
+
+
+def _controller_payment_operand(text, *, source_name):
+    from ..query_effect_amount_model import PublicQueryAmountSpec
+    from ..rules.stack_controller_payment_cost import TARGET_SPELL_TAX_MANA_VALUE
+    from .collection_quantity_templates import public_card_quantity
+    from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
+
+    count = _QUANTITY_PAYMENT_COUNT.fullmatch(text)
+    if count is not None:
+        subject = count["subject"]
+        quantity = public_card_quantity(query_characteristic_quantity(subject, source_name=source_name), subject)
+        if quantity is None:
+            return None
+        return PublicQueryAmountSpec(replace(
+            quantity, schema_version=2, multiplier=int(count["multiplier"]), offset=int(count["base"] or 0),
+        )).to_dict()
+    definition = _QUANTITY_PAYMENT_X.fullmatch(text)
+    if definition is None:
+        return None
+    value = definition["value"]
+    if value.casefold() == "its mana value":
+        return TARGET_SPELL_TAX_MANA_VALUE
+    if value.casefold() == "the greatest power among creatures you control":
+        from ..public_characteristic_aggregate_model import CONTROLLED_CREATURES_POWER_QUERY, PublicCharacteristicAggregateSpec
+        from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+        aggregate = PublicCharacteristicAggregateSpec("power", "maximum", "source_controller", CONTROLLED_CREATURES_POWER_QUERY)
+        return ScalarEffectAmountSpec(ScalarAmountOrigin.PUBLIC_AGGREGATE, schema_version=3, aggregate=aggregate).to_dict()
+    quantity = query_characteristic_value(value, source_name=source_name)
+    return PublicQueryAmountSpec(quantity).to_dict() if quantity is not None else None
+
+
+def _quantity_controller_payment_template(text, *, source_name):
+    match = re.fullmatch(
+        r"(?P<body>Counter target .+?) unless its controller pays (?P<amount>.+?)\.?", text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    counter = targeted_counter_effect_template(match["body"] + ".")
+    if counter is None or counter.target_schema.get("categories") != ["spell"]:
+        return None
+    try:
+        amount = _controller_payment_operand(match["amount"], source_name=source_name)
+        if amount is None:
+            return None
+        cost = {key: 0 for key in MANA_PAYMENT_KEYS}
+        cost["GENERIC"] = amount
+        return TargetedControllerPaymentTemplate(
+            counter, StackControllerPaymentCost(cost, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION),
+        )
+    except (TypeError, ValueError):
+        return None
+
+
+def targeted_controller_payment_template(
+    text: str, *, cast_x_available: bool = False, source_name: str = "",
+) -> TargetedControllerPaymentTemplate | None:
     if type(cast_x_available) is not bool:
         raise ValueError("Announced-X availability must be a strict Boolean")
     match = re.fullmatch(
@@ -258,7 +325,7 @@ def targeted_controller_payment_template(text: str, *, cast_x_available: bool = 
         r"(?P<cost>(?:\{(?:[0-9]+|[WUBRGCX])\})+)\.?", text.strip(), re.I,
     )
     if match is None:
-        return None
+        return _quantity_controller_payment_template(text, source_name=source_name)
     counter = targeted_counter_effect_template(match["body"] + ".")
     if counter is None:
         return None

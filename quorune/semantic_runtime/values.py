@@ -143,6 +143,15 @@ def _resolve_typed_semantic_value(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 3:
+        from ..rules.stack_controller_payment_cost import bind_stack_controller_quantity_payment
+
+        try:
+            return bind_stack_controller_quantity_payment(
+                host, value, resolve=lambda operand: resolve_semantic_value(host, operand, item),
+            )
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if value.get('op') == 'resolve_fixed_object_action' and value.get('schema_version') == 3:
         from ..rules.reanimation_followup import current_linked_subject, validate_linked_departure
 

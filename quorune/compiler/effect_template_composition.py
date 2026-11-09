@@ -125,7 +125,9 @@ def reviewed_contextual_effect_template(
         removal=temporary_keyword_removal_template(body,source_name=card_name,
             source_is_permanent=source_context.get('source_is_permanent'),source_card_types=tuple(source_context.get('source_card_types',())))
         if removal is not None:return removal
-        controller_payment = targeted_controller_payment_template(body, cast_x_available=cast_x_available)
+        controller_payment = targeted_controller_payment_template(
+            body, cast_x_available=cast_x_available, source_name=card_name,
+        )
         if controller_payment is not None:
             return controller_payment.compiled()
         current = compile_atomic(body, card_name=card_name, **source_context)
