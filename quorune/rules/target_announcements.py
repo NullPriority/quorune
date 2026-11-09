@@ -65,3 +65,30 @@ def dispatch_target_announcements(
             card.logical_object_id, tuple(sorted(types)),
         )
         host._dispatch_semantic_event(TARGET_ANNOUNCEMENT_EVENT, occurrence.to_context(), trigger_batch=trigger_batch)
+
+
+def _detects_targets_before_payment(host: Any) -> bool:
+    return getattr(host.state, 'target_announcement_timing_version', None) == 1
+
+
+def announce_initial_target_triggers(host: Any, item: Any | None) -> bool:
+    """Detect initial targeting while the announced battlefield objects are current."""
+    if item is None or not _detects_targets_before_payment(host):
+        return False
+    from ..trigger_processing import collect_ward_occurrences
+
+    dispatch_target_announcements(host, item)
+    collect_ward_occurrences(host, item)
+    return True
+
+
+def dispatch_legacy_paid_target_announcements(host: Any, item: Any, *, trigger_batch: list[Any]) -> None:
+    if not _detects_targets_before_payment(host):
+        dispatch_target_announcements(host, item, trigger_batch=trigger_batch)
+
+
+def collect_legacy_paid_ward_occurrences(host: Any, item: Any) -> None:
+    if not _detects_targets_before_payment(host):
+        from ..trigger_processing import collect_ward_occurrences
+
+        collect_ward_occurrences(host, item)

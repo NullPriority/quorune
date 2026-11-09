@@ -34,7 +34,9 @@ from .cast_face_offers import (
     selected_face_state_fields,
     split_permanent_face_values_version,
 )
-from .cast_source_placement_model import cast_source_placement_version
+from .cast_source_placement_model import (
+    cast_placement_state_fields, cast_source_placement_version, read_target_announcement_timing_version,
+)
 from .phasing_model import PhasingRecord, phasing_lifecycle_version
 from .printed_mana_cost_model import (
     CURRENT_PRINTED_MANA_COST_VERSION,
@@ -1105,6 +1107,7 @@ class GameState:
     ability_source_information_version: int | None = 1
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
+    target_announcement_timing_version: int | None = None
     phasing_lifecycle_version: int | None = 1
     printed_mana_cost_version: int | None = CURRENT_PRINTED_MANA_COST_VERSION
     explore_action_version: int | None = 1
@@ -1167,7 +1170,6 @@ class GameState:
             self.counter_quantity_provenance_version
         )
         ability_source_information_version(self.ability_source_information_version)
-        cast_source_placement_version(self.cast_source_placement_version)
         phasing_version = phasing_lifecycle_version(self.phasing_lifecycle_version)
         explore_action_version(self.explore_action_version)
         transform_timestamp_version(self.transform_timestamp_version)
@@ -1233,7 +1235,7 @@ class GameState:
                 if counter_provenance_version is not None else {}
             ),
             **selected_face_state_fields(self.cast_face_offers_version, self.split_permanent_face_values_version),
-            **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
+            **cast_placement_state_fields(self.cast_source_placement_version, self.target_announcement_timing_version),
             **({"phasing_lifecycle_version": phasing_version} if phasing_version is not None else {}),
             **printed_mana_cost_format_fields(self.printed_mana_cost_version),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
@@ -1317,6 +1319,7 @@ class GameState:
                 data.get("effect_destruction_replacement_version")
             ),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
+            target_announcement_timing_version=read_target_announcement_timing_version(data),
             phasing_lifecycle_version=phasing_lifecycle_version(data.get("phasing_lifecycle_version")),
             printed_mana_cost_version=read_printed_mana_cost_version(data),
             explore_action_version=explore_action_version(data.get('explore_action_version')),

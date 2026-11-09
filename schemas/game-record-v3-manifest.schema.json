@@ -106,6 +106,10 @@
           "const": 1,
           "type": "integer"
         },
+        "target_announcement_timing_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "characteristic_query_boundary_version": {
           "enum": [
             0,

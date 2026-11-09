@@ -530,6 +530,100 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Goblin Bombardment",
+      "oracle_id": "edad60c6-80de-4033-af1b-a703ac332983",
+      "oracle_text": "Sacrifice a creature: This enchantment deals 1 damage to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Reckless Abandon",
+      "oracle_id": "f24d5187-0f80-4528-bf44-03ae146f3551",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nReckless Abandon deals 4 damage to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-09-05",
+      "toughness": null,
+      "type_line": "Sorcery"
     }
   ],
   "rulings": [
@@ -658,6 +752,18 @@
       "published_at": "2014-04-26",
       "source": "wotc",
       "comment": "Heroic abilities will trigger only once per spell, even if that spell targets the creature with the heroic ability multiple times."
+    },
+    {
+      "comment": "Players can only respond once this spell has been cast and all its costs have been paid. No one can try to destroy the creature you sacrificed to prevent you from casting this spell.",
+      "oracle_id": "f24d5187-0f80-4528-bf44-03ae146f3551",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you cannot cast it without sacrificing a creature, and you cannot sacrifice additional creatures.",
+      "oracle_id": "f24d5187-0f80-4528-bf44-03ae146f3551",
+      "published_at": "2013-04-15",
+      "source": "wotc"
     }
   ]
 }

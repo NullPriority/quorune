@@ -247,6 +247,93 @@ class TargetAnnouncementActionTests(unittest.TestCase):
                 self.resolve(session); self.assertEqual(39, session.state.players['A'].life)
                 self.replay(session)
 
+    def test_targeted_cast_and_activation_capture_before_sacrificing_target(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.errors import GameRuleError
+
+        cases = (
+            ('Reckless Abandon', 'hand', 'spell', 'sacrifice_cards'),
+            ('Goblin Bombardment', 'battlefield', 'activated_ability', 'cost_cards'),
+        )
+        for seed, (name, zone, kind, sacrifice_field) in enumerate(cases, 848601020):
+            with self.subTest(action=kind):
+                session = self.session(seed)
+                engine = session.engine
+                target = self.add(engine, 'Tethered Skirge', ref='PAID-TARGET')
+                source = self.add(engine, name, ref='PAID-SOURCE', zone=zone)
+                register_generated_programs(self.db, engine.semantics, (self.db.by_oracle_id(source.oracle_id),),
+                    trust_level='trusted', capability_registry=self.registry, capability_profile='commander_review',
+                    promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+                    promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+                for card in (source, target):
+                    record = self.db.by_oracle_id(card.oracle_id)
+                    program = compile_best_available_card_program(self.db, record, semantic_registry=engine.semantics,
+                        capability_registry=self.registry, capability_profile='commander_review')
+                    binding = bind_card_program_runtime(program, capability_registry=self.registry,
+                        profile='commander_review')
+                    self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+                actions = self.priority(session, 'A', mana={'R': 1})
+                expected = 'cast:' + source.ref if kind == 'spell' else 'activate:' + source.ref + ':'
+                action = next(row for row in actions if row['id'].startswith(expected))
+                self.checkpoint(session)
+                command = {'action_id': action['id'], 'targets': [target.ref],
+                    sacrifice_field: [target.ref], 'pay': 'auto'}
+                before = authoritative_state_hash(session.state)
+                rejected = session.act('pilot:A', {**command, sacrifice_field: ['absent']})
+                self.assertFalse(rejected.ok, rejected.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+
+                if kind == 'spell':
+                    pay_for_cost = engine._pay_for_cost
+
+                    def fail_after_payment(*args, **kwargs):
+                        pending = [item for batch in session.state.pending_trigger_batches for item in batch.items]
+                        self.assertEqual([target.object_id], [item.source_object_id for item in pending])
+                        pay_for_cost(*args, **kwargs)
+                        raise GameRuleError('Late payment rejected after target announcement')
+
+                    with mock.patch.object(engine, '_pay_for_cost', side_effect=fail_after_payment):
+                        late_rejection = session.act('pilot:A', command)
+                    self.assertFalse(late_rejection.ok, late_rejection.summary)
+                    self.assertIn('Late payment rejected', late_rejection.summary)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+
+                result = session.act('pilot:A', command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual('graveyard', session.state.cards[target.object_id].zone)
+                self.assertEqual([kind, 'triggered_ability'], [item.kind for item in session.state.stack])
+                trigger = session.state.stack[-1]
+                self.assertEqual((target.object_id, 'A'), (trigger.source_object_id, trigger.controller))
+                self.resolve(session)
+                self.assertEqual(39, session.state.players['A'].life)
+                self.assertFalse(session.state.stack)
+                if kind == 'spell':
+                    self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+                self.replay(session)
+
+    def test_initial_target_timing_record_versions_are_strict(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        state = self.session(848601028).state
+        payload = state.to_dict()
+        field = 'target_announcement_timing_version'
+        self.assertEqual(1, payload[field])
+        self.assertEqual(1, GameState.from_dict(payload).target_announcement_timing_version)
+        for malformed in (None, False, '1', 2):
+            with self.subTest(malformed=malformed):
+                with self.assertRaisesRegex(ValueError, 'Target announcement timing'):
+                    GameState.from_dict({**payload, field: malformed})
+        with self.assertRaisesRegex(ValueError, 'initial stack placement'):
+            GameState.from_dict({**payload, 'cast_source_placement_version': None})
+        provenance = format_state_versions(state)
+        self.assertEqual(1, provenance.pop(field))
+        with self.assertRaisesRegex(ValueError, 'Target announcement timing provenance'):
+            validate_state_versions({'format': provenance}, state)
+        payload.pop(field)
+        self.assertNotIn(field, GameState.from_dict(payload).to_dict())
+
     def test_opposing_stack_controller_and_target_controller_publish_private_optional_draw(self):
         for caster in ('A', 'B'):
             with self.subTest(caster=caster):

@@ -61,7 +61,7 @@ from ...morph import (
     MORPH_CAST_METHOD,
     MorphError,
 )
-from ..spell_cast_events import SpellCastEvent
+from ..spell_cast_events import SpellCastEvent, cast_creature_target_controllers
 from ...selection.exile_cast import mana_value_of_cost
 from ...zone_object_state import (
     mark_card_face_down_for_morph,
@@ -71,7 +71,11 @@ from ...zone_object_state import (
 )
 from ...stack_counter import oracle_has_intrinsic_counter_prohibition
 from ...tap_state import dispatch_tapped_cost_group, set_permanent_tapped
-from ...trigger_processing import collect_ward_occurrences, enqueue_trigger_batch
+from ...trigger_processing import enqueue_trigger_batch
+from ..target_announcements import (
+    collect_legacy_paid_ward_occurrences, dispatch_legacy_paid_target_announcements,
+)
+from .source_placement import observe_cast_source_placement
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
 from ..casting_additional_costs import (
@@ -1083,22 +1087,6 @@ def _prior_controller_spell_count(
     )
 
 
-def _cast_creature_target_controllers(host: Any, item: Any) -> tuple[str, ...]:
-    """CR 115.9b: read targets still in their expected zone at cast completion."""
-    controllers: set[str] = set()
-    for ref in dict.fromkeys(item.targets):
-        snapshot = item.context.get("target_snapshots", {}).get(ref)
-        if not isinstance(snapshot, Mapping) or not host._target_identity_matches_snapshot(ref, snapshot):
-            continue
-        card = next((card for card in host.state.cards.values() if card.ref == ref and card.zone == "battlefield" and not card.phased_out), None)
-        if card is None:
-            continue
-        types, _, _ = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
-        if "creature" in types:
-            controllers.add(card.controller)
-    return tuple(sorted(controllers))
-
-
 def _dispatch_cast_events(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -1197,7 +1185,7 @@ def _dispatch_cast_events(
         keywords=tuple(effective_spell.get("keywords") or ()),
         phase=host.state.phase,
         targets=proposal.targets,
-        creature_target_controllers=_cast_creature_target_controllers(host, item),
+        creature_target_controllers=cast_creature_target_controllers(host, item),
         mana_spent_total=item.context.get('mana_spent_total'),
     ).to_context()
     event_sources = _ordered_event_sources(host,None)
@@ -1222,8 +1210,7 @@ def _dispatch_cast_events(
             sources=event_sources,
             trigger_batch=trigger_batch,
         )
-    from ..target_announcements import dispatch_target_announcements
-    dispatch_target_announcements(host, item, trigger_batch=trigger_batch)
+    dispatch_legacy_paid_target_announcements(host, item, trigger_batch=trigger_batch)
     from ..crime import record_crime_for_stack_placement
     record_crime_for_stack_placement(host,item,trigger_batch=trigger_batch)
     enqueue_trigger_batch(host, trigger_batch)
@@ -1476,8 +1463,7 @@ def _commit_cast_costs_and_stack(
             _AdditionalCostCommit([],[],{},{},[],[]),preparing=True)
         prepared_item.x_value=selected_option.get('announced_target_x',selected_option.get('announced_additional_x',response.get('x')))
         host.state.stack.append(prepared_item)
-        from ..state_triggers import observe_public_state_triggers
-        observe_public_state_triggers(host)
+        observe_cast_source_placement(host, prepared_item)
     from .spell_mana_payments import capture_spell_mana_payment
     excluded = {payment_card.object_id for payment_card in tap_cards}
     spend_context = host._spell_mana_spend_context(proposal.type_line)
@@ -1577,7 +1563,7 @@ def _commit_cast_costs_and_stack(
         prior_controller_spell_count=prior_controller_spell_count,
         payment_triggers=payment_triggers,
     )
-    collect_ward_occurrences(host, item)
+    collect_legacy_paid_ward_occurrences(host, item)
     host.state.players[proposal.seat].yield_policy = YieldPolicy()
     return bool(details.get('during_resolution'))
 

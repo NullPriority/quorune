@@ -120,6 +120,13 @@ later target changes and ordinary battlefield target announcements retain
 their separate contracts. Declared runtime provenance remains exact; absence
 compatibility does not authorize rewriting a mismatched manifest.
 
+The optional `target_announcement_timing_version` is `1` for current
+games. It requires initial stack placement and detects ordinary target triggers
+and Ward at the initial target announcement, before costs are paid. A rejected
+action rolls back the provisional occurrences. The manifest pins this timing
+to the initial checkpoint. Historical records without the mode retain their
+prior event timing.
+
 An optional per-card `permanent_composition` value has its own schema-one
 codec. It retains the current object identity, ordered physical snapshots and
 merge history while the battlefield has one live object. Nested physical

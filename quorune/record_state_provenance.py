@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
 from .printed_mana_cost_model import (
     PRINTED_MANA_COST_VERSION_FIELD,
@@ -45,7 +46,9 @@ def format_state_versions(state: Any) -> dict[str, int]:
             'crime_history_version','committed_occurrence_history_version','damage_life_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
-        **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
+        **cast_placement_state_fields(
+            getattr(state, "cast_source_placement_version", None), getattr(state, "target_announcement_timing_version", None),
+        ),
         **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
            if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
         **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
@@ -138,6 +141,8 @@ def validate_state_versions(
     placement=format_value.get('cast_source_placement_version',0)
     if type(placement) is not int or placement not in {0,1} or placement!=(cast_source_placement_version(getattr(state,'cast_source_placement_version',None)) or 0):
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')
+    if read_target_announcement_timing_version(format_value) != getattr(state, "target_announcement_timing_version", None):
+        raise ValueError("Target announcement timing provenance does not match the initial checkpoint")
     if read_printed_mana_cost_version(format_value) != getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None):
         raise ValueError("Printed mana cost authority provenance does not match the initial checkpoint")
     from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version

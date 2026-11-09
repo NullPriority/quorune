@@ -1,4 +1,4 @@
-"""Read-only mana affordability after the declared source leaves its origin."""
+"""Casting source placement reads and its immediate trigger observations."""
 from dataclasses import dataclass
 from ...cast_source_placement_model import cast_source_placement_version
 from .public_conditions import prospective_cost_condition_view
@@ -49,3 +49,11 @@ def prospective_sacrifice_read_host(host, actor, source_object_id):
 
 def power_sacrifice_read_host(host, actor, source_object_id):
     return prospective_sacrifice_read_host(host, actor, source_object_id)
+
+
+def observe_cast_source_placement(host, item) -> None:
+    from ..state_triggers import observe_public_state_triggers
+    from ..target_announcements import announce_initial_target_triggers
+
+    observe_public_state_triggers(host)
+    announce_initial_target_triggers(host, item)

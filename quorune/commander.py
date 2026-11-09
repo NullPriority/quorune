@@ -316,6 +316,7 @@ def initial_commander_state(
         ),
         control_history_version=CONTROL_HISTORY_VERSION,
         tap_state_event_version=1,
+        target_announcement_timing_version=1,
         turn_history=TurnHistory(departure_history_version=1,arrival_history_version=1,mill_history_version=1,
             spell_origin_history_version=1,graveyard_type_history_version=1,spell_mana_history_version=1,crime_history_version=1,
             committed_occurrence_history_version=1,damage_life_history_version=1),
