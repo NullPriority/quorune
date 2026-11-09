@@ -479,16 +479,17 @@ def sealed_public_characteristic_facts(
     characteristics: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Normalize public facts from one already-sealed characteristic view."""
-    from .permanent_event_state_model import sealed_permanent_state_context
+    from .permanent_event_state_model import ZONE_EVENT_NUMERICS_KEY, sealed_permanent_state_context
 
     types, subtypes, supertypes = type_parts(str(characteristics.get("type_line") or ""))
+    numerics = characteristics.get(ZONE_EVENT_NUMERICS_KEY, characteristics)
     return {
         **sealed_permanent_state_context(characteristics),
         "types": sorted(types),
         "subtypes": sorted(subtypes),
         "colors": _public_colors(characteristics),
-        "power": _public_numeric_power(characteristics),
-        "toughness": _public_numeric_power(characteristics, "toughness"),
+        "power": _public_numeric_power(numerics),
+        "toughness": _public_numeric_power(numerics, "toughness"),
         "supertypes": sorted(supertypes),
         "keywords": sorted(str(value).casefold() for value in characteristics.get("keywords", ()) or ()),
         "mana_value": float(characteristics.get("mana_value", 0) or 0),

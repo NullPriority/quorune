@@ -48,14 +48,15 @@ uncast entries retain zero. New result descriptors consume this sealed value
 after source departure. Records without an entry-X reader preserve their
 earlier event shape; malformed or mismatched identities reject.
 
-`permanent_event_state_version: 1` pins sealed public state used by represented
-zone and damage occurrences. Departure facts describe the old permanent;
-after-events use only the new object's current facts. Damage proposals retain
-their sealed source facts through replacement and final event dispatch.
-Historical absence preserves the
-earlier event shape and remains absent on serialization. Unknown, boolean,
-and manifest/checkpoint-mismatched versions reject before replay through the
-existing state-provenance owner.
+`permanent_event_state_version` pins sealed public state for represented zone
+and damage occurrences. Version 2 uses completed battlefield power and
+toughness for zone occurrences, including counters and continuous effects.
+Departures use the old permanent's statistics and entries use the new
+permanent's statistics. Damage proposals retain their sealed source facts
+through replacement and final dispatch. Version 1 replays with its recorded
+numeric semantics. A record with the field absent retains its earlier event
+shape. The state-provenance check rejects unknown versions, booleans, and
+manifest/checkpoint mismatches before replay.
 
 `unblocked_attacker_event_version: 1` independently pins post-blocker-declaration
 unblocked occurrences. Historical absence emits no new occurrence and remains

@@ -191,18 +191,20 @@ class PermanentEventStateModelTests(unittest.TestCase):
         from quorune.permanent_event_state_model import permanent_event_state_version
         state=GameState(game_id='state-facts-codec',config=GameConfig(),players={},cards={},deck_names={},
             commander_oracle_ids={},turn_order=[],current_turn=0,last_normal_turn_player=None)
-        self.assertEqual(1,state.to_dict()['permanent_event_state_version'])
+        self.assertEqual(2,state.to_dict()['permanent_event_state_version'])
         legacy=state.to_dict();legacy.pop('permanent_event_state_version')
         restored=GameState.from_dict(legacy)
         self.assertIsNone(restored.permanent_event_state_version)
         self.assertNotIn('permanent_event_state_version',restored.to_dict())
+        version_one=GameState.from_dict({**legacy,'permanent_event_state_version':1})
+        self.assertEqual(1,version_one.to_dict()['permanent_event_state_version'])
         from quorune.record_state_provenance import format_state_versions,validate_state_versions
-        validate_state_versions({'format':format_state_versions(state)},state)
-        validate_state_versions({'format':format_state_versions(restored)},restored)
-        for value in (True,0,2,'1'):
+        for checkpoint in (state,version_one,restored):
+            validate_state_versions({'format':format_state_versions(checkpoint)},checkpoint)
+        for value in (True,0,1,3,'2'):
             with self.assertRaises(ValueError):validate_state_versions(
                 {'format':{**format_state_versions(state),'permanent_event_state_version':value}},state)
-        for value in (True,0,2,'1'):
+        for value in (True,0,3,'2'):
             with self.assertRaises(ValueError):permanent_event_state_version(value)
 
     def test_normalized_departure_keeps_old_state_and_entry_uses_new_state(self):
@@ -275,6 +277,64 @@ class StateQualifiedZoneNativeTests(InheritedNativeFixture,unittest.TestCase):
 
     def attach(self,s,source,target):
         attach_objects(s.state.cards,source,target,source_timestamp=s.state.turn_sequence+1,players=s.state.players)
+
+    def test_death_stat_threshold_and_amount_preserve_version_one_replay(self):
+        for version in (1, 2):
+            with self.subTest(version=version):
+                session = self.session(848601)
+                session.state.permanent_event_state_version = version
+                engine = session.engine
+                burial = self.add(engine, "Proper Burial")
+                flayer = self.add(engine, "Sultai Flayer")
+                bear = self.add(engine, "Grizzly Bears")
+                kill = self.add(engine, "Murder", zone="hand")
+                bear.counters["+1/+1"] = 2
+                for card in (burial, flayer, kill):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"B": 2, "C": 1})
+                self.checkpoint(session)
+                self.assertEqual(4, engine._numeric_stat(bear.object_id, "toughness"))
+
+                self.cast(session, "A", kill, [bear.ref])
+                self.resolve_top(session)
+                self.assertEqual("graveyard", bear.zone)
+                if version == 2:
+                    self.assertEqual("trigger.order", session.state.pending_decision.kind)
+                    offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]
+                    self.assertEqual(2, len(offered))
+                    command = {"action_id": "order", "triggers": [item["id"] for item in offered]}
+                    self.reject(session, "B", command)
+                    ordered = session.act("pilot:A", command)
+                    self.assertTrue(ordered.ok, ordered.summary)
+                expected_sources = {burial.object_id, flayer.object_id} if version == 2 else {burial.object_id}
+                self.assertEqual(expected_sources, {item.source_object_id for item in session.state.stack})
+                self.assertEqual({4 if version == 2 else 2}, {item.context["toughness"] for item in session.state.stack})
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(48 if version == 2 else 42, session.state.players["A"].life)
+                self.replay(session, load=True)
+
+    def test_entry_stat_threshold_reads_completed_entering_creature(self):
+        session = self.session(848602)
+        engine = session.engine
+        uprising = self.add(engine, "Garruk's Uprising")
+        ballista = self.add(engine, "Walking Ballista", zone="hand")
+        for card in (uprising, ballista):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 8})
+        self.checkpoint(session)
+        self.priority(session, "A")
+        action = self.action(session, "A", ballista)
+        result = session.act("pilot:A", {"action_id": action["id"], "x": 4, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        hand_after_cast = len(session.state.players["A"].zones["hand"])
+
+        self.resolve_top(session)
+        self.assertEqual(("battlefield", 4), (ballista.zone, engine._numeric_stat(ballista.object_id, "power")))
+        trigger, = session.state.stack
+        self.assertEqual((uprising.object_id, 4), (trigger.source_object_id, trigger.context["power"]))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(hand_after_cast + 1, len(session.state.players["A"].zones["hand"]))
+        self.replay(session, load=True)
 
     def test_actual_combat_damage_distinguishes_enchanted_modified_and_opposing_equipment(self):
         s=self.session(603108120)

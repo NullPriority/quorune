@@ -266,6 +266,53 @@
       "type_line": "Legendary Creature \u2014 Human Knight"
     },
     {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Garruk's Uprising",
+      "oracle_id": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
+      "oracle_text": "When this enchantment enters, if you control a creature with power 4 or greater, draw a card.\nCreatures you control have trample. (Each of those creatures can deal excess combat damage to the player or planeswalker it's attacking.)\nWhenever a creature you control with power 4 or greater enters, draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
       "cmc": 3,
       "color_identity": [
         "U"
@@ -806,6 +853,53 @@
       "type_line": "Basic Land \u2014 Plains"
     },
     {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Proper Burial",
+      "oracle_id": "e5bf77c2-a9b2-4366-8412-e263160403c1",
+      "oracle_text": "Whenever a creature you control dies, you gain life equal to that creature's toughness.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-05-05",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
       "cmc": 1.0,
       "color_identity": [
         "R"
@@ -1003,6 +1097,96 @@
     {
       "cmc": 4.0,
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Sultai Flayer",
+      "oracle_id": "df621822-c811-40fa-99c1-ea9920bcd2e2",
+      "oracle_text": "Whenever a creature you control with toughness 4 or greater dies, you gain 4 life.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Snake Shaman"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "banned",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{X}",
+      "name": "Walking Ballista",
+      "oracle_id": "4b515bb0-f275-4400-8032-3173b799ab40",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.\n{4}: Put a +1/+1 counter on this creature.\nRemove a +1/+1 counter from this creature: It deals 1 damage to any target.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": "0",
+      "type_line": "Artifact Creature \u2014 Construct"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -1050,6 +1234,42 @@
   ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
+    {
+      "comment": "If one or more static abilities that apply to a creature entering change its power, those abilities are considered when determining whether Garruk's Uprising's last ability triggers. The same is true for replacement effects that apply to it, such as entering with one or more +1/+1 counters or entering as a copy of another creature.",
+      "oracle_id": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't control a creature with power 4 or greater immediately after Garruk's Uprising enters, its first ability won't trigger. If you don't control one as the ability resolves, you don't draw a card. They don't have to be the same creature both times, however.",
+      "oracle_id": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the last ability of Garruk's Uprising has triggered, lowering the power of the creature or removing it from the battlefield won't stop you from drawing a card.",
+      "oracle_id": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The first ability of Garruk's Uprising has you draw just one card, no matter how many creatures you control with power 4 or greater.",
+      "oracle_id": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A casting cost of {X}{X} means that you pay twice X. If you want X to be 3, you pay {6} to cast Walking Ballista.",
+      "oracle_id": "4b515bb0-f275-4400-8032-3173b799ab40",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Walking Ballista has been dealt damage or had its toughness reduced by an effect, this limits how many times you'll be able to remove +1/+1 counters from it in a single turn. For example, if it has three +1/+1 counters on it and has been dealt 1 damage this turn, it will be destroyed immediately after you activate the ability a second time and you won't be able to activate it a third time.",
+      "oracle_id": "4b515bb0-f275-4400-8032-3173b799ab40",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
     {
       "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
       "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
@@ -1282,6 +1502,12 @@
       "comment": "Gaining control of an Aura or Equipment doesn't change what it's attached to.",
       "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
       "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Sultai Flayer dies, and its toughness is still 4 or greater, its own ability will trigger.",
+      "oracle_id": "df621822-c811-40fa-99c1-ea9920bcd2e2",
+      "published_at": "2017-11-17",
       "source": "wotc"
     }
   ],

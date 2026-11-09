@@ -4,12 +4,14 @@ from collections.abc import Mapping
 
 PERMANENT_EVENT_STATE_KEY='public_permanent_event_state'
 PERMANENT_EVENT_STATE_PREFIX='permanent_state_'
+ZONE_EVENT_NUMERICS_KEY = 'public_zone_event_numerics'
+ZONE_EVENT_NUMERICS_VERSION = 2
 STATE_QUALIFIED_ZONE_CAPABILITY='trigger.event.state_qualified_zone_change'
 STATE_QUALIFIED_DAMAGE_CAPABILITY='trigger.event.state_qualified_damage'
 
 
 def permanent_event_state_version(value):
-    if value is not None and (type(value) is not int or value!=1):
+    if value is not None and (type(value) is not int or value not in {1, ZONE_EVENT_NUMERICS_VERSION}):
         raise ValueError('Unsupported permanent event-state execution version')
     return value
 

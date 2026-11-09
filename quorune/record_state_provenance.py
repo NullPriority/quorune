@@ -192,7 +192,7 @@ def validate_state_versions(
         or ninjutsu_bands != ninjutsu_band_retention_version(getattr(state, 'ninjutsu_band_retention_version', None))):
         raise ValueError('Ninjutsu band retention provenance does not match the initial checkpoint')
     permanent_state=format_value.get('permanent_event_state_version',0)
-    if (type(permanent_state) is not int or permanent_state not in {0,1}
+    if (type(permanent_state) is not int
             or permanent_state!=(permanent_event_state_version(getattr(state,'permanent_event_state_version',None)) or 0)):
         raise ValueError('Permanent event-state version disagrees with checkpoint')
     unblocked=format_value.get('unblocked_attacker_event_version',0)
