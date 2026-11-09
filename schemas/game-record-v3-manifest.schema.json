@@ -192,7 +192,8 @@
         "permanent_event_state_version": {
           "enum": [
             0,
-            1
+            1,
+            2
           ],
           "type": "integer"
         },
