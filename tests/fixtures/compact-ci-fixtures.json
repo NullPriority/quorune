@@ -489,6 +489,7 @@
     "tests/fixtures/conditioned-multi-event-cards.json",
     "tests/fixtures/controlled-counter-cost-cards.json",
     "tests/fixtures/controlled-keyword-target-cards.json",
+    "tests/fixtures/controlled-return-choice-cards.json",
     "tests/fixtures/controller-damage-cards.json",
     "tests/fixtures/controller-sacrifice-cards.json",
     "tests/fixtures/copiable-entry-ability-grant-cards.json",

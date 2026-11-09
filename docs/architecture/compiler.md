@@ -1590,6 +1590,13 @@ counter is not a proxy for this state: removing all counters does not end it,
 while a new battlefield incarnation starts without it. Ordinary ability
 removal still governs the conditional ability that consumes the fact.
 
+Mandatory single-permanent returns at the controller's upkeep or end step use
+the existing controller-scoped resolution choice. The resolver evaluates the
+current type and color of eligible permanents, then moves the chosen object
+to its owner's hand. The source may qualify. Entry returns that specify two
+colors use their union and retain the existing source-entry binding. These
+effects carry no announced target schema.
+
 Permanent designation triggers use the closed event vocabulary in
 `compiler/trigger_event_vocabulary.py`; the node generator retains its existing
 import path for consumers. Exact self heads for becoming monstrous or renowned

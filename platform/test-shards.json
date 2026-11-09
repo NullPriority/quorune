@@ -1290,6 +1290,7 @@
       "test_compiled_emblems",
       "test_compound_activation_restrictions",
       "test_continuous_effect_duration",
+      "test_controlled_return_choices",
       "test_copiable_entry_ability_grants",
       "test_designation_event_bindings",
       "test_emblem_creation",

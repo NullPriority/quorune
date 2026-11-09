@@ -216,6 +216,8 @@ def _controlled_quality_query(
         fields["types_all"] = ("creature",)
     elif normalized in {"artifact", "artifacts"}:
         fields["types_all"] = ("artifact",)
+    elif normalized in {"enchantment", "enchantments"}:
+        fields["types_all"] = ("enchantment",)
     elif normalized.startswith("untapped "):
         subtype = _UNTAPPED_BASIC_LAND_SUBTYPES.get(
             normalized.removeprefix("untapped ")
@@ -227,7 +229,7 @@ def _controlled_quality_query(
         fields["tapped"] = False
     else:
         color_match = re.fullmatch(
-            r"(?P<colors>white|blue|black|red|green"
+            r"(?P<colors>(?:white|blue|black|red|green)"
             r"(?: or (?:white|blue|black|red|green))?) creatures?",
             normalized,
         )
@@ -239,6 +241,32 @@ def _controlled_quality_query(
             for value in color_match.group("colors").split(" or ")
         )
     return ObjectQuerySpec(**fields)
+
+
+def _return_choice_spec(match: re.Match[str]) -> FixedEntryReturnRequirementSpec | None:
+    count_word = match.group("count").casefold()
+    excludes_source = count_word == "another"
+    predicate = _controlled_quality_query(
+        match.group("quality"),
+        excludes_source=excludes_source,
+    )
+    if predicate is None:
+        return None
+    return FixedEntryReturnRequirementSpec(
+        count=_COUNT_WORDS[count_word],
+        predicate=predicate,
+        excludes_source=excludes_source,
+        sacrifice_source_unless_paid=match.group("unless") is not None,
+    )
+
+
+def fixed_controller_return_choice_template(text: str) -> FixedEntryReturnRequirementSpec | None:
+    """Lower a single controller-selected permanent return with no source role."""
+
+    if not text.lstrip().casefold().startswith(("return a ", "return an ")):
+        return None
+    match = _RETURN_BODY.fullmatch(" ".join(text.split()))
+    return _return_choice_spec(match) if match is not None else None
 
 
 def fixed_entry_return_requirement_spec(
@@ -297,20 +325,7 @@ def fixed_entry_return_requirement_spec(
     match = _ENTRY_RETURN.fullmatch(normalized)
     if match is None:
         return None
-    count_word = match.group("count").casefold()
-    excludes_source = count_word == "another"
-    predicate = _controlled_quality_query(
-        match.group("quality"),
-        excludes_source=excludes_source,
-    )
-    if predicate is None:
-        return None
-    return FixedEntryReturnRequirementSpec(
-        count=_COUNT_WORDS[count_word],
-        predicate=predicate,
-        excludes_source=excludes_source,
-        sacrifice_source_unless_paid=match.group("unless") is not None,
-    )
+    return _return_choice_spec(match)
 
 
 def fixed_entry_return_effect_template(
@@ -335,26 +350,15 @@ def fixed_entry_return_effect_template(
     match = _RETURN_BODY.fullmatch(normalized)
     if match is None:
         return None, (), None, ()
-    count_word = match.group("count").casefold()
-    excludes_source = count_word == "another"
-    predicate = _controlled_quality_query(
-        match.group("quality"),
-        excludes_source=excludes_source,
-    )
-    if predicate is None:
-        return None, (), None, ()
-    return FixedEntryReturnRequirementSpec(
-        count=_COUNT_WORDS[count_word],
-        predicate=predicate,
-        excludes_source=excludes_source,
-        sacrifice_source_unless_paid=match.group("unless") is not None,
-    ).compiled()
+    requirement = _return_choice_spec(match)
+    return requirement.compiled() if requirement is not None else (None, (), None, ())
 
 
 __all__ = [
     "FIXED_ENTRY_RETURN_CAPABILITY",
     "FIXED_ENTRY_RETURN_MECHANIC",
     "FixedEntryReturnRequirementSpec",
+    "fixed_controller_return_choice_template",
     "fixed_entry_return_effect_template",
     "fixed_entry_return_requirement_spec",
 ]

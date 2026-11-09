@@ -10,7 +10,10 @@ from .tap_state_event_bindings import tap_state_bound_result
 from .scalar_effect_amounts import trigger_scalar_effect_amount_template
 from .token_copy_templates import token_copy_recipe_template
 from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
-from .fixed_entry_return_requirements import fixed_entry_return_effect_template
+from .fixed_entry_return_requirements import (
+    fixed_controller_return_choice_template,
+    fixed_entry_return_effect_template,
+)
 from .endure_templates import binding_endure_trigger_result
 
 
@@ -21,6 +24,10 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         returned = relative_target_reanimation_template(body, card_name=card_name, event=event)
         if returned is not None:
             return returned, False
+    if binding.variant in {"your upkeep", "your end step"} and body == binding.body:
+        return_choice = fixed_controller_return_choice_template(body)
+        if return_choice is not None:
+            return return_choice.compiled(), False
     if binding.variant == "source_attacks" and body == binding.body:
         from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
         conditional_return = conditional_reanimation_entry_counter_template(body, card_name=card_name)
