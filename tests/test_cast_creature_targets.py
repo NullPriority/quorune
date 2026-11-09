@@ -222,10 +222,11 @@ class CastCreatureTargetActionTests(unittest.TestCase):
         self.assertEqual(0,s.state.cards['cast-qualifier:OPPONENT-SOURCE'].counters.get('+1/+1',0));self.replay(s)
 
     def test_cast_target_fact_omission_mutant_is_killed_by_actual_trigger_outcome(self):
-        from quorune.rules.casting import commit as owner
-        with mock.patch.object(owner,'_cast_creature_target_controllers',return_value=()):
-            with self.assertRaises(AssertionError):
+        with mock.patch('quorune.rules.casting.commit.cast_creature_target_controllers',
+                        return_value=()) as omitted:
+            with self.assertRaisesRegex(AssertionError, r'^2 != 1$'):
                 self.test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback()
+            omitted.assert_called_once()
 
     def test_aura_cast_qualifies_controlled_creature_draw_but_not_repartee_with_private_replay(self):
         s=self.session(1150902);e=s.engine;growth=self.add(e,'Season of Growth','SEASON')

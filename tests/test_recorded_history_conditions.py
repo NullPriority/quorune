@@ -7,6 +7,7 @@ import unittest
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
+from quorune.attachments import attach_objects
 from quorune.carddb import CardDatabase
 from quorune.compiler.public_state_queries import fixed_public_state_condition
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
@@ -273,3 +274,40 @@ class RecordedHistoryConditionNativeTests(InheritedNativeFixture, unittest.TestC
                 self.assertIsNone(self.resolve(session))
                 self.assertEqual(["Bat Token"] if target == "A" else [], self._token_names(session))
                 self.replay(session)
+
+    def test_actual_lunar_counts_simultaneous_damage_loss_and_lifelink_at_net_zero(self):
+        session = self.session(603_694_152)
+        engine = session.engine
+        lunar = self.add(engine, "Lunar Convocation")
+        pinger = self.add(engine, "Prodigal Sorcerer")
+        collar = self.add(engine, "Basilisk Collar")
+        attach_objects(session.state.cards, collar, pinger,
+                       source_timestamp=collar.zone_timestamp, players=session.state.players)
+        pinger.acquired_control_turn_count = -1
+        for source in (lunar, pinger, collar):
+            self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        life = session.state.players["A"].life
+        offer = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                     if row["id"].startswith(f"activate:{pinger.ref}:"))
+        command = {"action_id": offer["id"], "targets": ["A"], "pay": "auto"}
+        unchanged = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(unchanged, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(life, session.state.players["A"].life)
+        facts = [(event.kind, event.amount) for event in session.state.turn_history.events
+                 if event.target == "A" and event.kind in {"player_gained_life", "player_lost_life"}]
+        self.assertCountEqual([("player_gained_life", 1), ("player_lost_life", 1)], facts)
+        session = self.replay(session, load=True)
+        self.end_step(session)
+        triggers = sum(item.source_object_id == lunar.object_id for item in session.state.stack)
+        self.assertEqual(2, triggers)
+        opponent_life = session.state.players["B"].life
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(["Bat Token"], self._token_names(session))
+        self.assertEqual(opponent_life - 1, session.state.players["B"].life)
+        self.replay(session)

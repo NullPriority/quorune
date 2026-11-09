@@ -355,6 +355,12 @@ the existing typed spending-purpose context. Sources are rechecked after mana
 activations before the final spend; ordinary later sacrifice prices do not
 retroactively invalidate an already paid mana cost.
 
+Printed mana cost authority version two carries each printed snow symbol as a
+separate obligation on the chosen cast option. The offer and committed payment
+use the same snow provenance query. Generic adjustments affect the ordinary
+mana vector, while the snow obligation consumes an eligible source unit.
+Historical version-one records keep their original printed-cost behavior.
+
 `rules/casting/spell_mana_payments.py` reads actual committed spell payments
 into the bounded turn-history owner and captures Expend occurrences before
 later casting costs remove their sources. The cast coordinator retains those
@@ -698,7 +704,10 @@ Server and browser forms share subset bounds and mandatory completion metadata.
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
 the same permanent, counters, damage, attachments and acquisition history.
-For current games, a successful double-faced transform receives a fresh
+In current games, a physical modal double-faced permanent can transform to its
+other permanent face. The eligibility mode is independent of transform
+timestamps and the existing nonmodal daybound and nightbound procedures.
+A successful double-faced transform receives a fresh
 timestamp from the canonical zone clock under CR 613.7g. The explicit
 `transform_timestamp_version` checkpoint marker preserves historical absent-mode
 timestamps and replay. Failed or stale transform instructions consume no new
@@ -724,6 +733,10 @@ snapshots derive the copy's mana value from the copied face's own mana cost;
 they do not copy the original's derived front-face value. A copy of a
 transforming back face therefore has mana value zero. Modal faces and split
 card stack and prospective views retain their separate selected-face rules.
+For a split permanent with a shared printed type line and a single active
+face, the battlefield view derives mana value and colors from that face
+under CR 202.2, 202.3, and 709.5. The ordinary target-legality query reads
+the same values.
 
 Current face-down copy reads use the existing layer-1b values and an anonymous
 copiable source. Listed Ward remains part of those values; the hidden printed

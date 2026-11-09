@@ -23,12 +23,20 @@ from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
 from .ability_source_information import ability_source_information_version
 from .qualified_attack_model import qualified_attack_facts_version
-from .permanent_event_state_model import permanent_event_state_version
+from .permanent_event_state_model import ZONE_EVENT_NUMERICS_VERSION, permanent_event_state_version
 from .battle_cry_resolution_model import battle_cry_resolution_version
 from .block_characteristic_model import block_characteristics_version
 from .unblocked_attacker_model import unblocked_attacker_event_version
-from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION, cast_face_offers_version, omen_resolution_binding
-from .cast_source_placement_model import cast_source_placement_version
+from .cast_face_offers import (
+    CURRENT_CAST_FACE_OFFERS_VERSION,
+    cast_face_offers_version,
+    omen_resolution_binding,
+    selected_face_state_fields,
+    split_permanent_face_values_version,
+)
+from .cast_source_placement_model import (
+    cast_placement_state_fields, cast_source_placement_version, read_target_announcement_timing_version,
+)
 from .phasing_model import PhasingRecord, phasing_lifecycle_version
 from .printed_mana_cost_model import (
     CURRENT_PRINTED_MANA_COST_VERSION,
@@ -36,7 +44,7 @@ from .printed_mana_cost_model import (
     read_printed_mana_cost_version,
 )
 from .explore_action_model import explore_action_version
-from .transform_timestamp_model import transform_timestamp_version
+from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version
 from .face_status_timestamp_model import face_status_timestamp_version
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
@@ -187,6 +195,7 @@ class TurnHistory:
     spell_mana_history_version: int | None = None
     crime_history_version: int | None = None
     committed_occurrence_history_version: int | None = None
+    damage_life_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -205,6 +214,9 @@ class TurnHistory:
         occurrence_version = self.committed_occurrence_history_version
         if occurrence_version is not None and (type(occurrence_version) is not int or occurrence_version != 1):
             raise ValueError("Unsupported committed occurrence history version")
+        damage_life_version = self.damage_life_history_version
+        if damage_life_version is not None and (type(damage_life_version) is not int or damage_life_version != 1):
+            raise ValueError("Unsupported damage life history version")
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
@@ -257,6 +269,8 @@ class TurnHistory:
             **({"crime_history_version":1} if self.crime_history_version is not None else {}),
             **({"committed_occurrence_history_version": 1}
                if self.committed_occurrence_history_version is not None else {}),
+            **({"damage_life_history_version": 1}
+               if self.damage_life_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -295,6 +309,7 @@ class TurnHistory:
             spell_mana_history_version=data.get("spell_mana_history_version"),
             crime_history_version=data.get("crime_history_version"),
             committed_occurrence_history_version=data.get("committed_occurrence_history_version"),
+            damage_life_history_version=data.get("damage_life_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)
@@ -1092,11 +1107,14 @@ class GameState:
     ability_source_information_version: int | None = 1
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
+    target_announcement_timing_version: int | None = None
     phasing_lifecycle_version: int | None = 1
     printed_mana_cost_version: int | None = CURRENT_PRINTED_MANA_COST_VERSION
     explore_action_version: int | None = 1
     transform_timestamp_version: int | None = 1
+    modal_dfc_transform_version: int | None = 1
     face_status_timestamp_version: int | None = 1
+    split_permanent_face_values_version: int | None = 1
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
     characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION
@@ -1104,7 +1122,7 @@ class GameState:
     token_copy_value_version: int | None = 1
     predefined_token_name_version: int | None = 1
     qualified_attack_facts_version: int | None = 1
-    permanent_event_state_version: int | None = 1
+    permanent_event_state_version: int | None = ZONE_EVENT_NUMERICS_VERSION
     battle_cry_resolution_version: int | None = 1
     ninjutsu_band_retention_version: int | None = 1
     block_characteristics_version: int | None = 1
@@ -1152,11 +1170,10 @@ class GameState:
             self.counter_quantity_provenance_version
         )
         ability_source_information_version(self.ability_source_information_version)
-        cast_face_offers_version(self.cast_face_offers_version)
-        cast_source_placement_version(self.cast_source_placement_version)
         phasing_version = phasing_lifecycle_version(self.phasing_lifecycle_version)
         explore_action_version(self.explore_action_version)
         transform_timestamp_version(self.transform_timestamp_version)
+        modal_dfc_transform_version(self.modal_dfc_transform_version)
         face_status_timestamp_version(self.face_status_timestamp_version)
         face_down_characteristics_version(self.face_down_characteristics_version)
         library_selection_knowledge_version(self.library_selection_knowledge_version)
@@ -1217,12 +1234,14 @@ class GameState:
                 {"counter_quantity_provenance_version": counter_provenance_version}
                 if counter_provenance_version is not None else {}
             ),
-            **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
-            **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
+            **selected_face_state_fields(self.cast_face_offers_version, self.split_permanent_face_values_version),
+            **cast_placement_state_fields(self.cast_source_placement_version, self.target_announcement_timing_version),
             **({"phasing_lifecycle_version": phasing_version} if phasing_version is not None else {}),
             **printed_mana_cost_format_fields(self.printed_mana_cost_version),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
             **({'transform_timestamp_version':self.transform_timestamp_version} if self.transform_timestamp_version is not None else {}),
+            **({"modal_dfc_transform_version": self.modal_dfc_transform_version}
+               if self.modal_dfc_transform_version is not None else {}),
             **({'face_status_timestamp_version':self.face_status_timestamp_version} if self.face_status_timestamp_version is not None else {}),
             **({'face_down_characteristics_version':self.face_down_characteristics_version} if self.face_down_characteristics_version is not None else {}),
             **({'library_selection_knowledge_version':self.library_selection_knowledge_version} if self.library_selection_knowledge_version is not None else {}),
@@ -1300,11 +1319,16 @@ class GameState:
                 data.get("effect_destruction_replacement_version")
             ),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
+            target_announcement_timing_version=read_target_announcement_timing_version(data),
             phasing_lifecycle_version=phasing_lifecycle_version(data.get("phasing_lifecycle_version")),
             printed_mana_cost_version=read_printed_mana_cost_version(data),
             explore_action_version=explore_action_version(data.get('explore_action_version')),
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),
+            modal_dfc_transform_version=modal_dfc_transform_version(data.get("modal_dfc_transform_version")),
             face_status_timestamp_version=face_status_timestamp_version(data.get('face_status_timestamp_version')),
+            split_permanent_face_values_version=split_permanent_face_values_version(
+                data.get("split_permanent_face_values_version"),
+            ),
             face_down_characteristics_version=face_down_characteristics_version(data.get('face_down_characteristics_version')),
             library_selection_knowledge_version=library_selection_knowledge_version(data.get('library_selection_knowledge_version')),
             characteristic_query_boundary_version=characteristic_query_boundary_version(data.get('characteristic_query_boundary_version')),

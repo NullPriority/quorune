@@ -70282,7 +70282,7 @@
           "Qualified principal-correct typed trigger binding",
           "Copy and retarget do not become spell casts"
         ],
-        "summary": "Publish one sealed public occurrence for each newly targeted permanent after authoritative cast, activation, triggered target selection, copy or retarget commit."
+        "summary": "Detect newly targeted current permanents through one sealed event owner. Initial cast and activation occurrences detect triggers at announcement before paying costs and place them only after the action completes. Trigger target selection, copies, and retargeting retain their ordinary commit boundaries."
       },
       "blockers": [],
       "dependencies": [
@@ -70296,7 +70296,8 @@
         "quorune.rules.target_announcements.TargetAnnouncement",
         "quorune.rules.target_announcements.dispatch_target_announcements",
         "quorune.compiler.target_announcement_bindings.target_announcement_binding_spec",
-        "quorune.compiler.trigger_result_templates.binding_effect_template"
+        "quorune.compiler.trigger_result_templates.binding_effect_template",
+        "quorune.rules.target_announcements.announce_initial_target_triggers"
       ],
       "implementation_mutation_rationale": "Removing target dispatch prevents an actual registered targeted cast from generating its printed trigger and is killed; missing APNAP or target dependencies independently prevent compiler admission.",
       "implementation_mutation_status": "killed",
@@ -70304,7 +70305,8 @@
         "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
         "test_copy_and_retarget_owner_publish_new_targets_without_creating_casts",
         "test_actual_targeted_illusion_sacrifices_before_spell_and_replays",
-        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation"
+        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+        "test_targeted_cast_and_activation_capture_before_sacrificing_target"
       ],
       "multiplayer_tests": [
         "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw"
@@ -70312,7 +70314,8 @@
       "negative_tests": [
         "test_current_phased_or_departed_target_creates_no_occurrence",
         "test_cast_target_occurrence_never_appears_after_invalid_target_rollback",
-        "test_target_announcement_compiler_dependency_and_implementation_mutants_fail_closed"
+        "test_target_announcement_compiler_dependency_and_implementation_mutants_fail_closed",
+        "test_targeted_cast_and_activation_capture_before_sacrificing_target"
       ],
       "official_rules": [
         "115.1",
@@ -70320,17 +70323,21 @@
         "115.7",
         "400.7",
         "601.2c",
+        "601.2h",
         "601.2i",
         "602.2b",
         "603.2",
         "603.3",
-        "603.3a"
+        "603.3a",
+        "702.21a",
+        "733.1"
       ],
       "positive_tests": [
         "test_target_occurrence_pins_stack_controller_and_each_current_object_once",
         "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
         "test_actual_triggered_target_choice_announces_only_committed_target",
-        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation"
+        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+        "test_targeted_cast_and_activation_capture_before_sacrificing_target"
       ],
       "privacy_tests": [
         "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw",
@@ -70339,7 +70346,8 @@
       "replay_tests": [
         "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
         "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw",
-        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation"
+        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+        "test_targeted_cast_and_activation_capture_before_sacrificing_target"
       ],
       "required_evidence": [
         "positive",

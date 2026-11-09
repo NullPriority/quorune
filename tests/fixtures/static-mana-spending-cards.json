@@ -1231,6 +1231,194 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "banned",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{S}",
+      "name": "Arcum's Astrolabe",
+      "oracle_id": "ec463bde-dadf-4044-8e41-71338fd4d62f",
+      "oracle_text": "({S} can be paid with one mana from a snow source.)\nWhen this artifact enters, draw a card.\n{1}, {T}: Add one mana of any color.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Snow Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Foundry Inspector",
+      "oracle_id": "18f22960-87ec-43cd-82ea-ec5cabf49ad3",
+      "oracle_text": "Artifact spells you cast cost {1} less to cast.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Construct"
+    },
+    {
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "name": "Snow-Covered Forest",
+      "mana_cost": "",
+      "type_line": "Basic Snow Land — Forest",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Thalia, Guardian of Thraben",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "oracle_text": "First strike\nNoncreature spells cost {1} more to cast.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": "1",
+      "type_line": "Legendary Creature — Human Soldier"
     }
   ],
   "rulings": [
@@ -1425,6 +1613,78 @@
       "published_at": "2008-10-01",
       "source": "wotc",
       "comment": "This effect can reduce only the generic portion of the artifact spell's total cost."
+    },
+    {
+      "comment": "If an artifact spell has {X} in its mana cost, choose the value for X first, and then reduce the cost by {1}. For example, an artifact that costs {X} with X chosen as 4 costs {3} to cast if you control Foundry Inspector.",
+      "oracle_id": "18f22960-87ec-43cd-82ea-ec5cabf49ad3",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a player has announced an artifact spell, no player may take actions to try to remove Foundry Inspector from the battlefield before that spell's cost is locked in.",
+      "oracle_id": "18f22960-87ec-43cd-82ea-ec5cabf49ad3",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Limited event (usually Booster Draft or Sealed Deck), you can't add basic snow lands to your card pool as you would other basic lands. You can play with basic snow lands only if you open them in your sealed deck or draft them.",
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Snow is a supertype, not a card type. It has no rules meaning or function by itself, but spells and abilities may refer to it.",
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Snow isn't a type of mana. If an effect says you may spend mana as though it were any type, you can't pay for {S} using mana that wasn't produced by a snow source.",
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some cards have additional effects for each {S} spent to cast them. You can cast these spells even if you don't spend any snow mana to cast them; their additional effects simply won't do anything.",
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Kaldheim set doesn't have any cards with mana costs that include {S}, but some previous sets do. If an effect says such a spell costs {1} less to cast, that reduction doesn't apply to any {S} costs. This is also true for activated abilities that include {S} in their activation costs and effects that reduce those costs.",
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "The {S} symbol is a generic mana symbol. It represents a cost that can be paid by one mana that was produced by a snow source. That mana can be any color or colorless.",
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Thalia's ability affects each spell that's not a creature spell, including your own.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Thalia's ability affects each spell that's not a creature spell, including your own.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2021-11-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2021-11-19",
+      "source": "wotc"
     }
   ]
 }

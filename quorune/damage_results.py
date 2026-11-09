@@ -173,7 +173,7 @@ class _MaterializationState:
 @dataclass(slots=True)
 class _CommitDeltas:
     records: list[DamageResultRecord]
-    player_life: dict[str, int]
+    player_life: list[LifeChange]
     player_poison: dict[str, int]
     permanent_counter_add: dict[tuple[str, str], int]
     permanent_counter_remove: dict[tuple[str, str], int]
@@ -991,7 +991,7 @@ def _result_record(event: ReplaceableEvent) -> DamageResultRecord:
 def _new_commit_deltas() -> _CommitDeltas:
     return _CommitDeltas(
         records=[],
-        player_life={},
+        player_life=[],
         player_poison={},
         permanent_counter_add={},
         permanent_counter_remove={},
@@ -1051,9 +1051,7 @@ def _accumulate_player_leaf(
         )
     if child.kind == "life.change":
         sign = 1 if record.direction == "gain" else -1
-        deltas.player_life[player] = (
-            deltas.player_life.get(player, 0) + sign * record.amount
-        )
+        deltas.player_life.append(LifeChange(player, sign * record.amount))
         return
     if child.kind == "counter.place":
         if record.counter_name != "poison":
@@ -1160,14 +1158,18 @@ def _validate_counter_delta_conflicts(deltas: _CommitDeltas) -> None:
 def _life_state_plan(
     host: DamageResultHost, deltas: _CommitDeltas
 ) -> LifeStatePlan:
+    history = getattr(host.state, "turn_history", None)
+    changes = deltas.player_life
+    if getattr(history, "damage_life_history_version", None) != 1:
+        # Historical records used one net transition per player.
+        totals: dict[str, int] = {}
+        for change in changes:
+            totals[change.player] = totals.get(change.player, 0) + change.amount
+        changes = [
+            LifeChange(player, amount) for player, amount in sorted(totals.items())
+        ]
     try:
-        return plan_life_changes(
-            host,
-            tuple(
-                LifeChange(player=player, amount=amount)
-                for player, amount in sorted(deltas.player_life.items())
-            ),
-        )
+        return plan_life_changes(host, changes)
     except LifeStateError as exc:
         raise DamageResultError(str(exc)) from exc
 

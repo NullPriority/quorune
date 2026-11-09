@@ -8,6 +8,14 @@ def transform_timestamp_version(value):
     return value
 
 
+def modal_dfc_transform_version(value: int | None) -> int | None:
+    if value is None:
+        return None
+    if type(value) is not int or value != 1:
+        raise ValueError("Unsupported modal double-faced transform version")
+    return value
+
+
 def ordered_transform_cards(cards,apnap_order):
     order=tuple(apnap_order);cards=tuple(cards)
     if len(order)!=len(set(order)) or any(card.controller not in order for card in cards):

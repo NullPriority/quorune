@@ -433,17 +433,22 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
         self.assertIn('self.assertFalse(session.act', result.failures[0][1])
 
     def test_overload_program_selection_omission_is_killed_before_wrong_body_can_execute(self):
-        import inspect
-        from quorune.rules.casting import proposal as owner
-        source = inspect.getsource(owner._cast_program_and_cost)
-        line = 'program = select_text_variant_proposal_program(host, card, program, selected.to_dict())'
-        self.assertEqual(1, source.count(line))
-        namespace = dict(vars(owner))
-        exec(source.replace(line, 'program = program'), namespace)
+        from quorune.rules.casting import fixed_text_variant_costs as owner
+
+        original = owner.select_text_variant_proposal_program
+        omitted_cost_ids = set()
+
+        def omit_overload_selection(host, card, program, option):
+            if option.get('overload') is None:
+                return original(host, card, program, option)
+            omitted_cost_ids.add(option['id'])
+            return program
+
         result = unittest.TestResult()
         witness = type(self)('test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature')
-        with mock.patch.object(owner, '_cast_program_and_cost', namespace['_cast_program_and_cost']):
+        with mock.patch.object(owner, 'select_text_variant_proposal_program', omit_overload_selection):
             witness.run(result)
+        self.assertEqual({'overload'}, omitted_cost_ids)
         self.assertFalse(result.errors)
         self.assertEqual(1, len(result.failures))
-        self.assertIn('self.assertTrue(result.ok', result.failures[0][1])
+        self.assertIn('The selected spell program does not match its paid text variant', result.failures[0][1])

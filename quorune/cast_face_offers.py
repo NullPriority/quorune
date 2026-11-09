@@ -60,5 +60,23 @@ def cast_face_offers_version(value):
     return value
 
 
+def split_permanent_face_values_version(value: object) -> int | None:
+    if value is None:
+        return None
+    if type(value) is not int or value != 1:
+        raise ValueError("Unsupported split permanent face value version")
+    return value
+
+
+def selected_face_state_fields(
+    cast_offers: int | None, split_permanent_values: int | None,
+) -> dict[str, int]:
+    versions = (
+        ("cast_face_offers_version", cast_face_offers_version(cast_offers)),
+        ("split_permanent_face_values_version", split_permanent_face_values_version(split_permanent_values)),
+    )
+    return {key: version for key, version in versions if version is not None}
+
+
 def complete_cast_face_offers(state):
     return cast_face_offers_version(getattr(state,'cast_face_offers_version',None)) is not None

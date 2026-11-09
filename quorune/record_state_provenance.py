@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
 from .printed_mana_cost_model import (
     PRINTED_MANA_COST_VERSION_FIELD,
@@ -42,16 +43,22 @@ def format_state_versions(state: Any) -> dict[str, int]:
         ),
         **({"arrival_history_version":1} if getattr(getattr(state,"turn_history",None),"arrival_history_version",None)==1 else {}),
         **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
-            'crime_history_version','committed_occurrence_history_version')
+            'crime_history_version','committed_occurrence_history_version','damage_life_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
-        **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
+        **cast_placement_state_fields(
+            getattr(state, "cast_source_placement_version", None), getattr(state, "target_announcement_timing_version", None),
+        ),
         **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
            if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
         **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
+        **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
+           if getattr(state, "modal_dfc_transform_version", None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
+        **({"split_permanent_face_values_version": state.split_permanent_face_values_version}
+           if getattr(state, "split_permanent_face_values_version", None) is not None else {}),
         **({'face_down_characteristics_version':state.face_down_characteristics_version} if getattr(state,'face_down_characteristics_version',None) is not None else {}),
         **({'library_selection_knowledge_version':state.library_selection_knowledge_version} if getattr(state,'library_selection_knowledge_version',None) is not None else {}),
         **({'characteristic_query_boundary_version':state.characteristic_query_boundary_version} if getattr(state,'characteristic_query_boundary_version',None) is not None else {}),
@@ -113,7 +120,7 @@ def validate_state_versions(
     actual_arrival=getattr(getattr(state,'turn_history',None),'arrival_history_version',None) or 0
     if type(arrival) is not int or arrival not in {0,1} or arrival!=actual_arrival:raise ValueError('Arrival-history provenance does not match the initial checkpoint')
     for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
-                'crime_history_version','committed_occurrence_history_version'):
+                'crime_history_version','committed_occurrence_history_version','damage_life_history_version'):
         declared=format_value.get(key,0);actual=getattr(getattr(state,'turn_history',None),key,None) or 0
         if type(declared) is not int or declared not in {0,1} or declared!=actual:raise ValueError('Qualified history provenance does not match the initial checkpoint')
     tap_version = format_value.get("tap_state_event_version", 0)
@@ -134,13 +141,27 @@ def validate_state_versions(
     placement=format_value.get('cast_source_placement_version',0)
     if type(placement) is not int or placement not in {0,1} or placement!=(cast_source_placement_version(getattr(state,'cast_source_placement_version',None)) or 0):
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')
+    if read_target_announcement_timing_version(format_value) != getattr(state, "target_announcement_timing_version", None):
+        raise ValueError("Target announcement timing provenance does not match the initial checkpoint")
     if read_printed_mana_cost_version(format_value) != getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None):
         raise ValueError("Printed mana cost authority provenance does not match the initial checkpoint")
-    from .transform_timestamp_model import transform_timestamp_version
+    from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version
     timestamp=format_value.get('transform_timestamp_version',0)
     if (type(timestamp) is not int or timestamp not in {0,1}
             or timestamp!=(transform_timestamp_version(getattr(state,'transform_timestamp_version',None)) or 0)):
         raise ValueError('Transform timestamp provenance does not match the initial checkpoint')
+    modal_transform = format_value.get("modal_dfc_transform_version", 0)
+    actual_modal_transform = modal_dfc_transform_version(getattr(state, "modal_dfc_transform_version", None)) or 0
+    if type(modal_transform) is not int or modal_transform not in {0, 1} or modal_transform != actual_modal_transform:
+        raise ValueError("Modal double-faced transform provenance does not match the initial checkpoint")
+    split_face_field = "split_permanent_face_values_version"
+    split_face_version = format_value.get(split_face_field)
+    if (
+        split_face_version != getattr(state, split_face_field, None)
+        or split_face_field in format_value
+        and (type(split_face_version) is not int or split_face_version != 1)
+    ):
+        raise ValueError("Split permanent face value provenance does not match the initial checkpoint")
     from .face_status_timestamp_model import face_status_timestamp_version
     face_status=format_value.get('face_status_timestamp_version',0)
     if (type(face_status) is not int or face_status not in {0,1}
@@ -171,7 +192,7 @@ def validate_state_versions(
         or ninjutsu_bands != ninjutsu_band_retention_version(getattr(state, 'ninjutsu_band_retention_version', None))):
         raise ValueError('Ninjutsu band retention provenance does not match the initial checkpoint')
     permanent_state=format_value.get('permanent_event_state_version',0)
-    if (type(permanent_state) is not int or permanent_state not in {0,1}
+    if (type(permanent_state) is not int
             or permanent_state!=(permanent_event_state_version(getattr(state,'permanent_event_state_version',None)) or 0)):
         raise ValueError('Permanent event-state version disagrees with checkpoint')
     unblocked=format_value.get('unblocked_attacker_event_version',0)

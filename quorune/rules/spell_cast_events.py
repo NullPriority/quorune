@@ -506,4 +506,20 @@ class SpellCopyEvent:
         ).hexdigest()
 
 
-__all__ = ["SpellCastEvent", "SpellCastEventError", "SpellCopyEvent"]
+def cast_creature_target_controllers(host: Any, item: Any) -> tuple[str, ...]:
+    """CR 115.9b: read targets still in their expected zone at cast completion."""
+    controllers: set[str] = set()
+    for ref in dict.fromkeys(item.targets):
+        snapshot = item.context.get("target_snapshots", {}).get(ref)
+        if not isinstance(snapshot, Mapping) or not host._target_identity_matches_snapshot(ref, snapshot):
+            continue
+        card = next((card for card in host.state.cards.values() if card.ref == ref and card.zone == "battlefield" and not card.phased_out), None)
+        if card is None:
+            continue
+        types, _, _ = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
+        if "creature" in types:
+            controllers.add(card.controller)
+    return tuple(sorted(controllers))
+
+
+__all__ = ["SpellCastEvent", "SpellCastEventError", "SpellCopyEvent", "cast_creature_target_controllers"]

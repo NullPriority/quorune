@@ -7,7 +7,12 @@ from .carddb import CardRecord
 from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION
 from .model import CardInstance
 from .omen import omen_characteristic_face
-from .rules.face_characteristic_values import printed_face_mana_value,printed_face_colors,current_face_mana_value
+from .rules.face_characteristic_values import (
+    current_face_mana_value,
+    has_shared_permanent_type_line,
+    printed_face_colors,
+    printed_face_mana_value,
+)
 from .defined_token_faces import (
     DEFINED_TOKEN_FACES_FIELD, DEFINED_TOKEN_IDENTITY_FIELD, defined_token_characteristic_values,
     defined_token_current_characteristics, defined_token_copiable_characteristics,
@@ -103,6 +108,7 @@ def base_card_characteristics(
     *,
     cast_face_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION,
     public_zone_front_faces: bool = False,
+    split_permanent_face_values_version: int | None = 1,
 ) -> dict[str, Any]:
     """Adapt printed or custom object data to the shared evaluator schema."""
 
@@ -167,7 +173,14 @@ def base_card_characteristics(
         )
     if record.layout=='prepare' and not values.get('is_prepare_spell'):
         face=record.faces[0]
-    selected=face is not None and (record.layout!='split' or card.zone=='stack' or card.annotations.get('prospective_cast_face') is True)
+    selected = face is not None and (
+        record.layout != "split" or card.zone == "stack"
+        or card.annotations.get("prospective_cast_face") is True
+        or (
+            split_permanent_face_values_version == 1 and card.zone == "battlefield"
+            and has_shared_permanent_type_line(record)
+        )
+    )
     return {
         "name": str(face.get("name")) if face else record.name,
         "mana_cost": str(face.get("mana_cost") or "") if face else record.mana_cost,

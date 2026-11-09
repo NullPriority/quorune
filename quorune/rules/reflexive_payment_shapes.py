@@ -48,3 +48,16 @@ def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids)
             *payment.capabilities, *child_capabilities}))
     except (KeyError, TypeError, ValueError):
         return ()
+
+
+def reflexive_payment_runtime_dependencies(program):
+    """Independently bind the cost and later effect of a reflexive instruction."""
+    effects = program.effects
+    if not any(effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 4 for effect in effects):
+        return ()
+    owned = reflexive_payment_node_capabilities(
+        effects=effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not owned:
+        raise ValueError('Reflexive payment requires a closed cost and an independently owned child')
+    return owned

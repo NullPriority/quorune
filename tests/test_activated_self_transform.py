@@ -136,6 +136,39 @@ class TransformTimestampVersionTests(unittest.TestCase):
                     {'format':{**modern['format'],'transform_timestamp_version':bad}},state)
 
 
+    def test_modal_transform_eligibility_has_independent_replay_provenance(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        key = "modal_dfc_transform_version"
+        state = self.state()
+        wire = state.to_dict()
+        self.assertEqual(1, wire[key])
+        self.assertEqual(wire, GameState.from_dict(wire).to_dict())
+        modern = {"format": format_state_versions(state)}
+        self.assertEqual(1, modern["format"][key])
+        validate_state_versions(modern, state)
+
+        old = {name: value for name, value in wire.items() if name != key}
+        legacy = GameState.from_dict(old)
+        self.assertIsNone(legacy.modal_dfc_transform_version)
+        self.assertEqual(1, legacy.transform_timestamp_version)
+        self.assertEqual(old, legacy.to_dict())
+        historical = {"format": format_state_versions(legacy)}
+        self.assertNotIn(key, historical["format"])
+        validate_state_versions(historical, legacy)
+
+        for manifest, value in ((historical, state), (modern, legacy)):
+            with self.assertRaises(ValueError):
+                validate_state_versions(manifest, value)
+        for bad in (True, False, 0, 2, "1", {}):
+            with self.subTest(bad=bad):
+                with self.assertRaises(ValueError):
+                    GameState.from_dict({**wire, key: bad})
+                with self.assertRaises(ValueError):
+                    validate_state_versions({"format": {**modern["format"], key: bad}}, state)
+
+
 class ActivatedTransformCompilerTests(unittest.TestCase):
     def test_fixed_self_transform_has_same_generic_owner_and_count_snapshot(self):
         registry=load_default_capability_registry();record=query_record('{6}: Transform this creature.')
@@ -196,6 +229,66 @@ class ActivatedTransformRuntimeTests(unittest.TestCase):
 
     def activation(self,s,card):
         return next(a for a in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if a['id'].startswith('activate:'+card.ref+':') and 'Transform' in a['label'])
+
+
+    def test_actual_modal_transform_reaches_permanent_face_in_place(self):
+        session = self.session(326007)
+        engine = session.engine
+        source = self.add(engine, "Monica Rambeau // Photon, Living Light", zone="hand")
+        offer = self.ready(session, source, {"C": 4, "W": 3, "R": 1})
+        self.assertEqual(f"cast:{source.ref}", offer["id"])
+        self.checkpoint(session)
+        cast = session.act("pilot:A", {
+            "action_id": offer["id"], "pay": "auto", "reserve": {"C": 2, "W": 2, "R": 1},
+        })
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(session))
+
+        current = engine.state.cards[source.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertEqual("Monica Rambeau", current.active_face)
+        identity, timestamp = current.logical_object_id, current.zone_timestamp
+        command = {"action_id": self.activation(session, current)["id"], "pay": "auto"}
+        before = authoritative_state_hash(engine.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        activated = session.act("pilot:A", command)
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertEqual(0, engine.state.stack[-1].context.get("source_transform_count"))
+        self.assertFalse(any(engine.state.players["A"].mana_pool.values()))
+        self.assertIsNone(self.resolve(session))
+
+        current = engine.state.cards[source.object_id]
+        self.assertEqual("Photon, Living Light", current.active_face)
+        self.assertEqual(identity, current.logical_object_id)
+        self.assertEqual(1, current.transform_count)
+        self.assertGreater(current.zone_timestamp, timestamp)
+        events = [event for event in engine.state.events
+                  if event.code == "permanent.transform" and event.details["object"] == source.ref]
+        self.assertEqual(1, len(events))
+        self.replay(session, load=True)
+
+    def test_modal_transform_to_sorcery_leaves_the_land_unchanged(self):
+        from quorune.permanent_transform import transform_permanent
+
+        session = self.session(326008)
+        engine = session.engine
+        source = self.add(engine, "Bala Ged Recovery // Bala Ged Sanctuary", zone="hand")
+        self.ready(session, source, {})
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(action for action in actions if action["id"].startswith(f"play-land:{source.ref}"))
+        self.checkpoint(session)
+        played = session.act("pilot:A", {"action_id": offer["id"]})
+        self.assertTrue(played.ok, played.summary)
+        current = engine.state.cards[source.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertEqual("Bala Ged Sanctuary", current.active_face)
+        before = authoritative_state_hash(engine.state)
+        self.assertIsNone(transform_permanent(
+            engine, current, expected_transform_count=0, day_night_instruction=False,
+        ))
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.replay(session, load=True)
 
     def test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability(self):
         self._ulvenwald_transform_journey(legacy=False)

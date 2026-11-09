@@ -169,6 +169,112 @@ class ManaSpendingRuntimeTests(unittest.TestCase):
         self.assertNotIn('cast:'+later.ref,{r['id'] for r in self.actions(s)})
         self.reject(s,{'action_id':'cast:'+later.ref,'pay':'manual','payment':{'G':1}},seat='A');self.private_replay(s,private)
 
+    def test_printed_snow_golem_automatic_payment_uses_snow_source(self):
+        from quorune.printed_mana_cost_model import CURRENT_PRINTED_MANA_COST_VERSION
+
+        session = self.session(1074181)
+        spell = self.add(session.engine, 'Icehide Golem', zone='hand')
+        snowy = self.add(session.engine, 'Snow-Covered Forest')
+        ordinary = self.add(session.engine, 'Forest')
+        reducer = self.add(session.engine, 'Foundry Inspector')
+        for card in (spell, reducer):
+            self.assertTrue(self.binding(session, card)['strict_capability_ready'])
+        self.prepare(session)
+        self.checkpoint(session)
+        offer = next(row for row in self.actions(session) if row.get('card') == spell.ref)
+        option, = offer['cost_options']
+        self.assertEqual(1, option['snow'])
+        self.assertEqual(0, sum(option['requirements'].values()))
+        command = {'action_id': offer['id'], 'pay': 'auto'}
+        self.reject(session, command, seat='D')
+        result = session.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[snowy.object_id].tapped)
+        self.assertFalse(session.state.cards[ordinary.object_id].tapped)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        item, = session.state.stack
+        self.assertEqual(('G',), tuple(item.mana_colors_spent))
+        session = self.replay(session, load=True)
+        self.assertEqual(CURRENT_PRINTED_MANA_COST_VERSION, session.state.printed_mana_cost_version)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_printed_snow_astrolabe_manual_payment_keeps_tax_and_draw_private(self):
+        from quorune.mana_provenance import mana_provenance_lots
+
+        session = self.session(1074182)
+        spell = self.add(session.engine, "Arcum's Astrolabe", zone='hand')
+        tax = self.add(session.engine, 'Thalia, Guardian of Thraben', seat='B')
+        snowy = self.add(session.engine, 'Snow-Covered Forest')
+        ordinary = [self.add(session.engine, 'Forest', ref=f'snow-ordinary-{i}') for i in range(2)]
+        top = self.top(session, 'Generic Bound Growth', 'private-snow-draw')
+        for card in (spell, tax):
+            self.assertTrue(self.binding(session, card)['strict_capability_ready'])
+        self.prepare(session)
+        self.checkpoint(session)
+        for source in (*ordinary, snowy):
+            self.activate(session, source)
+        offer = next(row for row in self.actions(session) if row.get('card') == spell.ref)
+        option, = offer['cost_options']
+        self.assertEqual((1, 1), (option['requirements']['GENERIC'], option['snow']))
+        command = {'action_id': offer['id'], 'pay': 'manual'}
+        self.reject(session, {**command, 'payment': {'G': 2}})
+        self.reject(session, {**command, 'payment': {'G': 1}, 'snow_payment': {'C': 1}})
+        self.reject(session, {**command, 'payment': {'G': 1}, 'snow_payment': {'G': 1}, 'declared_cost': {'GENERIC': 1}})
+        result = session.act('pilot:A', {**command, 'payment': {'G': 1}, 'snow_payment': {'G': 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, session.state.players['A'].mana_pool['G'])
+        self.assertFalse(mana_provenance_lots(session.state.players['A']))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
+        self.assertEqual('hand', session.state.cards[top.object_id].zone)
+        for seat in 'BCD':
+            self.assertNotIn(top.ref, json.dumps(session.packet(f'pilot:{seat}', full=True)))
+        self.replay(session, load=True)
+
+    def test_printed_snow_rejects_ordinary_mana_and_preserves_legacy_offers(self):
+        from quorune.printed_mana_cost_model import SNOW_MANA_COST_VERSION
+
+        cases = ((SNOW_MANA_COST_VERSION, 'Forest'), (1, 'Snow-Covered Forest'))
+        for version, source_name in cases:
+            with self.subTest(version=version):
+                session = self.session(1074184 + version)
+                session.state.printed_mana_cost_version = version
+                source = self.add(session.engine, source_name)
+                spell = self.add(session.engine, 'Icehide Golem', zone='hand')
+                self.prepare(session)
+                self.checkpoint(session)
+                self.activate(session, source)
+                self.assertEqual(1, session.state.players['A'].mana_pool['G'])
+                self.assertNotIn(f'cast:{spell.ref}', {row['id'] for row in self.actions(session)})
+                self.reject(session, {'action': 'cast', 'card': spell.ref, 'pay': 'auto'})
+                self.assertEqual(version, self.replay(session, load=True).state.printed_mana_cost_version)
+
+    def test_printed_snow_option_survives_hybrid_and_x_and_free_price_stays_zero(self):
+        from quorune.rules.casting.costs import build_cast_cost_options
+
+        session = self.session(1074188)
+        spell = self.add(session.engine, 'Icehide Golem', zone='hand')
+        record = self.db.lookup('Icehide Golem')
+        with patch.object(type(session.engine), 'card_record', return_value=replace(record, mana_cost='{X}{G/U}{S}{S}')):
+            options, has_x = session.engine._compiled_printed_cost_options('A', spell, x_value=3, hint=False)
+        self.assertTrue(has_x)
+        self.assertEqual({'hybrid-1', 'hybrid-2'}, {option['id'] for option in options})
+        self.assertEqual({(1, 0, 3, 2), (0, 1, 3, 2)}, {
+            (option['requirements']['G'], option['requirements']['U'], option['requirements']['GENERIC'], option['snow'])
+            for option in options
+        })
+        free, = build_cast_cost_options(session.engine, 'A', spell, None, hint=True, force_without_mana_cost=True)
+        self.assertNotIn('snow', free.to_dict())
+        self.assertEqual(0, sum(free.to_dict()['requirements'].values()))
+
+    def test_printed_snow_commit_omission_is_caught_by_automatic_cast(self):
+        with patch('quorune.rules.casting.commit.cast_snow_payment_kwargs', return_value={}):
+            with self.assertRaises(AssertionError):
+                self.test_printed_snow_golem_automatic_payment_uses_snow_source()
+
     def test_real_sacrifice_price_spends_before_permission_source_leaves(self):
         s=self.session(818040);source=self.add(s.engine,NAMES[0],zone='hand');spell=self.add(s.engine,'Shrapnel Blast',zone='hand')
         private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand');self.prepare(s,mana={'C':4,'W':1});self.checkpoint(s)

@@ -1437,11 +1437,17 @@
         "quorune/printed_mana_cost_model.py",
         "quorune/model.py",
         "quorune/record_state_provenance.py",
+        "quorune/rules/action_proposals.py",
+        "quorune/rules/casting/costs.py",
+        "tests/fixtures/static-mana-spending-cards.json",
         "tests/fixtures/suspend-cards.json",
+        "tests/test_static_mana_spending.py",
         "tests/test_suspend_rules.py"
       ],
       "test_modules": [
         "test_casting_spells_rules",
+        "test_action_proposals",
+        "test_static_mana_spending",
         "test_suspend_rules"
       ]
     },

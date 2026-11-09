@@ -952,13 +952,53 @@ class RulesSchedulerSourcePolicyTests(unittest.TestCase):
                 source.write_text(json.dumps(catalog), encoding="utf8")
                 with self.assertRaisesRegex(HarvestOutcomeHistoryError, "rationale is immutable"):
                     update_rules_scheduler.main()
-                declaration["transition_id"] = "fixture-new-transition"
                 declaration["compiler_version"] = "oracle-ir-v999999"
-                source.write_text(json.dumps(catalog), encoding="utf8")
                 with mock.patch.object(update_rules_scheduler, "ORACLE_COMPILER_VERSION", "oracle-ir-v999999"):
+                    for used_id in (recorded["transition_id"], "fixture-previous-content"):
+                        declaration["transition_id"] = used_id
+                        source.write_text(json.dumps(catalog), encoding="utf8")
+                        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "already been materialized"):
+                            update_rules_scheduler.main()
+                    declaration["transition_id"] = "fixture-new-transition"
+                    source.write_text(json.dumps(catalog), encoding="utf8")
                     self.assertEqual(0, update_rules_scheduler.main())
                 generate_history.assert_not_called()
                 generate_queue.assert_not_called()
+
+    def test_pre_corpus_duplicate_guard_preserves_unlanded_harvest_changes(self):
+        recorded = _json("coverage/harvest-outcome-history.json")["non_harvest_transitions"][-1]
+        entry = {
+            "transition_id": "fixture-unlanded-harvest",
+            "receipt_identity_kind": "semantic_content",
+            "bundle_id": "bundle:fixture-unlanded-harvest",
+            "candidate_ids": ["compiler:fixture-unlanded-harvest"],
+            "head_receipt": recorded["head_receipt"],
+        }
+        history = {"entries": [entry], "non_harvest_transitions": []}
+        reclassified = {
+            "transition_id": entry["transition_id"],
+            "compiler_version": entry["head_receipt"]["compiler_version"],
+            "bundle_id": None, "candidate_ids": [], "family_ids": [], "capability_ids": [],
+            "expected_complete_card_gain": None,
+            "non_harvest_reason": "Correct the outcome of an unpublished transition.",
+        }
+        revised = {
+            **reclassified,
+            "compiler_version": "oracle-ir-v999999",
+            "bundle_id": entry["bundle_id"],
+            "candidate_ids": entry["candidate_ids"],
+            "family_ids": ["effect_clause:fixture-unlanded-harvest"],
+            "capability_ids": ["effect.fixture_unlanded_harvest"],
+            "expected_complete_card_gain": 1,
+            "non_harvest_reason": None,
+        }
+        for declaration in (reclassified, revised):
+            with self.subTest(declaration=declaration):
+                with mock.patch("scripts.harvest_outcome_history._content_transition_is_landed", return_value=False):
+                    validate_semantic_transition_source_identity(declaration, history, repository=ROOT)
+                with mock.patch("scripts.harvest_outcome_history._content_transition_is_landed", return_value=True):
+                    with self.assertRaisesRegex(HarvestOutcomeHistoryError, "already been materialized"):
+                        validate_semantic_transition_source_identity(declaration, history, repository=ROOT)
 
     def test_pre_corpus_policy_validation_rejects_invalid_transition_metadata(self):
         from scripts import update_rules_scheduler

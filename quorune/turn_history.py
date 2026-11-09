@@ -22,6 +22,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         spell_mana_history_version=history.spell_mana_history_version,
         crime_history_version=history.crime_history_version,
         committed_occurrence_history_version=history.committed_occurrence_history_version,
+        damage_life_history_version=history.damage_life_history_version,
     )
 
 

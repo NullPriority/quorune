@@ -303,3 +303,20 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
         self.choose(session, targets=[current.ref]); self.resolve(session)
         self.assertEqual('hand', session.state.cards[discard.object_id].zone)
         self.replay(session, load=True)
+
+    def test_existing_reflexive_program_derives_its_required_runtime_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs import bind_semantic_program_runtime
+
+        session = self.session(603823013)
+        source = self.add(session.engine, "Labyrinth Adversary")
+        self.assert_closed(session, source)
+        witness, = (program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if any("reflexive_program" in effect for effect in program.effects))
+        capability = "trigger.reflexive.fixed_action_result"
+        dependencies = tuple(value for value in witness.capability_dependencies if value != capability)
+        mutated = replace(witness, capability_dependencies=dependencies,
+                          capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        bound = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(bound["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{capability}", bound["blockers"])

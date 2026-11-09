@@ -1652,96 +1652,96 @@
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:18d521d17524fea19594",
-          "line": 59,
+          "line": 64,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 59,
+          "source_line": 64,
           "symbol": "custom_copyable_characteristics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:607d29081b1b68dc919f",
-          "line": 82,
+          "line": 87,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 82,
+          "source_line": 87,
           "symbol": "copiable_card_characteristics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:a71c394da1e50ef72613",
-          "line": 97,
+          "line": 102,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 97,
+          "source_line": 102,
           "symbol": "library_reveal_printed_identity"
         },
         {
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:2de72c3f31ed18c44d30",
-          "line": 119,
+          "line": 125,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 119,
+          "source_line": 125,
           "symbol": "base_card_characteristics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:81133924b3668c123756",
-          "line": 119,
+          "line": 125,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 119,
+          "source_line": 125,
           "symbol": "base_card_characteristics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:b2baa5e98b3a6ef45281",
-          "line": 159,
+          "line": 165,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 159,
+          "source_line": 165,
           "symbol": "base_card_characteristics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:b60a8a2c04778c336bfa",
-          "line": 164,
+          "line": 170,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 164,
+          "source_line": 170,
           "symbol": "base_card_characteristics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/carddb_characteristics.py",
           "flow_id": "card-identity-flow:a5d5d4fbb7b918e11f96",
-          "line": 172,
+          "line": 185,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 172,
+          "source_line": 185,
           "symbol": "base_card_characteristics"
         },
         {
@@ -4448,228 +4448,204 @@
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:dafe997a947bdcb53701",
-          "line": 471,
+          "line": 469,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 471,
+          "source_line": 469,
           "symbol": "CommanderEngine.semantic_program_is_current_trusted"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:820958e625a81a3b33e9",
-          "line": 951,
+          "line": 949,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 951,
+          "source_line": 949,
           "symbol": "CommanderEngine.display_name"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:ac4aece5b4719a6ce00b",
-          "line": 1491,
+          "line": 1489,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1491,
+          "source_line": 1489,
           "symbol": "CommanderEngine._opening_hand_signals"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:c8ce2142eaee8f95af3c",
-          "line": 1528,
+          "line": 1526,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1528,
+          "source_line": 1526,
           "symbol": "CommanderEngine._mulligan_hand_payload"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:33aa0babd6100c80200f",
-          "line": 1622,
+          "line": 1620,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1622,
+          "source_line": 1620,
           "symbol": "CommanderEngine._complete_mulligan_declaration"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:e702553895a9ec06acd7",
-          "line": 1695,
+          "line": 1693,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1695,
+          "source_line": 1693,
           "symbol": "CommanderEngine._perform_mulligan_redraws"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:069f0aa7972e35921d4f",
-          "line": 1866,
+          "line": 1864,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1866,
+          "source_line": 1864,
           "symbol": "CommanderEngine._enter_step"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:11917771955a8dfcc944",
-          "line": 2222,
+          "line": 2220,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 2222,
+          "source_line": 2220,
           "symbol": "CommanderEngine._pause_for_unsupported_semantic"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:1dca752fd32f7184a9b6",
-          "line": 2428,
+          "line": 2426,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 2428,
+          "source_line": 2426,
           "symbol": "CommanderEngine._play_land"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:1394f135b3f00266895e",
-          "line": 2443,
+          "line": 2441,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 2443,
+          "source_line": 2441,
           "symbol": "CommanderEngine._play_land"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:71e685e1f28ba18f3fff",
-          "line": 2450,
+          "line": 2448,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 2450,
+          "source_line": 2448,
           "symbol": "CommanderEngine._play_land"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:9de773047bd942e495c0",
-          "line": 2453,
+          "line": 2451,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 2453,
+          "source_line": 2451,
           "symbol": "CommanderEngine._play_land"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:6c3fe5f16fd5a9ac9ed1",
-          "line": 2491,
+          "line": 2489,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 2491,
+          "source_line": 2489,
           "symbol": "CommanderEngine._play_land"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:7c2642d8466fcc172fc8",
-          "line": 2522,
+          "line": 2520,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 2522,
+          "source_line": 2520,
           "symbol": "CommanderEngine._select_cast_face"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:c21096142467c90b756d",
-          "line": 2591,
+          "line": 2589,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 2591,
+          "source_line": 2589,
           "symbol": "CommanderEngine._semantic_key_for_ability"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:f40b6568fc271667889d",
-          "line": 3015,
+          "line": 3020,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 3015,
+          "source_line": 3020,
           "symbol": "CommanderEngine._compiled_printed_cost_options"
         },
         {
           "classification": "rules_value",
           "file": "quorune/engine.py",
           "flow_id": "card-identity-flow:47ffadd183b331455796",
-          "line": 3059,
+          "line": 3064,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 3059,
-          "symbol": "CommanderEngine._compiled_printed_cost_options"
-        },
-        {
-          "classification": "rules_value",
-          "file": "quorune/engine.py",
-          "flow_id": "card-identity-flow:e0d344efeaf00c114f3e",
-          "line": 3084,
-          "selector": null,
-          "sink_kind": "identity_as_data",
-          "source_field": "oracle_id",
-          "source_kind": "attribute",
-          "source_line": 3084,
-          "symbol": "CommanderEngine._compiled_printed_cost_options"
-        },
-        {
-          "classification": "rules_value",
-          "file": "quorune/engine.py",
-          "flow_id": "card-identity-flow:63ecbe9ab3940d6c2360",
-          "line": 3095,
-          "selector": null,
-          "sink_kind": "identity_as_data",
-          "source_field": "name",
-          "source_kind": "attribute",
-          "source_line": 3095,
+          "source_line": 3064,
           "symbol": "CommanderEngine._compiled_printed_cost_options"
         },
         {
@@ -5252,24 +5228,24 @@
           "classification": "rules_value",
           "file": "quorune/permanent_transform.py",
           "flow_id": "card-identity-flow:1396154bff0589b513f7",
-          "line": 196,
+          "line": 198,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 196,
+          "source_line": 198,
           "symbol": "_other_face"
         },
         {
           "classification": "rules_value",
           "file": "quorune/permanent_transform.py",
           "flow_id": "card-identity-flow:5d4291f4766a7808e3f5",
-          "line": 284,
+          "line": 288,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 284,
+          "source_line": 288,
           "symbol": "_commit_transform_faces"
         },
         {
@@ -6392,204 +6368,204 @@
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:7bf7f5586e2480f74b15",
-          "line": 219,
+          "line": 225,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 219,
+          "source_line": 225,
           "symbol": "_commit_tap_costs"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:764c63ccfcf9c1b7726c",
-          "line": 226,
+          "line": 232,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 226,
+          "source_line": 232,
           "symbol": "_commit_tap_costs"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:398bdffb71cccaa55fc6",
-          "line": 237,
+          "line": 243,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 237,
+          "source_line": 243,
           "symbol": "_commit_tap_costs"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:adda11afbdcbe01c0768",
-          "line": 260,
+          "line": 266,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 260,
+          "source_line": 266,
           "symbol": "_pay_life_additional_cost"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:0338b5205686de176ab6",
-          "line": 289,
+          "line": 295,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 289,
+          "source_line": 295,
           "symbol": "_pay_fixed_life_additional_cost"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:117ba42c7934c2e1b035",
-          "line": 403,
+          "line": 409,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 403,
+          "source_line": 409,
           "symbol": "_commit_counter_placement_additional_cost"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:6cd772983cf79179b5f0",
-          "line": 422,
+          "line": 428,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 422,
+          "source_line": 428,
           "symbol": "_commit_counter_placement_additional_cost"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:03d6c185bf84d0ed5307",
-          "line": 686,
+          "line": 692,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 686,
+          "source_line": 692,
           "symbol": "_commit_card_cost_changes"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:a6c2300d6b53c73c0aa5",
-          "line": 738,
+          "line": 744,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 738,
+          "source_line": 744,
           "symbol": "_commit_additional_costs"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:7ce8b0ce0ad506b9e390",
-          "line": 947,
+          "line": 953,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 947,
+          "source_line": 953,
           "symbol": "_create_spell_item"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:e5c883090d355a8b6cae",
-          "line": 983,
+          "line": 989,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 983,
+          "source_line": 989,
           "symbol": "_create_spell_item"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:d99d42afece678d20013",
-          "line": 994,
+          "line": 1000,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 994,
+          "source_line": 1000,
           "symbol": "_create_spell_item"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:c59d3b9c8e84aa8a8076",
-          "line": 1001,
+          "line": 1007,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 1001,
+          "source_line": 1007,
           "symbol": "_create_spell_item"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:f4cd65ddc063f9eb2703",
-          "line": 1150,
+          "line": 1140,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1150,
+          "source_line": 1140,
           "symbol": "_dispatch_cast_events"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:3784b1ada751475209c7",
-          "line": 1374,
+          "line": 1363,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1374,
+          "source_line": 1363,
           "symbol": "_revalidate_cast_contracts"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:a6474b70e5db9fa0c0c1",
-          "line": 1560,
+          "line": 1548,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1560,
+          "source_line": 1548,
           "symbol": "_commit_cast_costs_and_stack"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/commit.py",
           "flow_id": "card-identity-flow:55620d580ca6edb39e66",
-          "line": 1561,
+          "line": 1549,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1561,
+          "source_line": 1549,
           "symbol": "_commit_cast_costs_and_stack"
         },
         {
@@ -6620,84 +6596,84 @@
           "classification": "rules_value",
           "file": "quorune/rules/casting/costs.py",
           "flow_id": "card-identity-flow:de50960629a67dbb77f9",
-          "line": 151,
+          "line": 153,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 151,
+          "source_line": 153,
           "symbol": "_compiled_payment_mechanics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/costs.py",
           "flow_id": "card-identity-flow:69b3f0acf490d9100af3",
-          "line": 154,
+          "line": 156,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 154,
+          "source_line": 156,
           "symbol": "_compiled_payment_mechanics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/costs.py",
           "flow_id": "card-identity-flow:b566e3e7fedaa316f0e0",
-          "line": 157,
+          "line": 159,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 157,
+          "source_line": 159,
           "symbol": "_compiled_payment_mechanics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/costs.py",
           "flow_id": "card-identity-flow:4857faaa3cbe97ade2b5",
-          "line": 160,
+          "line": 162,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 160,
+          "source_line": 162,
           "symbol": "_compiled_payment_mechanics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/costs.py",
           "flow_id": "card-identity-flow:f7dac04c347eef7f9a1d",
-          "line": 279,
+          "line": 281,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 279,
+          "source_line": 281,
           "symbol": "_with_evoke_cost"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/costs.py",
           "flow_id": "card-identity-flow:b40f23c46da4919b9a3b",
-          "line": 362,
+          "line": 364,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 362,
+          "source_line": 364,
           "symbol": "_cast_schema_and_mechanics"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/costs.py",
           "flow_id": "card-identity-flow:a84bbbc21253df12a329",
-          "line": 441,
+          "line": 443,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 441,
+          "source_line": 443,
           "symbol": "_initial_options"
         },
         {
@@ -6956,60 +6932,60 @@
           "classification": "rules_value",
           "file": "quorune/rules/casting/proposal.py",
           "flow_id": "card-identity-flow:5de1435957a5de47620b",
-          "line": 165,
+          "line": 169,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 165,
+          "source_line": 169,
           "symbol": "_resolve_cast_source"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/proposal.py",
           "flow_id": "card-identity-flow:89cdbb10d0b1fdf8966a",
-          "line": 313,
+          "line": 322,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 313,
+          "source_line": 322,
           "symbol": "_spell_semantic_key"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/proposal.py",
           "flow_id": "card-identity-flow:c6e75acd637d1d92c0f1",
-          "line": 539,
+          "line": 548,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 539,
+          "source_line": 548,
           "symbol": "_cast_program_and_cost"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/proposal.py",
           "flow_id": "card-identity-flow:e8688a395cb38ab86c59",
-          "line": 599,
+          "line": 608,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 599,
+          "source_line": 608,
           "symbol": "_cast_program_and_cost"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/casting/proposal.py",
           "flow_id": "card-identity-flow:639cf370c33ba2180831",
-          "line": 1046,
+          "line": 1050,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 1046,
+          "source_line": 1050,
           "symbol": "build_cast_offer"
         },
         {
@@ -9228,9 +9204,9 @@
           "generated_provenance": 15,
           "reviewed_historical_compatibility": 1,
           "reviewed_override": 3,
-          "rules_value": 445
+          "rules_value": 443
         },
-        "classified_flow_count": 764,
+        "classified_flow_count": 762,
         "prohibited_identity_dispatch_count": 0
       },
       "external_dependencies": {
@@ -9336,8 +9312,8 @@
         },
         "engine_logical_lines": {
           "baseline": 6560,
-          "current": 6469,
-          "delta": -91
+          "current": 6452,
+          "delta": -108
         },
         "legacy_card_specific_operations": {
           "baseline": 5,
@@ -9395,7 +9371,7 @@
           "expression": "self.state = state",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 450,
+          "line": 448,
           "state_path": "<state-root>",
           "symbol": "__init__"
         },
@@ -9404,7 +9380,7 @@
           "expression": "self.state = snapshot",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 583,
+          "line": 581,
           "state_path": "<state-root>",
           "symbol": "transaction"
         },
@@ -9413,7 +9389,7 @@
           "expression": "self.state.turn_history = history",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 623,
+          "line": 621,
           "state_path": "turn_history",
           "symbol": "_record_turn_history"
         },
@@ -9422,7 +9398,7 @@
           "expression": "self.state.ref_counters[prefix] = self.state.ref_counters.get(prefix, 0) + 1",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 692,
+          "line": 690,
           "state_path": "ref_counters",
           "symbol": "_next_ref"
         },
@@ -9431,7 +9407,7 @@
           "expression": "self.state.event_sequence += 1",
           "file": "quorune/engine.py",
           "kind": "augmented_assignment",
-          "line": 718,
+          "line": 716,
           "state_path": "event_sequence",
           "symbol": "_log"
         },
@@ -9440,7 +9416,7 @@
           "expression": "self.state.events.append(event)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:append",
-          "line": 735,
+          "line": 733,
           "state_path": "events",
           "symbol": "_log"
         },
@@ -9449,7 +9425,7 @@
           "expression": "self.state.monarch = seat",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 770,
+          "line": 768,
           "state_path": "monarch",
           "symbol": "become_monarch"
         },
@@ -9458,7 +9434,7 @@
           "expression": "self.state.revision += 1",
           "file": "quorune/engine.py",
           "kind": "augmented_assignment",
-          "line": 1423,
+          "line": 1421,
           "state_path": "revision",
           "symbol": "submit"
         },
@@ -9467,7 +9443,7 @@
           "expression": "self.state.mulligan_round += 1",
           "file": "quorune/engine.py",
           "kind": "augmented_assignment",
-          "line": 1569,
+          "line": 1567,
           "state_path": "mulligan_round",
           "symbol": "_issue_mulligan_declaration"
         },
@@ -9476,7 +9452,7 @@
           "expression": "self.state.combat = CombatState()",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 1984,
+          "line": 1982,
           "state_path": "combat",
           "symbol": "_finish_combat_phase"
         },
@@ -9485,7 +9461,7 @@
           "expression": "self.state.annotations.append(annotation)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:append",
-          "line": 2255,
+          "line": 2253,
           "state_path": "annotations",
           "symbol": "_pause_for_unsupported_semantic"
         },
@@ -9494,7 +9470,7 @@
           "expression": "self.state.priority_player = None",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 2256,
+          "line": 2254,
           "state_path": "priority_player",
           "symbol": "_pause_for_unsupported_semantic"
         },
@@ -9503,7 +9479,7 @@
           "expression": "self.state.priority_player = None",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 2509,
+          "line": 2507,
           "state_path": "priority_player",
           "symbol": "_play_land"
         },
@@ -9512,7 +9488,7 @@
           "expression": "self.state.priority_passes = []",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 2510,
+          "line": 2508,
           "state_path": "priority_passes",
           "symbol": "_play_land"
         },
@@ -9521,7 +9497,7 @@
           "expression": "self.state.stack.remove(item)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:remove",
-          "line": 3427,
+          "line": 3410,
           "state_path": "stack",
           "symbol": "_prepare_stack_resolution"
         },
@@ -9530,7 +9506,7 @@
           "expression": "self.state.players[controller].zones[zone].append( object_id )",
           "file": "quorune/engine.py",
           "kind": "mutating_call:append",
-          "line": 3613,
+          "line": 3596,
           "state_path": "players.zones",
           "symbol": "_create_copy_object"
         },
@@ -9539,7 +9515,7 @@
           "expression": "self.state.stack.append(copied)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:append",
-          "line": 3731,
+          "line": 3714,
           "state_path": "stack",
           "symbol": "_copy_stack_item"
         },
@@ -9548,7 +9524,7 @@
           "expression": "self.state.combat.attackers_declared = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5215,
+          "line": 5198,
           "state_path": "combat.attackers_declared",
           "symbol": "_issue_attackers"
         },
@@ -9557,7 +9533,7 @@
           "expression": "self.state.combat.defending_players = [ seat for seat in self.active_seats if seat != active ]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5216,
+          "line": 5199,
           "state_path": "combat.defending_players",
           "symbol": "_issue_attackers"
         },
@@ -9566,7 +9542,7 @@
           "expression": "self.state.combat.attackers_declared = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5536,
+          "line": 5519,
           "state_path": "combat.attackers_declared",
           "symbol": "_complete_attackers"
         },
@@ -9575,7 +9551,7 @@
           "expression": "self.state.combat.had_attacking_creature = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5538,
+          "line": 5521,
           "state_path": "combat.had_attacking_creature",
           "symbol": "_complete_attackers"
         },
@@ -9584,7 +9560,7 @@
           "expression": "self.state.combat.defending_players = [ seat for seat in self.active_seats if seat != active ]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5539,
+          "line": 5522,
           "state_path": "combat.defending_players",
           "symbol": "_complete_attackers"
         },
@@ -9593,7 +9569,7 @@
           "expression": "self.state.combat.blockers_declared = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5618,
+          "line": 5601,
           "state_path": "combat.blockers_declared",
           "symbol": "_begin_blocker_decisions"
         },
@@ -9602,7 +9578,7 @@
           "expression": "self.state.combat.blocker_cursor = 0",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5621,
+          "line": 5604,
           "state_path": "combat.blocker_cursor",
           "symbol": "_begin_blocker_decisions"
         },
@@ -9611,7 +9587,7 @@
           "expression": "self.state.combat.blockers_declared = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 5627,
+          "line": 5610,
           "state_path": "combat.blockers_declared",
           "symbol": "_issue_next_blocker"
         },
@@ -9620,7 +9596,7 @@
           "expression": "self.state.combat.blocker_cursor += 1",
           "file": "quorune/engine.py",
           "kind": "augmented_assignment",
-          "line": 5672,
+          "line": 5655,
           "state_path": "combat.blocker_cursor",
           "symbol": "_issue_next_blocker"
         },
@@ -9629,7 +9605,7 @@
           "expression": "self.state.combat.blocker_cursor += 1",
           "file": "quorune/engine.py",
           "kind": "augmented_assignment",
-          "line": 5771,
+          "line": 5754,
           "state_path": "combat.blocker_cursor",
           "symbol": "_complete_blockers"
         },
@@ -9638,7 +9614,7 @@
           "expression": "self.state.combat.damage_assignments.extend(declared)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:extend",
-          "line": 6085,
+          "line": 6068,
           "state_path": "combat.damage_assignments",
           "symbol": "_apply_combat_assignments"
         },
@@ -9647,7 +9623,7 @@
           "expression": "self.state.stack = [ item for item in self.state.stack if item.card_object_id != card.object_id ]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6536,
+          "line": 6519,
           "state_path": "stack",
           "symbol": "_stabilize"
         },
@@ -9656,7 +9632,7 @@
           "expression": "self.state.eliminated_players.append(seat)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:append",
-          "line": 6700,
+          "line": 6683,
           "state_path": "eliminated_players",
           "symbol": "_eliminate_players"
         },
@@ -9665,7 +9641,7 @@
           "expression": "self.state.stack = [item for item in self.state.stack if item.card_object_id != card.object_id]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6716,
+          "line": 6699,
           "state_path": "stack",
           "symbol": "_eliminate_players"
         },
@@ -9674,7 +9650,7 @@
           "expression": "self.state.stack = [item for item in self.state.stack if item.controller != seat or item.card_object_id is not None]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6755,
+          "line": 6738,
           "state_path": "stack",
           "symbol": "_eliminate_players"
         },
@@ -9683,7 +9659,7 @@
           "expression": "self.state.priority_passes = [passed for passed in self.state.priority_passes if passed != seat]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6757,
+          "line": 6740,
           "state_path": "priority_passes",
           "symbol": "_eliminate_players"
         },
@@ -9692,7 +9668,7 @@
           "expression": "self.state.monarch = None",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6764,
+          "line": 6747,
           "state_path": "monarch",
           "symbol": "_eliminate_players"
         },
@@ -9701,7 +9677,7 @@
           "expression": "self.state.combat.defending_players = [ seat for seat in self.state.combat.defending_players if seat in remaining ]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6795,
+          "line": 6778,
           "state_path": "combat.defending_players",
           "symbol": "_eliminate_players"
         },
@@ -9710,7 +9686,7 @@
           "expression": "self.state.game_over = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6801,
+          "line": 6784,
           "state_path": "game_over",
           "symbol": "_eliminate_players"
         },
@@ -9719,7 +9695,7 @@
           "expression": "self.state.winner = remaining[0]",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6802,
+          "line": 6785,
           "state_path": "winner",
           "symbol": "_eliminate_players"
         },
@@ -9728,7 +9704,7 @@
           "expression": "self.state.priority_player = None",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6803,
+          "line": 6786,
           "state_path": "priority_player",
           "symbol": "_eliminate_players"
         },
@@ -9737,7 +9713,7 @@
           "expression": "self.state.game_over = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6807,
+          "line": 6790,
           "state_path": "game_over",
           "symbol": "_eliminate_players"
         },
@@ -9746,7 +9722,7 @@
           "expression": "self.state.draw = True",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6808,
+          "line": 6791,
           "state_path": "draw",
           "symbol": "_eliminate_players"
         },
@@ -9755,7 +9731,7 @@
           "expression": "self.state.priority_player = None",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6809,
+          "line": 6792,
           "state_path": "priority_player",
           "symbol": "_eliminate_players"
         },
@@ -9764,7 +9740,7 @@
           "expression": "self.state.priority_player = self._next_active_after(unique[-1])",
           "file": "quorune/engine.py",
           "kind": "assignment",
-          "line": 6813,
+          "line": 6796,
           "state_path": "priority_player",
           "symbol": "_eliminate_players"
         },
@@ -10166,7 +10142,7 @@
             "symbol": "__init__"
           },
           "kind": "assignment",
-          "line": 450,
+          "line": 448,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -10186,7 +10162,7 @@
             "symbol": "_apply_combat_assignments"
           },
           "kind": "mutating_call:extend",
-          "line": 6085,
+          "line": 6068,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.damage_assignments",
           "subsystems": [
@@ -10206,7 +10182,7 @@
             "symbol": "_begin_blocker_decisions"
           },
           "kind": "assignment",
-          "line": 5621,
+          "line": 5604,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.blocker_cursor",
           "subsystems": [
@@ -10226,7 +10202,7 @@
             "symbol": "_begin_blocker_decisions"
           },
           "kind": "assignment",
-          "line": 5618,
+          "line": 5601,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.blockers_declared",
           "subsystems": [
@@ -10246,7 +10222,7 @@
             "symbol": "_complete_attackers"
           },
           "kind": "assignment",
-          "line": 5536,
+          "line": 5519,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.attackers_declared",
           "subsystems": [
@@ -10266,7 +10242,7 @@
             "symbol": "_complete_attackers"
           },
           "kind": "assignment",
-          "line": 5539,
+          "line": 5522,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.defending_players",
           "subsystems": [
@@ -10286,7 +10262,7 @@
             "symbol": "_complete_attackers"
           },
           "kind": "assignment",
-          "line": 5538,
+          "line": 5521,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.had_attacking_creature",
           "subsystems": [
@@ -10306,7 +10282,7 @@
             "symbol": "_complete_blockers"
           },
           "kind": "augmented_assignment",
-          "line": 5771,
+          "line": 5754,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.blocker_cursor",
           "subsystems": [
@@ -10326,7 +10302,7 @@
             "symbol": "_copy_stack_item"
           },
           "kind": "mutating_call:append",
-          "line": 3731,
+          "line": 3714,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "stack",
           "subsystems": [
@@ -10346,7 +10322,7 @@
             "symbol": "_create_copy_object"
           },
           "kind": "mutating_call:append",
-          "line": 3613,
+          "line": 3596,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "players.zones",
           "subsystems": [
@@ -10366,7 +10342,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6795,
+          "line": 6778,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.defending_players",
           "subsystems": [
@@ -10386,7 +10362,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6808,
+          "line": 6791,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "draw",
           "subsystems": [
@@ -10406,7 +10382,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6801,
+          "line": 6784,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "game_over",
           "subsystems": [
@@ -10426,7 +10402,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6807,
+          "line": 6790,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "game_over",
           "subsystems": [
@@ -10446,7 +10422,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6764,
+          "line": 6747,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "monarch",
           "subsystems": [
@@ -10466,7 +10442,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6757,
+          "line": 6740,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "priority_passes",
           "subsystems": [
@@ -10486,7 +10462,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6803,
+          "line": 6786,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "priority_player",
           "subsystems": [
@@ -10506,7 +10482,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6809,
+          "line": 6792,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "priority_player",
           "subsystems": [
@@ -10526,7 +10502,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6813,
+          "line": 6796,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "priority_player",
           "subsystems": [
@@ -10546,7 +10522,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6716,
+          "line": 6699,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "stack",
           "subsystems": [
@@ -10566,7 +10542,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6755,
+          "line": 6738,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "stack",
           "subsystems": [
@@ -10586,7 +10562,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "assignment",
-          "line": 6802,
+          "line": 6785,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "winner",
           "subsystems": [
@@ -10606,7 +10582,7 @@
             "symbol": "_eliminate_players"
           },
           "kind": "mutating_call:append",
-          "line": 6700,
+          "line": 6683,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "eliminated_players",
           "subsystems": [
@@ -10626,7 +10602,7 @@
             "symbol": "_finish_combat_phase"
           },
           "kind": "assignment",
-          "line": 1984,
+          "line": 1982,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat",
           "subsystems": [
@@ -10646,7 +10622,7 @@
             "symbol": "_issue_attackers"
           },
           "kind": "assignment",
-          "line": 5215,
+          "line": 5198,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.attackers_declared",
           "subsystems": [
@@ -10666,7 +10642,7 @@
             "symbol": "_issue_attackers"
           },
           "kind": "assignment",
-          "line": 5216,
+          "line": 5199,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.defending_players",
           "subsystems": [
@@ -10686,7 +10662,7 @@
             "symbol": "_issue_mulligan_declaration"
           },
           "kind": "augmented_assignment",
-          "line": 1569,
+          "line": 1567,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "mulligan_round",
           "subsystems": [
@@ -10706,7 +10682,7 @@
             "symbol": "_issue_next_blocker"
           },
           "kind": "assignment",
-          "line": 5627,
+          "line": 5610,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.blockers_declared",
           "subsystems": [
@@ -10726,7 +10702,7 @@
             "symbol": "_issue_next_blocker"
           },
           "kind": "augmented_assignment",
-          "line": 5672,
+          "line": 5655,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "combat.blocker_cursor",
           "subsystems": [
@@ -10746,7 +10722,7 @@
             "symbol": "_log"
           },
           "kind": "augmented_assignment",
-          "line": 718,
+          "line": 716,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "event_sequence",
           "subsystems": [
@@ -10766,7 +10742,7 @@
             "symbol": "_log"
           },
           "kind": "mutating_call:append",
-          "line": 735,
+          "line": 733,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "events",
           "subsystems": [
@@ -10786,7 +10762,7 @@
             "symbol": "_next_ref"
           },
           "kind": "assignment",
-          "line": 692,
+          "line": 690,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "ref_counters",
           "subsystems": [
@@ -10806,7 +10782,7 @@
             "symbol": "_pause_for_unsupported_semantic"
           },
           "kind": "assignment",
-          "line": 2256,
+          "line": 2254,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "priority_player",
           "subsystems": [
@@ -10826,7 +10802,7 @@
             "symbol": "_pause_for_unsupported_semantic"
           },
           "kind": "mutating_call:append",
-          "line": 2255,
+          "line": 2253,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "annotations",
           "subsystems": [
@@ -10846,7 +10822,7 @@
             "symbol": "_play_land"
           },
           "kind": "assignment",
-          "line": 2510,
+          "line": 2508,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "priority_passes",
           "subsystems": [
@@ -10866,7 +10842,7 @@
             "symbol": "_play_land"
           },
           "kind": "assignment",
-          "line": 2509,
+          "line": 2507,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "priority_player",
           "subsystems": [
@@ -10886,7 +10862,7 @@
             "symbol": "_prepare_stack_resolution"
           },
           "kind": "mutating_call:remove",
-          "line": 3427,
+          "line": 3410,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "stack",
           "subsystems": [
@@ -10906,7 +10882,7 @@
             "symbol": "_record_turn_history"
           },
           "kind": "assignment",
-          "line": 623,
+          "line": 621,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "turn_history",
           "subsystems": [
@@ -10926,7 +10902,7 @@
             "symbol": "_stabilize"
           },
           "kind": "assignment",
-          "line": 6536,
+          "line": 6519,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "stack",
           "subsystems": [
@@ -10946,7 +10922,7 @@
             "symbol": "become_monarch"
           },
           "kind": "assignment",
-          "line": 770,
+          "line": 768,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "monarch",
           "subsystems": [
@@ -10966,7 +10942,7 @@
             "symbol": "submit"
           },
           "kind": "augmented_assignment",
-          "line": 1423,
+          "line": 1421,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "revision",
           "subsystems": [
@@ -10986,7 +10962,7 @@
             "symbol": "transaction"
           },
           "kind": "assignment",
-          "line": 583,
+          "line": 581,
           "owner_rationale": "Authoritative transaction rollback replaces the state root.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -11605,8 +11581,8 @@
     "engine": {
       "cross_subsystem_responsibility_count": 7,
       "dunder_methods": 1,
-      "logical_lines": 6469,
-      "physical_lines": 6971,
+      "logical_lines": 6452,
+      "physical_lines": 6954,
       "private_methods": 195,
       "public_methods": 27,
       "responsibility_groups": [
@@ -11952,7 +11928,7 @@
           "module": "quorune.semantic_runtime.intents"
         },
         {
-          "fan_in": 85,
+          "fan_in": 86,
           "fan_out": 5,
           "module": "quorune.object_query"
         }
@@ -11965,7 +11941,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 103,
+          "fan_out": 105,
           "module": "quorune.card_programs.runtime_requirements"
         },
         {
@@ -11984,14 +11960,14 @@
           "module": "quorune.rules.effect_node_capabilities"
         },
         {
+          "fan_in": 2,
+          "fan_out": 79,
+          "module": "quorune.rules.casting.commit"
+        },
+        {
           "fan_in": 4,
           "fan_out": 78,
           "module": "quorune.compiler.program_generation"
-        },
-        {
-          "fan_in": 2,
-          "fan_out": 78,
-          "module": "quorune.rules.casting.commit"
         },
         {
           "fan_in": 1,
@@ -12034,7 +12010,7 @@
           "module": "quorune.zone_transitions"
         }
       ],
-      "internal_edges": 10011,
+      "internal_edges": 10025,
       "modules": [
         {
           "fan_in": 2,
@@ -12488,7 +12464,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 103,
+          "fan_out": 105,
           "module": "quorune.card_programs.runtime_requirements"
         },
         {
@@ -15377,7 +15353,7 @@
           "module": "quorune.counter_placement"
         },
         {
-          "fan_in": 7,
+          "fan_in": 8,
           "fan_out": 1,
           "module": "quorune.counter_placement_event_model"
         },
@@ -16537,7 +16513,7 @@
           "module": "quorune.object_predicate"
         },
         {
-          "fan_in": 85,
+          "fan_in": 86,
           "fan_out": 5,
           "module": "quorune.object_query"
         },
@@ -16687,7 +16663,7 @@
           "module": "quorune.prevention_triggers"
         },
         {
-          "fan_in": 3,
+          "fan_in": 10,
           "fan_out": 0,
           "module": "quorune.printed_mana_cost_model"
         },
@@ -17108,7 +17084,7 @@
         },
         {
           "fan_in": 16,
-          "fan_out": 0,
+          "fan_out": 1,
           "module": "quorune.rules.action_proposals"
         },
         {
@@ -17403,7 +17379,7 @@
         },
         {
           "fan_in": 4,
-          "fan_out": 5,
+          "fan_out": 6,
           "module": "quorune.rules.casting.additional_tap_costs"
         },
         {
@@ -17423,7 +17399,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 2,
+          "fan_out": 3,
           "module": "quorune.rules.casting.assist_costs"
         },
         {
@@ -17468,7 +17444,7 @@
         },
         {
           "fan_in": 2,
-          "fan_out": 78,
+          "fan_out": 79,
           "module": "quorune.rules.casting.commit"
         },
         {
@@ -17478,7 +17454,7 @@
         },
         {
           "fan_in": 7,
-          "fan_out": 45,
+          "fan_out": 46,
           "module": "quorune.rules.casting.costs"
         },
         {
@@ -17578,7 +17554,7 @@
         },
         {
           "fan_in": 6,
-          "fan_out": 30,
+          "fan_out": 32,
           "module": "quorune.rules.casting.proposal"
         },
         {
@@ -17602,8 +17578,8 @@
           "module": "quorune.rules.casting.reveal_costs"
         },
         {
-          "fan_in": 4,
-          "fan_out": 4,
+          "fan_in": 5,
+          "fan_out": 6,
           "module": "quorune.rules.casting.source_placement"
         },
         {
@@ -17648,7 +17624,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 4,
+          "fan_out": 5,
           "module": "quorune.rules.casting.waterbend_costs"
         },
         {
@@ -17657,7 +17633,7 @@
           "module": "quorune.rules.casting_additional_cost_groups"
         },
         {
-          "fan_in": 33,
+          "fan_in": 34,
           "fan_out": 8,
           "module": "quorune.rules.casting_additional_costs"
         },
@@ -18393,7 +18369,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 1,
+          "fan_out": 2,
           "module": "quorune.rules.permanent_event_state"
         },
         {
@@ -18507,7 +18483,7 @@
           "module": "quorune.rules.reconfigure"
         },
         {
-          "fan_in": 4,
+          "fan_in": 5,
           "fan_out": 4,
           "module": "quorune.rules.reflexive_payment_shapes"
         },
@@ -18747,8 +18723,8 @@
           "module": "quorune.rules.tap_state_event_capability_shapes"
         },
         {
-          "fan_in": 6,
-          "fan_out": 1,
+          "fan_in": 7,
+          "fan_out": 2,
           "module": "quorune.rules.target_announcements"
         },
         {
@@ -20802,7 +20778,7 @@
           "module": "quorune.trigger_participation_query_model"
         },
         {
-          "fan_in": 48,
+          "fan_in": 49,
           "fan_out": 10,
           "module": "quorune.trigger_processing"
         },
@@ -21055,7 +21031,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1941,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "5387ad79ef0c81e01c53a5831ce5b061fc5d728e6c0ad4522cc6a6b027b7de11",
+      "source_fingerprint": "48dadb13483303b11e0c1843fe5fb566caa7af3fd5229b5c6deb1bb85e5fe584",
       "uncovered_high_risk_pairs": 13
     },
     "migration_queue": [],
@@ -21213,10 +21189,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 6687,
+          "end_line": 6670,
           "file": "quorune/engine.py",
           "kind": "method",
-          "line": 6437,
+          "line": 6420,
           "logical_lines": 242,
           "name": "_stabilize",
           "physical_lines": 251,
@@ -21224,10 +21200,10 @@
           "visibility": "private"
         },
         {
-          "end_line": 3549,
+          "end_line": 3532,
           "file": "quorune/engine.py",
           "kind": "method",
-          "line": 3310,
+          "line": 3293,
           "logical_lines": 237,
           "name": "_prepare_stack_resolution",
           "physical_lines": 240,
@@ -21268,10 +21244,10 @@
           "visibility": "private"
         },
         {
-          "end_line": 4931,
+          "end_line": 4914,
           "file": "quorune/engine.py",
           "kind": "method",
-          "line": 4709,
+          "line": 4692,
           "logical_lines": 222,
           "name": "_declaration_restrictions",
           "physical_lines": 223,
@@ -21444,7 +21420,7 @@
           "visibility": "dunder"
         }
       ],
-      "logical_lines": 315880,
+      "logical_lines": 316095,
       "methods": {
         "dunder": 939,
         "private": 1081,
@@ -21456,8 +21432,8 @@
           "file": "quorune/engine.py",
           "functions_and_methods": 226,
           "language": "python",
-          "logical_lines": 6469,
-          "physical_lines": 6971
+          "logical_lines": 6452,
+          "physical_lines": 6954
         },
         {
           "file": "quorune/declaration_restrictions.py",
@@ -21502,18 +21478,25 @@
           "physical_lines": 1594
         },
         {
-          "file": "quorune/rules/casting/commit.py",
-          "functions_and_methods": 45,
-          "language": "python",
-          "logical_lines": 1497,
-          "physical_lines": 1583
-        },
-        {
           "file": "quorune/work_selection.py",
           "functions_and_methods": 28,
           "language": "python",
           "logical_lines": 1496,
           "physical_lines": 1558
+        },
+        {
+          "file": "quorune/rules/casting/commit.py",
+          "functions_and_methods": 44,
+          "language": "python",
+          "logical_lines": 1487,
+          "physical_lines": 1571
+        },
+        {
+          "file": "quorune/rules/casting/costs.py",
+          "functions_and_methods": 40,
+          "language": "python",
+          "logical_lines": 1484,
+          "physical_lines": 1563
         },
         {
           "file": "quorune/compiler/keyword_nodes.py",
@@ -21535,13 +21518,6 @@
           "language": "python",
           "logical_lines": 1473,
           "physical_lines": 1567
-        },
-        {
-          "file": "quorune/rules/casting/costs.py",
-          "functions_and_methods": 40,
-          "language": "python",
-          "logical_lines": 1472,
-          "physical_lines": 1551
         },
         {
           "file": "quorune/semantic_runtime/ability_fragments.py",
@@ -21666,8 +21642,8 @@
           "file": "quorune/damage_results.py",
           "functions_and_methods": 49,
           "language": "python",
-          "logical_lines": 1370,
-          "physical_lines": 1498
+          "logical_lines": 1371,
+          "physical_lines": 1500
         },
         {
           "file": "quorune/rules/node_capability_shapes.py",
@@ -21705,18 +21681,18 @@
           "physical_lines": 1393
         },
         {
+          "file": "quorune/model.py",
+          "functions_and_methods": 54,
+          "language": "python",
+          "logical_lines": 1280,
+          "physical_lines": 1477
+        },
+        {
           "file": "quorune/selection/searching.py",
           "functions_and_methods": 30,
           "language": "python",
           "logical_lines": 1266,
           "physical_lines": 1310
-        },
-        {
-          "file": "quorune/model.py",
-          "functions_and_methods": 54,
-          "language": "python",
-          "logical_lines": 1256,
-          "physical_lines": 1453
         },
         {
           "file": "quorune/compiler/direct_target.py",
@@ -21806,8 +21782,8 @@
           "file": "quorune/rules/casting/proposal.py",
           "functions_and_methods": 33,
           "language": "python",
-          "logical_lines": 1011,
-          "physical_lines": 1074
+          "logical_lines": 1015,
+          "physical_lines": 1078
         },
         {
           "file": "quorune/compiler/damage_templates.py",
@@ -21887,18 +21863,18 @@
           "physical_lines": 982
         },
         {
+          "file": "quorune/rules/activation/commit.py",
+          "functions_and_methods": 32,
+          "language": "python",
+          "logical_lines": 898,
+          "physical_lines": 958
+        },
+        {
           "file": "quorune/semantic_runtime/damage_replacements.py",
           "functions_and_methods": 28,
           "language": "python",
           "logical_lines": 896,
           "physical_lines": 982
-        },
-        {
-          "file": "quorune/rules/activation/commit.py",
-          "functions_and_methods": 32,
-          "language": "python",
-          "logical_lines": 895,
-          "physical_lines": 955
         },
         {
           "file": "quorune/compiler/cast_cost_modifier_templates.py",
@@ -22310,8 +22286,8 @@
           "file": "quorune/zone_trigger_events.py",
           "functions_and_methods": 24,
           "language": "python",
-          "logical_lines": 605,
-          "physical_lines": 675
+          "logical_lines": 606,
+          "physical_lines": 676
         },
         {
           "file": "quorune/damage_prevention_aftermath.py",
@@ -22608,6 +22584,13 @@
           "physical_lines": 552
         },
         {
+          "file": "quorune/rules/spell_cast_events.py",
+          "functions_and_methods": 13,
+          "language": "python",
+          "logical_lines": 492,
+          "physical_lines": 525
+        },
+        {
           "file": "quorune/service.py",
           "functions_and_methods": 20,
           "language": "python",
@@ -22641,13 +22624,6 @@
           "language": "python",
           "logical_lines": 479,
           "physical_lines": 545
-        },
-        {
-          "file": "quorune/rules/spell_cast_events.py",
-          "functions_and_methods": 12,
-          "language": "python",
-          "logical_lines": 478,
-          "physical_lines": 509
         },
         {
           "file": "quorune/activation_condition_model.py",
@@ -22867,6 +22843,13 @@
           "physical_lines": 451
         },
         {
+          "file": "quorune/card_programs/runtime_requirements.py",
+          "functions_and_methods": 7,
+          "language": "python",
+          "logical_lines": 410,
+          "physical_lines": 429
+        },
+        {
           "file": "quorune/semantic_choices/amass.py",
           "functions_and_methods": 7,
           "language": "python",
@@ -22893,13 +22876,6 @@
           "language": "python",
           "logical_lines": 407,
           "physical_lines": 446
-        },
-        {
-          "file": "quorune/card_programs/runtime_requirements.py",
-          "functions_and_methods": 7,
-          "language": "python",
-          "logical_lines": 406,
-          "physical_lines": 425
         },
         {
           "file": "quorune/tap_state.py",
@@ -22972,6 +22948,13 @@
           "physical_lines": 410
         },
         {
+          "file": "quorune/rules/action_proposals.py",
+          "functions_and_methods": 19,
+          "language": "python",
+          "logical_lines": 378,
+          "physical_lines": 436
+        },
+        {
           "file": "quorune/compiler/action_permission_templates.py",
           "functions_and_methods": 12,
           "language": "python",
@@ -22991,13 +22974,6 @@
           "language": "python",
           "logical_lines": 373,
           "physical_lines": 406
-        },
-        {
-          "file": "quorune/rules/action_proposals.py",
-          "functions_and_methods": 19,
-          "language": "python",
-          "logical_lines": 373,
-          "physical_lines": 430
         },
         {
           "file": "quorune/compiler/public_state_fact_queries.py",
@@ -23091,18 +23067,18 @@
           "physical_lines": 412
         },
         {
+          "file": "quorune/permanent_transform.py",
+          "functions_and_methods": 16,
+          "language": "python",
+          "logical_lines": 357,
+          "physical_lines": 402
+        },
+        {
           "file": "quorune/card_programs/trust.py",
           "functions_and_methods": 9,
           "language": "python",
           "logical_lines": 356,
           "physical_lines": 384
-        },
-        {
-          "file": "quorune/permanent_transform.py",
-          "functions_and_methods": 16,
-          "language": "python",
-          "logical_lines": 353,
-          "physical_lines": 398
         },
         {
           "file": "quorune/aura/decisions.py",
@@ -23465,8 +23441,8 @@
           "file": "quorune/commander.py",
           "functions_and_methods": 8,
           "language": "python",
-          "logical_lines": 278,
-          "physical_lines": 326
+          "logical_lines": 279,
+          "physical_lines": 327
         },
         {
           "file": "quorune/semantic_runtime/generic.py",
@@ -24127,6 +24103,13 @@
           "physical_lines": 250
         },
         {
+          "file": "quorune/record_state_provenance.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 202,
+          "physical_lines": 217
+        },
+        {
           "file": "quorune/rules/stack_damage_sources.py",
           "functions_and_methods": 10,
           "language": "python",
@@ -24211,6 +24194,13 @@
           "physical_lines": 219
         },
         {
+          "file": "quorune/turn_history.py",
+          "functions_and_methods": 13,
+          "language": "python",
+          "logical_lines": 193,
+          "physical_lines": 233
+        },
+        {
           "file": "quorune/soulbond_model.py",
           "functions_and_methods": 21,
           "language": "python",
@@ -24223,13 +24213,6 @@
           "language": "python",
           "logical_lines": 192,
           "physical_lines": 220
-        },
-        {
-          "file": "quorune/turn_history.py",
-          "functions_and_methods": 13,
-          "language": "python",
-          "logical_lines": 192,
-          "physical_lines": 232
         },
         {
           "file": "quorune/cascade.py",
@@ -24258,6 +24241,13 @@
           "language": "python",
           "logical_lines": 190,
           "physical_lines": 221
+        },
+        {
+          "file": "quorune/carddb_characteristics.py",
+          "functions_and_methods": 6,
+          "language": "python",
+          "logical_lines": 189,
+          "physical_lines": 211
         },
         {
           "file": "quorune/rules/temporary_target_interaction_shapes.py",
@@ -24400,13 +24390,6 @@
           "physical_lines": 197
         },
         {
-          "file": "quorune/record_state_provenance.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 181,
-          "physical_lines": 196
-        },
-        {
           "file": "quorune/rules/library_scry.py",
           "functions_and_methods": 7,
           "language": "python",
@@ -24467,13 +24450,6 @@
           "functions_and_methods": 8,
           "language": "python",
           "logical_lines": 177,
-          "physical_lines": 198
-        },
-        {
-          "file": "quorune/carddb_characteristics.py",
-          "functions_and_methods": 6,
-          "language": "python",
-          "logical_lines": 176,
           "physical_lines": 198
         },
         {
@@ -25030,6 +25006,13 @@
           "physical_lines": 167
         },
         {
+          "file": "quorune/ability_fragment_host.py",
+          "functions_and_methods": 7,
+          "language": "python",
+          "logical_lines": 146,
+          "physical_lines": 162
+        },
+        {
           "file": "quorune/protocol.py",
           "functions_and_methods": 9,
           "language": "python",
@@ -25056,13 +25039,6 @@
           "language": "python",
           "logical_lines": 144,
           "physical_lines": 152
-        },
-        {
-          "file": "quorune/ability_fragment_host.py",
-          "functions_and_methods": 7,
-          "language": "python",
-          "logical_lines": 143,
-          "physical_lines": 159
         },
         {
           "file": "quorune/control_history.py",
@@ -25282,6 +25258,13 @@
           "physical_lines": 149
         },
         {
+          "file": "quorune/rules/casting/blight_costs.py",
+          "functions_and_methods": 12,
+          "language": "python",
+          "logical_lines": 136,
+          "physical_lines": 161
+        },
+        {
           "file": "quorune/semantic_runtime/fixed_damage_set_handlers.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -25294,13 +25277,6 @@
           "language": "python",
           "logical_lines": 135,
           "physical_lines": 151
-        },
-        {
-          "file": "quorune/rules/casting/blight_costs.py",
-          "functions_and_methods": 12,
-          "language": "python",
-          "logical_lines": 135,
-          "physical_lines": 160
         },
         {
           "file": "quorune/compiler/day_night_nodes.py",
@@ -26479,6 +26455,13 @@
           "physical_lines": 105
         },
         {
+          "file": "quorune/rules/casting/additional_tap_costs.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 93,
+          "physical_lines": 110
+        },
+        {
           "file": "quorune/rules/casting/emerge_costs.py",
           "functions_and_methods": 8,
           "language": "python",
@@ -26554,13 +26537,6 @@
           "language": "python",
           "logical_lines": 91,
           "physical_lines": 104
-        },
-        {
-          "file": "quorune/rules/casting/additional_tap_costs.py",
-          "functions_and_methods": 8,
-          "language": "python",
-          "logical_lines": 91,
-          "physical_lines": 108
         },
         {
           "file": "quorune/rules/counter_removal_capabilities.py",
@@ -26766,6 +26742,13 @@
           "physical_lines": 97
         },
         {
+          "file": "quorune/rules/waterbend_payments.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 86,
+          "physical_lines": 104
+        },
+        {
           "file": "quorune/bound_declaration_model.py",
           "functions_and_methods": 7,
           "language": "python",
@@ -26834,13 +26817,6 @@
           "language": "python",
           "logical_lines": 84,
           "physical_lines": 100
-        },
-        {
-          "file": "quorune/rules/waterbend_payments.py",
-          "functions_and_methods": 8,
-          "language": "python",
-          "logical_lines": 84,
-          "physical_lines": 102
         },
         {
           "file": "quorune/zone_object_keyword_grants.py",
@@ -27067,6 +27043,13 @@
           "physical_lines": 94
         },
         {
+          "file": "quorune/permanent_event_state_model.py",
+          "functions_and_methods": 12,
+          "language": "python",
+          "logical_lines": 79,
+          "physical_lines": 100
+        },
+        {
           "file": "quorune/semantic_runtime/conditional_flash.py",
           "functions_and_methods": 6,
           "language": "python",
@@ -27128,13 +27111,6 @@
           "language": "python",
           "logical_lines": 77,
           "physical_lines": 100
-        },
-        {
-          "file": "quorune/permanent_event_state_model.py",
-          "functions_and_methods": 12,
-          "language": "python",
-          "logical_lines": 77,
-          "physical_lines": 98
         },
         {
           "file": "quorune/rules/evidence_storage.py",
@@ -27331,6 +27307,13 @@
           "language": "python",
           "logical_lines": 74,
           "physical_lines": 83
+        },
+        {
+          "file": "quorune/rules/target_announcements.py",
+          "functions_and_methods": 7,
+          "language": "python",
+          "logical_lines": 74,
+          "physical_lines": 94
         },
         {
           "file": "quorune/semantic_runtime/devour.py",
@@ -27823,6 +27806,13 @@
           "physical_lines": 72
         },
         {
+          "file": "quorune/rules/casting/assist_costs.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 66,
+          "physical_lines": 77
+        },
+        {
           "file": "quorune/rules/casting/target_cardinality.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -28068,6 +28058,13 @@
           "physical_lines": 72
         },
         {
+          "file": "quorune/cast_face_offers.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 62,
+          "physical_lines": 82
+        },
+        {
           "file": "quorune/compiler/public_exile_followup_templates.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -28199,13 +28196,6 @@
           "language": "python",
           "logical_lines": 61,
           "physical_lines": 75
-        },
-        {
-          "file": "quorune/rules/casting/assist_costs.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 61,
-          "physical_lines": 72
         },
         {
           "file": "quorune/rules/enlist.py",
@@ -28495,13 +28485,6 @@
           "physical_lines": 66
         },
         {
-          "file": "quorune/rules/target_announcements.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 57,
-          "physical_lines": 67
-        },
-        {
           "file": "quorune/semantic_runtime/activation_costs.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -28731,6 +28714,13 @@
           "language": "python",
           "logical_lines": 54,
           "physical_lines": 64
+        },
+        {
+          "file": "quorune/rules/reflexive_payment_shapes.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 54,
+          "physical_lines": 63
         },
         {
           "file": "quorune/rules/resolution_characteristic_shapes.py",
@@ -29321,13 +29311,6 @@
           "physical_lines": 58
         },
         {
-          "file": "quorune/cast_face_offers.py",
-          "functions_and_methods": 6,
-          "language": "python",
-          "logical_lines": 48,
-          "physical_lines": 64
-        },
-        {
           "file": "quorune/compiler/created_token_cleanup_templates.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -29839,13 +29822,6 @@
           "physical_lines": 47
         },
         {
-          "file": "quorune/rules/reflexive_payment_shapes.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 43,
-          "physical_lines": 50
-        },
-        {
           "file": "quorune/rules/spell_self_exile.py",
           "functions_and_methods": 5,
           "language": "python",
@@ -29949,6 +29925,13 @@
           "language": "python",
           "logical_lines": 42,
           "physical_lines": 48
+        },
+        {
+          "file": "quorune/rules/casting/source_placement.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 42,
+          "physical_lines": 59
         },
         {
           "file": "quorune/rules/entry_subtype_grants.py",
@@ -30602,13 +30585,6 @@
           "physical_lines": 43
         },
         {
-          "file": "quorune/rules/casting/source_placement.py",
-          "functions_and_methods": 7,
-          "language": "python",
-          "logical_lines": 37,
-          "physical_lines": 51
-        },
-        {
           "file": "quorune/rules/damage_permanent_recipients.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -30903,6 +30879,13 @@
           "physical_lines": 39
         },
         {
+          "file": "quorune/rules/casting/waterbend_costs.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 35,
+          "physical_lines": 45
+        },
+        {
           "file": "quorune/rules/granted_static_costs.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -31125,13 +31108,6 @@
           "language": "python",
           "logical_lines": 33,
           "physical_lines": 39
-        },
-        {
-          "file": "quorune/rules/casting/waterbend_costs.py",
-          "functions_and_methods": 4,
-          "language": "python",
-          "logical_lines": 33,
-          "physical_lines": 43
         },
         {
           "file": "quorune/rules/current_face_keywords.py",
@@ -31407,6 +31383,13 @@
           "physical_lines": 37
         },
         {
+          "file": "quorune/rules/permanent_event_state.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 31,
+          "physical_lines": 39
+        },
+        {
           "file": "quorune/rules/token_prowess_requirements.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -31659,6 +31642,13 @@
           "physical_lines": 36
         },
         {
+          "file": "quorune/cast_source_placement_model.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 29,
+          "physical_lines": 40
+        },
+        {
           "file": "quorune/compiler/attached_untap_restraints.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -31755,6 +31745,13 @@
           "language": "python",
           "logical_lines": 29,
           "physical_lines": 37
+        },
+        {
+          "file": "quorune/rules/face_characteristic_values.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 29,
+          "physical_lines": 39
         },
         {
           "file": "quorune/rules/graveyard_payment_sources.py",
@@ -31974,6 +31971,13 @@
           "physical_lines": 36
         },
         {
+          "file": "quorune/counter_placement_event_model.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 27,
+          "physical_lines": 37
+        },
+        {
           "file": "quorune/face_up_effect_model.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -31993,6 +31997,13 @@
           "language": "python",
           "logical_lines": 27,
           "physical_lines": 29
+        },
+        {
+          "file": "quorune/printed_mana_cost_model.py",
+          "functions_and_methods": 5,
+          "language": "python",
+          "logical_lines": 27,
+          "physical_lines": 41
         },
         {
           "file": "quorune/rules/casting/kicked_targets.py",
@@ -32730,13 +32741,6 @@
           "physical_lines": 25
         },
         {
-          "file": "quorune/counter_placement_event_model.py",
-          "functions_and_methods": 2,
-          "language": "python",
-          "logical_lines": 22,
-          "physical_lines": 30
-        },
-        {
           "file": "quorune/damage_aftermath_preparation.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -33178,20 +33182,6 @@
           "physical_lines": 22
         },
         {
-          "file": "quorune/rules/face_characteristic_values.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 18,
-          "physical_lines": 26
-        },
-        {
-          "file": "quorune/rules/permanent_event_state.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 18,
-          "physical_lines": 24
-        },
-        {
           "file": "quorune/rules/spell_history_ordinals.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -33346,6 +33336,13 @@
           "physical_lines": 22
         },
         {
+          "file": "quorune/transform_timestamp_model.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 17,
+          "physical_lines": 23
+        },
+        {
           "file": "quorune/compiler/attack_event_results.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -33484,13 +33481,6 @@
           "language": "python",
           "logical_lines": 15,
           "physical_lines": 23
-        },
-        {
-          "file": "quorune/printed_mana_cost_model.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 15,
-          "physical_lines": 25
         },
         {
           "file": "quorune/rules/blight_shapes.py",
@@ -33871,13 +33861,6 @@
           "physical_lines": 14
         },
         {
-          "file": "quorune/transform_timestamp_model.py",
-          "functions_and_methods": 2,
-          "language": "python",
-          "logical_lines": 11,
-          "physical_lines": 15
-        },
-        {
           "file": "quorune/compiler/ability_keyword_fragment_model.py",
           "functions_and_methods": 0,
           "language": "python",
@@ -34065,13 +34048,6 @@
           "language": "python",
           "logical_lines": 7,
           "physical_lines": 10
-        },
-        {
-          "file": "quorune/cast_source_placement_model.py",
-          "functions_and_methods": 1,
-          "language": "python",
-          "logical_lines": 6,
-          "physical_lines": 9
         },
         {
           "file": "quorune/characteristic_query_boundary_model.py",
@@ -34281,10 +34257,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 6687,
+          "end_line": 6670,
           "file": "quorune/engine.py",
           "kind": "method",
-          "line": 6437,
+          "line": 6420,
           "logical_lines": 242,
           "name": "_stabilize",
           "physical_lines": 251,
@@ -34292,10 +34268,10 @@
           "visibility": "private"
         },
         {
-          "end_line": 3549,
+          "end_line": 3532,
           "file": "quorune/engine.py",
           "kind": "method",
-          "line": 3310,
+          "line": 3293,
           "logical_lines": 237,
           "name": "_prepare_stack_resolution",
           "physical_lines": 240,
@@ -34336,10 +34312,10 @@
           "visibility": "private"
         },
         {
-          "end_line": 4931,
+          "end_line": 4914,
           "file": "quorune/engine.py",
           "kind": "method",
-          "line": 4709,
+          "line": 4692,
           "logical_lines": 222,
           "name": "_declaration_restrictions",
           "physical_lines": 223,
@@ -34463,8 +34439,8 @@
           "file": "quorune/engine.py",
           "functions_and_methods": 226,
           "language": "python",
-          "logical_lines": 6469,
-          "physical_lines": 6971
+          "logical_lines": 6452,
+          "physical_lines": 6954
         },
         {
           "file": "quorune/declaration_restrictions.py",
@@ -34495,7 +34471,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 350108,
+      "physical_lines": 350364,
       "python_file_count": 1802,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -34513,7 +34489,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 6584,
+      "top_level_functions": 6601,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -34822,9 +34798,9 @@
           ],
           "file": "quorune/carddb_characteristics.py",
           "lines": [
-            115,
-            176,
-            180
+            121,
+            189,
+            193
           ],
           "member": "oracle_text",
           "rationale": "Carries derived text for identity or display provenance.",
@@ -34839,9 +34815,9 @@
           ],
           "file": "quorune/carddb_characteristics.py",
           "lines": [
-            111,
-            176,
-            178
+            117,
+            189,
+            191
           ],
           "member": "oracle_text",
           "rationale": "Carries derived text for identity or display provenance.",
@@ -34855,7 +34831,7 @@
           ],
           "file": "quorune/carddb_characteristics.py",
           "lines": [
-            46
+            51
           ],
           "member": "executable_oracle_text",
           "rationale": "Carries derived text for identity or display provenance.",
@@ -34869,7 +34845,7 @@
           ],
           "file": "quorune/carddb_characteristics.py",
           "lines": [
-            43
+            48
           ],
           "member": "oracle_text",
           "rationale": "Carries derived text for identity or display provenance.",
@@ -34883,7 +34859,7 @@
           ],
           "file": "quorune/carddb_characteristics.py",
           "lines": [
-            45
+            50
           ],
           "member": "oracle_text",
           "rationale": "Carries derived text for identity or display provenance.",
@@ -42793,7 +42769,7 @@
       "card_specific_operation_branch_occurrences": {
         "remora_tax": 1
       },
-      "count": 1085,
+      "count": 1086,
       "limitations": "AST heuristic covers if/match conditions whose source names op or operation.",
       "locations": [
         {
@@ -46239,7 +46215,7 @@
         {
           "condition": "effect.get(\"op\") == \"choose_cards_apnap\"",
           "file": "quorune/engine.py",
-          "line": 3868,
+          "line": 3851,
           "string_literals": [
             "choose_cards_apnap",
             "op"
@@ -46249,7 +46225,7 @@
         {
           "condition": "effect.get(\"op\") == \"search\"",
           "file": "quorune/engine.py",
-          "line": 3883,
+          "line": 3866,
           "string_literals": [
             "op",
             "search"
@@ -46259,7 +46235,7 @@
         {
           "condition": "str(effect.get(\"op\") or \"\") in default_semantic_choice_registry().operations",
           "file": "quorune/engine.py",
-          "line": 3934,
+          "line": 3917,
           "string_literals": [
             "",
             "op"
@@ -46624,7 +46600,7 @@
         {
           "condition": "set(value)!={'field','op','value'} or value['op']!='eq'",
           "file": "quorune/permanent_event_state_model.py",
-          "line": 73,
+          "line": 75,
           "string_literals": [
             "eq",
             "field",
@@ -47526,7 +47502,7 @@
         {
           "condition": "program is not None and any( effect.get(\"op\") == ENCORE_EFFECT_OPERATION for effect in program.effects )",
           "file": "quorune/rules/activation/commit.py",
-          "line": 854,
+          "line": 856,
           "string_literals": [
             "op"
           ],
@@ -47535,7 +47511,7 @@
         {
           "condition": "any(effect.get('op')==ENCORE_EFFECT_OPERATION and ENCORE_COPY_IDENTITY_FIELD in effect for effect in program.effects)",
           "file": "quorune/rules/activation/commit.py",
-          "line": 864,
+          "line": 866,
           "string_literals": [
             "op"
           ],
@@ -47924,7 +47900,7 @@
         {
           "condition": "selected.get(\"operation\") != cost.operation",
           "file": "quorune/rules/casting/commit.py",
-          "line": 483,
+          "line": 489,
           "string_literals": [
             "operation"
           ],
@@ -51056,6 +51032,17 @@
             "schema_version"
           ],
           "symbol": "reflexive_payment_parts"
+        },
+        {
+          "condition": "not any(effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 4 for effect in effects)",
+          "file": "quorune/rules/reflexive_payment_shapes.py",
+          "line": 56,
+          "string_literals": [
+            "offer_optional_mana_payment",
+            "op",
+            "schema_version"
+          ],
+          "symbol": "reflexive_payment_runtime_dependencies"
         },
         {
           "condition": "program is None or not host.semantic_program_is_current_trusted(program) or not any(effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 4 and FrozenMap(effect.get('reflexive_program', {})) == intent.program",
@@ -55032,11 +55019,11 @@
         "offer_modular_counter_transfer": 2,
         "offer_optional_counter_placement": 1,
         "offer_optional_effect": 13,
-        "offer_optional_mana_payment": 12,
+        "offer_optional_mana_payment": 13,
         "offer_soulbond_pair": 1,
         "offset": 1,
         "once": 1,
-        "op": 701,
+        "op": 702,
         "operation": 7,
         "opponents": 2,
         "optional": 3,
@@ -55146,7 +55133,7 @@
         "sacrifice_one": 6,
         "schedule_fixed_object_action": 3,
         "schedule_turn_skip": 1,
-        "schema_version": 97,
+        "schema_version": 98,
         "scope": 7,
         "scry": 5,
         "scute_swarm_token": 1,
@@ -56060,7 +56047,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 142,
+        "primary_test_count": 141,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_source_counter_targets",
@@ -56091,7 +56078,6 @@
           "test_blight",
           "test_boast_restrictions",
           "test_capability_implementation_mutations",
-          "test_cast_creature_targets",
           "test_cast_source_placement",
           "test_casting_payment_keywords",
           "test_casualty_compiler",
@@ -56161,7 +56147,8 @@
           "test_morph_rules",
           "test_multikicker_entry_counters",
           "test_mutate_cast_metadata",
-          "test_nonmana_buyback_costs"
+          "test_nonmana_buyback_costs",
+          "test_nonmana_kicker"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -61787,7 +61774,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1456,
     "compiler_module_physical_lines": 1518,
-    "compiler_version": "oracle-ir-v803",
+    "compiler_version": "oracle-ir-v852",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -62107,22 +62094,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 4784,
+          "interaction": 4785,
           "multiplayer": 3450,
           "mutation": 1596,
-          "negative": 4663,
-          "positive": 5393,
+          "negative": 4664,
+          "positive": 5394,
           "privacy": 2731,
           "property": 178,
-          "replay": 4224,
+          "replay": 4225,
           "rollback": 467
         },
-        "declaration_count": 27486,
-        "declaration_source_fingerprint": "309b97330067ab167815c5e98feb9449f5cde5faf494351df3f68fcc7e1bd103",
-        "fingerprint": "58847d8869bddd43bdfa67e96a1d05cd61c2564fa60697732751e7a362363d61",
-        "registry_fingerprint": "4848c7e2bb55b98c27d7070007430ce337384cae9008afbf0d070949f825e753"
+        "declaration_count": 27490,
+        "declaration_source_fingerprint": "81370e307472577ad980a49e8afd7232f5eb40c5c617ae68c848f4fe0c532a7d",
+        "fingerprint": "876ce2cf735def7550d8ae350687eb787cc217fe6cd5d16362c8082ae4c1856f",
+        "registry_fingerprint": "bb0ce5fccf8f7ef4a76976cbb26af02df0268878b5560a3bc22019afc40750f8"
       },
-      "fingerprint": "4848c7e2bb55b98c27d7070007430ce337384cae9008afbf0d070949f825e753",
+      "fingerprint": "bb0ce5fccf8f7ef4a76976cbb26af02df0268878b5560a3bc22019afc40750f8",
       "implementation_mutation_status_counts": {
         "killed": 722,
         "not_run": 4
@@ -62525,7 +62512,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 880,
         "exact_nodes": 1007,
-        "fingerprint": "8e17da8ed91138ddbc7fdbc351939c4c591b31be0d72868f548cdbc82444a5e6",
+        "fingerprint": "55f5e0fc9184fd2852a54843ff1abb9f2c28e08ba4925263a44e05fcda4b1db5",
         "grammar_source_fingerprint": "8b5e41cd0050d96d35c4106a74eaf803c37102f91918fae993168b88be3c4eaf",
         "identity_fingerprint": "7d63536b6d51a3ddd96a51c4eabbb129849f5627a26fda1ec8ed41043d9e4d29",
         "present": true,
@@ -62537,7 +62524,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 905,
         "exact_nodes": 1045,
-        "fingerprint": "330fef21e18683026c4a6f6803bbec3407300fc2928c8a2798bfa91b14a85839",
+        "fingerprint": "ad8cc50fed114f56b56a439fb5ba5f69c195b2322a75553aeb2e52edf1debe7a",
         "grammar_source_fingerprint": "8b5e41cd0050d96d35c4106a74eaf803c37102f91918fae993168b88be3c4eaf",
         "identity_fingerprint": "6e8212e5cf9a563deab970d366cae3dfb4b8d6393c5634d387c209f89cb3a76c",
         "present": true,
@@ -62556,7 +62543,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "e3940b48eb0167d52f109c1d9700d31703249786d66be4f37c5ea7565c32eff2",
+      "fingerprint": "ff56b09a64a9c0e8b8fded0780b24f2d7f59418335ad7963613562a80755b44e",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -63425,14 +63412,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 11585,
-      "discovered_total": 14894,
+      "conventional_ast_cases": 11606,
+      "discovered_total": 14915,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 350,
         "fuzz_named": 1,
         "privacy_or_projection_named": 136,
-        "replay_named": 802,
+        "replay_named": 805,
         "server_named": 71
       },
       "reconciles": true,

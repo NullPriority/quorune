@@ -48,14 +48,15 @@ uncast entries retain zero. New result descriptors consume this sealed value
 after source departure. Records without an entry-X reader preserve their
 earlier event shape; malformed or mismatched identities reject.
 
-`permanent_event_state_version: 1` pins sealed public state used by represented
-zone and damage occurrences. Departure facts describe the old permanent;
-after-events use only the new object's current facts. Damage proposals retain
-their sealed source facts through replacement and final event dispatch.
-Historical absence preserves the
-earlier event shape and remains absent on serialization. Unknown, boolean,
-and manifest/checkpoint-mismatched versions reject before replay through the
-existing state-provenance owner.
+`permanent_event_state_version` pins sealed public state for represented zone
+and damage occurrences. Version 2 uses completed battlefield power and
+toughness for zone occurrences, including counters and continuous effects.
+Departures use the old permanent's statistics and entries use the new
+permanent's statistics. Damage proposals retain their sealed source facts
+through replacement and final dispatch. Version 1 replays with its recorded
+numeric semantics. A record with the field absent retains its earlier event
+shape. The state-provenance check rejects unknown versions, booleans, and
+manifest/checkpoint mismatches before replay.
 
 `unblocked_attacker_event_version: 1` independently pins post-blocker-declaration
 unblocked occurrences. Historical absence emits no new occurrence and remains
@@ -104,6 +105,12 @@ incarnation without storing its hidden destination. Rollover clears
 the facts and retains the mode. Older records omit the field and retain
 their previous event hashes.
 
+The optional `turn_history.damage_life_history_version` is `1` when damage
+results record each committed life gain and loss separately. The manifest
+pins the mode from the initial checkpoint. Records that omit it retain the
+historical net life transitions from damage. The mode persists when the
+turn history resets.
+
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
 during replay. The mode survives journal reset and turn rollover. A
@@ -113,6 +120,13 @@ Malformed versions and crime facts without the declared mode reject. Copies,
 later target changes and ordinary battlefield target announcements retain
 their separate contracts. Declared runtime provenance remains exact; absence
 compatibility does not authorize rewriting a mismatched manifest.
+
+The optional `target_announcement_timing_version` is `1` for current
+games. It requires initial stack placement and detects ordinary target triggers
+and Ward at the initial target announcement, before costs are paid. A rejected
+action rolls back the provisional occurrences. The manifest pins this timing
+to the initial checkpoint. Historical records without the mode retain their
+prior event timing.
 
 An optional per-card `permanent_composition` value has its own schema-one
 codec. It retains the current object identity, ordered physical snapshots and
@@ -247,11 +261,12 @@ absence retains the earlier transition order and remains absent on serialization
 Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
 See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
 
-New checkpoints carry `printed_mana_cost_version: 1`, mirrored in manifest
-format provenance. The ordinary cost owner rejects an absent printed price.
-A printed zero and separately authorized alternative prices use their existing
-owners. Historical absence retains the earlier price behavior for exact replay
-and stays absent on serialization. A malformed or mismatched version rejects.
+New checkpoints carry `printed_mana_cost_version: 3`, mirrored in manifest
+format provenance. The cast proposal checks that a submitted X is a nonnegative
+integer before payment or stack placement. Version two represents printed snow
+obligations and version one distinguishes absent printed prices from printed
+zero. Earlier versions and historical absence preserve their original command
+behavior for exact replay. A malformed or mismatched version rejects.
 
 New checkpoints also carry `explore_action_version: 1` in matching format
 provenance. Empty-library Explore attempts a counter on the retained current
@@ -269,6 +284,12 @@ timestamp clock while retaining the logical object. Historical absence retains
 the previous timestamp behavior and remains absent on serialization. Unknown,
 boolean and mismatched versions reject before replay. See
 [ADR 0149](../adr/0149-versioned-transform-timestamps.md).
+Physical modal double-faced transformation independently pins
+`modal_dfc_transform_version: 1` in the checkpoint and manifest. It admits
+a transform when the other face is a permanent. Archived checkpoints without
+the marker retain the previous physical modal eligibility and their recorded
+hashes. The marker uses the same strict manifest and checkpoint agreement.
+
 Current ordinary turn-up actions independently pin
 `face_status_timestamp_version: 1`. The zone owner assigns a fresh timestamp
 before face-up observers run. Absence retains the prior ordinary timestamp even
@@ -712,6 +733,11 @@ replays its original Omen resolution under matching runtime provenance.
 Records with an absent marker retain
 their earlier face offers and resolution. The decoder rejects Boolean and
 unknown versions.
+
+The independent `split_permanent_face_values_version: 1` marker binds the
+current battlefield mana value and colors for a shared-type split permanent
+with one active face. Initial checkpoint and manifest must agree. Records
+without the marker replay with their original split permanent values.
 
 Current runtime-trust provenance also identifies a core permanent-spell copy's
 empty resolution through its pinned spell record. It retains the copy-specific

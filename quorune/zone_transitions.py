@@ -37,7 +37,7 @@ from .life_state import (
 from .model import CardInstance, GameState, StackItem
 from .relative_power_target import pin_host_relative_power_source_departures
 from .zone_trigger_processing import _damage_source_characteristics
-from .rules.permanent_event_state import current_zone_event_characteristics
+from .rules.permanent_event_state import current_zone_event_characteristics, with_zone_event_numerics
 from .scalar_effect_amounts import pin_scalar_characteristic_departures
 from .station import pin_host_station_departures
 from .semantic_runtime import (
@@ -600,7 +600,7 @@ class ZoneTransitionOwner:
             card,
         )
         characteristics = (
-            _damage_source_characteristics(self.host, card)
+            with_zone_event_numerics(self.host, card, _damage_source_characteristics(self.host, card))
             if semantic_events
             else {}
         )

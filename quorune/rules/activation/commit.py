@@ -842,6 +842,8 @@ def _commit_activation_costs_and_stack(
     chosen_source_information = capture_chosen_color_mana_source(source, ability)
     from .payment_commit import commit_activation_payments, announce_targeted_activation
     announcement = announce_targeted_activation(host,proposal,source,ability,response,attachment_snapshot,transmute_context)
+    from ..target_announcements import announce_initial_target_triggers, dispatch_target_announcements
+    initial_targets_announced = announce_initial_target_triggers(host, announcement)
     paid_objects, activations, spent, special_cost_context = commit_activation_payments(
         host, proposal, source, ability, response, mana_option,
     )
@@ -902,11 +904,12 @@ def _commit_activation_costs_and_stack(
     if duration_tracked:
         item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
     if announcement is None:host.state.stack.append(item)
-    from ..target_announcements import dispatch_target_announcements
-    dispatch_target_announcements(host, item)
+    if not initial_targets_announced:
+        dispatch_target_announcements(host, item)
     from ..crime import record_crime_for_stack_placement
     record_crime_for_stack_placement(host,item)
-    collect_ward_occurrences(host, item)
+    if not initial_targets_announced:
+        collect_ward_occurrences(host, item)
     host._log(
         proposal.seat,
         "stack.activate",

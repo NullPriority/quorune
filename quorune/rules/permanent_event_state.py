@@ -1,6 +1,9 @@
-"""Capture public state through the existing authoritative object query."""
-from ..permanent_event_state_model import (PermanentEventState,PERMANENT_EVENT_STATE_KEY,
-    permanent_event_state_version)
+"""Capture public state and completed battlefield statistics for occurrences."""
+from ..object_query import exact_numeric_characteristic
+from ..permanent_event_state_model import (
+    PermanentEventState, PERMANENT_EVENT_STATE_KEY, ZONE_EVENT_NUMERICS_KEY,
+    ZONE_EVENT_NUMERICS_VERSION, permanent_event_state_version,
+)
 
 
 def captured_permanent_event_state(host,card,characteristics=None):
@@ -17,8 +20,20 @@ def captured_permanent_event_state(host,card,characteristics=None):
 def permanent_event_characteristics(host,card,characteristics):
     facts=captured_permanent_event_state(host,card,characteristics)
     if facts is None:return characteristics
-    return {**characteristics,PERMANENT_EVENT_STATE_KEY:facts.to_dict()}
+    return {**characteristics, PERMANENT_EVENT_STATE_KEY: facts.to_dict()}
+
+
+def with_zone_event_numerics(host, card, characteristics):
+    """Seal the subject's final statistics separately from its layer view."""
+    if (card.zone != 'battlefield'
+            or getattr(host.state, 'permanent_event_state_version', None) != ZONE_EVENT_NUMERICS_VERSION):
+        return characteristics
+    return {**characteristics, ZONE_EVENT_NUMERICS_KEY: {
+        field: exact_numeric_characteristic(card, characteristics, field)
+        for field in ('power', 'toughness')
+    }}
 
 
 def current_zone_event_characteristics(host,card):
-    return permanent_event_characteristics(host,card,host._effective_card_data(card))
+    captured = permanent_event_characteristics(host, card, host._effective_card_data(card))
+    return with_zone_event_numerics(host, card, captured)

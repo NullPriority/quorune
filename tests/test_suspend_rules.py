@@ -869,7 +869,8 @@ class PrintedManaCostAuthorityTests(unittest.TestCase):
         current = session.state.cards[bloom.object_id]
         self.assertEqual(("exile", 3), (current.zone, current.counters["time"]))
         reloaded = self.replay(session, load=True)
-        self.assertEqual(1, reloaded.state.printed_mana_cost_version)
+        from quorune.printed_mana_cost_model import CURRENT_PRINTED_MANA_COST_VERSION
+        self.assertEqual(CURRENT_PRINTED_MANA_COST_VERSION, reloaded.state.printed_mana_cost_version)
 
     def test_absent_price_legacy_record_replays_and_mismatched_versions_fail_closed(self):
         session = self.session(118605)
@@ -885,7 +886,7 @@ class PrintedManaCostAuthorityTests(unittest.TestCase):
         fields = format_state_versions(reloaded.state)
         self.assertNotIn("printed_mana_cost_version", fields)
         self.assertNotIn("printed_mana_cost_version", reloaded.state.to_dict())
-        for invalid in (True, None, 0, 2):
+        for invalid in (True, None, 0, 4):
             with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "printed mana cost"):
                 GameState.from_dict({**reloaded.state.to_dict(), "printed_mana_cost_version": invalid})
         with self.assertRaisesRegex(ValueError, "Printed mana cost authority provenance"):

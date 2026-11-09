@@ -106,6 +106,10 @@
           "const": 1,
           "type": "integer"
         },
+        "target_announcement_timing_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "characteristic_query_boundary_version": {
           "enum": [
             0,
@@ -129,6 +133,13 @@
           "type": "integer"
         },
         "crime_history_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "damage_life_history_version": {
           "enum": [
             0,
             1
@@ -168,13 +179,29 @@
           ],
           "type": "integer"
         },
+        "modal_dfc_transform_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
         "name": {
           "const": "commander"
         },
         "permanent_event_state_version": {
           "enum": [
             0,
-            1
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        "printed_mana_cost_version": {
+          "enum": [
+            1,
+            2,
+            3
           ],
           "type": "integer"
         },
@@ -186,6 +213,10 @@
         },
         "review_profile": {
           "const": "commander_review"
+        },
+        "split_permanent_face_values_version": {
+          "const": 1,
+          "type": "integer"
         },
         "starting_life": {
           "minimum": 1,
