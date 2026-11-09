@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .fixed_effect_payment import FIXED_EFFECT_PAYMENT_CAPABILITY, FixedEffectPaymentSpec
+from .fixed_effect_payment import FIXED_EFFECT_PAYMENT_CAPABILITY, RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
 from .rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 
 
@@ -25,6 +25,8 @@ class SourceMaintenanceSpec:
             raise ValueError("Source maintenance requires a fixed typed payment")
         if self.payment is not None and self.payment.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
             raise ValueError("Source maintenance has no hybrid payment authority")
+        if self.payment is not None and self.payment.kind == RETURN_PAYMENT_KIND:
+            raise ValueError("Source maintenance has no permanent return authority")
 
     def effect(self) -> dict[str, Any]:
         return {

@@ -3237,14 +3237,8 @@ Heterogeneous spell-or-permanent targets, hidden selection, broader mass
 choices, controller destinations, alternative costs, delayed or linked moves,
 and arbitrary positions remain source-spanned residuals.
 
-Bounded controller returns use the public object-choice handler with a
-closed battlefield query. The printed count controls the minimum and
-maximum of the offer. The resolver seals each eligible incarnation and
-moves the selected permanents simultaneously to their owners' hands.
-An empty optional choice declines the return. The source exclusion uses
-the original incarnation when the instruction says another permanent.
-
-An earlier entry trigger can select a reentered permanent when it
+Entry returns that exclude the source bind the triggering battlefield
+incarnation. The earlier trigger can select a reentered permanent when it
 meets the remaining choice predicate. The effect materializer removes the
 incarnation exclusion after the original object leaves the battlefield.
 Archived instructions using a physical reference replay their recorded
@@ -3255,6 +3249,19 @@ choice owner. The complete return must be available for its branch to be
 offered. Otherwise, the trigger resolves its original source-sacrifice
 instruction under CR 118.12a and 608.2d. The recorded legacy choice shape
 continues to replay its original proposal and fallback.
+
+Bounded controller returns use the public object-choice handler with a
+closed battlefield query. The printed count controls the minimum and
+maximum of the offer. The resolver seals each eligible incarnation and
+moves the selected permanents simultaneously to their owners' hands.
+An empty optional choice declines the return. The source exclusion uses
+the original incarnation when the instruction says another permanent.
+
+The fixed resolution payment owner reuses the same query for one optional
+return followed by an independently represented “If you do” result. A legal
+selection pays the cost even when a destination replacement changes the move.
+The result waits for the replacement choice, and any source-bound consequence
+uses the original incarnation. An empty selection leaves the result unused.
 
 The printed-price authority for Phyrexian casting symbols expands each
 symbol into its canonical colored mana and life choices. The offer and

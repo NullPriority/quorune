@@ -19787,19 +19787,20 @@
       "applicability": {
         "exclusions": [
           "targeted, hidden-zone, or other-controller selections",
-          "conditional payment results and dynamic bounds"
+          "dynamic bounds, reflexive triggers, and unrepresented payment results"
         ],
         "inputs": [
           "fixed zero-through-three optional or one mandatory count",
           "closed public battlefield controller predicate",
-          "original source incarnation exclusion when printed"
+          "original source incarnation exclusion when printed",
+          "a separately closed optional payment wrapper for one return before an If you do result"
         ],
         "outputs": [
           "principal-scoped public bounded object choice",
           "simultaneous moves to the chosen cards' owners' hands",
           "sealed identity checks and deterministic replay"
         ],
-        "summary": "Offer a controller's bounded public return choice at resolution and move its selected permanents to their owners' hands."
+        "summary": "Offer a controller's bounded public return choice at resolution and move its selected permanents to their owners' hands. The fixed resolution payment owner may use one return as an optional cost."
       },
       "blockers": [],
       "dependencies": [
@@ -19811,10 +19812,13 @@
       "id": "choice.controller.bounded_return_owner_hand",
       "implementation_components": [
         "quorune.compiler.controlled_return_templates.controlled_return_template",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
         "quorune.rules.controlled_return.ControlledReturn",
         "quorune.rules.controlled_return.controlled_return_runtime_dependencies",
         "quorune.semantic_choices.controlled_return.prepare_controlled_return",
         "quorune.semantic_choices.controlled_return.complete_controlled_return",
+        "quorune.semantic_choices.controlled_return.controlled_return_intent",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_effect_payment",
         "quorune.semantic_choices.public_selection.PublicObjectChoiceHandler"
       ],
       "implementation_mutation_rationale": "A lowered maximum of one fails the source-grounded two-land witness.",
@@ -19822,7 +19826,10 @@
       "interaction_tests": [
         "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners",
         "test_actual_aviary_mechanic_has_no_offer_when_only_the_source_qualifies",
-        "test_actual_time_wipe_moves_the_choice_before_destroying_remaining_creatures"
+        "test_actual_time_wipe_moves_the_choice_before_destroying_remaining_creatures",
+        "test_actual_geothermal_kami_pays_with_a_borrowed_enchantment_or_declines",
+        "test_actual_temur_sabertooth_still_pays_when_commander_destination_is_replaced",
+        "test_actual_biblioplex_kraken_restricts_blocks_only_for_the_original_attacker"
       ],
       "multiplayer_tests": [
         "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners",
@@ -19839,10 +19846,13 @@
       "official_rules": [
         "101.3",
         "109.5",
+        "118.11",
+        "118.12",
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "903.9b"
       ],
       "positive_tests": [
         "test_bounded_return_closes_the_count_controller_and_source_exclusion",

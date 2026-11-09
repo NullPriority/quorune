@@ -196,6 +196,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
         from .optional_payment_templates import binding_aware_optional_mana_payment_template
         payment = binding_aware_optional_mana_payment_template(
             body,
+            source_is_permanent=binding.active_zone == "battlefield",
             compile_result=lambda text: binding_effect_template(
                 binding, text, card_name=card_name,
                 effect_template=effect_template, _allow_payment=False,

@@ -58,6 +58,13 @@ def prepare_controlled_return(effect, context):
     )
 
 
+def controlled_return_intent(actor, selected, label):
+    return MoveObjectsSimultaneouslyIntent(
+        actor=actor, object_refs=selected, expected_zones=("battlefield",), destination="hand",
+        reason=label, controlled_only=True,
+    )
+
+
 def complete_controlled_return(continuation, response, query):
     effect = continuation.effect
     if set(effect) != {"op", CONTROLLED_RETURN_FIELD, "_choice_actor", "_stack_label", "_return_candidates"}:
@@ -81,7 +88,4 @@ def complete_controlled_return(continuation, response, query):
         raise SemanticChoiceError("Controlled return selection is outside its sealed bounds")
     if not selected:
         return SemanticChoiceCompletion()
-    return SemanticChoiceCompletion(intents=(MoveObjectsSimultaneouslyIntent(
-        actor=actor, object_refs=tuple(selected), expected_zones=("battlefield",), destination="hand",
-        reason=effect["_stack_label"], controlled_only=True,
-    ),))
+    return SemanticChoiceCompletion(intents=(controlled_return_intent(actor, tuple(selected), effect["_stack_label"]),))

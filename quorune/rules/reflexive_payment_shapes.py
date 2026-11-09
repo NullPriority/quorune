@@ -6,7 +6,7 @@ from ..reflexive_trigger_model import (
     REFLEXIVE_PAYMENT_MECHANIC, SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
     SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION, ReflexiveTriggerProgram,
 )
-from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
+from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
 from ..replacement.immutable import thaw_value
 from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 
@@ -20,6 +20,8 @@ def reflexive_payment_parts(effect):
     payment = FixedEffectPaymentSpec.from_dict(effect['payment'])
     if payment.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
         raise ValueError('Reflexive payment has no hybrid payment authority')
+    if payment.kind == RETURN_PAYMENT_KIND:
+        raise ValueError('Reflexive payment has no permanent return authority')
     if (('cost' in effect) != (payment.kind == 'mana')
             or payment.kind == 'mana' and dict(effect['cost']) != dict(payment.requirements)):
         raise ValueError('Reflexive payment mana identity changed')

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
+from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
 from ..compiler.optional_payment_templates import OPTIONAL_MANA_PAYMENT_OPERATION
 from .blight_model import blight_decline_branch_is_closed
 from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
@@ -60,7 +60,7 @@ def fixed_payment_event_player_runtime_dependencies(program):
                 payment=value.get('payment')
                 if not isinstance(payment,Mapping):raise ValueError('Fixed payment descriptor is unavailable')
                 refs=references(value.get('effects',())) | references(value.get('declined_effects',()))
-                if refs or payment.get('kind') in ('source_sacrifice', HYBRID_RESOLUTION_PAYMENT_KIND):
+                if refs or payment.get('kind') in ('source_sacrifice', HYBRID_RESOLUTION_PAYMENT_KIND, RETURN_PAYMENT_KIND):
                     owned=fixed_effect_payment_node_capabilities(effects=(value,),target_schema=program.target_schema,mechanic_ids=program.coverage)
                     if not owned or any(not _event_player_reference_is_closed(program,ref) for ref in refs):
                         raise ValueError('Fixed payment result lacks its closed occurrence-player scope')
@@ -106,7 +106,7 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     except (ValueError,TypeError,KeyError):return ()
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
     if payment.kind in {'discard','exile','mana_discard'}and payment.predicate.owner!='$controller':return ()
-    if payment.kind in {'sacrifice','tap','blight'}and payment.predicate.controller!='$controller':return ()
+    if payment.kind in {'sacrifice','tap','blight',RETURN_PAYMENT_KIND}and payment.predicate.controller!='$controller':return ()
     if payment.kind=='sacrifice' and payment.schema_version==6 and payment.predicate.exclude_ref!='$source.zone_object':return ()
     if payment.kind in {'remove_source_counter','source_sacrifice'} and payment.source_ref!='$source.zone_object':return ()
     nested=wrapper['effects']
@@ -115,6 +115,8 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
             return ()
         nested = wrapper["declined_effects"]
     if not isinstance(nested,(list,tuple))or not 1<=len(nested)<=4 or any(not isinstance(e,Mapping)or e.get('op')in {'offer_optional_effect',OPTIONAL_MANA_PAYMENT_OPERATION}for e in nested):return ()
+    if payment.kind == RETURN_PAYMENT_KIND and any(effect.get("card") == "$source" for effect in nested):
+        return ()
     dependencies=set(payment.capabilities)
     components=fixed_payment_result_capabilities(effects=nested,target_schema=target_schema,
         mechanic_ids=mechanics-{FIXED_EFFECT_PAYMENT_MECHANIC})

@@ -173,6 +173,7 @@ def binding_aware_optional_mana_payment_template(
     text: str,
     *,
     compile_result: Callable[[str], tuple[CompiledEffectTemplate, bool]],
+    source_is_permanent: bool | None = None,
 ) -> tuple[CompiledEffectTemplate, bool] | None:
     """Keep the trigger's reference binding inside the existing payment owner."""
     requires_current_ability = False
@@ -186,7 +187,9 @@ def binding_aware_optional_mana_payment_template(
     payment = fixed_optional_mana_payment_template(text, compile_effect=compile_body)
     if payment is None:
         from .fixed_effect_payment_templates import fixed_effect_payment_template
-        compiled = fixed_effect_payment_template(text, compile_effect=compile_body)
+        compiled = fixed_effect_payment_template(
+            text, compile_effect=compile_body, source_is_permanent=source_is_permanent,
+        )
         if compiled is not None:return compiled, requires_current_ability
     if payment is None:
         return None

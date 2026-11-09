@@ -179,7 +179,10 @@ def reviewed_contextual_effect_template(
     reflexive = reflexive_payment_template(text, compile_effect=payment_body)
     if reflexive is not None:
         return reflexive
-    fixed_payment=fixed_effect_payment_template(text,compile_effect=payment_body) or fixed_effect_payment_with_mandatory_prefix(text,compile_effect=payment_body)
+    payment_context = {"compile_effect": payment_body, "source_is_permanent": source_context.get("source_is_permanent")}
+    fixed_payment = fixed_effect_payment_template(text, **payment_context) or fixed_effect_payment_with_mandatory_prefix(
+        text, **payment_context,
+    )
     if fixed_payment is not None:
         return fixed_payment
     return reviewed_effect_template_composition(

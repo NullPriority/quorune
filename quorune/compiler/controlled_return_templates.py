@@ -16,7 +16,7 @@ _CONTROLLED_RETURN = re.compile(
 _UP_TO = {"up to one": 1, "up to two": 2, "up to three": 3}
 
 
-def controlled_return_template(text: str, *, source_is_permanent: bool | None):
+def controlled_return_scope(text: str, *, source_is_permanent: bool | None) -> ControlledReturn | None:
     if not text.lstrip().casefold().startswith(("return ", "you may return ")):
         return None
     match = _CONTROLLED_RETURN.fullmatch(" ".join(text.split()))
@@ -32,5 +32,11 @@ def controlled_return_template(text: str, *, source_is_permanent: bool | None):
     query = replace(query, controller="$controller", exclude_ref="$source.zone_object" if another else None)
     maximum = _UP_TO.get(count, 1)
     minimum = 0 if match["optional"] or count in _UP_TO else 1
-    return ("bounded-controlled-return-v1", (ControlledReturn(query, minimum, maximum).effect(),),
-            None, (CONTROLLED_RETURN_MECHANIC,))
+    return ControlledReturn(query, minimum, maximum)
+
+
+def controlled_return_template(text: str, *, source_is_permanent: bool | None):
+    scope = controlled_return_scope(text, source_is_permanent=source_is_permanent)
+    if scope is None:
+        return None
+    return "bounded-controlled-return-v1", (scope.effect(),), None, (CONTROLLED_RETURN_MECHANIC,)
