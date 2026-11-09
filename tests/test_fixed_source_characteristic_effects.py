@@ -1986,6 +1986,189 @@ class IndefiniteAnimationNativeTests(InheritedNativeFixture, unittest.TestCase):
                 self.assertEqual("battlefield", session.state.cards[own.object_id].zone)
                 self.replay(session, load=True)
 
+    def test_enchantment_form_and_cast_keyword_require_independent_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.resolution_characteristic_model import (
+            INDEFINITE_ENCHANTMENT_FORM_CAPABILITY, INDEFINITE_ENCHANTMENT_FORM_VERSION,
+        )
+        from quorune.rules.spell_cast_events import (
+            SPELL_CAST_KEYWORD_CAPABILITY, SpellCastEventError, spell_cast_keyword_condition_dependencies,
+        )
+
+        session = self.session(850001)
+        acrolith = self.add(session.engine, "Opal Acrolith")
+        spider = self.add(session.engine, "Hidden Spider")
+        for source in (acrolith, spider):
+            self.assert_closed(session, source)
+        form, = (p for p in session.engine.semantics.programs_for_oracle(acrolith.oracle_id)
+                 if any(e.get("schema_version") == INDEFINITE_ENCHANTMENT_FORM_VERSION for e in p.effects))
+        cast, = session.engine.semantics.programs_for_oracle(spider.oracle_id)
+        for program, capability in (
+            (form, INDEFINITE_ENCHANTMENT_FORM_CAPABILITY),
+            (cast, SPELL_CAST_KEYWORD_CAPABILITY),
+            (cast, "trigger.event.normalized_spell_cast"),
+        ):
+            self.assertIn(capability, program.capability_dependencies)
+            dependencies = tuple(cap for cap in program.capability_dependencies if cap != capability)
+            closure = self.registry.closure(dependencies, profile="commander_review").to_dict() if dependencies else None
+            withdrawn = replace(program, capability_dependencies=dependencies, capability_closure=closure)
+            binding = bind_semantic_program_runtime(withdrawn, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"], binding)
+            self.assertIn("capability:undeclared_runtime_dependency:" + capability, binding["blockers"])
+        effect, = form.effects
+        for changed in ({"card": "$target.0"}, {"characteristics": {"card_type": "Artifact"}},
+                        {"schema_version": 18.0}, {"duration": "until_end_of_turn"}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                fixed_resolution_characteristic_instruction({**effect, **changed})
+        with self.assertRaises(SpellCastEventError):
+            spell_cast_keyword_condition_dependencies({"field": "keywords", "op": "contains_any", "value": ["reach"]})
+
+    def test_opal_acrolith_reverts_through_zero_cost_and_animates_again(self):
+        from quorune.continuous_effects import ContinuousEffectDuration
+
+        session = self.session(850002)
+        engine = session.engine
+        source = self.add(engine, "Opal Acrolith")
+        viper = self.add(engine, "Ambush Viper", seat="B", zone="hand")
+        faerie = self.add(engine, "Faerie Invaders", seat="B", zone="hand")
+        source.counters["+1/+1"] = 1
+        self.assert_closed(session, source)
+        self.prepare(session)
+        session.state.players["B"].mana_pool.update({"C": 5, "G": 1, "U": 1})
+        self.checkpoint(session)
+        identity = source.logical_object_id
+
+        self.cast(session, "B", viper)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(({"creature"}, {"soldier"}), engine._effective_type_parts(source)[:2])
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(({"enchantment"}, set()), engine._effective_type_parts(current)[:2])
+        self.assertEqual(1, current.counters["+1/+1"])
+        layers = [effect for effect in session.state.continuous_effects if effect.source_id == source.object_id]
+        newest = max(layers, key=lambda effect: effect.timestamp)
+        self.assertEqual(Layer.TYPE, newest.layer)
+        self.assertEqual(ContinuousEffectDuration.ZONE_OBJECT, newest.duration,
+                         "Enchantment form belongs to the original incarnation")
+
+        self.cast(session, "B", faerie)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(({"creature"}, {"soldier"}),
+                         engine._effective_type_parts(session.state.cards[source.object_id])[:2])
+        self.assertEqual((3, 5), (engine._numeric_stat(source.object_id, "power"),
+                                  engine._numeric_stat(source.object_id, "toughness")))
+        self.assertEqual(identity, session.state.cards[source.object_id].logical_object_id)
+        self.replay(session, load=True)
+
+    def test_hidden_stag_reverts_on_controller_land_play_and_reanimates_on_opponent_play(self):
+        session = self.session(850003)
+        engine = session.engine
+        source = self.add(engine, "Hidden Stag", seat="B")
+        lands = {seat: self.add(engine, "Forest", seat=seat, zone="hand", ref=f"stag-land-{seat}")
+                 for seat in "ABC"}
+        self.assert_closed(session, source)
+        self.prepare(session)
+        filler = session.state.players["B"].zones["hand"][0]
+        engine.move_card(filler, "library", log=False)
+        self.checkpoint(session)
+        identity = source.logical_object_id
+
+        for seat, types in (("A", {"creature"}), ("B", {"enchantment"}), ("C", {"creature"})):
+            with self.subTest(seat=seat):
+                self.until(session, lambda s: s.state.active_player == seat and s.state.phase == "precombat_main"
+                    and s.state.pending_decision is not None and s.state.pending_decision.kind == "priority")
+                self.priority(session, seat)
+                packet = session.packet(f"pilot:{seat}", full=True)
+                offer = next(row for row in packet["decision"]["ctx"]["legal"]["actions"]
+                             if row["id"].startswith("play-land:") and row.get("card") == lands[seat].ref)
+                command = {"action_id": offer["id"]}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:D", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act(f"pilot:{seat}", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(1, self.trigger_count(session, source))
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[source.object_id]
+                self.assertEqual(types, engine._effective_type_parts(current)[0])
+                self.assertEqual(identity, current.logical_object_id)
+        self.replay(session, load=True)
+
+    def test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy(self):
+        session = self.session(850004)
+        engine = session.engine
+        source = self.add(engine, "Hidden Spider", seat="B")
+        printed = self.add(engine, "Sootfeather Flock", zone="hand")
+        own = self.add(engine, "Faerie Invaders", seat="B", zone="hand", ref="spider-own-flier")
+        rival = self.add(engine, "Faerie Invaders", zone="hand", ref="spider-opposing-flier")
+        for card in (source, printed):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 8, "U": 1})
+        session.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.checkpoint(session)
+
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"] == "cast-morph:" + printed.ref)
+        accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, self.trigger_count(session, source), "Face-down flying must stay absent from cast facts")
+        self.assertNotIn("Sootfeather Flock", json.dumps(session.packet("pilot:C", full=True)))
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.cards[printed.object_id].face_down)
+
+        self.cast(session, "B", own)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", rival)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(({"creature"}, {"spider"}), engine._effective_type_parts(current)[:2])
+        self.assertIn("reach", [keyword.casefold() for keyword in engine._effective_card_data(current)["keywords"]])
+        self.assertEqual((3, 5), (engine._numeric_stat(current.object_id, "power"),
+                                  engine._numeric_stat(current.object_id, "toughness")))
+        self.replay(session, load=True)
+
+    def test_enchantment_form_temporary_duration_mutant_is_killed(self):
+        from unittest.mock import patch
+        from quorune import continuous_effect_state as owner
+        from quorune.continuous_effects import ContinuousEffectDuration
+        from quorune.resolution_characteristic_model import INDEFINITE_ENCHANTMENT_FORM_VERSION
+
+        original = owner._characteristic_effect_timing
+
+        def temporary(host, effect, *, actor, source):
+            if effect.get("schema_version") == INDEFINITE_ENCHANTMENT_FORM_VERSION:
+                return ContinuousEffectDuration.UNTIL_END_OF_TURN, None, None
+            return original(host, effect, actor=actor, source=source)
+
+        with patch.object(owner, "_characteristic_effect_timing", side_effect=temporary):
+            with self.assertRaisesRegex(AssertionError, "Enchantment form belongs to the original incarnation"):
+                self.test_opal_acrolith_reverts_through_zero_cost_and_animates_again()
+
+    def test_cast_keyword_omission_mutant_is_killed_by_face_down_cast(self):
+        from unittest.mock import patch
+        from quorune.compiler.spell_cast_predicates import FixedSpellCastCharacteristicKind, FixedSpellCastCharacteristicTerm
+
+        original = FixedSpellCastCharacteristicTerm.event_condition.fget
+
+        def omit_keyword(term):
+            if term.kind is FixedSpellCastCharacteristicKind.KEYWORD:
+                return {"field": "types", "op": "contains_any", "value": ["creature"]}
+            return original(term)
+
+        with patch.object(FixedSpellCastCharacteristicTerm, "event_condition", property(omit_keyword)):
+            with self.assertRaisesRegex(AssertionError, "Face-down flying must stay absent from cast facts"):
+                self.test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy()
+
     def test_temporary_duration_mutant_is_killed_by_native_animation(self):
         from unittest.mock import patch
         from quorune import continuous_effect_state as owner

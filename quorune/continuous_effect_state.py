@@ -257,9 +257,9 @@ def matching_battlefield_objects(
 
 
 def _characteristic_effect_timing(host, effect, *, actor, source):
-    from .resolution_characteristic_model import INDEFINITE_SOURCE_ANIMATION_VERSION
+    from .resolution_characteristic_model import INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS
 
-    if effect.get("schema_version") == INDEFINITE_SOURCE_ANIMATION_VERSION:
+    if effect.get("schema_version") in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS:
         return ContinuousEffectDuration.ZONE_OBJECT, None, None
     if SOURCE_TAP_EFFECT_FIELD not in effect:
         expiry = actor if NEXT_TURN_EFFECT_FIELD in effect else None

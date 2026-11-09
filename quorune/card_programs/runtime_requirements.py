@@ -167,10 +167,12 @@ def _event_query_runtime_requirements(program):
     from ..counter_placement_event_model import counter_placement_event_dependencies
     from ..player_result_events import player_result_runtime_dependencies
     from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT, upkeep_hand_runtime_dependencies
+    from ..rules.spell_cast_events import spell_cast_event_runtime_dependencies
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
         required.update(counter_placement_event_dependencies(program, subscriptions))
         required.update(player_result_runtime_dependencies(program, subscriptions))
+        required.update(spell_cast_event_runtime_dependencies(program, subscriptions))
         if program.event == TRANSFORM_EVENT or (
             subscriptions is not None and subscriptions.subscription_for(TRANSFORM_EVENT) is not None
         ):
@@ -190,8 +192,6 @@ def _event_query_runtime_requirements(program):
                 } <= coverage:
                     raise ValueError('Conditioned subscriptions require complete intervening coverage')
                 required.add('trigger.condition.fixed_public_state')
-            if any(child.event == 'spell.cast' for child in subscriptions.subscriptions):
-                required.add('trigger.event.normalized_spell_cast')
             if any(child.event.removesuffix('.self') == 'permanent.enter' for child in subscriptions.subscriptions):
                 required.add('trigger.event.normalized_zone_change')
             if any(child.event.removesuffix('.self')==MUTATE_EVENT for child in subscriptions.subscriptions):

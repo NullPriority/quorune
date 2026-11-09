@@ -648,6 +648,244 @@
       "released_at": "2024-02-23",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Hidden Spider",
+      "oracle_id": "b0709570-a145-4c3c-ba56-f06d25753855",
+      "oracle_text": "When an opponent casts a creature spell with flying, if this permanent is an enchantment, it becomes a 3/5 Spider creature with reach. (It can block creatures with flying.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1998-10-12",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Hidden Stag",
+      "oracle_id": "70c32155-dc07-45cb-bceb-e19d3ebc915d",
+      "oracle_text": "Whenever an opponent plays a land, if this permanent is an enchantment, it becomes a 3/2 Elk Beast creature.\nWhenever you play a land, if this permanent is a creature, it becomes an enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1998-10-12",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Opal Acrolith",
+      "oracle_id": "d08b8dd6-3a44-4e86-8ce8-2d0a014a9aa8",
+      "oracle_text": "Whenever an opponent casts a creature spell, if this permanent is an enchantment, it becomes a 2/4 Soldier creature.\n{0}: This permanent becomes an enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1998-10-12",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Morph"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}",
+      "name": "Sootfeather Flock",
+      "oracle_id": "54a4bde3-c61f-44ea-bd2f-cdbf6a76eefa",
+      "oracle_text": "Flying\nMorph {3}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2003-02-03",
+      "toughness": "2",
+      "type_line": "Creature — Bird"
     }
   ],
   "rulings": [
@@ -787,6 +1025,84 @@
       "comment": "Once the exiled permanent returns, it’s considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners’ graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
       "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
       "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Does not trigger on lands put onto the battlefield by a spell or ability.",
+      "oracle_id": "70c32155-dc07-45cb-bceb-e19d3ebc915d",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "When it turns into a creature, it is no longer an enchantment.",
+      "oracle_id": "70c32155-dc07-45cb-bceb-e19d3ebc915d",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature.",
+      "oracle_id": "70c32155-dc07-45cb-bceb-e19d3ebc915d",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "When it turns into a creature, it is no longer an enchantment.",
+      "oracle_id": "b0709570-a145-4c3c-ba56-f06d25753855",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "This card now uses the Reach keyword ability to enable the blocking of flying creatures. This works because a creature with flying can only be blocked by creatures with flying or reach.",
+      "oracle_id": "b0709570-a145-4c3c-ba56-f06d25753855",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability only triggers if the creature spell has flying, regardless of whether an effect would cause the creature to have flying once it entered.",
+      "oracle_id": "b0709570-a145-4c3c-ba56-f06d25753855",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature.",
+      "oracle_id": "b0709570-a145-4c3c-ba56-f06d25753855",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Changes into a creature even if the spell is countered.",
+      "oracle_id": "d08b8dd6-3a44-4e86-8ce8-2d0a014a9aa8",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "It triggers when the spell is cast, which means it becomes a creature before that spell resolves.",
+      "oracle_id": "d08b8dd6-3a44-4e86-8ce8-2d0a014a9aa8",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "When it turns into a creature, it is no longer an enchantment.",
+      "oracle_id": "d08b8dd6-3a44-4e86-8ce8-2d0a014a9aa8",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "When it turns into an enchantment, it is no longer a creature.",
+      "oracle_id": "d08b8dd6-3a44-4e86-8ce8-2d0a014a9aa8",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A \"creature spell\" is any spell with the type Creature, even if it has other types such as Artifact or Enchantment. Older cards of type Summon are also Creature spells.",
+      "oracle_id": "d08b8dd6-3a44-4e86-8ce8-2d0a014a9aa8",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature.",
+      "oracle_id": "d08b8dd6-3a44-4e86-8ce8-2d0a014a9aa8",
+      "published_at": "2008-08-01",
       "source": "wotc"
     }
   ]

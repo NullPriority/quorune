@@ -29,11 +29,17 @@ DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION = 16
 INDEFINITE_SOURCE_ANIMATION_VERSION = 17
 INDEFINITE_SOURCE_ANIMATION_MECHANIC = "indefinite-source-animation"
 INDEFINITE_SOURCE_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_source_animation"
+INDEFINITE_ENCHANTMENT_FORM_VERSION = 18
+INDEFINITE_ENCHANTMENT_FORM_MECHANIC = "indefinite-enchantment-form"
+INDEFINITE_ENCHANTMENT_FORM_CAPABILITY = "continuous.resolution.indefinite_enchantment_form"
+INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS = frozenset({
+    INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_ENCHANTMENT_FORM_VERSION,
+})
 DERIVED_CHARACTERISTIC_CAPABILITY = "continuous.resolution.derived_base_power_toughness"
 RECIPIENT_MANA_VALUE = "recipient_mana_value"
 FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
-    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, INDEFINITE_SOURCE_ANIMATION_VERSION,
+    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
 # Every non-retaining animation in this closed model sets Creature alone.
@@ -223,6 +229,19 @@ class IndefiniteSourceAnimationSpec:
         ))
 
 
+class IndefiniteEnchantmentFormSpec:
+    """One closed layer-four type setting on the original source."""
+
+    __slots__ = ()
+
+    capability_dependencies = (INDEFINITE_ENCHANTMENT_FORM_CAPABILITY,)
+
+    def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
+        return ((Layer.TYPE, "4", (
+            ContinuousOperation("set_types", ("Enchantment",), field="card_types"),
+        )),)
+
+
 @dataclass(frozen=True, slots=True)
 class DerivedResolutionCharacteristicsSpec:
     """One resolved quantity supplies both base stats of a selected object."""
@@ -384,18 +403,22 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
-    if value.get("schema_version") == INDEFINITE_SOURCE_ANIMATION_VERSION:
-        if (type(value["schema_version"]) is not int or value.get("op") != CHARACTERISTIC_OPERATION
-                or set(value) != expected | {"card"}):
-            raise ValueError("Indefinite animation requires its closed versioned instruction")
+    version = value.get("schema_version")
+    if type(version) is int and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS:
+        if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
+            raise ValueError("Indefinite characteristics require a closed versioned instruction")
         card = value["card"]
         if (type(card) is not str or not card
                 or (card.startswith("$") if resolved else card != "$source.zone_object")):
-            raise ValueError("Indefinite animation requires its exact source incarnation")
+            raise ValueError("Indefinite characteristics require their exact source incarnation")
+        if version == INDEFINITE_ENCHANTMENT_FORM_VERSION:
+            if value["characteristics"] != {"card_type": "Enchantment"}:
+                raise ValueError("Indefinite enchantment form has one closed type setting")
+            return IndefiniteEnchantmentFormSpec(), card
         return IndefiniteSourceAnimationSpec.from_dict(value["characteristics"]), card
     from .next_turn_effect import split_next_turn_effect
 

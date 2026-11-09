@@ -381,6 +381,10 @@ intervening enchantment condition uses live types at trigger and resolution.
 A source that leaves and returns has a new incarnation.
 Cast triggers with a direct source return likewise resolve against the original
 battlefield incarnation.
+An indefinite Enchantment setting adds a layer-four effect to that same
+incarnation. Later type effects take precedence in timestamp order. Cast
+predicates that require flying read the effective keywords of the committed
+spell, including the public characteristics of a face-down cast.
 
 Fuse is a hand-only casting method selected through the ordinary cast offer and
 proposal. It creates one spell with both halves' names, types, colors, and

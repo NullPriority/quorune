@@ -55,6 +55,9 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
     if (match["condition"].casefold() == "this permanent is an enchantment"
             and body.casefold().startswith("it becomes a ")):
         body = "This permanent " + body[3:]
+    elif (match["condition"].casefold() == "this permanent is a creature"
+            and re.fullmatch(r"it becomes an enchantment\.?", body, re.I)):
+        body = "This permanent becomes an enchantment."
     if (
         isinstance(condition, FixedPublicStateConditionSpec)
         and condition.fact is FixedPublicStateFact.CONTROLLER_BELOW_STARTING_LIFE

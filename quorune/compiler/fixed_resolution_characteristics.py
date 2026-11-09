@@ -15,6 +15,7 @@ from ..resolution_characteristic_model import (
     SUBTYPE_GRANT_INSTRUCTION_VERSION, DerivedResolutionCharacteristicsSpec,
     FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec, IndefiniteSourceAnimationSpec,
     INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_SOURCE_ANIMATION_MECHANIC,
+    INDEFINITE_ENCHANTMENT_FORM_VERSION, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
@@ -187,6 +188,20 @@ def _indefinite_source_animation(text, *, source_name, source_is_permanent, sour
         ("cr-611-continuous-effects", INDEFINITE_SOURCE_ANIMATION_MECHANIC))
 
 
+def _indefinite_enchantment_form(text, *, source_name, source_is_permanent, source_card_types):
+    match = re.fullmatch(r"(?P<subject>.+?) becomes an enchantment\.", text, re.I)
+    if match is None:
+        return None
+    selected = _subject(match["subject"], source_name=source_name,
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if selected != ({"card": "$source.zone_object"}, None):
+        return None
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": INDEFINITE_ENCHANTMENT_FORM_VERSION,
+        "characteristics": {"card_type": "Enchantment"}, "card": "$source.zone_object"}
+    return ("indefinite-enchantment-form-v1", (effect,), None,
+        ("cr-611-continuous-effects", INDEFINITE_ENCHANTMENT_FORM_MECHANIC))
+
+
 def fixed_resolution_characteristics_effect_template(
     text: str, *, source_name: str, source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
@@ -211,8 +226,10 @@ def fixed_resolution_characteristics_effect_template(
     else:
         suffix=re.fullmatch(r"(?P<body>.+?) until end of turn(?P<rider>\. (?:It's|They're) still (?:a land|lands|a planeswalker|planeswalkers)\.)?\.?",normalized,re.I)
         if suffix is None:
-            return _indefinite_source_animation(normalized, source_name=source_name,
-                source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+            return _indefinite_enchantment_form(normalized, source_name=source_name,
+                source_is_permanent=source_is_permanent, source_card_types=source_card_types) or _indefinite_source_animation(
+                    normalized, source_name=source_name, source_is_permanent=source_is_permanent,
+                    source_card_types=source_card_types)
         body=suffix['body']+(suffix['rider'] or '')
     body=body.rstrip('.')
     derived = _derived_target_animation(body, cast_x_available=cast_x_available)

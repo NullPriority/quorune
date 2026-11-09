@@ -31964,6 +31964,81 @@
       "applicability": {
         "exclusions": [
           "other recipients",
+          "temporary type changes",
+          "type changes combined with removing abilities"
+        ],
+        "inputs": [
+          "exact source incarnation",
+          "one fixed Enchantment type setting"
+        ],
+        "outputs": [
+          "correlated enchantment subtypes",
+          "one timestamped indefinite type effect"
+        ],
+        "summary": "Set the original source to Enchantment for its battlefield incarnation through one layer-four type setting."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "dependency_fail_closed_rationale": "The canonical descriptor independently requires its typed capability during runtime binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.indefinite_enchantment_form",
+      "implementation_components": [
+        "quorune.compiler.fixed_resolution_characteristics._indefinite_enchantment_form",
+        "quorune.resolution_characteristic_model.IndefiniteEnchantmentFormSpec",
+        "quorune.continuous_effect_state.apply_fixed_resolution_characteristics"
+      ],
+      "implementation_mutation_rationale": "The real zero-cost activation witness fails when the owner substitutes a temporary duration.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_hidden_stag_reverts_on_controller_land_play_and_reanimates_on_opponent_play",
+        "test_opal_acrolith_reverts_through_zero_cost_and_animates_again"
+      ],
+      "multiplayer_tests": [
+        "test_hidden_stag_reverts_on_controller_land_play_and_reanimates_on_opponent_play"
+      ],
+      "negative_tests": [
+        "test_enchantment_form_and_cast_keyword_require_independent_authority",
+        "test_hidden_stag_reverts_on_controller_land_play_and_reanimates_on_opponent_play"
+      ],
+      "official_rules": [
+        "205.1a",
+        "305.1",
+        "400.7",
+        "603.4",
+        "611.2a",
+        "613.1d",
+        "613.7"
+      ],
+      "positive_tests": [
+        "test_hidden_stag_reverts_on_controller_land_play_and_reanimates_on_opponent_play",
+        "test_opal_acrolith_reverts_through_zero_cost_and_animates_again"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_hidden_stag_reverts_on_controller_land_play_and_reanimates_on_opponent_play",
+        "test_opal_acrolith_reverts_through_zero_cost_and_animates_again"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "other recipients",
           "event-dependent protection",
           "indefinite noncreature forms"
         ],
@@ -73852,6 +73927,79 @@
       "replay_tests": [
         "test_actual_chosen_entry_multicast_copy_and_countered_spell",
         "test_actual_multicolor_any_caster_and_optional_result_principals"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "printed but hidden flying",
+          "permanent characteristics after entry",
+          "unrepresented keyword predicates"
+        ],
+        "inputs": [
+          "committed caster",
+          "selected spell types",
+          "effective cast keywords"
+        ],
+        "outputs": [
+          "one closed flying cast condition"
+        ],
+        "summary": "A creature-cast predicate can require flying on the actual committed spell using its immutable cast keywords."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_spell_cast"
+      ],
+      "dependency_fail_closed_rationale": "The canonical descriptor independently requires its typed capability during runtime binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.spell_cast_keyword",
+      "implementation_components": [
+        "quorune.compiler.spell_cast_predicates.FixedSpellCastCharacteristicTerm",
+        "quorune.rules.spell_cast_events.spell_cast_keyword_condition_dependencies",
+        "quorune.rules.spell_cast_events.spell_cast_event_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "Omitting the keyword predicate incorrectly triggers on a real face-down creature cast.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy"
+      ],
+      "multiplayer_tests": [
+        "test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy"
+      ],
+      "negative_tests": [
+        "test_enchantment_form_and_cast_keyword_require_independent_authority",
+        "test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy"
+      ],
+      "official_rules": [
+        "405.4",
+        "601.2i",
+        "603.2",
+        "702.9a",
+        "708.2"
+      ],
+      "positive_tests": [
+        "test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy"
+      ],
+      "privacy_tests": [
+        "test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy"
+      ],
+      "replay_tests": [
+        "test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy"
       ],
       "required_evidence": [
         "positive",

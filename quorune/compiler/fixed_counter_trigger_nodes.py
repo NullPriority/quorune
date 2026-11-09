@@ -642,9 +642,14 @@ class FixedCounterTriggerBinding:
         from ..public_history_query_model import public_history_query_dependencies
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
+        from ..rules.spell_cast_events import spell_cast_keyword_condition_dependencies
+
         ordinal=self.spell_subject.qualified_ordinal_spec if self.spell_subject is not None else None
+        cast_keywords = spell_cast_keyword_condition_dependencies(
+            self.spell_subject.event_condition if self.spell_subject is not None else None,
+        )
         attacked_life = (ATTACKED_PLAYER_LIFE_CAPABILITY,) if self.attacked_player_life else ()
-        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
+        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*cast_keywords,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
