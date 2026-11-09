@@ -224,10 +224,19 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
         self.assertTrue(mutant.material_residuals)
 
     def test_bound_payment_nested_variable_and_reflexive_forms_remain_residual(self):
+        paid = self.compile(
+            "Whenever this creature attacks, you may pay {W}. When you do, it gains flying until end of turn."
+        )
+        self.assertEqual("exact", paid.status, paid.material_residuals)
+        node, = paid.faces[0].nodes
+        effect, = node.effects
+        self.assertEqual(4, effect["schema_version"])
+        self.assertEqual("reflexive_trigger_program", effect["reflexive_program"]["kind"])
+        self.assertEqual("$source.zone_object", effect["reflexive_program"]["effects"][0]["card"])
         bodies = (
             "you may pay {X}. If you do, it gains flying until end of turn.",
             "you may pay {0}. If you do, it gains flying until end of turn.",
-            "you may pay {W}. When you do, it gains flying until end of turn.",
+            "you may pay {W}. When you do, it gains flying until your next turn.",
             "you may pay {W}. If you do, you may pay {W}. If you do, it gains flying until end of turn.",
             "you may pay {W}. If you do, it gains an unknown ability until end of turn.",
         )

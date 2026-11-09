@@ -535,7 +535,13 @@ class DevoidRuntimeTests(unittest.TestCase):
     def test_devoid_executes_while_replacement_siblings_fail_closed(self):
         session = self.session(121_100_006)
         engine = session.engine
-        record = self.db.lookup("Void Shatter")
+        printed = compile_oracle_card(
+            self.db.lookup("Void Shatter"),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", printed.status, printed.material_residuals)
+        record = self.db.lookup("Devoid Test Conditional Counterspell")
         program = compile_card_program(
             self.db,
             record,
@@ -603,8 +609,8 @@ class DevoidRuntimeTests(unittest.TestCase):
         )
 
         card = CardInstance(
-            object_id="devoid-void-shatter",
-            ref="VOID-SHATTER",
+            object_id="devoid-conditional-counterspell",
+            ref="DEVOID-CONDITIONAL-COUNTER",
             oracle_id=record.oracle_id,
             printed_name=record.name,
             owner="A",

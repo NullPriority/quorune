@@ -40,8 +40,20 @@ class ScalarHistoryQuantityCompilerTests(unittest.TestCase):
                 self.assertEqual(ScalarAmountOrigin.HISTORY, amount.origin)
                 self.assertEqual(fact, amount.history_fact)
                 self.assertIsNone(amount.binding_id)
+        text = "Draw a card for each nontoken creature that died this turn."
+        ir = compile_oracle_card(record(text, "Sorcery"), capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        self.assertIn(SCALAR_AMOUNT_CAPABILITY, node.capability_dependencies)
+        amount = ScalarEffectAmountSpec.from_dict(node.effects[0]["count"])
+        self.assertEqual("public_turn_history_count", amount.origin.value)
+        history = amount.history_count.to_dict()
+        self.assertEqual("permanent_died", history["event"])
+        self.assertEqual(["creature"], history["types_all"])
+        self.assertIs(False, history["token"])
         for text in (
-            "Draw a card for each nontoken creature that died this turn.",
+            "Draw a card for each nontoken creature that died while blocking this turn.",
             "Draw a card for each creature that died this way.",
             "Draw a card for each card target opponent discarded this turn.",
         ):

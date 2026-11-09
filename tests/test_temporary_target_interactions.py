@@ -401,14 +401,18 @@ class TemporaryTargetInteractionRuntimeTests(unittest.TestCase):
         engine.state.priority_passes = []
         records = tuple(self.db.by_oracle_id(row["oracle_id"]) for row in json.loads(FIXTURE_PATH.read_text(encoding='utf-8'))["cards"] if row["oracle_text"])
         register_generated_programs(
-            self.db, engine.semantics, records, trust_level="trusted", capability_registry=self.registry,
+            self.db, engine.semantics, records, trust_level="provisional", capability_registry=self.registry,
             capability_profile="commander_review", promote_exact_runtime_handlers=True,
             promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
             promote_exact_capability_declarations=True,
         )
         for row in records:
-            self.assertTrue(all(engine.semantic_program_is_current_trusted(p)
-                                for p in engine.semantics.programs_for_oracle(row.oracle_id)))
+            programs = engine.semantics.programs_for_oracle(row.oracle_id)
+            if programs:
+                self.assertTrue(all(engine.semantic_program_is_current_trusted(p) for p in programs))
+            else:
+                ir = compile_oracle_card(row, capability_registry=self.registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
         return session
 
     def add(self, engine, name, *, seat="A", zone="battlefield", ref=None):

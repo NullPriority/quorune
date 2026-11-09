@@ -59,6 +59,33 @@
       "layout": "normal",
       "released_at": "2016-01-22",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000012100002",
+      "name": "Devoid Test Conditional Counterspell",
+      "mana_cost": "{1}{U}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Devoid (This card has no color.)\nCounter target spell. If that spell is countered this way and it was cast from a graveyard, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Devoid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-01-22",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "rulings": []
