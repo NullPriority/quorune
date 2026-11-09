@@ -175,3 +175,117 @@ class IndependentTargetClauseNativeTests(InheritedNativeFixture,unittest.TestCas
         self.resolve_top(s);self.assertEqual((3,3),self.stats(s,targets['C']));self.assertEqual((0,6),self.stats(s,targets['D']))
         self.assertEqual((0,3),self.stats(s,targets['A']));self.assertIsNone(self.resolve(s))
         self.assertEqual((3,6),self.stats(s,targets['A']));self.replay(s,load=True)
+
+    def test_maw_keeps_both_target_roles_and_the_departed_incarnation(self):
+        for mode in ('shared', 'creature_leaves', 'land_leaves'):
+            with self.subTest(mode=mode):
+                session = self.session(115_857_010 + len(mode))
+                spell = self.add(session.engine, 'Into the Maw of Hell', zone='hand')
+                land = self.add(session.engine, 'Dryad Arbor' if mode == 'shared' else 'Forest', seat='B')
+                creature = land if mode == 'shared' else self.add(session.engine, 'Phyrexian Walker', seat='B')
+                if mode == 'creature_leaves':
+                    response = self.add(session.engine, 'Cloudshift', seat='B', zone='hand')
+                    self.add(session.engine, 'Plains', seat='B')
+                if mode == 'land_leaves':
+                    response = self.add(session.engine, 'Boomerang', seat='B', zone='hand')
+                    self.add(session.engine, 'Island', seat='B', ref='response-island-1')
+                    self.add(session.engine, 'Island', seat='B', ref='response-island-2')
+                self.assert_closed(session, spell)
+                self.prepare(session, mana={'C': 4, 'R': 2})
+                self.checkpoint(session)
+                action = self.action(session, 'A', spell)
+                self.assertEqual(2, len(action['target_schema']['groups']))
+                self.reject(session, 'A', {'action_id': action['id'], 'targets': [land.ref], 'pay': 'auto'})
+                self.cast(session, 'A', spell, [land.ref, creature.ref])
+                old_creature = session.state.cards[creature.object_id].logical_object_id
+                if mode != 'shared':
+                    target = creature if mode == 'creature_leaves' else land
+                    self.cast(session, 'B', response, [target.ref])
+                    self.resolve_top(session)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                current_land = session.state.cards[land.object_id]
+                current_creature = session.state.cards[creature.object_id]
+                self.assertEqual('hand' if mode == 'land_leaves' else 'graveyard', current_land.zone)
+                self.assertEqual('battlefield' if mode == 'creature_leaves' else 'graveyard', current_creature.zone)
+                self.assertNotEqual(old_creature, current_creature.logical_object_id)
+                self.replay(session, load=True)
+
+    def test_chandras_revolution_keeps_both_land_steps_after_its_creature_target_leaves(self):
+        session = self.session(115_857_031)
+        spell = self.add(session.engine, "Chandra's Revolution", zone='hand')
+        land = self.add(session.engine, 'Forest', seat='B')
+        creature = self.add(session.engine, 'Phyrexian Walker', seat='B')
+        response = self.add(session.engine, 'Cloudshift', seat='B', zone='hand')
+        self.add(session.engine, 'Plains', seat='B')
+        land.tapped = True
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={'C': 3, 'R': 1})
+        from quorune.turn_step_owner import TURN_STEPS
+        session.state.phase, session.state.step = 'postcombat_main', 'main'
+        session.state.phase_index = TURN_STEPS.index(('postcombat_main', 'main'))
+        self.checkpoint(session)
+        action = self.action(session, 'A', spell)
+        self.reject(session, 'A', {'action_id': action['id'], 'targets': [land.ref, creature.ref], 'pay': 'auto'})
+        self.cast(session, 'A', spell, [creature.ref, land.ref])
+        self.cast(session, 'B', response, [creature.ref])
+        self.resolve_top(session)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        current_land = session.state.cards[land.object_id]
+        self.assertTrue(current_land.tapped)
+        self.assertTrue(current_land.annotations['does_not_untap_next'])
+        self.assertEqual('battlefield', session.state.cards[creature.object_id].zone)
+        self.until(session, lambda state: state.state.active_player == 'B' and state.state.step == 'upkeep')
+        current_land = session.state.cards[land.object_id]
+        self.assertTrue(current_land.tapped)
+        self.assertNotIn('does_not_untap_next', current_land.annotations)
+        self.replay(session, load=True)
+
+    def test_practiced_offense_keeps_its_player_counters_and_creature_choice_separate(self):
+        for creature_leaves in (False, True):
+            with self.subTest(creature_leaves=creature_leaves):
+                session = self.session(115_857_042 + creature_leaves)
+                spell = self.add(session.engine, 'Practiced Offense', zone='hand' if creature_leaves else 'graveyard')
+                counter_recipient = self.add(session.engine, 'Phyrexian Walker', seat='C', ref='offense-counter')
+                creature = self.add(session.engine, 'Phyrexian Walker', seat='B', ref='offense-keyword')
+                if creature_leaves:
+                    response = self.add(session.engine, 'Cloudshift', seat='B', zone='hand')
+                    self.add(session.engine, 'Plains', seat='B')
+                self.assert_closed(session, spell)
+                self.prepare(session, mana={'C': 2, 'W': 1})
+                self.checkpoint(session)
+                self.cast(session, 'A', spell, ['C', creature.ref])
+                if not creature_leaves:
+                    from dataclasses import replace
+                    from quorune.compiler.program_composition import is_closed_composed_spell_effect_program
+                    from quorune.compiler.program_generation import _closed_effect_recognizers
+
+                    program = session.engine.semantics.get(session.state.stack[-1].semantic_key)
+                    choice = program.effects[-1]
+                    self.assertEqual('$target_group.clause_1.0', choice['target'])
+                    forged = replace(program, effects=[program.effects[0],
+                        {**choice, 'target': '$target_group.clause_0.0'}])
+                    self.assertFalse(is_closed_composed_spell_effect_program(
+                        forged, component_recognizers=_closed_effect_recognizers()))
+                if creature_leaves:
+                    self.cast(session, 'B', response, [creature.ref])
+                    self.resolve_top(session)
+                session = self.replay(session, load=True)
+                decision = self.resolve(session)
+                self.assertEqual(1, session.state.cards[counter_recipient.object_id].counters['+1/+1'])
+                if creature_leaves:
+                    self.assertIsNone(decision)
+                else:
+                    self.assertEqual('semantic.choice', decision.kind)
+                    command = {'action_id': 'choose', 'choice': 'Lifelink'}
+                    self.reject(session, 'B', command)
+                    session = self.replay(session, load=True)
+                    result = session.act('pilot:A', command)
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertIsNone(self.resolve(session))
+                current = session.state.cards[creature.object_id]
+                self.assertEqual(not creature_leaves, 'lifelink' in session.engine._combat_keywords(current))
+                self.assertEqual('graveyard' if creature_leaves else 'exile',
+                                 session.state.cards[spell.object_id].zone)
+                self.replay(session, load=True)

@@ -111,6 +111,27 @@ def _scope_component_target(value: Any, role: int, *, restore: bool = False) -> 
     return scalar if value == '$target.0' else group if value == '$targets' else value
 
 
+
+def _scoped_component_effect(effect: Mapping[str, Any], role: int, *, restore: bool = False) -> dict[str, Any]:
+    scoped = _scope_component_target(effect, role, restore=restore)
+    branches = scoped.get('then_by_choice')
+    if scoped.get('op') != 'choose_option' or not isinstance(branches, Mapping) or len(branches) != 2:
+        return scoped
+    reference = '$target.0' if restore else f'$target_group.clause_{role}.0'
+    if not all(isinstance(branch, (list, tuple)) and len(branch) == 1
+               and isinstance(branch[0], Mapping)
+               and branch[0].get('op') == 'grant_keyword_until_end_of_turn'
+               and branch[0].get('card') == reference for branch in branches.values()):
+        return scoped
+    # The option only applies its own target's keyword. Expose that target to
+    # the existing instruction filter before the player is asked to choose.
+    if restore and scoped.get('target') == reference:
+        del scoped['target']
+    elif not restore and 'target' not in scoped:
+        scoped['target'] = reference
+    return scoped
+
+
 def _component_target_roles_are_exact(value: Any, role: int) -> bool:
     if isinstance(value, Mapping):
         return all(_component_target_roles_are_exact(item, role) for item in value.values())
@@ -258,7 +279,7 @@ def is_closed_composed_spell_effect_program(
                 dict(cost_schema) if cost_schema is not None else None
             ),
             coverage=list(coverage),
-            effects=[_scope_component_target(dict(effect), target_offset, restore=True) if multi_target and target_schema is not None
+            effects=[_scoped_component_effect(effect, target_offset, restore=True) if multi_target and target_schema is not None
                 else dict(effect) for effect in program.effects[offset:end]],
             event_condition=(
                 dict(event_condition)
@@ -563,7 +584,7 @@ def program_from_generated_node_group(
     effects = []
     target_offset = 0
     for node in nodes:
-        effects.extend(_scope_component_target(dict(effect), target_offset)
+        effects.extend(_scoped_component_effect(effect, target_offset)
             if multi_target and node.target_schema is not None else dict(effect) for effect in node.effects)
         if node.target_schema is not None:
             target_offset += 1
