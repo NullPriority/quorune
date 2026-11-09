@@ -2982,7 +2982,10 @@ spell alternative, suppresses printed costs and abilities, and retains
 external cost modifiers that apply to the represented face-down spell.
 Disguise retains its face-down Ward, while Megamorph places its counter before
 turn-up triggers. The same descriptor later authorizes a controller-only
-no-stack turn-face-up action through the current effective-keyword boundary.
+no-stack turn-face-up action through the current effective-keyword boundary. The
+normalized face-up event binds its own source's damage, untap and temporary
+characteristic results. Source mutations use the turning permanent's zone
+object. Revealing a face-down card does not publish this event.
 Ordinary descriptors retain their original serialized shape. Schema-two
 descriptors add fixed two-color hybrid symbols and reuse the existing immutable
 mana-option expansion. Each currently payable combination has its own offer,

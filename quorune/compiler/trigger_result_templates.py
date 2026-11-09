@@ -181,7 +181,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .mill_templates import event_recipient_mill_result
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
     if mill is not None:return mill
-    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked', 'source_dealt_damage', 'source_received_combat_damage'}:
+    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked', 'source_dealt_damage', 'source_received_combat_damage', 'source_turned_face_up'}:
         from .explore_templates import single_explore_effect_template
         explored = single_explore_effect_template(body, allow_source_pronoun=True)
         if explored is not None:return explored.compiled(), False
@@ -217,7 +217,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
         return random_discard
     specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
     if specialized[0] is not None:return specialized,True
-    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage'}:
+    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage','source_turned_face_up'}:
         from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation, _source_self_counter_payment
         payment=_source_self_counter_payment(body,card_name=card_name,compile_effect=effect_template)
         if payment is not None:return payment,True

@@ -543,6 +543,7 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
         ref: str,
         zone: str = "hand",
         seat: str = "B",
+        promote_exact_capability_declarations: bool = False,
     ):
         engine = session.engine
         record = self.db.lookup(name)
@@ -570,6 +571,7 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
             promote_exact_runtime_handlers=True,
             promote_exact_trigger_programs=True,
             promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=promote_exact_capability_declarations,
         )
         return card
 
@@ -723,6 +725,74 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
             replay = replay_record(game_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_actual_face_up_results_bind_to_the_turning_object(self):
+        import test_bound_effect_programs as bound
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        cases = (
+            ("Atarka Efreet", MEGAMORPH_CAST_METHOD, {"C": 5, "R": 1}, 1),
+            ("Skirk Marauder", "morph", {"C": 5, "R": 1}, 2),
+            ("Liege of the Axe", "morph", {"C": 4, "W": 1}, 0),
+            ("Unstable Hulk", "morph", {"C": 6, "R": 2}, 0),
+        )
+        for index, (name, method, mana, damage) in enumerate(cases):
+            with self.subTest(name=name):
+                session = self.session(70237090 + index)
+                engine = session.engine
+                card = self.add_card(
+                    session, name=name, ref="FACE-UP-RESULT", promote_exact_capability_declarations=True,
+                )
+                program = compile_best_available_card_program(
+                    self.db, self.db.lookup(name), semantic_registry=engine.semantics,
+                    capability_registry=self.capabilities, capability_profile="commander_review",
+                )
+                binding = bind_card_program_runtime(program, capability_registry=self.capabilities,
+                                                    profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding)
+                self.assertEqual("capability_closed", binding["trust_basis"])
+                engine.state.players["B"].mana_pool.update(mana)
+                self.prepare_priority(session)
+                session.initial_checkpoint = checkpoint_envelope(engine.state)
+                self.cast_face_down(session, card, method=method)
+                self.assertFalse(engine.state.stack)
+                self.assertNotIn(name, json.dumps(session.packet("pilot:A", full=True)))
+                if name == "Liege of the Axe":
+                    card.tapped = True
+                    self.prepare_priority(session)
+                    session.initial_checkpoint = checkpoint_envelope(engine.state)
+                    session.commands.clear()
+                    session.decisions.clear()
+
+                action_id = f"turn-face-up:{card.ref}"
+                offers = engine._priority_action_hints("B")["actions"]
+                self.assertIn(action_id, {offer["id"] for offer in offers})
+                result = session.act("pilot:B", {"action_id": action_id, "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                self.assertFalse(card.face_down)
+                if method == MEGAMORPH_CAST_METHOD:
+                    self.assertEqual(1, card.counters.get("+1/+1"))
+                if damage:
+                    self.assertEqual("semantic.target", session.state.pending_decision.kind)
+                    before = authoritative_state_hash(engine.state)
+                    choice = {"action_id": "choose", "targets": ["A"]}
+                    self.assertFalse(session.act("pilot:A", choice).ok)
+                    self.assertEqual(before, authoritative_state_hash(engine.state))
+                    selected = session.act("pilot:B", choice)
+                    self.assertTrue(selected.ok, selected.summary)
+                self.assertEqual(1, len(engine.state.stack))
+                self.pass_until(session, lambda: not engine.state.stack)
+                if damage:
+                    self.assertEqual(40 - damage, engine.state.players["A"].life)
+                elif name == "Liege of the Axe":
+                    self.assertFalse(engine.state.cards[card.object_id].tapped)
+                else:
+                    self.assertEqual(8, engine._numeric_stat(card.object_id, "power"))
+                    self.assertIn("trample", engine._combat_keywords(card))
+                    skip, = engine.state.scheduled_turn_skips
+                    self.assertEqual(("B", "turn", 1), (skip.player, skip.spec.boundary.value, skip.spec.count))
+                bound.BoundEffectProgramRuntimeTests.replay(self, session, load=True)
 
     def test_megamorph_counter_replacement_suspends_and_replays(self):
         session = self.session(70237009, players=4)
