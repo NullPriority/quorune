@@ -1377,7 +1377,11 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
     from .relative_power_target import bind_relative_mana_value_trigger_schema
     from .target_source import BOUND_TARGETING_SOURCE_VERSION, capture_targeting_source, TARGETING_SOURCE_CONTEXT
     try:
-        stack_context.update(bind_relative_mana_value_trigger_schema(host, source, program.target_schema))
+        stack_context.update(bind_relative_mana_value_trigger_schema(
+            host, source, program.target_schema,
+            death_context=context if event == "creature.dies" else None,
+            source_characteristics=characteristics,
+        ))
         if bound_reflexive_has_targets(program.effects):
             stack_context[TARGETING_SOURCE_CONTEXT] = capture_targeting_source(
                 host, source, characteristics=characteristics, zone=active_zone, schema_version=BOUND_TARGETING_SOURCE_VERSION,

@@ -39,6 +39,9 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
             relative_graveyard_copy_template(body, card_name=card_name, event="enter")
             if condition is not None else None
         )
+        if event_phrase == "dies":
+            from .reanimation_templates import relative_target_reanimation_template
+            relative = relative_target_reanimation_template(body, card_name=card_name, event="dies")
         compiled = relative or effect_template(body, card_name=card_name)
         if compiled[0] is None:
             compiled = _source_self_reflexive_payment(body, card_name=card_name,

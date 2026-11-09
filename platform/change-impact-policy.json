@@ -1124,11 +1124,17 @@
     {
       "id": "fixed-single-object-reanimation-contract",
       "patterns": [
+        "quorune/compiler/public_zone_program_closure.py",
         "quorune/compiler/reanimation_templates.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/creature_power_damage.py",
         "quorune/effect_runtime/zones_and_attachments.py",
+        "quorune/relative_power_target.py",
         "quorune/rules/reanimation_capability_shapes.py",
         "quorune/self_zone_move.py",
         "quorune/targets.py",
+        "quorune/trigger_discovery.py",
         "tests/fixtures/fixed-target-reanimation-cards.json",
         "tests/fixtures/self-zone-move-cards.json"
       ],
@@ -1136,6 +1142,7 @@
         "test_aura_targeting_entry",
         "test_exact_artifact_engines",
         "test_exact_deck_interactions",
+        "test_fixed_creature_power_damage",
         "test_fixed_mana_value_target_predicates",
         "test_fixed_target_reanimation",
         "test_rules_scheduler",

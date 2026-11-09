@@ -15,6 +15,12 @@ from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    if binding.variant in {"source_attacks", "your end step"} and body == binding.body:
+        from .reanimation_templates import relative_target_reanimation_template
+        event = "attack" if binding.variant == "source_attacks" else "end_step"
+        returned = relative_target_reanimation_template(body, card_name=card_name, event=event)
+        if returned is not None:
+            return returned, False
     if binding.variant == "source_attacks" and body == binding.body:
         from .graveyard_copy_cast_templates import relative_graveyard_copy_template
         from .targeted_graveyard_cast_templates import relative_graveyard_cast_template

@@ -96,6 +96,10 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if TERMINAL_SPELL_MOVE_MECHANICS.intersection(mechanics):
         return terminal_spell_move_node_capabilities(effects=effects,target_schema=target_schema,
             mechanics=mechanics,cost_schema=cost_schema)
+    from ..compiler.reanimation_templates import RELATIVE_TARGET_REANIMATION_MECHANIC
+    if RELATIVE_TARGET_REANIMATION_MECHANIC in mechanics:
+        from .reanimation_capability_shapes import relative_target_reanimation_node_capabilities
+        return relative_target_reanimation_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
     from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC
     if GRAVEYARD_COPY_MECHANIC in mechanics:
         from .graveyard_card_targets import graveyard_copy_cast_node_capabilities

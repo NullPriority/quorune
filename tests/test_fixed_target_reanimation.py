@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune import CommanderSession
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.reanimation_templates import (
@@ -126,6 +127,47 @@ class FixedTargetReanimationCompilerTests(unittest.TestCase):
                         for node in nodes
                     )
                 )
+
+    def test_source_power_reanimation_requires_a_closed_source_target_and_event(self):
+        from types import SimpleNamespace
+        from quorune.compiler.reanimation_templates import RELATIVE_TARGET_REANIMATION_MECHANIC
+        from quorune.relative_power_target import MANA_VALUE_LE_POWER, MANA_VALUE_POWER_CAPABILITY
+        from quorune.rules.reanimation_capability_shapes import source_power_reanimation_runtime_dependencies
+
+        text = ("When this creature dies, return another target non-Bear creature card with mana value less "
+                "than or equal to this creature's power from your graveyard to the battlefield.")
+        ir = self.compile(text, type_line="Creature — Bear")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = self.reanimation_nodes(ir)
+        self.assertIn(RELATIVE_TARGET_REANIMATION_MECHANIC, node.mechanics)
+        self.assertIn(MANA_VALUE_POWER_CAPABILITY, node.capability_dependencies)
+        self.assertEqual(MANA_VALUE_LE_POWER, node.target_schema["predicate"])
+        self.assertTrue(node.target_schema["another"])
+        self.assertEqual(["bear"], node.target_schema["subtypes_none"])
+        program = SimpleNamespace(
+            event="creature.dies.self", active_zone="battlefield", event_condition=None,
+            coverage=node.mechanics, effects=node.effects, target_schema=node.target_schema,
+        )
+        self.assertIn(MANA_VALUE_POWER_CAPABILITY, source_power_reanimation_runtime_dependencies(program))
+        for changed in (
+            {**node.target_schema, "another": False},
+            {**node.target_schema, "count": True},
+            {**node.target_schema, "owner_relation": "any"},
+            {**node.target_schema, "predicate": "unknown"},
+        ):
+            with self.assertRaises(ValueError):
+                source_power_reanimation_runtime_dependencies(SimpleNamespace(**{**vars(program), "target_schema": changed}))
+        with self.assertRaises(ValueError):
+            source_power_reanimation_runtime_dependencies(SimpleNamespace(**{**vars(program), "event": "resolve"}))
+        foreign = self.compile(text.replace("this creature's power", "another creature's power"), type_line="Creature — Bear")
+        self.assertNotEqual("exact", foreign.status)
+        values = deepcopy(self.registry_value)
+        dependency = next(row for row in values["capabilities"] if row["id"] == MANA_VALUE_POWER_CAPABILITY)
+        dependency.update(status="blocked", blockers=["source power authority withdrawn"])
+        blocked = self.compile(text, type_line="Creature — Bear", capabilities=trusted_registry(values))
+        self.assertNotEqual("exact", blocked.status)
+        with patch("quorune.compiler.reanimation_templates.relative_target_reanimation_template", return_value=None):
+            self.assertNotEqual("exact", self.compile(text, type_line="Creature — Bear").status)
 
     def test_reanimation_target_domains_controller_and_tapped_state_are_typed(self):
         cases = (
@@ -1076,3 +1118,130 @@ class FixedTargetReanimationSetNativeTests(unittest.TestCase):
         self.assertIsNone(H.resolve(self,session))
         for card in (first,second):self.assertEqual('battlefield',engine.state.cards[card.object_id].zone)
         H.replay(self,session,load=True)
+
+
+class SourcePowerReanimationNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "source-power-reanimation.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "bound-effect-program-cards.json", "fixed-target-reanimation-cards.json",
+            "graveyard-copy-cast-cards.json", "casualty-cards.json", "discover-cards.json",
+        )], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Source-power reanimation", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _target_offer(self, session, source, expected, *, minimum=1):
+        packet = session.packet("pilot:A", full=True)["decision"]
+        self.assertEqual("semantic.target", packet["kind"])
+        schema = packet["ctx"]["target_schema"]
+        group, = schema["groups"]
+        self.assertEqual((minimum, 1), (group["min"], group["max"]))
+        self.assertEqual(set(expected), set(schema["legal_refs"]))
+        self.assertNotIn(source.object_id, str(packet["ctx"]))
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+
+    def test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets(self):
+        for eligible in (True, False):
+            with self.subTest(eligible=eligible):
+                session = self.session(33886901 + eligible)
+                engine = session.engine
+                source = self.add(engine, "Carmen, Cruel Skymarcher")
+                self.add(engine, "Fervor")
+                self.add(engine, "Sign in Blood", zone="graveyard")
+                self.add(engine, "Centaur Courser", zone="graveyard")
+                self.add(engine, "Grizzly Bears", seat="B", zone="graveyard", ref="foreign-bear")
+                artifact = self.add(engine, "Sol Ring", zone="graveyard") if eligible else None
+                equal = self.add(engine, "Grizzly Bears", zone="graveyard") if eligible else None
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.attack(session, [(source, "C")])
+                self._target_offer(session, source, [artifact.ref, equal.ref] if eligible else [], minimum=0)
+                self.target(session, "A", [artifact.ref] if eligible else [])
+                self.assertIsNone(self.resolve(session))
+                if eligible:
+                    arrived = session.state.cards[artifact.object_id]
+                    self.assertEqual(("battlefield", "A", False), (arrived.zone, arrived.controller, arrived.tapped))
+                    self.assertEqual("graveyard", session.state.cards[equal.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution(self):
+        for index, outcome in enumerate(("return", "shrink", "no_attack")):
+            with self.subTest(outcome=outcome):
+                session = self.session(33886910 + index)
+                engine = session.engine
+                source = self.add(engine, "Alesha, Who Laughs at Fate")
+                target = self.add(engine, "Centaur Courser", zone="graveyard")
+                self.add(engine, "Hill Giant", zone="graveyard")
+                self.add(engine, "Sol Ring", zone="graveyard")
+                self.add(engine, "Centaur Courser", seat="B", zone="graveyard", ref="foreign-courser")
+                self.add(engine, "Fervor")
+                self.add(engine, "Swamp", seat="B")
+                shrink = self.add(engine, "Disfigure", seat="B", zone="hand")
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.attack(session, [] if outcome == "no_attack" else [(source, "C")])
+                self.until(session, lambda value: value.state.step == "end_step" and value.state.pending_decision is not None)
+                if outcome == "no_attack":
+                    self.assertEqual("priority", session.state.pending_decision.kind)
+                    self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+                else:
+                    self.assertEqual(3, session.engine._numeric_stat(source.object_id, "power"))
+                    self._target_offer(session, source, [target.ref])
+                    self.target(session, "A", [target.ref])
+                    if outcome == "shrink":
+                        self.cast(session, "B", shrink, [source.ref])
+                        self.resolve_top(session)
+                        self.assertEqual(1, session.engine._numeric_stat(source.object_id, "power"))
+                    self.assertIsNone(self.resolve(session))
+                    destination = "battlefield" if outcome == "return" else "graveyard"
+                    self.assertEqual(destination, session.state.cards[target.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards(self):
+        cases = (
+            ("Gurgling Anointer", "Centaur Courser", "Hill Giant", 2),
+            ("Fiendish Panda", "Hill Giant", "Serra Angel", 1),
+        )
+        for index, (name, equal, greater, bonus) in enumerate(cases):
+            with self.subTest(name=name):
+                session = self.session(33886920 + index)
+                engine = session.engine
+                source = self.add(engine, name)
+                source.counters["+1/+1"] = bonus
+                target = self.add(engine, equal)
+                self.add(engine, greater, zone="graveyard")
+                bear = self.add(engine, "Grizzly Bears", zone="graveyard")
+                self.add(engine, equal, seat="B", zone="graveyard", ref="foreign-equal")
+                sweep = self.add(engine, "Day of Judgment", zone="hand")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 2, "W": 2})
+                self.checkpoint(session)
+                self.assertEqual(3 + index, engine._numeric_stat(source.object_id, "power"))
+                self.cast(session, "A", sweep)
+                self.assertEqual("semantic.target", self.resolve(session).kind)
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+                expected = [target.ref, bear.ref] if index == 0 else [target.ref]
+                self._target_offer(session, source, expected)
+                before = authoritative_state_hash(session.state)
+                rejected = session.act("pilot:A", {"action_id": "choose", "targets": [source.ref]})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                self.target(session, "A", [target.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                self.replay(session, load=True)

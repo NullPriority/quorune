@@ -8,11 +8,14 @@ from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
 from ..effect_contracts import REANIMATE_OPERATION
+from ..relative_power_target import MANA_VALUE_LE_POWER
+from ..rules.source_references import matches_source_power_reference
 from ..targets import TargetGroup
 
 
 FIXED_TARGET_REANIMATION_CAPABILITY = "zone.reanimate.fixed_target"
 FIXED_TARGET_REANIMATION_MECHANIC = "fixed-target-reanimation"
+RELATIVE_TARGET_REANIMATION_MECHANIC = "source-power-target-reanimation"
 FIXED_TARGET_REANIMATION_SET_CAPABILITY = "zone.reanimate.fixed_target_set"
 FIXED_TARGET_REANIMATION_SET_MECHANIC = "fixed-target-reanimation-set"
 
@@ -249,6 +252,80 @@ def fixed_target_reanimation_effect_template(
         tapped=bool(match.group("tapped")),
         owner_controls=controller == "its owner's",
     )
+
+
+_RELATIVE_REANIMATION = re.compile(
+    r"Return (?P<choice>up to one |another )?target (?P<quality>creature|permanent|non-(?P<excluded>[A-Za-z][A-Za-z'’-]*) creature) "
+    r"card with mana value less than or equal to (?P<source>.+?)['’]s power from your graveyard to the battlefield\.",
+    re.IGNORECASE,
+)
+
+
+def relative_reanimation_target_schema(scope, excluded_subtype=None):
+    """Declare one supported graveyard target before its source is bound."""
+
+    optional = scope == "optional_permanent"
+    schema = {
+        "zones": ["graveyard"], "categories": ["card"], "owner_relation": "you",
+        "types_any": list(_PERMANENT_TYPES) if optional else ["creature"],
+        "predicate": MANA_VALUE_LE_POWER,
+        **({"min": 0, "max": 1} if optional else {"count": 1}),
+    }
+    if scope == "another_creature":
+        schema["another"] = True
+        if excluded_subtype is not None:
+            schema["subtypes_none"] = [excluded_subtype]
+    return schema
+
+
+def relative_reanimation_scope(schema):
+    from ..replacement.immutable import freeze_value, thaw_value
+
+    raw = thaw_value(freeze_value(schema))
+    if not isinstance(raw, dict):
+        return None
+    if raw.get("another") is True:
+        excluded = raw.get("subtypes_none", [])
+        if not isinstance(excluded, list) or len(excluded) > 1:
+            return None
+        subtype = excluded[0] if excluded else None
+        if excluded and (type(subtype) is not str or canonical_creature_subtype(subtype) != subtype):
+            return None
+        scope = "another_creature"
+    else:
+        subtype = None
+        scope = "optional_permanent" if "min" in raw else "mandatory_creature"
+    bounds = ("min", "max") if scope == "optional_permanent" else ("count",)
+    if any(type(raw.get(field)) is not int for field in bounds):
+        return None
+    return scope if raw == relative_reanimation_target_schema(scope, subtype) else None
+
+
+def relative_target_reanimation_template(text, *, card_name, event):
+    if not text.casefold().startswith(("return target ", "return another ", "return up to one ")):
+        return None
+    match = _RELATIVE_REANIMATION.fullmatch(" ".join(text.split()))
+    if match is None or not matches_source_power_reference(match["source"], card_name):
+        return None
+    quality = match["quality"].casefold()
+    choice = (match["choice"] or "").casefold()
+    excluded = None
+    if event == "attack" and choice == "up to one " and quality == "permanent":
+        scope = "optional_permanent"
+    elif event == "end_step" and not choice and quality == "creature":
+        scope = "mandatory_creature"
+    elif event == "dies" and choice == "another " and (quality == "creature" or match["excluded"] is not None):
+        scope = "another_creature"
+        if match["excluded"] is not None:
+            excluded = canonical_creature_subtype(match["excluded"])
+            if excluded is None:
+                return None
+    else:
+        return None
+    schema = relative_reanimation_target_schema(scope, excluded)
+    base = {key: value for key, value in schema.items() if key != "predicate"}
+    template, effects, _, mechanics = FixedTargetReanimationTemplate(base, tapped=False, owner_controls=False).compiled()
+    return template, effects, schema, (*mechanics, RELATIVE_TARGET_REANIMATION_MECHANIC)
 
 
 __all__ = [

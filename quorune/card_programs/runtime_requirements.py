@@ -352,6 +352,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         targeted_graveyard_cast_runtime_dependencies,
     )
     from ..rules.public_zone_move_capability_shapes import triggered_source_exile_runtime_dependencies
+    from ..rules.reanimation_capability_shapes import source_power_reanimation_runtime_dependencies
 
     for resolver, label in (
         (spell_self_exile_runtime_dependencies, 'spell_self_exile'),
@@ -362,6 +363,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (opposing_graveyard_return_runtime_dependencies, 'opposing_graveyard_return'),
         (targeted_graveyard_cast_runtime_dependencies, 'targeted_graveyard_cast'),
         (graveyard_copy_cast_runtime_dependencies, 'graveyard_copy_cast'),
+        (source_power_reanimation_runtime_dependencies, 'source_power_reanimation'),
     ):
         try:
             required.update(resolver(program))

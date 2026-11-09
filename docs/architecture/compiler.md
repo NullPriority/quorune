@@ -3085,6 +3085,14 @@ plural forms compose through the homogeneous target-set owner. Mass and
 untargeted non-source returns, variable selections, hidden origins, copied or
 granted behavior, and unrepresented compound riders remain residual.
 
+Source-power reanimation adds an inclusive mana-value limit to an own-graveyard
+target. A self-attack trigger may select up to one permanent card. An end-step
+trigger keeps its declared creature target and public intervening condition.
+A self-dies return requires another creature card and can exclude a declared
+creature subtype. The departure owner captures power before simultaneous moves.
+The offer and resolution predicate use the same source incarnation, reading its
+current power while it remains present and its last-known power after departure.
+
 `compiler/reanimation_followup_templates.py` composes one targeted return with
 Haste and one typed end-step departure. Version five adds a mandatory exile
 replacement for any later nonexile departure of that returned incarnation. The

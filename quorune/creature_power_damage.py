@@ -146,8 +146,22 @@ def occurrence_creature_power_snapshot(host, card, *, characteristics=None):
     return snapshot
 
 
+def _observes_departing_creature_power(program, event):
+    if any(occurrence_power_damage_in(program.effects)):
+        return True
+    from .relative_power_target import MANA_VALUE_POWER_CAPABILITY, MANA_VALUE_POWER_PREDICATES
+
+    schema = getattr(program, "target_schema", None)
+    return (
+        event == "creature.dies.self"
+        and isinstance(schema, Mapping)
+        and schema.get("predicate") in MANA_VALUE_POWER_PREDICATES
+        and MANA_VALUE_POWER_CAPABILITY in program.capability_dependencies
+    )
+
+
 def with_occurrence_power_departure(host, card, characteristics):
-    if (card.zone != "battlefield" or not any(any(occurrence_power_damage_in(program.effects))
+    if (card.zone != "battlefield" or not any(_observes_departing_creature_power(program, event)
                                             for event in ("creature.dies", "creature.dies.self")
                                             for program in host.semantics.programs_for_event(event))
             or "creature" not in host._type_parts(str(characteristics.get("type_line") or ""))[0]):

@@ -65309,7 +65309,8 @@
         ],
         "outputs": [
           "shared target verdict",
-          "replayable waiting and stack source binding"
+          "replayable waiting and stack source binding",
+          "simultaneous predeparture source snapshot for a self-dies trigger"
         ],
         "summary": "Compare a public graveyard card mana value with the current or immediate last-known power of the exact triggered source at selection and resolution."
       },
@@ -65326,7 +65327,9 @@
         "quorune.relative_power_target.RelativePowerTargetCondition",
         "quorune.relative_power_target.bind_relative_mana_value_trigger_schema",
         "quorune.relative_power_target.pin_host_relative_power_source_departures",
-        "quorune.target_predicates.target_predicate_matches"
+        "quorune.target_predicates.target_predicate_matches",
+        "quorune.compiler.reanimation_templates.relative_target_reanimation_template",
+        "quorune.creature_power_damage.with_occurrence_power_departure"
       ],
       "implementation_mutation_rationale": "Removing the typed source-bound grammar leaves its trigger residual.",
       "implementation_mutation_status": "killed",
@@ -65334,19 +65337,29 @@
         "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
         "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
         "test_original_narset_revalidates_live_power_before_exiling",
-        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "multiplayer_tests": [
         "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
         "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
         "test_original_narset_revalidates_live_power_before_exiling",
-        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "negative_tests": [
         "test_relative_graveyard_compiler_rejects_foreign_source_and_missing_authority",
         "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
         "test_original_narset_revalidates_live_power_before_exiling",
-        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell",
+        "test_source_power_reanimation_requires_a_closed_source_target_and_event",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "official_rules": [
         "107.2",
@@ -65354,6 +65367,8 @@
         "115.1d",
         "202.3",
         "603.3d",
+        "603.4",
+        "603.10a",
         "608.2b",
         "702.26b",
         "702.26d"
@@ -65362,18 +65377,27 @@
         "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
         "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
         "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell",
-        "test_relative_graveyard_target_codec_and_waiting_departure_are_exact"
+        "test_relative_graveyard_target_codec_and_waiting_departure_are_exact",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "privacy_tests": [
         "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
         "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
-        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "replay_tests": [
         "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
         "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
         "test_original_narset_revalidates_live_power_before_exiling",
-        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "required_evidence": [
         "positive",
@@ -85366,22 +85390,34 @@
         "quorune.rules.reanimation_capability_shapes.fixed_target_reanimation_node_capabilities",
         "quorune.effect_runtime.zones_and_attachments._apply_reanimate",
         "quorune.zone_transitions.ZoneTransitionOwner.move_card",
-        "quorune.compiler.public_zone_program_closure.is_closed_reanimation_effect_program"
+        "quorune.compiler.public_zone_program_closure.is_closed_reanimation_effect_program",
+        "quorune.compiler.reanimation_templates.relative_target_reanimation_template",
+        "quorune.rules.reanimation_capability_shapes.source_power_reanimation_runtime_dependencies"
       ],
       "implementation_mutation_rationale": "The focused shape and runtime mutation witnesses remove the compiler production, widen the graveyard permanent domain, bypass target revalidation, or skip the canonical zone owner; exact lowering and no-mutation assertions reject each survivor.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
         "test_reanimation_current_graveyard_characteristics_and_source_control_compose",
-        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "multiplayer_tests": [
         "test_reanimation_four_player_projection_and_apnap_are_stable",
-        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "negative_tests": [
         "test_reanimation_unsupported_and_malformed_shapes_fail_closed",
-        "test_reanimation_target_revalidates_and_rolls_back"
+        "test_reanimation_target_revalidates_and_rolls_back",
+        "test_source_power_reanimation_requires_a_closed_source_target_and_event",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "official_rules": [
         "110.2a",
@@ -85399,16 +85435,25 @@
         "test_reanimation_target_domains_controller_and_tapped_state_are_typed",
         "test_reanimation_closed_type_and_power_qualities_are_typed",
         "test_reanimation_controller_tapped_and_characteristic_variants_resolve",
-        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "privacy_tests": [
         "test_reanimation_four_player_projection_and_apnap_are_stable",
-        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "replay_tests": [
         "test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
         "test_reanimation_four_player_projection_and_apnap_are_stable",
-        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_original_alesha_checks_raid_and_revalidates_current_power_at_resolution",
+        "test_original_carmen_reanimates_only_eligible_permanents_or_chooses_zero_targets",
+        "test_original_gurgling_and_panda_bind_dying_source_power_and_other_cards"
       ],
       "required_evidence": [
         "positive",

@@ -197,7 +197,23 @@ def bound_relative_power_condition(predicate, value):
     return condition
 
 
-def bind_relative_mana_value_trigger_schema(host, source, schema):
+def _trigger_source_power(host, source, death_context, source_characteristics):
+    if death_context is None:
+        return current_effective_creature_power(host, source)
+    from .creature_power_damage import validate_occurrence_power_snapshot
+    from .creature_power_damage_model import OCCURRENCE_POWER_DAMAGE_CONTEXT
+
+    raw, departed = validate_occurrence_power_snapshot(
+        death_context, (source_characteristics or {}).get(OCCURRENCE_POWER_DAMAGE_CONTEXT),
+    )
+    if (departed.object_id, departed.logical_object_id) != (source.object_id, source.logical_object_id):
+        raise RelativePowerTargetError("Relative mana-value targets lost their departing source")
+    return raw["power"]
+
+
+def bind_relative_mana_value_trigger_schema(
+    host, source, schema, *, death_context=None, source_characteristics=None,
+):
     """Pin the exact battlefield source before the trigger waits for placement."""
 
     if not isinstance(schema, Mapping) or schema.get("predicate") not in MANA_VALUE_POWER_PREDICATES:
@@ -206,7 +222,7 @@ def bind_relative_mana_value_trigger_schema(host, source, schema):
         raise RelativePowerTargetError("Relative mana-value targets require their current source event")
     known = RelativePowerSourceSnapshot(
         source.object_id, source.logical_object_id, source.ref,
-        current_effective_creature_power(host, source),
+        _trigger_source_power(host, source, death_context, source_characteristics),
     )
     condition = RelativePowerTargetCondition(known, kind=schema["predicate"])
     return {"target_schema_override": {"groups": [
