@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any, Protocol
 
 from .errors import GameRuleError
 from .model import StackItem
 from .semantic_runtime.static_cast_rules import static_stack_item_uncounterable
-from .zone_trigger_events import ZoneTransitionKind
+from .zone_trigger_events import ZoneTransitionKind, counter_destination_fields
 from .combat_entry_activations import cleanup_ninjutsu_reveal
 from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
 
@@ -81,6 +81,27 @@ def stack_item_can_be_countered(
     return True
 
 
+def _prepare_counter_destination(host, item, value, selections):
+    from .entry_counters import capture_prospective_entry_characteristics
+    from .semantic_runtime.zone_replacements import prepare_zone_change_replacement
+
+    if item.kind not in {"spell", "spell_copy"}:
+        raise GameRuleError("Only a countered spell can move to an alternate destination")
+    zone, position = counter_destination_fields(value)
+    card = host.state.cards.get(item.card_object_id or "")
+    if card is None or card.zone != "stack":
+        return zone, {}
+    characteristics, _ = capture_prospective_entry_characteristics(
+        host, card=card, enter_face=None, battlefield_entry=False,
+    )
+    prepared = prepare_zone_change_replacement(
+        host, card, zone, entry_characteristics=characteristics,
+        transition_kind=ZoneTransitionKind.COUNTERED_SPELL, selections=selections,
+        error_type=GameRuleError,
+    )
+    return zone, {"position": position, "prepared_replacement": prepared}
+
+
 def counter_stack_item(
     host: StackCounterHost,
     value: str,
@@ -89,6 +110,8 @@ def counter_stack_item(
     reason: str = "countered",
     as_rule: bool = False,
     countered_by: str | None = None,
+    counter_destination: str | None = None,
+    replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
 ) -> StackItem:
     item = next(
         (
@@ -113,6 +136,11 @@ def counter_stack_item(
             importance=2,
         )
         return item
+    move_options = {}
+    if counter_destination is not None:
+        destination, move_options = _prepare_counter_destination(
+            host, item, counter_destination, replacement_selections,
+        )
     from .rules.event_spell_copy import pin_event_spell_copy_departure
     pin_event_spell_copy_departure(host,item)
     host.state.stack.remove(item)
@@ -121,14 +149,17 @@ def counter_stack_item(
     if item.card_object_id:
         card = host.state.cards[item.card_object_id]
         if card.zone == "stack":
-            host.move_card(
+            moved = host.move_card(
                 card.object_id,
                 destination,
                 reason=reason,
                 log=False,
                 semantic_events=True,
                 transition_kind=ZoneTransitionKind.COUNTERED_SPELL,
+                **move_options,
             )
+            if counter_destination is not None:
+                destination = moved.zone
     telemetry_seat = (
         countered_by
         if countered_by in host.state.players

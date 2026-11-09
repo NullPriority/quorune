@@ -2424,9 +2424,15 @@ controller receives the computed v2 numeric cost and can accept or decline,
 including when the price is zero. Mana funding uses that frozen vector.
 Canonical target and stack-counter owners still handle invalidation, counter
 prohibitions, attribution, and destination. The fixed form is shared by spell,
-activated, normalized-trigger, granted and composition contexts. Unsupported
-nonmana prices, variable activation X, multiple targets within one payment,
-and linked counter-result instructions remain source-spanned residuals.
+activated, normalized-trigger, granted and composition contexts. A fixed
+countered-spell destination can replace the ordinary graveyard result with
+exile, its owner's hand, or a fixed edge of its owner's library. The same
+instruction owns a direct counter and a declined fixed or announced-X
+payment. Its prepared zone move applies any remaining replacements before
+the target leaves the stack. A resolving spell's own printed bottom-of-library
+instruction uses the terminal spell-move owner. Unrepresented linked results,
+nonmana prices, variable activation X, and multiple targets within one payment
+remain source-spanned residuals.
 
 `compiler/optional_payment_templates.py` owns the historical triggered clause
 `you may pay <cost>. If you do, <effect>` when the cost is one positive fixed

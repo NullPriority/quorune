@@ -16,6 +16,7 @@ from ..query_effect_amount_model import (
     PublicQueryAmountSpec,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, counter_destination_fields
 from ..scalar_effect_amount_model import (
     SCALAR_AMOUNT_CAPABILITY, SCALAR_AMOUNT_KIND, ScalarAmountOrigin, ScalarEffectAmountSpec,
 )
@@ -25,6 +26,7 @@ STACK_CONTROLLER_PAYMENT_MECHANIC = "counter-unless-controller-payment"
 STACK_CONTROLLER_PAYMENT_CAPABILITY = "stack.counter.controller_payment"
 STACK_CONTROLLER_QUANTITY_PAYMENT_CAPABILITY = "stack.counter.controller_quantity_payment"
 STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION = 3
+STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION = 4
 TARGET_SPELL_TAX_MANA_VALUE = FrozenMap({"kind": "counter_payment_target_mana_value", "schema_version": 1})
 MANA_PAYMENT_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
 _PAYMENT_FIELDS = frozenset({"op", "schema_version", "stack", "player", "cost"})
@@ -116,25 +118,42 @@ class StackControllerPaymentCost:
 def _is_payment_effect(effect: Mapping[str, Any]) -> bool:
     return (isinstance(effect, Mapping) and effect.get("op") == "counter_unless_pay"
             and type(effect.get("schema_version")) is int
-            and effect["schema_version"] in {2, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION})
+            and effect["schema_version"] in {
+                2, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
+            })
+
+
+def _payment_fields(effect):
+    if effect.get("schema_version") == STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION:
+        return _PAYMENT_FIELDS | {COUNTER_DESTINATION_FIELD}
+    return _PAYMENT_FIELDS
 
 
 def compiled_stack_controller_payment_cost(effect: Mapping[str, Any]) -> StackControllerPaymentCost:
-    if not isinstance(effect, Mapping) or set(effect) != _PAYMENT_FIELDS:
+    if not isinstance(effect, Mapping) or set(effect) != _payment_fields(effect):
         raise ValueError("Controller payment effect fields are malformed")
     if not _is_payment_effect(effect):
         raise ValueError("Controller payment effect identity is malformed")
     if effect["stack"] != "$target.0" or effect["player"] != "$target.current_controller.0":
         raise ValueError("Controller payment must refer to its current stack target")
-    return StackControllerPaymentCost(effect["cost"], effect["schema_version"])
+    version = effect["schema_version"]
+    if version == STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION:
+        counter_destination_fields(effect[COUNTER_DESTINATION_FIELD])
+        version = 2
+    return StackControllerPaymentCost(effect["cost"], version)
 
 
 def resolved_stack_controller_payment_cost(effect: Mapping[str, Any]) -> dict[str, int]:
-    if not isinstance(effect, Mapping) or not _PAYMENT_FIELDS <= set(effect) or set(effect) - _PAYMENT_FIELDS - _CONTINUATION_METADATA:
+    if not isinstance(effect, Mapping):
         raise ValueError("Resolved controller payment fields are malformed")
-    public = {key: effect[key] for key in _PAYMENT_FIELDS}
-    if public["op"] != "counter_unless_pay" or type(public["schema_version"]) is not int or public["schema_version"] != 2:
+    fields = _payment_fields(effect)
+    if not fields <= set(effect) or set(effect) - fields - _CONTINUATION_METADATA:
+        raise ValueError("Resolved controller payment fields are malformed")
+    public = {key: effect[key] for key in fields}
+    if not _is_payment_effect(public) or public["schema_version"] == STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION:
         raise ValueError("Resolved controller payment identity is malformed")
+    if COUNTER_DESTINATION_FIELD in public:
+        counter_destination_fields(public[COUNTER_DESTINATION_FIELD])
     if any(type(public[key]) is not str or not public[key] for key in ("stack", "player")):
         raise ValueError("Resolved controller payment requires a stack target and payer")
     if not isinstance(public["cost"], Mapping):

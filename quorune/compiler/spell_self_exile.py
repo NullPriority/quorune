@@ -6,12 +6,14 @@ from dataclasses import replace
 import re
 
 from ..rules.source_references import SourceReferenceSpec
-from ..rules.spell_self_exile import SELF_EXILE, SELF_SHUFFLE, terminal_spell_move
+from ..rules.spell_self_exile import SELF_BOTTOM, SELF_EXILE, SELF_SHUFFLE, terminal_spell_move
 from .closed_effect_programs import _top_level_positions
 
 
 _SELF_EXILE = re.compile(r'Exile (?P<source>.+?)\.', re.I)
 _SELF_SHUFFLE = re.compile(r"Shuffle (?P<source>.+?) into its owner['’]s library\.", re.I)
+
+_SELF_BOTTOM = re.compile(r"Put (?P<source>.+?) on the bottom of its owner['’]s library\.", re.I)
 
 
 def _terminal_body(text, *, source_name, instruction_pattern, allow_spell_reference=False):
@@ -40,10 +42,17 @@ def terminal_self_shuffle_body(text, *, source_name):
     )
 
 
+def terminal_self_bottom_body(text, *, source_name):
+    return _terminal_body(
+        text, source_name=source_name, instruction_pattern=_SELF_BOTTOM, allow_spell_reference=True,
+    )
+
+
 def terminal_spell_move_effect_compiler(compile_effect, *, source_name, oracle_text, ordinary_spell):
     if not ordinary_spell:
         return compile_effect
-    for parser, move in ((terminal_self_exile_body, SELF_EXILE), (terminal_self_shuffle_body, SELF_SHUFFLE)):
+    for parser, move in ((terminal_self_exile_body, SELF_EXILE), (terminal_self_shuffle_body, SELF_SHUFFLE),
+                         (terminal_self_bottom_body, SELF_BOTTOM)):
         if parser(oracle_text, source_name=source_name) is not None:
             break
     else:

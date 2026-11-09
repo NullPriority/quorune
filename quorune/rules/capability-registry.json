@@ -62846,6 +62846,97 @@
     {
       "applicability": {
         "exclusions": [
+          "stack abilities",
+          "variable or unrepresented destination effects",
+          "unrepresented effects borrowing the counter result"
+        ],
+        "inputs": [
+          "one currently legal spell target",
+          "one fixed owner destination and library edge",
+          "an independently closed counter or target-controller payment",
+          "the canonical destination replacement order"
+        ],
+        "outputs": [
+          "prepared alternate zone move",
+          "canonical counter attribution",
+          "resumable owner replacement decision when required",
+          "ordinary independent sibling effects"
+        ],
+        "summary": "Replace the graveyard destination of one actually countered spell with a fixed exile, owner hand, or owner-library edge before ordinary zone replacements."
+      },
+      "blockers": [],
+      "dependencies": [
+        "stack.counter.effect",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The compiled destination requires an independently admitted spell target and counter owner. An unrepresented destination is rejected at both admission and execution.",
+      "dependency_fail_closed_status": "passed",
+      "id": "stack.counter.destination_replacement",
+      "implementation_components": [
+        "quorune.compiler.counter_templates.targeted_counter_effect_template",
+        "quorune.compiler.counter_templates.targeted_controller_payment_template",
+        "quorune.rules.node_capability_shapes.targeted_counter_node_capabilities",
+        "quorune.semantic_runtime.stack_counter_handlers.CounterStackTargetHandler",
+        "quorune.stack_counter.counter_stack_item",
+        "quorune.semantic_choices.payments.OptionalPaymentHandler"
+      ],
+      "implementation_mutation_rationale": "The actual Dissipate witness rejects a canonical counter using the ordinary graveyard destination after its alternate move has been compiled.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_memory_lapse_resumes_the_commander_replacement_and_exiles_flashback",
+        "test_original_paid_counter_destinations_apply_only_on_decline",
+        "test_original_defabricate_keeps_its_spell_and_ability_modes_separate"
+      ],
+      "multiplayer_tests": [
+        "test_original_memory_lapse_resumes_the_commander_replacement_and_exiles_flashback",
+        "test_original_paid_counter_destinations_apply_only_on_decline"
+      ],
+      "negative_tests": [
+        "test_counter_destination_descriptors_are_closed_to_one_spell",
+        "test_original_remand_draws_without_moving_an_uncounterable_spell"
+      ],
+      "official_rules": [
+        "115.1a",
+        "608.2b",
+        "614.15",
+        "616.1a",
+        "701.6a",
+        "701.6b",
+        "702.34a",
+        "903.9b"
+      ],
+      "positive_tests": [
+        "test_original_counter_destinations_commit_to_printed_zones",
+        "test_original_paid_counter_destinations_apply_only_on_decline",
+        "test_original_defabricate_keeps_its_spell_and_ability_modes_separate"
+      ],
+      "privacy_tests": [
+        "test_original_memory_lapse_resumes_the_commander_replacement_and_exiles_flashback"
+      ],
+      "replay_tests": [
+        "test_original_memory_lapse_resumes_the_commander_replacement_and_exiles_flashback",
+        "test_original_remand_draws_without_moving_an_uncounterable_spell",
+        "test_original_defabricate_keeps_its_spell_and_ability_modes_separate"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "counter unless a player pays or performs another action",
           "conditional, optional, modal, mass, multi-target, or linked-result counter clauses",
           "intrinsic alternate countered-spell destinations other than a represented zone replacement",
@@ -83264,6 +83355,80 @@
     {
       "applicability": {
         "exclusions": [
+          "a spell which does not resolve",
+          "a source incarnation other than the resolving spell",
+          "random or unrepresented library positions"
+        ],
+        "inputs": [
+          "one independently closed spell body",
+          "its printed terminal self instruction",
+          "the resolving physical spell identity and owner"
+        ],
+        "outputs": [
+          "the normal stack departure with fixed bottom position",
+          "ordinary replacement handling",
+          "separate destination from any earlier target move"
+        ],
+        "summary": "Place a resolving spell on the bottom of its owner's library through the canonical final stack move when its complete printed body includes that terminal instruction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The terminal marker, trusted spell program, and exact library destination must agree before a bottom position is applied.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.library_bottom.resolving_spell",
+      "implementation_components": [
+        "quorune.rules.spell_self_exile.spell_self_bottom_runtime_dependencies",
+        "quorune.compiler.spell_self_exile.terminal_self_bottom_body",
+        "quorune.compiler.spell_self_exile.terminal_spell_move_effect_compiler",
+        "quorune.stack_resolution.complete_stack_resolution"
+      ],
+      "implementation_mutation_rationale": "The actual Spell Crumple witness kills a top-position mutant and separately observes the target owner's bottom card.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_spell_crumple_moves_both_owner_library_edges"
+      ],
+      "multiplayer_tests": [
+        "test_original_spell_crumple_moves_both_owner_library_edges"
+      ],
+      "negative_tests": [
+        "test_resolving_spell_library_edge_mutant_is_killed"
+      ],
+      "official_rules": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "701.6a"
+      ],
+      "positive_tests": [
+        "test_original_spell_crumple_moves_both_owner_library_edges"
+      ],
+      "privacy_tests": [
+        "test_original_spell_crumple_moves_both_owner_library_edges"
+      ],
+      "replay_tests": [
+        "test_original_spell_crumple_moves_both_owner_library_edges"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "linked source-departure banishment",
           "transformed or face-down return",
           "conditional, optional-return or payment riders",
@@ -85545,7 +85710,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 762,
+  "registry_version": 763,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

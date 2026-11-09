@@ -41,7 +41,9 @@ from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_char
 from ..rules.linked_exile_return_shapes import linked_ability_exile_runtime_dependencies
 from ..rules.resolution_characteristic_shapes import fixed_target_color_runtime_dependencies, temporary_creature_type_runtime_dependencies
 from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
-from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies, spell_self_shuffle_runtime_dependencies
+from ..rules.spell_self_exile import (
+    spell_self_bottom_runtime_dependencies, spell_self_exile_runtime_dependencies, spell_self_shuffle_runtime_dependencies,
+)
 from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dependencies
 from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
 from ..rules.keyword_runtime_requirements import keyword_runtime_dependencies
@@ -345,6 +347,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
     for resolver, label in (
         (spell_self_exile_runtime_dependencies, 'spell_self_exile'),
         (spell_self_shuffle_runtime_dependencies, 'spell_self_shuffle'),
+        (spell_self_bottom_runtime_dependencies, 'spell_self_bottom'),
         (triggered_source_exile_runtime_dependencies, 'triggered_source_exile'),
         (public_graveyard_return_runtime_dependencies, 'public_graveyard_return'),
     ):

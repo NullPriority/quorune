@@ -216,6 +216,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         from ..counter_permission import counter_prohibition_payload_dependencies
         own = (*own,*counter_prohibition_payload_dependencies(value,coverage=mechanics))
         own = (*own, *_damage_payload_dependencies(value, mechanics))
+        from ..zone_trigger_events import counter_destination_payload_dependencies
+        own = (*own, *counter_destination_payload_dependencies(value))
         if value.get('kind') == 'legend_rule_exemption':
             from ..legend_rule_model import legend_rule_payload_dependencies
             own = (*own, *legend_rule_payload_dependencies(value))

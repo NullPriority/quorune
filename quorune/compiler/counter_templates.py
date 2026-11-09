@@ -8,10 +8,12 @@ from typing import Any, Mapping
 from ..query_effect_amount_model import CastXAmountSpec
 from ..replacement.immutable import FrozenMap
 from ..rules.stack_controller_payment_cost import (
-    MANA_PAYMENT_KEYS, STACK_CONTROLLER_PAYMENT_MECHANIC, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
+    MANA_PAYMENT_KEYS, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION, STACK_CONTROLLER_PAYMENT_MECHANIC,
+    STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
     StackControllerPaymentCost,
 )
 from ..util import mana_cost_to_vector
+from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, counter_destination_fields
 
 from .direct_target import (
     compiled_direct_target,
@@ -93,10 +95,15 @@ class TargetedCounterEffectTemplate:
 
     target: CounterTarget
     mana_value_predicate: tuple[str, int] | None = None
+    counter_destination: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.target, CounterTarget):
             raise ValueError("Counter target domain is unsupported")
+        if self.counter_destination is not None:
+            counter_destination_fields(self.counter_destination)
+            if self.target_schema.get("categories") != ["spell"]:
+                raise ValueError("A countered-spell destination requires a spell target")
         if self.mana_value_predicate is not None:
             if type(self.mana_value_predicate) is not tuple or len(self.mana_value_predicate) != 2:
                 raise ValueError("Fixed stack mana-value predicate must be an immutable field/value pair")
@@ -112,14 +119,15 @@ class TargetedCounterEffectTemplate:
         if self.mana_value_predicate is not None:
             field, value = self.mana_value_predicate
             slug += f"-{field.replace('_', '-')}-{value}"
-        return f"counter-target-{slug}-v2"
+        suffix = "-destination-v1" if self.counter_destination is not None else "-v2"
+        return f"counter-target-{slug}{suffix}"
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
-        return direct_target_effect(
-            "counter_stack_target",
-            reference_field="stack",
-        )
+        effect, = direct_target_effect("counter_stack_target", reference_field="stack")
+        if self.counter_destination is not None:
+            effect = {**effect, COUNTER_DESTINATION_FIELD: self.counter_destination}
+        return (effect,)
 
     @property
     def target_schema(self) -> Mapping[str, Any]:
@@ -183,10 +191,30 @@ class TargetedCounterEffectTemplate:
         )
 
 
+_COUNTER_DESTINATION_SENTENCES = {
+    "exile it instead of putting it into its owner's graveyard": "exile",
+    "put it into its owner's hand instead of into that player's graveyard": "owner_hand",
+    "put it on top of its owner's library instead of into that player's graveyard": "library_top",
+    "put it on the bottom of its owner's library instead of into that player's graveyard": "library_bottom",
+}
+
+
+def _counter_destination_clause(text: str) -> tuple[str, str | None]:
+    normalized = text.strip()
+    match = re.fullmatch(
+        r"(Counter target [^.\n]+\.) If (?:that|the) spell is countered this way, ([^.\n]+)\.",
+        normalized, re.I,
+    )
+    if match is None:
+        return normalized, None
+    destination = _COUNTER_DESTINATION_SENTENCES.get(match[2].casefold().replace("’", "'"))
+    return (match[1], destination) if destination is not None else (normalized, None)
+
+
 def targeted_counter_effect_template(
     text: str,
 ) -> TargetedCounterEffectTemplate | None:
-    normalized = text.strip()
+    normalized, destination = _counter_destination_clause(text)
     quantity = re.search(r" with mana value (?P<value>[0-9]+)(?P<comparison> or less| or greater)?\.?$", normalized, re.I)
     numeric = None
     if quantity is not None:
@@ -214,10 +242,11 @@ def targeted_counter_effect_template(
     )
     if match is None:
         return None
-    if numeric is not None and "ability" in match["target"].casefold():
+    if (numeric is not None or destination is not None) and "ability" in match["target"].casefold():
         return None
     return TargetedCounterEffectTemplate(
         CounterTarget(match.group("target").casefold()), mana_value_predicate=numeric,
+        counter_destination=destination,
     )
 
 
@@ -241,13 +270,18 @@ class TargetedControllerPaymentTemplate:
     def __post_init__(self) -> None:
         if not isinstance(self.counter, TargetedCounterEffectTemplate) or not isinstance(self.payment, StackControllerPaymentCost):
             raise ValueError("Controller payment requires closed target and cost values")
+        if self.counter.counter_destination is not None and self.payment.schema_version != 2:
+            raise ValueError("Counter destination payment requires a fixed or announced-X vector")
 
     def compiled(self):
+        destination = self.counter.counter_destination
+        version = STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION if destination is not None else self.payment.schema_version
         return (
-            f"counter-controller-payment-{self.counter.template_id.removeprefix('counter-target-').removesuffix('-v2')}-v{self.payment.schema_version}",
-            ({"op": "counter_unless_pay", "schema_version": self.payment.schema_version,
+            f"counter-controller-payment-{self.counter.template_id.removeprefix('counter-target-').removesuffix('-v2')}-v{version}",
+            ({"op": "counter_unless_pay", "schema_version": version,
               "stack": "$target.0", "player": "$target.current_controller.0",
-              "cost": self.payment.to_dict()},),
+              "cost": self.payment.to_dict(),
+              **({COUNTER_DESTINATION_FIELD: destination} if destination is not None else {})},),
             self.counter.target_schema,
             (*self.counter.mechanics, STACK_CONTROLLER_PAYMENT_MECHANIC),
         )
@@ -320,15 +354,18 @@ def targeted_controller_payment_template(
 ) -> TargetedControllerPaymentTemplate | None:
     if type(cast_x_available) is not bool:
         raise ValueError("Announced-X availability must be a strict Boolean")
+    normalized, destination = _counter_destination_clause(text)
     match = re.fullmatch(
         r"(?P<body>Counter target .+?) unless its controller pays "
-        r"(?P<cost>(?:\{(?:[0-9]+|[WUBRGCX])\})+)\.?", text.strip(), re.I,
+        r"(?P<cost>(?:\{(?:[0-9]+|[WUBRGCX])\})+)\.?", normalized, re.I,
     )
     if match is None:
-        return _quantity_controller_payment_template(text, source_name=source_name)
+        return _quantity_controller_payment_template(text, source_name=source_name) if destination is None else None
     counter = targeted_counter_effect_template(match["body"] + ".")
-    if counter is None:
+    if counter is None or destination is not None and counter.target_schema.get("categories") != ["spell"]:
         return None
+    if destination is not None:
+        counter = replace(counter, counter_destination=destination)
     requirements, symbols = mana_cost_to_vector(match["cost"])
     if symbols:
         if not cast_x_available or tuple(symbols) != ("X",) or requirements["GENERIC"]:

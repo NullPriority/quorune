@@ -6,9 +6,10 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .stack_controller_payment_cost import (
     STACK_CONTROLLER_PAYMENT_CAPABILITY, STACK_CONTROLLER_PAYMENT_MECHANIC,
-    STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
+    STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
     compiled_stack_controller_payment_cost,
 )
+from ..zone_trigger_events import COUNTER_DESTINATION_FIELD
 
 
 def stack_controller_payment_node_capabilities(
@@ -28,8 +29,11 @@ def stack_controller_payment_node_capabilities(
     ):
         return ()
     from .node_capability_shapes import targeted_counter_node_capabilities
+    counter_effect = {"op": "counter_stack_target", "stack": "$target.0"}
+    if COUNTER_DESTINATION_FIELD in effects[0]:
+        counter_effect[COUNTER_DESTINATION_FIELD] = effects[0][COUNTER_DESTINATION_FIELD]
     counter = targeted_counter_node_capabilities(
-        effects=({"op": "counter_stack_target", "stack": "$target.0"},),
+        effects=(counter_effect,),
         target_schema=target_schema, mechanic_ids=mechanics,
     )
     return (STACK_CONTROLLER_PAYMENT_CAPABILITY, *counter, *payment.capabilities) if counter else ()
@@ -45,10 +49,11 @@ def is_closed_stack_controller_payment_program(program: Any) -> bool:
 
 def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]:
     """Revalidate the independent target roles of a composed payment clause."""
-    quantity = any(effect.get("op") == "counter_unless_pay"
-                   and effect.get("schema_version") == STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION
-                   for effect in program.effects)
-    if STACK_CONTROLLER_PAYMENT_MECHANIC not in program.coverage and not quantity:
+    versioned = any(effect.get("op") == "counter_unless_pay"
+                    and effect.get("schema_version") in {
+                        STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
+                    } for effect in program.effects)
+    if STACK_CONTROLLER_PAYMENT_MECHANIC not in program.coverage and not versioned:
         return ()
     from ..compiler.program_composition import composed_spell_family_runtime_dependencies
 
@@ -56,11 +61,11 @@ def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]
         program, capability=STACK_CONTROLLER_PAYMENT_CAPABILITY,
         mechanic=STACK_CONTROLLER_PAYMENT_MECHANIC,
     )
-    if composed is not None or not quantity:
+    if composed is not None or not versioned:
         return composed or ()
     owned = stack_controller_payment_node_capabilities(
         effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
     )
     if not owned:
-        raise ValueError("Controller quantity payment requires its independently closed cost and spell target")
+        raise ValueError("Versioned controller payment requires its independently closed cost and spell target")
     return owned

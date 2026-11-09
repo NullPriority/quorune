@@ -1300,6 +1300,18 @@ class CounterStackIntent:
     stack_ref: str
     reason: str
     countered_by: str
+    counter_destination: str | None = None
+    replacement_selections: tuple[str | FrozenMap, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.counter_destination is not None:
+            from ..zone_trigger_events import counter_destination_fields
+
+            counter_destination_fields(self.counter_destination)
+        elif self.replacement_selections:
+            raise ValueError("Counter replacement selections require a represented destination")
+        object.__setattr__(self, "replacement_selections",
+            _freeze_replacement_selections(self.replacement_selections, family="Countered spell"))
 
 
 @dataclass(frozen=True, slots=True)

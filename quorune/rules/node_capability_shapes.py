@@ -628,17 +628,28 @@ def targeted_counter_node_capabilities(
         or not fixed_stack_counter_target_schema_is_closed(target_schema)
     ):
         return ()
+    from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, counter_destination_payload_dependencies
+
     effect = effects[0]
+    destination_present = COUNTER_DESTINATION_FIELD in effect
+    fields = {"op", "stack"} | ({COUNTER_DESTINATION_FIELD} if destination_present else set())
     if (
-        set(effect) != {"op", "stack"}
+        set(effect) != fields
         or effect.get("op") != "counter_stack_target"
         or effect.get("stack") != "$target.0"
     ):
+        return ()
+    if destination_present and tuple(target_schema.get("categories", ())) != ("spell",):
+        return ()
+    try:
+        destination_dependencies = counter_destination_payload_dependencies(effect)
+    except ValueError:
         return ()
     from ..ability_source_information import ability_source_filter_dependencies
     return (
         "stack.counter.effect",
         "target.revalidate_resolution",
+        *destination_dependencies,
         *ability_source_filter_dependencies(target_schema),
     )
 

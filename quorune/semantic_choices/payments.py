@@ -7,7 +7,9 @@ from ..compiler.optional_payment_templates import (
     OPTIONAL_MANA_PAYMENT_OPERATION,
 )
 from ..replacement.immutable import FrozenMap, freeze_value
-from ..rules.stack_controller_payment_cost import resolved_stack_controller_payment_cost
+from ..rules.stack_controller_payment_cost import (
+    STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION, resolved_stack_controller_payment_cost,
+)
 from ..semantic_runtime.intents import (
     CounterStackIntent,
     EliminatePlayersIntent,
@@ -21,7 +23,7 @@ from ..trigger_participation import (
     TriggerParticipationError,
     WardSpec,
 )
-from ..zone_trigger_events import ZoneTransitionKind
+from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
@@ -759,6 +761,11 @@ class OptionalPaymentHandler:
             target = str(effect.get("stack") or "")
             if query.stack_object(target) is None:
                 return SemanticChoiceCompletion()
+            if effect.get("schema_version") == STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION:
+                return SemanticChoiceCompletion(prepend_effects=(FrozenMap({
+                    "op": "counter_stack_target", "stack": target,
+                    COUNTER_DESTINATION_FIELD: effect[COUNTER_DESTINATION_FIELD],
+                }),))
             return SemanticChoiceCompletion(
                 intents=(
                     CounterStackIntent(
@@ -1196,7 +1203,7 @@ PAYMENT_CHOICE_HANDLERS = (
         test_modules=("tests.test_targeted_counter_effect_clauses", "tests.test_stack_counter_rules", "tests.test_semantic_choice_characterization"),
         continuation_fields=("player", "cost", "source", "stack", "beneficiary", "stage",
             "_choice_actor", "_requirements", "_source_ref", "_source_logical_object_id", "_stack_label",
-            "schema_version", "_countering_controller"),
+            "schema_version", "_countering_controller", COUNTER_DESTINATION_FIELD),
     ),
     OptionalPaymentHandler(
         operation="cumulative_upkeep",

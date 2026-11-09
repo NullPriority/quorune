@@ -1160,12 +1160,19 @@ class SemanticChoiceIntentHostMixin:
         return tuple(result.subject_id for result in results)
 
     def counter_stack_intent(self, intent: CounterStackIntent) -> None:
-        if any(item.ref == intent.stack_ref for item in self.state.stack):
-            self._counter_stack_item(
-                intent.stack_ref,
-                reason=intent.reason,
-                countered_by=intent.countered_by,
+        if not any(item.ref == intent.stack_ref for item in self.state.stack):
+            return
+        if intent.counter_destination is not None:
+            from ..stack_counter import counter_stack_item
+
+            counter_stack_item(
+                self, intent.stack_ref, reason=intent.reason, countered_by=intent.countered_by,
+                counter_destination=intent.counter_destination, replacement_selections=intent.replacement_selections,
             )
+            return
+        self._counter_stack_item(
+            intent.stack_ref, reason=intent.reason, countered_by=intent.countered_by,
+        )
 
     def eliminate_players_intent(self, intent: EliminatePlayersIntent) -> None:
         self._eliminate_players(list(intent.players), reason=intent.reason)

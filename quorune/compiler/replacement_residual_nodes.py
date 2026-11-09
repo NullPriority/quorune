@@ -45,6 +45,19 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
                                                   compile_effect=compile_effect)
         if body is not None and declared(body, card_name=source_name)[0] == VARIABLE_DAMAGE_TEMPLATE_ID:
             return None
+    if spell and "spell is countered this way" in material_line.casefold():
+        from ..zone_trigger_events import COUNTER_DESTINATION_FIELD
+        from .declared_effect_amounts import declared_spell_effect_compiler
+
+        body = without_ability_word_label(material_line)
+        if body is not None:
+            declared = declared_spell_effect_compiler(
+                record, is_spell=True, oracle_text=oracle_text, compile_effect=compile_effect,
+            )
+            _, effects, _, _ = declared(body, card_name=source_name)
+            if (len(effects) == 1 and effects[0].get("op") in {"counter_stack_target", "counter_unless_pay"}
+                    and COUNTER_DESTINATION_FIELD in effects[0]):
+                return None
     linked_reanimation = fixed_reanimation_followup_template(material_line) if spell else None
     if linked_reanimation is not None and linked_reanimation.followup.exile_on_leave:
         return None

@@ -22,6 +22,30 @@ from .composition_departure import CompositionZoneFact
 ZoneEventSourceTiming = Literal["before", "after"]
 _SACRIFICE_TRANSITION_KIND = "sacrifice"
 
+COUNTER_DESTINATION_FIELD = "counter_destination"
+COUNTER_DESTINATION_CAPABILITY = "stack.counter.destination_replacement"
+_COUNTER_DESTINATIONS = {
+    "exile": ("exile", "top"),
+    "owner_hand": ("hand", "top"),
+    "library_top": ("library", "top"),
+    "library_bottom": ("library", "bottom"),
+}
+
+
+def counter_destination_fields(value: Any) -> tuple[str, str]:
+    if type(value) is not str or value not in _COUNTER_DESTINATIONS:
+        raise ValueError("Unsupported countered-spell destination")
+    return _COUNTER_DESTINATIONS[value]
+
+
+def counter_destination_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    if COUNTER_DESTINATION_FIELD not in value:
+        return ()
+    if value.get("op") not in {"counter_stack_target", "counter_unless_pay"}:
+        raise ValueError("Countered-spell destinations require their stack counter owner")
+    counter_destination_fields(value[COUNTER_DESTINATION_FIELD])
+    return (COUNTER_DESTINATION_CAPABILITY,)
+
 
 class ZoneTransitionKind(str, Enum):
     """Closed semantic cause needed by normalized zone-event derivation."""

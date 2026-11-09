@@ -18,7 +18,9 @@ SELF_EXILE = TerminalSpellMove("exile", "zone.exile.resolving_spell",
 SELF_SHUFFLE = TerminalSpellMove("library", "zone.shuffle.resolving_spell",
     "spell-resolution-self-shuffle", "terminal-spell-self-shuffle-v1")
 CAPABILITY, MECHANIC, TEMPLATE = SELF_EXILE.capability, SELF_EXILE.mechanic, SELF_EXILE.template
-_MOVES = (SELF_EXILE, SELF_SHUFFLE)
+SELF_BOTTOM = TerminalSpellMove("library", "zone.library_bottom.resolving_spell",
+    "spell-resolution-self-bottom", "terminal-spell-self-bottom-v1")
+_MOVES = (SELF_EXILE, SELF_SHUFFLE, SELF_BOTTOM)
 TERMINAL_SPELL_MOVE_MECHANICS = frozenset(move.mechanic for move in _MOVES)
 
 
@@ -46,7 +48,7 @@ def _move_runtime_dependencies(program, move):
             or getattr(program,'event',None) != 'resolve'
             or getattr(program,'active_zone',None) != 'stack'
             or not str(getattr(program,'ability_id','')).startswith('spell:')):
-        action = 'self exile' if move is SELF_EXILE else 'self shuffle'
+        action = move.mechanic.removeprefix("spell-resolution-").replace("-", " ")
         raise ValueError(f'Terminal {action} requires its complete resolving-spell context')
     return (move.capability,)
 
@@ -57,3 +59,7 @@ def spell_self_exile_runtime_dependencies(program):
 
 def spell_self_shuffle_runtime_dependencies(program):
     return _move_runtime_dependencies(program, SELF_SHUFFLE)
+
+
+def spell_self_bottom_runtime_dependencies(program):
+    return _move_runtime_dependencies(program, SELF_BOTTOM)
