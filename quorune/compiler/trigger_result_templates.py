@@ -15,6 +15,10 @@ from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .exile_templates import triggered_source_exile_template
+    source_exile = triggered_source_exile_template(binding, body)
+    if source_exile is not None:
+        return source_exile, True
     from .discover_templates import cast_event_fixed_top_exile, damage_player_qualified_exile_cast
     exile_cast = damage_player_qualified_exile_cast(binding, body) or cast_event_fixed_top_exile(binding, body)
     if exile_cast is not None:

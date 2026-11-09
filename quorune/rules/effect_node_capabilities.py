@@ -34,7 +34,11 @@ from ..delayed_object_model import delayed_object_node_capabilities
 from .delayed_counter_shapes import delayed_counter_node_capabilities
 from .graveyard_card_targets import targeted_own_graveyard_return_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
-from .public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities, fixed_public_zone_move_set_node_capabilities, public_graveyard_card_exile_node_capabilities
+from .public_zone_move_capability_shapes import (
+    fixed_owner_zone_move_node_capabilities, fixed_public_zone_move_set_node_capabilities,
+    public_graveyard_card_exile_node_capabilities, triggered_source_exile_node_capabilities,
+)
+from .prevention_component_shapes import fixed_prevention_component_capabilities
 from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
 from .counter_removal_capabilities import all_counter_removal_node_capabilities, fixed_counter_removal_node_capabilities
 from .affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
@@ -98,7 +102,6 @@ def effect_node_capabilities(
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
     from .occurrence_object_results import occurrence_object_node_capabilities,block_counterpart_zone_capabilities
     from .attack_event_results import attack_event_characteristic_capabilities
-    from .prevention_component_shapes import fixed_prevention_component_capabilities
     try:
         dependencies: set[str] = set(attachment_information_capabilities(effects))
     except AttachmentReferenceError:
@@ -198,6 +201,7 @@ def effect_node_capabilities(
         fixed_surveil_node_capabilities,
         fixed_self_return_node_capabilities,
         graveyard_self_return_node_capabilities,
+        triggered_source_exile_node_capabilities,
         target_player_sequence_node_capabilities,
         fixed_resolution_characteristic_set_node_capabilities,
         single_explore_node_capabilities,

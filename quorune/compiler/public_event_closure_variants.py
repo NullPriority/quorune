@@ -15,6 +15,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         DAMAGE_PERMANENT_VARIANT,
         'source_damage_death_history',
         'public_anywhere_graveyard_card',
+        'creature_graveyard_owner',
         'public_land_play',
         "opponent_second_draw",
         "any_player_second_draw",

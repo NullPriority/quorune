@@ -236,7 +236,8 @@ def resolve_semantic_value(
             return retained_transmute_mana_value(item)
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
-    if value == "$source.zone_object":
+    if value in ("$source.zone_object", "$source.graveyard_object"):
+        zone = "battlefield" if value == "$source.zone_object" else "graveyard"
         object_id = str(getattr(item, "source_object_id", None) or "")
         logical_object_id = str(
             getattr(item, "context", {}).get("source_logical_object_id")
@@ -245,7 +246,7 @@ def resolve_semantic_value(
         source = host.state.cards.get(object_id)
         if (
             source is None
-            or source.zone != "battlefield"
+            or source.zone != zone
             or source.phased_out
             or not logical_object_id
             or source.logical_object_id != logical_object_id

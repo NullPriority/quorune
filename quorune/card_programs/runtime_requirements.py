@@ -336,10 +336,13 @@ def _value_runtime_requirements(program):
     return required, blockers
 
 
-def _terminal_spell_move_requirements(program, required, blockers):
+def _self_zone_move_requirements(program, required, blockers):
+    from ..rules.public_zone_move_capability_shapes import triggered_source_exile_runtime_dependencies
+
     for resolver, label in (
         (spell_self_exile_runtime_dependencies, 'spell_self_exile'),
         (spell_self_shuffle_runtime_dependencies, 'spell_self_shuffle'),
+        (triggered_source_exile_runtime_dependencies, 'triggered_source_exile'),
     ):
         try:
             required.update(resolver(program))
@@ -396,7 +399,7 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_qualified_library_top:invalid:{exc}')
     try:required.update(random_graveyard_return_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_random_graveyard_return:invalid:{exc}')
-    _terminal_spell_move_requirements(program, required, blockers)
+    _self_zone_move_requirements(program, required, blockers)
     try:required.update(closed_effect_program_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_closed_effect_program:invalid:{exc}')
     try:required.update(activation_restriction_runtime_dependencies(program))

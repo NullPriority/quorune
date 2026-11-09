@@ -325,6 +325,42 @@ def public_graveyard_card_exile_node_capabilities(
     )
 
 
+TRIGGERED_SOURCE_EXILE_MECHANIC = "triggered-source-exile"
+_SOURCE_EXILE_BY_ZONE = {
+    "battlefield": ("exile_permanent", "$source.zone_object", "permanent.exile.effect"),
+    "graveyard": ("exile_public_graveyard_card", "$source.graveyard_object", "card.exile.public_graveyard"),
+}
+
+
+def triggered_source_exile_result(zone):
+    operation, reference, _capability = _SOURCE_EXILE_BY_ZONE[zone]
+    return {"op": operation, "card": reference}
+
+
+def triggered_source_exile_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if (target_schema is not None or len(effects) != 1
+            or TRIGGERED_SOURCE_EXILE_MECHANIC not in mechanic_ids):
+        return ()
+    return tuple(capability for zone, (_, _, capability) in _SOURCE_EXILE_BY_ZONE.items()
+                 if effects[0] == triggered_source_exile_result(zone))
+
+
+def triggered_source_exile_runtime_dependencies(program):
+    marked = TRIGGERED_SOURCE_EXILE_MECHANIC in program.coverage
+    if not marked and not any(
+        effect.get("op") in ("exile_permanent", "exile_public_graveyard_card")
+        and effect.get("card") in ("$source.zone_object", "$source.graveyard_object")
+        for effect in program.effects
+    ):
+        return ()
+    zone = program.active_zone
+    if (program.event != "creature.dies" or zone not in _SOURCE_EXILE_BY_ZONE
+            or program.target_schema is not None or len(program.effects) != 1
+            or program.effects[0] != triggered_source_exile_result(zone)):
+        raise ValueError("Triggered source exile requires one source-bound creature death result")
+    return (_SOURCE_EXILE_BY_ZONE[zone][2],)
+
+
 def fixed_public_zone_move_set_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],

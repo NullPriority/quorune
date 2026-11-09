@@ -59,6 +59,7 @@ from .graveyard_card_targets import (
     targeted_own_graveyard_return_node_capabilities,
 )
 from .public_zone_move_capability_shapes import (
+    TRIGGERED_SOURCE_EXILE_MECHANIC,
     fixed_owner_zone_move_covered_mechanics, fixed_owner_zone_move_node_capabilities,
     fixed_public_zone_move_set_node_capabilities,
     public_graveyard_card_exile_node_capabilities,
@@ -1451,9 +1452,9 @@ def capability_covered_mechanics(
     if "permanent.destroy.fixed_set" in supplied:
         covered.add("destroy-fixed-set")
     if "permanent.exile.effect" in supplied:
-        covered.add(_EXILE_MECHANIC)
+        covered.update({_EXILE_MECHANIC, TRIGGERED_SOURCE_EXILE_MECHANIC})
     if "card.exile.public_graveyard" in supplied:
-        covered.update({_EXILE_MECHANIC, "fixed-public-zone-move"})
+        covered.update({_EXILE_MECHANIC, "fixed-public-zone-move", TRIGGERED_SOURCE_EXILE_MECHANIC})
     if "zone.move.fixed_public_set" in supplied:
         covered.update(
             {

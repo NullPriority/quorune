@@ -110,7 +110,9 @@ from ..preparation_model import preparation_result_node_capabilities
 from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
 from .hand_inspection_capability_shapes import fixed_hand_inspection_node_capabilities
 from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
-from .public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
+from .public_zone_move_capability_shapes import (
+    fixed_owner_zone_move_node_capabilities, triggered_source_exile_node_capabilities,
+)
 from .node_capability_shapes import (
     fixed_source_characteristics_node_capabilities,
     fixed_target_effect_sequence_node_capabilities,
@@ -211,6 +213,7 @@ _COMPONENT_RESOLVERS = (
     fixed_surveil_node_capabilities,
     fixed_self_return_node_capabilities,
     graveyard_self_return_node_capabilities,
+    triggered_source_exile_node_capabilities,
     fixed_mill_node_capabilities,
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,

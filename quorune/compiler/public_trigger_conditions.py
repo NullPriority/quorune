@@ -8,8 +8,10 @@ import re
 from ..continuous_conditions import (
     FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
 )
+from ..object_predicate import ObjectQuerySpec
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_participant_schedule
 from ..scheduled_player import UPKEEP_HAND_COUNT_CAPABILITY, UpkeepParticipantHandCondition
+from .fixed_public_event_trigger_bindings import creature_graveyard_owner_spec
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .public_state_queries import fixed_public_state_condition
 from .trigger_event_vocabulary import FixedCounterTriggerEvent
@@ -39,7 +41,26 @@ def upkeep_hand_condition(text: str) -> UpkeepParticipantHandCondition | None:
     return UpkeepParticipantHandCondition(comparison, threshold)
 
 
+def _graveyard_source_intervening_binding(match, *, card_name, compile_binding):
+    text = f"{match['prefix']}, {match['body']}"
+    spec = creature_graveyard_owner_spec(text, active_zone="graveyard")
+    if spec is None:
+        return None
+    base = compile_binding(text, card_name=card_name)
+    if base is None or base.variant != spec.variant:
+        return None
+    condition = FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+        schema_version=2,
+        predicate=ObjectQuerySpec(zones=("graveyard",)),
+    )
+    return replace(base, public_active_zone=spec.active_zone, public_condition=spec.condition,
+                   public_state_condition=condition)
+
+
 def bind_public_intervening_trigger(match, *, card_name, compile_binding, compile_source_binding):
+    if match["condition"].casefold() == "this card is in your graveyard":
+        return _graveyard_source_intervening_binding(match, card_name=card_name, compile_binding=compile_binding)
     condition = upkeep_hand_condition(match['condition']) or fixed_public_state_condition(
         match['condition'], source_name=card_name or 'This source',
     )

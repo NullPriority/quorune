@@ -481,6 +481,32 @@ def _artifact_graveyard_spec(
     )
 
 
+_CREATURE_GRAVEYARD_OWNER = re.compile(
+    r"(?:When|Whenever) a (?P<nontoken>nontoken )?creature is put into "
+    r"(?P<owner>your|an opponent's) graveyard from the battlefield, (?P<body>.+)",
+    re.IGNORECASE,
+)
+
+
+def creature_graveyard_owner_spec(
+    material_line: str, *, active_zone: str = "battlefield",
+) -> FixedPublicEventBindingSpec | None:
+    match = _CREATURE_GRAVEYARD_OWNER.fullmatch(material_line)
+    if match is None:
+        return None
+    owner = {
+        "field": "owner",
+        "op": "eq" if match["owner"].casefold() == "your" else "ne",
+        "value": "$source.owner" if active_zone == "graveyard" else "$source.controller",
+    }
+    nontoken = {"field": "token", "op": "eq", "value": False} if match["nontoken"] else None
+    return _spec(
+        "creature.dies", "creature_graveyard_owner", match["body"],
+        "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+        condition=_all_conditions(owner, nontoken), active_zone=active_zone,
+    )
+
+
 def _land_entry_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     match = re.fullmatch(
         r"Whenever a land(?: (?P<relation>an opponent controls))? enters, "
@@ -857,6 +883,7 @@ def _public_zone_spec(
         return closed
     parsers: tuple[Callable[[str], FixedPublicEventBindingSpec | None], ...] = (
         _artifact_graveyard_spec,
+        creature_graveyard_owner_spec,
         _land_entry_spec,
         _power_entry_spec,
         _source_or_artifact_death_spec,
