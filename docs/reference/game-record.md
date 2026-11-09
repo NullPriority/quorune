@@ -253,11 +253,12 @@ absence retains the earlier transition order and remains absent on serialization
 Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
 See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
 
-New checkpoints carry `printed_mana_cost_version: 1`, mirrored in manifest
-format provenance. The ordinary cost owner rejects an absent printed price.
-A printed zero and separately authorized alternative prices use their existing
-owners. Historical absence retains the earlier price behavior for exact replay
-and stays absent on serialization. A malformed or mismatched version rejects.
+New checkpoints carry `printed_mana_cost_version: 3`, mirrored in manifest
+format provenance. The cast proposal checks that a submitted X is a nonnegative
+integer before payment or stack placement. Version two represents printed snow
+obligations and version one distinguishes absent printed prices from printed
+zero. Earlier versions and historical absence preserve their original command
+behavior for exact replay. A malformed or mismatched version rejects.
 
 New checkpoints also carry `explore_action_version: 1` in matching format
 provenance. Empty-library Explore attempts a counter on the retained current

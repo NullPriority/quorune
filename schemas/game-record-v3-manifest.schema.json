@@ -192,6 +192,14 @@
           ],
           "type": "integer"
         },
+        "printed_mana_cost_version": {
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "type": "integer"
+        },
         "profile": {
           "enum": [
             "commander_duel",

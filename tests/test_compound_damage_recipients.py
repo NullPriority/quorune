@@ -101,6 +101,47 @@ class CompoundDamageRuntimeTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close();cls.temp.cleanup()
 
+    def test_printed_cast_rejects_noninteger_x_before_paying_or_stacking(self):
+        from quorune.printed_mana_cost_model import STRICT_ANNOUNCED_CAST_X_VERSION
+
+        session = self.session(844250)
+        source = self.add(session.engine, "Earthquake", zone="hand")
+        self.prepare(session, mana={"R": 1, "C": 2})
+        self.checkpoint(session)
+        self.assertEqual(STRICT_ANNOUNCED_CAST_X_VERSION, session.state.printed_mana_cost_version)
+        self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+        action = self.action(session, source)
+        command = {"action_id": action["id"], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        for submitted in ({"x": True}, {"x": 1.5}, {"choices": {"x": "1"}}, {"x": float("inf")}):
+            result = session.act("pilot:A", {**command, **submitted})
+            self.assertFalse(result.ok, result.summary)
+            self.assertIn("integer", result.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {**command, "x": 1})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1, session.state.stack[-1].x_value)
+        self.assertEqual(1, session.state.players["A"].mana_pool["C"])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([39] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session, load=True)
+
+    def test_legacy_printed_cast_x_replays_as_recorded(self):
+        from quorune.printed_mana_cost_model import SNOW_MANA_COST_VERSION
+
+        session = self.session(844251)
+        session.state.printed_mana_cost_version = SNOW_MANA_COST_VERSION
+        source = self.add(session.engine, "Earthquake", zone="hand")
+        self.prepare(session, mana={"R": 1, "C": 2})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": self.action(session, source)["id"], "x": True, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIs(session.state.stack[-1].x_value, True)
+        resumed = self.replay(session, load=True)
+        self.assertEqual(SNOW_MANA_COST_VERSION, resumed.state.printed_mana_cost_version)
+        self.assertIs(resumed.state.stack[-1].x_value, True)
+
     def test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets(self):
         session=self.session(729101)
         source=self.add(session.engine,'Earthquake',zone='hand')

@@ -2991,7 +2991,9 @@ class CommanderEngine(
         if record is None:
             return [], False
         from .rules.casting.face_queries import current_printed_cast_mana_cost
-        from .printed_mana_cost_model import PRINTED_MANA_COST_VERSION_FIELD, SNOW_MANA_COST_VERSION
+        from .printed_mana_cost_model import (
+            PRINTED_MANA_COST_VERSION_FIELD, SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION,
+        )
         mana_cost = current_printed_cast_mana_cost(self,card,record)
         cost_version = getattr(self.state, PRINTED_MANA_COST_VERSION_FIELD, None)
         if cost_version is not None and not mana_cost.strip():
@@ -3008,7 +3010,7 @@ class CommanderEngine(
                 for variant in variants:
                     variant[symbol] += 1
                 continue
-            if symbol == "S" and cost_version == SNOW_MANA_COST_VERSION:
+            if symbol == "S" and cost_version in (SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION):
                 snow += 1
                 continue
             if symbol == "X":

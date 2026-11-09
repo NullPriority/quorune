@@ -131,7 +131,7 @@ class CastProposalRequest:
         raw_x = response.get("x")
         try:
             x_value = int(raw_x) if raw_x is not None else None
-        except (TypeError, ValueError) as exc:
+        except (TypeError, ValueError, OverflowError) as exc:
             raise CastProposalError("Cast X value must be an integer") from exc
         if x_value is not None and x_value < 0:
             raise CastProposalError("Cast X value must be nonnegative")

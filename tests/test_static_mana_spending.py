@@ -170,7 +170,7 @@ class ManaSpendingRuntimeTests(unittest.TestCase):
         self.reject(s,{'action_id':'cast:'+later.ref,'pay':'manual','payment':{'G':1}},seat='A');self.private_replay(s,private)
 
     def test_printed_snow_golem_automatic_payment_uses_snow_source(self):
-        from quorune.printed_mana_cost_model import SNOW_MANA_COST_VERSION
+        from quorune.printed_mana_cost_model import CURRENT_PRINTED_MANA_COST_VERSION
 
         session = self.session(1074181)
         spell = self.add(session.engine, 'Icehide Golem', zone='hand')
@@ -195,7 +195,7 @@ class ManaSpendingRuntimeTests(unittest.TestCase):
         item, = session.state.stack
         self.assertEqual(('G',), tuple(item.mana_colors_spent))
         session = self.replay(session, load=True)
-        self.assertEqual(SNOW_MANA_COST_VERSION, session.state.printed_mana_cost_version)
+        self.assertEqual(CURRENT_PRINTED_MANA_COST_VERSION, session.state.printed_mana_cost_version)
         self.assertIsNone(self.resolve(session))
         self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
         self.replay(session, load=True)
