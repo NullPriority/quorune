@@ -244,8 +244,10 @@ def _source_permanent_participation_template(
         text,
         source_name=source_name or "",
     )
+    from .chosen_type_cast_costs import CHOSEN_TYPE_CAST_COST_TEMPLATE, chosen_type_spell_cost_handler
     from .targeted_spell_costs import targeted_spell_cost_template
     spell_cost_reduction = (targeted_spell_cost_template(text,source_name=source_name or 'source')
+        or chosen_type_spell_cost_handler(text)
         or static_fixed_spell_cost_reduction_handler(text, source_name=source_name or 'source'))
     if spell_cost_reduction is not None:
         template_id = spell_cost_reduction[0]
@@ -261,7 +263,7 @@ def _source_permanent_participation_template(
                 "static_ability",
                 *(
                     (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1", "optional-life-colored-reduction-v1"}
+                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1", "optional-life-colored-reduction-v1", CHOSEN_TYPE_CAST_COST_TEMPLATE}
                     else ()
                 ),
             ),

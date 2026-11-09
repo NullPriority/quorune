@@ -9,6 +9,10 @@ from typing import Any, Mapping
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 
 
+CHOSEN_TYPE_CAST_COST_HANDLER_ID = "modification.cast-cost.chosen-creature-type.v1"
+CHOSEN_TYPE_CAST_COST_CAPABILITY = "casting.cost.modifier.chosen_creature_type"
+
+
 class CastCostModifierError(ValueError):
     """A public spell-cost modifier descriptor is malformed."""
 

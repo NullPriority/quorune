@@ -2477,7 +2477,9 @@
         "quorune/semantic_runtime/cast_costs.py",
         "quorune/semantic_runtime/cast_lifecycles.py",
         "quorune/stack_resolution.py",
-        "tests/fixtures/fixed-casting-surface-cards.json"
+        "tests/fixtures/fixed-casting-surface-cards.json",
+        "quorune/compiler/chosen_type_cast_costs.py",
+        "quorune/semantic_runtime/chosen_type_cast_costs.py"
       ],
       "test_modules": [
         "test_bestow_rules",

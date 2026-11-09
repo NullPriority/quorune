@@ -388,6 +388,15 @@ sacrifice by the permanent's current controller. Other follow-up durations,
 conditional predicates and independently unowned sibling effects remain
 residuals.
 
+`compiler/chosen_type_cast_costs.py` lowers a fixed generic or explicit
+colored-only reduction keyed to the source's current chosen creature type.
+Creature-spell subjects retain their Creature gate. Other matching spell
+subjects also include Kindred spells. The current source controller supplies
+controller-scoped reductions, while the unqualified subject applies to any
+caster. The typed modifier reads the declared spell on the prospective stack
+and uses the shared total-cost owner after hybrid and alternate costs are
+chosen. A source without a designation supplies no reduction.
+
 `compiler/cast_cost_modifier_templates.py` lowers fixed ordinary mana bundles
 for a carrying spell's self-reduction, including separate generic and colored
 components. Its public queries cover current land subtypes, fixed own-graveyard

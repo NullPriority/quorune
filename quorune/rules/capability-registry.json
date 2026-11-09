@@ -12196,6 +12196,94 @@
     {
       "applicability": {
         "exclusions": [
+          "colored reductions with generic spill",
+          "variable reductions",
+          "open source or caster scopes"
+        ],
+        "inputs": [
+          "current battlefield source and retained creature-type choice",
+          "declared spell subject and caster"
+        ],
+        "outputs": [
+          "fixed generic or colored-only reduction in the common cast price"
+        ],
+        "summary": "Reduce fixed generic or explicit colored-only spell costs using a current source's public creature-type designation and the declared spell's prospective characteristics."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.cost.modifier.fixed_query",
+        "zone.entry.public_designation"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the chosen-type cost capability blocks exact admission of the typed source.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.cost.modifier.chosen_creature_type",
+      "implementation_components": [
+        "quorune.compiler.chosen_type_cast_costs.chosen_type_spell_cost_handler",
+        "quorune.semantic_runtime.chosen_type_cast_costs.ChosenTypeSpellCostModifierHandler",
+        "quorune.semantic_runtime.chosen_type_cast_costs.chosen_type_cost_spell_row",
+        "quorune.rules.chosen_type_events.chosen_type_event_value",
+        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions",
+        "quorune.rules.casting.static_modifiers.apply_static_reductions"
+      ],
+      "implementation_mutation_rationale": "Omitting the chosen-type producer leaves the fixed printed creature-spell clause residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "multiplayer_tests": [
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller"
+      ],
+      "negative_tests": [
+        "test_chosen_type_costs_lower_closed_creature_and_colored_spell_scopes",
+        "test_chosen_type_costs_reject_open_qualifiers_and_missing_authority",
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "official_rules": [
+        "101.1",
+        "109.5",
+        "118.7a",
+        "118.7b",
+        "205.3m",
+        "601.2f",
+        "601.2h",
+        "614.12a",
+        "707.6"
+      ],
+      "positive_tests": [
+        "test_chosen_type_costs_lower_closed_creature_and_colored_spell_scopes",
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "nonpermanent and nonmatching spells",
           "generic or other-color reduction",
           "unrepresented life amounts or selectors"
