@@ -8314,7 +8314,7 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v841-consolidated-rules-defects",
+      "transition_id": "oracle-ir-v852-consolidated-rules-defect-retry",
       "compiler_version": "oracle-ir-v852",
       "bundle_id": null,
       "candidate_ids": [],

@@ -1441,6 +1441,13 @@ def _latest_semantic_receipt(
     return latest
 
 
+def _require_unused_transition_id(
+    transition_id: str, records: Sequence[Mapping[str, Any]],
+) -> None:
+    if any(row.get("transition_id") == transition_id for row in records):
+        raise HarvestOutcomeHistoryError("Semantic transition identity has already been materialized")
+
+
 def validate_semantic_transition_source_identity(
     declaration: Mapping[str, Any],
     materialized_history: Mapping[str, Any],
@@ -1468,11 +1475,26 @@ def validate_semantic_transition_source_identity(
             if recorded.get(ADMISSION_RECOVERY_IDS) != validated.get(ADMISSION_RECOVERY_IDS):
                 raise HarvestOutcomeHistoryError("Recorded admission recovery scope is immutable")
             return
+    last_harvest = entries[-1]
+    transition_id = validated["transition_id"]
+    amending_unlanded_harvest = (
+        repository is not None
+        and last_harvest.get("receipt_identity_kind") == "semantic_content"
+        and last_harvest.get("transition_id") == transition_id
+        and (
+            _declaration_revises_unlanded_content_entry(validated, last_harvest)
+            or (validated["outcome_kind"] == "non_harvest"
+                and validated["compiler_version"] == last_harvest["head_receipt"]["compiler_version"])
+        )
+        and not _content_transition_is_landed(repository, transition_id)
+    )
+    earlier_entries = entries[:-1] if amending_unlanded_harvest else entries
+    _require_unused_transition_id(transition_id, (*earlier_entries, *non_harvest))
+    if amending_unlanded_harvest:
+        return
     latest = _latest_semantic_receipt(entries, non_harvest, repository=repository)
     if latest["compiler_version"] != validated["compiler_version"]:
         # A new source identity is legitimate before its corpus is generated.
-        return
-    if candidates and candidates[-1]["transition_id"] == validated["transition_id"]:
         return
     raise HarvestOutcomeHistoryError(
         "Compiler identity is already recorded; retain its stable semantic "
@@ -1968,11 +1990,6 @@ def build_harvest_outcome_history(
         repository,
         entries=entries,
     )
-    transition_ids = {
-        str(row.get("transition_id") or "")
-        for row in (*entries, *non_harvest_transitions)
-        if row.get("transition_id")
-    }
     current_receipt = _worktree_receipt(repository)
     latest = _latest_semantic_receipt(
         entries,
@@ -2019,11 +2036,6 @@ def build_harvest_outcome_history(
     if reclassified is not None:
         entries.pop()
         non_harvest_transitions.append(reclassified)
-        transition_ids = {
-            str(row.get("transition_id") or "")
-            for row in (*entries, *non_harvest_transitions)
-            if row.get("transition_id")
-        }
         latest = reclassified["head_receipt"]
     if (
         validated_declaration is not None
@@ -2133,10 +2145,7 @@ def build_harvest_outcome_history(
             raise HarvestOutcomeHistoryError(
                 "Harvest transition base does not match durable main"
             )
-        if validated_declaration["transition_id"] in transition_ids:
-            raise HarvestOutcomeHistoryError(
-                "Semantic transition identity has already been materialized"
-            )
+        _require_unused_transition_id(validated_declaration["transition_id"], (*entries, *non_harvest_transitions))
         entries.append(
             _content_entry(
                 validated_declaration,
@@ -2159,10 +2168,7 @@ def build_harvest_outcome_history(
             raise HarvestOutcomeHistoryError(
                 "Semantic transition compiler version does not match its receipt"
             )
-        if validated_declaration["transition_id"] in transition_ids:
-            raise HarvestOutcomeHistoryError(
-                "Semantic transition identity has already been materialized"
-            )
+        _require_unused_transition_id(validated_declaration["transition_id"], (*entries, *non_harvest_transitions))
         base = _non_harvest_transition_base(repository, latest=latest,
             durable=receipt(_durable_main_tip(repository)), rows=non_harvest_transitions)
         non_harvest_transitions.append(
