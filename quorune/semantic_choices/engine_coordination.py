@@ -232,7 +232,8 @@ class SemanticChoiceCoordinationMixin:
             from ..soulbond_model import SoulbondOpportunity
             from ..soulbond_state import opportunity_candidates
             return opportunity_candidates(self, SoulbondOpportunity.from_effect(effect))
-        if str(effect.get("op") or "") != "choose_objects":
+        from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
+        if str(effect.get("op") or "") != "choose_objects" or CONTROLLED_RETURN_FIELD in effect:
             return ()
         selector = dict(effect.get("selector") or {})
         selector.setdefault("min", int(effect.get("minimum", 1)))

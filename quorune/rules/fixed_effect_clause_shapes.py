@@ -99,6 +99,7 @@ from .token_creation_capability_shapes import (
 )
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .attachment_action_capability_shapes import fixed_attachment_action_node_capabilities
+from .controlled_return import controlled_return_node_capabilities
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
 from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
 from .impulse_access_capability_shapes import fixed_impulse_access_node_capabilities
@@ -173,6 +174,7 @@ _COMPONENT_RESOLVERS = (
     fixed_target_effect_sequence_node_capabilities,
     fixed_source_effect_sequence_node_capabilities,
     fixed_entry_return_node_capabilities,
+    controlled_return_node_capabilities,
     tap_state_event_player_node_capabilities,
     fixed_impulse_access_node_capabilities,
     fixed_monarch_node_capabilities,

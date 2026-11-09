@@ -40,6 +40,11 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         )
         if relative is not None:
             return relative, False
+    if body == binding.body and body.casefold().startswith('you may return '):
+        from .controlled_return_templates import controlled_return_template
+        selected = controlled_return_template(body, source_is_permanent=binding.active_zone == 'battlefield')
+        if selected is not None:
+            return selected, False
     from .exile_templates import triggered_source_exile_template
     source_exile = triggered_source_exile_template(binding, body)
     if source_exile is not None:

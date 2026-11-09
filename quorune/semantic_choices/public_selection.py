@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
 from ..semantic_runtime.intents import (
     CreateTokenIntent,
     LifeChangeIntent,
@@ -47,6 +48,8 @@ class PublicObjectChoiceHandler:
         "_minimum",
         "_maximum",
         "_stack_label",
+        CONTROLLED_RETURN_FIELD,
+        "_return_candidates",
     )
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = (
@@ -67,6 +70,9 @@ class PublicObjectChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if CONTROLLED_RETURN_FIELD in effect:
+            from .controlled_return import prepare_controlled_return
+            return prepare_controlled_return(effect, context)
         refs = context.query.choice_candidate_refs()
         if not refs:
             return SemanticChoicePreparation(
@@ -140,6 +146,9 @@ class PublicObjectChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        if CONTROLLED_RETURN_FIELD in effect:
+            from .controlled_return import complete_controlled_return
+            return complete_controlled_return(continuation, response, query)
         selected = tuple(
             str(value)
             for value in response.get("objects", response.get("cards", ()))

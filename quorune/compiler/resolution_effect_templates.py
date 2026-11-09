@@ -306,6 +306,10 @@ def typed_resolution_effect_template(
     )
     if attachment is not None:
         return attachment
+    from .controlled_return_templates import controlled_return_template
+    controlled_return = controlled_return_template(text, source_is_permanent=source_is_permanent)
+    if controlled_return is not None:
+        return controlled_return
     fixed_damage = fixed_damage_effect_template(text, card_name=card_name)
     if fixed_damage is not None:
         return fixed_damage.compiled()

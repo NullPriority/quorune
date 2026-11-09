@@ -19786,6 +19786,97 @@
     {
       "applicability": {
         "exclusions": [
+          "targeted, hidden-zone, or other-controller selections",
+          "conditional payment results and dynamic bounds"
+        ],
+        "inputs": [
+          "fixed zero-through-three optional or one mandatory count",
+          "closed public battlefield controller predicate",
+          "original source incarnation exclusion when printed"
+        ],
+        "outputs": [
+          "principal-scoped public bounded object choice",
+          "simultaneous moves to the chosen cards' owners' hands",
+          "sealed identity checks and deterministic replay"
+        ],
+        "summary": "Offer a controller's bounded public return choice at resolution and move its selected permanents to their owners' hands."
+      },
+      "blockers": [],
+      "dependencies": [
+        "permanent.return.owner_hand",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The verified capability withdrawal leaves the printed up-to return unresolved.",
+      "dependency_fail_closed_status": "passed",
+      "id": "choice.controller.bounded_return_owner_hand",
+      "implementation_components": [
+        "quorune.compiler.controlled_return_templates.controlled_return_template",
+        "quorune.rules.controlled_return.ControlledReturn",
+        "quorune.rules.controlled_return.controlled_return_runtime_dependencies",
+        "quorune.semantic_choices.controlled_return.prepare_controlled_return",
+        "quorune.semantic_choices.controlled_return.complete_controlled_return",
+        "quorune.semantic_choices.public_selection.PublicObjectChoiceHandler"
+      ],
+      "implementation_mutation_rationale": "A lowered maximum of one fails the source-grounded two-land witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners",
+        "test_actual_aviary_mechanic_has_no_offer_when_only_the_source_qualifies",
+        "test_actual_time_wipe_moves_the_choice_before_destroying_remaining_creatures"
+      ],
+      "multiplayer_tests": [
+        "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners",
+        "test_actual_aviary_mechanic_has_no_offer_when_only_the_source_qualifies",
+        "test_actual_time_wipe_moves_the_choice_before_destroying_remaining_creatures"
+      ],
+      "negative_tests": [
+        "test_bounded_return_closes_the_count_controller_and_source_exclusion",
+        "test_bounded_return_requires_its_declared_capability",
+        "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners",
+        "test_actual_aviary_mechanic_has_no_offer_when_only_the_source_qualifies",
+        "test_actual_time_wipe_moves_the_choice_before_destroying_remaining_creatures"
+      ],
+      "official_rules": [
+        "101.3",
+        "109.5",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d"
+      ],
+      "positive_tests": [
+        "test_bounded_return_closes_the_count_controller_and_source_exclusion",
+        "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners",
+        "test_actual_aviary_mechanic_has_no_offer_when_only_the_source_qualifies",
+        "test_actual_time_wipe_moves_the_choice_before_destroying_remaining_creatures"
+      ],
+      "privacy_tests": [
+        "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners"
+      ],
+      "replay_tests": [
+        "test_actual_kazandu_stomper_can_decline_or_return_two_to_their_owners",
+        "test_actual_aviary_mechanic_has_no_offer_when_only_the_source_qualifies",
+        "test_actual_time_wipe_moves_the_choice_before_destroying_remaining_creatures"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "targets, up-to counts, each or all sets, opponent-controlled subjects, hidden zones, non-owner destinations, variable or optional return instructions",
           "chosen, named, linked, historic, dynamic, target-relative, and unsupported characteristic predicates",
           "compound effects following the return",

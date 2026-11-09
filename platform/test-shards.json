@@ -1287,6 +1287,7 @@
       "test_attached_static_characteristics",
       "test_attachment_damage_results_native",
       "test_bloodthirst_rules",
+      "test_bounded_return",
       "test_combat_phase_rules",
       "test_compiled_emblems",
       "test_compound_activation_restrictions",
