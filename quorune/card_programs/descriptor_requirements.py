@@ -269,6 +269,11 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *conditional_recipient_capabilities(value))
         from ..public_zone_condition_model import public_zone_condition_capabilities
         own = (*own, *public_zone_condition_capabilities(value))
+        from ..untap_step import CONDITIONAL_UNTAP_HANDLER_ID
+        if value.get("handler_id") == CONDITIONAL_UNTAP_HANDLER_ID:
+            condition = value.get("public_condition")
+            if isinstance(condition, Mapping) and condition.get("scope") == "subject_controller_not_monarch":
+                own = (*own, "variant.monarch.designate")
         from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
         own = (*own, *conditional_free_cast_capabilities(value))
         from ..land_entry_condition_model import land_entry_condition_capabilities

@@ -538,6 +538,15 @@ permissions cause one untap attempt. An own-step-only prohibition does not
 block that additional untap. General prohibitions and stun replacement still
 apply, and resulting triggers wait for upkeep and ordinary APNAP placement.
 
+A conditional untap prohibition evaluates the current source ability and
+public facts before the simultaneous step. A count for an opponent is tested
+for each opponent separately. An attached monarchy exception reads the
+attached object's controller. A source controller's count can exclude the
+source itself and uses current effective characteristics. The prohibition
+applies only to the affected object's controller's untap step. An ordinary
+effect may still untap it, subject to the existing absolute prohibitions and
+replacement rules.
+
 Fixed untargeted land untap instructions use a controller-issued public choice
 at resolution. The new continuation pins current physical and logical land
 identities, orders eligible references canonically across replay loads,

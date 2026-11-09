@@ -176,12 +176,14 @@ def _step_participation_runtime_template(
 ) -> StaticRuntimeTemplate | None:
     if source_name is None:
         return None
+    from .conditional_untap_templates import conditional_untap_step_handler
     from .untap_selection_templates import fixed_untap_selection_limit_handler
 
     rule = (
         static_turn_step_skip_handler(text)
         or fixed_untap_selection_limit_handler(text, source_name=source_name)
         or static_untap_step_handler(text, source_name=source_name)
+        or conditional_untap_step_handler(text, source_name=source_name)
     )
     if rule is None:
         return None

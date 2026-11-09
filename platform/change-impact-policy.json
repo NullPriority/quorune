@@ -5944,7 +5944,9 @@
         "quorune/untap_step.py",
         "quorune/untap_step_coordination.py",
         "tests/test_fixed_untap_participation.py",
-        "tests/fixtures/fixed-untap-participation-cards.json"
+        "tests/fixtures/fixed-untap-participation-cards.json",
+        "quorune/compiler/conditional_untap_templates.py",
+        "quorune/semantic_runtime/conditional_untap.py"
       ],
       "test_modules": [
         "test_fixed_untap_participation",

@@ -3346,13 +3346,19 @@ untap. Untaps outside the affected controller's untap step remain separate.
 `compiler/untap_step_templates.py` lowers mandatory self untaps on other
 players' turns and fixed untap prohibitions against nonbasic lands, legendary
 creatures, represented subtype sets, inclusive fixed power thresholds, or named
-counter minima. The untap-specific numeric grammar reuses immutable object
-queries without widening continuous characteristic generators. Color unions
-use one current controlled set; attached subjects retain their stated type.
+counter minima. A fixed power threshold can include a printed color exclusion.
+These predicates reuse immutable current object queries. Color unions use one
+current controlled set. Attached subjects retain their stated type.
 Current untap components carry ability-fragment presence, so ability removal
 suppresses their participation. Historical programs retain their recorded
-coverage. Choice-dependent, variable, unrepresented conditional and compound
-subjects remain residual.
+coverage.
+
+`compiler/conditional_untap_templates.py` binds a current public condition to
+a source or attached untap prohibition. It admits a fixed count for the source
+controller or any single opponent and the printed exception for an attached
+subject's monarch controller. The conditional descriptor uses the same step
+planner and reads its public facts at that step. Choice-derived subjects,
+history-dependent clauses and variable counts remain residual.
 
 The source-only optional untap clause lowers to a separate component in the
 existing static untap participation family. `untap.step.optional_source`

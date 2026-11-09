@@ -80764,7 +80764,8 @@
         "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
         "test_shared_public_queries_govern_untap_participation",
         "test_source_leaves_and_control_changes_recompute_participation",
-        "test_static_prohibition_does_not_consume_stun_and_next_step_marker_expires"
+        "test_static_prohibition_does_not_consume_stun_and_next_step_marker_expires",
+        "test_actual_crackdown_filters_current_color_and_inclusive_power"
       ],
       "multiplayer_tests": [
         "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap",
@@ -80786,7 +80787,8 @@
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_unrepresented_qualifiers_malformed_descriptors_and_producer_omission_fail_closed",
         "test_unsupported_untap_step_wording_remains_residual",
-        "test_untap_step_descriptor_rejects_malformed_shapes"
+        "test_untap_step_descriptor_rejects_malformed_shapes",
+        "test_actual_crackdown_filters_current_color_and_inclusive_power"
       ],
       "official_rules": [
         "101.2",
@@ -80819,7 +80821,8 @@
         "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
         "test_seedborn_muse_untaps_all_permanents_on_opponent_untap",
         "test_shared_public_queries_govern_untap_participation",
-        "test_source_and_attached_prohibitions_use_current_relationships"
+        "test_source_and_attached_prohibitions_use_current_relationships",
+        "test_actual_crackdown_filters_current_color_and_inclusive_power"
       ],
       "privacy_tests": [
         "test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap"
@@ -80835,7 +80838,8 @@
         "test_copied_additional_untap_survives_original_departure_and_replays",
         "test_murkfiend_color_union_is_current_mandatory_and_duplicate_stun_attempts_are_not_added",
         "test_numeric_originals_use_current_power_counters_and_inclusive_thresholds",
-        "test_typed_untap_participation_replays_exactly"
+        "test_typed_untap_participation_replays_exactly",
+        "test_actual_crackdown_filters_current_color_and_inclusive_power"
       ],
       "required_evidence": [
         "positive",
@@ -80851,6 +80855,94 @@
         "commander_review"
       ],
       "version": 3
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "historical attack conditions",
+          "hidden count predicates",
+          "absolute untap prohibitions",
+          "variable queries"
+        ],
+        "inputs": [
+          "current source or attachment identity",
+          "effective public battlefield counts or current monarch"
+        ],
+        "outputs": [
+          "source-pinned prohibition for its controller's simultaneous untap step"
+        ],
+        "summary": "Evaluate fixed public controller counts, separate opponent counts, or an attached monarchy exception before applying a current own-step untap prohibition."
+      },
+      "blockers": [],
+      "dependencies": [
+        "untap.step.static_participation"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the conditional participation capability blocks exact admission of the source.",
+      "dependency_fail_closed_status": "passed",
+      "id": "untap.step.conditional_participation",
+      "implementation_components": [
+        "quorune.compiler.conditional_untap_templates.conditional_untap_step_handler",
+        "quorune.semantic_runtime.conditional_untap.ConditionalUntapStepParticipationHandler",
+        "quorune.semantic_runtime.conditional_untap.conditional_untap_applies",
+        "quorune.card_programs.runtime.fixed_public_state_condition_matches",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.untap_step.plan_untap_step"
+      ],
+      "implementation_mutation_rationale": "Omitting the conditional producer leaves its otherwise closed source residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "multiplayer_tests": [
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "negative_tests": [
+        "test_conditional_untap_compiles_closed_current_state_scopes",
+        "test_conditional_untap_producer_and_capability_withdrawal_fail_closed",
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "official_rules": [
+        "109.5",
+        "502.3",
+        "502.4",
+        "611.3a",
+        "613.1f",
+        "701.26b"
+      ],
+      "positive_tests": [
+        "test_conditional_untap_compiles_closed_current_state_scopes",
+        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {

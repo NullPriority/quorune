@@ -14,6 +14,10 @@ class UntapStepError(ValueError):
     """An untap-step descriptor or snapshot is malformed."""
 
 
+CONDITIONAL_UNTAP_HANDLER_ID = "participation.untap-step.conditional.v1"
+CONDITIONAL_UNTAP_CAPABILITY = "untap.step.conditional_participation"
+
+
 class UntapInstruction(str, Enum):
     OPTIONAL = "optional"
     PROHIBIT = "prohibition"

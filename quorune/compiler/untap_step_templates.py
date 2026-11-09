@@ -15,6 +15,7 @@ from .public_state_queries import fixed_battlefield_query_subject
 
 
 UntapStepHandlerTemplate = tuple[str, Mapping[str, Any], str]
+_COLOR_SYMBOLS = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
 
 
 def static_turn_step_skip_handler(text: str) -> UntapStepHandlerTemplate | None:
@@ -97,21 +98,27 @@ def _fixed_untap_query_subject(subject: str):
         subtype=canonical_creature_subtype(text[:-3]+'y')
     if subtype is not None:
         return 'any',ObjectQuerySpec(zones=('battlefield',),subtypes_all=(subtype,)),False
-    numeric=re.fullmatch(rf'creatures with power (?P<count>{FIXED_COUNT_PATTERN}) or (?P<comparison>greater|less)',text)
+    colors = "|".join(_COLOR_SYMBOLS)
+    numeric = re.fullmatch(
+        rf"(?:non(?P<excluded>{colors}) )?creatures with power "
+        rf"(?P<count>{FIXED_COUNT_PATTERN}) or (?P<comparison>greater|less)", text,
+    )
     if numeric is not None:
         predicate=TargetNumericCharacteristicSpec(TargetNumericCharacteristic.POWER,
             TargetNumericComparison.AT_LEAST if numeric['comparison']=='greater' else TargetNumericComparison.AT_MOST,
             fixed_number(numeric['count']))
-        return 'any',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),numeric_characteristic=predicate),False
+        excluded = (_COLOR_SYMBOLS[numeric["excluded"]],) if numeric["excluded"] else ()
+        return "any", ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",), colors_none=excluded, numeric_characteristic=predicate,
+        ), False
     counter=re.fullmatch(r'creatures with (?P<counter>[a-z]+(?: [a-z]+)?) counters on them',text)
     if counter is not None:
         return 'any',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),
             state_predicate=PermanentStatePredicateSpec(counter_name=counter['counter'],minimum_counter_count=1)),False
     colors=re.fullmatch(r'(?P<first>white|blue|black|red|green) and/or (?P<second>white|blue|black|red|green) creatures you control',text)
     if colors is not None:
-        symbols={'white':'W','blue':'U','black':'B','red':'R','green':'G'}
         return 'source_controller',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),
-            colors_any=tuple(sorted({symbols[colors['first']],symbols[colors['second']]}))),False
+            colors_any=tuple(sorted({_COLOR_SYMBOLS[colors['first']],_COLOR_SYMBOLS[colors['second']]}))),False
     return fixed_battlefield_query_subject(subject)
 
 
