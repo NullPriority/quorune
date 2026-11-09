@@ -2,12 +2,20 @@
 import tempfile,unittest
 from pathlib import Path
 import state_trigger_fixture as fixtures
-from quorune.cast_source_placement_model import cast_source_placement_version
+from quorune.cast_source_placement_model import (
+    CAST_SOURCE_PLACEMENT_VERSION_FIELD, TARGET_ANNOUNCEMENT_TIMING_VERSION_FIELD,
+    cast_source_placement_version,
+)
 from quorune.model import GameState
 from quorune.record import authoritative_state_hash
 from quorune.record_state_provenance import format_state_versions,validate_state_versions
 
 class CastSourcePlacementTests(fixtures.StateTriggerFixture,unittest.TestCase):
+    @staticmethod
+    def use_legacy_placement(state):
+        state.cast_source_placement_version = None
+        state.target_announcement_timing_version = None
+
     def test_omitted_prospective_characteristic_binding_mutant_is_killed(self):
         from unittest.mock import patch
         self.test_public_cost_predicate_uses_layered_characteristics_after_source_leaves_hand()
@@ -17,7 +25,10 @@ class CastSourcePlacementTests(fixtures.StateTriggerFixture,unittest.TestCase):
     def test_new_state_subscriptions_fail_closed_on_a_legacy_placement_checkpoint(self):
         from quorune.rules.state_triggers import observe_public_state_triggers
         from quorune.errors import GameRuleError
-        session=self.session(612651003);self.add(session.engine,'Emperor Crocodile',zone='hand');session.state.cast_source_placement_version=None;before=authoritative_state_hash(session.state)
+        session = self.session(612651003)
+        self.add(session.engine, 'Emperor Crocodile', zone='hand')
+        self.use_legacy_placement(session.state)
+        before = authoritative_state_hash(session.state)
         with self.assertRaises(GameRuleError):observe_public_state_triggers(session.engine)
         self.assertEqual(before,authoritative_state_hash(session.state))
     def test_public_cost_predicate_uses_layered_characteristics_after_source_leaves_hand(self):
@@ -26,7 +37,10 @@ class CastSourcePlacementTests(fixtures.StateTriggerFixture,unittest.TestCase):
         session=self.session(612651040)
         for oid in tuple(session.state.players['A'].zones['hand']):session.engine.move_card(oid,'library',reason='Prepared public cost condition hand',semantic_events=False)
         spell=self.add(session.engine,'Leatherback Baloth',zone='hand');self.add(session.engine,'Shock',zone='hand');body=self.add(session.engine,'Maro');self.prepare(session);condition=fixed_public_state_condition('you control a creature with toughness 2 or greater',source_name=spell.printed_name);self.assertIsNotNone(condition);self.assertEqual(2,session.engine._numeric_stat(body.object_id,'toughness'));before=authoritative_state_hash(session.state)
-        self.assertEqual(0,self_public_condition_multiplier(session.engine,'A',spell,condition));self.assertEqual(before,authoritative_state_hash(session.state));session.state.cast_source_placement_version=None;self.assertEqual(1,self_public_condition_multiplier(session.engine,'A',spell,condition))
+        self.assertEqual(0, self_public_condition_multiplier(session.engine, 'A', spell, condition))
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.use_legacy_placement(session.state)
+        self.assertEqual(1, self_public_condition_multiplier(session.engine, 'A', spell, condition))
     def test_advertised_dynamic_mana_accounts_for_the_spell_leaving_hand(self):
         from quorune.attachments import attach_objects
         for hand_count in (2,3):
@@ -43,8 +57,24 @@ class CastSourcePlacementTests(fixtures.StateTriggerFixture,unittest.TestCase):
                     self.assertIsNotNone(offered);result=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(result.ok,result.summary);self.assertTrue(session.state.cards[source.object_id].tapped);self.assertEqual(0,sum(session.state.players['A'].mana_pool.values()));self.settle(session);self.assertEqual('battlefield',session.state.cards[spell.object_id].zone);self.replay(session,load=True)
 
     def test_marker_roundtrip_rejects_boolean_and_legacy_absence_keeps_old_payload(self):
-        session=self.session(612651001);raw=session.state.to_dict();self.assertEqual(1,raw['cast_source_placement_version']);self.assertEqual(raw,GameState.from_dict(raw).to_dict())
-        raw.pop('cast_source_placement_version');old=GameState.from_dict(raw);self.assertIsNone(old.cast_source_placement_version);self.assertEqual(raw,old.to_dict());self.assertEqual(1,cast_source_placement_version(1));self.assertIsNone(cast_source_placement_version(None))
+        session = self.session(612651001)
+        raw = session.state.to_dict()
+        self.assertEqual(1, raw[CAST_SOURCE_PLACEMENT_VERSION_FIELD])
+        self.assertEqual(1, raw[TARGET_ANNOUNCEMENT_TIMING_VERSION_FIELD])
+        self.assertEqual(raw, GameState.from_dict(raw).to_dict())
+
+        placement_only = dict(raw)
+        placement_only.pop(TARGET_ANNOUNCEMENT_TIMING_VERSION_FIELD)
+        self.assertEqual(placement_only, GameState.from_dict(placement_only).to_dict())
+        raw = dict(placement_only)
+        raw.pop(CAST_SOURCE_PLACEMENT_VERSION_FIELD)
+        old = GameState.from_dict(raw)
+        self.assertIsNone(old.cast_source_placement_version)
+        self.assertEqual(raw, old.to_dict())
+        self.assertEqual(1, cast_source_placement_version(1))
+        self.assertIsNone(cast_source_placement_version(None))
+        with self.assertRaisesRegex(ValueError, 'requires version 1 and initial stack placement'):
+            GameState.from_dict({**raw, TARGET_ANNOUNCEMENT_TIMING_VERSION_FIELD: 1})
         for value in (True,False,0,2,'1'):
             with self.assertRaises(ValueError):GameState.from_dict({**raw,'cast_source_placement_version':value})
 
@@ -55,12 +85,23 @@ class CastSourcePlacementTests(fixtures.StateTriggerFixture,unittest.TestCase):
             if value is None:changed['format'].pop('cast_source_placement_version')
             else:changed['format']['cast_source_placement_version']=value
             with self.assertRaises(ValueError):validate_state_versions(changed,state)
-        state.cast_source_placement_version=None;legacy={'format':format_state_versions(state)};self.assertNotIn('cast_source_placement_version',legacy['format']);validate_state_versions(legacy,state)
+        self.use_legacy_placement(state)
+        legacy = {'format': format_state_versions(state)}
+        self.assertNotIn(CAST_SOURCE_PLACEMENT_VERSION_FIELD, legacy['format'])
+        self.assertNotIn(TARGET_ANNOUNCEMENT_TIMING_VERSION_FIELD, legacy['format'])
+        validate_state_versions(legacy, state)
 
     def test_real_additional_sacrifice_cast_preserves_versioned_timestamp_order_and_replay(self):
         for current in (False,True):
             with self.subTest(current=current):
-                session=self.session(612651010+current);session.state.cast_source_placement_version=1 if current else None;spell=self.add(session.engine,"Altar's Reap",zone='hand');body=self.add(session.engine,'Grizzly Bears');self.prepare(session,mana={'C':1,'B':1});self.checkpoint(session);offered=self.action(session,'A',spell)
+                session = self.session(612651010 + current)
+                if not current:
+                    self.use_legacy_placement(session.state)
+                spell = self.add(session.engine, "Altar's Reap", zone='hand')
+                body = self.add(session.engine, 'Grizzly Bears')
+                self.prepare(session, mana={'C': 1, 'B': 1})
+                self.checkpoint(session)
+                offered = self.action(session, 'A', spell)
                 before=authoritative_state_hash(session.state)
                 denied=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto','sacrifice_cards':[]});self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(session.state))
                 accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto','sacrifice_cards':[body.ref]});self.assertTrue(accepted.ok,accepted.summary);self.assertEqual('stack',session.state.cards[spell.object_id].zone);self.assertEqual('graveyard',session.state.cards[body.object_id].zone)
