@@ -338,8 +338,9 @@ function TargetControl({
     const id = text(group.id || "target");
     const selected = list(targets[id]).map(String);
     const maximum = Number(group.max ?? 1);
+    if (checked && maximum === 0) return;
     let next = checked ? [...selected, ref] : selected.filter((item) => item !== ref);
-    if (next.length > maximum) {
+    if (checked && next.length > maximum) {
       next = maximum === 1 ? [ref] : [...next.slice(-(maximum - 1)), ref];
     }
     const updated = { ...values, [name]: { ...targets, [id]: next } };
@@ -379,6 +380,7 @@ function TargetControl({
                       type="checkbox"
                       data-testid={`choice-target-${testValue(ref)}`}
                       checked={selected.includes(ref)}
+                      disabled={group.max === 0 && !selected.includes(ref)}
                       onChange={(event) => toggleTarget(group, ref, event.target.checked)}
                     />
                     <span>{labelFor(ref)}</span>
@@ -727,7 +729,11 @@ function ChoiceControl({
   const name = text(field.name);
   const control = text(field.control);
   const value = values[name];
-  const set = (next: JsonValue) => onChange({ ...values, [name]: next });
+  const set = (next: JsonValue) => {
+    const updated = { ...values, [name]: next };
+    if (name === "x" && value !== next) delete updated[DAMAGE_ALLOCATION_FIELD];
+    onChange(updated);
+  };
   if (control === "mana_modes") return <ManaModes field={field} value={value} onValue={set} />;
   if (control === "refs") return <RefOptions field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "ordered_partition") return <OrderedPartition field={field} value={value} onValue={set} labelFor={labelFor} />;

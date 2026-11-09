@@ -232,10 +232,14 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
     if not is_spell or " damage divided as you choose among " not in oracle_text.casefold():
         return terminal
 
-    from .announced_damage_templates import fixed_announced_damage_template
+    from .announced_damage_templates import fixed_announced_damage_template, variable_announced_damage_template
 
     def compile_spell_effect(text: str, **context):
-        allocation = fixed_announced_damage_template(text, card_name=context.get("card_name") or record.name)
+        name = context.get("card_name") or record.name
+        face = next((face for face in record.faces if face.get("name") == name), None)
+        face_x = face is not None and "X" in mana_cost_to_vector(str(face.get("mana_cost") or ""))[1]
+        allocation = (fixed_announced_damage_template(text, card_name=name)
+                      or variable_announced_damage_template(text, card_name=name, has_cast_x=available or face_x))
         return allocation or terminal(text, **context)
 
     return compile_spell_effect

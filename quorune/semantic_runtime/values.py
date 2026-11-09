@@ -175,7 +175,8 @@ def _resolve_effect_mapping(host, value, item):
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
         if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
-            value = {**value, ANNOUNCED_DAMAGE_EFFECT_FIELD: bind_announced_damage_recipients(host, value, item)}
+            total, recipients = bind_announced_damage_recipients(host, value, item)
+            value = {**value, "amount": total, ANNOUNCED_DAMAGE_EFFECT_FIELD: recipients}
         missing = bound_mutation_target_overrides(host, value, item,
             lambda reference: resolve_semantic_value(host, reference, item))
         if missing:

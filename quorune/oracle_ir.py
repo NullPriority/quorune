@@ -178,7 +178,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v842"
+ORACLE_COMPILER_VERSION = "oracle-ir-v843"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1312,7 +1312,7 @@ def _compile_face(
 
         unowned_replacement=unowned_replacement_node(node_id=node_id,line=line,
             material_line=material_line,span=span,source_name=face_name or record.name,
-            spell=spell,permanent=permanent,has_faces=bool(record.faces),bargain_available=printed_bargain_spec(record) is not None,
+            spell=spell,permanent=permanent,record=record,oracle_text=oracle_text,
             compile_effect=contextual_effect_template,residuals=residuals)
         if unowned_replacement is not None:
             nodes.append(unowned_replacement)

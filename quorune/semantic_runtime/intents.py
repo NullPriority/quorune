@@ -477,7 +477,7 @@ class DealFixedDamageSetIntent:
         else:
             recipients = self.allocated_recipients
             if (self.spec is not None or self.death_exile_scope is not None
-                    or not isinstance(recipients, tuple) or self.amount < 1
+                    or not isinstance(recipients, tuple)
                     or any(not isinstance(recipient, AllocatedDamageRecipient) for recipient in recipients)
                     or len({recipient.ref for recipient in recipients}) != len(recipients)
                     or sum(recipient.amount for recipient in recipients) > self.amount):

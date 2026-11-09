@@ -1498,7 +1498,10 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
     expanded=optional_life_cost_variants(host,seat,card,expanded,cast_type_line=cast_type_line)
     target_mana_x = has_x
     target_schema = getattr(program, "target_schema", None)
-    if not has_x and isinstance(target_schema, Mapping) and "count_parameter" in target_schema:
+    from ...announced_damage import bind_cast_allocation_option, variable_damage_allocation
+    allocation = variable_damage_allocation(target_schema)
+    if not has_x and isinstance(target_schema, Mapping) and (
+            "count_parameter" in target_schema or allocation is not None and allocation.quantity is None):
         _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
         if target_mana_x:
             expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
@@ -1513,6 +1516,10 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
         from .target_cardinality import bind_target_count_option
         option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x,
             target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
+        if option is None:
+            continue
+        option = bind_cast_allocation_option(host, seat, card, target_schema, option, submission,
+                                             hint=hint, has_x=target_mana_x or declared_cost_x)
         if option is None:
             continue
         option_cast_type_line = (

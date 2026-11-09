@@ -51,7 +51,8 @@ class KickedSelfReplacementCompilerTests(unittest.TestCase):
                 residuals=[];span=SourceSpan(0,len(text),1)
                 node=unowned_replacement_node(node_id='n1',line=text,material_line=text,
                     span=span,source_name='Generic Witness',spell=not permanent,permanent=permanent,
-                    has_faces=False,compile_effect=_reviewed_effect_template,residuals=residuals)
+                    record=record(text,'Creature — Wizard' if permanent else 'Sorcery'),oracle_text=text,
+                    compile_effect=_reviewed_effect_template,residuals=residuals)
                 self.assertEqual('replacement_effect',node.kind)
                 self.assertEqual('battlefield' if permanent else 'stack',node.active_zone)
                 self.assertEqual(('replace',False,False,('r1',)),(node.event,node.lowerable,node.exact,node.residual_ids))
@@ -65,7 +66,7 @@ class KickedSelfReplacementCompilerTests(unittest.TestCase):
             residuals=[]
             self.assertIsNone(unowned_replacement_node(node_id='n1',line=text,material_line=text,
                 span=SourceSpan(0,len(text),1),source_name='Generic Witness',spell=True,permanent=False,
-                has_faces=False,compile_effect=_reviewed_effect_template,residuals=residuals))
+                record=record(text,'Sorcery'),oracle_text=text,compile_effect=_reviewed_effect_template,residuals=residuals))
             self.assertEqual([],residuals)
 
     def test_unsupported_targets_variable_results_and_permanent_trigger_contexts_stay_residual(self):

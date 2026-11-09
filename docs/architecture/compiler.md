@@ -2380,6 +2380,11 @@ spell or activation payment. The trigger controller chooses targets and seals
 their shares while placing the ability on the stack. Resolution passes the
 surviving shares to the simultaneous damage owner. Derived totals, X target
 counts, and linked riders require their own closed compiler shapes.
+The variable spell shape uses one amount from announced mana or life X, a
+public battlefield count, or the maximum power of controlled creatures. The
+cast cost and target owners bind the amount before payment and limit the
+number of legal targets to that amount and any printed ceiling. This shape
+also represents X plus one and doubling X at the printed threshold.
 
 `compiler/optional_effect_templates.py` owns one leading `You may` around one
 independently exact atomic effect. It preserves the nested effect's target

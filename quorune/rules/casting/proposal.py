@@ -865,6 +865,8 @@ def _cast_offer_payload(
         )
         public_schema = None
         if target_spec is not None:
+            from ...announced_damage import preview_cast_allocation_schema
+            target_spec = preview_cast_allocation_schema(target_spec, raw)
             public_schema = host._public_target_schema(
                 seat, target_spec, acting_source=spell_targeting_source(host,card), source_ref=card.ref
             )

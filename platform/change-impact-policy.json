@@ -6800,6 +6800,7 @@
       "patterns": [
         "quorune/announced_damage.py",
         "quorune/compiler/announced_damage_templates.py",
+        "quorune/rules/casting/targeted_costs.py",
         "quorune/rules/activation/proposal.py",
         "quorune/selection/targeting.py",
         "quorune/compiler/damage_templates.py",

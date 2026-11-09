@@ -39952,6 +39952,99 @@
     {
       "applicability": {
         "exclusions": [
+          "Triggered and activated variable assignments, damage history aggregates, and dependent riders.",
+          "Multiple target groups and alternative X mechanics without an independently represented price."
+        ],
+        "inputs": [
+          "One cast with printed mana X, a declared life X cost, or a closed public battlefield count or power aggregate.",
+          "One optional group of distinct legal targets with positive integral shares."
+        ],
+        "outputs": [
+          "A sealed total and ordered allocation on the cast and any copies.",
+          "A single replacement-aware damage batch using the original surviving shares."
+        ],
+        "summary": "Seal a cast-announced or public battlefield damage total with ordered target shares before payment. Resolve only the shares for surviving target slots."
+      },
+      "blockers": [],
+      "dependencies": [
+        "damage.batch.fixed_set",
+        "damage.source.stack_current_or_lki",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "The runtime independently decodes the amount and requires one matching cast effect and target schema.",
+      "dependency_fail_closed_status": "passed",
+      "id": "damage.batch.announced_variable_allocation",
+      "implementation_components": [
+        "quorune.announced_damage.VariableDamageAllocationSpec",
+        "quorune.announced_damage.bind_cast_allocation_option",
+        "quorune.announced_damage.bind_announced_damage_recipients",
+        "quorune.compiler.announced_damage_templates.variable_announced_damage_template",
+        "quorune.rules.damage_capability_shapes.variable_damage_allocation_program_requirements"
+      ],
+      "implementation_mutation_rationale": "Removing cast allocation validation admits a Rolling Thunder cast with no announced shares. The native rejection witness detects it.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_variable_damage_tax_preview_preserves_the_positive_share_boundary",
+        "test_actual_jaws_of_stone_copies_sealed_public_count_in_slot_order",
+        "test_actual_fire_covenant_pays_announced_life_after_sealing_shares",
+        "test_actual_monstrous_onslaught_keeps_cast_power_when_its_source_leaves",
+        "test_actual_hail_and_rock_slide_filter_declared_combatants"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rolling_thunder_keeps_x_shares_through_bounce_and_replay",
+        "test_actual_jaws_of_stone_copies_sealed_public_count_in_slot_order"
+      ],
+      "negative_tests": [
+        "test_variable_damage_requires_matching_spell_allocation_authority",
+        "test_actual_rolling_thunder_keeps_x_shares_through_bounce_and_replay",
+        "test_variable_damage_tax_preview_preserves_the_positive_share_boundary",
+        "test_omitting_variable_allocation_validation_is_caught_by_native_cast"
+      ],
+      "official_rules": [
+        "107.1b",
+        "107.1c",
+        "107.3a",
+        "107.3b",
+        "115.6",
+        "120.4",
+        "601.2b",
+        "601.2d",
+        "608.2b",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_actual_rolling_thunder_keeps_x_shares_through_bounce_and_replay",
+        "test_actual_meteor_shower_and_rolling_thunder_distinguish_zero_x",
+        "test_actual_shatterskull_divides_double_total_at_threshold"
+      ],
+      "privacy_tests": [
+        "test_actual_rolling_thunder_keeps_x_shares_through_bounce_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_rolling_thunder_keeps_x_shares_through_bounce_and_replay",
+        "test_actual_jaws_of_stone_copies_sealed_public_count_in_slot_order",
+        "test_actual_monstrous_onslaught_keeps_cast_power_when_its_source_leaves",
+        "test_actual_shatterskull_divides_double_total_at_threshold"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unowned variable or divided amounts",
           "chosen, linked-result, history-derived, and dynamic-characteristic predicates",
           "additive affected groups that cannot be identity-deduplicated",

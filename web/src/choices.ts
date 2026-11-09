@@ -154,8 +154,13 @@ export function selectedTargetCostLabel(field: ChoiceField, values: ChoiceValues
 function resolveDependentField(field: ChoiceField, values: ChoiceValues): ChoiceField {
   if (stringValue(field.control) === "targets") {
     const schema = record(field.schema);
+    const allocation = record(schema[DAMAGE_ALLOCATION_FIELD]);
+    const damageMaximum = allocation.schema_version === 2 ? damageAllocationTotal(allocation, values) : undefined;
     const groups = list(schema.groups).map((rawGroup) => {
       const group = record(rawGroup);
+      if (damageMaximum !== undefined) {
+        return { ...group, max: Math.min(Number(group.max ?? 0), damageMaximum) };
+      }
       const exact = stringValue(group.count_from);
       const source = exact || stringValue(group.maximum_from);
       if (!source) return group;
@@ -234,12 +239,25 @@ function selectedTargetGroups(field: ChoiceField, values: ChoiceValues): ChoiceF
   return list(schema.groups).map((group) => record(group));
 }
 
-export function selectedDamageAllocation(field: ChoiceField, values: ChoiceValues) {
-  const spec = record(record(field.schema)[DAMAGE_ALLOCATION_FIELD]);
+function damageAllocationTotal(spec: ChoiceField, values: ChoiceValues): number | undefined {
   const total = spec.total;
-  if (spec.schema_version !== 1 || typeof total !== "number" || !Number.isSafeInteger(total) || total < 1) {
-    return null;
+  if (spec.schema_version === 1 || spec.schema_version === 2 && total !== undefined) {
+    const minimum = spec.schema_version === 1 ? 1 : 0;
+    return typeof total === "number" && Number.isSafeInteger(total) && total >= minimum ? total : undefined;
   }
+  const amount = record(spec.amount);
+  const x = values.x ?? 0;
+  if (spec.schema_version !== 2 || amount.kind !== "x"
+      || typeof x !== "number" || !Number.isSafeInteger(x) || x < 0
+      || (amount.increment !== 0 && amount.increment !== 1)
+      || (amount.double_from !== null && amount.double_from !== 6)) return undefined;
+  const computed = amount.double_from === 6 && x >= 6 ? 2 * x : x + amount.increment;
+  return Number.isSafeInteger(computed) ? computed : undefined;
+}
+
+export function selectedDamageAllocation(field: ChoiceField, values: ChoiceValues) {
+  const total = damageAllocationTotal(record(record(field.schema)[DAMAGE_ALLOCATION_FIELD]), values);
+  if (total === undefined) return null;
   const targets = record(values[stringValue(field.name || "targets")]);
   const refs = selectedTargetGroups(field, values).flatMap((group) =>
     list(targets[stringValue(group.id || "target")]).map(String),

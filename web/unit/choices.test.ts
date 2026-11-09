@@ -38,6 +38,27 @@ test("Announced damage is editable and only submitted for its active target form
   assert.deepEqual(executableChoices(form([]), edited), {});
 });
 
+test("Variable divided damage uses the announced X and the printed target ceiling", () => {
+  const xField = { name: "x", control: "integer", minimum: 0, maximum: 6 };
+  const group = { id: "target", min: 0, max: 2, legal_refs: ["B", "D"] };
+  const choices = (increment: number, doubleFrom: number | null) => form([xField, {
+    name: "targets", control: "targets", schema: {
+      groups: [group],
+      damage_allocation: { schema_version: 2, amount: { kind: "x", increment, double_from: doubleFrom } },
+    },
+  }]);
+  const targets = { target: ["B", "D"] };
+  const doubled = choices(0, 6);
+  assert.deepEqual(validateChoices(doubled, { x: 6, targets, damage_allocation: { B: 3, D: 9 } }), []);
+  assert.match(validateChoices(doubled, { x: 6, targets, damage_allocation: { B: 3, D: 3 } }).join(), /12 damage/);
+  assert.deepEqual(executableChoices(doubled, { x: 5, targets }), {
+    x: 5, targets, damage_allocation: { B: 4, D: 1 },
+  });
+  assert.ok(validateChoices(doubled, { x: 0, targets }).length);
+  assert.deepEqual(executableChoices(choices(1, null), { x: 0, targets: { target: ["B"] } }).damage_allocation, { B: 1 });
+  assert.ok(validateChoices(choices(1, null), { x: 0, targets }).length);
+});
+
 test("declining a resolving cast ignores its targets and additional payments", () => {
   const cast: ChoiceForm = {
     v: 1, submit_label: "Choose",

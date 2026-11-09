@@ -277,9 +277,14 @@ def _value_runtime_requirements(program):
         blockers.add(f"runtime_self_public_condition:invalid:{exc}")
     try:
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
+        from ..announced_damage import VARIABLE_DAMAGE_ALLOCATION_CAPABILITY, variable_damage_allocation
         from ..fractional_quantity_model import HALF_MILL_CAPABILITY
         from ..target_cardinality import SELECTED_PLAYER_RESULT_CAPABILITY
         from ..fixed_top_exile import FIXED_TOP_EXILE_CAPABILITY
+        if VARIABLE_DAMAGE_ALLOCATION_CAPABILITY in amounts or variable_damage_allocation(program.target_schema) is not None:
+            from ..rules.damage_capability_shapes import variable_damage_allocation_program_requirements
+
+            required.update(variable_damage_allocation_program_requirements(program))
         if FIXED_TOP_EXILE_CAPABILITY in amounts:
             from ..rules.discover_capability_shapes import validate_fixed_top_exile_program_scope
             validate_fixed_top_exile_program_scope(program)

@@ -45,13 +45,16 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
 
 
 def _damage_payload_dependencies(value, mechanics):
-    from ..announced_damage import ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_EFFECT_FIELD, validate_announced_damage_effect
+    from ..announced_damage import (
+        ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_EFFECT_FIELD, VariableDamageAllocationSpec,
+        validate_announced_damage_effect,
+    )
     from ..damage_death_exile_model import damage_death_exile_payload_dependencies
     from ..damage_prevention_permission import unpreventability_payload_dependencies
 
     if ANNOUNCED_DAMAGE_EFFECT_FIELD in value:
-        validate_announced_damage_effect(value)
-        return (ANNOUNCED_DAMAGE_CAPABILITY,)
+        spec = validate_announced_damage_effect(value)
+        return spec.capability_dependencies if isinstance(spec, VariableDamageAllocationSpec) else (ANNOUNCED_DAMAGE_CAPABILITY,)
     return (*unpreventability_payload_dependencies(value, coverage=mechanics),
             *damage_death_exile_payload_dependencies(value, coverage=mechanics))
 

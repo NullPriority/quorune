@@ -6,8 +6,10 @@ import re
 
 from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_MECHANIC
 from ..turn_skip_model import TURN_SKIP_MECHANIC
+from .bargain_nodes import printed_bargain_spec
 from .ir_model import OracleNode,append_residual
 from .kicked_self_replacement_templates import is_fixed_spell_self_replacement
+from .oracle_source_text import without_ability_word_label
 from .reanimation_followup_templates import fixed_reanimation_followup_template
 
 
@@ -25,15 +27,24 @@ def _balanced_reminder_delimiters(line):
 
 
 def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
-        spell,permanent,has_faces,compile_effect,residuals,bargain_available=False):
+        spell,permanent,record,oracle_text,compile_effect,residuals):
     if not _REPLACEMENT_MARKERS.search(material_line):
         if not _REPLACEMENT_MARKERS.search(line) or _balanced_reminder_delimiters(line):
             return None
-    if spell and bargain_available and compile_effect(material_line,card_name=source_name,bargain_available=True)[0]=='linked-bargain-same-target-v1':
+    if spell and printed_bargain_spec(record) is not None and compile_effect(material_line,card_name=source_name,bargain_available=True)[0]=='linked-bargain-same-target-v1':
         return None
     if spell and is_fixed_spell_self_replacement(material_line,source_name,
-            compile_effect,has_faces=has_faces):
+            compile_effect,has_faces=bool(record.faces)):
         return None
+    if spell and " damage divided as you choose among " in material_line.casefold():
+        from .announced_damage_templates import VARIABLE_DAMAGE_TEMPLATE_ID
+        from .declared_effect_amounts import declared_spell_effect_compiler
+
+        body = without_ability_word_label(material_line)
+        declared = declared_spell_effect_compiler(record, is_spell=True, oracle_text=oracle_text,
+                                                  compile_effect=compile_effect)
+        if body is not None and declared(body, card_name=source_name)[0] == VARIABLE_DAMAGE_TEMPLATE_ID:
+            return None
     linked_reanimation = fixed_reanimation_followup_template(material_line) if spell else None
     if linked_reanimation is not None and linked_reanimation.followup.exile_on_leave:
         return None
