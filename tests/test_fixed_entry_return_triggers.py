@@ -940,6 +940,7 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
         )
         program = self.register_typed_event_trigger(engine, source)
         legacy_effects = deepcopy(program.effects)
+        self.assertEqual(1, legacy_effects[0].pop("entry_return_payment_version"))
         legacy_choice = legacy_effects[0]["then_by_choice"]["return"][0]
         self.assertEqual("$source.zone_object", legacy_choice["exclude_ref"])
         legacy_choice["exclude_ref"] = "$source"

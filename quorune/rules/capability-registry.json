@@ -19723,7 +19723,8 @@
           "current source ability applicability",
           "trigger-source physical and logical identity",
           "stable public object refs",
-          "applicable destination replacements"
+          "applicable destination replacements",
+          "current full-count eligibility for a checked entry return payment"
         ],
         "outputs": [
           "one controller-scoped public choice",
@@ -19732,7 +19733,7 @@
           "normalized zone-change events",
           "exact continuation replay"
         ],
-        "summary": "Compile and resolve one source-entry requirement that returns one to three controller-selected public permanents to their owners' hands, or returns the exact source incarnation after one fixed public entry event. Source exclusion uses the triggering incarnation for new instructions and retains the recorded physical-reference encoding for archived instructions."
+        "summary": "Compile and resolve one source-entry requirement that returns one to three controller-selected public permanents to their owners' hands, or returns the exact source incarnation after one fixed public entry event. Source exclusion uses the triggering incarnation for new instructions and retains the recorded physical-reference encoding for archived instructions. Checked entry return payments consult the authoritative APNAP candidate set before offering the complete return."
       },
       "blockers": [],
       "dependencies": [
@@ -19751,9 +19752,11 @@
         "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
         "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent",
         "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
-        "quorune.semantic_runtime.values.resolve_semantic_value"
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.rules.entry_return_payment.bind_checked_entry_return_payment",
+        "quorune.rules.entry_return_capability_shapes.checked_entry_return_runtime_dependencies"
       ],
-      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove the binding, choice, source exclusion, fallback, or owner-hand commit and the exact witnesses fail. The original Quickling witness exposes a stable reference exclusion applied to the earlier trigger.",
+      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove the binding, choice, source exclusion, fallback, or owner-hand commit and the exact witnesses fail. The original Quickling witness exposes a stable reference exclusion applied to the earlier trigger. The unpayable native Quickling witness detects an unavailable return branch.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_entry_return_choice_uses_owner_hand_and_replays",
@@ -19762,11 +19765,13 @@
         "test_external_entry_self_return_uses_source_incarnation",
         "test_external_entry_self_returns_batch_in_apnap_order",
         "test_reentered_source_remains_excluded_from_another_return_payment",
-        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger"
+        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger",
+        "test_actual_quickling_resolves_the_sacrifice_when_return_is_unavailable"
       ],
       "multiplayer_tests": [
         "test_external_entry_self_returns_batch_in_apnap_order",
-        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger"
+        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger",
+        "test_actual_quickling_resolves_the_sacrifice_when_return_is_unavailable"
       ],
       "negative_tests": [
         "test_entry_return_capability_dependency_fails_closed",
@@ -19774,7 +19779,8 @@
         "test_entry_return_choice_revalidates_and_rolls_back",
         "test_fixed_entry_return_requirements_compile_exactly_and_fail_closed",
         "test_source_entry_return_declares_registered_bounce_dependency",
-        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger"
+        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger",
+        "test_actual_quickling_resolves_the_sacrifice_when_return_is_unavailable"
       ],
       "official_rules": [
         "101.4",
@@ -19790,7 +19796,8 @@
         "test_entry_return_untapped_basic_land_subtypes_execute",
         "test_fixed_entry_return_requirements_compile_exactly_and_fail_closed",
         "test_source_entry_return_declares_registered_bounce_dependency",
-        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger"
+        "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger",
+        "test_actual_quickling_resolves_the_sacrifice_when_return_is_unavailable"
       ],
       "privacy_tests": [
         "test_entry_return_choice_uses_owner_hand_and_replays",
@@ -19800,7 +19807,8 @@
         "test_entry_return_choice_uses_owner_hand_and_replays",
         "test_external_entry_self_return_uses_source_incarnation",
         "test_actual_quickling_can_return_the_new_incarnation_for_its_earlier_trigger",
-        "test_reentered_source_remains_excluded_from_another_return_payment"
+        "test_reentered_source_remains_excluded_from_another_return_payment",
+        "test_actual_quickling_resolves_the_sacrifice_when_return_is_unavailable"
       ],
       "required_evidence": [
         "positive",
@@ -19816,7 +19824,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 4
+      "version": 5
     },
     {
       "applicability": {

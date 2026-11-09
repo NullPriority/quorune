@@ -8,6 +8,7 @@ from ..compiler.fixed_entry_return_requirements import (
     FIXED_ENTRY_RETURN_CAPABILITY,
     FIXED_ENTRY_RETURN_MECHANIC,
 )
+from .entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION, ENTRY_RETURN_PAYMENT_VERSION_FIELD
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 
 
@@ -68,12 +69,19 @@ def _choice_is_closed(effect: Mapping[str, Any]) -> bool:
 def _contains_closed_choice(effect: Mapping[str, Any]) -> bool:
     if _choice_is_closed(effect):
         return True
+    checked = ENTRY_RETURN_PAYMENT_VERSION_FIELD in effect
+    if checked and (
+        type(effect[ENTRY_RETURN_PAYMENT_VERSION_FIELD]) is not int
+        or effect[ENTRY_RETURN_PAYMENT_VERSION_FIELD] != ENTRY_RETURN_PAYMENT_VERSION
+    ):
+        return False
     if set(effect) != {
         "op",
         "player",
         "prompt",
         "options",
         "then_by_choice",
+        *((ENTRY_RETURN_PAYMENT_VERSION_FIELD,) if checked else ()),
     } or effect.get("op") != "choose_option":
         return False
     branches = effect.get("then_by_choice")
@@ -92,6 +100,8 @@ def _contains_closed_choice(effect: Mapping[str, Any]) -> bool:
         or len(branches["return"]) != 1
         or not isinstance(branches["return"][0], Mapping)
         or not _choice_is_closed(branches["return"][0])
+        or (checked and (branches["return"][0].get("require_full_count") is not True
+                         or type(branches["return"][0].get("count")) is not int))
         or branches["sacrifice"]
         != [
             {"op": "sacrifice_if_present", "card": "$source.zone_object"}
@@ -99,6 +109,10 @@ def _contains_closed_choice(effect: Mapping[str, Any]) -> bool:
     ):
         return False
     return True
+
+
+def checked_entry_return_payment_is_closed(effect: Mapping[str, Any]) -> bool:
+    return ENTRY_RETURN_PAYMENT_VERSION_FIELD in effect and _contains_closed_choice(effect)
 
 
 def fixed_entry_return_node_capabilities(
@@ -127,4 +141,26 @@ def fixed_entry_return_node_capabilities(
     return (FIXED_ENTRY_RETURN_CAPABILITY, *(('permanent.return.owner_hand',) if source_return else ()))
 
 
-__all__ = ["fixed_entry_return_node_capabilities"]
+def checked_entry_return_runtime_dependencies(program) -> tuple[str, ...]:
+    from ..replacement.immutable import thaw_value
+    from .effect_shape_walkers import nested_effects
+
+    if not any(ENTRY_RETURN_PAYMENT_VERSION_FIELD in effect for effect in nested_effects(program.effects)):
+        return ()
+    if (
+        len(program.effects) != 1
+        or not checked_entry_return_payment_is_closed(thaw_value(program.effects[0]))
+        or program.target_schema is not None
+        or program.event != "permanent.enter"
+        or program.active_zone != "battlefield"
+        or program.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}
+    ):
+        raise ValueError("Checked entry return payment requires its own battlefield entry event")
+    return (FIXED_ENTRY_RETURN_CAPABILITY,)
+
+
+__all__ = [
+    "checked_entry_return_payment_is_closed",
+    "checked_entry_return_runtime_dependencies",
+    "fixed_entry_return_node_capabilities",
+]

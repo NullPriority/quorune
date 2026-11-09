@@ -351,6 +351,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         opposing_graveyard_return_runtime_dependencies, public_graveyard_return_runtime_dependencies,
         targeted_graveyard_cast_runtime_dependencies,
     )
+    from ..rules.entry_return_capability_shapes import checked_entry_return_runtime_dependencies
     from ..rules.public_zone_move_capability_shapes import triggered_source_exile_runtime_dependencies
     from ..rules.reanimation_capability_shapes import source_power_reanimation_runtime_dependencies
 
@@ -364,6 +365,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (targeted_graveyard_cast_runtime_dependencies, 'targeted_graveyard_cast'),
         (graveyard_copy_cast_runtime_dependencies, 'graveyard_copy_cast'),
         (source_power_reanimation_runtime_dependencies, 'source_power_reanimation'),
+        (checked_entry_return_runtime_dependencies, 'checked_entry_return'),
     ):
         try:
             required.update(resolver(program))

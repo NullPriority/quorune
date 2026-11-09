@@ -3215,6 +3215,12 @@ incarnation exclusion after the original object leaves the battlefield.
 Archived instructions using a physical reference replay their recorded
 exclusion.
 
+Checked entry return payments read the same current candidates as the APNAP
+choice owner. The complete return must be available for its branch to be
+offered. Otherwise, the trigger resolves its original source-sacrifice
+instruction under CR 118.12a and 608.2d. The recorded legacy choice shape
+continues to replay its original proposal and fallback.
+
 The printed-price authority for Phyrexian casting symbols expands each
 symbol into its canonical colored mana and life choices. The offer and
 accepted proposal use the same mana vector and selected life amount, with
