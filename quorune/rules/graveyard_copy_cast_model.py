@@ -13,8 +13,10 @@ GRAVEYARD_COPY_OFFER = "offer_graveyard_card_copies"
 GRAVEYARD_COPY_CAPABILITY = "casting.resolution.graveyard_copies"
 GRAVEYARD_COPY_MECHANIC = "resolving-graveyard-copy-cast"
 GRAVEYARD_COPY_PARENT_FIELD = "resolving_graveyard_copy_parent"
-GRAVEYARD_COPY_RULES = ("118.8c", "400.7j", "601.2", "608.2b", "608.2g", "704.5e", "707.12", "707.12a")
-_SCOPES = ("any", "opponent", "paired", "own", "own_all")
+GRAVEYARD_COPY_RULES = (
+    "118.8c", "400.7j", "601.2", "608.2b", "608.2g", "608.3f", "704.5e", "707.10f", "707.12", "707.12a",
+)
+_SCOPES = ("any", "opponent", "paired", "own", "own_all", "own_source_power", "public_source_power")
 
 
 def _copy_count(scope, count):

@@ -42,6 +42,7 @@ def _live_target(host, *, item, actor, effect):
     if (card is None or card.zone != "graveyard" or not card.is_card_object or card.face_down
             or card.owner != snapshot.get("owner") or card.owner not in host.active_seats
             or effect["owner_relation"] == "opponent" and card.owner == actor
+            or effect["owner_relation"] == "you" and card.owner != actor
             or not target_identity_matches_snapshot(host, ref, snapshot)):
         raise GameRuleError("The graveyard cast target incarnation changed")
     program = host.semantics.get(item.semantic_key)

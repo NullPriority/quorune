@@ -10,8 +10,9 @@ from .object_predicate import (
     PermanentStatePredicateSpec,
 )
 from .relative_power_target import (
-    RelativePowerTargetCondition,
+    RELATIVE_POWER_TARGET_PREDICATES,
     RelativePowerTargetError,
+    bound_relative_power_condition,
 )
 from .target_forms import TargetCharacteristicForm
 from .target_history import TargetDamageHistorySpec
@@ -143,12 +144,10 @@ def _target_resolution_condition(
     if not isinstance(raw_condition, Mapping):
         raise ValueError("Target resolution_condition must be an object")
     resolution_condition = dict(raw_condition)
-    if predicate != "power_less_than_source":
+    if predicate not in RELATIVE_POWER_TARGET_PREDICATES:
         return resolution_condition
     try:
-        return RelativePowerTargetCondition.from_dict(
-            resolution_condition
-        ).to_dict()
+        return bound_relative_power_condition(predicate, resolution_condition).to_dict()
     except RelativePowerTargetError as exc:
         raise ValueError(str(exc)) from exc
 

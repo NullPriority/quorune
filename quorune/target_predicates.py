@@ -6,8 +6,10 @@ from typing import Any, Mapping, Protocol, Set
 
 from .model import CardInstance, StackItem
 from .relative_power_target import (
-    RelativePowerTargetCondition,
+    CREATURE_POWER_PREDICATE,
+    RELATIVE_POWER_TARGET_PREDICATES,
     RelativePowerTargetError,
+    bound_relative_power_condition,
     current_effective_creature_power,
 )
 from .targets import TargetGroup
@@ -36,17 +38,17 @@ class TargetPredicateHost(Protocol):
 def _relative_power_matches(
     host: TargetPredicateHost,
     group: TargetGroup,
-    card: CardInstance | None,
+    row: Mapping[str, Any],
 ) -> bool:
-    if card is None:
+    card = row.get("card")
+    if not isinstance(card, CardInstance):
         return False
     try:
-        condition = RelativePowerTargetCondition.from_dict(
-            group.resolution_condition
-        )
+        condition = bound_relative_power_condition(group.predicate, group.resolution_condition)
         source = host.state.cards.get(condition.source.object_id)
         if (
-            source is not None
+            condition.kind == CREATURE_POWER_PREDICATE
+            and source is not None
             and source.zone == "battlefield"
             and source.logical_object_id == condition.source.logical_object_id
             and source.phased_out
@@ -65,6 +67,11 @@ def _relative_power_matches(
             if source_is_current
             else None
         )
+        if condition.kind != CREATURE_POWER_PREDICATE:
+            return condition.permits_mana_value(
+                mana_value=row.get("mana_value"), current_source_power=current_source_power,
+                use_last_known=not source_is_current,
+            )
         return condition.permits(
             target_power=host._numeric_stat(card.object_id, "power"),
             current_source_power=current_source_power,
@@ -181,12 +188,8 @@ def target_predicate_matches(
             and isinstance(card, CardInstance)
             and source.attached_to != card.object_id
         )
-    if predicate == "power_less_than_source":
-        return _relative_power_matches(
-            host,
-            group,
-            card if isinstance(card, CardInstance) else None,
-        )
+    if predicate in RELATIVE_POWER_TARGET_PREDICATES:
+        return _relative_power_matches(host, group, row)
     raise TargetPredicateError(f"Unsupported target predicate {predicate!r}")
 
 

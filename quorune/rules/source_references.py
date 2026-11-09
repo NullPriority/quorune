@@ -135,6 +135,10 @@ class SourceReferenceSpec:
         return bool(normalized) and normalized in self.normalized_names
 
 
+def matches_source_power_reference(candidate: str, card_name: str) -> bool:
+    return source_self_permanent_type(candidate) is not None or SourceReferenceSpec(card_name).matches(candidate)
+
+
 __all__ = [
     "SOURCE_REFERENCE_SCHEMA_VERSION",
     "CYCLED_SOURCE_DAMAGE_COVERAGE",

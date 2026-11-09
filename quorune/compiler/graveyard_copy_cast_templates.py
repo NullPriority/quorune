@@ -6,6 +6,7 @@ import re
 
 from ..rules.graveyard_card_targets import graveyard_copy_scope_schema
 from ..rules.graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION
+from ..rules.source_references import matches_source_power_reference
 
 _ONE = re.compile(
     r"Exile target instant or sorcery card from (?P<graveyard>a|an opponent['’]s) graveyard\. "
@@ -25,6 +26,28 @@ _EACH = re.compile(
 )
 
 
+_OWN_RELATIVE = re.compile(
+    r"Exile target instant or sorcery card with mana value less than or equal to (?P<source>.+?)['’]s power "
+    r"from your graveyard\. Copy that card\. You may cast the copy without paying its mana cost\.",
+    re.IGNORECASE,
+)
+_PUBLIC_RELATIVE = re.compile(
+    r"Exile target noncreature, nonland card with mana value less than (?P<source>.+?)['’]s power "
+    r"from a graveyard and copy it\. You may cast the copy without paying its mana cost\.",
+    re.IGNORECASE,
+)
+
+
+def relative_graveyard_copy_template(text, *, card_name, event):
+    if not text.casefold().startswith("exile target "):
+        return None
+    pattern, scope = (_OWN_RELATIVE, "own_source_power") if event == "enter" else (_PUBLIC_RELATIVE, "public_source_power")
+    match = pattern.fullmatch(" ".join(text.split()))
+    if match is None or not matches_source_power_reference(match["source"], card_name):
+        return None
+    return _copy_result(scope, 1)
+
+
 def graveyard_copy_cast_template(text):
     if not text.lstrip().casefold().startswith("exile "):
         return None
@@ -41,6 +64,10 @@ def graveyard_copy_cast_template(text):
         scope = "own_all" if match["subject"].casefold() == "each" else "own"
     else:
         return None
+    return _copy_result(scope, copies)
+
+
+def _copy_result(scope, copies):
     target_schema = graveyard_copy_scope_schema(scope)
     effect = {"op": GRAVEYARD_COPY_OPERATION, "player": "$controller", "scope": scope,
               "copies": copies, "cards": "$targets" if target_schema is not None else []}

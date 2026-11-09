@@ -3683,13 +3683,24 @@ An optional exile rider records the child spell's owner and stack incarnation
 and participates in ordinary destination replacement.
 
 Graveyard copy casts exile the surviving originals together before creating
-the printed copies. The resolving spell binds each new copy to that parent,
-and the existing resolving-cast payment transaction accepts one current
+the printed copies. The resolving spell or ability binds each copy to that
+parent, and the existing resolving-cast payment transaction accepts one current
 option at a time. An optional sequence can finish with uncast copies. A
 required sequence offers a cast while a copy has a payable option outside
-the hidden-quality cost exception in CR 118.8c. The
-normal and overloaded bodies retain their separate targeting and both
-preserve the spell's terminal exile.
+the hidden-quality cost exception in CR 118.8c. The normal and overloaded
+bodies retain their separate targeting and preserve the spell's terminal exile.
+A cast permanent copy becomes a token on battlefield arrival through the
+ordinary zone transition, without emitting a token-creation event.
+
+Source-relative graveyard casts use a closed comparison of the selected card's
+public mana value with the exact triggering source's power. The own-graveyard
+instant or sorcery forms use an inclusive ceiling. The public noncreature and
+nonland copy form uses a strict ceiling and applies both type exclusions.
+Target selection and resolution revalidation share the predicate. A waiting
+trigger retains immediate source power through state-based departure, and a
+pending stack item uses the original incarnation's last-known power after
+departure or phasing out. A source that remains present uses its current
+power. The copy form on entry also requires its own cast-entry receipt.
 
 `compiler/station_context_nodes.py` binds one or two increasing positive Station symbols
 to independently compiled children. Thresholds accumulate; the explicit pinned

@@ -211,6 +211,10 @@ def execute_discover_cast(host,intent):
         payment_id=f'{intent.stack_ref}:{producer}:{intent.progress.candidate.logical_object_id}',
         replacement_selections=intent.replacement_selections,
         force_without_mana_cost=intent.progress.fixed_top_payment != "paid")
-    if not any(stack.ref not in before and stack.kind=='spell' and stack.card_object_id==card.object_id
-               for stack in host.state.stack):
+    spell = next((stack for stack in host.state.stack if stack.ref not in before
+                  and stack.kind == "spell" and stack.card_object_id == card.object_id), None)
+    if spell is None:
         raise StateInvariantError('The Discover choice created no spell')
+    if intent.progress.copy_parent_ref is not None and spell.default_destination == "battlefield":
+        from .zone_object_state import mark_resolving_graveyard_copy
+        mark_resolving_graveyard_copy(host.state.cards[card.object_id], item.ref, zone="stack")

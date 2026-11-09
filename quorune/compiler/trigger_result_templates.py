@@ -15,6 +15,14 @@ from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    if binding.variant == "source_attacks" and body == binding.body:
+        from .graveyard_copy_cast_templates import relative_graveyard_copy_template
+        from .targeted_graveyard_cast_templates import relative_graveyard_cast_template
+        relative = relative_graveyard_copy_template(body, card_name=card_name, event="attack") or relative_graveyard_cast_template(
+            body, card_name=card_name,
+        )
+        if relative is not None:
+            return relative, False
     from .exile_templates import triggered_source_exile_template
     source_exile = triggered_source_exile_template(binding, body)
     if source_exile is not None:

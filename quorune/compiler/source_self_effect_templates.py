@@ -34,7 +34,12 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         compile_fixed=lambda text:effect_template(text,card_name=card_name)) or source_self_contextual_effect_template(
             body,card_name=card_name,event_phrase=event_phrase,compile_effect=effect_template)
     if compiled is None:
-        compiled = effect_template(body, card_name=card_name)
+        from .graveyard_copy_cast_templates import relative_graveyard_copy_template
+        relative = (
+            relative_graveyard_copy_template(body, card_name=card_name, event="enter")
+            if condition is not None else None
+        )
+        compiled = relative or effect_template(body, card_name=card_name)
         if compiled[0] is None:
             compiled = _source_self_reflexive_payment(body, card_name=card_name,
                 event_phrase=event_phrase, effect_template=effect_template) or compiled

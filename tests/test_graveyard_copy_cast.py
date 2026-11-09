@@ -58,6 +58,78 @@ class GraveyardCopyCastCompilerTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ExileCastProgress.from_dict({**copy.to_dict(), "schema_version": 4})
 
+    def test_relative_graveyard_target_codec_and_waiting_departure_are_exact(self):
+        from quorune.relative_power_target import (
+            MANA_VALUE_LE_POWER, MANA_VALUE_LT_POWER, RelativePowerTargetCondition,
+            bind_relative_mana_value_trigger_schema, pin_host_relative_power_source_departures,
+        )
+        from quorune.rules.graveyard_card_targets import graveyard_copy_scope_schema
+        from quorune.targets import TargetGroup
+        from quorune.trigger_batches import create_pending_trigger_batch
+
+        source = SimpleNamespace(object_id="source", ref="O1", logical_object_id="source@0",
+                                 zone="battlefield", phased_out=False, power=3)
+        state = SimpleNamespace(stack=[], pending_trigger_batches=[])
+        host = SimpleNamespace(state=state, _effective_card_data=lambda card: {"type_line": "Creature"},
+                               _type_parts=lambda text: ({"creature"}, set(), set()),
+                               _numeric_stat=lambda identity, stat: source.power)
+        schema = graveyard_copy_scope_schema("own_source_power")
+        context = bind_relative_mana_value_trigger_schema(host, source, schema)
+        group, = context["target_schema_override"]["groups"]
+        bound = RelativePowerTargetCondition.from_dict(group["resolution_condition"])
+        self.assertTrue(bound.permits_mana_value(mana_value=3, current_source_power=3, use_last_known=False))
+        self.assertFalse(bound.permits_mana_value(mana_value=4, current_source_power=3, use_last_known=False))
+        self.assertTrue(bound.permits_mana_value(mana_value=0, current_source_power=None, use_last_known=False))
+        self.assertEqual(MANA_VALUE_LE_POWER, TargetGroup.from_mapping(group).predicate)
+        with self.assertRaises(ValueError):
+            TargetGroup.from_mapping({**group, "predicate": MANA_VALUE_LT_POWER})
+        with self.assertRaises(ValueError):
+            TargetGroup.from_mapping(schema)
+        state.pending_trigger_batches.append(create_pending_trigger_batch(
+            batch_id="waiting", ref="TB1", apnap_order=("A",), turn_sequence=1, priority_epoch=1,
+            items=({"stack_id": "pending", "ref": "S1", "kind": "triggered_ability",
+                    "controller": "A", "label": "waiting", "context": context},),
+        ))
+        source.power = 1
+        self.assertEqual(1, pin_host_relative_power_source_departures(host, [source], phase_out=True))
+        waiting, = state.pending_trigger_batches[0].items
+        retained = waiting.event_facts["target_schema_override"]["groups"][0]["resolution_condition"]
+        lki = RelativePowerTargetCondition.from_dict(retained)
+        self.assertEqual(1, lki.source.last_known_power)
+        self.assertFalse(lki.permits_mana_value(mana_value=2, current_source_power=5, use_last_known=True))
+        self.assertTrue(lki.permits_mana_value(mana_value=2, current_source_power=5, use_last_known=False))
+        source.phased_out = True
+        source.power = 9
+        self.assertEqual(0, pin_host_relative_power_source_departures(host, [source]))
+        self.assertEqual((waiting,), state.pending_trigger_batches[0].items)
+
+    def test_relative_graveyard_compiler_rejects_foreign_source_and_missing_authority(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.relative_power_target import MANA_VALUE_POWER_CAPABILITY
+        from quorune.rules.capabilities import CapabilityRegistry
+        from test_targeted_graveyard_return_effect_clauses import card_record
+        import json
+
+        body = ("Whenever this creature attacks, exile target noncreature, nonland card with mana value less than "
+                "this creature's power from a graveyard and copy it. You may cast the copy without paying its mana cost.")
+        registry = load_default_capability_registry()
+
+        def compile_body(text, capability_registry=registry):
+            return compile_oracle_card(card_record(text), capability_registry=capability_registry,
+                                       capability_profile="commander_review")
+
+        exact = compile_body(body)
+        self.assertEqual("exact", exact.status, exact.material_residuals)
+        self.assertIn(MANA_VALUE_POWER_CAPABILITY, exact.faces[0].nodes[0].capability_dependencies)
+        self.assertNotEqual("exact", compile_body(body.replace("this creature's power", "another creature's power")).status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        for row in raw["capabilities"]:
+            if row["id"] == MANA_VALUE_POWER_CAPABILITY:
+                row.update(status="blocked", blockers=["relative target authority withdrawn"])
+        self.assertNotEqual("exact", compile_body(body, CapabilityRegistry(raw)).status)
+        with patch("quorune.compiler.graveyard_copy_cast_templates.relative_graveyard_copy_template", return_value=None):
+            self.assertNotEqual("exact", compile_body(body).status)
+
 
 class GraveyardCopyCastRuntimeTests(InheritedNativeFixture, unittest.TestCase):
     casualty_action = casualty.CasualtyFixture.casualty_action
@@ -102,6 +174,174 @@ class GraveyardCopyCastRuntimeTests(InheritedNativeFixture, unittest.TestCase):
         accepted = session.act("pilot:A", {"action_id": "choose", "choice": "cast",
             "cast": {"cost_option": option["id"], "targets": list(targets)}})
         self.assertTrue(accepted.ok, accepted.summary)
+
+    def _relative_target_offer(self, session, source, expected):
+        packet = session.packet("pilot:A", full=True)["decision"]
+        self.assertEqual("semantic.target", packet["kind"])
+        self.assertEqual(set(expected), set(packet["ctx"]["target_schema"]["legal_refs"]))
+        self.assertNotIn(source.object_id, str(packet["ctx"]))
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+
+    def test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power(self):
+        for prototype in (False, True):
+            with self.subTest(prototype=prototype):
+                session = self.session(33886801 + prototype)
+                engine = session.engine
+                source = self.add(engine, "Arcane Proxy", zone="hand")
+                equal = self.add(engine, "Sign in Blood", zone="graveyard")
+                greater = self.add(engine, "Divination", zone="graveyard")
+                self.add(engine, "Lightning Bolt", seat="B", zone="graveyard")
+                blink = self.add(engine, "Ephemerate", zone="hand")
+                self.add(engine, "Generic Bound Plains")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 7, "U": 2})
+                self.checkpoint(session)
+                if prototype:
+                    action_id = f"cast-prototype:{source.ref}"
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    self.assertIn(action_id, {row["id"] for row in actions})
+                    result = session.act("pilot:A", {"action_id": action_id, "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                else:
+                    self._announce(session, source, [])
+                self.assertEqual("semantic.target", self.resolve(session).kind)
+                expected = [equal.ref] if prototype else [equal.ref, greater.ref]
+                self._relative_target_offer(session, source, expected)
+                selected = equal if prototype else greater
+                self.target(session, "A", [selected.ref])
+                option, = self._choice(session, optional=True)
+                session = self.replay(session, load=True)
+                self._cast_copy(session, option, ["A"] if prototype else [])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("exile", session.state.cards[selected.object_id].zone)
+                self.cast(session, "A", blink, [source.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                other = greater if prototype else equal
+                self.assertEqual("graveyard", session.state.cards[other.object_id].zone)
+                self.replay(session, load=True)
+
+    def _narset_target(self, seed):
+        session = self.session(seed)
+        engine = session.engine
+        source = self.add(engine, "Narset, Enlightened Exile")
+        chosen = self.add(engine, "Sol Ring", seat="B", zone="graveyard")
+        equal = self.add(engine, "Divination", zone="graveyard")
+        self.add(engine, "Grizzly Bears", seat="C", zone="graveyard")
+        self.add(engine, "Island", seat="D", zone="graveyard")
+        self.add(engine, "Lightning Bolt", seat="D", zone="hand")
+        disfigure = self.add(engine, "Disfigure", seat="B", zone="hand")
+        self.add(engine, "Swamp", seat="B")
+        self.add(engine, "Fervor")
+        self.add(engine, "Doubling Season")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(source, "C")])
+        self._relative_target_offer(session, source, [chosen.ref])
+        before = authoritative_state_hash(session.state)
+        illegal = session.act("pilot:A", {"action_id": "choose", "targets": [equal.ref]})
+        self.assertFalse(illegal.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.target(session, "A", [chosen.ref])
+        return session, source, chosen, disfigure
+
+    def test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy(self):
+        session, source, original, _ = self._narset_target(33886805)
+        option, = self._choice(session, optional=True)
+        self.assertEqual("exile", session.state.cards[original.object_id].zone)
+        session = self.replay(session, load=True)
+        self._cast_copy(session, option)
+        spell, = [card for card in session.state.cards.values()
+                  if card.is_card_copy and card.zone == "stack" and card.printed_name == "Sol Ring"]
+        self.assertIsNone(self.resolve(session))
+        copy, = [card for card in session.state.cards.values()
+                 if card.is_token and card.zone == "battlefield" and card.printed_name == "Sol Ring"]
+        self.assertEqual((spell.object_id, "A", "A"), (copy.object_id, copy.owner, copy.controller))
+        self.assertEqual("B", session.state.cards[original.object_id].owner)
+        self.assertEqual(4, session.engine._numeric_stat(source.object_id, "power"))
+        self.replay(session, load=True)
+
+    def test_original_narset_revalidates_live_power_before_exiling(self):
+        session, source, original, disfigure = self._narset_target(33886806)
+        self.cast(session, "B", disfigure, [source.ref])
+        self.resolve_top(session)
+        self.assertEqual(1, session.engine._numeric_stat(source.object_id, "power"))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[original.object_id].zone)
+        self.assertFalse(any(card.is_card_copy for card in session.state.cards.values()))
+        self.replay(session, load=True)
+
+    def test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell(self):
+        from quorune.targeted_graveyard_cast_model import GRAVEYARD_CAST_OPERATION
+
+        for decreased in (False, True):
+            with self.subTest(decreased=decreased):
+                session = self.session(33886810 + decreased)
+                engine = session.engine
+                source = self.add(engine, "Dreadhorde Arcanist")
+                original = self.add(engine, "Lightning Bolt", zone="graveyard")
+                self.add(engine, "Lightning Bolt", seat="C", zone="graveyard", ref="foreign-bolt")
+                self.add(engine, "Sign in Blood", zone="graveyard")
+                disfigure = self.add(engine, "Disfigure", seat="B", zone="hand")
+                bounce = self.add(engine, "Unsummon", seat="B", zone="hand")
+                self.add(engine, "Swamp", seat="B")
+                self.add(engine, "Island", seat="B")
+                self.add(engine, "Fervor")
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.attack(session, [(source, "C")])
+                self._relative_target_offer(session, source, [original.ref])
+                self.target(session, "A", [original.ref])
+                if decreased:
+                    self.cast(session, "B", disfigure, [source.ref])
+                    self.resolve_top(session)
+                    self.assertEqual(-1, session.engine._numeric_stat(source.object_id, "power"))
+                self.cast(session, "B", bounce, [source.ref])
+                self.resolve_top(session)
+                self.assertEqual("hand", session.state.cards[source.object_id].zone)
+                decision = self.resolve(session)
+                if decreased:
+                    self.assertIsNone(decision)
+                    self.assertEqual("graveyard", session.state.cards[original.object_id].zone)
+                else:
+                    self.assertEqual("semantic.choice", decision.kind)
+                    packet = session.packet("pilot:A", full=True)["decision"]
+                    self.assertEqual(GRAVEYARD_CAST_OPERATION, packet["ctx"]["operation"])
+                    option, = packet["ctx"]["cast_options"]
+                    session = self.replay(session, load=True)
+                    result = session.act("pilot:A", {"action_id": "choose", "choice": "cast",
+                        "cast": {"cost_option": option["id"], "targets": ["C"]}})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("stack", session.state.cards[original.object_id].zone)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual("exile", session.state.cards[original.object_id].zone)
+                    self.assertEqual(37, session.state.players["C"].life)
+                self.replay(session, load=True)
+
+    def test_original_arcane_proxy_keeps_preplacement_power_after_state_based_death(self):
+        session = self.session(33886812)
+        engine = session.engine
+        source = self.add(engine, "Arcane Proxy", zone="hand")
+        zero = self.add(engine, "Ancestral Vision", zone="graveyard")
+        self.add(engine, "Lightning Bolt", zone="graveyard")
+        self.add(engine, "Elesh Norn, Grand Cenobite", seat="B")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "U": 2})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": f"cast-prototype:{source.ref}", "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self._relative_target_offer(session, source, [zero.ref])
+        self.target(session, "A", [zero.ref])
+        option, = self._choice(session, optional=True)
+        self._cast_copy(session, option, ["A"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[zero.object_id].zone)
+        self.replay(session, load=True)
 
     def test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies(self):
         session = self.session(33886701)

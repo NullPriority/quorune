@@ -214,6 +214,486 @@
       "released_at": "2012-10-05",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "name": "Arcane Proxy",
+      "mana_cost": "{7}",
+      "type_line": "Artifact Creature — Wizard",
+      "oracle_text": "Prototype {1}{U}{U} — 2/1 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\nWhen this creature enters, if you cast it, exile target instant or sorcery card with mana value less than or equal to this creature's power from your graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Prototype"
+      ],
+      "produced_mana": [],
+      "layout": "prototype",
+      "released_at": "2022-11-18",
+      "cmc": 7.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "name": "Narset, Enlightened Exile",
+      "mana_cost": "{1}{U}{R}{W}",
+      "type_line": "Legendary Creature — Human Monk",
+      "oracle_text": "Creatures you control have prowess.\nWhenever Narset attacks, exile target noncreature, nonland card with mana value less than Narset's power from a graveyard and copy it. You may cast the copy without paying its mana cost.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-05-12",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4c05b382-58ab-4a2d-a81c-408ea273b6b6",
+      "name": "Dreadhorde Arcanist",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature — Zombie Wizard",
+      "oracle_text": "Trample\nWhenever this creature attacks, you may cast target instant or sorcery card with mana value less than or equal to this creature's power from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-05-03",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "banned",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "c6207f6a-a624-4754-88f5-dbe700c841ff",
+      "name": "Sign in Blood",
+      "mana_cost": "{B}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Target player draws two cards and loses 2 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "name": "Ephemerate",
+      "mana_cost": "{W}",
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Rebound"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "cmc": 1.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "958d71ff-c9f7-46f0-96ca-79e7f4d65a16",
+      "name": "Elesh Norn, Grand Cenobite",
+      "mana_cost": "{5}{W}{W}",
+      "type_line": "Legendary Creature — Phyrexian Praetor",
+      "oracle_text": "Vigilance\nOther creatures you control get +2/+2.\nCreatures your opponents control get -2/-2.",
+      "power": "4",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-11-17",
+      "cmc": 7.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "name": "Ancestral Vision",
+      "mana_cost": "",
+      "type_line": "Sorcery",
+      "oracle_text": "Suspend 4—{U} (Rather than cast this card from your hand, pay {U} and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)\nTarget player draws three cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Suspend"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "cmc": 0.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Swamp"
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "name": "Doubling Season",
+      "mana_cost": "{4}{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.\nIf an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "cmc": 5.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "focused_graveyard_copy_cast_cards",
@@ -228,7 +708,7 @@
       "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
       "published_at": "2022-04-29",
       "source": "wotc",
-      "comment": "Casualty N means \u201cAs an additional cost to cast this spell, you may sacrifice a creature with power N or greater.\u201d and \u201cWhen you cast this spell, if a casualty cost was paid for it, copy it. If the spell has any targets, you may choose new targets for the copy.\u201d"
+      "comment": "Casualty N means “As an additional cost to cast this spell, you may sacrifice a creature with power N or greater.” and “When you cast this spell, if a casualty cost was paid for it, copy it. If the spell has any targets, you may choose new targets for the copy.”"
     },
     {
       "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
@@ -240,7 +720,7 @@
       "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
       "published_at": "2022-04-29",
       "source": "wotc",
-      "comment": "The copy of the spell is created on the stack, so it's not \u201ccast.\u201d Abilities that trigger when a player casts a spell won't trigger."
+      "comment": "The copy of the spell is created on the stack, so it's not “cast.” Abilities that trigger when a player casts a spell won't trigger."
     },
     {
       "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
@@ -282,19 +762,19 @@
       "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
       "published_at": "2012-07-01",
       "source": "wotc",
-      "comment": "If you cast a card \u201cwithout paying its mana cost,\u201d you can\u2019t pay any alternative costs. You can pay additional costs such as kicker costs. If the card has mandatory additional costs, you must pay those."
+      "comment": "If you cast a card “without paying its mana cost,” you can’t pay any alternative costs. You can pay additional costs such as kicker costs. If the card has mandatory additional costs, you must pay those."
     },
     {
       "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
       "published_at": "2012-07-01",
       "source": "wotc",
-      "comment": "If one of Spelltwine\u2019s targets is illegal when Spelltwine tries to resolve, you\u2019ll still exile and copy the remaining legal target."
+      "comment": "If one of Spelltwine’s targets is illegal when Spelltwine tries to resolve, you’ll still exile and copy the remaining legal target."
     },
     {
       "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
       "published_at": "2012-07-01",
       "source": "wotc",
-      "comment": "Spelltwine has two targets: the instant or sorcery card in your graveyard and the one in an opponent\u2019s graveyard. You can\u2019t cast Spelltwine unless you can choose both legal targets."
+      "comment": "Spelltwine has two targets: the instant or sorcery card in your graveyard and the one in an opponent’s graveyard. You can’t cast Spelltwine unless you can choose both legal targets."
     },
     {
       "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
@@ -379,6 +859,312 @@
       "published_at": "2024-01-12",
       "source": "wotc",
       "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "You cast the copy while the ability is resolving and still on the stack. You can't wait to cast it later in the turn."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you don't want to cast the copy, you can choose not to; the copy ceases to exist the next time state-based actions are checked."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When cast as a prototyped spell, that spell has the mana cost, power, and toughness characteristics shown in its colored, secondary text box rather than the normal values of those characteristics. Its color and mana value are determined by that mana cost. The permanent that spell becomes as it resolves has the same characteristics. If the spell leaves the stack in any other way, or the permanent it becomes leaves the battlefield, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The prototype ability functions in any zone that the spell could be cast from. For example, if an effect allows you to cast artifact spells from your graveyard, you could cast a prototyped Blitz Automaton from your graveyard."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "A prototype card is a colorless card in every zone except the stack or the battlefield, as well as while on the stack or the battlefield if not cast as a prototyped spell. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Blitz Automaton is a colorless creature card with mana value 7. It can't be the target of Recommission, a spell that targets an artifact or creature card with mana value 3 or less in your graveyard."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a prototyped spell isn't the same as casting it for an alternative cost, and an alternative cost may be applied to a spell cast this way. For example, if an effect allows you to cast an artifact card without paying its mana cost, you could either cast Blitz Automaton normally, or as a prototyped spell."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Regardless of how it was cast, a prototype card always has the same name, abilities, types, and so on. Only the mana cost, mana value, color, power, and toughness change depending on whether the card was cast as a prototyped spell."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the spell you cast has {X} in its mana cost, you must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When casting a prototyped spell, use only its prototype characteristics to determine whether it's legal to cast it. For example, if Blitz Automaton is exiled with the last ability of Chandra, Dressed to Kill, you would be able to cast it for {2}{R} (because it's a red spell), even though you wouldn't be able to cast it as a colorless spell for its normal cost."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If an effect copies a prototyped spell, that copy (as well as the token it becomes on the battlefield) will have the same characteristics as the prototyped spell. Similarly, if an effect creates a token that's a copy of a prototyped permanent or causes another permanent to become a copy of it, the copy would have the same characteristics as the prototyped permanent."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If another effect causes Arcane Proxy's power to be less than the mana value of the target card as the ability tries to resolve, the target is illegal. The card won't be exiled, and you won't get to cast a copy."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If the spell you cast has {X} in its mana cost, you must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "You cast the copy while the ability is resolving and still on the stack. You can't wait to cast it later in the turn."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "Once a prowess ability triggers, causing the creature to lose prowess by removing Narset, Enlightened Exile won't affect that ability. The creature will still get +1/+1 until end of turn."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If a creature has multiple instances of prowess, each triggers separately."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "Narset's first ability gives it prowess while it's on the battlefield."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If another effect causes Narset's power to be less than or equal to the mana value of the target card as the ability tries to resolve, the target is illegal. The card won't be exiled, and you won't get to cast a copy."
+    },
+    {
+      "oracle_id": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If you don't want to cast the copy, you can choose not to; the copy ceases to exist the next time state-based actions are performed."
+    },
+    {
+      "oracle_id": "4c05b382-58ab-4a2d-a81c-408ea273b6b6",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The instant or sorcery card you target must have mana value less than or equal to Dreadhorde Arcanist's power immediately after Dreadhorde Arcanist has attacked. Any other abilities that trigger when creatures you control attack won't have resolved yet."
+    },
+    {
+      "oracle_id": "4c05b382-58ab-4a2d-a81c-408ea273b6b6",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "4c05b382-58ab-4a2d-a81c-408ea273b6b6",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If Dreadhorde Arcanist leaves the battlefield before its triggered ability resolves, use its power as it last existed on the battlefield to check whether the card is still a legal target."
+    },
+    {
+      "oracle_id": "4c05b382-58ab-4a2d-a81c-408ea273b6b6",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "4c05b382-58ab-4a2d-a81c-408ea273b6b6",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you cast the card, you do so as part of the resolution of Dreadhorde Arcanist's triggered ability. You can't wait to cast it later in the turn. Timing permissions based on a card's type are ignored, and the spell will resolve before blockers are declared."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn."
+    },
+    {
+      "oracle_id": "958d71ff-c9f7-46f0-96ca-79e7f4d65a16",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "If a second Elesh Norn, Grand Cenobite comes under your control, you'll put one into its owner's graveyard due to the “legend rule” at the same time that any of your opponents' creatures getting -4/-4 are put into their owner's graveyard for having 0 or less toughness."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2013-06-07",
+      "source": "wotc",
+      "comment": "Although originally printed with a characteristic-defining ability that defined its color, this card now has a color indicator. This color indicator can't be affected by text-changing effects (such as the one created by Crystal Spray), although color-changing effects can still overwrite it."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Due to a recent rules change to suspend, you are no longer required to cast the suspended card as the second triggered ability of suspend resolves. Instead, as the second triggered ability resolves, you may cast the card. Timing permissions based on the card's type are ignored. If you don't cast the card, it remains exiled with no time counters on it, and it's no longer suspended."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Suspend is a keyword that represents three abilities. The first is a static ability that allows you to exile the card from your hand with the specified number of time counters (the number before the dash) on it by paying its suspend cost (listed after the dash). The second is a triggered ability that removes a time counter from the suspended card at the beginning of each of your upkeeps. The third is a triggered ability that gives you the option to cast the card when the last time counter is removed."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The mana value of a spell cast without paying its mana cost is determined by its mana cost, even though that cost wasn't paid."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Exiling a card with suspend isn't casting that card. This action doesn't use the stack and can't be responded to."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If an effect refers to a \"suspended card,\" that means a card that (1) has suspend, (2) is in exile, and (3) has one or more time counters on it."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You can exile a card in your hand using suspend any time you could cast that card. Consider its card type, any effects that modify when you could cast it (such as flash) and any other effects that stop you from casting it (such as from Meddling Mage's ability) to determine if and when you can do this. Whether you could actually complete all steps in casting the card is irrelevant. For example, you can exile a card with suspend that has no mana cost or that requires a target even if no legal targets are available at that time."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the spell requires any targets, those targets are chosen when the spell is finally cast, not when it's exiled."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the second triggered ability is countered, the card can't be cast. It remains exiled with no time counters on it, and it's no longer suspended."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the first triggered ability of suspend (the one that removes time counters) is countered, no time counter is removed. The ability will trigger again at the beginning of the card's owner's next upkeep."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Cards exiled with suspend are exiled face up."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" such as with suspend, you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those if you want to cast the card."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "When the last time counter is removed, the second triggered ability of suspend (the one that lets you cast the card) triggers. It doesn't matter why the last time counter was removed or what effect removed it."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If a card with no mana cost is given an alternative cost equal to its mana cost (by Snapcaster Mage, for example), that cost cannot be paid and the card cannot be cast this way."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "A card with no mana cost can't be cast normally; you'll need a way to cast it for an alternative cost or without paying its mana cost, such as by suspending it."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If there are two Doubling Seasons on the battlefield, then the number of tokens or counters is four times the original number. If there are three on the battlefield, then the number of tokens or counters is eight times the original number, and so on."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Battles will enter with double the normal number of defense counters."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Everything that is specified by the effect creating the original token or tokens will also be true about the additional token or tokens created by Doubling Season's replacement effect. For example, if an effect tells you to create a token \"tapped and attacking,\" the additional tokens will also be tapped and attacking."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Doubling Season affects permanents that enter with counters."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Planeswalkers will enter with double the normal number of loyalty counters. However, if you activate an ability whose cost has you put loyalty counters on a planeswalker, the number you put on isn't doubled. This is because those counters are put on as a cost, not as an effect."
     }
   ],
   "schema_version": 1,

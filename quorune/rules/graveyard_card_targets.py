@@ -658,6 +658,15 @@ def targeted_graveyard_cast_schema(owner_relation):
     ).to_target_schema()
 
 
+def targeted_graveyard_cast_instruction_schema(owner_relation):
+    from ..relative_power_target import MANA_VALUE_LE_POWER
+
+    schema = targeted_graveyard_cast_schema(owner_relation)
+    if owner_relation == "you":
+        schema["predicate"] = MANA_VALUE_LE_POWER
+    return schema
+
+
 def targeted_graveyard_cast_node_capabilities(*, effects, target_schema, mechanic_ids):
     from ..replacement.immutable import FrozenMap, thaw_value
     from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_CAPABILITY, GRAVEYARD_CAST_MECHANIC, validate_graveyard_cast_effect
@@ -667,11 +676,15 @@ def targeted_graveyard_cast_node_capabilities(*, effects, target_schema, mechani
     try:
         effect = effects[0]
         validate_graveyard_cast_effect(effect)
-        if thaw_value(FrozenMap(target_schema)) != targeted_graveyard_cast_schema(effect["owner_relation"]):
+        if thaw_value(FrozenMap(target_schema)) != targeted_graveyard_cast_instruction_schema(effect["owner_relation"]):
             return ()
     except (ValueError, TypeError):
         return ()
-    return GRAVEYARD_CAST_CAPABILITY, "target.revalidate_resolution"
+    from ..relative_power_target import MANA_VALUE_POWER_CAPABILITY
+    return (
+        GRAVEYARD_CAST_CAPABILITY, "target.revalidate_resolution",
+        *((MANA_VALUE_POWER_CAPABILITY,) if effect["owner_relation"] == "you" else ()),
+    )
 
 
 def targeted_graveyard_cast_runtime_dependencies(program):
@@ -685,10 +698,19 @@ def targeted_graveyard_cast_runtime_dependencies(program):
     )
     if not required:
         raise GraveyardCardTargetError("A graveyard cast requires its closed target and resolving permission")
+    if effects[0]["owner_relation"] == "you":
+        _require_relative_graveyard_attack(program)
     return required
 
 
 def graveyard_copy_scope_schema(scope):
+    from ..relative_power_target import MANA_VALUE_LE_POWER, MANA_VALUE_LT_POWER
+
+    if scope == "own_source_power":
+        return {**targeted_graveyard_cast_schema("you"), "predicate": MANA_VALUE_LE_POWER}
+    if scope == "public_source_power":
+        return {"zones": ["graveyard"], "categories": ["card"], "owner_relation": "any",
+                "types_none": ["creature", "land"], "count": 1, "predicate": MANA_VALUE_LT_POWER}
     if scope == "own_all":
         return None
     if scope == "paired":
@@ -710,7 +732,16 @@ def graveyard_copy_cast_node_capabilities(*, effects, target_schema, mechanic_id
             return ()
     except (ValueError, TypeError):
         return ()
-    return GRAVEYARD_COPY_CAPABILITY, *(("target.revalidate_resolution",) if expected is not None else ())
+    from ..relative_power_target import MANA_VALUE_POWER_CAPABILITY, MANA_VALUE_POWER_PREDICATES
+    from ..source_entry_cast_information import SOURCE_ENTRY_CAST_CAPABILITY, SOURCE_ENTRY_CAST_HAND_CAPABILITY, SOURCE_ENTRY_CAST_HAND_MECHANIC
+
+    return (
+        GRAVEYARD_COPY_CAPABILITY,
+        *(("target.revalidate_resolution",) if expected is not None else ()),
+        *((MANA_VALUE_POWER_CAPABILITY,) if expected and expected.get("predicate") in MANA_VALUE_POWER_PREDICATES else ()),
+        *((SOURCE_ENTRY_CAST_CAPABILITY,) if effects[0]["scope"] == "own_source_power" else ()),
+        *((SOURCE_ENTRY_CAST_HAND_CAPABILITY,) if SOURCE_ENTRY_CAST_HAND_MECHANIC in mechanic_ids else ()),
+    )
 
 
 def graveyard_copy_cast_runtime_dependencies(program):
@@ -724,7 +755,26 @@ def graveyard_copy_cast_runtime_dependencies(program):
     )
     if not required:
         raise GraveyardCardTargetError("Graveyard copy casting requires its exact exile and target scope")
+    _validate_relative_graveyard_copy_event(program, effects[0]["scope"])
     return required
+
+
+def _validate_relative_graveyard_copy_event(program, scope):
+    if scope == "own_source_power":
+        from ..source_entry_cast_information import validate_source_entry_cast_condition
+        if program.active_zone != "battlefield" or program.event != "permanent.enter.self":
+            raise GraveyardCardTargetError("A source-power graveyard copy requires its own entry")
+        validate_source_entry_cast_condition(program.event_condition)
+    if scope == "public_source_power":
+        _require_relative_graveyard_attack(program)
+
+
+def _require_relative_graveyard_attack(program):
+    if (
+        program.active_zone != "battlefield" or program.event != "creature.attacks"
+        or program.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}
+    ):
+        raise GraveyardCardTargetError("A source-power graveyard target requires its own attack")
 
 
 def public_graveyard_return_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:

@@ -11250,6 +11250,11 @@
         "quorune/compiler/spell_self_exile.py",
         "quorune/discover_casting.py",
         "quorune/discover_model.py",
+        "quorune/phasing.py",
+        "quorune/relative_power_target.py",
+        "quorune/rules/graveyard_card_targets.py",
+        "quorune/target_predicates.py",
+        "quorune/targets.py",
         "quorune/rules/graveyard_copy_cast_model.py",
         "quorune/semantic_choices/graveyard_copy_cast.py",
         "quorune/rules/resolving_cast_payments.py",
@@ -11261,7 +11266,9 @@
         "test_fixed_overload",
         "test_discover_rules",
         "test_casualty_native",
-        "test_cipher_native"
+        "test_cipher_native",
+        "test_mentor_rules",
+        "test_targeted_graveyard_cast"
       ]
     },
     {

@@ -15,6 +15,14 @@ class RelativePowerTargetError(ValueError):
     """A relative-power target condition is malformed."""
 
 
+CREATURE_POWER_PREDICATE = "power_less_than_source"
+MANA_VALUE_LT_POWER = "mana_value_less_than_source_power"
+MANA_VALUE_LE_POWER = "mana_value_at_most_source_power"
+MANA_VALUE_POWER_PREDICATES = frozenset({MANA_VALUE_LT_POWER, MANA_VALUE_LE_POWER})
+RELATIVE_POWER_TARGET_PREDICATES = MANA_VALUE_POWER_PREDICATES | {CREATURE_POWER_PREDICATE}
+MANA_VALUE_POWER_CAPABILITY = "target.card.mana_value_source_power"
+
+
 class RelativePowerDepartureHost(Protocol):
     state: Any
 
@@ -84,8 +92,11 @@ class RelativePowerDepartureSnapshot:
     object_id: str
     logical_object_id: str
     last_known_power: int | None
+    phased_out: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.phased_out) is not bool:
+            raise RelativePowerTargetError("Departure phasing must be a boolean")
         _identity(self.object_id, field="Departing source object ID")
         _identity(
             self.logical_object_id,
@@ -103,14 +114,14 @@ class RelativePowerDepartureSnapshot:
 class RelativePowerTargetCondition:
     source: RelativePowerSourceSnapshot
     schema_version: int = 1
-    kind: str = "power_less_than_source"
+    kind: str = CREATURE_POWER_PREDICATE
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version != 1:
             raise RelativePowerTargetError(
                 "Unsupported relative-power target schema version"
             )
-        if self.kind != "power_less_than_source":
+        if type(self.kind) is not str or self.kind not in RELATIVE_POWER_TARGET_PREDICATES:
             raise RelativePowerTargetError(
                 "Unsupported relative-power target condition"
             )
@@ -153,25 +164,54 @@ class RelativePowerTargetCondition:
         current_source_power: int | None,
         use_last_known: bool = False,
     ) -> bool:
-        if type(target_power) is not int or (
-            current_source_power is not None
-            and type(current_source_power) is not int
+        if self.kind != CREATURE_POWER_PREDICATE or type(target_power) is not int:
+            raise RelativePowerTargetError("Relative-power comparisons require exact integer power")
+        source_power = self._source_power(current_source_power, use_last_known)
+        return source_power is not None and target_power < source_power
+
+    def permits_mana_value(self, *, mana_value, current_source_power, use_last_known):
+        if self.kind not in MANA_VALUE_POWER_PREDICATES or (
+            type(mana_value) not in {int, float} or not 0 <= mana_value < float("inf")
         ):
-            raise RelativePowerTargetError(
-                "Relative-power comparisons require exact integer power"
-            )
-        if type(use_last_known) is not bool:
-            raise RelativePowerTargetError(
-                "Relative-power LKI selection must be a boolean"
-            )
-        source_power = (
-            self.source.last_known_power
-            if use_last_known
-            else current_source_power
-        )
+            raise RelativePowerTargetError("A relative mana-value comparison needs a finite mana value")
+        # CR 107.2 uses zero for the power of a known source without power.
+        source_power = self._source_power(current_source_power, use_last_known)
         if source_power is None:
-            return False
-        return target_power < source_power
+            source_power = 0
+        if self.kind == MANA_VALUE_LT_POWER:
+            return mana_value < source_power
+        return mana_value <= source_power
+
+    def _source_power(self, current, use_last_known):
+        if current is not None and type(current) is not int:
+            raise RelativePowerTargetError("Relative-power comparisons require exact integer power")
+        if type(use_last_known) is not bool:
+            raise RelativePowerTargetError("Relative-power LKI selection must be a boolean")
+        return self.source.last_known_power if use_last_known else current
+
+
+def bound_relative_power_condition(predicate, value):
+    condition = RelativePowerTargetCondition.from_dict(value)
+    if condition.kind != predicate:
+        raise RelativePowerTargetError("Relative-power target predicate changed")
+    return condition
+
+
+def bind_relative_mana_value_trigger_schema(host, source, schema):
+    """Pin the exact battlefield source before the trigger waits for placement."""
+
+    if not isinstance(schema, Mapping) or schema.get("predicate") not in MANA_VALUE_POWER_PREDICATES:
+        return {}
+    if source.zone != "battlefield" or source.phased_out or "resolution_condition" in schema:
+        raise RelativePowerTargetError("Relative mana-value targets require their current source event")
+    known = RelativePowerSourceSnapshot(
+        source.object_id, source.logical_object_id, source.ref,
+        current_effective_creature_power(host, source),
+    )
+    condition = RelativePowerTargetCondition(known, kind=schema["predicate"])
+    return {"target_schema_override": {"groups": [
+        {**dict(schema), "resolution_condition": condition.to_dict()},
+    ]}}
 
 
 def current_effective_creature_power(
@@ -222,37 +262,70 @@ def current_effective_creature_power(
     return power
 
 
+def _target_conditions(context, predicates):
+    if not isinstance(context, Mapping):
+        return
+    schema = context.get("target_schema_override")
+    if not isinstance(schema, Mapping):
+        return
+    groups = schema.get("groups")
+    if not isinstance(groups, (list, tuple)):
+        return
+    for index, group in enumerate(groups):
+        if isinstance(group, Mapping) and group.get("predicate") in predicates:
+            yield index, bound_relative_power_condition(group["predicate"], group.get("resolution_condition"))
+
+
+def _condition_id(condition):
+    return condition.source.object_id, condition.source.logical_object_id
+
+
 def relative_power_source_identities(
-    stack_items: Sequence[Any],
+    stack_items: Sequence[Any], *, predicates=RELATIVE_POWER_TARGET_PREDICATES,
 ) -> frozenset[tuple[str, str]]:
     """Return source incarnations used by pending relative-power targets."""
 
-    identities: set[tuple[str, str]] = set()
-    for item in stack_items:
-        context = getattr(item, "context", None)
-        if not isinstance(context, Mapping):
+    return frozenset(
+        _condition_id(condition)
+        for item in stack_items
+        for _, condition in _target_conditions(getattr(item, "context", {}), predicates)
+    )
+
+
+def _departure_context(context, by_identity, predicates):
+    groups = None
+    for index, condition in _target_conditions(context, predicates):
+        departure = by_identity.get(_condition_id(condition))
+        if departure is None or (departure.phased_out and condition.kind in MANA_VALUE_POWER_PREDICATES):
             continue
-        schema = context.get("target_schema_override")
-        if not isinstance(schema, Mapping):
-            continue
-        groups = schema.get("groups")
-        if not isinstance(groups, (list, tuple)):
-            continue
-        for group in groups:
-            if not isinstance(group, Mapping) or group.get("predicate") != (
-                "power_less_than_source"
-            ):
-                continue
-            condition = RelativePowerTargetCondition.from_dict(
-                group.get("resolution_condition")
-            )
-            identities.add(
-                (
-                    condition.source.object_id,
-                    condition.source.logical_object_id,
-                )
-            )
-    return frozenset(identities)
+        if groups is None:
+            schema = context["target_schema_override"]
+            groups = list(schema["groups"])
+        updated_condition = replace(
+            condition,
+            source=replace(condition.source, last_known_power=departure.last_known_power),
+        )
+        groups[index] = {**dict(groups[index]), "resolution_condition": updated_condition.to_dict()}
+    if groups is None:
+        return None
+    return {**dict(context), "target_schema_override": {**dict(schema), "groups": groups}}
+
+
+def _departure_identities(departures):
+    values = tuple(departures)
+    if any(not isinstance(value, RelativePowerDepartureSnapshot) for value in values):
+        raise RelativePowerTargetError("Relative-power departures require typed snapshots")
+    by_identity = {(value.object_id, value.logical_object_id): value for value in values}
+    if len(by_identity) != len(values):
+        raise RelativePowerTargetError("Relative-power departure identities must be unique")
+    return by_identity
+
+
+def _stack_departure_updates(stack_items, by_identity, predicates):
+    return [
+        (item, context) for item in stack_items
+        if (context := _departure_context(getattr(item, "context", {}), by_identity, predicates)) is not None
+    ]
 
 
 def pin_relative_power_source_departures(
@@ -261,78 +334,27 @@ def pin_relative_power_source_departures(
 ) -> int:
     """Pin immediate predeparture power into matching pending target schemas."""
 
-    values = tuple(departures)
-    if any(
-        not isinstance(value, RelativePowerDepartureSnapshot)
-        for value in values
-    ):
-        raise RelativePowerTargetError(
-            "Relative-power departures require typed snapshots"
-        )
-    by_identity = {
-        (value.object_id, value.logical_object_id): value for value in values
-    }
-    if len(by_identity) != len(values):
-        raise RelativePowerTargetError(
-            "Relative-power departure identities must be unique"
-        )
-    prepared_updates: list[tuple[Any, dict[str, Any]]] = []
-    for item in stack_items:
-        context = getattr(item, "context", None)
-        if not isinstance(context, Mapping):
-            continue
-        schema = context.get("target_schema_override")
-        if not isinstance(schema, Mapping):
-            continue
-        groups = schema.get("groups")
-        if not isinstance(groups, (list, tuple)):
-            continue
-        updated_groups: list[Any] = []
-        changed = False
-        for raw_group in groups:
-            if not isinstance(raw_group, Mapping) or raw_group.get(
-                "predicate"
-            ) != "power_less_than_source":
-                updated_groups.append(raw_group)
-                continue
-            condition = RelativePowerTargetCondition.from_dict(
-                raw_group.get("resolution_condition")
-            )
-            departure = by_identity.get(
-                (
-                    condition.source.object_id,
-                    condition.source.logical_object_id,
-                )
-            )
-            if departure is None:
-                updated_groups.append(raw_group)
-                continue
-            updated_condition = replace(
-                condition,
-                source=replace(
-                    condition.source,
-                    last_known_power=departure.last_known_power,
-                ),
-            )
-            updated_groups.append(
-                {
-                    **dict(raw_group),
-                    "resolution_condition": updated_condition.to_dict(),
-                }
-            )
-            changed = True
-        if not changed:
-            continue
-        prepared_updates.append((item, {
-            **dict(context),
-            "target_schema_override": {
-                **dict(schema),
-                "groups": updated_groups,
-            },
-        }))
-    for item, context in prepared_updates:
+    updates = _stack_departure_updates(
+        stack_items, _departure_identities(departures), RELATIVE_POWER_TARGET_PREDICATES,
+    )
+    for item, context in updates:
         item.context = context
-    return len(prepared_updates)
+    return len(updates)
+
+
+def _waiting_departure_updates(batches, by_identity):
+    for index, batch in enumerate(batches):
+        contexts = {
+            item.ref: context for item in batch.items
+            if (context := _departure_context(item.event_facts, by_identity, MANA_VALUE_POWER_PREDICATES)) is not None
+        }
+        if contexts:
+            groups = tuple(replace(group, items=tuple(
+                replace(item, payload={**dict(item.payload), "context": contexts[item.ref]})
+                if item.ref in contexts else item
+                for item in group.items
+            )) for group in batch.groups)
+            yield index, replace(batch, groups=groups)
 
 
 def pin_host_relative_power_source_departures(
@@ -340,25 +362,37 @@ def pin_host_relative_power_source_departures(
     cards: Sequence[Any],
     *,
     error_type: type[Exception] = RelativePowerTargetError,
+    phase_out: bool = False,
 ) -> int:
-    """Capture all relevant current powers before a host mutates any card."""
+    """Capture power for exact stack and waiting sources before a transition."""
 
+    predicates = MANA_VALUE_POWER_PREDICATES if phase_out else RELATIVE_POWER_TARGET_PREDICATES
     try:
-        identities = relative_power_source_identities(host.state.stack)
-        departures = tuple(
+        batches = getattr(host.state, "pending_trigger_batches", ())
+        identities = relative_power_source_identities(host.state.stack, predicates=predicates) | {
+            _condition_id(condition) for batch in batches for item in batch.items
+            for _, condition in _target_conditions(item.event_facts, MANA_VALUE_POWER_PREDICATES)
+        }
+        by_identity = _departure_identities(
             RelativePowerDepartureSnapshot(
-                object_id=card.object_id,
-                logical_object_id=card.logical_object_id,
-                last_known_power=current_effective_creature_power(host, card),
+                card.object_id, card.logical_object_id, current_effective_creature_power(host, card),
+                phased_out=getattr(card, "phased_out", False),
             )
             for card in cards
             if getattr(card, "zone", None) == "battlefield"
             and (card.object_id, card.logical_object_id) in identities
         )
-        return pin_relative_power_source_departures(
-            host.state.stack,
-            departures,
-        )
+        if not by_identity:
+            return 0
+        updates = _stack_departure_updates(host.state.stack, by_identity, predicates)
+        pending = tuple(_waiting_departure_updates(batches, by_identity))
+        from .trigger_processing import replace_pending_trigger_batch
+
+        for item, context in updates:
+            item.context = context
+        for index, batch in pending:
+            replace_pending_trigger_batch(host, index, batch)
+        return len(updates) + len(pending)
     except RelativePowerTargetError as exc:
         if error_type is RelativePowerTargetError:
             raise

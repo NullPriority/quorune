@@ -17,8 +17,9 @@ GRAVEYARD_CAST_FIELDS = frozenset({"op", "player", "card", "owner_relation", "ex
 
 def validate_graveyard_cast_effect(effect, *, resolved=False):
     if (not isinstance(effect, Mapping) or set(effect) != GRAVEYARD_CAST_FIELDS
-            or effect["op"] != GRAVEYARD_CAST_OPERATION or effect["owner_relation"] not in ("any", "opponent")
-            or type(effect["exile_on_graveyard"]) is not bool):
+            or effect["op"] != GRAVEYARD_CAST_OPERATION or effect["owner_relation"] not in ("any", "opponent", "you")
+            or type(effect["exile_on_graveyard"]) is not bool
+            or effect["owner_relation"] == "you" and not effect["exile_on_graveyard"]):
         raise ValueError("The resolving graveyard cast instruction changed")
     if resolved:
         if any(type(effect[key]) is not str or not effect[key] for key in ("player", "card")):

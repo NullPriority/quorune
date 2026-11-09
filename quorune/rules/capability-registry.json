@@ -18294,7 +18294,8 @@
         ],
         "outputs": [
           "public card copies with original resolution authority",
-          "optional or required free casting with ordered continuation"
+          "optional or required free casting with ordered continuation",
+          "same-object token arrival when a cast permanent copy resolves"
         ],
         "summary": "Exile surviving graveyard selections and create the printed copies before casting any during the same resolving instruction."
       },
@@ -18310,7 +18311,8 @@
         "quorune.rules.graveyard_card_targets.graveyard_copy_cast_runtime_dependencies",
         "quorune.semantic_choices.graveyard_copy_cast.GraveyardCopyCastHandler",
         "quorune.semantic_choices.graveyard_copy_cast.execute_exile_graveyard_copies",
-        "quorune.discover_casting.execute_discover_cast"
+        "quorune.discover_casting.execute_discover_cast",
+        "quorune.zone_object_state.reset_card_after_zone_change"
       ],
       "implementation_mutation_rationale": "Removing the closed copy template leaves the printed result residual.",
       "implementation_mutation_status": "killed",
@@ -18319,7 +18321,8 @@
         "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
         "test_original_flawless_forgery_casualty_keeps_the_two_exile_and_copy_results_separate",
         "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets",
-        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment"
+        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy"
       ],
       "multiplayer_tests": [
         "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
@@ -18330,7 +18333,8 @@
       "negative_tests": [
         "test_graveyard_copy_cast_scope_and_serialized_copy_progress_are_exact",
         "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
-        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets"
+        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy"
       ],
       "official_rules": [
         "118.8c",
@@ -18338,7 +18342,9 @@
         "601.2",
         "608.2b",
         "608.2g",
+        "608.3f",
         "704.5e",
+        "707.10f",
         "707.12",
         "707.12a"
       ],
@@ -18347,7 +18353,8 @@
         "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
         "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
         "test_original_flawless_forgery_casualty_keeps_the_two_exile_and_copy_results_separate",
-        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets"
+        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy"
       ],
       "privacy_tests": [
         "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
@@ -18359,7 +18366,8 @@
         "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
         "test_original_flawless_forgery_casualty_keeps_the_two_exile_and_copy_results_separate",
         "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets",
-        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment"
+        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy"
       ],
       "required_evidence": [
         "positive",
@@ -65286,6 +65294,102 @@
         "commander_review"
       ],
       "version": 2
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "hidden targets",
+          "arbitrary source expressions",
+          "unrepresented result and event combinations"
+        ],
+        "inputs": [
+          "closed strict or inclusive comparison",
+          "exact battlefield source incarnation",
+          "current public graveyard mana value"
+        ],
+        "outputs": [
+          "shared target verdict",
+          "replayable waiting and stack source binding"
+        ],
+        "summary": "Compare a public graveyard card mana value with the current or immediate last-known power of the exact triggered source at selection and resolution."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the represented target capability prevents the printed trigger from closing.",
+      "dependency_fail_closed_status": "passed",
+      "id": "target.card.mana_value_source_power",
+      "implementation_components": [
+        "quorune.compiler.graveyard_copy_cast_templates.relative_graveyard_copy_template",
+        "quorune.compiler.targeted_graveyard_cast_templates.relative_graveyard_cast_template",
+        "quorune.relative_power_target.RelativePowerTargetCondition",
+        "quorune.relative_power_target.bind_relative_mana_value_trigger_schema",
+        "quorune.relative_power_target.pin_host_relative_power_source_departures",
+        "quorune.target_predicates.target_predicate_matches"
+      ],
+      "implementation_mutation_rationale": "Removing the typed source-bound grammar leaves its trigger residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
+        "test_original_narset_revalidates_live_power_before_exiling",
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+      ],
+      "multiplayer_tests": [
+        "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
+        "test_original_narset_revalidates_live_power_before_exiling",
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+      ],
+      "negative_tests": [
+        "test_relative_graveyard_compiler_rejects_foreign_source_and_missing_authority",
+        "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
+        "test_original_narset_revalidates_live_power_before_exiling",
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+      ],
+      "official_rules": [
+        "107.2",
+        "113.7a",
+        "115.1d",
+        "202.3",
+        "603.3d",
+        "608.2b",
+        "702.26b",
+        "702.26d"
+      ],
+      "positive_tests": [
+        "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell",
+        "test_relative_graveyard_target_codec_and_waiting_departure_are_exact"
+      ],
+      "privacy_tests": [
+        "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+      ],
+      "replay_tests": [
+        "test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power",
+        "test_original_narset_uses_strict_public_types_and_casts_a_permanent_copy",
+        "test_original_narset_revalidates_live_power_before_exiling",
+        "test_original_arcanist_uses_immediate_departure_power_and_exiles_the_actual_spell"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
