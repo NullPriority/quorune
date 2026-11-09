@@ -368,6 +368,12 @@ occurrences in its existing APNAP batch; rollback covers payment facts and
 collected triggers together. Activation payments and uncast spell copies do
 not enter this journal. See [ADR 0128](../adr/0128-payment-time-expend-occurrences.md).
 
+Static library-top actions collect the current source ability separately from
+private top-card visibility. The typed turn-history qualifiers use the source
+incarnation's declared attack or its controller's committed cast. A Class
+ability also requires its current level membership. Offers and submissions use
+the same land-play and cast permission, with ordinary timing and costs.
+
 Fuse is a hand-only casting method selected through the ordinary cast offer and
 proposal. It creates one spell with both halves' names, types, colors, and
 combined printed mana cost and mana value. Casting a single half retains that

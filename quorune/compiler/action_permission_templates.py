@@ -98,6 +98,14 @@ _COVEN_TOP_ACTION = re.compile(
     r"(?:Coven — )?As long as you control three or more creatures with different powers, (?P<body>you may .+)", re.I,
 )
 _OPPONENT_MORE_LANDS_TOP_ACTION = re.compile(r"As long as an opponent controls more lands than you, (?P<body>you may .+)", re.I)
+_SOURCE_ATTACKED_TOP_ACTION = re.compile(
+    r"As long as (?P<source>.+?) attacked this turn, you may play the top card of your library\.?",
+    re.I,
+)
+_CONTROLLER_CAST_TOP_ACTION = re.compile(
+    r"As long as you(?: have|'ve|’ve) cast a spell this turn, you may play cards from the top of your library\.?",
+    re.I,
+)
 _CHOSEN_TYPE_TOP_CAST = re.compile(r"You may cast creature spells of the chosen type from the top of your library\.?", re.I)
 _MINIMUM_MANA_VALUE_TOP_CAST = re.compile(
     r"You may (?P<lands>play lands and )?cast spells with mana value (?P<amount>[1-9][0-9]?) or greater "
@@ -350,7 +358,30 @@ def static_action_permission_handler(
             _library_visibility_descriptor(LibraryTopVisibility.CONTROLLER, ActionPermissionScope.CONTROLLER),
             _library_action_descriptor(land_queries=(_query(types_all=('land',)),)),
         ), ('library.visibility.top.static', 'library.action.top.static'))
-    return _qualified_library_top_action_handler(normalized, source_name) or _library_top_action_handler(normalized)
+    return (
+        _history_library_top_action_handler(normalized, source_name)
+        or _qualified_library_top_action_handler(normalized, source_name)
+        or _library_top_action_handler(normalized)
+    )
+
+
+def _history_library_top_action_handler(text: str, source_name: str | None):
+    if _CONTROLLER_CAST_TOP_ACTION.fullmatch(text) is not None:
+        qualifier = LibraryTopQualifier.CONTROLLER_CAST_THIS_TURN
+    elif (attacked := _SOURCE_ATTACKED_TOP_ACTION.fullmatch(text)) is not None:
+        source = attacked['source']
+        if not (source.casefold() in {'this creature', 'this vehicle', 'this permanent'}
+                or source_name and SourceReferenceSpec(source_name).matches(source)):
+            return None
+        qualifier = LibraryTopQualifier.SOURCE_ATTACKED_THIS_TURN
+    else:
+        return None
+    descriptor = _library_action_descriptor(
+        land_queries=(_query(types_all=('land',)),), spell_queries=(_spell_query(),),
+    )
+    return ('turn-history-library-top-action-v2', {**descriptor, 'handler_id': QUALIFIED_LIBRARY_TOP_HANDLER_ID,
+        'schema_version': 2, 'qualifier': qualifier.value},
+        ('library.action.top.static', *library_top_qualifier_capabilities(qualifier)))
 
 
 def _qualified_library_top_action_handler(normalized: str, source_name: str | None):

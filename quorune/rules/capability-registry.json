@@ -47191,6 +47191,86 @@
     {
       "applicability": {
         "exclusions": [
+          "opponent or prior-turn casts",
+          "attacks by other or earlier incarnations",
+          "special timing, prices, and quotas"
+        ],
+        "inputs": [
+          "current source and its logical incarnation",
+          "committed current-turn attack and spell-cast history"
+        ],
+        "outputs": [
+          "ordinary library-top cast and land-play permission with the unchanged separate top-card view"
+        ],
+        "summary": "Ordinary library-top actions can require the current source's declared attack or a completed cast by its current controller this turn. The live ability and independent controller-only look retain their own authority."
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.action.top.qualified"
+      ],
+      "dependency_fail_closed_rationale": "Runtime binding independently requires the typed history qualifier capability and current battlefield ability. Controller-cast history also requires the fixed public history query capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.action.top.turn_history",
+      "implementation_components": [
+        "quorune.compiler.action_permission_templates._history_library_top_action_handler",
+        "quorune.semantic_runtime.action_permissions._bound_library_top_queries"
+      ],
+      "implementation_mutation_rationale": "Omitting controller-cast history exposes a real land-play offer after only an opponent cast. The Class witness distinguishes this from its level gate.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_fortune_tellers_talent_requires_level_and_committed_controller_cast",
+        "test_lunar_whale_requires_its_current_incarnations_attack"
+      ],
+      "multiplayer_tests": [
+        "test_fortune_tellers_talent_requires_level_and_committed_controller_cast",
+        "test_lunar_whale_requires_its_current_incarnations_attack"
+      ],
+      "negative_tests": [
+        "test_fortune_tellers_talent_requires_level_and_committed_controller_cast",
+        "test_lunar_whale_requires_its_current_incarnations_attack",
+        "test_qualified_library_top_descriptors_and_dependencies_are_closed"
+      ],
+      "official_rules": [
+        "109.5",
+        "305.1",
+        "400.7",
+        "401.5",
+        "508.1k",
+        "601.2i",
+        "611.3a",
+        "716.2a"
+      ],
+      "positive_tests": [
+        "test_fortune_tellers_talent_requires_level_and_committed_controller_cast",
+        "test_lunar_whale_requires_its_current_incarnations_attack"
+      ],
+      "privacy_tests": [
+        "test_fortune_tellers_talent_requires_level_and_committed_controller_cast",
+        "test_lunar_whale_requires_its_current_incarnations_attack"
+      ],
+      "replay_tests": [
+        "test_fortune_tellers_talent_requires_level_and_committed_controller_cast",
+        "test_lunar_whale_requires_its_current_incarnations_attack"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unowned quantities or reference producers",
           "unrepresented linked discovered-card references or observers"
         ],

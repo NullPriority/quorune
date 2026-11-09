@@ -906,6 +906,244 @@
       "released_at": "2018-06-08",
       "toughness": null,
       "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "class",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Fortune Teller's Talent",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nYou may look at the top card of your library any time.\n{3}{U}: Level 2\nAs long as you've cast a spell this turn, you may play cards from the top of your library.\n{2}{U}: Level 3\nSpells you cast from anywhere other than your hand cost {2} less to cast.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-08-02",
+      "toughness": null,
+      "type_line": "Enchantment — Class"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "The Lunar Whale",
+      "oracle_id": "13b4aeac-4530-4e09-a547-548b4884bb2f",
+      "oracle_text": "Flying\nYou may look at the top card of your library any time.\nAs long as The Lunar Whale attacked this turn, you may play the top card of your library.\nCrew 1",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": "5",
+      "type_line": "Legendary Artifact — Vehicle"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1131,6 +1369,120 @@
       "published_at": "2024-07-26",
       "source": "wotc",
       "comment": "You must pay all costs and follow all timing rules for lands played and spells cast from the top of your library this way."
+    },
+    {
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you cast the top card of your library, you can't look at the next one until you're done paying for that spell.",
+      "oracle_id": "13b4aeac-4530-4e09-a547-548b4884bb2f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Lunar Whale lets you look at the top card of your library whenever you want (with one restriction—see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand.",
+      "oracle_id": "13b4aeac-4530-4e09-a547-548b4884bb2f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The top card of your library isn't in your hand, so you can't cycle it, discard it, or activate any of its abilities that could be activated from your hand.",
+      "oracle_id": "13b4aeac-4530-4e09-a547-548b4884bb2f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must follow all normal timing rules for spells cast and lands played using the third ability and must pay all costs for spells cast this way. To cast a spell this way, you may choose to pay any alternative costs or optional additional costs the spell may have (such as a kicker cost). You must pay any mandatory additional costs.",
+      "oracle_id": "13b4aeac-4530-4e09-a547-548b4884bb2f",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Class has five abilities. The three in the major sections of its text box are class abilities. Class abilities can be static, activated, or triggered abilities. The other two are level abilities, one activated ability to advance the Class to level 2 and another to advance the Class to level 3.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Class starts with only the first of its three class abilities. As the first level ability resolves, the Class becomes level 2 and gains the second class ability. As the second level ability resolves, the Class becomes level 3 and gains the third class ability.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining a level is a normal activated ability. It uses the stack and can be responded to.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining a level won't remove abilities that a Class had at a previous level.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you cast a spell from the top of your library, you can't look at the next one until you're done paying for that spell.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost reduction applies only to generic mana in the total cost of spells you cast from anywhere other than your hand.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "There's no restriction on how many Class permanents you can control, whether they're the same or different classes. Each Class permanent tracks its own level separately.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as a flashback cost), add any cost increases (such as kicker costs), then apply any cost reductions (such as that of this ability). The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can look at the top card of your library whenever you want (with one restriction; see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't activate the first level ability of a Class unless that Class is level 1. Similarly, you can't activate the second level ability of a Class unless that Class is level 2.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must pay all costs and follow all timing rules for lands played and spells cast from the top of your library this way.",
+      "oracle_id": "1b430f67-3686-4452-8594-b060f1a5a04e",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
     }
   ],
   "schema_version": 1,

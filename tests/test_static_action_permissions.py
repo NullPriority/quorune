@@ -36,6 +36,7 @@ from quorune.semantic_runtime.action_permissions import (
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID,
     ADDITIONAL_LAND_PLAY_HANDLER_ID,
     LIBRARY_TOP_ACTION_HANDLER_ID,
+    LIBRARY_TOP_HISTORY_CAPABILITY,
     LIBRARY_TOP_MANA_VALUE_CAPABILITY,
     LIBRARY_TOP_VISIBILITY_HANDLER_ID,
     LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
@@ -43,6 +44,7 @@ from quorune.semantic_runtime.action_permissions import (
     USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT,
     ActionPermissionKind,
     QUALIFIED_LIBRARY_TOP_CAPABILITY,
+    LibraryTopQualifier,
     additional_land_play_permission_slots,
     controller_action_permissions,
     default_action_permission_registry,
@@ -420,6 +422,8 @@ class PublicLibraryActionPermissionCompilerTests(unittest.TestCase):
             ('Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.', 'distinct_creature_powers'),
             ('You may cast creature spells of the chosen type from the top of your library.', 'chosen_creature_type'),
             ('You may play lands and cast spells with mana value 4 or greater from the top of your library.', 'minimum_spell_mana_value'),
+            ('As long as this Vehicle attacked this turn, you may play the top card of your library.', 'source_attacked_this_turn'),
+            ("As long as you've cast a spell this turn, you may play cards from the top of your library.", 'controller_cast_this_turn'),
         )
         registry = default_action_permission_registry()
         for index, (text, qualifier) in enumerate(cases):
@@ -439,6 +443,12 @@ class PublicLibraryActionPermissionCompilerTests(unittest.TestCase):
                     required.append(LIBRARY_TOP_MANA_VALUE_CAPABILITY)
                     with self.assertRaises(SemanticNodeError):
                         registry.validate({**descriptor, 'minimum_spell_mana_value': True})
+                if qualifier in {'source_attacked_this_turn', 'controller_cast_this_turn'}:
+                    required.append(LIBRARY_TOP_HISTORY_CAPABILITY)
+                if qualifier == 'controller_cast_this_turn':
+                    from quorune.public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
+
+                    required.append(PUBLIC_HISTORY_QUERY_CAPABILITY)
                 for capability in required:
                     deps = tuple(value for value in program.capability_dependencies if value != capability)
                     withdrawn = replace(program, capability_dependencies=deps,
@@ -451,6 +461,8 @@ class PublicLibraryActionPermissionCompilerTests(unittest.TestCase):
                     registry.validate({**descriptor, 'qualifier': 'unknown'})
         foreign = 'As long as Another Equipment is attached to a creature, you may cast spells from the top of your library.'
         self.assertTrue(self.compile(_permanent(foreign, suffix=116_312_018), trust_level='provisional').residuals)
+        foreign_attack = 'As long as Another Vehicle attacked this turn, you may play the top card of your library.'
+        self.assertTrue(self.compile(_permanent(foreign_attack, suffix=116_312_020), trust_level='provisional').residuals)
         compound = _permanent('You may look at the top card of your library any time, and you may play lands from the top of your library.',
             suffix=116_312_019)
         program, = generated_programs(_NoRulingsDatabase(), compound, trust_level='trusted',
@@ -1492,6 +1504,107 @@ class QualifiedLibraryTopNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.take(session, action, targets=[bearer.ref], pay='auto')
         self.assertIsNone(self.resolve(session))
         self.assertEqual(bearer.object_id, session.state.cards[source.object_id].attached_to)
+
+    def test_lunar_whale_requires_its_current_incarnations_attack(self):
+        for source_attacks in (False, True):
+            with self.subTest(source_attacks=source_attacks):
+                session = self.session(847101 + source_attacks)
+                source = self.add(session.engine, 'The Lunar Whale')
+                other = self.add(session.engine, 'Grizzly Bears')
+                self.add(session.engine, 'Mountain')
+                self.add(session.engine, 'Plains')
+                blink = self.add(session.engine, 'Cloudshift', zone='hand')
+                later = self.add_top(session, 'Lightning Bolt', 'history-later')
+                top = self.add_top(session, 'Lightning Bolt', 'history-top')
+                for creature in (source, other):
+                    creature.acquired_control_turn_count = -1
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.assertEqual([top.ref], self.known_top(session))
+                self.assertEqual([], self.known_top(session, 'D'))
+                self.assertIsNone(self.offer(session, top, 'cast'))
+                if source_attacks:
+                    crew, = (ability for ability in session.engine._activated_abilities(source)
+                        if ability.crew_threshold is not None)
+                    action_id = f'activate:{source.ref}:{crew.ability_id}'
+                    action = next(row for row in self.actions(session) if row['id'] == action_id)
+                    self.take(session, action, cost_cards=[other.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertIsNone(self.offer(session, top, 'cast'))
+                self.attack(session, [(source if source_attacks else other, 'B')])
+                self.priority(session, 'A')
+                if source_attacks:
+                    self.cast(session, 'A', top, ['B'])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual('graveyard', session.state.cards[top.object_id].zone)
+                    self.assertEqual([later.ref], self.known_top(session))
+                    old_incarnation = source.logical_object_id
+                    self.cast(session, 'A', blink, [source.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertNotEqual(old_incarnation, session.state.cards[source.object_id].logical_object_id)
+                self.priority(session, 'A')
+                denied = later if source_attacks else top
+                self.assertEqual([denied.ref], self.known_top(session))
+                self.assertIsNone(self.offer(session, denied, 'cast'))
+                before = authoritative_state_hash(session.state)
+                result = session.act('pilot:A', {'action_id': 'cast:' + denied.ref, 'targets': ['B'], 'pay': 'auto'})
+                self.assertFalse(result.ok, result.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                self.assertEqual([], self.known_top(session, 'D'))
+                self.replay(session, load=True)
+
+    def test_fortune_tellers_talent_requires_level_and_committed_controller_cast(self):
+        session = self.session(847110)
+        source = self.add(session.engine, "Fortune Teller's Talent")
+        rival_spell = self.add(session.engine, 'Lightning Bolt', seat='B', zone='hand', ref='rival-cast')
+        own_spell = self.add(session.engine, 'Lightning Bolt', zone='hand', ref='own-cast')
+        self.add(session.engine, 'Mountain')
+        land = self.add_top(session, 'Forest', 'history-land')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 3, 'U': 1})
+        session.state.players['B'].mana_pool['R'] = 1
+        self.checkpoint(session)
+        self.assertEqual([land.ref], self.known_top(session))
+        self.assertEqual([], self.known_top(session, 'B'))
+        self.assertIsNone(self.offer(session, land, 'play_land'))
+        self.assertFalse(any(permission.source_ref == source.ref and permission.kind is ActionPermissionKind.LIBRARY_TOP_ACTION
+            for permission in controller_action_permissions(session.engine, 'A')))
+        self.cast(session, 'B', rival_spell, ['A'])
+        self.assertIsNone(self.resolve(session))
+        self.priority(session, 'A')
+        level, = (ability for ability in session.engine._activated_abilities(source)
+            if ability.effect_text == 'Level 2')
+        level_id = f'activate:{source.ref}:{level.ability_id}'
+        self.take(session, next(row for row in self.actions(session) if row['id'] == level_id), pay='auto')
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, session.state.cards[source.object_id].class_level)
+        self.assertIsNone(self.offer(session, land, 'play_land'), 'An opponent cast does not satisfy the history gate')
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:A', {'action_id': 'cast:' + own_spell.ref, 'targets': ['missing'], 'pay': 'auto'})
+        self.assertFalse(rejected.ok, rejected.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertIsNone(self.offer(session, land, 'play_land'))
+        self.cast(session, 'A', own_spell, ['B'])
+        self.assertIsNone(self.offer(session, land, 'play_land'))
+        self.assertIsNone(self.resolve(session))
+        self.take(session, self.offer(session, land, 'play_land'))
+        self.assertEqual('battlefield', session.state.cards[land.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_history_permission_gate_omission_is_detected(self):
+        from quorune.semantic_runtime import action_permissions
+
+        original = action_permissions._bound_library_top_queries
+
+        def omit_controller_history(host, permission, *, spell):
+            if permission.library_top_qualifier is LibraryTopQualifier.CONTROLLER_CAST_THIS_TURN:
+                return permission.top_spell_queries if spell else permission.top_land_queries
+            return original(host, permission, spell=spell)
+
+        with mock.patch.object(action_permissions, '_bound_library_top_queries', side_effect=omit_controller_history):
+            with self.assertRaisesRegex(AssertionError, 'An opponent cast does not satisfy the history gate'):
+                self.test_fortune_tellers_talent_requires_level_and_committed_controller_cast()
 
     def test_reality_chip_reconfigures_and_stops_offering_after_attachment_leaves(self):
         session = self.session(826101)

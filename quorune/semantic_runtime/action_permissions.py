@@ -12,12 +12,16 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face
+from ..continuous_conditions import (
+    FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
+)
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..library_search_model import LibrarySearchRuleSpec
 from ..object_query import ObjectQueryResult, object_matches_query
 from ..public_characteristic_aggregate_model import (
     CONTROLLED_CREATURES_POWER_QUERY, PublicCharacteristicAggregateSpec,
 )
+from ..public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY, PublicHistoryQuerySpec
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
     RuntimeComponentRegistry,
@@ -42,6 +46,7 @@ LIBRARY_TOP_ACTION_HANDLER_ID = "permission.action.library-top-action.v1"
 QUALIFIED_LIBRARY_TOP_HANDLER_ID = 'permission.action.library-top-action.v2'
 QUALIFIED_LIBRARY_TOP_CAPABILITY = 'library.action.top.qualified'
 LIBRARY_TOP_MANA_VALUE_CAPABILITY = 'library.action.top.mana_value'
+LIBRARY_TOP_HISTORY_CAPABILITY = 'library.action.top.turn_history'
 ADDITIONAL_LAND_PLAY_HANDLER_ID = "permission.action.additional-land-play.v1"
 OPENING_HAND_BATTLEFIELD_HANDLER_ID = "permission.action.opening-hand-battlefield.v1"
 OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
@@ -80,18 +85,34 @@ class LibraryTopQualifier(StrEnum):
     OPPONENT_MORE_LANDS = 'opponent_more_lands'
     CHOSEN_CREATURE_TYPE = 'chosen_creature_type'
     MINIMUM_SPELL_MANA_VALUE = 'minimum_spell_mana_value'
+    SOURCE_ATTACKED_THIS_TURN = 'source_attacked_this_turn'
+    CONTROLLER_CAST_THIS_TURN = 'controller_cast_this_turn'
 
 
 _DISTINCT_POWER = PublicCharacteristicAggregateSpec(
     'power', 'distinct_count', 'source_controller', CONTROLLED_CREATURES_POWER_QUERY, schema_version=2,
 )
 _BATTLEFIELD_LAND = ObjectQuerySpec(zones=('battlefield',), types_all=('land',))
+_LIBRARY_TOP_HISTORY_CONDITIONS = {
+    LibraryTopQualifier.SOURCE_ATTACKED_THIS_TURN: FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST, amount=1, schema_version=4,
+        fact=FixedPublicStateFact.SOURCE_ATTACKED_THIS_TURN,
+    ),
+    LibraryTopQualifier.CONTROLLER_CAST_THIS_TURN: FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST, amount=1, schema_version=8,
+        history_query=PublicHistoryQuerySpec('spell_cast', 'controller'),
+    ),
+}
 
 
 def library_top_qualifier_capabilities(qualifier: LibraryTopQualifier) -> tuple[str, ...]:
     additional = {
         LibraryTopQualifier.DISTINCT_CREATURE_POWERS: _DISTINCT_POWER.capability_dependencies,
         LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE: (LIBRARY_TOP_MANA_VALUE_CAPABILITY,),
+        LibraryTopQualifier.SOURCE_ATTACKED_THIS_TURN: (LIBRARY_TOP_HISTORY_CAPABILITY,),
+        LibraryTopQualifier.CONTROLLER_CAST_THIS_TURN: (
+            LIBRARY_TOP_HISTORY_CAPABILITY, PUBLIC_HISTORY_QUERY_CAPABILITY,
+        ),
     }
     return (QUALIFIED_LIBRARY_TOP_CAPABILITY, *additional.get(qualifier, ()))
 
@@ -564,6 +585,10 @@ class ActionPermissionHost(Protocol):
 
     def _public_object_query_result(self, card: Any) -> ObjectQueryResult: ...
 
+    def _fixed_public_state_condition_holds(
+        self, source: Any, condition: FixedPublicStateConditionSpec,
+    ) -> bool: ...
+
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
 
@@ -680,6 +705,9 @@ def _bound_library_top_queries(host: ActionPermissionHost, permission: StaticAct
         if card.ref == permission.source_ref and card.logical_object_id == permission.source_logical_object_id), None)
     if source is None:
         return ()
+    history_condition = _LIBRARY_TOP_HISTORY_CONDITIONS.get(qualifier)
+    if history_condition is not None:
+        return queries if host._fixed_public_state_condition_holds(source, history_condition) else ()
     if qualifier is LibraryTopQualifier.ATTACHED_TO_CREATURE:
         from ..attachments import attached_object_identity
 
