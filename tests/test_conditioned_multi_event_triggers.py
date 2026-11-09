@@ -1,4 +1,4 @@
-"""Native and admission checks for a condition shared by multiple events."""
+"""Native and admission checks for typed multi-event trigger subscriptions."""
 
 import json
 import tempfile
@@ -123,6 +123,67 @@ class ConditionedMultiEventTriggerTests(InheritedNativeFixture, unittest.TestCas
                             and event.details.get('reason') == 'intervening_condition_false'
                             for event in session.state.events))
         self.replay(session)
+
+    def test_dusk_urchins_puts_one_counter_on_the_combat_source(self):
+        for index, controller in enumerate(("A", "B")):
+            with self.subTest(controller=controller):
+                session = self.session(603_040_110 + index)
+                source = self.add(session.engine, "Dusk Urchins", seat=controller)
+                source.acquired_control_turn_count = -1
+                attacker = source
+                if controller == "B":
+                    attacker = self.add(session.engine, "Generic Bound Body", ref="urchins-opposing-attacker")
+                    attacker.acquired_control_turn_count = -1
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.attack(session, [(attacker, "B")])
+                if controller == "B":
+                    self.assertEqual(0, self.trigger_count(session, source))
+                    self.until(session, lambda game: game.state.pending_decision is not None
+                               and game.state.pending_decision.kind == "combat.blockers")
+                    accepted = session.act("pilot:B", {"a": "block", "blk": {source.ref: attacker.ref}})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(1, self.trigger_count(session, source))
+                self.assertEqual(0, session.state.cards[source.object_id].counters.get("-1/-1", 0))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(1, session.state.cards[source.object_id].counters.get("-1/-1"))
+                self.replay(session, load=True)
+
+    def test_scurrilous_sentry_connives_on_its_own_entry_and_attack(self):
+        session = self.session(603_040_112)
+        engine = session.engine
+        source = self.add(engine, "Scurrilous Sentry", zone="hand")
+        haste = self.add(engine, "Fervor")
+        nonland = self.add(engine, "Generic Bound Growth", zone="hand", ref="sentry-private-nonland")
+        land = self.add(engine, "Generic Bound Plains", zone="hand", ref="sentry-private-land")
+        for card in (source, haste):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3, "B": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        for index, selected in enumerate((nonland, land)):
+            if index:
+                self.attack(session, [(source, "B")])
+            self.assertEqual(1, self.trigger_count(session, source))
+            decision = self.resolve(session)
+            self.assertEqual("semantic.choice", decision.kind)
+            self.assertEqual(["A"], list(decision.actors))
+            self.assertNotIn(selected.ref, json.dumps(session.packet("pilot:B", full=True)))
+            choice = {"action_id": "choose", "cards": [selected.ref]}
+            before = authoritative_state_hash(session.state)
+            self.assertFalse(session.act("pilot:B", choice).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            accepted = session.act("pilot:A", choice)
+            self.assertTrue(accepted.ok, accepted.summary)
+            current = session.state.cards[source.object_id]
+            self.assertEqual(1, current.counters.get("+1/+1"))
+            self.assertEqual("graveyard", session.state.cards[selected.object_id].zone)
+            complete = [event for event in session.state.events if event.code == "connive.complete"]
+            self.assertEqual(index + 1, len(complete))
+            self.assertEqual(current.logical_object_id, complete[-1].details["conniver_logical_object_id"])
+        self.replay(session, load=True)
 
     def test_conditioned_subscriptions_require_the_shared_predicate_and_coverage(self):
         session = self.session(603_040_103)

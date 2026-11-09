@@ -5273,7 +5273,9 @@ the committed occurrence, applies the shared current layer-6 ability query,
 and places the ordinary APNAP trigger. The closed grammar covers source or
 exact printed-name entry, attack, death, leave, graveyard, face-up, combat-
 damage, monstrous, block, and sacrifice pairs plus the exact current enchanted
-creature attack/block relation. Eerie binds the controlled enchantment entry
+creature attack/block relation. A fixed self-counter result can bind both
+attack and block occurrences. A source that enters or attacks can use the
+existing source connive result. Eerie binds the controlled enchantment entry
 and full-unlock branches separately. A represented graveyard self-return uses
 the source owner for both predicates. Cross-zone Cycling/death pairs, other
 commander or Room subjects, linked Haunt, chosen or another-object predicates,

@@ -152,7 +152,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     source_counter = public_event_source_counter_result(
         binding, body, effect_template=effect_template, card_name=card_name,
         accepted_variants=source_counter_variants,
-        allow_source_pronoun=source_pronoun,
+        allow_source_pronoun=source_pronoun or binding.variant == 'source_attacks_or_blocks',
     )
     if source_counter is not None:return source_counter
     from .event_counter_results import public_event_target_counter_result
@@ -181,7 +181,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .mill_templates import event_recipient_mill_result
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
     if mill is not None:return mill
-    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked', 'source_dealt_damage', 'source_received_combat_damage', 'source_turned_face_up'}:
+    if source_pronoun or binding.variant in {'source_turned_face_up', 'source_enters_or_attacks'}:
         from .explore_templates import single_explore_effect_template
         explored = single_explore_effect_template(body, allow_source_pronoun=True)
         if explored is not None:return explored.compiled(), False
