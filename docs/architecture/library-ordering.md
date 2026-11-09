@@ -92,6 +92,23 @@ choice and its order. Opponents see ordinary hand and library counts and any
 destination that becomes public. A pending private selection or destination
 replacement resumes through the existing Game Record continuation.
 
+## Ordered graveyard targets
+
+An instruction that puts cards from one graveyard at a library edge uses the
+shared target plan for the announced count, ownership, and current incarnations.
+The controller privately orders the surviving targets. An instruction that
+targets cards from an opposing graveyard requires an explicit ordering
+instruction for the controller and one shared card owner. Zero or one surviving
+target needs no ordering decision. One selected mode can supply the target set.
+
+The simultaneous zone transaction keeps its move order tied to target
+announcement. After destination replacements and before publishing movement
+facts, it places the actual arrivals at the printed edge in the chosen order.
+Only the chooser sees the ordering decision and gains positional knowledge of
+the arrivals when several cards reach the library. Replacement continuations
+bind the private order and the announced batch so replay can resume without
+changing the placement or revealing the permutation.
+
 ## Mill result counts
 
 The existing Mill preparation owner consumes a nonnegative resolved integer.

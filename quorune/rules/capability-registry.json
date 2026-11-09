@@ -48326,6 +48326,99 @@
     {
       "applicability": {
         "exclusions": [
+          "targets across graveyards",
+          "unrepresented choice of a different ordering player",
+          "non-edge placement"
+        ],
+        "inputs": [
+          "surviving optional graveyard target set",
+          "one owning seat",
+          "printed library edge"
+        ],
+        "outputs": [
+          "private complete permutation",
+          "stable simultaneous movement and replacement replay"
+        ],
+        "summary": "Order surviving targets from one graveyard at their owner's library edge without exposing their private permutation."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The closed operation derives its capability from the executable target and order shape.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.order.graveyard_targets",
+      "implementation_components": [
+        "quorune.compiler.fixed_top_order_templates._graveyard_library_order_template",
+        "quorune.library_order_model.LibraryArrivalOrder",
+        "quorune.rules.library_order_shapes.fixed_library_order_capabilities",
+        "quorune.rules.library_partition.commit_ordered_library_arrivals",
+        "quorune.semantic_choices.fixed_top_order.GraveyardLibraryOrderingHandler",
+        "quorune.semantic_choices.intent_replacement._simultaneous_move_intent_identity",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Removing the exact graveyard-order template prevents trusted compilation of the printed instruction.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_footbottom_feast_orders_survivors_before_draw",
+        "test_original_misinformation_orders_one_opposing_graveyard_privately_through_replacement",
+        "test_original_bow_of_nylea_orders_the_bottom_mode",
+        "test_original_bone_harvest_moves_one_target_before_scheduling_draw"
+      ],
+      "multiplayer_tests": [
+        "test_original_footbottom_feast_orders_survivors_before_draw",
+        "test_original_misinformation_orders_one_opposing_graveyard_privately_through_replacement"
+      ],
+      "negative_tests": [
+        "test_ordered_graveyard_library_requires_closed_targets_and_ordered_intent",
+        "test_original_footbottom_feast_orders_survivors_before_draw",
+        "test_original_misinformation_orders_one_opposing_graveyard_privately_through_replacement"
+      ],
+      "official_rules": [
+        "115.3",
+        "400.7",
+        "401.4",
+        "608.2b",
+        "608.2c",
+        "903.9b"
+      ],
+      "positive_tests": [
+        "test_ordered_graveyard_library_requires_closed_targets_and_ordered_intent",
+        "test_original_footbottom_feast_orders_survivors_before_draw",
+        "test_original_misinformation_orders_one_opposing_graveyard_privately_through_replacement",
+        "test_original_bow_of_nylea_orders_the_bottom_mode"
+      ],
+      "privacy_tests": [
+        "test_original_footbottom_feast_orders_survivors_before_draw",
+        "test_original_misinformation_orders_one_opposing_graveyard_privately_through_replacement"
+      ],
+      "replay_tests": [
+        "test_ordered_graveyard_library_requires_closed_targets_and_ordered_intent",
+        "test_original_footbottom_feast_orders_survivors_before_draw",
+        "test_original_misinformation_orders_one_opposing_graveyard_privately_through_replacement",
+        "test_original_bow_of_nylea_orders_the_bottom_mode",
+        "test_original_bone_harvest_moves_one_target_before_scheduling_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Scry 0 as an event",
           "multiple players instructed to Scry simultaneously",
           "unrepresented dynamic or variable Scry counts",

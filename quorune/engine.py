@@ -222,6 +222,7 @@ from .stack_resolution import (
     trusted_generic_empty_resolution,
 )
 from . import spell_copy_engine_adapter as copy_events
+from .library_order_model import LibraryArrivalOrder
 from .model import (
     CardInstance,
     CombatState,
@@ -1291,6 +1292,7 @@ class CommanderEngine(
         ] | None = None,
         tapped: bool | None = None,
         destination_controllers: Mapping[str,str] | None = None,
+        library_order: LibraryArrivalOrder | None = None,
     ) -> list[CardInstance]:
         """Compatibility facade for one simultaneous zone transaction."""
 
@@ -1300,7 +1302,7 @@ class CommanderEngine(
             log=log,
             replacement_selections=replacement_selections,
             transition_kinds=transition_kinds,
-            tapped=tapped,destination_controllers=destination_controllers,
+            tapped=tapped,destination_controllers=destination_controllers,library_order=library_order,
         )
 
     def shuffle_library(self, seat: str, *, reason: str = "shuffle", actor: str | None = None) -> None:

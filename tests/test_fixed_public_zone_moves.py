@@ -2692,6 +2692,55 @@ class CommanderZoneMoveRuntimeTests(_RuntimeBase):
 
 
 class TargetedOwnerLibraryCompilerTests(unittest.TestCase):
+    def test_ordered_graveyard_library_requires_closed_targets_and_ordered_intent(self):
+        from quorune.library_order_model import GRAVEYARD_LIBRARY_ORDER_CAPABILITY, LibraryArrivalOrder
+        from quorune.rules.library_order_shapes import fixed_library_order_capabilities, library_order_payload_dependencies
+        from quorune.semantic_choices.intent_replacement import semantic_intent_identity, validate_semantic_intent_identity
+        from quorune.semantic_choices.model import SemanticChoiceError
+        from quorune.semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+        from quorune.target_cardinality import ANY_NUMBER_TARGET_CAPABILITY
+
+        own = "Put any number of target artifact cards from your graveyard on top of your library."
+        bounded = "Put up to two target cards from your graveyard on top of your library."
+        other = "Put up to three target cards from an opponent's graveyard on top of their library in any order."
+        cases = ((own, "own", "you", True), (bounded, "own", "you", False),
+                 (other, "opponent", "opponent", False))
+        for text, scope, relation, dynamic in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                effect, = node.effects
+                schema = node.target_schema
+                self.assertEqual(scope, effect["scope"])
+                self.assertEqual(relation, schema["owner_relation"])
+                self.assertEqual(relation == "opponent", schema.get("same_owner", False))
+                self.assertEqual((GRAVEYARD_LIBRARY_ORDER_CAPABILITY,), library_order_payload_dependencies(effect))
+                required = fixed_library_order_capabilities(effects=(effect,), target_schema=schema, mechanic_ids=node.mechanics)
+                self.assertIn(GRAVEYARD_LIBRARY_ORDER_CAPABILITY, required)
+                self.assertEqual(dynamic, ANY_NUMBER_TARGET_CAPABILITY in required)
+                self.assertFalse(fixed_library_order_capabilities(
+                    effects=(effect,), target_schema={**schema, "same_owner": False}, mechanic_ids=node.mechanics,
+                ))
+        self.assertNotEqual("exact", self.compile(other.replace(" in any order", "")).status)
+        self.assertNotEqual("exact", self.compile(own.replace("your library", "their library")).status)
+        with patch("quorune.compiler.fixed_top_order_templates._graveyard_library_order_template", return_value=None):
+            self.assertNotEqual("exact", self.compile(own).status)
+
+        args = ("A", ("one", "two"), ("graveyard",), "library", "test library order")
+        legacy = MoveObjectsSimultaneouslyIntent(*args)
+        kind, fields = semantic_intent_identity(legacy)
+        self.assertNotIn("library_order", fields)
+        self.assertEqual(fields, validate_semantic_intent_identity(kind, fields))
+        ordered = MoveObjectsSimultaneouslyIntent(*args, library_order=LibraryArrivalOrder("A", "bottom", ("two", "one")))
+        kind, fields = semantic_intent_identity(ordered)
+        self.assertEqual(fields, validate_semantic_intent_identity(kind, fields))
+        for members in (["one", "one"], ["one"], ["one", "outsider"]):
+            with self.subTest(members=members), self.assertRaises(SemanticChoiceError):
+                validate_semantic_intent_identity(kind, {**fields, "library_order": {**fields["library_order"], "members": members}})
+        with self.assertRaises(SemanticChoiceError):
+            validate_semantic_intent_identity(kind, {**fields, "library_order": {**fields["library_order"], "chooser": "B"}})
+
     def test_printed_phyrexian_prices_preserve_x_tax_and_the_life_choice(self):
         from quorune.printed_mana_cost_model import printed_phyrexian_life_payment
         from quorune.rules.casting.face_queries import printed_phyrexian_cast_options
@@ -2738,7 +2787,7 @@ class TargetedOwnerLibraryCompilerTests(unittest.TestCase):
         with patch("quorune.compiler.fixed_owner_zone_move_templates._targeted_bounded_graveyard_library_move", return_value=None):
             self.assertNotEqual("exact", self.compile(cases[0][0]).status)
         for text in ("Put target card from a graveyard on top of your library.",
-                     "Put up to two target cards from your graveyard on top of your library."):
+                     "Put up to two target cards from graveyards on top of their owners' libraries in any order."):
             self.assertNotEqual("exact", self.compile(text).status)
 
     def test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder(self):
@@ -2880,6 +2929,173 @@ class TargetedOwnerLibraryRuntimeTests(unittest.TestCase):
             capability_registry=self.registry, capability_profile="commander_review")
         binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
         self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def test_original_footbottom_feast_orders_survivors_before_draw(self):
+        self.register_fixture_cards_on_add = True
+        for selected in (0, 1, 8):
+            with self.subTest(selected=selected):
+                session = self.session(33886400 + selected)
+                engine = session.engine
+                source = self.add(engine, "Footbottom Feast", zone="hand")
+                wrong = self.add(engine, "Murder", zone="graveyard", ref="order-wrong-type")
+                targets = [self.add(engine, "Generic Bound Body", zone="graveyard", ref=f"order-body-{i}")
+                           for i in range(selected)]
+                creeper = self.add(engine, "Crypt Creeper", seat="B") if selected else None
+                self.assert_whole_admission(session, source.printed_name)
+                action = self._witnesses.BoundEffectProgramRuntimeTests.ready(self, session, source, {"C": 2, "B": 1})
+                schema = action["target_schema"]
+                self.assertNotIn(wrong.ref, schema["legal_refs"])
+                self.assertTrue(all(card.ref in schema["legal_refs"] for card in targets))
+                self.checkpoint(session)
+                hand_before = len(session.state.players["A"].zones["hand"])
+                result = session.act("pilot:A", {"action_id": action["id"], "targets": [card.ref for card in targets], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                if creeper is not None:
+                    self.assertTrue(session.act("pilot:A", {"action_id": "pass"}).ok)
+                    legal = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    response = next(row for row in legal if row["id"].startswith(f"activate:{creeper.ref}:"))
+                    result = session.act("pilot:B", {"action_id": response["id"], "targets": [targets[0].ref], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                waiting = self.resolve(session)
+                if selected == 8:
+                    self.assertEqual("semantic.choice", waiting.kind)
+                    surviving = targets[1:]
+                    choice = session.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+                    self.assertEqual([card.ref for card in surviving], choice["legal_refs"])
+                    self.assertEqual(7, choice["minimum"])
+                    self.assertEqual("top_to_bottom", choice["order"])
+                    for seat in "BCD":
+                        self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+                    before = authoritative_state_hash(session.state)
+                    self.assertFalse(session.act("pilot:A", {"action_id": "choose", "cards": [surviving[0].ref] * 7}).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    session = self.replay(session, load=True)
+                    order = list(reversed(surviving))
+                    result = session.act("pilot:A", {"action_id": "choose", "cards": [card.ref for card in order]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertIsNone(self.resolve(session))
+                    library = session.state.players["A"].zones["library"]
+                    self.assertEqual([card.object_id for card in order[1:]], list(reversed(library[-6:])))
+                    self.assertEqual("hand", session.state.cards[order[0].object_id].zone)
+                else:
+                    self.assertIsNone(waiting)
+                self.assertEqual(hand_before - (selected == 1), len(session.state.players["A"].zones["hand"]))
+                if targets:
+                    self.assertEqual("exile", session.state.cards[targets[0].object_id].zone)
+                self.replay(session, load=True)
+
+    def test_original_misinformation_orders_one_opposing_graveyard_privately_through_replacement(self):
+        self.register_fixture_cards_on_add = True
+        baseline = self.session(33886421)
+        engine = baseline.engine
+        source = self.add(engine, "Misinformation", zone="hand")
+        player = baseline.state.players["B"]
+        commander = baseline.state.cards[player.zones["command"].pop()]
+        commander.zone = "graveyard"
+        player.zones["graveyard"].append(commander.object_id)
+        decline, = pending_commander_zone_state_choices(
+            (commander,), active_seats=engine.active_seats, apnap_order=engine.apnap_order(),
+        )
+        commit_commander_zone_choice_decline(commander, decline)
+        targets = [self.add(engine, "Generic Bound Body", seat="B", zone="graveyard", ref=f"opposing-order-{i}")
+                   for i in range(2)]
+        other = self.add(engine, "Murder", seat="C", zone="graveyard", ref="other-opposing-graveyard")
+        self.assert_whole_admission(baseline, source.printed_name)
+        action = self._witnesses.BoundEffectProgramRuntimeTests.ready(self, baseline, source, {"B": 1})
+        self.assertTrue(action["target_schema"]["groups"][0]["same_owner"])
+        self.checkpoint(baseline)
+        command = {"action_id": action["id"], "pay": "auto"}
+        before = authoritative_state_hash(baseline.state)
+        self.assertFalse(baseline.act("pilot:A", {**command, "targets": [targets[0].ref, other.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(baseline.state))
+        announced = [commander.ref, *(card.ref for card in targets)]
+        cast = baseline.act("pilot:A", {**command, "targets": announced})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("semantic.choice", self.resolve(baseline).kind)
+        self.assertEqual(("pilot:A",), tuple(baseline.pending_principals()))
+        self.assertIsNone(baseline.packet("pilot:B", full=True)["decision"])
+        before = authoritative_state_hash(baseline.state)
+        self.assertFalse(baseline.act("pilot:B", {"action_id": "choose", "cards": announced}).ok)
+        self.assertEqual(before, authoritative_state_hash(baseline.state))
+
+        observed = []
+        for reverse in (False, True):
+            session = self.replay(baseline, load=True)
+            private = [announced[2], announced[0], announced[1]] if reverse else announced
+            chosen = session.act("pilot:A", {"action_id": "choose", "cards": private})
+            self.assertTrue(chosen.ok, chosen.summary)
+            self.assertEqual("replacement.order", session.state.pending_decision.kind)
+            self.assertEqual(("pilot:B",), tuple(session.pending_principals()))
+            for card in (commander, *targets):
+                self.assertEqual("graveyard", session.state.cards[card.object_id].zone)
+            waiting = session.packet("pilot:B", full=True)["decision"]["ctx"]
+            session = self.replay(session, load=True)
+            option = next(row for row in waiting["options"] if not row.get("decline"))
+            replaced = session.act("pilot:B", {"action_id": "choose", "replacement": option["id"]})
+            self.assertTrue(replaced.ok, replaced.summary)
+            self.assertIsNone(self.resolve(session))
+            self.assertEqual("command", session.state.cards[commander.object_id].zone)
+            expected = list(reversed(targets)) if reverse else targets
+            self.assertEqual([card.object_id for card in expected], list(reversed(session.state.players["B"].zones["library"][-2:])))
+            self.replay(session, load=True)
+            packets = [session.packet(f"pilot:{seat}", full=True) for seat in "BCD"]
+            for packet in packets:
+                self.assertNotIn("known_top", packet["state"]["players"]["B"])
+            known = session.packet("pilot:A", full=True)["state"]["players"]["B"]["known_top"]
+            self.assertEqual([session.state.cards[card.object_id].ref for card in expected], [card["id"] for card in known[:2]])
+            observed.append((waiting, packets))
+        self.assertEqual(*observed)
+
+    def test_original_bow_of_nylea_orders_the_bottom_mode(self):
+        self.register_fixture_cards_on_add = True
+        session = self.session(33886427)
+        source = self.add(session.engine, "Bow of Nylea")
+        targets = [self.add(session.engine, "Generic Bound Body", zone="graveyard", ref=f"bow-bottom-{i}") for i in range(3)]
+        creeper = self.add(session.engine, "Crypt Creeper", seat="B")
+        self.assert_whole_admission(session, source.printed_name)
+        action = self._witnesses.BoundEffectProgramRuntimeTests.ready(self, session, source, {"C": 1, "G": 1})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": action["id"], "modes": ["mode_4"],
+            "targets": [card.ref for card in targets], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.act("pilot:A", {"action_id": "pass"}).ok)
+        legal = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        response = next(row for row in legal if row["id"].startswith(f"activate:{creeper.ref}:"))
+        result = session.act("pilot:B", {"action_id": response["id"], "targets": [targets[1].ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        schema = session.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+        self.assertEqual("bottom_to_top", schema["order"])
+        self.assertEqual([targets[0].ref, targets[2].ref], schema["legal_refs"])
+        order = [targets[2], targets[0]]
+        chosen = session.act("pilot:A", {"action_id": "choose", "cards": [card.ref for card in order]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual([card.object_id for card in order], session.state.players["A"].zones["library"][:2])
+        self.assertEqual("exile", session.state.cards[targets[1].object_id].zone)
+        self.replay(session, load=True)
+
+    def test_original_bone_harvest_moves_one_target_before_scheduling_draw(self):
+        self.register_fixture_cards_on_add = True
+        session = self.session(33886433)
+        source = self.add(session.engine, "Bone Harvest", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", zone="graveyard", ref="delayed-order-target")
+        self.assert_whole_admission(session, source.printed_name)
+        action = self._witnesses.BoundEffectProgramRuntimeTests.ready(self, session, source, {"C": 2, "B": 1})
+        self.checkpoint(session)
+        hand_before = len(session.state.players["A"].zones["hand"])
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(target.object_id, session.state.players["A"].zones["library"][-1])
+        self.assertEqual(hand_before - 1, len(session.state.players["A"].zones["hand"]))
+        trigger, = [trigger for trigger in session.state.delayed_triggers
+                    if trigger.label == "Draw at the beginning of the next turn's upkeep"]
+        self.assertEqual("A", trigger.controller)
+        self.assertTrue(trigger.active)
+        self.assertEqual("upkeep", trigger.condition["step"])
+        self.replay(session, load=True)
 
     def test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay(self):
         cases = (

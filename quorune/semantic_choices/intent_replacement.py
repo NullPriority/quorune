@@ -19,6 +19,7 @@ from ..affected_permanents import (
     AffectedPermanentSetSpec,
 )
 from ..entry_counter_model import EntryCounterError, EffectEntryCounter
+from ..library_order_model import LibraryArrivalOrder
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime import (
     CounterPlacementAmount,
@@ -324,6 +325,8 @@ def _simultaneous_move_intent_identity(
     }
     if intent.transition_kind is not ZoneTransitionKind.ORDINARY:
         identity["transition_kind"] = intent.transition_kind.value
+    if intent.library_order is not None:
+        identity["library_order"] = intent.library_order.to_dict()
     return "move_objects_simultaneously", identity
 
 
@@ -953,7 +956,7 @@ def _validate_zone_move_intent_identity(value):
 def _validate_simultaneous_move_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) not in {
+    if not isinstance(value, Mapping) or set(value) - {"library_order"} not in {
         frozenset(_SIMULTANEOUS_MOVE_FIELDS),
         frozenset(_SIMULTANEOUS_MOVE_TRANSITION_FIELDS),
     }:
@@ -972,6 +975,7 @@ def _validate_simultaneous_move_intent_identity(
             transition_kind=ZoneTransitionKind(
                 value.get("transition_kind", ZoneTransitionKind.ORDINARY.value)
             ),
+            library_order=LibraryArrivalOrder.from_dict(value["library_order"]) if "library_order" in value else None,
         )
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(

@@ -30,6 +30,7 @@ from .entry_counters import (
 )
 from .entry_results import commit_prepared_entry_results
 from .errors import GameRuleError, StateInvariantError
+from .library_order_model import LibraryArrivalOrder
 from .life_state import (
     LifeStateError,
     commit_life_payment,
@@ -1103,7 +1104,9 @@ class ZoneTransitionOwner:
         publish_events: bool = True,
         damage_clears: Sequence[tuple[str, str]] = (),
         attacking_entries: Mapping[str, Any] | None = None,
+        library_order: LibraryArrivalOrder | None = None,
     ) -> list[CardInstance]:
+        library_owner = self._ordered_library_destination(changes, library_order) if library_order is not None else None
         if attacking_entries:
             from .rules.attacking_card_entry import AttackingEntryRecipient
 
@@ -1132,8 +1135,29 @@ class ZoneTransitionOwner:
             clear_damage_for_permanents(self.host, damage_clears)
         if not changes:return []
         snapshots=self._commit_simultaneous_zone_batch(changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,reason=reason,log=log)
+        if library_order is not None:
+            from .rules.library_partition import commit_ordered_library_arrivals
+
+            commit_ordered_library_arrivals(
+                self.state.players[library_owner].zones["library"], library_order,
+                (card for card, _ in snapshots),
+            )
         return self._publish_simultaneous_zone_batch(snapshots,prepared,kinds,reason=reason,
             publish_events=publish_events,attacking_entries=attacking_entries)
+
+    def _ordered_library_destination(self, changes, order: LibraryArrivalOrder) -> str:
+        if not isinstance(order, LibraryArrivalOrder) or (
+            len(changes) != len(order.members) or set(changes) != {(member, "library") for member in order.members}
+        ):
+            raise GameRuleError("Library order must describe the whole requested batch")
+        self.host._require_seat(order.chooser, in_game=True)
+        cards = tuple(self.state.cards.get(member) for member in order.members)
+        if any(card is None or card.zone != "graveyard" or card.permanent_composition is not None for card in cards):
+            raise GameRuleError("Ordered library movements must begin in the graveyard")
+        owners = {card.owner for card in cards}
+        if len(owners) != 1:
+            raise GameRuleError("Ordered library movements require a single library")
+        return next(iter(owners))
 
     def _commit_simultaneous_zone_batch(self,changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,*,reason,log,destination_timestamp=None):
         """Commit an already validated group without publishing partial facts."""

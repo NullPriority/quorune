@@ -3,6 +3,7 @@ from __future__ import annotations
 """Commit a typed simultaneous-movement intent through the canonical zone port."""
 
 from typing import Any
+from ..library_order_model import LibraryArrivalOrder
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
 
 
@@ -24,6 +25,13 @@ def commit_simultaneous_movement(host:Any,intent:MoveObjectsSimultaneouslyIntent
         entry={'tapped':intent.battlefield_tapped,'destination_controllers':{
             card.object_id:card.owner if intent.battlefield_controller is PublicBattlefieldController.OWNER else intent.actor
             for card in cards}}
+    if intent.library_order is not None:
+        by_ref = {card.ref: card.object_id for card in cards}
+        entry["library_order"] = LibraryArrivalOrder(
+            intent.library_order.chooser,
+            intent.library_order.position,
+            tuple(by_ref[ref] for ref in intent.library_order.members),
+        )
     host._move_cards_simultaneously(
         [
             (card.object_id, intent.destination)

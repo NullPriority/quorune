@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 
 from ..compiler.any_number_target_sets import ANY_NUMBER_TARGET_MECHANIC
+from ..library_order_model import GRAVEYARD_LIBRARY_ORDER_MECHANIC
 from ..target_cardinality import (
     ANY_NUMBER_TARGET_CAPABILITY, AnnouncedTargetCardinality,
     SELECTED_PLAYER_RESULT_CAPABILITY, SELECTED_PLAYER_RESULT_LAYOUTS, SELECTED_PLAYER_RESULT_MECHANIC,
@@ -127,6 +128,21 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
 def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids):
     if SELECTED_PLAYER_RESULT_MECHANIC in mechanic_ids:
         return selected_player_result_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if GRAVEYARD_LIBRARY_ORDER_MECHANIC in mechanic_ids:
+        from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
+        from .library_order_shapes import fixed_library_order_capabilities
+        from .node_capability_shapes import fixed_draw_node_capabilities
+
+        owned = fixed_library_order_capabilities(
+            effects=effects[:1], target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+        if ANY_NUMBER_TARGET_CAPABILITY not in owned or len(effects) > 2:
+            return ()
+        if len(effects) == 1:
+            return owned
+        followup = dict(effects=effects[1:], target_schema=None, mechanic_ids=mechanic_ids)
+        draw = fixed_draw_node_capabilities(**followup) or fixed_next_turn_draw_node_capabilities(**followup)
+        return (*owned, *draw) if draw else ()
     if isinstance(target_schema,Mapping) and {'distinct_controllers','retain_controller'}.intersection(target_schema):
         from .per_player_target_sets import per_player_target_node_capabilities
         return per_player_target_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)

@@ -29,11 +29,12 @@ def _intent_types():
 
 def _value_types():
     from ..connive import ConnivingObject
+    from ..library_order_model import LibraryArrivalOrder
     from ..semantic_runtime.intents import CounterPlacementAmount
     from ..entry_counter_model import EffectEntryCounter
     from ..reflexive_trigger_model import ReflexivePaidCreatureSnapshot
     from ..scalar_effect_amount_model import PaidCreatureStatSnapshot
-    return {cls.__name__:cls for cls in (ConnivingObject, CounterPlacementAmount, EffectEntryCounter,
+    return {cls.__name__:cls for cls in (ConnivingObject, CounterPlacementAmount, EffectEntryCounter, LibraryArrivalOrder,
                                          ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot)}
 
 
@@ -67,6 +68,8 @@ def _intent_data(intent):
         values.pop("effect_generated")
     if isinstance(intent, typed.QueueReflexiveTriggerIntent) and intent.paid_creature is None:
         values.pop("paid_creature")
+    if isinstance(intent, typed.MoveObjectsSimultaneouslyIntent) and intent.library_order is None:
+        values.pop("library_order")
     return _data(values)
 
 
@@ -131,6 +134,8 @@ def decode_remaining_completion(value):
             expected_fields.remove("effect_generated")
         if cls is typed.QueueReflexiveTriggerIntent and "paid_creature" not in values:
             expected_fields.remove("paid_creature")
+        if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent) and "library_order" not in values:
+            expected_fields.remove("library_order")
         if set(values) != expected_fields:
             raise SemanticChoiceError('Completed choice intent has unknown kind or fields')
         values={key:_restore(child) for key,child in values.items()}

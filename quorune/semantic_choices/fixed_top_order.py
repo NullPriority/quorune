@@ -7,6 +7,8 @@ from ..library_order_model import (
     FixedTopLibraryOrderSpec, TOP_ORDER_OPERATION, TOP_ORDER_CAPABILITY,
     FixedHandTopOrderSpec, HAND_TOP_ORDER_OPERATION, HAND_TOP_ORDER_CAPABILITY,
     HAND_TOP_ORDER_RULES,
+    GRAVEYARD_LIBRARY_ORDER_OPERATION, GRAVEYARD_LIBRARY_ORDER_CAPABILITY,
+    GRAVEYARD_LIBRARY_ORDER_RULES, LibraryArrivalOrder, validate_graveyard_library_order_effect,
 )
 from ..replacement.immutable import FrozenMap
 from ..rules.library_partition import partition_refs, LibraryPartitionError
@@ -14,7 +16,7 @@ from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .ordering import LibraryOrderingHandler
 from .model import (
-    AutoContinue, ObjectChoice, SemanticChoiceCompletion, SemanticChoiceContinuation,
+    AutoContinue, ObjectChoice, OrderingChoice, SemanticChoiceCompletion, SemanticChoiceContinuation,
     SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest,
 )
 
@@ -151,6 +153,95 @@ class FixedHandTopOrderingHandler:
         return SemanticChoiceCompletion(intents=(intent,))
 
 
+def _targeted_graveyard_rows(effect, query, stack_ref, actor):
+    try:
+        validate_graveyard_library_order_effect(effect, resolved=True)
+    except ValueError as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    parent = query.stack_object(stack_ref)
+    refs = tuple(effect["cards"])
+    if (parent is None or actor != parent.controller or actor not in query.active_seats
+            or refs != tuple(ref for ref in parent.targets if ref is not None)):
+        raise SemanticChoiceError("Library order requires the controller's surviving stack targets")
+    rows = tuple(query.object(ref, zones=("graveyard",)) for ref in refs)
+    if any(row is None or not row.logical_object_id or row.token for row in rows):
+        raise SemanticChoiceError("Library order requires current graveyard card incarnations")
+    owners = {row.owner for row in rows}
+    if len(owners) > 1 or not owners.issubset(query.active_seats) or (
+        owners and (actor in owners) != (effect["scope"] == "own")
+    ):
+        raise SemanticChoiceError("Library order targets must belong to the instructed graveyard")
+    return parent, rows
+
+
+def _graveyard_library_move(effect, parent, order):
+    return MoveObjectsSimultaneouslyIntent(
+        actor=parent.controller, object_refs=tuple(effect["cards"]), expected_zones=("graveyard",),
+        destination="library", reason=parent.label, owned_only=effect["scope"] == "own",
+        library_order=LibraryArrivalOrder(parent.controller, effect["position"], order),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class GraveyardLibraryOrderingHandler:
+    operation: str = GRAVEYARD_LIBRARY_ORDER_OPERATION
+    handler_id: str = "choice.ordering.graveyard-to-library.v1"
+    schema_version: int = 1
+    rule_references: tuple[str, ...] = GRAVEYARD_LIBRARY_ORDER_RULES
+    capability_dependencies: tuple[str, ...] = (GRAVEYARD_LIBRARY_ORDER_CAPABILITY,)
+    continuation_fields: tuple[str, ...] = ("op", "cards", "position", "scope", "_graveyard_incarnations")
+    private_data: tuple[str, ...] = ("selected library order",)
+    projected_fields: tuple[str, ...] = ("prompt", "objects", "legal_actions.choice_schema")
+    mutation_path: tuple[str, ...] = ("MoveObjectsSimultaneouslyIntent", "ZoneTransitionOwner.move_cards_simultaneously")
+    replay_fixture: str = "targeted-private-graveyard-library-order"
+    test_modules: tuple[str, ...] = ("tests.test_fixed_public_zone_moves",)
+
+    def prepare(self, effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+        cards = effect.get("cards")
+        if isinstance(cards, (list, tuple)) and None in cards:
+            effect = {**effect, "cards": [ref for ref in cards if ref is not None]}
+        parent, rows = _targeted_graveyard_rows(effect, context.query, context.stack_ref, context.actor)
+        refs = tuple(row.ref for row in rows)
+        if len(refs) < 2:
+            return SemanticChoicePreparation(
+                None, FrozenMap(effect), auto_continue=AutoContinue(reason="no library permutation needed"),
+                preparation_intents=(_graveyard_library_move(effect, parent, refs),) if refs else (),
+            )
+        position = effect["position"]
+        choice = OrderingChoice(
+            "cards", refs, visibility="actor_private",
+            schema_extras=FrozenMap({"order": "top_to_bottom" if position == "top" else "bottom_to_top"}),
+        )
+        return SemanticChoicePreparation(
+            request=SemanticChoiceRequest(
+                prompt=f"Order the targeted cards at the {position} of their owner's library.",
+                choice=choice,
+                public_context=FrozenMap({"stack": parent.ref, "operation": self.operation,
+                    "objects": [{"id": row.ref, "name": row.printed_name} for row in rows]}),
+            ),
+            continuation_effect=FrozenMap({
+                **dict(effect), "_graveyard_incarnations": {row.ref: row.logical_object_id for row in rows},
+            }),
+        )
+
+    def complete(self, continuation: SemanticChoiceContinuation, response: Mapping[str, Any],
+                 query: SemanticChoiceQuery) -> SemanticChoiceCompletion:
+        effect = dict(continuation.effect)
+        incarnations = effect.pop("_graveyard_incarnations", None)
+        parent, rows = _targeted_graveyard_rows(
+            effect, query, continuation.stack_ref, continuation.semantic_frame.controller,
+        )
+        if len(rows) < 2 or incarnations != {row.ref: row.logical_object_id for row in rows}:
+            raise SemanticChoiceError("The pinned graveyard targets changed")
+        try:
+            order = partition_refs(response.get("cards"), field="cards")
+        except LibraryPartitionError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        if set(order) != set(incarnations):
+            raise SemanticChoiceError("Order every surviving graveyard target exactly once")
+        return SemanticChoiceCompletion(intents=(_graveyard_library_move(effect, parent, order),))
+
+
 FIXED_TOP_ORDER_HANDLERS = (FixedTopLibraryOrderingHandler(
     operation=TOP_ORDER_OPERATION,
     handler_id='choice.ordering.fixed-controller-top.v1',
@@ -160,4 +251,4 @@ FIXED_TOP_ORDER_HANDLERS = (FixedTopLibraryOrderingHandler(
         '_looked_incarnations',
     ),
     test_modules=('tests.test_fixed_top_order',),
-), FixedHandTopOrderingHandler())
+), FixedHandTopOrderingHandler(), GraveyardLibraryOrderingHandler())

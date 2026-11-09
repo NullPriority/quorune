@@ -645,6 +645,382 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "03dc8820-ec10-42c1-8200-d323cfcbf2b0",
+      "name": "Misinformation",
+      "mana_cost": "{B}",
+      "type_line": "Instant",
+      "oracle_text": "Put up to three target cards from an opponent's graveyard on top of their library in any order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-09-22",
+      "cmc": 1.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0a35df9d-80a0-4b6f-91d5-dad980af47e1",
+      "name": "Footbottom Feast",
+      "mana_cost": "{2}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Put any number of target creature cards from your graveyard on top of your library.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-06-17",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Bone Harvest",
+      "oracle_id": "0cc38d20-5ae8-413a-9f26-ff13cd92f24c",
+      "oracle_text": "Put any number of target creature cards from your graveyard on top of your library.\nDraw a card at the beginning of the next turn's upkeep.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "31f32afa-5b2a-4218-ae7b-642e1cac3911",
+      "name": "Forever Young",
+      "mana_cost": "{1}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Put any number of target creature cards from your graveyard on top of your library.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-10-04",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "361b965f-2ce7-49f8-84e7-7325ea0c948d",
+      "name": "Bow of Nylea",
+      "mana_cost": "{1}{G}{G}",
+      "type_line": "Legendary Enchantment Artifact",
+      "oracle_text": "Attacking creatures you control have deathtouch.\n{1}{G}, {T}: Choose one \u2014\n\u2022 Put a +1/+1 counter on target creature.\n\u2022 Bow of Nylea deals 2 damage to target creature with flying.\n\u2022 You gain 3 life.\n\u2022 Put up to four target cards from your graveyard on the bottom of your library in any order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-09-27",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9d2e7099-dcd5-428f-a732-2a82b8d1dd1a",
+      "name": "Frantic Salvage",
+      "mana_cost": "{3}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Put any number of target artifact cards from your graveyard on top of your library.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-02-04",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cc94462f-a207-4fdb-8704-aa979c244cab",
+      "name": "Gravepurge",
+      "mana_cost": "{2}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Put any number of target creature cards from your graveyard on top of your library.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-03-27",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ff27ff96-afd2-45df-b799-3046179e27c6",
+      "name": "Reinforcements",
+      "mana_cost": "{W}",
+      "type_line": "Instant",
+      "oracle_text": "Put up to three target creature cards from your graveyard on top of your library.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-09-22",
+      "cmc": 1.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -737,6 +1113,102 @@
       "published_at": "2023-06-16",
       "source": "wotc",
       "comment": "Some spells and abilities that amass Orcs may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't amass Orcs."
+    },
+    {
+      "oracle_id": "03dc8820-ec10-42c1-8200-d323cfcbf2b0",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "You don\u2019t need to show the opponent what order you put the cards on top of their library."
+    },
+    {
+      "oracle_id": "03dc8820-ec10-42c1-8200-d323cfcbf2b0",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "You target the cards, but not the opponent."
+    },
+    {
+      "oracle_id": "0a35df9d-80a0-4b6f-91d5-dad980af47e1",
+      "published_at": "2007-10-01",
+      "source": "wotc",
+      "comment": "You choose the order of the cards you put on top of your library."
+    },
+    {
+      "oracle_id": "0a35df9d-80a0-4b6f-91d5-dad980af47e1",
+      "published_at": "2007-10-01",
+      "source": "wotc",
+      "comment": "You can cast this with zero targets. If you do, you\u2019ll get to draw a card. However, if you cast this with at least one target and all of those targets become illegal, the spell won\u2019t resolve and you won\u2019t get to draw a card."
+    },
+    {
+      "oracle_id": "0cc38d20-5ae8-413a-9f26-ff13cd92f24c",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You have to show which creature cards you put on top of your library, but not the order you put them there."
+    },
+    {
+      "oracle_id": "31f32afa-5b2a-4218-ae7b-642e1cac3911",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "You can cast Forever Young with no targets if you just want to draw a card."
+    },
+    {
+      "oracle_id": "31f32afa-5b2a-4218-ae7b-642e1cac3911",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you choose any target creature cards and they are all illegal targets by the time Forever Young tries to resolve, the spell won't resolve. You won't draw a card."
+    },
+    {
+      "oracle_id": "31f32afa-5b2a-4218-ae7b-642e1cac3911",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "You choose the order that the creature cards are put on top of your library. You don't have to reveal this order to other players. Whichever ends up on top will be the card you draw."
+    },
+    {
+      "oracle_id": "361b965f-2ce7-49f8-84e7-7325ea0c948d",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "You choose which mode you're using as you activate the ability."
+    },
+    {
+      "oracle_id": "9d2e7099-dcd5-428f-a732-2a82b8d1dd1a",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "You choose the order of the cards you put on top of your library."
+    },
+    {
+      "oracle_id": "9d2e7099-dcd5-428f-a732-2a82b8d1dd1a",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "You can cast this with zero targets. If you do, you\u2019ll get to draw a card. However, if you cast this with at least one target and all of those targets become illegal (because another effect has removed them from the graveyard, perhaps), the spell won\u2019t resolve and you won\u2019t get to draw a card."
+    },
+    {
+      "oracle_id": "cc94462f-a207-4fdb-8704-aa979c244cab",
+      "published_at": "2011-01-22",
+      "source": "wotc",
+      "comment": "You can cast Gravepurge with zero targets. If you do, you\u2019ll draw a card as the spell resolves."
+    },
+    {
+      "oracle_id": "cc94462f-a207-4fdb-8704-aa979c244cab",
+      "published_at": "2011-01-22",
+      "source": "wotc",
+      "comment": "If you cast Gravepurge with at least one target and all of those targets become illegal, the spell won\u2019t resolve and you won\u2019t get to draw a card."
+    },
+    {
+      "oracle_id": "cc94462f-a207-4fdb-8704-aa979c244cab",
+      "published_at": "2011-01-22",
+      "source": "wotc",
+      "comment": "You choose the order of the cards you put on top of your library."
+    },
+    {
+      "oracle_id": "cc94462f-a207-4fdb-8704-aa979c244cab",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "You can cast Gravepurge with no targets. If you do, you\u2019ll just draw a card. However, if you cast it with at least one target and all of those targets become illegal, the spell won\u2019t resolve and you won\u2019t draw a card."
+    },
+    {
+      "oracle_id": "ff27ff96-afd2-45df-b799-3046179e27c6",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You have to show which creature cards you put on top of your library, but not the order you put them there."
     }
   ]
 }
