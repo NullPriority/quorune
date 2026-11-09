@@ -1361,6 +1361,391 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "14f36157-f55f-495d-9ffe-f38135a59750",
+      "name": "Shire Shirriff",
+      "mana_cost": "{1}{W}",
+      "type_line": "Creature — Halfling Soldier",
+      "oracle_text": "Vigilance\nWhen this creature enters, you may sacrifice a token. When you do, exile target creature an opponent controls until this creature leaves the battlefield.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "name": "Heart-Piercer Manticore",
+      "mana_cost": "{2}{R}{R}",
+      "type_line": "Creature — Manticore",
+      "oracle_text": "When this creature enters, you may sacrifice another creature. When you do, this creature deals damage equal to that creature's power to any target.\nEmbalm {5}{R} ({5}{R}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Manticore with no mana cost. Embalm only as a sorcery.)",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Embalm"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-08-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "d46c3fb6-f1c7-4a96-ae42-5bce17fc7c1d",
+      "name": "Ziatora, the Incinerator",
+      "mana_cost": "{3}{B}{R}{G}",
+      "type_line": "Legendary Creature — Demon Dragon",
+      "oracle_text": "Flying\nAt the beginning of your end step, you may sacrifice another creature. When you do, Ziatora deals damage equal to that creature's power to any target and you create three Treasure tokens.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Treasure"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "f701ada1-e9e1-42ce-9a62-c11bcec03da7",
+      "name": "Surtland Flinger",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Creature — Giant Berserker",
+      "oracle_text": "Whenever this creature attacks, you may sacrifice another creature. When you do, this creature deals damage equal to the sacrificed creature's power to any target. If the sacrificed creature was a Giant, this creature deals twice that much damage instead.",
+      "power": "4",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "name": "Universal Automaton",
+      "mana_cost": "{1}",
+      "type_line": "Artifact Creature — Shapeshifter",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Changeling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "218d9277-c179-4de3-9c7f-79b5a6d4fa38",
+      "name": "Merfolk of the Pearl Trident",
+      "mana_cost": "{U}",
+      "type_line": "Creature — Merfolk",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Hydrosurge",
+      "oracle_id": "4c2059d5-9a2e-4b89-a617-9125eb0cd570",
+      "oracle_text": "Target creature gets -5/-0 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-07-18",
+      "toughness": null,
+      "type_line": "Instant"
     }
   ],
   "rulings": [
@@ -1609,6 +1994,96 @@
       "published_at": "2008-05-01",
       "source": "wotc",
       "comment": "The protection ability means the following: - Mistmeadow Skulk can't be blocked by creatures with mana value 3 or greater. - Mistmeadow Skulk can't be enchanted by Auras with mana value 3 or greater. It also can't be equipped by Equipment with mana value 3 or greater. - Mistmeadow Skulk can't be targeted by spells with mana value 3 or greater. It also can't be targeted by abilities from sources with mana value 3 or greater. - All damage that would be dealt to Mistmeadow Skulk by sources with mana value 3 or greater is prevented."
+    },
+    {
+      "oracle_id": "14f36157-f55f-495d-9ffe-f38135a59750",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "You don't choose a target for Shire Shirriff's last ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when you sacrifice a token this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "14f36157-f55f-495d-9ffe-f38135a59750",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If Shire Shirriff leaves the battlefield before its last ability resolves, you can still sacrifice a token. However, when you do, the target creature won't be exiled when the \"reflexive\" triggered ability resolves. Similarly, if Shire Shirriff leaves the battlefield while the \"reflexive\" ability is still on the stack, the target creature won't be exiled."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "The sacrificed creature's last known existence on the battlefield is checked to determine its power."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "For each card with embalm, a corresponding game play supplement token can be found in some Amonkhet booster packs. These supplements are not required to play with cards with embalm; you can use the same items to represent an embalmed token as you would any other token."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Heart-Piercer Manticore's damage-dealing ability triggers only when you sacrifice a creature as a result of the instruction of its triggered ability. It won't trigger if you sacrifice a creature for any other reason."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "The token copies exactly what was printed on the original card and nothing else. It doesn't copy any information about the object the card was before it was put into your graveyard."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If the card copied by the token had any \"when [this permanent] enters the battlefield\" abilities, then the token also has those abilities and will trigger them when it's created. Similarly, any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities that the token has copied will also work."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "You can't sacrifice multiple creatures to deal damage multiple times."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "The token is a Zombie in addition to its other types and is white instead of its other colors. It has no mana cost, and thus its mana value is 0. These are copiable values of the token that other effects may copy."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Heart-Piercer Manticore features a new style of triggered ability. When it enters the battlefield, its triggered ability goes on the stack without a target. While that ability is resolving, you may sacrifice a creature. If you do, a second ability triggers and you pick a target that will be dealt damage. This is different from other abilities that say \"If you do . . .\" in that players may cast spells and activate abilities before a creature is sacrificed and then again after the creature is sacrificed but before damage is dealt."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Once you've activated an embalm ability, the card is immediately exiled. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If a spell or ability puts a creature card with embalm into your graveyard during your main phase, you'll have priority immediately after that spell or ability resolves. You can activate the creature card's embalm ability before any player can exile it with an effect, such as that of Crook of Condemnation, if it's legal for you to do so."
+    },
+    {
+      "oracle_id": "d46c3fb6-f1c7-4a96-ae42-5bce17fc7c1d",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Use the creature's power as it last existed on the battlefield to determine how much damage Ziatora deals."
+    },
+    {
+      "oracle_id": "f701ada1-e9e1-42ce-9a62-c11bcec03da7",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Surtland Flinger’s triggered ability goes on the stack without a target. While that ability is resolving, you may sacrifice another creature. When you do, the reflexive triggered ability triggers and you pick a target to be dealt damage. This is different from effects that say “If you do” in that players may take actions after you’ve sacrificed the creature but before damage is dealt."
+    },
+    {
+      "oracle_id": "f701ada1-e9e1-42ce-9a62-c11bcec03da7",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Use the power of the creature as it was sacrificed to determine how much damage is dealt. Damage will be dealt before blockers are declared."
     }
   ]
 }

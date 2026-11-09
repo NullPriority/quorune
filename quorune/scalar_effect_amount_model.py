@@ -9,6 +9,7 @@ from typing import Any, Mapping
 
 from .query_effect_amount_model import PublicQueryAmountError
 from .counter_names import normalized_counter_name
+from .creature_subtypes import canonical_creature_subtype
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .multikicker_model import FixedManaMultikickerSpec
 from .public_history_query_model import PublicHistoryQuerySpec
@@ -26,6 +27,7 @@ PAID_SACRIFICE_STAT_CONTEXT = 'paid_sacrifice_creature_stats'
 
 class ScalarAmountOrigin(StrEnum):
     PAID_SACRIFICE_CREATURE = 'paid_sacrifice_creature_stat'
+    REFLEXIVE_PAID_CREATURE = 'reflexive_paid_creature_stat'
     CAST_SPELL_MANA_VALUE = 'committed_cast_spell_mana_value'
     CAST_MANA_COLOR_COUNT = 'cast_mana_color_count'
     MULTIKICKER_COUNT = 'multikicker_count'
@@ -60,10 +62,12 @@ class ScalarEffectAmountSpec:
     multikicker: FixedManaMultikickerSpec | None = None
     target_group: str | None = None
     history_count: PublicHistoryQuerySpec | None = None
+    double_for_subtype: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6,7,8,9,10}:
+        if type(self.schema_version) is not int or self.schema_version not in range(1, 12):
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        _validate_reflexive_paid_power(self)
         if (self.schema_version == 10) != (self.origin is ScalarAmountOrigin.HISTORY_COUNT):
             raise PublicQueryAmountError("History counts require their explicit scalar version")
         if self.schema_version == 10:
@@ -121,6 +125,7 @@ class ScalarEffectAmountSpec:
         characteristic_origin = self.origin in {
             ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
             ScalarAmountOrigin.CAST_SPELL_MANA_VALUE, ScalarAmountOrigin.PAID_SACRIFICE_CREATURE,
+            ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
             raise PublicQueryAmountError("Scalar characteristic does not match its origin")
@@ -139,7 +144,8 @@ class ScalarEffectAmountSpec:
                 **({'aggregate':self.aggregate.to_dict()} if self.schema_version==3 else {}),
                 **({'multikicker':self.multikicker.to_dict()} if self.schema_version==5 else {}),
                 **({'target_group':self.target_group} if self.schema_version==7 else {}),
-                **({"history_count": self.history_count.to_dict()} if self.history_count is not None else {})}
+                **({"history_count": self.history_count.to_dict()} if self.history_count is not None else {}),
+                **({"double_for_subtype": self.double_for_subtype} if self.schema_version == 11 else {})}
 
     @property
     def history_count_capabilities(self) -> tuple[str, ...]:
@@ -163,6 +169,8 @@ class ScalarEffectAmountSpec:
             fields.add('target_group')
         if isinstance(value, Mapping) and value.get("schema_version") == 10:
             fields.add("history_count")
+        if isinstance(value, Mapping) and value.get("schema_version") == 11:
+            fields.add("double_for_subtype")
         if not isinstance(value, Mapping) or set(value) != fields or value.get("kind") != SCALAR_AMOUNT_KIND:
             raise PublicQueryAmountError("Scalar amount fields are incomplete or unknown")
         try:
@@ -176,9 +184,23 @@ class ScalarEffectAmountSpec:
             return cls(origin=origin, characteristic=value["characteristic"], history_fact=value["history_fact"],
                        coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],
                        counter_name=value.get("counter_name"), aggregate=aggregate, multikicker=multikicker,
-                       target_group=value.get("target_group"), history_count=history_count)
+                       target_group=value.get("target_group"), history_count=history_count,
+                       double_for_subtype=value.get("double_for_subtype"))
         except (TypeError,ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
+
+
+def _validate_reflexive_paid_power(spec: ScalarEffectAmountSpec) -> None:
+    if (spec.schema_version == 11) != (spec.origin is ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE):
+        raise PublicQueryAmountError("Reflexive paid power requires its explicit scalar version")
+    subtype = spec.double_for_subtype
+    if spec.schema_version == 11:
+        if spec.characteristic != "power" or spec.binding_id is not None or spec.coefficient != 1:
+            raise PublicQueryAmountError("Reflexive paid damage reads one sealed power")
+        if subtype is not None and canonical_creature_subtype(subtype) != subtype:
+            raise PublicQueryAmountError("Reflexive damage multiplier requires a canonical creature subtype")
+    elif subtype is not None:
+        raise PublicQueryAmountError("Only reflexive paid power can carry a subtype multiplier")
 
 
 def scalar_amount_specs(value: Any) -> tuple[ScalarEffectAmountSpec, ...]:

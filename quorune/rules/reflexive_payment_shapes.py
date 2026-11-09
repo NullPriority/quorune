@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Mapping
 from ..reflexive_trigger_model import (
-    BOUND_REFLEXIVE_PROGRAM_VERSION, REFLEXIVE_PAYMENT_CAPABILITY, REFLEXIVE_PAYMENT_MECHANIC, ReflexiveTriggerProgram,
+    BOUND_REFLEXIVE_PROGRAM_VERSION, BOUND_REFLEXIVE_PROGRAM_VERSIONS, REFLEXIVE_PAYMENT_CAPABILITY,
+    REFLEXIVE_PAYMENT_MECHANIC, SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
+    SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION, ReflexiveTriggerProgram,
 )
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
 from ..replacement.immutable import thaw_value
@@ -24,7 +26,19 @@ def reflexive_payment_parts(effect):
     program = ReflexiveTriggerProgram.from_dict(effect['reflexive_program'])
     if program.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION and payment.kind not in {'mana', 'energy'}:
         raise ValueError('Bound reflexive triggers require one fixed mana or energy payment')
+    if program.schema_version == SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION:
+        _validate_selected_sacrifice(effect['player'], payment, program)
     return payment, program
+
+
+def _validate_selected_sacrifice(player, payment, program):
+    if (payment.kind != 'sacrifice' or payment.amount != 1
+            or payment.predicate.controller != player or payment.predicate.zones != ('battlefield',)):
+        raise ValueError('Selected reflexive sacrifices require one controlled permanent')
+    if program.uses_paid_creature and not (
+        'creature' in payment.predicate.types_all or payment.predicate.types_any == ('creature',)
+    ):
+        raise ValueError('Reflexive paid power requires a creature sacrifice predicate')
 
 
 def reflexive_program_capabilities(program):
@@ -32,8 +46,10 @@ def reflexive_program_capabilities(program):
 
     effects = tuple(thaw_value(effect) for effect in program.effects)
     schema = thaw_value(program.target_schema)
+    if program.uses_paid_creature:
+        return _paid_power_result_capabilities(effects, schema, program.mechanic_ids)
     owned = fixed_payment_result_capabilities(effects=effects, target_schema=schema, mechanic_ids=program.mechanic_ids)
-    if owned or program.schema_version != BOUND_REFLEXIVE_PROGRAM_VERSION:
+    if owned or program.schema_version not in BOUND_REFLEXIVE_PROGRAM_VERSIONS:
         return owned
     from .linked_exile_return_shapes import linked_exile_return_node_capabilities
     from .role_token_shapes import role_token_node_capabilities
@@ -44,6 +60,34 @@ def reflexive_program_capabilities(program):
         or role_token_node_capabilities(effects=effects, target_schema=schema, mechanics=mechanics)
         or _live_count_result_capabilities(effects, schema, mechanics)
     )
+
+
+def _paid_power_result_capabilities(effects, schema, mechanics):
+    from ..compiler.scalar_effect_amounts import scalar_amount_shape_context
+    from ..scalar_effect_amount_model import (
+        SCALAR_AMOUNT_CAPABILITY, SCALAR_AMOUNT_MECHANIC, ScalarAmountOrigin, ScalarEffectAmountSpec,
+        scalar_amount_specs,
+    )
+    from .fixed_effect_payment_shapes import fixed_payment_result_capabilities
+
+    damage = effects[0]
+    if (schema is None or SCALAR_AMOUNT_MECHANIC not in mechanics
+            or damage.get('op') != 'damage' or damage.get('source') != '$source'
+            or damage.get('target') != '$target.0'
+            or len(effects) > 2 or len(effects) == 2 and effects[1].get('op') != 'create_token'):
+        return ()
+    try:
+        amount = ScalarEffectAmountSpec.from_dict(damage.get('amount'))
+        if amount.origin is not ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE or scalar_amount_specs(effects) != (amount,):
+            return ()
+    except ValueError:
+        return ()
+    shape = scalar_amount_shape_context(effects, mechanics)
+    if shape is None:
+        return ()
+    projected, fixed_mechanics = shape
+    owned = fixed_payment_result_capabilities(effects=projected, target_schema=schema, mechanic_ids=fixed_mechanics)
+    return tuple(sorted({*owned, SCALAR_AMOUNT_CAPABILITY})) if owned else ()
 
 
 def _live_count_result_capabilities(effects, schema, mechanics):
@@ -98,10 +142,30 @@ def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids)
         child_capabilities = reflexive_program_capabilities(program)
         if not child_capabilities:
             return ()
+        selected_sacrifice = ((SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,)
+                              if program.schema_version == SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION else ())
         return tuple(sorted({REFLEXIVE_PAYMENT_CAPABILITY, 'trigger.placement.apnap',
-            *payment.capabilities, *child_capabilities}))
+            *selected_sacrifice, *payment.capabilities, *child_capabilities}))
     except (KeyError, TypeError, ValueError):
         return ()
+
+
+def validate_reflexive_paid_power_scope(effects, values, required_capabilities):
+    if SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY not in required_capabilities:
+        return
+    from ..scalar_effect_amount_model import ScalarAmountOrigin, scalar_amount_specs
+
+    if len(effects) == 1:
+        try:
+            _, child = reflexive_payment_parts(effects[0])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            paid_amounts = [spec for spec in scalar_amount_specs(values)
+                            if spec.origin is ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE]
+            if child.uses_paid_creature and len(paid_amounts) == 1:
+                return
+    raise ValueError('Reflexive paid power requires its selected-sacrifice child')
 
 
 def reflexive_payment_runtime_dependencies(program):
@@ -115,6 +179,6 @@ def reflexive_payment_runtime_dependencies(program):
     if not owned:
         raise ValueError('Reflexive payment requires a closed cost and an independently owned child')
     _, child = reflexive_payment_parts(effects[0])
-    if child.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION and not program.ability_id.startswith('trigger:'):
+    if child.schema_version in BOUND_REFLEXIVE_PROGRAM_VERSIONS and not program.ability_id.startswith('trigger:'):
         raise ValueError('Bound reflexive payments require an admitted creating trigger')
     return owned

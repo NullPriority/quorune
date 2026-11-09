@@ -277,6 +277,8 @@ def _value_runtime_requirements(program):
         blockers.add(f"runtime_self_public_condition:invalid:{exc}")
     try:
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
+        from ..rules.reflexive_payment_shapes import validate_reflexive_paid_power_scope
+        validate_reflexive_paid_power_scope(program.effects, values, amounts)
         from ..announced_damage import VARIABLE_DAMAGE_ALLOCATION_CAPABILITY, variable_damage_allocation
         from ..fractional_quantity_model import HALF_MILL_CAPABILITY
         from ..target_cardinality import SELECTED_PLAYER_RESULT_CAPABILITY

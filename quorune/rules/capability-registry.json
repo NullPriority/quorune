@@ -77047,6 +77047,100 @@
     {
       "applicability": {
         "exclusions": [
+          "repeat or mandatory payments",
+          "direct sacrifice of the source",
+          "paid-object facts other than closed creature power and subtype doubling",
+          "unrepresented child effects"
+        ],
+        "inputs": [
+          "one actor-selected controlled permanent",
+          "typed optional sacrifice cost",
+          "bound trigger source and independent child target schema",
+          "pre-move creature power and subtypes when required"
+        ],
+        "outputs": [
+          "committed sacrifice",
+          "ordinary APNAP reflexive trigger and target placement",
+          "damage from sealed power when the admitted child reads it"
+        ],
+        "summary": "An optional selected sacrifice creates an independently owned reflexive trigger. Represented damage can use the paid creature's last battlefield power and double for a retained creature subtype."
+      },
+      "blockers": [],
+      "dependencies": [
+        "choice.affected_player.fixed_sacrifice",
+        "trigger.reflexive.fixed_action_result",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The independently decoded cost must select one controlled battlefield object. Paid power requires a creature predicate and a closed targeted damage result.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.reflexive.selected_sacrifice",
+      "implementation_components": [
+        "quorune.compiler.reflexive_payment_templates.reflexive_payment_template",
+        "quorune.reflexive_trigger_model.ReflexivePaidCreatureSnapshot",
+        "quorune.rules.reflexive_payment_shapes.reflexive_payment_node_capabilities",
+        "quorune.semantic_choices.reflexive_payment.complete_reflexive_payment",
+        "quorune.rules.reflexive_triggers.enqueue_reflexive_trigger",
+        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount"
+      ],
+      "implementation_mutation_rationale": "The original Surtland Flinger witness distinguishes equal current paid power with and without the paid Giant subtype.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_shirriff_pays_before_its_linked_target",
+        "test_original_surtland_flinger_reads_effective_paid_power_and_subtype",
+        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_original_shirriff_pays_before_its_linked_target",
+        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+      ],
+      "negative_tests": [
+        "test_selected_reflexive_sacrifice_rejects_a_forged_paid_power_binding",
+        "test_original_shirriff_pays_before_its_linked_target",
+        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+      ],
+      "official_rules": [
+        "107.1b",
+        "118.11",
+        "400.7",
+        "603.3d",
+        "603.12",
+        "608.2b",
+        "608.2h",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_original_shirriff_pays_before_its_linked_target",
+        "test_original_surtland_flinger_reads_effective_paid_power_and_subtype",
+        "test_original_ziatora_loses_all_results_when_its_target_leaves",
+        "test_original_manticore_uses_paid_creature_power_after_source_leaves"
+      ],
+      "privacy_tests": [
+        "test_original_shirriff_pays_before_its_linked_target"
+      ],
+      "replay_tests": [
+        "test_original_shirriff_pays_before_its_linked_target",
+        "test_original_surtland_flinger_reads_effective_paid_power_and_subtype",
+        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "random, qualified, linked-result or variable discards",
           "discard costs and cleanup",
           "arbitrary or unsealed context player expressions",
@@ -85361,7 +85455,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 760,
+  "registry_version": 761,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

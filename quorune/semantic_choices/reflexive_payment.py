@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
+from ..creature_subtypes import canonical_creature_subtype
+from ..reflexive_trigger_model import QueueReflexiveTriggerIntent, ReflexivePaidCreatureSnapshot
+from ..scalar_effect_amount_model import PaidCreatureStatSnapshot
+from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+from ..zone_trigger_events import ZoneTransitionKind
 from ..rules.reflexive_payment_shapes import reflexive_payment_parts, reflexive_program_capabilities
 from ..replacement.immutable import FrozenMap
 from .fixed_effect_payment import complete_fixed_payment_cost, prepare_fixed_payment_cost
@@ -53,6 +57,26 @@ def prepare_reflexive_payment(effect, context):
     }))
 
 
+def _paid_creature_snapshot(intents, actor, query):
+    if len(intents) != 1:
+        raise SemanticChoiceError('Reflexive paid power requires exactly one sacrifice')
+    intent = intents[0]
+    if (not isinstance(intent, MoveObjectsSimultaneouslyIntent) or intent.actor != actor
+            or intent.transition_kind is not ZoneTransitionKind.SACRIFICE or len(intent.object_refs) != 1
+            or intent.expected_zones != ('battlefield',) or not intent.controlled_only):
+        raise SemanticChoiceError('Reflexive paid power requires its selected sacrifice intent')
+    creature = query.object(intent.object_refs[0], zones=('battlefield',))
+    if creature is None or creature.controller != actor or 'creature' not in creature.types:
+        raise SemanticChoiceError('The selected sacrifice is no longer a controlled creature')
+    try:
+        stats = PaidCreatureStatSnapshot(creature.logical_object_id, creature.effective_power, creature.effective_toughness)
+        subtypes = tuple(sorted({subtype for value in creature.subtypes
+                                 if (subtype := canonical_creature_subtype(value)) is not None}))
+        return ReflexivePaidCreatureSnapshot(stats, subtypes)
+    except ValueError as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+
+
 def complete_reflexive_payment(continuation, response, query):
     effect = continuation.effect
     actor = effect.get('_choice_actor')
@@ -62,6 +86,7 @@ def complete_reflexive_payment(continuation, response, query):
     completion = complete_fixed_payment_cost(payment, effect, response, query)
     if not completion.intents:
         return completion
+    paid_creature = _paid_creature_snapshot(completion.intents, actor, query) if program.uses_paid_creature else None
     return SemanticChoiceCompletion(intents=(*completion.intents,
         QueueReflexiveTriggerIntent(controller=actor, parent_stack_ref=continuation.stack_ref,
-            program=FrozenMap(program.to_dict())),))
+            program=FrozenMap(program.to_dict()), paid_creature=paid_creature),))

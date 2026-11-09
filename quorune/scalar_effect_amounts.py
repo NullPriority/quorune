@@ -217,6 +217,16 @@ def _paid_creature_stat_amount(item, characteristic):
     return getattr(snapshot, characteristic)
 
 
+def _reflexive_paid_creature_power(item, spec: ScalarEffectAmountSpec) -> int:
+    from .reflexive_trigger_model import REFLEXIVE_PAID_CREATURE_CONTEXT, ReflexivePaidCreatureSnapshot
+
+    if (item.kind != 'triggered_ability' or item.context.get('event') != 'trigger.reflexive'
+            or not item.context.get('reflexive_parent')):
+        raise PublicQueryAmountError('Reflexive paid power requires its triggered consequence')
+    snapshot = ReflexivePaidCreatureSnapshot.from_dict(item.context.get(REFLEXIVE_PAID_CREATURE_CONTEXT))
+    return snapshot.stats.power * (2 if spec.double_for_subtype in snapshot.subtypes else 1)
+
+
 def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any], item) -> int:
     spec = ScalarEffectAmountSpec.from_dict(value)
     from .cast_event_amounts import committed_cast_mana_value_facts
@@ -236,6 +246,8 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             return spec.coefficient * previous["value"]
     if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE:
         amount = _paid_creature_stat_amount(item, spec.characteristic)
+    elif spec.origin is ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE:
+        amount = _reflexive_paid_creature_power(item, spec)
     elif spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:
         amount=cast_facts['mana_value']
     elif spec.origin is ScalarAmountOrigin.CAST_MANA_COLOR_COUNT:

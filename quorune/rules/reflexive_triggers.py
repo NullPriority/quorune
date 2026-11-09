@@ -6,7 +6,9 @@ from copy import deepcopy
 
 from ..errors import GameRuleError
 from ..model import StackItem
-from ..reflexive_trigger_model import BOUND_REFLEXIVE_PROGRAM_VERSION, ReflexiveTriggerProgram
+from ..reflexive_trigger_model import (
+    BOUND_REFLEXIVE_PROGRAM_VERSIONS, REFLEXIVE_PAID_CREATURE_CONTEXT, ReflexiveTriggerProgram,
+)
 from ..replacement.immutable import FrozenMap
 from ..trigger_processing import enqueue_trigger_batch
 from .reflexive_payment_shapes import reflexive_program_capabilities
@@ -52,8 +54,10 @@ def enqueue_reflexive_trigger(host, intent):
     context = {key: deepcopy(value) for key, value in parent.context.items()
                if key.startswith('source_') or key in retained}
     source_id = parent.source_object_id or parent.card_object_id
-    if consequence.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION:
+    if consequence.schema_version in BOUND_REFLEXIVE_PROGRAM_VERSIONS:
         context.update(_bound_reflexive_context(parent, consequence, source_id))
+    if intent.paid_creature is not None:
+        context[REFLEXIVE_PAID_CREATURE_CONTEXT] = intent.paid_creature.to_dict()
     source = host.state.cards.get(source_id)
     if source is not None:
         if not context.get('source_logical_object_id'):

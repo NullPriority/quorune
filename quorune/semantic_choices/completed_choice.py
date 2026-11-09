@@ -31,7 +31,10 @@ def _value_types():
     from ..connive import ConnivingObject
     from ..semantic_runtime.intents import CounterPlacementAmount
     from ..entry_counter_model import EffectEntryCounter
-    return {cls.__name__:cls for cls in (ConnivingObject,CounterPlacementAmount,EffectEntryCounter)}
+    from ..reflexive_trigger_model import ReflexivePaidCreatureSnapshot
+    from ..scalar_effect_amount_model import PaidCreatureStatSnapshot
+    return {cls.__name__:cls for cls in (ConnivingObject, CounterPlacementAmount, EffectEntryCounter,
+                                         ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot)}
 
 
 def _data(value):
@@ -62,6 +65,8 @@ def _intent_data(intent):
     values = {field.name: getattr(intent, field.name) for field in fields(intent)}
     if isinstance(intent, typed.PlaceCountersIntent) and intent.effect_generated:
         values.pop("effect_generated")
+    if isinstance(intent, typed.QueueReflexiveTriggerIntent) and intent.paid_creature is None:
+        values.pop("paid_creature")
     return _data(values)
 
 
@@ -124,6 +129,8 @@ def decode_remaining_completion(value):
         expected_fields = {field.name for field in fields(cls)}
         if cls is typed.PlaceCountersIntent and "effect_generated" not in values:
             expected_fields.remove("effect_generated")
+        if cls is typed.QueueReflexiveTriggerIntent and "paid_creature" not in values:
+            expected_fields.remove("paid_creature")
         if set(values) != expected_fields:
             raise SemanticChoiceError('Completed choice intent has unknown kind or fields')
         values={key:_restore(child) for key,child in values.items()}
