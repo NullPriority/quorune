@@ -13,12 +13,15 @@ EVENT_BATTLEFIELD_RETURN_CAPABILITY = 'zone.return.fixed_event_battlefield'
 EVENT_BATTLEFIELD_RETURN_MECHANIC = 'fixed-event-battlefield-return'
 
 
-def event_battlefield_return_effect(*, tapped: bool, entry_counter: str | None = None) -> dict[str, Any]:
-    if type(tapped) is not bool or entry_counter not in {None, '+1/+1'}:
+def event_battlefield_return_effect(
+    *, tapped: bool, entry_counter: str | None = None, controller: str = '$context.owner',
+) -> dict[str, Any]:
+    if (type(tapped) is not bool or entry_counter not in (None, '+1/+1')
+            or type(controller) is not str or controller not in ('$context.owner', '$controller')):
         raise ValueError('Event battlefield return has unsupported entry instructions')
     return {'op': 'reanimate', 'schema_version': 2, 'card': '$context.card',
         'expected_zone_change_counter': '$context.card_zone_change_counter',
-        'controller': '$context.owner', 'tapped': tapped, 'entry_counter': entry_counter,
+        'controller': controller, 'tapped': tapped, 'entry_counter': entry_counter,
         'source': '$stack'}
 
 

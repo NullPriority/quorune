@@ -80,12 +80,14 @@ def fixed_target_reanimation_node_capabilities(
             EVENT_BATTLEFIELD_RETURN_CAPABILITY, event_battlefield_return_effect)
         effect = effects[0]
         try:
-            expected = event_battlefield_return_effect(tapped=effect['tapped'], entry_counter=effect['entry_counter'])
+            expected = event_battlefield_return_effect(tapped=effect['tapped'],
+                entry_counter=effect['entry_counter'], controller=effect['controller'])
         except (ValueError, TypeError, KeyError):
             return ()
         if target_schema is not None or EVENT_BATTLEFIELD_RETURN_MECHANIC not in mechanics or dict(effect) != expected:
             return ()
         return (EVENT_BATTLEFIELD_RETURN_CAPABILITY, 'zone.change.destination_replacement',
+            *(('attachment.reference.current_or_lki',) if effect['controller'] == '$controller' else ()),
             *(('counter.producer.effect_entry',) if effect['entry_counter'] else ()))
     if (
         FIXED_TARGET_REANIMATION_MECHANIC not in mechanics
@@ -182,6 +184,21 @@ def relative_target_reanimation_node_capabilities(*, effects, target_schema, mec
     if effect["tapped"] is not False:
         return ()
     return FIXED_TARGET_REANIMATION_CAPABILITY, MANA_VALUE_POWER_CAPABILITY, "target.revalidate_resolution"
+
+
+def attached_event_battlefield_return_runtime_dependencies(program):
+    from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get('op') == REANIMATE_OPERATION and effect.get('schema_version') == 2
+               and effect.get('controller') == '$controller' for effect in nested_effects(program.effects)):
+        return ()
+    required = fixed_target_reanimation_node_capabilities(effects=program.effects,
+        target_schema=program.target_schema, mechanic_ids=(EVENT_BATTLEFIELD_RETURN_MECHANIC,))
+    if (not required or program.active_zone != 'battlefield' or program.event != 'creature.dies'
+            or program.event_condition != {'field': 'attachments', 'op': 'contains_any', 'value': ['$source.ref']}):
+        raise ValueError('Controller return requires the source-bound attached creature death')
+    return required
 
 
 def source_power_reanimation_runtime_dependencies(program):

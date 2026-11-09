@@ -792,6 +792,7 @@
       "test_all_blocker_requirements",
       "test_alternative_activation_mana",
       "test_any_source_counter_costs",
+      "test_attached_return_composition",
       "test_bargain_results",
       "test_card_program_v2",
       "test_card_unlock_frontier",

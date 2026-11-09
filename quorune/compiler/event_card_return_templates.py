@@ -27,20 +27,28 @@ def self_death_return_binding(material_line: str, *, card_name: str | None = Non
 
 
 def event_card_return_template(binding, body: str, *, card_name: str):
-    if binding.event.value not in {'creature.dies.self', 'permanent.graveyard.self', 'creature.dies'}:
+    attached_graveyard = (binding.event.value == 'permanent.graveyard'
+                          and binding.variant == 'enchanted_permanent_graveyard')
+    if binding.event.value not in {'creature.dies.self', 'permanent.graveyard.self', 'creature.dies'} and not attached_graveyard:
         return None
     source_event = binding.event.value.endswith('.self') or binding.variant in {'source_creature_dies', 'source_dies'}
     attached = binding.variant in {'enchanted_creature_dies', 'equipped_creature_dies'}
-    subject = r'it|this card|' + SourceReferenceSpec(card_name).regex_pattern if source_event else r'that card'
-    if not source_event and not attached:
+    if not (source_event or attached or attached_graveyard):
         return None
+    if (attached_graveyard or attached and body.casefold().startswith('return it ')) and body != binding.body:
+        return None
+    subject = r'it|this card|' + SourceReferenceSpec(card_name).regex_pattern if source_event else r'it|that card'
     battlefield = re.fullmatch(r'return (?:' + subject + r") to the battlefield "
-        r"(?P<tapped>tapped )?under its owner['’]s control"
+        r"(?P<tapped>tapped )?under (?P<controller>its owner['’]s|your) control"
         r"(?P<counter> with a \+1/\+1 counter on it)?\.?", body, re.I)
     if battlefield is not None:
+        return_to_controller = battlefield['controller'].casefold() == 'your'
+        if attached_graveyard or return_to_controller and (not attached or body != binding.body):
+            return None
         return ('fixed-departed-event-battlefield-return-v1',
             (event_battlefield_return_effect(tapped=battlefield['tapped'] is not None,
-                entry_counter='+1/+1' if battlefield['counter'] else None),), None,
+                entry_counter='+1/+1' if battlefield['counter'] else None,
+                controller='$controller' if return_to_controller else '$context.owner'),), None,
             (EVENT_BATTLEFIELD_RETURN_MECHANIC,))
     if not re.fullmatch(r'return (?:' + subject + r") to its owner['’]s hand\.?", body, re.I):
         return None

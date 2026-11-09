@@ -721,6 +721,8 @@ def _attachment_death_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
     graveyard=re.fullmatch(r'(?:When|Whenever) enchanted (?P<type>artifact|creature|enchantment|land|permanent) is put into a graveyard(?: from the battlefield)?, (?P<body>.+)',material_line,re.I)
+    if graveyard is None:
+        graveyard = re.fullmatch(r'(?:When|Whenever) enchanted (?P<type>land) dies, (?P<body>.+)', material_line, re.I)
     if graveyard is not None:
         kind=graveyard['type'].casefold()
         return _spec('permanent.graveyard','enchanted_permanent_graveyard',graveyard['body'],

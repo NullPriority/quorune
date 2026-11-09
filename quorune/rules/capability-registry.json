@@ -29363,7 +29363,8 @@
           "timestamp and logical incarnation",
           "live all-land or basic-land-subtype query and fixed land-creature base values",
           "independent characteristic_query_boundary_version marker:current integer1 or historical absence",
-          "reviewed designated commander-creature owner/controller relation with explicit designation capability"
+          "reviewed designated commander-creature owner/controller relation with explicit designation capability",
+          "fixed animation of one reciprocal attached land"
         ],
         "outputs": [
           "layer4/5/6/7b/7c continuous effects",
@@ -29373,7 +29374,7 @@
           "current bounded public characteristic queries include the completed requested layer while retaining earlier-source authority and same-layer dependencies",
           "owner-relative base-stat/type effects independent of receiver control, with counters applied in their later layer"
         ],
-        "summary": "Apply source-bound constant type, color, keyword and base-stat settings to current public battlefield subjects, including independently closed scalar and public graveyard-count conditions. Pure fixed attached-permanent P/T and keyword modifiers remain meaningful across later creature animation without a type/color/base-stat operation. Unconditional fixed-P/T land animation selects all lands or one canonical basic land subtype, retaining all previous types and abilities, with optional fixed color and layer7bbase. Descriptor-owned earliest-layer metadata preserves source participation for emitted type/color effects. A qualified in-addition-to-other-creature-types clause adds exactly one fixed canonical creature subtype through the existing layer4 owner; unrelated characteristics are preserved, explicit color/base settings retain their own layers and source participation. Designated commander-creature settings may compare receiver ownership or control with the current source controller through the existing public query binder; noncreature commanders, ordinary creatures and general owner queries remain excluded."
+        "summary": "Apply source-bound constant type, color, keyword and base-stat settings to current public battlefield subjects, including independently closed scalar and public graveyard-count conditions. Pure fixed attached-permanent P/T and keyword modifiers remain meaningful across later creature animation without a type/color/base-stat operation. Unconditional fixed-P/T land animation selects all lands or one canonical basic land subtype, retaining all previous types and abilities, with optional fixed color and layer7bbase. Descriptor-owned earliest-layer metadata preserves source participation for emitted type/color effects. A qualified in-addition-to-other-creature-types clause adds exactly one fixed canonical creature subtype through the existing layer4 owner; unrelated characteristics are preserved, explicit color/base settings retain their own layers and source participation. Designated commander-creature settings may compare receiver ownership or control with the current source controller through the existing public query binder; noncreature commanders, ordinary creatures and general owner queries remain excluded. A fixed attached-land animation retains the land's types and abilities while applying the printed creature subtypes, color, keywords, and base stats in their ordinary layers."
       },
       "blockers": [],
       "dependencies": [
@@ -29419,7 +29420,8 @@
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
         "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
-        "test_static_setting_source_removal_and_ability_order_use_current_layers"
+        "test_static_setting_source_removal_and_ability_order_use_current_layers",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "multiplayer_tests": [
         "test_actual_crusade_sets_black_adds_zombie_and_keeps_goblin_kindred_and_unrelated_creatures",
@@ -29441,7 +29443,8 @@
         "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
-        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it"
+        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "negative_tests": [
         "test_actual_crusade_sets_black_adds_zombie_and_keeps_goblin_kindred_and_unrelated_creatures",
@@ -29466,7 +29469,9 @@
         "test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
         "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed",
         "test_verified_setting_withdrawal_blocks_all_four_complete_originals",
-        "test_verified_setting_withdrawal_blocks_qualified_addition_with_unrelated_keyword_control"
+        "test_verified_setting_withdrawal_blocks_qualified_addition_with_unrelated_keyword_control",
+        "test_retaining_land_animation_uses_closed_layers_and_attached_subject",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "official_rules": [
         "109.5",
@@ -29519,7 +29524,9 @@
         "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
         "test_source_cutoff_includes_only_completed_requested_layers",
         "test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
-        "test_static_settings_preserve_exact_types_colors_and_source_spans"
+        "test_static_settings_preserve_exact_types_colors_and_source_spans",
+        "test_retaining_land_animation_uses_closed_layers_and_attached_subject",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "privacy_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
@@ -29563,7 +29570,8 @@
         "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
-        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it"
+        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "required_evidence": [
         "positive",
@@ -29579,7 +29587,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 6
+      "version": 7
     },
     {
       "applicability": {
@@ -85776,7 +85784,7 @@
     {
       "applicability": {
         "exclusions": [
-          "other return controllers",
+          "return controllers outside the printed owner or attached trigger controller",
           "exile or hand return origins",
           "unrepresented entry transforms or attachments",
           "dynamic entry counters",
@@ -85785,14 +85793,15 @@
         "inputs": [
           "sealed departed-card ref, owner and zone-change counter",
           "one death-event child",
-          "fixed tapped and entry-counter instruction"
+          "fixed tapped and entry-counter instruction",
+          "captured attachment relation when the trigger controller receives the permanent"
         ],
         "outputs": [
-          "owner-controlled battlefield return",
+          "battlefield entry under the printed owner or captured trigger controller",
           "stale or missing departed card is ignored",
           "entry counters participate in the existing replacement transaction"
         ],
-        "summary": "Return the exact public graveyard incarnation retained by one death occurrence to the battlefield under its owner, optionally tapped with one fixed +1/+1 entry counter, through canonical ZoneMoveIntent."
+        "summary": "Return the sealed public graveyard incarnation under its owner or the controller of the source-bound attached creature death trigger. The existing entry transaction supports tapped entry and one fixed +1/+1 counter."
       },
       "blockers": [],
       "dependencies": [
@@ -85805,21 +85814,26 @@
         "quorune.event_card_return.event_battlefield_return_intent",
         "quorune.compiler.event_card_return_templates.event_card_return_template",
         "quorune.semantic_runtime.effect_handlers.DomainEffectHandler.lower",
-        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent"
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent",
+        "quorune.rules.reanimation_capability_shapes.attached_event_battlefield_return_runtime_dependencies"
       ],
       "implementation_mutation_rationale": "Removing the expected graveyard incarnation lets the old actual granted death trigger return a later incarnation and is detected.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
-        "test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant"
+        "test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant",
+        "test_original_unholy_indenture_uses_apnap_and_the_winning_trigger_controller"
       ],
       "multiplayer_tests": [
-        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+        "test_original_unholy_indenture_uses_apnap_and_the_winning_trigger_controller"
       ],
       "negative_tests": [
         "test_event_battlefield_intent_rejects_malformed_identity_and_entry_fields",
         "test_event_battlefield_dependencies_and_unrepresented_riders_fail_closed",
-        "test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant"
+        "test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant",
+        "test_printed_attachment_returns_bind_the_departure_and_controller",
+        "test_original_unholy_indenture_uses_apnap_and_the_winning_trigger_controller"
       ],
       "official_rules": [
         "400.7e",
@@ -85831,13 +85845,17 @@
       ],
       "positive_tests": [
         "test_event_battlefield_return_lowers_owner_incarnation_tap_and_entry_counter",
-        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+        "test_printed_attachment_returns_bind_the_departure_and_controller",
+        "test_original_unholy_indenture_uses_apnap_and_the_winning_trigger_controller"
       ],
       "privacy_tests": [
-        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+        "test_original_unholy_indenture_uses_apnap_and_the_winning_trigger_controller"
       ],
       "replay_tests": [
-        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+        "test_original_unholy_indenture_uses_apnap_and_the_winning_trigger_controller"
       ],
       "required_evidence": [
         "positive",
@@ -85853,7 +85871,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -85865,14 +85883,15 @@
         "inputs": [
           "Source-spanned death or battlefield-to-graveyard trigger",
           "Sealed public event card and zone-change counter",
-          "Existing replacement-aware zone move intent"
+          "Existing replacement-aware zone move intent",
+          "captured attachment relation for creature, land, or other represented permanent departures"
         ],
         "outputs": [
           "Particular departed card returned to owners hand",
           "Missing or changed graveyard incarnation does nothing",
           "Canonical hidden destination and replacement continuation replay"
         ],
-        "summary": "Return one card identified by a sealed self or attached-creature death occurrence from its exact new graveyard incarnation to its owners hand."
+        "summary": "Return the sealed public graveyard incarnation to its owner's hand. The source or attached permanent uses the represented battlefield-to-graveyard occurrence and its committed zone-change counter."
       },
       "blockers": [],
       "dependencies": [
@@ -85891,14 +85910,18 @@
       "implementation_mutation_rationale": "An executable omission mutant removes the decisive recorded cast fact or departed incarnation and is killed by actual action outcome assertions.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_attachment_lki_returns_dead_creature_after_aura_leaves"
+        "test_attachment_lki_returns_dead_creature_after_aura_leaves",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "multiplayer_tests": [
-        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "negative_tests": [
         "test_stale_graveyard_incarnation_is_not_returned_by_old_trigger",
-        "test_event_return_missing_dependency_and_incarnation_mutants_fail_closed"
+        "test_event_return_missing_dependency_and_incarnation_mutants_fail_closed",
+        "test_printed_attachment_returns_bind_the_departure_and_controller",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "official_rules": [
         "400.7",
@@ -85912,14 +85935,17 @@
       "positive_tests": [
         "test_departed_return_effect_requires_exact_event_card_and_counter",
         "test_event_return_source_and_attached_grammar_preserve_unrelated_siblings",
-        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+        "test_printed_attachment_returns_bind_the_departure_and_controller",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "privacy_tests": [
         "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
       ],
       "replay_tests": [
         "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
-        "test_attachment_lki_returns_dead_creature_after_aura_leaves"
+        "test_attachment_lki_returns_dead_creature_after_aura_leaves",
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
       ],
       "required_evidence": [
         "positive",
@@ -85935,7 +85961,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {

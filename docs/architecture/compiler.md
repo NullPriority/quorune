@@ -1976,6 +1976,19 @@ versioned recipient-relative public quantity; the ordinary attached owner
 keeps any paired keyword fragments and applies the resolved count in layer 7c.
 Unrepresented relative qualities and hidden attachment quantities stay residual.
 
+Fixed attached-land animation retains the land's existing card types,
+supertypes, and subtypes. A reciprocal attachment selects the recipient.
+The printed creature subtypes, color, keywords, and base stats enter their
+ordinary layers, and existing stat modifiers still apply afterward.
+
+An attached death return reads the departed permanent and its exact
+graveyard incarnation from the committed occurrence. The land death
+wording uses the battlefield-to-graveyard event and its retained land
+type. A battlefield return uses the printed owner or the attached
+trigger's controller. Its fixed entry counter goes through the existing
+replacement transaction. Other triggers with the earlier graveyard
+identity cannot return the permanent again after it moves.
+
 The existing fixed public setting owner also accepts static removal of
 represented fixed keyword strings. The compiler retains the complete live
 public query and each keyword capability; the unchanged layer-6 emitter uses
