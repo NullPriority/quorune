@@ -193,6 +193,10 @@
         "name": {
           "const": "commander"
         },
+        "permanent_death_history_version": {
+          "enum": [0, 1],
+          "type": "integer"
+        },
         "permanent_event_state_version": {
           "enum": [
             0,
@@ -229,6 +233,10 @@
         },
         "starting_life": {
           "minimum": 1,
+          "type": "integer"
+        },
+        "transform_event_characteristics_version": {
+          "enum": [0, 1],
           "type": "integer"
         },
         "transform_timestamp_version": {
