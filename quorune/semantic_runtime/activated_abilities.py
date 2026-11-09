@@ -9,10 +9,10 @@ from typing import Any, Mapping
 from ..abilities import ActivatedAbility
 from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
 from ..activation_cost_modifiers import (
-    ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY, validate_ability_local_mana_reduction,
+    ability_local_mana_reduction_capabilities, ability_local_mana_reduction_from_dict,
+    ability_local_reduction_origin_is_supported,
 )
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
-from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..replacement.immutable import thaw_value
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -30,12 +30,13 @@ def ability_local_mana_reduction_runtime_dependencies(program: Any) -> tuple[str
         return ()
     if program.event != 'activate' or field not in cost:
         raise ValueError('Ability-local reduction requires its activation cost schema')
-    quantity = CharacteristicQuantitySpec.from_dict(thaw_value(cost[field]))
-    validate_ability_local_mana_reduction(quantity)
-    if any(field not in ability or CharacteristicQuantitySpec.from_dict(thaw_value(ability[field])) != quantity
+    reduction = ability_local_mana_reduction_from_dict(thaw_value(cost[field]))
+    if not ability_local_reduction_origin_is_supported((program.active_zone,), cost.get('discard_source'), reduction):
+        raise ValueError('Ability-local reduction requires a supported activation origin')
+    if any(field not in ability or ability_local_mana_reduction_from_dict(thaw_value(ability[field])) != reduction
            for ability in catalogs):
         raise ValueError('Ability-local reduction differs between the catalog and activation cost')
-    return (ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,)
+    return ability_local_mana_reduction_capabilities(reduction, program.active_zone)
 
 
 @dataclass(frozen=True, slots=True)

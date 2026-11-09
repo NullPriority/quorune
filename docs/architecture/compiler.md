@@ -334,6 +334,13 @@ graveyard cards, distinct basic land types, or one named counter on the source.
 The bound price applies to one ordinary battlefield activation, and the full
 effect and timing clauses still require complete-card admission.
 
+Ability-local prices can also read a fixed public condition or a controlled
+power or toughness aggregate. A false condition retains the ordinary price.
+The source and the rest of the public state remain in their current zones
+while the price is determined. A printed discard-source activation from hand
+can use a controlled battlefield count. The normal cost owner locks the
+generic reduction before mana abilities or other payments change that state.
+
 `compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
 face of a preparation card to closed inset instant or sorcery characteristics.
 The entry replacement and source-only preparation results require complete-card

@@ -7,8 +7,13 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .characteristic_fragments import (
     CharacteristicQuantityReduction, CharacteristicQuantityScope, CharacteristicQuantitySpec,
+    characteristic_quantity_capabilities,
 )
-from .object_predicate import ObjectQuerySpec
+from .continuous_conditions import (
+    FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
+)
+from .object_predicate import ObjectQuerySpec, object_query_capabilities
+from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .target_cost_subject import TargetCostSubjectSpec
 from .power_up_model import reduce_power_up_requirements
 from .replacement.immutable import FrozenMap, thaw_value
@@ -18,6 +23,7 @@ ACTIVATION_GENERIC_COST_CAPABILITY = 'activation.mana_cost.static_generic'
 ACTIVATION_GENERIC_COST_HANDLER = 'modification.activation-cost.fixed-generic.v1'
 ACTIVATION_GENERIC_COST_EVENT = 'activation.mana_cost.modify'
 ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY = 'activation.mana_cost.ability_local_public_count'
+ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY = 'activation.mana_cost.ability_local_public_value'
 MANA_KEYS = ('GENERIC', 'W', 'U', 'B', 'R', 'G', 'C')
 
 
@@ -27,7 +33,52 @@ class ActivationManaCostData(Protocol):
     generic_reduction_per_legendary_creature: int
 
 
-def validate_ability_local_mana_reduction(quantity: CharacteristicQuantitySpec) -> None:
+def _controlled_battlefield_count(quantity: Any) -> bool:
+    return (isinstance(quantity, CharacteristicQuantitySpec) and quantity.schema_version == 1
+            and quantity.scope is CharacteristicQuantityScope.CONTROLLER_ZONE
+            and quantity.query is not None and quantity.query.zones == ('battlefield',)
+            and not quantity.exclude_attached_object)
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionalActivationReduction:
+    generic: int
+    condition: FixedPublicStateConditionSpec
+
+    def __post_init__(self) -> None:
+        if type(self.generic) is not int or self.generic <= 0:
+            raise ValueError('Conditional activation reduction requires positive generic mana')
+        condition = self.condition
+        if not isinstance(condition, FixedPublicStateConditionSpec) or not (
+            condition.kind is FixedPublicStateConditionKind.CONTROLLER_TURN
+            or condition.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST
+            and _controlled_battlefield_count(condition.quantity)
+            or condition.kind is FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST
+            and condition.fact is FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES
+        ):
+            raise ValueError('Conditional activation reduction requires a closed current public condition')
+
+    def to_dict(self) -> dict[str, Any]:
+        return {'schema_version': 1, 'generic': self.generic, 'condition': self.condition.to_dict()}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> ConditionalActivationReduction:
+        if (set(value) != {'schema_version', 'generic', 'condition'}
+                or type(value['schema_version']) is not int or value['schema_version'] != 1):
+            raise ValueError('Conditional activation reduction fields are incomplete or unknown')
+        return cls(value['generic'], FixedPublicStateConditionSpec.from_dict(value['condition']))
+
+
+AbilityLocalManaReduction = CharacteristicQuantitySpec | ConditionalActivationReduction | PublicCharacteristicAggregateSpec
+
+
+def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -> None:
+    if isinstance(quantity, ConditionalActivationReduction):
+        return
+    if isinstance(quantity, PublicCharacteristicAggregateSpec):
+        if quantity.schema_version != 1 or quantity.controller_relation != 'source_controller':
+            raise ValueError('Ability-local aggregate requires current controlled battlefield objects')
+        return
     if (not isinstance(quantity, CharacteristicQuantitySpec) or quantity.multiplier != 1
             or quantity.offset or quantity.exclude_attached_object):
         raise ValueError('Ability-local mana reduction requires an unscaled public quantity')
@@ -39,6 +90,33 @@ def validate_ability_local_mana_reduction(quantity: CharacteristicQuantitySpec) 
                 and quantity.reduction is CharacteristicQuantityReduction.DISTINCT_BASIC_LAND_TYPES)):
         return
     raise ValueError('Ability-local reduction requires a represented controlled or source count')
+
+
+def ability_local_mana_reduction_from_dict(value: Mapping[str, Any]) -> AbilityLocalManaReduction:
+    if not isinstance(value, Mapping):
+        raise ValueError('Ability-local mana reduction must be a descriptor')
+    if 'condition' in value or 'generic' in value:
+        reduction = ConditionalActivationReduction.from_dict(value)
+    elif 'characteristic' in value:
+        reduction = PublicCharacteristicAggregateSpec.from_dict(value)
+    else:
+        reduction = CharacteristicQuantitySpec.from_dict(value)
+    validate_ability_local_mana_reduction(reduction)
+    return reduction
+
+
+def ability_local_reduction_origin_is_supported(zones, discard_source, reduction) -> bool:
+    return (zones == ('battlefield',) or zones == ('hand',) and discard_source is True
+            and _controlled_battlefield_count(reduction) and not reduction.exclude_source)
+
+
+def ability_local_mana_reduction_capabilities(reduction: AbilityLocalManaReduction, zone: str) -> tuple[str, ...]:
+    if isinstance(reduction, CharacteristicQuantitySpec) and zone == 'battlefield':
+        return (ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,)
+    raw = reduction.to_dict()
+    aggregate = reduction.capability_dependencies if isinstance(reduction, PublicCharacteristicAggregateSpec) else ()
+    return tuple(sorted({ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY, *object_query_capabilities(raw),
+                         *characteristic_quantity_capabilities(raw), *aggregate}))
 
 
 def base_activation_requirements(

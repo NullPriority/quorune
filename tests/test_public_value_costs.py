@@ -103,6 +103,41 @@ class PublicValueCostModelTests(unittest.TestCase):
 
 
 class PublicValueCostCompilerTests(unittest.TestCase):
+    def test_ability_local_public_value_roundtrips_and_rejects_open_conditions(self):
+        from quorune.abilities import ActivatedAbility
+        from quorune.activation_cost_modifiers import ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY
+        from quorune.compiler.activated_costs import parse_compiled_activation_line
+        from quorune.semantic_runtime.activated_abilities import (
+            ability_local_mana_reduction_runtime_dependencies, activated_ability_catalog_descriptor,
+        )
+
+        body = '{4}{W}, {T}: Draw a card.'
+        for discount in ('{2} less to activate if you control a legendary creature.',
+                         '{X} less to activate, where X is the greatest power among creatures you control.'):
+            with self.subTest(discount=discount):
+                text = f'{body} This ability costs {discount}'
+                ability, = parse_compiled_activation_line(text, card_name='Generic Query Observer', keywords=())[0]
+                self.assertEqual('Draw a card.', ability.effect_text)
+                self.assertEqual(ability.to_dict(), ActivatedAbility.from_dict(ability.to_dict()).to_dict())
+                ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                catalog = activated_ability_catalog_descriptor(ability)
+                program = SimpleNamespace(event='activate', active_zone='battlefield', cost_schema=node.cost, handlers=(catalog,))
+                self.assertIn(ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY, node.capability_dependencies)
+                self.assertIn(ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY, ability_local_mana_reduction_runtime_dependencies(program))
+                program.active_zone = 'hand'
+                with self.assertRaisesRegex(ValueError, 'origin'):
+                    ability_local_mana_reduction_runtime_dependencies(program)
+
+        for discount in ('{2} less to activate if you have two or more cards in hand.',
+                         '{1} less to activate if it targets a creature with power 3 or less.',
+                         '{X} less to activate, where X is the greatest power among creatures your opponents control.'):
+            with self.subTest(unsupported=discount):
+                text = f'{body} This ability costs {discount}'
+                self.assertNotEqual('exact', compile_oracle_card(query_record(text),
+                    capability_registry=load_default_capability_registry()).status)
+
     def test_ability_local_discount_closes_only_its_cost_and_catalog(self):
         from quorune.abilities import ActivatedAbility
         from quorune.compiler.activated_costs import parse_compiled_activation_line
@@ -128,7 +163,7 @@ class PublicValueCostCompilerTests(unittest.TestCase):
         self.assertIn(ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY, node.capability_dependencies)
         descriptor = activated_ability_catalog_descriptor(ability)
         self.assertEqual(ability.to_dict(), ActivatedAbilityCatalogHandler().validate(descriptor).to_dict())
-        program = SimpleNamespace(event='activate', cost_schema=node.cost, handlers=(descriptor,))
+        program = SimpleNamespace(event='activate', active_zone='battlefield', cost_schema=node.cost, handlers=(descriptor,))
         self.assertEqual((ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,),
                          ability_local_mana_reduction_runtime_dependencies(program))
         unbound = {**descriptor, 'ability': {**descriptor['ability'], field: {
@@ -136,7 +171,7 @@ class PublicValueCostCompilerTests(unittest.TestCase):
         }}}
         with self.assertRaisesRegex(ValueError, 'differs'):
             ability_local_mana_reduction_runtime_dependencies(
-                SimpleNamespace(event='activate', cost_schema=node.cost, handlers=(unbound,)))
+                SimpleNamespace(event='activate', active_zone='battlefield', cost_schema=node.cost, handlers=(unbound,)))
         for unsupported in (line.replace('other artifact you control', 'card in your hand'),
                             line.replace('costs {1}', 'costs {2}'), line + ' Unrepresented sibling.'):
             with self.subTest(unsupported=unsupported):
@@ -329,6 +364,137 @@ class PublicValueCostNativeTests(unittest.TestCase):
         with patch('quorune.rules.activation.cost_modifiers._ability_local_mana_modifiers', return_value=[]):
             with self.assertRaisesRegex(AssertionError, 'GENERIC'):
                 self.test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee()
+
+    def test_actual_fixed_activation_reductions_read_own_current_permanents(self):
+        for qualified in (False, True):
+            with self.subTest(qualified=qualified):
+                session = self.session(118_862_001 + qualified)
+                engine = session.engine
+                esquire = self.add(engine, 'Esquire of the King')
+                security = self.add(engine, 'Starport Security')
+                target = self.add(engine, 'Memnite', seat='B', ref='countered-foreign-creature')
+                target.counters['+1/+1'] = 1
+                self.add(engine, 'Generic Bound Commander', seat='A' if qualified else 'B', ref='price-legend')
+                if qualified:
+                    security.counters['+1/+1'] = 1
+                for card in (esquire, security):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={'C': 3 if qualified else 7, 'W': 2})
+                self.checkpoint(session)
+                for card, generic in ((security, 1 if qualified else 3), (esquire, 2 if qualified else 4)):
+                    offered = self.activation(session, card)
+                    self.assertEqual({'GENERIC': generic, 'W': 1}, offered['cost_summary']['m'])
+                    command = {'action_id': offered['id'], 'pay': 'auto'}
+                    if card is security:
+                        self.assertNotIn(security.ref, offered['target_schema']['legal_refs'])
+                        command['targets'] = [target.ref]
+                    accepted = session.act('pilot:A', command)
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertIsNone(self.resolve(session))
+                    self.priority(session, 'A')
+                self.assertTrue(session.state.cards[target.object_id].tapped)
+                self.assertEqual(0, session.state.players['A'].mana_pool['C'])
+                self.assertEqual(0, session.state.players['A'].mana_pool['W'])
+                self.replay(session, load=True)
+
+    def test_actual_crocodile_uses_distinct_graveyard_values_and_locks_before_mana(self):
+        for qualified in (False, True):
+            with self.subTest(qualified=qualified):
+                session = self.session(118_862_003 + qualified)
+                engine = session.engine
+                source = self.add(engine, 'Sewer Crocodile')
+                for name in ('Hallowed Fountain', 'Agatha of the Vile Cauldron', 'Murder', 'Concentrate'):
+                    self.add(engine, name, zone='graveyard')
+                self.add(engine, 'Murder', zone='graveyard', ref='duplicate-mana-value')
+                self.add(engine, 'Giant Growth', seat='B', zone='graveyard', ref='opponent-mana-value')
+                donor = self.add(engine, 'Wild Cantor', zone='graveyard' if qualified else 'battlefield')
+                blocker = self.add(engine, 'Memnite', seat='B', ref='public-blocker')
+                for card in (source, donor):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={'U': 1} if qualified else {'C': 3})
+                self.checkpoint(session)
+                self.assertTrue(engine._can_block(source, blocker)[0])
+                offered = self.activation(session, source)
+                self.assertEqual({'U': 1} if qualified else {'GENERIC': 3, 'U': 1}, offered['cost_summary']['m'])
+                accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual('graveyard', session.state.cards[donor.object_id].zone)
+                self.assertEqual(0, session.state.players['A'].mana_pool['C'])
+                self.assertIsNone(self.resolve(session))
+                self.assertFalse(engine._can_block(session.state.cards[source.object_id], session.state.cards[blocker.object_id])[0])
+                self.replay(session, load=True)
+
+    def test_actual_baru_reads_live_wurm_power_and_keeps_the_green_fee(self):
+        for controlled in (False, True):
+            with self.subTest(controlled=controlled):
+                session = self.session(118_862_005 + controlled)
+                engine = session.engine
+                source = self.add(engine, 'Baru, Wurmspeaker')
+                self.add(engine, 'Craw Wurm', seat='A' if controlled else 'B', ref='wurm-for-price')
+                self.assert_closed(session, source)
+                self.prepare(session, mana={'G': 1} if controlled else {'C': 7, 'G': 1})
+                self.checkpoint(session)
+                offered = self.activation(session, source)
+                self.assertEqual({'G': 1} if controlled else {'GENERIC': 7, 'G': 1}, offered['cost_summary']['m'])
+                accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertIsNone(self.resolve(session))
+                wurms = [card for card in session.state.cards.values() if card.zone == 'battlefield'
+                         and card.controller == 'A' and card.is_token
+                         and 'wurm' in engine._type_parts(engine._effective_card_data(card)['type_line'])[1]]
+                self.assertEqual(1, len(wurms))
+                self.assertEqual(0, session.state.players['A'].mana_pool['G'])
+                self.replay(session, load=True)
+
+    def test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price(self):
+        from quorune.engine import TURN_STEPS
+        from quorune.model import CombatState
+
+        session = self.session(118_862_007)
+        engine = session.engine
+        source = self.add(engine, 'Eiganjo, Seat of the Empire', zone='hand', ref='private-eiganjo-channel')
+        legend = self.add(engine, 'Generic Bound Commander', ref='friendly-legend')
+        self.add(engine, 'Generic Bound Commander', seat='B', ref='foreign-legend')
+        attacker = self.add(engine, 'Memnite', seat='B', ref='current-attacker')
+        self.assert_closed(session, source)
+        self.prepare(session, active='B', mana={'C': 1, 'W': 1})
+        engine.permissions.invalidate_current()
+        session.state.pending_decision = None
+        session.state.phase = 'combat'
+        session.state.step = 'declare_attackers'
+        session.state.phase_index = TURN_STEPS.index(('combat', 'declare_attackers'))
+        attacker.attacking = 'A'
+        session.state.combat = CombatState(attackers_declared=True, had_attacking_creature=True,
+            attackers={attacker.object_id: 'A'}, defending_players=['A'])
+        engine._grant_priority('A')
+        engine.pump()
+        self.checkpoint(session)
+        offered = self.activation(session, source)
+        self.assertEqual({'GENERIC': 1, 'W': 1}, offered['cost_summary']['m'])
+        self.assertEqual([attacker.ref], offered['target_schema']['legal_refs'])
+        self.assertNotIn(source.ref, json.dumps(session.packet('pilot:B', full=True)))
+        command = {'action_id': offered['id'], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A', {**command, 'targets': [legend.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {**command, 'targets': [attacker.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('graveyard', session.state.cards[attacker.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_ability_local_condition_mutant_is_killed_by_the_real_activation_price(self):
+        with patch('quorune.rules.activation.public_state_conditions.current_activation_public_state_matches', return_value=True):
+            with self.assertRaisesRegex(AssertionError, 'GENERIC'):
+                self._assert_unmet_crocodile_price()
+
+    def _assert_unmet_crocodile_price(self):
+        session = self.session(118_862_008)
+        source = self.add(session.engine, 'Sewer Crocodile')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 3, 'U': 1})
+        self.assertEqual({'GENERIC': 3, 'U': 1}, self.activation(session, source)['cost_summary']['m'])
 
     def test_actual_trainer_uses_current_power_and_keeps_paid_cost_after_provider_removal(self):
         session = self.session(118_610_001)

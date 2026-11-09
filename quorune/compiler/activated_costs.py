@@ -5,7 +5,7 @@ from typing import Any, Sequence
 
 from ..abilities import ActivatedAbility, ActivationLimit, parse_activated_abilities
 from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
-from ..activation_cost_modifiers import ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY
+from ..activation_cost_modifiers import ability_local_mana_reduction_capabilities
 from ..activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
 from ..activation_usage import ACTIVATION_ONCE_PER_OBJECT_CAPABILITY
 from ..power_up_model import POWER_UP_CAPABILITY
@@ -73,7 +73,7 @@ def activated_ability_cost_capabilities(
 
     additional: list[str] = []
     if ability.ability_local_mana_reduction is not None:
-        additional.append(ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY)
+        additional.extend(ability_local_mana_reduction_capabilities(ability.ability_local_mana_reduction, ability.zones[0]))
     if ability.forecast:
         from ..forecast_model import FORECAST_CAPABILITY
         additional.append(FORECAST_CAPABILITY)

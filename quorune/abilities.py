@@ -30,7 +30,10 @@ from .activation_condition_model import (
 )
 from .activation_restriction_composition import activation_restriction_from_effect
 from .activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD, validate_activated_ability_descriptor
-from .characteristic_fragments import CharacteristicQuantitySpec
+from .activation_cost_modifiers import (
+    AbilityLocalManaReduction, ability_local_mana_reduction_from_dict, ability_local_reduction_origin_is_supported,
+    validate_ability_local_mana_reduction,
+)
 from .granted_activation_model import (
     GRANTING_ATTACHMENT_PAYMENT_FIELD, GrantingAttachmentPayment,
     validate_bound_granting_attachment_payment,
@@ -170,7 +173,7 @@ class ActivatedAbility:
     forecast: bool = False
     granting_attachment_payment: GrantingAttachmentPayment | None = None
     saddle_threshold: int | None = None
-    ability_local_mana_reduction: CharacteristicQuantitySpec | None = None
+    ability_local_mana_reduction: AbilityLocalManaReduction | None = None
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
@@ -186,13 +189,13 @@ class ActivatedAbility:
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
         if self.ability_local_mana_reduction is not None:
-            from .activation_cost_modifiers import validate_ability_local_mana_reduction
-
             validate_ability_local_mana_reduction(self.ability_local_mana_reduction)
-            if (self.mana_ability or self.zones != ("battlefield",) or self.mana_cost_options
+            if (self.mana_ability or self.mana_cost_options
                     or self.complex_symbols or self.announced_x_symbols is not None
-                    or self.generic_reduction_per_legendary_creature or not self.mana.get("GENERIC")):
-                raise ValueError("Ability-local reductions require an ordinary fixed battlefield activation price")
+                    or self.generic_reduction_per_legendary_creature or not self.mana.get("GENERIC")
+                    or not ability_local_reduction_origin_is_supported(self.zones, self.discard_source,
+                                                                       self.ability_local_mana_reduction)):
+                raise ValueError("Ability-local reductions require a represented ordinary fixed activation price")
         if self.saddle_threshold is not None:
             from .saddle import validate_saddle_ability
             validate_saddle_ability(self)
@@ -282,7 +285,7 @@ class ActivatedAbility:
         return cls(
             ability_id=value["ability_id"],
             ability_local_mana_reduction=(
-                CharacteristicQuantitySpec.from_dict(value[ABILITY_LOCAL_MANA_REDUCTION_FIELD])
+                ability_local_mana_reduction_from_dict(value[ABILITY_LOCAL_MANA_REDUCTION_FIELD])
                 if ABILITY_LOCAL_MANA_REDUCTION_FIELD in value else None
             ),
             announced_x_symbols=value.get('announced_x_symbols'),
