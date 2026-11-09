@@ -20,7 +20,7 @@ from .fixed_resolution_characteristics import fixed_resolution_characteristics_e
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .reflexive_payment_templates import reflexive_payment_template
 from .optional_payment_templates import fixed_optional_mana_payment_template
-from .counter_templates import targeted_controller_payment_template
+from .counter_templates import targeted_controller_payment_followup_template, targeted_controller_payment_template
 from .token_copy_templates import token_copy_recipe_template
 from .resolution_condition_templates import resolution_condition_template
 from .query_counter_sequences import ordered_quantity_sequence_template
@@ -130,6 +130,12 @@ def reviewed_contextual_effect_template(
         )
         if controller_payment is not None:
             return controller_payment.compiled()
+        followup = targeted_controller_payment_followup_template(
+            body, source_name=card_name, cast_x_available=cast_x_available,
+            compile_component=lambda clause: compile_fixed(clause, card_name=card_name, **source_context),
+        )
+        if followup is not None:
+            return followup
         current = compile_atomic(body, card_name=card_name, **source_context)
         if current[0] is not None:
             return current

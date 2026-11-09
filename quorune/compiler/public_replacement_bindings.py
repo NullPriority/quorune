@@ -35,7 +35,7 @@ def public_same_target_replacement(normal_text, alternative, normal, compile_com
         match=re.fullmatch(r'Target player (?:gains|loses|draws) .+\.',normal_text,re.I)
         if match and re.match(r'^that player ',alternative,re.I):rewritten='Target player '+alternative[len('that player '):]
     elif original.get('op')=='counter_unless_pay' and original.get('stack')=='$target.0':
-        match=re.fullmatch(r'Counter (?P<target>target .+? spell) unless its controller pays .+\.',normal_text,re.I)
+        match=re.fullmatch(r'Counter (?P<target>target (?:.+? )?spell) unless its controller pays .+\.',normal_text,re.I)
         if match and re.match(r'^counter that spell\b',alternative,re.I):
             rewritten='Counter '+match['target']+alternative[len('Counter that spell'):]
     elif original.get('op')=='return_graveyard_card_to_owner_hand' and original.get('card')=='$target.0':

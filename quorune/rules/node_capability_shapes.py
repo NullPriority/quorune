@@ -181,6 +181,7 @@ _FIXED_TARGET_ZONE_OBJECT_KEYWORDS = frozenset(
 _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
     _COUNTER_STACK_BASE,
     {**_COUNTER_STACK_BASE, "types_none": ["creature"]},
+    {**_COUNTER_STACK_BASE, "subtypes_none": ["faerie"]},
     *tuple(
         {**_COUNTER_STACK_BASE, "types_any": list(types)}
         for types in (

@@ -8,8 +8,8 @@ from typing import Any, Mapping
 from ..query_effect_amount_model import CastXAmountSpec
 from ..replacement.immutable import FrozenMap
 from ..rules.stack_controller_payment_cost import (
-    MANA_PAYMENT_KEYS, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION, STACK_CONTROLLER_PAYMENT_MECHANIC,
-    STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
+    COUNTER_PAYMENT_FOLLOWUP_FIELD, MANA_PAYMENT_KEYS, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
+    STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION, STACK_CONTROLLER_PAYMENT_MECHANIC, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
     StackControllerPaymentCost,
 )
 from ..util import mana_cost_to_vector
@@ -26,6 +26,7 @@ from .direct_target import (
 class CounterTarget(str, Enum):
     SPELL = "spell"
     NONCREATURE_SPELL = "noncreature spell"
+    NON_FAERIE_SPELL = "non-faerie spell"
     CREATURE_SPELL = "creature spell"
     CREATURE_OR_PLANESWALKER_SPELL = "creature or planeswalker spell"
     INSTANT_OR_SORCERY_SPELL = "instant or sorcery spell"
@@ -155,6 +156,8 @@ class TargetedCounterEffectTemplate:
             options["types_any"] = _TYPE_DOMAINS[self.target]
         elif self.target is CounterTarget.NONCREATURE_SPELL:
             options["types_none"] = ("creature",)
+        elif self.target is CounterTarget.NON_FAERIE_SPELL:
+            options["subtypes_none"] = ("faerie",)
         elif self.target in _COLOR_DOMAINS:
             options["colors_any"] = _COLOR_DOMAINS[self.target]
         elif self.target is CounterTarget.NONBLUE_SPELL:
@@ -223,7 +226,7 @@ def targeted_counter_effect_template(
         numeric = (field, int(quantity["value"]))
         normalized = normalized[:quantity.start()] + "."
     match = re.fullmatch(
-        r"counter target (?P<target>spell|noncreature spell|creature spell|"
+        r"counter target (?P<target>spell|noncreature spell|non-faerie spell|creature spell|"
         r"creature or planeswalker spell|instant or sorcery spell|"
         r"sorcery spell|instant spell|artifact or enchantment spell|"
         r"artifact spell|creature or enchantment spell|"
@@ -372,6 +375,65 @@ def targeted_controller_payment_template(
             return None
         requirements["GENERIC"] = CastXAmountSpec().to_dict()
     return TargetedControllerPaymentTemplate(counter, StackControllerPaymentCost(FrozenMap(requirements)))
+
+
+def targeted_controller_payment_followup_template(
+    text: str, *, source_name: str, cast_x_available: bool, compile_component,
+):
+    from ..rules.source_references import SourceReferenceSpec
+    from ..rules.stack_controller_payment_shapes import stack_controller_payment_node_capabilities
+
+    prefix, separator, tail = text.strip().partition(". ")
+    if not separator or not prefix.casefold().startswith("counter target "):
+        return None
+    payment = targeted_controller_payment_template(
+        prefix + ".", cast_x_available=cast_x_available, source_name=source_name,
+    )
+    if payment is None or payment.counter.counter_destination is not None or payment.payment.schema_version != 2:
+        return None
+
+    when = "always"
+    payer = "$target.current_controller.0"
+    x_field = None
+    paid = re.fullmatch(r"If they do, (?P<result>.+)", tail, re.I)
+    if paid is not None:
+        when, body = "paid", paid["result"]
+    elif re.fullmatch(r"That player discards a card\.", tail, re.I):
+        body = "Target player discards a card."
+    elif re.fullmatch(r"You gain X life\.", tail, re.I):
+        body, x_field = "You gain 1 life.", "delta"
+    elif re.fullmatch(
+        rf"{SourceReferenceSpec(source_name).regex_pattern} deals X damage to that spell['’]s controller\.",
+        tail, re.I,
+    ):
+        body, x_field = f"{source_name} deals 1 damage to target player.", "amount"
+    else:
+        return None
+
+    result_id, result_effects, result_schema, result_mechanics = compile_component(body)
+    if result_id is None or len(result_effects) != 1:
+        return None
+    result = dict(result_effects[0])
+    if x_field is not None:
+        if not payment.payment.uses_cast_x or result.get(x_field) != 1:
+            return None
+        result[x_field] = CastXAmountSpec().to_dict()
+    if result_schema is not None:
+        if result.get("target") != "$target.0":
+            return None
+        result["target"] = payer
+        if result["op"] == "choose_cards_apnap" and result.get("players") == ["$target.0"]:
+            result["players"] = [payer]
+    template, effects, schema, mechanics = payment.compiled()
+    effect = {**effects[0], "schema_version": STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION,
+        COUNTER_PAYMENT_FOLLOWUP_FIELD: {"when": when, "effect": result, "mechanic_ids": list(result_mechanics)}}
+    combined_mechanics = tuple(dict.fromkeys((*mechanics, *result_mechanics)))
+    if not stack_controller_payment_node_capabilities(
+        effects=(effect,), target_schema=schema, mechanic_ids=combined_mechanics,
+    ):
+        return None
+    return f"{template}-followup-{result['op'].replace('_', '-')}-v1", (effect,), schema, combined_mechanics
+
 
 
 __all__ = [

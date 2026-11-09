@@ -2434,6 +2434,14 @@ instruction uses the terminal spell-move owner. Unrepresented linked results,
 nonmana prices, variable activation X, and multiple targets within one payment
 remain source-spanned residuals.
 
+A closed v5 follow-up binds one independently owned consequence before the
+controller's payment choice. Life gain and damage reuse the announced X.
+The payer's discard and the damage recipient keep the controller of the
+legal target spell even after it leaves the stack. Other admitted consequences
+can depend on acceptance of payment. A public-state substitution selects one
+price for the same target and can read current keyword qualifications at
+resolution. The stack target schema can exclude an explicit subtype.
+
 `compiler/optional_payment_templates.py` owns the historical triggered clause
 `you may pay <cost>. If you do, <effect>` when the cost is one positive fixed
 ordinary generic, colored, or colorless mana vector and the body is one

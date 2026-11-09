@@ -6,10 +6,50 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .stack_controller_payment_cost import (
     STACK_CONTROLLER_PAYMENT_CAPABILITY, STACK_CONTROLLER_PAYMENT_MECHANIC,
-    STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
-    compiled_stack_controller_payment_cost,
+    STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION, STACK_CONTROLLER_FOLLOWUP_PAYMENT_CAPABILITY,
+    STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
+    compiled_stack_controller_payment_cost, counter_payment_followup,
 )
 from ..zone_trigger_events import COUNTER_DESTINATION_FIELD
+from ..query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
+from ..replacement.immutable import FrozenMap, thaw_value
+
+
+def _followup_capabilities(effect, payment):
+    from .fixed_effect_payment_shapes import fixed_payment_result_capabilities
+
+    payload = counter_payment_followup(effect)
+    projected = thaw_value(FrozenMap(payload["effect"]))
+    operation = projected["op"]
+    payer = "$target.current_controller.0"
+    schema = None
+    amount_field = {"damage": "amount", "life": "delta"}.get(operation)
+    if amount_field is not None:
+        amount = CastXAmountSpec.from_dict(projected[amount_field])
+        if not payment.uses_cast_x or amount.coefficient != 1:
+            return ()
+        projected[amount_field] = 1
+    if operation in {"damage", "choose_cards_apnap"}:
+        if projected.get("target") != payer:
+            return ()
+        projected["target"] = "$target.0"
+        schema = {"zones": ["player"], "categories": ["player"], "count": 1}
+        if operation == "choose_cards_apnap":
+            if projected.get("players") != [payer]:
+                return ()
+            projected["players"] = ["$target.0"]
+            schema["player_relation"] = "any"
+    else:
+        actor_field = "controller" if operation == "create_token" else "player"
+        if projected.get(actor_field) != "$controller":
+            return ()
+    owned = fixed_payment_result_capabilities(
+        effects=(projected,), target_schema=schema, mechanic_ids=payload["mechanic_ids"],
+    )
+    if not owned:
+        return ()
+    return (STACK_CONTROLLER_FOLLOWUP_PAYMENT_CAPABILITY, *owned,
+            *((DECLARED_AMOUNT_CAPABILITY,) if amount_field is not None else ()))
 
 
 def stack_controller_payment_node_capabilities(
@@ -23,7 +63,8 @@ def stack_controller_payment_node_capabilities(
         payment = compiled_stack_controller_payment_cost(effects[0])
     except (TypeError, ValueError, KeyError):
         return ()
-    if payment.schema_version == STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION and (
+    if (payment.schema_version == STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION
+            or effects[0]["schema_version"] == STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION) and (
         target_schema is None or tuple(target_schema.get("zones", ())) != ("stack",)
         or tuple(target_schema.get("categories", ())) != ("spell",)
     ):
@@ -36,7 +77,17 @@ def stack_controller_payment_node_capabilities(
         effects=(counter_effect,),
         target_schema=target_schema, mechanic_ids=mechanics,
     )
-    return (STACK_CONTROLLER_PAYMENT_CAPABILITY, *counter, *payment.capabilities) if counter else ()
+    if not counter:
+        return ()
+    followup = ()
+    if effects[0]["schema_version"] == STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION:
+        try:
+            followup = _followup_capabilities(effects[0], payment)
+        except (TypeError, ValueError, KeyError):
+            return ()
+        if not followup:
+            return ()
+    return tuple(dict.fromkeys((STACK_CONTROLLER_PAYMENT_CAPABILITY, *counter, *payment.capabilities, *followup)))
 
 
 def is_closed_stack_controller_payment_program(program: Any) -> bool:
@@ -52,6 +103,7 @@ def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]
     versioned = any(effect.get("op") == "counter_unless_pay"
                     and effect.get("schema_version") in {
                         STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
+                        STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION,
                     } for effect in program.effects)
     if STACK_CONTROLLER_PAYMENT_MECHANIC not in program.coverage and not versioned:
         return ()

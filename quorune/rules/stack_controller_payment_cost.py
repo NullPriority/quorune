@@ -27,6 +27,9 @@ STACK_CONTROLLER_PAYMENT_CAPABILITY = "stack.counter.controller_payment"
 STACK_CONTROLLER_QUANTITY_PAYMENT_CAPABILITY = "stack.counter.controller_quantity_payment"
 STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION = 3
 STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION = 4
+STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION = 5
+STACK_CONTROLLER_FOLLOWUP_PAYMENT_CAPABILITY = "stack.counter.payment_followup"
+COUNTER_PAYMENT_FOLLOWUP_FIELD = "counter_payment_followup"
 TARGET_SPELL_TAX_MANA_VALUE = FrozenMap({"kind": "counter_payment_target_mana_value", "schema_version": 1})
 MANA_PAYMENT_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
 _PAYMENT_FIELDS = frozenset({"op", "schema_version", "stack", "player", "cost"})
@@ -120,13 +123,60 @@ def _is_payment_effect(effect: Mapping[str, Any]) -> bool:
             and type(effect.get("schema_version")) is int
             and effect["schema_version"] in {
                 2, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
+                STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION,
             })
 
 
 def _payment_fields(effect):
     if effect.get("schema_version") == STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION:
         return _PAYMENT_FIELDS | {COUNTER_DESTINATION_FIELD}
+    if effect.get("schema_version") == STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION:
+        return _PAYMENT_FIELDS | {COUNTER_PAYMENT_FOLLOWUP_FIELD}
     return _PAYMENT_FIELDS
+
+
+def counter_payment_followup(effect: Mapping[str, Any]) -> Mapping[str, Any]:
+    payload = effect.get(COUNTER_PAYMENT_FOLLOWUP_FIELD)
+    if not isinstance(payload, Mapping) or set(payload) != {"when", "effect", "mechanic_ids"}:
+        raise ValueError("Counter payment follow-up requires a closed effect and outcome")
+    condition, result, mechanics = payload["when"], payload["effect"], payload["mechanic_ids"]
+    if (type(condition) is not str or condition not in {"always", "paid"}
+            or not isinstance(result, Mapping) or not isinstance(mechanics, (tuple, list))
+            or not mechanics or any(type(value) is not str or not value for value in mechanics)
+            or len(set(mechanics)) != len(mechanics)):
+        raise ValueError("Counter payment follow-up descriptor is malformed")
+    allowed = {"life", "damage", "choose_cards_apnap"} if condition == "always" else {"surveil", "create_token"}
+    if type(result.get("op")) is not str or result["op"] not in allowed:
+        raise ValueError("Counter payment follow-up result is outside its closed family")
+    return payload
+
+
+def _validate_bound_followup(effect, countering_controller):
+    payload = counter_payment_followup(effect)
+    result = payload["effect"]
+    payer = effect["player"]
+    operation = result["op"]
+    if type(countering_controller) is not str or not countering_controller:
+        raise ValueError("Counter payment follow-up requires the resolving controller")
+    if operation == "choose_cards_apnap":
+        players = result.get("players")
+        if (not isinstance(players, (tuple, list)) or tuple(players) != (payer,)
+                or result.get("target") != payer or result.get("actor") != countering_controller):
+            raise ValueError("Counter payment discard lost its payer and resolving controller")
+    elif operation == "damage":
+        if result.get("target") != payer:
+            raise ValueError("Counter payment damage lost its payer")
+    else:
+        actor_field = "controller" if operation == "create_token" else "player"
+        if result.get(actor_field) != countering_controller:
+            raise ValueError("Counter payment follow-up lost its resolving controller")
+
+
+def bound_counter_payment_followup_effects(effect, *, paid: bool):
+    payload = counter_payment_followup(effect)
+    if payload["when"] == "paid" and not paid:
+        return ()
+    return (FrozenMap(payload["effect"]),)
 
 
 def compiled_stack_controller_payment_cost(effect: Mapping[str, Any]) -> StackControllerPaymentCost:
@@ -140,10 +190,15 @@ def compiled_stack_controller_payment_cost(effect: Mapping[str, Any]) -> StackCo
     if version == STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION:
         counter_destination_fields(effect[COUNTER_DESTINATION_FIELD])
         version = 2
+    elif version == STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION:
+        counter_payment_followup(effect)
+        version = 2
     return StackControllerPaymentCost(effect["cost"], version)
 
 
-def resolved_stack_controller_payment_cost(effect: Mapping[str, Any]) -> dict[str, int]:
+def resolved_stack_controller_payment_cost(
+    effect: Mapping[str, Any], *, countering_controller: str | None = None,
+) -> dict[str, int]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolved controller payment fields are malformed")
     fields = _payment_fields(effect)
@@ -156,6 +211,8 @@ def resolved_stack_controller_payment_cost(effect: Mapping[str, Any]) -> dict[st
         counter_destination_fields(public[COUNTER_DESTINATION_FIELD])
     if any(type(public[key]) is not str or not public[key] for key in ("stack", "player")):
         raise ValueError("Resolved controller payment requires a stack target and payer")
+    if public["schema_version"] == STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION:
+        _validate_bound_followup(public, countering_controller)
     if not isinstance(public["cost"], Mapping):
         raise ValueError("Resolved controller payment cost must be a vector")
     payment = StackControllerPaymentCost(FrozenMap(public["cost"]))

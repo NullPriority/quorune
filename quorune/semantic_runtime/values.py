@@ -152,6 +152,9 @@ def _resolve_effect_mapping(host, value, item):
             )
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+    if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 5:
+        if resolve_semantic_value(host, value['stack'], item) is None:
+            return {**value, 'stack': None}
     if value.get('op') == 'resolve_fixed_object_action' and value.get('schema_version') == 3:
         from ..rules.reanimation_followup import current_linked_subject, validate_linked_departure
 

@@ -63072,6 +63072,91 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented nonmana payment",
+          "unrepresented linked results or extra target choices",
+          "unbound recipients"
+        ],
+        "inputs": [
+          "one legal spell target and its current controller",
+          "fixed or announced-X mana vector",
+          "one closed bound consequence",
+          "an always or paid-only outcome"
+        ],
+        "outputs": [
+          "ordinary frozen payer choice",
+          "canonical counter or payment",
+          "one replayable bound result after the represented outcome"
+        ],
+        "summary": "Bind one independently owned follow-up to the resolving player or the legal spell target's current controller before asking that payer to pay or decline."
+      },
+      "blockers": [],
+      "dependencies": [
+        "stack.counter.controller_payment"
+      ],
+      "dependency_fail_closed_rationale": "The consequence must be independently closed, its recipient must match the typed payer or resolving controller, and a shared X must be the announced cast value.",
+      "dependency_fail_closed_status": "passed",
+      "id": "stack.counter.payment_followup",
+      "implementation_components": [
+        "quorune.compiler.counter_templates.targeted_controller_payment_followup_template",
+        "quorune.rules.stack_controller_payment_shapes.stack_controller_payment_node_capabilities",
+        "quorune.rules.stack_controller_payment_cost.counter_payment_followup",
+        "quorune.rules.stack_controller_payment_cost.bound_counter_payment_followup_effects",
+        "quorune.semantic_choices.payments.OptionalPaymentHandler"
+      ],
+      "implementation_mutation_rationale": "The original Divert Disaster decline witness detects a paid-only Lander result incorrectly executed after decline.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_counter_followups_resolve_after_either_payment_outcome",
+        "test_original_counter_paid_followups_keep_surveil_and_lander_private_or_conditional"
+      ],
+      "multiplayer_tests": [
+        "test_original_counter_followups_resolve_after_either_payment_outcome",
+        "test_original_counter_paid_followups_keep_surveil_and_lander_private_or_conditional"
+      ],
+      "negative_tests": [
+        "test_counter_payment_followup_shape_is_detached_and_rejects_unbound_payer",
+        "test_counter_payment_paid_followup_on_decline_mutant_is_killed"
+      ],
+      "official_rules": [
+        "117.2e",
+        "118.12",
+        "118.12a",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.6a"
+      ],
+      "positive_tests": [
+        "test_original_counter_followups_resolve_after_either_payment_outcome",
+        "test_original_counter_paid_followups_keep_surveil_and_lander_private_or_conditional"
+      ],
+      "privacy_tests": [
+        "test_original_counter_followups_resolve_after_either_payment_outcome",
+        "test_original_counter_paid_followups_keep_surveil_and_lander_private_or_conditional"
+      ],
+      "replay_tests": [
+        "test_original_counter_followups_resolve_after_either_payment_outcome",
+        "test_original_counter_paid_followups_keep_surveil_and_lander_private_or_conditional"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "temporary target-specific prohibitions",
           "payment-to-counter rules",
           "dynamic mana-value and power predicates",
@@ -85710,7 +85795,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 763,
+  "registry_version": 764,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

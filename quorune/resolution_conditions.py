@@ -120,7 +120,9 @@ def _card_only_graveyard_count(quantity) -> bool:
         and not quantity.terms and not quantity.mana_colors)
 
 
-def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> bool:
+def resolution_condition_is_closed(
+    condition: FixedPublicStateConditionSpec, *, allow_keyword_count: bool = False,
+) -> bool:
     """Exclude object-relative bindings; this boundary binds only the controller."""
 
     if condition.kind in {
@@ -136,8 +138,15 @@ def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> 
     ):
         return False
     quantity = condition.quantity
+    keyword_count = (
+        allow_keyword_count and quantity is not None and quantity.schema_version == 6
+        and quantity.scope is CharacteristicQuantityScope.CONTROLLER_ZONE
+        and condition.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST
+        and condition.amount == 1 and quantity.query is not None and bool(quantity.query.keywords_all)
+        and not quantity.query.keywords_none
+    )
     return quantity is None or not (
-        (quantity.schema_version != 1 and not _card_only_graveyard_count(quantity))
+        (quantity.schema_version != 1 and not _card_only_graveyard_count(quantity) and not keyword_count)
         or quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE
         or quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER
         or quantity.exclude_source
@@ -211,7 +220,9 @@ def validate_resolution_condition_instruction(
         condition = KickedCastCondition()
     else:
         condition = FixedPublicStateConditionSpec.from_dict(effect["condition"])
-    if not cast_fact and not resolution_condition_is_closed(condition):
+    if not cast_fact and not resolution_condition_is_closed(
+        condition, allow_keyword_count=effect.get('schema_version') == 8,
+    ):
         raise ValueError("Object-relative resolution conditions are unsupported")
     if ordinary_alternative and not all(resolution_condition_is_closed(leaf) for leaf in condition.leaf_conditions()):
         raise ValueError("Each branch condition leaf must bind only the resolving controller")
