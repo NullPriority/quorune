@@ -186,6 +186,22 @@ def _apply_next_spell_improvise_or_next_spell_uncounterable(
     return True
 
 
+def _apply_next_spell_payment(host, effect, *, actor, operation, reason):
+    from ..rules.next_spell_payment import grant_next_spell_payment, next_spell_payment_kind
+
+    if actor not in host.active_seats:
+        raise GameRuleError("Next spell payment requires the active ability controller")
+    try:
+        kind = next_spell_payment_kind({key: value for key, value in effect.items()
+                                        if key not in {"reason", "_runtime_source"}}, actor=actor)
+        grant_next_spell_payment(host.state.players[actor].stats, host.state.turn_sequence, kind)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(actor, "effect.next_spell_payment", f"{actor}'s next spell has {kind}.",
+              {"player": actor, "payment": kind, "reason": reason}, importance=1, changed_players=[actor])
+    return True
+
+
 
 def _apply_veil_of_summer(
     host: Any,
@@ -460,6 +476,7 @@ HANDLERS = {
     'gain_class_level': _apply_gain_class_level,
     'grant_uncounterable_hexproof_from_colors_until_end': _apply_grant_uncounterable_hexproof_from_colors_until_end,
     'mana': _apply_mana,
+    'grant_next_spell_payment': _apply_next_spell_payment,
     'next_spell_improvise': _apply_next_spell_improvise_or_next_spell_uncounterable,
     'next_spell_uncounterable': _apply_next_spell_improvise_or_next_spell_uncounterable,
     'veil_of_summer': _apply_veil_of_summer,

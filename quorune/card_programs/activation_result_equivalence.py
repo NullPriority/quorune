@@ -74,4 +74,18 @@ def _fixed_target_counter(current, old):
 
 def fixed_activation_results_equal(current, old):
     return (_artifact_from_hand(current, old) or _graveyard_return(current, old)
-        or _opponent_graveyards(current, old) or _fixed_target_counter(current, old))
+        or _opponent_graveyards(current, old) or _fixed_target_counter(current, old)
+        or _next_spell_improvise(current, old))
+
+
+def _next_spell_improvise(current, old):
+    from ..rules.next_spell_payment import next_spell_payment_kind, next_spell_payment_node_capabilities
+
+    if (current.target_schema is not None or old.target_schema is not None or len(current.effects) != 1
+            or list(old.effects) != [{"op": "next_spell_improvise", "player": "$controller"}]):
+        return False
+    try:
+        kind = next_spell_payment_kind(current.effects[0])
+    except (TypeError, ValueError):
+        return False
+    return kind == "improvise" and _owned(current, next_spell_payment_node_capabilities)

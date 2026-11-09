@@ -38,9 +38,14 @@ def revalidate_resources_after_mana(host, proposal, card, option, details):
     from .additional_tap_costs import validate_fixed_tap_payment
     from .conspire_costs import conspire_tap_cards
     from .emerge_costs import validate_emerge_after_mana_payment
+    from .mixed_tap_payment import revalidate_mixed_tap_payment
     from .waterbend_costs import validate_cast_waterbend
 
     _revalidate_granted_payment(host, proposal, card, option, details)
+    try:
+        revalidate_mixed_tap_payment(host, proposal, option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), status="unpayable", reason="stale_mixed_tap_payment") from exc
     for validate, reason in (
         (validate_emerge_after_mana_payment, "stale_emerge_sacrifice"),
         (conspire_tap_cards, "stale_conspire_after_mana"),

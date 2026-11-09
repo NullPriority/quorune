@@ -967,9 +967,9 @@ def _create_spell_item(
         rebound=rebound,
     )
     ref = existing_item.ref if existing_item is not None else host._next_ref("S")
-    used_improvise = bool(
-        (host.state.players[proposal.seat].stats.get if preparing else host.state.players[proposal.seat].stats.pop)("next_spell_improvise", False)
-    )
+    from ..next_spell_payment import capture_next_spell_payments
+    used_improvise, next_payments = capture_next_spell_payments(
+        host.state.players[proposal.seat].stats, host.state.turn_sequence, preparing=preparing)
     used_uncounterable = bool(
         (host.state.players[proposal.seat].stats.get if preparing else host.state.players[proposal.seat].stats.pop)(
             "next_spell_uncounterable", False
@@ -1008,7 +1008,7 @@ def _create_spell_item(
         context=declared_spell_context(proposal,details,selected_option,costs,
             provenance=_cast_provenance_context(proposal,spent,state=host.state,record=record,card=card),
             lifecycle_context=lifecycle_context,method_spec=method_spec,used_uncounterable=used_uncounterable,
-            intrinsic_uncounterable=intrinsic_uncounterable,used_improvise=used_improvise),
+            intrinsic_uncounterable=intrinsic_uncounterable,used_improvise=used_improvise,next_payments=next_payments),
     )
 
 

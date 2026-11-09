@@ -2,7 +2,7 @@ from __future__ import annotations
 from .control_capability_shapes import fixed_control_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
-from .temporary_cast_restrictions import temporary_cast_node_capabilities
+from .next_spell_payment import temporary_player_rule_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
 from .combat_removal_shapes import combat_removal_node_capabilities
@@ -157,7 +157,7 @@ _COMPONENT_RESOLVERS = (
     fixed_resolution_mana_choice_capabilities,
     fixed_resolution_mana_capabilities,
     all_kind_counter_component_capabilities,
-    temporary_cast_node_capabilities,
+    temporary_player_rule_node_capabilities,
     fixed_goad_node_capabilities,
     fixed_prevention_component_capabilities,
     fixed_extra_turn_node_capabilities,

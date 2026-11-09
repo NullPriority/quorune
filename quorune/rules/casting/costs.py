@@ -49,6 +49,7 @@ from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...object_query import object_matches_query, object_query_result
 from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from ..action_proposals import CastCostOption
+from ..next_spell_payment import with_next_spell_payments
 from ..casting_additional_costs import (
     AdditionalCostError,
     fixed_counter_additional_cost,
@@ -143,11 +144,10 @@ def _compiled_payment_mechanics(
 ) -> list[dict[str, Any]] | None:
     """Resolve trusted printed payment mechanics at the selected face."""
 
+    stats = host.state.players[seat].stats
+    turn_sequence = host.state.turn_sequence
     if suppress_source_costs:
-        mechanics: list[dict[str, Any]] = []
-        if host.state.players[seat].stats.get("next_spell_improvise"):
-            mechanics.append({"kind": "improvise", "schema_version": 1})
-        return mechanics
+        return with_next_spell_payments(stats, turn_sequence, [])
     mechanics = host._cost_payment_mechanics(record, schema)
     printed_keywords = {str(value).casefold() for value in record.keywords}
     compiled_by_kind: dict[str, tuple[Any, ...]] = {
@@ -195,12 +195,7 @@ def _compiled_payment_mechanics(
         printed = kind in printed_keywords
         if (declared or printed) and not compiled_by_kind[kind]:
             return None
-    if host.state.players[seat].stats.get("next_spell_improvise") and not any(
-        str(value.get("kind") or "").casefold() == "improvise"
-        for value in mechanics
-    ):
-        mechanics.append({"kind": "improvise", "schema_version": 1})
-    return mechanics
+    return with_next_spell_payments(stats, turn_sequence, mechanics)
 
 
 def _with_kicker_cost(
@@ -1037,6 +1032,8 @@ def _apply_payment_mechanics(
     spend_context: Any,
     reserved_cards: Sequence[Any] = (),
 ) -> tuple[dict[str, Any], list[Any]] | None:
+    from .mixed_tap_payment import apply_tap_payments, supports_mixed_tap_payment
+
     choice_schema: dict[str, Any] = {}
     selected_cards: list[Any] = list(reserved_cards)
     kinds = tuple(
@@ -1056,7 +1053,7 @@ def _apply_payment_mechanics(
         for mechanic in mechanics
         if str(mechanic.get("kind") or "").casefold() == "delve"
     )
-    if len(tap_mechanics) > 1 or len(delve_mechanics) > 1:
+    if len(delve_mechanics) > 1 or (len(tap_mechanics) > 1 and not supports_mixed_tap_payment(tap_mechanics)):
         return None
     for mechanic in mechanics:
         kind = str(mechanic.get("kind") or "").casefold()
@@ -1073,33 +1070,9 @@ def _apply_payment_mechanics(
         choice_schema=choice_schema,
     ):
         return None
-    if tap_mechanics:
-        mechanic = tap_mechanics[0]
-        kind = str(mechanic.get("kind") or "").casefold()
-        if kind == "convoke":
-            if not _apply_convoke(
-                host,
-                seat,
-                option,
-                response,
-                hint=hint,
-                spend_context=spend_context,
-                selected_cards=selected_cards,
-                choice_schema=choice_schema,
-            ):
-                return None
-        elif not _apply_improvise(
-            host,
-            seat,
-            option,
-            mechanic,
-            response,
-            hint=hint,
-            spend_context=spend_context,
-            selected_cards=selected_cards,
-            choice_schema=choice_schema,
-        ):
-            return None
+    if not apply_tap_payments(host, seat, option, tap_mechanics, response, hint=hint,
+                              spend_context=spend_context, selected_cards=selected_cards, choice_schema=choice_schema):
+        return None
     return choice_schema, selected_cards
 
 

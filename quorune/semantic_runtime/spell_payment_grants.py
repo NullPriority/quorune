@@ -8,6 +8,7 @@ from typing import Any, Mapping
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face
 from ..card_programs.admission import program_has_complete_card_program_admission
+from ..casting_payment_keywords import PAYMENT_GRANT_SCOPE_FIELD
 from ..object_predicate import ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from .component_registry import exact_fields
@@ -140,7 +141,7 @@ def matching_spell_payment_kinds(host, seat, card, grants, *, origin, cast_type_
 
 
 def granted_payment_mechanics(kinds):
-    return [{"kind": kind, "schema_version": 1} for kind in kinds]
+    return [{"kind": kind, "schema_version": 1, PAYMENT_GRANT_SCOPE_FIELD: "battlefield"} for kind in kinds]
 
 
 def revalidate_spell_payment_grant(host, seat, card, uses, *, origin, cast_type_line, face_down):

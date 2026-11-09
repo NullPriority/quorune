@@ -263,9 +263,9 @@ pair one with a fixed mana payment. The separate
 lowered literal Convoke, Improvise and Delve nodes beside an admitted price and
 one complete result. Each node retains its original source span, including
 payment keywords between the price and result. Repeated instances retain their
-ordinary redundancy. Concurrent Convoke and Improvise still require a mixed
-tap-payment owner and remain residual, as do variable tap discounts and unknown
-price or keyword qualifiers.
+ordinary redundancy. Current typed grants can combine Convoke and Improvise
+through the shared allocation owner. Variable tap discounts and unknown price
+or keyword qualifiers remain residual.
 
 Fixed Waterbend costs compile into an optional typed activation cost field or
 one mandatory casting-price descriptor. The existing result owners keep their
@@ -4121,8 +4121,7 @@ casting-payment component family. Improvise advertises current controlled
 untapped artifacts and commits their tap costs through the casting transaction;
 Delve advertises owner-graveyard cards and commits immutable, revalidated
 graveyard-to-exile identities. Both pay only generic mana after the represented
-total cost is determined. Delve composes with Convoke in one payment proposal;
-parallel tap-payment families remain fail closed.
+total cost is determined. Delve composes with Convoke in one payment proposal.
 
 Compiled battlefield grants supply those same payment mechanics to the
 controller's qualifying spell. The closed subject grammar covers all spells,
@@ -4131,6 +4130,13 @@ creature spells, multicolored spells, and the printed exile-origin restriction.
 The selected cast option supplies the spell characteristics. Current layer-6
 component presence and the active face or unlocked door govern the grant.
 The payment plan checks the grant again after mana abilities resolve.
+
+A resolving ability can grant Convoke or Improvise to the controller's next
+spell this turn. Its typed turn window participates in the shared cost query,
+survives source departure, and is consumed on successful casting. Cleanup
+clears an unused window. A current typed grant can combine the two tap payment
+abilities through one allocation with disjoint resource selections.
+See [ADR 0164](../adr/0164-next-spell-payment-grants.md).
 
 Fixed ordinary or colored-hybrid `Evoke` costs lower to typed alternative-cost
 branches carrying one immutable payment marker. Permanent-spell resolution

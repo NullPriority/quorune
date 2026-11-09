@@ -48,7 +48,7 @@ def capture_paid_creature_stats(host, creature, previous):
 
 
 def declared_spell_context(proposal,details,selected_option,costs,*,provenance,lifecycle_context,
-        method_spec,used_uncounterable,intrinsic_uncounterable,used_improvise):
+        method_spec,used_uncounterable,intrinsic_uncounterable,used_improvise,next_payments=()):
     return {
         **provenance,
         **({ANNOUNCED_DAMAGE_CONTEXT: copy.deepcopy(details[ANNOUNCED_DAMAGE_CONTEXT])}
@@ -78,7 +78,8 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         "cant_be_countered": (
             used_uncounterable or intrinsic_uncounterable
         ),
-        "granted_improvise": used_improvise,
+        "granted_improvise": used_improvise or "improvise" in next_payments,
+        **({"next_spell_payment_grants": list(next_payments)} if next_payments else {}),
         "cost_option": proposal.cost_option_id,
         'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
         **({MUTATE_PAYMENT_FIELD:copy.deepcopy(selected_option[MUTATE_PAYMENT_FIELD])}

@@ -144,6 +144,7 @@ VALID_EFFECT_OPERATIONS = {
     "mana",
     "mill",
     "ninjutsu_entry",
+    "grant_next_spell_payment",
     "next_spell_improvise",
     "next_spell_uncounterable",
     "note",

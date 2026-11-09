@@ -1379,8 +1379,9 @@ class ExactZimoneClosureTests(unittest.TestCase):
         )
         self.assertTrue(artifact.tapped)
         self.assertTrue(engine.state.stack[-1].context["granted_improvise"])
+        self.assertEqual(["improvise"], engine.state.stack[-1].context["next_spell_payment_grants"])
         self.assertNotIn(
-            "next_spell_improvise",
+            "next_spell_payment",
             engine.state.players["A"].stats,
         )
 

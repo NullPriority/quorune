@@ -4,7 +4,7 @@ from .tap_additional_cost import PAYMENT_COMPOSITION_CAPABILITY,PAYMENT_COMPOSIT
 from .casting_additional_cost_groups import fixed_additional_cost_node_capabilities
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
-from .control_capability_shapes import fixed_control_node_capabilities
+from .control_capability_shapes import control_covered_mechanics, fixed_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
@@ -1372,6 +1372,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'resolution.target_controller_information': 'fixed-target-controller-information',
         'trigger.keyword.provoke.fixed': 'provoke',
         'choice.controller.bounded_return_owner_hand': 'bounded-controlled-return',
+        'casting.payment.next_spell_grant': 'fixed-next-spell-payment-grant',
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
@@ -1393,11 +1394,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         mechanic
         for capability, mechanic in mapping.items()
         if capability in supplied
-    } | fixed_library_search_covered_mechanics(supplied) | _control_covered_mechanics(supplied) | fixed_event_player_result_covered_mechanics(supplied)
-
-
-def _control_covered_mechanics(supplied: set[str]) -> set[str]:
-    return {"fixed-resolution-control", "cr-611-continuous-effects"} if "continuous.control.fixed_resolution" in supplied else set()
+    } | fixed_library_search_covered_mechanics(supplied) | control_covered_mechanics(supplied) | fixed_event_player_result_covered_mechanics(supplied)
 
 
 def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:

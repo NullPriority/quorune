@@ -1936,6 +1936,12 @@ the caster's qualifying spell. The shared cost query checks the prospective
 spell face and origin. Redundant grants share a single payment choice, and
 revalidation after mana abilities protects the atomic cast if a grant is lost.
 
+A resolving next-spell grant keeps its payment kinds on the controller's
+current turn window. The next successful cast consumes the whole window even
+if the caster pays entirely with mana. Cleanup clears an unused window. When
+Convoke and Improvise apply through a typed grant, the cast query allocates
+both sets together and validates each selected permanent before committing.
+
 Source-pinned self and battlefield static spell-cost modifiers enter that same
 total-cost stage. The selected face or current layer-6 source supplies one
 strict typed metric over public effective objects, source counters, party,

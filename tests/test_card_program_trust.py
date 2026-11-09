@@ -401,6 +401,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.disjoint_negative_keyword_grant",
                 "continuous.control.attached_source",
                 "continuous.ability.fixed_public_state_grant",
+                "continuous.ability.spell_payment_grant",
                 "continuous.ability.conditional_flash",
                 "continuous.ability.public_state_color_grant",
                 "continuous.declaration.public_state",

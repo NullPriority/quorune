@@ -16773,6 +16773,102 @@
     {
       "applicability": {
         "exclusions": [
+          "ordinal and spell-quality-qualified grants",
+          "unrepresented payment keywords and durations"
+        ],
+        "inputs": [
+          "closed resolving controller grant",
+          "current turn sequence",
+          "existing typed payment plan"
+        ],
+        "outputs": [
+          "one next spell payment window",
+          "successful cast consumption and cleanup expiry",
+          "disjoint Convoke and Improvise selections"
+        ],
+        "summary": "A resolving typed ability grants Convoke or Improvise to its controller's next spell this turn. Redundant grants share the existing payment choice. The grant survives source departure, is consumed on successful casting, and expires at cleanup. A current typed grant allows the shared disjoint mixed tap payment plan."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "Verified capability withdrawal keeps the printed ability residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.payment.next_spell_grant",
+      "implementation_components": [
+        "quorune.compiler.temporary_player_rule_templates.temporary_player_rule_template",
+        "quorune.rules.next_spell_payment.NextSpellPaymentWindow",
+        "quorune.rules.next_spell_payment.capture_next_spell_payments",
+        "quorune.rules.next_spell_payment.with_next_spell_payments",
+        "quorune.effect_runtime.state_and_permissions._apply_next_spell_payment",
+        "quorune.rules.casting.commit._create_spell_item",
+        "quorune.turn_step_owner.TurnStepOwner",
+        "quorune.rules.casting.mixed_tap_payment.apply_tap_payments",
+        "quorune.rules.casting.mixed_tap_payment.revalidate_mixed_tap_payment"
+      ],
+      "implementation_mutation_rationale": "Compiler omission removes the exact next spell payment and is detected by the independent shape witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_wand_grant_is_redundant_and_consumed_with_or_without_convoke",
+        "test_actual_flockchaser_grant_survives_the_attacking_source_departure",
+        "test_actual_archway_grant_pays_with_an_artifact_and_expires_at_cleanup",
+        "test_actual_wand_and_archway_compose_disjoint_tap_payment_resources"
+      ],
+      "multiplayer_tests": [
+        "test_actual_wand_grant_is_redundant_and_consumed_with_or_without_convoke",
+        "test_actual_flockchaser_grant_survives_the_attacking_source_departure",
+        "test_actual_archway_grant_pays_with_an_artifact_and_expires_at_cleanup",
+        "test_actual_wand_and_archway_compose_disjoint_tap_payment_resources"
+      ],
+      "negative_tests": [
+        "test_next_spell_payment_shape_and_window_are_closed",
+        "test_actual_wand_grant_is_redundant_and_consumed_with_or_without_convoke",
+        "test_actual_archway_grant_pays_with_an_artifact_and_expires_at_cleanup",
+        "test_actual_wand_and_archway_compose_disjoint_tap_payment_resources"
+      ],
+      "official_rules": [
+        "514.2",
+        "601.2h",
+        "601.2i",
+        "611.2a",
+        "702.51a",
+        "702.51d",
+        "702.126a",
+        "702.126c"
+      ],
+      "positive_tests": [
+        "test_next_spell_payment_shape_and_window_are_closed",
+        "test_actual_wand_grant_is_redundant_and_consumed_with_or_without_convoke",
+        "test_actual_flockchaser_grant_survives_the_attacking_source_departure",
+        "test_actual_archway_grant_pays_with_an_artifact_and_expires_at_cleanup",
+        "test_actual_wand_and_archway_compose_disjoint_tap_payment_resources"
+      ],
+      "privacy_tests": [
+        "test_actual_wand_grant_is_redundant_and_consumed_with_or_without_convoke"
+      ],
+      "replay_tests": [
+        "test_actual_wand_grant_is_redundant_and_consumed_with_or_without_convoke",
+        "test_actual_flockchaser_grant_survives_the_attacking_source_departure",
+        "test_actual_archway_grant_pays_with_an_artifact_and_expires_at_cleanup",
+        "test_actual_wand_and_archway_compose_disjoint_tap_payment_resources"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "historical games without payment provenance",
           "copied casting decisions as payment",
           "unsupported conditional clauses, variable thresholds or mixed results"
@@ -27355,7 +27451,7 @@
         "exclusions": [
           "ordinal and one-shot payment grants",
           "unknown spell predicates or casting origins",
-          "unrepresented mixed tap-payment combinations"
+          "unrepresented combinations with additional tap prices"
         ],
         "inputs": [
           "complete typed battlefield source ability",

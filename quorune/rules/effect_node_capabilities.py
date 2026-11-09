@@ -84,6 +84,7 @@ from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabi
 from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities, announced_target_set_node_capabilities
 from .closed_effect_program_shapes import closed_effect_program_node_capabilities
 from .linked_exile_return_shapes import linked_ability_exile_node_capabilities
+from .next_spell_payment import temporary_player_rule_node_capabilities
 
 
 def effect_node_capabilities(
@@ -97,7 +98,6 @@ def effect_node_capabilities(
     from .actual_life_transfer import actual_life_transfer_capabilities
     from .per_player_target_sets import per_player_target_node_capabilities
     from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
-    from .temporary_cast_restrictions import temporary_cast_node_capabilities
     from .library_search_rule_shapes import temporary_library_search_node_capabilities
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
     from .occurrence_object_results import occurrence_object_node_capabilities,block_counterpart_zone_capabilities
@@ -127,7 +127,7 @@ def effect_node_capabilities(
         occurrence_object_node_capabilities,
         entry_permanent_result_capabilities,
         attack_event_characteristic_capabilities,
-        temporary_cast_node_capabilities,
+        temporary_player_rule_node_capabilities,
         random_graveyard_return_node_capabilities,
         graveyard_return_choice_node_capabilities,
         fixed_stack_spell_copy_node_capabilities,
