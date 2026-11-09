@@ -1354,6 +1354,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         PREPARATION_RESULT_CAPABILITY: PREPARATION_RESULT_MECHANIC,
         'library.order.fixed_controller':'fixed-controller-top-order',
         'library.order.fixed_hand_to_top': 'fixed-hand-to-library-top',
+        'library.order.affected_player_hand_to_top': 'fixed-affected-player-hand-to-top',
         'library.order.graveyard_targets': 'ordered-graveyard-library-targets',
         'card.return.opponent_graveyard_to_owner_hand': 'opposing-graveyard-return-then-targeted-result',
         'casting.resolution.targeted_graveyard': 'targeted-resolving-graveyard-cast',

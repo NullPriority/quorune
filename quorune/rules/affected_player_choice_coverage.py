@@ -3,6 +3,7 @@ from __future__ import annotations
 """Existing mechanic coverage for closed affected-player choice capabilities."""
 
 from ..alternative_discard_model import ALTERNATIVE_DISCARD_CAPABILITY,ALTERNATIVE_DISCARD_MECHANIC
+from ..library_order_model import AFFECTED_HAND_TOP_CAPABILITY, AFFECTED_HAND_TOP_MECHANIC
 
 from ..compiler.affected_player_discard_templates import (
     FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
@@ -30,6 +31,7 @@ def affected_player_choice_covered_mechanics(supplied: set[str]) -> set[str]:
         (ALTERNATIVE_DISCARD_CAPABILITY,{ALTERNATIVE_DISCARD_MECHANIC}),
         (FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY, {FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC, 'cr-402-hand'}),
         (FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY, {FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC, 'cr-402-hand'}),
+        (AFFECTED_HAND_TOP_CAPABILITY, {AFFECTED_HAND_TOP_MECHANIC, 'cr-402-hand'}),
         (FIXED_CONTROLLER_DISCARD_CAPABILITY, {FIXED_CONTROLLER_DISCARD_MECHANIC}),
         (FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY, {FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC}),
         ('zone.discard.whole_hand', {'whole-hand-discard', 'cr-402-hand'}),

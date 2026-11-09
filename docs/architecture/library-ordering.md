@@ -92,6 +92,21 @@ choice and its order. Opponents see ordinary hand and library counts and any
 destination that becomes public. A pending private selection or destination
 replacement resumes through the existing Game Record continuation.
 
+The affected-player form accepts a fixed one-, two- or three-card instruction
+for one announced player or opponent, every player, or every opponent. A
+target's legal availability is independent of hand size. Printed-order
+sequences keep their earlier results, including life loss against an empty
+hand.
+
+The affected seat receives the top-first choice. When multiple seats choose,
+the APNAP owner keeps their selections private and pins the selected
+incarnations until all choices are complete. The zone owner moves every
+selected card in one batch, preserving the chosen order in each owner's
+library. A required destination replacement choice suspends the batch before
+any movement.
+The projected choice and public event stream leave other seats' selections
+and library orders private.
+
 ## Ordered graveyard targets
 
 An instruction that puts cards from one graveyard at a library edge uses the

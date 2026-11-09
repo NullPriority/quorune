@@ -114,6 +114,10 @@ def _affected_quantity_payload_dependencies(
             and value.get("then") == "exile" and value.get("predicate") is not None):
         from ..rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies
         return fixed_hand_exile_payload_dependencies(value)
+    from ..library_order_model import is_affected_hand_top_choice
+    if is_affected_hand_top_choice(value):
+        from ..rules.affected_player_discard_capability_shapes import fixed_hand_top_apnap_payload_dependencies
+        return fixed_hand_top_apnap_payload_dependencies(value)
     if value.get("op") == "mill" and isinstance(value.get("count"), Mapping):
         from ..rules.mill_capability_shapes import half_mill_payload_dependencies
         return half_mill_payload_dependencies(value) or None

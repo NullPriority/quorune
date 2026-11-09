@@ -6,11 +6,14 @@ from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..errors import GameRuleError
+from ..library_order_model import HAND_TOP_APNAP_RESULT, HAND_TOP_FIRST, is_affected_hand_top_choice
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_choices.apnap_commit import APNAP_OBJECT_COMMIT_OPERATION
-from .apnap_contract import is_typed_hand_exile, validate_apnap_choice_effect
+from .apnap_contract import (
+    is_typed_hand_exile, revalidate_ordered_hand_choices, validate_apnap_choice_effect,
+)
 from .fractional_counts import seal_fractional_counts, apnap_required_count
 from .alternative_discard import alternative_discard_options,validate_alternative_discard_choice
 from ..alternative_discard_model import alternative_discard_count
@@ -214,6 +217,7 @@ class ApnapChoiceOwnerMixin:
                     "prompt": str(effect.get("prompt") or "Choose card(s)"),
                     "count": count,
                     "options": options,
+                    **({"order": HAND_TOP_FIRST} if is_affected_hand_top_choice(effect) else {}),
                     "prior_public_choices": dict(state["selected"]) if not effect.get("hidden") else {},
                     **({DECLINED_LIFE_LOSS: effect[DECLINED_LIFE_LOSS],
                         "prior_payment_choices": {player: bool(refs) for player, refs in state["selected"].items()}}
@@ -284,7 +288,8 @@ class ApnapChoiceOwnerMixin:
         if not queue or queue[0] != seat:
             raise GameRuleError("APNAP choice queue actor changed")
         resume = dict(state.get("resume") or {})
-        if is_typed_hand_exile(effect) or DECLINED_LIFE_LOSS in effect:
+        hand_top = is_affected_hand_top_choice(effect)
+        if is_typed_hand_exile(effect) or hand_top or DECLINED_LIFE_LOSS in effect:
             validate_apnap_choice_effect(self, effect, resume)
         if str(resume.get("stack_ref") or "") != str(
             selection.stack_ref or ""
@@ -316,6 +321,7 @@ class ApnapChoiceOwnerMixin:
         if not alternative_discard_count(effect.get('count')) and len(values) not in allowed_counts:
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         refs: list[str] = []
+        hand_top_incarnations = {}
         for value in values:
             card = self._resolve_object(
                 seat,
@@ -325,11 +331,17 @@ class ApnapChoiceOwnerMixin:
             if card.ref not in options or card.ref in refs:
                 raise GameRuleError("Invalid or duplicate APNAP choice")
             refs.append(card.ref)
+            if hand_top:
+                hand_top_incarnations[card.ref] = card.logical_object_id
         if (not validate_alternative_discard_choice(self,effect,seat,options,refs,response.get('discard_mode'))
                 and len(refs) not in allowed_counts):
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         selected = dict(state["selected"])
         selected[seat] = refs
+        if hand_top:
+            state["hand_top_incarnations"] = {
+                **state.get("hand_top_incarnations", {}), **hand_top_incarnations,
+            }
         queue = list(state["queue"])[1:]
         state["selected"] = selected
         state["queue"] = queue
@@ -354,13 +366,17 @@ class ApnapChoiceOwnerMixin:
     def _apply_apnap_choices(self, state: dict[str, Any]) -> None:
         effect = state["effect"]
         then = str(effect.get("then") or "sacrifice")
+        hand_top = is_affected_hand_top_choice(effect)
         selected_refs: list[str] = []
         player_order = list(
             state.get("player_order") or state["selected"].keys()
         )
+        if hand_top:
+            revalidate_ordered_hand_choices(self, state, player_order)
         for seat in player_order:
             refs = state["selected"].get(seat, ())
-            for ref in refs:
+            # The zone owner appends arrivals. Reverse each owner's top-first choice.
+            for ref in reversed(refs) if hand_top else refs:
                 if ref in selected_refs:
                     raise GameRuleError("APNAP choices contain a duplicate object")
                 selected_refs.append(ref)
@@ -369,6 +385,7 @@ class ApnapChoiceOwnerMixin:
             "discard": "graveyard",
             "exile": "exile",
             "return_owner_hand": "hand",
+            HAND_TOP_APNAP_RESULT: "library",
         }.get(then)
         if destination is None:
             raise GameRuleError(f"Unsupported APNAP continuation {then}")

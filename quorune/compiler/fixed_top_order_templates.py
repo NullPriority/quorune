@@ -1,6 +1,7 @@
 """Whole fixed-count controller ordering and explicit controller shuffle."""
 import re
 
+from .affected_player_discard_templates import fixed_affected_player_hand_top_effect_template
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from ..library_order_model import (
     FixedTopLibraryOrderSpec,
@@ -90,4 +91,4 @@ def fixed_top_order_template(text: str):
             'fixed-controller-shuffle-v1', (fixed_shuffle_effect(),), None,
             (SHUFFLE_MECHANIC,),
         )
-    return _graveyard_library_order_template(text)
+    return fixed_affected_player_hand_top_effect_template(text) or _graveyard_library_order_template(text)

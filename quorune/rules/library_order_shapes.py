@@ -16,6 +16,7 @@ from ..library_order_model import (
     SHUFFLE_OPERATION,
     SHUFFLE_CAPABILITY,
     SHUFFLE_MECHANIC,
+    is_affected_hand_top_choice,
     validate_fixed_shuffle_effect,
     validate_graveyard_library_order_effect,
 )
@@ -63,6 +64,12 @@ def fixed_library_order_capabilities(*, effects, target_schema, mechanic_ids):
     try:
         if effect.get("op") == GRAVEYARD_LIBRARY_ORDER_OPERATION and GRAVEYARD_LIBRARY_ORDER_MECHANIC in mechanic_ids:
             return _graveyard_library_order_capabilities(effect, target_schema)
+        if is_affected_hand_top_choice(effect):
+            from .affected_player_discard_capability_shapes import fixed_affected_player_hand_top_node_capabilities
+
+            return fixed_affected_player_hand_top_node_capabilities(
+                effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+            )
         if target_schema is not None:
             return ()
         if effect.get('op') == TOP_ORDER_OPERATION and TOP_ORDER_MECHANIC in mechanic_ids:

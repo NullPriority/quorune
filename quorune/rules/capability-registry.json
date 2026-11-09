@@ -49035,6 +49035,100 @@
     {
       "applicability": {
         "exclusions": [
+          "variable counts",
+          "another player's hand or library",
+          "non-top destinations"
+        ],
+        "inputs": [
+          "one announced player or opponent or a represented APNAP seat set",
+          "fixed count and private own-hand choices"
+        ],
+        "outputs": [
+          "private top-first selection per affected player",
+          "one simultaneous library destination batch"
+        ],
+        "summary": "Place fixed ordered cards from each instructed player's own hand on top of that player's library through private APNAP choices and a simultaneous zone transaction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The exact payload independently requires the affected-player ordering capability, including after removal of printed coverage metadata.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.order.affected_player_hand_to_top",
+      "implementation_components": [
+        "quorune.compiler.affected_player_discard_templates.fixed_affected_player_hand_top_effect_template",
+        "quorune.rules.affected_player_discard_capability_shapes.fixed_hand_top_apnap_payload_dependencies",
+        "quorune.selection.apnap_contract.revalidate_ordered_hand_choices",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Omitting the affected-player producer makes a fixed targeted hand order residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "negative_tests": [
+        "test_affected_hand_top_rejects_other_zones_counts_and_open_actor_fields",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand"
+      ],
+      "official_rules": [
+        "101.4",
+        "101.4a",
+        "101.4b",
+        "400.7",
+        "401.4",
+        "402.3",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "609.3",
+        "903.9b"
+      ],
+      "positive_tests": [
+        "test_affected_hand_top_compiles_and_requires_its_own_capability",
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "privacy_tests": [
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "replay_tests": [
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "targets across graveyards",
           "unrepresented choice of a different ordering player",
           "non-edge placement"
