@@ -41,6 +41,14 @@ def mark_cast_grant_rider(card: CardInstance, binding) -> None:
     card.annotations[CAST_GRANT_RIDER_FIELD] = binding.to_dict()
 
 
+def mark_resolving_graveyard_copy(card: CardInstance, parent_ref: str) -> None:
+    from .rules.graveyard_copy_cast_model import GRAVEYARD_COPY_PARENT_FIELD
+
+    if not card.is_card_copy or card.zone != "exile" or type(parent_ref) is not str or not parent_ref:
+        raise ZoneObjectStateError("A resolving copy requires an exiled copy and its parent")
+    card.annotations[GRAVEYARD_COPY_PARENT_FIELD] = parent_ref
+
+
 def mark_resolving_paid_entry_copy(card: CardInstance, context) -> None:
     value = context.get(PAID_ENTRY_COPY_FIELD)
     if value is None:

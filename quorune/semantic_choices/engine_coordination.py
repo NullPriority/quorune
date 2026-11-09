@@ -470,6 +470,11 @@ class SemanticChoiceCoordinationMixin:
         from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
         from ..fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
         from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_OPERATION
+        from ..rules.graveyard_copy_cast_model import GRAVEYARD_COPY_OFFER
+
+        if effect.get("op") == GRAVEYARD_COPY_OFFER:
+            from .graveyard_copy_cast import graveyard_copy_cast_options
+            return graveyard_copy_cast_options(self, item=stack_item, actor=actor, effect=effect)
 
         if effect.get("op") == GRAVEYARD_CAST_OPERATION:
             from .targeted_graveyard_cast import targeted_graveyard_cast_options

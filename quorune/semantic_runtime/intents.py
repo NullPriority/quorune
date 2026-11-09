@@ -59,6 +59,7 @@ from .madness_intent import MadnessChoiceIntent
 from .miracle_intent import MiracleCastChoiceIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
+from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 
 
 _EXPLORE_LABEL = "Explore"
@@ -1594,6 +1595,7 @@ SemanticIntent: TypeAlias = (
     | MiracleCastChoiceIntent
     | DiscoverCastIntent
     | GraveyardCastIntent
+    | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
     | ChooseOneRestBottomRandomIntent
     | ShuffleLibraryIntent

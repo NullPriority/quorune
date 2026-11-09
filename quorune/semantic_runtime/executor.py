@@ -6,6 +6,7 @@ from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
+from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
@@ -817,24 +818,27 @@ def _execute_tap_state_intent(
 
 
 def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent, ExileGraveyardCopiesIntent):
+        from ..semantic_choices.graveyard_copy_cast import execute_exile_graveyard_copies
+        return intent.actor, execute_exile_graveyard_copies(sink, intent)
     if isinstance(intent, GraveyardCastIntent):
         from ..semantic_choices.targeted_graveyard_cast import execute_targeted_graveyard_cast
         execute_targeted_graveyard_cast(sink, intent)
-        return intent.effect["player"]
+        return intent.effect["player"], None
     if isinstance(intent,DiscoverCastIntent):
         from ..discover_casting import execute_discover_cast
         execute_discover_cast(sink,intent)
-        return intent.actor
+        return intent.actor, None
     if isinstance(intent,DiscoverCleanupIntent):
         from ..discover_cleanup import execute_discover_cleanup
         execute_discover_cleanup(sink,intent)
-        return intent.actor
+        return intent.actor, None
     if isinstance(intent, MiracleCastChoiceIntent):
         from ..drawing.miracle_casting import execute_miracle_cast_choice
         execute_miracle_cast_choice(sink, intent)
     else:
         sink.madness_choice_intent(intent)
-    return intent.source.card_ref or intent.actor
+    return intent.source.card_ref or intent.actor, None
 
 
 def _synchronize_instruction_observers(sink):
@@ -1005,8 +1009,9 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             result = sink.move_objects_simultaneously_intent(intent)
             results.append((intent.actor, result))
             continue
-        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,GraveyardCastIntent)):
-            results.append((_execute_resolving_cast_choice(sink,intent),None))
+        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
+                               GraveyardCastIntent,ExileGraveyardCopiesIntent)):
+            results.append(_execute_resolving_cast_choice(sink,intent))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):
             results.append(_execute_library_intent(sink, intent))

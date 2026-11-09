@@ -347,6 +347,7 @@ def _value_runtime_requirements(program):
 
 def _zone_move_runtime_requirements(program, required, blockers):
     from ..rules.graveyard_card_targets import (
+        graveyard_copy_cast_runtime_dependencies,
         opposing_graveyard_return_runtime_dependencies, public_graveyard_return_runtime_dependencies,
         targeted_graveyard_cast_runtime_dependencies,
     )
@@ -360,6 +361,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (public_graveyard_return_runtime_dependencies, 'public_graveyard_return'),
         (opposing_graveyard_return_runtime_dependencies, 'opposing_graveyard_return'),
         (targeted_graveyard_cast_runtime_dependencies, 'targeted_graveyard_cast'),
+        (graveyard_copy_cast_runtime_dependencies, 'graveyard_copy_cast'),
     ):
         try:
             required.update(resolver(program))

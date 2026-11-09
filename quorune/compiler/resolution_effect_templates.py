@@ -218,8 +218,11 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .graveyard_copy_cast_templates import graveyard_copy_cast_template
     from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
 
+    if (copy_cast := graveyard_copy_cast_template(text)) is not None:
+        return copy_cast
     if (graveyard_cast := targeted_graveyard_cast_template(text)) is not None:
         return graveyard_cast
     from .untargeted_untap_templates import fixed_land_untap_choice_template

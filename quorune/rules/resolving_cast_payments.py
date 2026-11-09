@@ -8,6 +8,23 @@ from ..replacement_effects import ReplacementChoiceRequired
 from .random_discard_additional_cost import freeze_random_spell_cost_response
 
 
+def resolving_price_requires_cast(option):
+    """CR 118.8c exempts a required price with a stated hidden-card quality."""
+    from ..object_predicate import ObjectQuerySpec
+    from .casting_additional_costs import fixed_zone_change_additional_cost
+    from .reveal_additional_cost import fixed_reveal_additional_cost
+
+    unrestricted_hand = ObjectQuerySpec(zones=("hand",), owner="$actor", known_to_actor=True)
+    for cost in option.get("additional_costs", ()):
+        if fixed_reveal_additional_cost(cost) is not None:
+            return False
+        move = fixed_zone_change_additional_cost(cost)
+        if (move is not None and move.origin_zone == "hand" and move.count is not None and move.count > 0
+                and move.predicate != unrestricted_hand):
+            return False
+    return True
+
+
 def commit_resolving_exile_cast(host, *, actor, response, payment_id, replacement_selections=(),
                                force_without_mana_cost=True):
     return commit_resolving_cast(

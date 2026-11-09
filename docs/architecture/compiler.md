@@ -3682,6 +3682,15 @@ The parent completes its remaining instructions before priority resumes.
 An optional exile rider records the child spell's owner and stack incarnation
 and participates in ordinary destination replacement.
 
+Graveyard copy casts exile the surviving originals together before creating
+the printed copies. The resolving spell binds each new copy to that parent,
+and the existing resolving-cast payment transaction accepts one current
+option at a time. An optional sequence can finish with uncast copies. A
+required sequence offers a cast while a copy has a payable option outside
+the hidden-quality cost exception in CR 118.8c. The
+normal and overloaded bodies retain their separate targeting and both
+preserve the spell's terminal exile.
+
 `compiler/station_context_nodes.py` binds one or two increasing positive Station symbols
 to independently compiled children. Thresholds accumulate; the explicit pinned
 export annotation locates the final fixed power/toughness box. Ambiguous box

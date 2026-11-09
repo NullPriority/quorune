@@ -63,13 +63,21 @@ def require_discover_resolution(host,*,actor,stack_ref):
 
 
 def require_discover_exile(host,progress,*,actor,include_candidate=True):
+    from .rules.graveyard_copy_cast_model import GRAVEYARD_COPY_PARENT_FIELD
+
     cards=[]
     owner = progress.supplier or actor
     for identity in progress.exiled if include_candidate else progress.cleanup_cards:
         card=host.state.cards.get(identity.object_id)
         if (card is None or card.ref!=identity.ref or card.logical_object_id!=identity.logical_object_id
-                or card.owner!=owner or card.zone!='exile' or not card.is_card_object):
+                or card.owner!=owner or card.zone!='exile'):
             raise GameRuleError('A Discover exile incarnation changed')
+        if progress.copy_parent_ref is None:
+            if not card.is_card_object:
+                raise GameRuleError('A Discover exile incarnation must remain a physical card')
+        elif (owner != actor or not card.is_card_copy
+                or card.annotations.get(GRAVEYARD_COPY_PARENT_FIELD) != progress.copy_parent_ref):
+            raise GameRuleError('The resolving copy lost its parent or exact incarnation')
         cards.append(card)
     return tuple(cards)
 
@@ -78,6 +86,8 @@ def _discover_cast_option_pairs(host,*,item,actor,effect):
     if item is None:return ()
     require_discover_resolution(host,actor=actor,stack_ref=item.ref)
     progress=ExileCastProgress.from_dict(effect['progress'])
+    if progress.copy_parent_ref is not None and progress.copy_parent_ref != item.ref:
+        raise GameRuleError("An exiled copy is authorized only during its original resolution")
     require_discover_exile(host,progress,actor=actor)
     if progress.candidate is None:return ()
     card=host.state.cards[progress.candidate.object_id];record=host.card_record(card)
@@ -144,14 +154,21 @@ def fixed_top_exile_cast_options(host, *, item, actor, effect):
 def _fixed_top_cast_option_pairs(host, *, actor, card, progress):
     if card.face_down:
         return ()
-    prefix = f"fixed-top:{progress.fixed_top_payment}:{card.ref}:"
+    prefix = (f"graveyard-copy:{card.ref}:" if progress.copy_parent_ref is not None
+              else f"fixed-top:{progress.fixed_top_payment}:{card.ref}:")
     pairs = []
     for method, face in offered_cast_methods(host, card):
+        if progress.copy_parent_ref is not None and method is not None:
+            continue
         result = build_cast_offer(host, actor, card, cast_method=method, face_name=face,
                                   resolving_payment=progress.fixed_top_payment)
         if result.offer is None:
             continue
         offer = result.offer.to_dict(include_fingerprint=False)
+        required = {}
+        if progress.copy_parent_ref is not None:
+            from .rules.resolving_cast_payments import resolving_price_requires_cast
+            required = {option.option_id: resolving_price_requires_cast(option.to_dict()) for option in result.cost_options}
         for price in offer["cost_options"]:
             option = {**price, "face": offer.get("face"), "cast_method": method}
             label = price.get("label", offer["label"])
@@ -159,6 +176,8 @@ def _fixed_top_cast_option_pairs(host, *, actor, card, progress):
                 label = f"{label} (prototype)"
             public = {**option, "id": prefix + discover_options_fingerprint((option,)), "card": card.ref,
                       "label": f"{card.printed_name} — {label}"}
+            if progress.copy_parent_ref is not None:
+                public["required_cast"] = required[price["id"]]
             pairs.append((public, option))
     return tuple(pairs)
 
@@ -183,7 +202,7 @@ def execute_discover_cast(host,intent):
             raise GameRuleError("The casting method changed from the selected option")
         if method is not None:
             response["cast_method"] = method
-        producer = "fixed-top-exile"
+        producer = "graveyard-copy" if intent.progress.copy_parent_ref is not None else "fixed-top-exile"
     elif intent.progress.supplier is not None:
         producer = 'exile-until-instant-or-sorcery'
     else:

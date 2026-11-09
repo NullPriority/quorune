@@ -18284,6 +18284,102 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented copy counts",
+          "unrepresented source-relative target thresholds"
+        ],
+        "inputs": [
+          "closed graveyard scope and copy quantity",
+          "committed original exile arrivals",
+          "resolving controller"
+        ],
+        "outputs": [
+          "public card copies with original resolution authority",
+          "optional or required free casting with ordered continuation"
+        ],
+        "summary": "Exile surviving graveyard selections and create the printed copies before casting any during the same resolving instruction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The compiled target scope, exact exile arrivals and original resolving frame bound each copy.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.resolution.graveyard_copies",
+      "implementation_components": [
+        "quorune.compiler.graveyard_copy_cast_templates.graveyard_copy_cast_template",
+        "quorune.rules.graveyard_card_targets.graveyard_copy_cast_runtime_dependencies",
+        "quorune.semantic_choices.graveyard_copy_cast.GraveyardCopyCastHandler",
+        "quorune.semantic_choices.graveyard_copy_cast.execute_exile_graveyard_copies",
+        "quorune.discover_casting.execute_discover_cast"
+      ],
+      "implementation_mutation_rationale": "Removing the closed copy template leaves the printed result residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
+        "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
+        "test_original_flawless_forgery_casualty_keeps_the_two_exile_and_copy_results_separate",
+        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets",
+        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment"
+      ],
+      "multiplayer_tests": [
+        "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
+        "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
+        "test_original_flawless_forgery_casualty_keeps_the_two_exile_and_copy_results_separate",
+        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment"
+      ],
+      "negative_tests": [
+        "test_graveyard_copy_cast_scope_and_serialized_copy_progress_are_exact",
+        "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
+        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets"
+      ],
+      "official_rules": [
+        "118.8c",
+        "400.7j",
+        "601.2",
+        "608.2b",
+        "608.2g",
+        "704.5e",
+        "707.12",
+        "707.12a"
+      ],
+      "positive_tests": [
+        "test_graveyard_copy_cast_scope_and_serialized_copy_progress_are_exact",
+        "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
+        "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
+        "test_original_flawless_forgery_casualty_keeps_the_two_exile_and_copy_results_separate",
+        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets"
+      ],
+      "privacy_tests": [
+        "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
+        "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
+        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment"
+      ],
+      "replay_tests": [
+        "test_original_mnemonic_deluge_casts_a_selected_subset_of_three_copies",
+        "test_original_spelltwine_requires_each_castable_copy_and_preserves_partial_targets",
+        "test_original_flawless_forgery_casualty_keeps_the_two_exile_and_copy_results_separate",
+        "test_original_mizzix_mastery_overload_keeps_terminal_exile_and_uses_no_targets",
+        "test_original_spelltwine_can_finish_without_a_hidden_quality_payment"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented colors or ordinary payment",
           "temporary casting grants",
           "unbound graveyard targets"

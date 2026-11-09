@@ -16,8 +16,10 @@ from .model import SemanticChoiceCompletion, SemanticChoiceContinuation, Semanti
 
 def _intent_types():
     from ..targeted_graveyard_cast_model import GraveyardCastIntent
+    from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
     return {cls.__name__:cls for cls in (
         GraveyardCastIntent,
+        ExileGraveyardCopiesIntent,
         typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,
@@ -31,12 +33,14 @@ def _intent_types():
 
 def _value_types():
     from ..connive import ConnivingObject
+    from ..rules.library_selection import LibrarySelectionObjectIdentity
     from ..library_order_model import LibraryArrivalOrder
     from ..semantic_runtime.intents import CounterPlacementAmount
     from ..entry_counter_model import EffectEntryCounter
     from ..reflexive_trigger_model import ReflexivePaidCreatureSnapshot
     from ..scalar_effect_amount_model import PaidCreatureStatSnapshot
     return {cls.__name__:cls for cls in (ConnivingObject, CounterPlacementAmount, EffectEntryCounter, LibraryArrivalOrder,
+                                         LibrarySelectionObjectIdentity,
                                          ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot)}
 
 

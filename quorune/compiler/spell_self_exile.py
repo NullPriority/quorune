@@ -86,7 +86,8 @@ def closed_terminal_spell_move_program(program, *, body_is_closed, price_is_clos
         # The existing price owner checks its exact descriptor and prefix first.
         return price_is_closed(program,recognizers=(body_is_closed,))
     if program.cost_schema is not None:
-        return False
+        from ..rules.overload_shapes import fixed_overload_program_is_closed
+        return fixed_overload_program_is_closed(program)
     body = replace(program,destination='graveyard',
         provenance={**program.provenance,'template_id':template[len(prefix):]},
         coverage=[value for value in program.coverage if value!=move.mechanic])

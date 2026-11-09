@@ -11243,6 +11243,28 @@
       ]
     },
     {
+      "id": "graveyard-copy-resolving-cast",
+      "patterns": [
+        "quorune/compiler/graveyard_copy_cast_templates.py",
+        "quorune/compiler/overload_spell_faces.py",
+        "quorune/compiler/spell_self_exile.py",
+        "quorune/discover_casting.py",
+        "quorune/discover_model.py",
+        "quorune/rules/graveyard_copy_cast_model.py",
+        "quorune/semantic_choices/graveyard_copy_cast.py",
+        "quorune/rules/resolving_cast_payments.py",
+        "tests/fixtures/graveyard-copy-cast-cards.json",
+        "tests/test_graveyard_copy_cast.py"
+      ],
+      "test_modules": [
+        "test_graveyard_copy_cast",
+        "test_fixed_overload",
+        "test_discover_rules",
+        "test_casualty_native",
+        "test_cipher_native"
+      ]
+    },
+    {
       "id": "targeted-resolving-graveyard-cast",
       "patterns": [
         "quorune/compiler/targeted_graveyard_cast_templates.py",

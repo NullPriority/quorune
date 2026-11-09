@@ -48,8 +48,13 @@ def compile_fixed_overload_face(*, record, face_id, face_name, oracle_text, mate
     if not re.search(r'\btarget\b', body, re.I):
         return None
     each_body = re.sub(r'\btarget\b', 'each', body, flags=re.I)
-    variants = [effect_template(body, card_name=face_name or record.name),
-        effect_template(each_body, card_name=face_name or record.name)]
+    from .spell_self_exile import terminal_spell_move_effect_compiler
+
+    source_name = face_name or record.name
+    compile_body = terminal_spell_move_effect_compiler(
+        effect_template, source_name=source_name, oracle_text=body, ordinary_spell=True,
+    )
+    variants = [compile_body(body, card_name=source_name), compile_body(each_body, card_name=source_name)]
     if any(not template or not effects or not mechanics for template, effects, targets, mechanics in variants):
         return None
     if variants[0][2] is None or variants[1][2] is not None:

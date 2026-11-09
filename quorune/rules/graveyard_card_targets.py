@@ -688,6 +688,45 @@ def targeted_graveyard_cast_runtime_dependencies(program):
     return required
 
 
+def graveyard_copy_scope_schema(scope):
+    if scope == "own_all":
+        return None
+    if scope == "paired":
+        return {"groups": [{"id": "clause_0", **targeted_graveyard_cast_schema("you")},
+                           {"id": "clause_1", **targeted_graveyard_cast_schema("opponent")}]}
+    return targeted_graveyard_cast_schema("you" if scope == "own" else scope)
+
+
+def graveyard_copy_cast_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..replacement.immutable import freeze_value, thaw_value
+    from .graveyard_copy_cast_model import GRAVEYARD_COPY_CAPABILITY, GRAVEYARD_COPY_MECHANIC, validate_graveyard_copy_effect
+
+    if len(effects) != 1 or GRAVEYARD_COPY_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        validate_graveyard_copy_effect(effects[0])
+        expected = graveyard_copy_scope_schema(effects[0]["scope"])
+        if thaw_value(freeze_value(target_schema)) != expected:
+            return ()
+    except (ValueError, TypeError):
+        return ()
+    return GRAVEYARD_COPY_CAPABILITY, *(("target.revalidate_resolution",) if expected is not None else ())
+
+
+def graveyard_copy_cast_runtime_dependencies(program):
+    from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION
+
+    effects = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_COPY_OPERATION)
+    if not effects:
+        return ()
+    required = graveyard_copy_cast_node_capabilities(
+        effects=effects, target_schema=program.target_schema, mechanic_ids=(GRAVEYARD_COPY_MECHANIC,),
+    )
+    if not required:
+        raise GraveyardCardTargetError("Graveyard copy casting requires its exact exile and target scope")
+    return required
+
+
 def public_graveyard_return_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
     version = effect.get("schema_version")
     if effect.get("op") != GRAVEYARD_RETURN_OPERATION or version != PUBLIC_GRAVEYARD_RETURN_VERSION:

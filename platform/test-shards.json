@@ -743,6 +743,7 @@
       "test_global_plural_characteristic_sets",
       "test_granted_combat_compositions",
       "test_granted_keyword_events",
+      "test_graveyard_copy_cast",
       "test_history_entry_counters",
       "test_incubate_rules",
       "test_kicked_target_replacements",

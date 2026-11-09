@@ -61,6 +61,7 @@ class ExileCastProgress:
     candidate_ref: str | None
     supplier: str | None = None
     fixed_top_payment: str | None = None
+    copy_parent_ref: str | None = None
 
     def __post_init__(self):
         if self.amount is not None:
@@ -77,6 +78,10 @@ class ExileCastProgress:
             or len(exiled) != 1 or self.candidate_ref is None
         ):
             raise ValueError("Fixed top casting requires one supplied exile incarnation and its payment mode")
+        if self.copy_parent_ref is not None and (
+            type(self.copy_parent_ref) is not str or not self.copy_parent_ref or self.fixed_top_payment != "free"
+        ):
+            raise ValueError("An exiled copy cast requires its resolving parent and free price")
         if (any(not isinstance(card,LibrarySelectionObjectIdentity) for card in exiled)
                 or any(len({getattr(card,key) for card in exiled})!=len(exiled)
                        for key in ('object_id','logical_object_id','ref'))
@@ -129,6 +134,9 @@ class ExileCastProgress:
         if self.fixed_top_payment is not None:
             search = {"schema_version": 4, "scan": "fixed_top_result", "supplier": self.supplier,
                       "payment": self.fixed_top_payment}
+        if self.copy_parent_ref is not None:
+            search = {"schema_version": 5, "scan": "graveyard_copy", "supplier": self.supplier,
+                      "copy_parent_ref": self.copy_parent_ref}
         return {**search, 'exiled': [card.to_dict() for card in self.exiled], 'candidate_ref': self.candidate_ref}
 
     @classmethod
@@ -138,6 +146,7 @@ class ExileCastProgress:
             raise ValueError('Exile scan progress has a closed versioned shape')
         supplier = None
         payment = None
+        copy_parent_ref = None
         if value['schema_version'] == 1 and set(value) == common | {'amount'}:
             amount = value['amount']
             ManaValueLimitSpec(amount)
@@ -151,12 +160,16 @@ class ExileCastProgress:
         elif (value["schema_version"] == 4 and set(value) == common | {"scan", "supplier", "payment"}
               and value["scan"] == "fixed_top_result" and value["payment"] in ("free", "paid")):
             amount, supplier, payment = None, value["supplier"], value["payment"]
+        elif (value["schema_version"] == 5 and set(value) == common | {"scan", "supplier", "copy_parent_ref"}
+              and value["scan"] == "graveyard_copy" and type(value["copy_parent_ref"]) is str):
+            amount, supplier, payment = None, value["supplier"], "free"
+            copy_parent_ref = value["copy_parent_ref"]
         else:
             raise ValueError('Exile scan progress has a closed versioned shape')
         if not isinstance(value['exiled'], (list, tuple)):
             raise ValueError('Exile scan progress requires an ordered history')
         return cls(amount, tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in value['exiled']),
-                   value['candidate_ref'], supplier, payment)
+                   value['candidate_ref'], supplier, payment, copy_parent_ref)
 
 
 DiscoverProgress = ExileCastProgress

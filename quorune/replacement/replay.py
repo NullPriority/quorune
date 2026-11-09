@@ -1251,6 +1251,7 @@ def _decode_semantic_intent_continuation(
             "discover_cleanup",
             "discover_cast",
             "targeted_graveyard_cast",
+            "exile_graveyard_copies",
             "life_change",
             "life_loss_batch",
             "library_selection",

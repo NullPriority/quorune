@@ -1,0 +1,386 @@
+{
+  "cards": [
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Casualty"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Flawless Forgery",
+      "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
+      "oracle_text": "Casualty 3 (As you cast this spell, you may sacrifice a creature with power 3 or greater. When you do, copy this spell and you may choose a new target for the copy.)\nExile target instant or sorcery card from an opponent's graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-04-29",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "56de4cdc-4db0-48ec-8a16-f66086507233",
+      "name": "Mnemonic Deluge",
+      "mana_cost": "{6}{U}{U}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile target instant or sorcery card from a graveyard. Copy that card three times. You may cast the copies without paying their mana costs. Exile Mnemonic Deluge.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "cmc": 9.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "name": "Spelltwine",
+      "mana_cost": "{5}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile target instant or sorcery card from your graveyard and target instant or sorcery card from an opponent's graveyard. Copy those cards. Cast the copies if able without paying their mana costs. Exile Spelltwine.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "cmc": 6.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Overload"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Mizzix's Mastery",
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "oracle_text": "Exile target card that's an instant or sorcery from your graveyard. For each card exiled this way, copy it, and you may cast the copy without paying its mana cost. Exile Mizzix's Mastery.\nOverload {5}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "card_faces": [],
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Cremate",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "oracle_text": "Exile target card from a graveyard.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "focused_graveyard_copy_cast_cards",
+  "rulings": [
+    {
+      "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "After Flawless Forgery resolves, the exiled card remains exiled."
+    },
+    {
+      "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Casualty N means \u201cAs an additional cost to cast this spell, you may sacrifice a creature with power N or greater.\u201d and \u201cWhen you cast this spell, if a casualty cost was paid for it, copy it. If the spell has any targets, you may choose new targets for the copy.\u201d"
+    },
+    {
+      "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If you pay the casualty cost of a spell, the copy will resolve before the original spell."
+    },
+    {
+      "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "The copy of the spell is created on the stack, so it's not \u201ccast.\u201d Abilities that trigger when a player casts a spell won't trigger."
+    },
+    {
+      "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "You may sacrifice only one creature to pay a spell's casualty cost, and you copy the spell only once."
+    },
+    {
+      "oracle_id": "56de4cdc-4db0-48ec-8a16-f66086507233",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You create and cast the copies all during the resolution of Mnemonic Deluge. You can't wait and cast them later. If you don't cast all three copies, the ones you don't cast will cease to exist."
+    },
+    {
+      "oracle_id": "56de4cdc-4db0-48ec-8a16-f66086507233",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Because you're casting the spells during the resolution of Mnemonic Deluge, ignore any timing restrictions based on card type. In other words, you can cast copies of a sorcery card this way."
+    },
+    {
+      "oracle_id": "56de4cdc-4db0-48ec-8a16-f66086507233",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "56de4cdc-4db0-48ec-8a16-f66086507233",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If the card you copy has {X} in its mana cost, you must choose 0 as the value of X when casting the copy without paying its mana cost."
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "The copy you cast first will already be on the stack when you cast the other copy. If that spell targets a spell, you may choose the first copy as a legal target."
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "If you cast a card \u201cwithout paying its mana cost,\u201d you can\u2019t pay any alternative costs. You can pay additional costs such as kicker costs. If the card has mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "If one of Spelltwine\u2019s targets is illegal when Spelltwine tries to resolve, you\u2019ll still exile and copy the remaining legal target."
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "Spelltwine has two targets: the instant or sorcery card in your graveyard and the one in an opponent\u2019s graveyard. You can\u2019t cast Spelltwine unless you can choose both legal targets."
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "You can cast the copies in either order."
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "If the card has X in its mana cost, you must choose 0 as its value."
+    },
+    {
+      "oracle_id": "307e68e0-5095-474c-af02-bfcb2e463763",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "The copies are created in exile and cast from exile. The cards remain exiled."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "The copies are created and cast during the resolution of Mizzix's Mastery. You can't wait to cast them later in the turn. Timing restrictions based on the copy's type are ignored. Other restrictions (such as \"Cast [this spell] only during combat\") are not."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If you don't cast one of the copies (perhaps because there are no legal targets available or you don't want to), the copy will cease to exist."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Mizzix's Mastery is still on the stack as it resolves. If you pay the overload cost, Mizzix's Mastery won't copy itself."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If Mizzix's Mastery exiled multiple cards, you may cast the copies in any order. The last copy you cast will be the first one to resolve."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "The cards remain exiled no matter what happens to the copies."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If the copy has {X} in its mana cost, you must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "40362fe0-a1a9-4d76-8c35-eac474b91af5",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Oracle and rules witnesses for graveyard copy casting"
+}
