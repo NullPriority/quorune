@@ -201,10 +201,17 @@ or allocation assertions. Expiring that budget still fails the witness.
 
 Keep at most two substantive branches active:
 
-- Slot A is pushed and undergoing pull-request certification.
-- Slot B is a separate worktree containing the next independent rules batch.
+- Slot A holds the public batch through protected generation and certification.
+- Slot B holds the next card batch in a separate worktree on an unpublished
+  branch. Keep developing it while Slot A runs.
 
-Create Slot B from current remote `main` while Slot A is running:
+Alternate a consolidated defect-only pull request with a card-support pull
+request that adds at least 500 net distinct capability-closed cards. Group
+reproduced defects and keep each fix and its evidence independently reviewable.
+Resolve release blockers before merging affected work. Continue building card
+support when no defect batch is ready.
+
+Create Slot B from verified `origin/main` while Slot A is running:
 
 ```powershell
 git fetch origin --prune
@@ -231,9 +238,11 @@ the exact finalizer command for the detected platform. Run it without
 `--install-hook` to recheck an existing worktree.
 
 Never rebase or rewrite Slot A while its exact head is being certified. If its
-CI fails, preserve coherent Slot B work, fix Slot A in its own worktree, push a
-new immutable head, and let stale runs cancel. After Slot A merges, fetch and
-rebase Slot B only when its changes actually overlap the merged work.
+CI fails, follow exact-head failure triage and fix Slot A in its own worktree.
+Fetch `origin/main` during certification and before publishing Slot B. When
+verified `origin/main` advances, save a local checkpoint of Slot B and rebase
+onto the verified commit. Reconcile upstream fixes, recheck the retained card
+bindings and affected behavior, and confirm the net gain against the new base.
 
 Clean up a merged slot only after confirming its pull request and `main` SHA:
 
