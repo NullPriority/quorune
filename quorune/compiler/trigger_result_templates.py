@@ -22,6 +22,10 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         if returned is not None:
             return returned, False
     if binding.variant == "source_attacks" and body == binding.body:
+        from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
+        conditional_return = conditional_reanimation_entry_counter_template(body, card_name=card_name)
+        if conditional_return is not None:
+            return conditional_return, False
         from .graveyard_copy_cast_templates import relative_graveyard_copy_template
         from .targeted_graveyard_cast_templates import relative_graveyard_cast_template
         relative = relative_graveyard_copy_template(body, card_name=card_name, event="attack") or relative_graveyard_cast_template(

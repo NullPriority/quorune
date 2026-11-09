@@ -12463,6 +12463,83 @@
     {
       "applicability": {
         "exclusions": [
+          "Attacks on other players, planeswalkers, or battles",
+          "Removed creatures and historical combat activity",
+          "Alternative costs, variable discounts, and resolution-time checks"
+        ],
+        "inputs": [
+          "Current casting controller and typed intrinsic discount",
+          "Current combat attacker identities and actual attack recipients",
+          "Public type-layer characteristics of active attackers"
+        ],
+        "outputs": [
+          "A boolean multiplier for the existing fixed casting cost reduction",
+          "Offer and committed cost use the same current public combat facts"
+        ],
+        "summary": "A closed intrinsic cost predicate reads whether a current creature is attacking the casting player directly."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.cost.self_public_reduction"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the direct-attack authority blocks the conditional discount while the existing return template stays exact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.cost.self_attacking_controller",
+      "implementation_components": [
+        "quorune.compiler.cast_cost_modifier_templates._public_condition_metric",
+        "quorune.rules.casting.public_conditions.current_creature_attacking_controller",
+        "quorune.rules.casting.public_conditions.self_public_condition_dependencies",
+        "quorune.self_cast_reductions.cast_reduction_multiplier"
+      ],
+      "implementation_mutation_rationale": "Erasing the current direct-recipient test accepts attacks on other recipients and fails the combat fact witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_heroic_return_prices_only_current_attacks_at_its_caster"
+      ],
+      "multiplayer_tests": [
+        "test_actual_heroic_return_prices_only_current_attacks_at_its_caster"
+      ],
+      "negative_tests": [
+        "test_withdrawing_either_new_owner_preserves_the_legacy_return",
+        "test_actual_heroic_return_prices_only_current_attacks_at_its_caster",
+        "test_mutating_the_direct_defender_check_breaks_the_current_combat_fact"
+      ],
+      "official_rules": [
+        "109.5",
+        "506.4",
+        "506.5",
+        "508.4",
+        "601.2f"
+      ],
+      "positive_tests": [
+        "test_actual_heroic_return_prices_only_current_attacks_at_its_caster",
+        "test_mutating_the_direct_defender_check_breaks_the_current_combat_fact"
+      ],
+      "privacy_tests": [
+        "test_actual_heroic_return_prices_only_current_attacks_at_its_caster"
+      ],
+      "replay_tests": [
+        "test_actual_heroic_return_prices_only_current_attacks_at_its_caster"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "other zones or player scopes",
           "compound, source-relative, variable or hidden numeric predicates",
           "additional query qualities",
@@ -85135,6 +85212,100 @@
         "test_recolored_permanent_spell_copy_keeps_its_color_as_the_same_token",
         "test_white_recolor_revalidates_original_spell_and_copy_uses_its_own_color",
         "test_colored_face_down_permanent_exposes_its_color_and_keeps_its_identity_private"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "Unrepresented subtype sets and noncreature card-type qualifiers",
+          "Variable counter quantities and plural returns",
+          "New replacement choices or post-entry counter placement"
+        ],
+        "inputs": [
+          "One already qualified and incarnation-pinned scalar graveyard target",
+          "One fixed additional counter instruction qualified by creature or a canonical creature subtype",
+          "Current battlefield type-layer effects and previously applied entry copy values"
+        ],
+        "outputs": [
+          "One conditional self-replacement contribution in the existing entry proposal",
+          "The shared replacement selector rechecks the condition after a change to the entry form",
+          "Counter replacement and committed entry retain the original placing controller and stack source"
+        ],
+        "summary": "A scalar graveyard return can add fixed counters when the prospective entering permanent meets its printed creature type or subtype condition."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.reanimate.entry_counters"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing conditional entry authority blocks the qualified return while the legacy fixed counter return stays exact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.reanimate.conditional_entry_counters",
+      "implementation_components": [
+        "quorune.compiler.reanimation_entry_counter_templates.conditional_reanimation_entry_counter_template",
+        "quorune.entry_counters.effect_entry_counter_effects",
+        "quorune.reanimation_entry_counters.validate_reanimation_entry_effect",
+        "quorune.rules.reanimation_entry_counters.reanimation_entry_counter_runtime_dependencies",
+        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects",
+        "quorune.semantic_runtime.zone_replacement_inputs.conditional_counter_entry_types"
+      ],
+      "implementation_mutation_rationale": "Erasing the entry qualifier breaks the exact versioned effect and fails the source-grounded witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_recommission_reads_the_prospective_layer_four_entry",
+        "test_actual_heroic_return_rechecks_the_copied_entry_form",
+        "test_actual_winter_soldier_uses_its_own_attack_and_relative_target"
+      ],
+      "multiplayer_tests": [
+        "test_actual_recommission_reads_the_prospective_layer_four_entry",
+        "test_actual_heroic_return_rechecks_the_copied_entry_form",
+        "test_actual_winter_soldier_uses_its_own_attack_and_relative_target"
+      ],
+      "negative_tests": [
+        "test_printed_qualification_and_runtime_shape_are_both_required",
+        "test_withdrawing_either_new_owner_preserves_the_legacy_return",
+        "test_actual_recommission_reads_the_prospective_layer_four_entry",
+        "test_actual_heroic_return_rechecks_the_copied_entry_form",
+        "test_actual_winter_soldier_uses_its_own_attack_and_relative_target"
+      ],
+      "official_rules": [
+        "122.6",
+        "122.6a",
+        "400.7",
+        "608.2b",
+        "614.12",
+        "614.15",
+        "616.1a",
+        "616.1c",
+        "616.1f"
+      ],
+      "positive_tests": [
+        "test_printed_qualification_and_runtime_shape_are_both_required",
+        "test_actual_recommission_reads_the_prospective_layer_four_entry",
+        "test_actual_heroic_return_rechecks_the_copied_entry_form",
+        "test_actual_winter_soldier_uses_its_own_attack_and_relative_target"
+      ],
+      "privacy_tests": [
+        "test_actual_recommission_reads_the_prospective_layer_four_entry"
+      ],
+      "replay_tests": [
+        "test_actual_recommission_reads_the_prospective_layer_four_entry",
+        "test_actual_heroic_return_rechecks_the_copied_entry_form",
+        "test_actual_winter_soldier_uses_its_own_attack_and_relative_target"
       ],
       "required_evidence": [
         "positive",

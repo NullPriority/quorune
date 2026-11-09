@@ -58,6 +58,10 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
             if (len(effects) == 1 and effects[0].get("op") in {"counter_stack_target", "counter_unless_pay"}
                     and COUNTER_DESTINATION_FIELD in effects[0]):
                 return None
+    if spell:
+        from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
+        if conditional_reanimation_entry_counter_template(material_line) is not None:
+            return None
     linked_reanimation = fixed_reanimation_followup_template(material_line) if spell else None
     if linked_reanimation is not None and linked_reanimation.followup.exile_on_leave:
         return None

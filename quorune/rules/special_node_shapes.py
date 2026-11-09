@@ -98,6 +98,10 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
             mechanics=mechanics,cost_schema=cost_schema)
     from ..compiler.reanimation_templates import RELATIVE_TARGET_REANIMATION_MECHANIC
     if RELATIVE_TARGET_REANIMATION_MECHANIC in mechanics:
+        from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_MECHANIC
+        if REANIMATION_ENTRY_COUNTER_MECHANIC in mechanics:
+            from .reanimation_entry_counters import reanimation_entry_counter_node_capabilities
+            return reanimation_entry_counter_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
         from .reanimation_capability_shapes import relative_target_reanimation_node_capabilities
         return relative_target_reanimation_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
     from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC

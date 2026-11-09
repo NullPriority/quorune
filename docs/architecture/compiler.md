@@ -3130,6 +3130,15 @@ the existing commander owner-choice rules apply. Shield,
 stun, variable counts, plural returns and other unrepresented riders remain
 outside this composition.
 
+Version six adds a creature or canonical creature subtype condition to the
+entry counter. The replacement selector evaluates the type layer for the
+prospective incarnation under its receiving controller. It rechecks the
+condition after a copy replacement changes the entry form. Recommission uses
+the prospective creature type, and Heroic Return and Winter Soldier check the
+Hero subtype. Winter Soldier uses the existing source-power target predicate
+at its own attack event. Heroic Return's cast cost separately checks whether
+the current combat roster contains a creature attacking its caster directly.
+
 `compiler/public_zone_move_templates.py` owns fixed public-origin movement as
 one shared grammar across spell, triggered, activated, and modal bodies. It
 lowers a target physical card in any graveyard through a closed card-type,

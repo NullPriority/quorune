@@ -232,7 +232,11 @@ def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
                             effects[effect.effect_id+':'+next_key]=replace(effect,effect_id=effect.effect_id+':'+next_key)
                         queue.append((_copy_form_view(source,values),next_key))
                     effect_id=f'{descriptor["handler_id"]}:{subject.object_ref}:{program.key}:{index}:{key}:{target.ref}'
-                    types=tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
+                    if any(counter.required_entry_type is not None for counter in subject.effect_entry_counters):
+                        from .zone_replacement_inputs import conditional_counter_entry_types
+                        types = conditional_counter_entry_types(host, source, subject.destination_controller, copy_values=values)
+                    else:
+                        types = tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
                     effects[effect_id]=ReplacementEffect(effect_id=effect_id,source_id=subject.object_ref,event_kind='zone.change',
                         replacement_class=ReplacementClass.ENTERS_COPY,occurrence_id=occurrence,
                         conditions={'destination':{'eq':'battlefield'},'object_ref':{'eq':subject.object_ref},'entry_copy_form':{'eq':form_key}},

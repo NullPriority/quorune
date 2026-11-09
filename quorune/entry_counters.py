@@ -280,6 +280,12 @@ def effect_entry_counter_effects(
             raise EntryCounterError(
                 "Effect entry counters require typed instructions"
             )
+        conditions = {
+            "destination": {"eq": "battlefield"},
+            "object_ref": {"eq": object_ref},
+        }
+        if counter.required_entry_type is not None:
+            conditions["object_types"] = {"contains": counter.required_entry_type}
         effects.append(
             ReplacementEffect(
                 effect_id=(
@@ -290,10 +296,7 @@ def effect_entry_counter_effects(
                 source_id=counter.source_ref,
                 event_kind="zone.change",
                 replacement_class=ReplacementClass.SELF_REPLACEMENT,
-                conditions={
-                    "destination": {"eq": "battlefield"},
-                    "object_ref": {"eq": object_ref},
-                },
+                conditions=conditions,
                 operations=(
                     CreateAffectedObjectCounter(
                         counter_name=counter.counter_name,

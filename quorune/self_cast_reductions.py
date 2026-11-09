@@ -44,6 +44,7 @@ class CastReductionMetricKind(str, Enum):
     TURN_VALUE = "turn_value"
     SOURCE_COUNTER_COUNT = "source_counter_count"
     SOURCE_POWER = "source_power"
+    CREATURE_ATTACKING_CONTROLLER = "creature_attacking_controller"
     PARTY_SIZE = "party_size"
     PERMANENT_COLOR_COUNT = "permanent_color_count"
     DISTINCT_NAME_COUNT = "distinct_name_count"
@@ -185,13 +186,13 @@ class CastReductionMetric:
             return True
         if self.public_state is not None:
             raise SelfCastReductionError('Other cost metrics do not carry a public-state condition')
-        if self.kind is CastReductionMetricKind.SOURCE_POWER:
+        if self.kind in {CastReductionMetricKind.SOURCE_POWER, CastReductionMetricKind.CREATURE_ATTACKING_CONTROLLER}:
             if (type(self.schema_version) is not int or self.schema_version != 4
                     or not isinstance(self.queries, tuple) or self.queries
                     or self.minimum is not None or self.maximum is not None
                     or self.require_all is not False or self.color is not None or self.turn_fact is not None
                     or self.counter_name is not None or self.aggregate is not None):
-                raise SelfCastReductionError('Source power requires only its version4 scalar kind')
+                raise SelfCastReductionError(f'{self.kind.value} requires only its version-four scalar kind')
             return True
         if self.kind is CastReductionMetricKind.PUBLIC_COUNTER_TOTAL:
             if (type(self.schema_version) is not int or self.schema_version != 2
@@ -658,6 +659,21 @@ def _query_count(host: SelfCastReductionHost, seat: str, metric: CastReductionMe
     return sum(len(_matching_cards(host, seat, query)) for query in metric.queries)
 
 
+def _total_queried_mana_value(
+    host: SelfCastReductionHost, seat: str, queries: tuple[CastReductionObjectQuery, ...],
+) -> int:
+    total = 0
+    for query in queries:
+        for _card, effective in _matching_cards(host, seat, query):
+            value = float(effective.get("mana_value") or 0)
+            if value < 0 or not value.is_integer():
+                raise SelfCastReductionError(
+                    "Cast-reduction mana values must be nonnegative integers"
+                )
+            total += int(value)
+    return total
+
+
 def _turn_fact_holds(host: SelfCastReductionHost, seat: str, fact: CastReductionTurnFact) -> bool:
     if fact is CastReductionTurnFact.CONTROLLER_TURN:
         return host.state.active_player == seat
@@ -806,6 +822,9 @@ def cast_reduction_multiplier(
     if metric.kind is CastReductionMetricKind.PUBLIC_STATE:
         from .rules.casting.public_conditions import self_public_condition_multiplier
         return self_public_condition_multiplier(host,seat,source,metric.public_state)
+    if metric.kind is CastReductionMetricKind.CREATURE_ATTACKING_CONTROLLER:
+        from .rules.casting.public_conditions import current_creature_attacking_controller
+        return int(current_creature_attacking_controller(host, seat))
     if metric.kind is CastReductionMetricKind.PUBLIC_COUNTER_TOTAL:
         return public_player_permanent_counter_total(host)
     if metric.kind in {CastReductionMetricKind.SOURCE_POWER, CastReductionMetricKind.SOURCE_COUNTER_COUNT}:
@@ -821,16 +840,7 @@ def cast_reduction_multiplier(
     if metric.kind is CastReductionMetricKind.OBJECT_COUNT:
         return _query_count(host, seat, metric)
     if metric.kind is CastReductionMetricKind.TOTAL_MANA_VALUE:
-        total = 0
-        for query in metric.queries:
-            for _card, effective in _matching_cards(host, seat, query):
-                value = float(effective.get("mana_value") or 0)
-                if value < 0 or not value.is_integer():
-                    raise SelfCastReductionError(
-                        "Cast-reduction mana values must be nonnegative integers"
-                    )
-                total += int(value)
-        return total
+        return _total_queried_mana_value(host, seat, metric.queries)
     if metric.kind is CastReductionMetricKind.DEVOTION:
         assert metric.color is not None
         return _devotion(host, seat, metric.color)

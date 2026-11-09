@@ -1077,6 +1077,7 @@
       "test_class_lifecycle",
       "test_combat_defending_player_native",
       "test_combat_defending_player_results",
+      "test_conditional_reanimation_entry_counters",
       "test_conditioned_multi_event_triggers",
       "test_controlled_keyword_targets",
       "test_counter_prohibition_runtime",

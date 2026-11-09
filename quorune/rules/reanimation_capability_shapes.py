@@ -192,18 +192,28 @@ def source_power_reanimation_runtime_dependencies(program):
         and any(effect.get("op") == REANIMATE_OPERATION for effect in program.effects)
     ):
         return ()
-    required = relative_target_reanimation_node_capabilities(
-        effects=program.effects, target_schema=schema, mechanics=program.coverage,
-    )
+    from ..reanimation_entry_counters import CONDITIONAL_REANIMATION_COUNTER_VERSION
+
+    conditional = (len(program.effects) == 1
+        and program.effects[0].get("schema_version") == CONDITIONAL_REANIMATION_COUNTER_VERSION)
+    if conditional:
+        from .reanimation_entry_counters import reanimation_entry_counter_node_capabilities
+        required = reanimation_entry_counter_node_capabilities(
+            effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
+        )
+    else:
+        required = relative_target_reanimation_node_capabilities(
+            effects=program.effects, target_schema=schema, mechanics=program.coverage,
+        )
     scope = relative_reanimation_scope(schema)
     expected_event = {
         "optional_permanent": "creature.attacks",
-        "mandatory_creature": "step.begin",
+        "mandatory_creature": "creature.attacks" if conditional else "step.begin",
         "another_creature": "creature.dies.self",
     }.get(scope)
     if not required or program.active_zone != "battlefield" or program.event != expected_event:
         raise ValueError("Relative reanimation requires its exact triggered source and graveyard target")
-    if scope == "optional_permanent" and program.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}:
+    if program.event == "creature.attacks" and program.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}:
         raise ValueError("Relative attack reanimation requires its own attack")
     return required
 

@@ -220,7 +220,10 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     """Retain the precedence of leaves that do not inspect source context."""
     from .graveyard_copy_cast_templates import graveyard_copy_cast_template
     from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
+    from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
 
+    if (conditional_return := conditional_reanimation_entry_counter_template(text)) is not None:
+        return conditional_return
     if (copy_cast := graveyard_copy_cast_template(text)) is not None:
         return copy_cast
     if (graveyard_cast := targeted_graveyard_cast_template(text)) is not None:

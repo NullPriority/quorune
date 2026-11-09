@@ -1346,6 +1346,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         REVEAL_TOP_CAPABILITY: REVEAL_TOP_MECHANIC,
         'resolution.target_set.ordered_results':'shared-target-set-result-sequence',
         'zone.reanimate.entry_counters':'fixed-target-entry-counter-reanimation',
+        'zone.reanimate.conditional_entry_counters':'conditional-target-entry-counter-reanimation',
         REANIMATION_FOLLOWUP_CAPABILITY: REANIMATION_FOLLOWUP_MECHANIC,
         'target.set.one_per_player':'fixed-per-player-target-set',
         FACE_UP_EFFECT_CAPABILITY: FACE_UP_EFFECT_MECHANIC,

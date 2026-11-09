@@ -103,6 +103,7 @@ from .zone_replacement_model import (
 )
 from .zone_replacement_inputs import (
     active_zone_replacement_sources,
+    conditional_counter_entry_types,
     zone_change_subject_characteristics,
     validated_zone_change_snapshot_inputs,
     zone_change_snapshot_events,
@@ -818,6 +819,11 @@ def _zone_change_snapshot_subjects(
         try:
             characteristics, destination_controller, card_types, subtypes, supertypes = zone_change_subject_characteristics(
                 host, card, destination, entry_characteristics, destination_controllers)
+            counters = tuple(effect_entry_counters.get(card.object_id, ()))
+            if any(counter.required_entry_type is not None for counter in counters):
+                object_types = conditional_counter_entry_types(host, card, destination_controller)
+            else:
+                object_types = tuple(sorted(card_types | subtypes | supertypes))
             controlled_basic_types = controller_basic_land_types(
                 host,
                 destination_controller,
@@ -877,9 +883,7 @@ def _zone_change_snapshot_subjects(
                         keywords=tuple(characteristics.get("keywords") or ()),
                         read_ahead_supported=read_ahead_supported,
                     ),
-                    effect_entry_counters=tuple(
-                        effect_entry_counters.get(card.object_id, ())
-                    ),
+                    effect_entry_counters=counters,
                     self_entry_counter_amounts=subject_dynamic_self_entry_amounts(
                         host,
                         card=card,
@@ -913,9 +917,7 @@ def _zone_change_snapshot_subjects(
                         prospective_name=prospective_name,
                         cache=entry_metrics_by_controller,
                     ),
-                    object_types=tuple(
-                        sorted({*card_types, *subtypes, *supertypes})
-                    ),
+                    object_types=object_types,
                     is_card_object=card.is_card_object,
                     transition_kind=transition_kinds.get(
                         card.object_id,

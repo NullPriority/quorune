@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..effect_contracts import EffectFamilyContract, effect_operation_contracts
+from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_VERSIONS
 from ..replacement.immutable import FrozenMap
 from ..source_tap_effect import RUNTIME_SOURCE_CONTINUITY_FIELD, SOURCE_TAP_EFFECT_FIELD
 from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION, validate_linked_instruction
@@ -64,7 +65,7 @@ class DomainEffectHandler:
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
             return IntentPlan(operation=operation, handler_id=self.handler_id, intents=(intent,))
-        if operation == 'reanimate' and effect.get('schema_version') == 3:
+        if operation == 'reanimate' and effect.get('schema_version') in REANIMATION_ENTRY_COUNTER_VERSIONS:
             from ..reanimation_entry_counters import reanimation_entry_counter_intent
             try:
                 intent=reanimation_entry_counter_intent(effect,actor=context.actor,reason=context.default_reason)
