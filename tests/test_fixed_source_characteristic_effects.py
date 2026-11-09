@@ -1808,3 +1808,197 @@ class ChosenCreatureTypeNativeTests(InheritedNativeFixture, unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+class IndefiniteAnimationNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "indefinite-source-animation.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json", FIXTURE], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Indefinite animation",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 24)],
+            ["Generic Bound Commander"],
+        )
+
+    def test_indefinite_source_animation_requires_duration_and_protection_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.resolution_characteristic_model import (
+            INDEFINITE_SOURCE_ANIMATION_CAPABILITY, INDEFINITE_SOURCE_ANIMATION_VERSION,
+        )
+
+        session = self.session(849001)
+        source = self.add(session.engine, "Opal Guardian")
+        self.assert_closed(session, source)
+        program, = (p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if p.event == "spell.cast")
+        self.assertTrue(bind_semantic_program_runtime(program, capability_registry=self.registry,
+            profile="commander_review")["strict"])
+        effect, = program.effects
+        self.assertEqual(("$source.zone_object", INDEFINITE_SOURCE_ANIMATION_VERSION),
+            (effect["card"], effect["schema_version"]))
+        self.assertEqual("R", effect["characteristics"]["protection_color"])
+        for capability in (INDEFINITE_SOURCE_ANIMATION_CAPABILITY, "protection.typed.debt"):
+            dependencies = tuple(value for value in program.capability_dependencies if value != capability)
+            self.assertIn(capability, program.capability_dependencies)
+            withdrawn = replace(program, capability_dependencies=dependencies,
+                capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+            result = bind_semantic_program_runtime(withdrawn, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(result["strict"], result)
+            self.assertIn("capability:undeclared_runtime_dependency:" + capability, result["blockers"])
+        for changed in ({"card": "$target.0"}, {"schema_version": 17.0}, {"duration": "until_end_of_turn"},
+                        {"characteristics": {**effect["characteristics"], "protection_color": "event_colors"}}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                fixed_resolution_characteristic_instruction({**effect, **changed})
+        dynamic = record(
+            "When an opponent casts a creature spell, if this permanent is an enchantment, "
+            "it becomes a 4/4 Giant creature with protection from each of that spell's colors.",
+            type_line="Enchantment",
+        )
+        self.assertNotEqual("exact", compile_oracle_card(dynamic, capability_registry=self.registry).status)
+
+    def test_opal_guardian_animates_after_countered_opponent_spell_and_protects(self):
+        session = self.session(849002)
+        engine = session.engine
+        source = self.add(engine, "Opal Guardian")
+        own = self.add(engine, "Ornithopter", zone="hand")
+        first_bolt = self.add(engine, "Lightning Bolt", seat="B", zone="hand", ref="animation-wrong-type")
+        protected_bolt = self.add(engine, "Lightning Bolt", seat="C", zone="hand", ref="animation-protection")
+        creature = self.add(engine, "Ambush Viper", seat="B", zone="hand")
+        counter = self.add(engine, "Counterspell", zone="hand")
+        private = self.add(engine, "Faerie Invaders", seat="D", zone="hand", ref="animation-private")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"U": 2})
+        session.state.players["B"].mana_pool.update({"G": 2, "R": 1})
+        session.state.players["C"].mana_pool["R"] = 1
+        self.checkpoint(session)
+        self.cast(session, "A", own)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "B", first_bolt, ["A"])
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "B", creature)
+        self.assertEqual(1, self.trigger_count(session, source))
+        creature_spell = next(item for item in session.state.stack if item.kind == "spell")
+        self.cast(session, "A", counter, [creature_spell.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+        self.assertEqual(({"creature"}, {"gargoyle"}),
+            engine._effective_type_parts(session.state.cards[source.object_id])[:2])
+        self.assertEqual((3, 4), (engine._numeric_stat(source.object_id, "power"),
+                                  engine._numeric_stat(source.object_id, "toughness")))
+        self.priority(session, "C")
+        actions = session.packet("pilot:C", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"] == "cast:" + protected_bolt.ref)
+        self.assertNotIn(source.ref, offer["target_schema"]["legal_refs"])
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:C", {"action_id": offer["id"], "targets": [source.ref], "pay": "auto"})
+        self.assertFalse(rejected.ok, rejected.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        self.replay(session, load=True)
+
+    def test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry(self):
+        from quorune.continuous_effects import ContinuousEffectDuration
+
+        session = self.session(849003)
+        engine = session.engine
+        source = self.add(engine, "Opal Champion")
+        viper = self.add(engine, "Ambush Viper", seat="B", zone="hand")
+        faerie = self.add(engine, "Faerie Invaders", seat="B", zone="hand")
+        blink = self.add(engine, "Cloudshift", zone="hand")
+        self.add(engine, "Generic Bound Plains")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        session.state.players["B"].mana_pool.update({"C": 5, "G": 1, "U": 1})
+        filler = session.state.players["A"].zones["hand"][0]
+        engine.move_card(filler, "library", log=False)
+        self.checkpoint(session)
+        self.cast(session, "B", viper)
+        self.cast(session, "B", faerie)
+        self.assertEqual(2, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        old_id = source.logical_object_id
+        layers = [effect for effect in session.state.continuous_effects if effect.source_id == source.object_id]
+        self.assertEqual(3, len(layers))
+        self.assertEqual(1, len({effect.timestamp for effect in layers}))
+        self.assertEqual({ContinuousEffectDuration.ZONE_OBJECT}, {effect.duration for effect in layers},
+            "Animation must belong to the battlefield incarnation")
+        initial_turn = session.state.turn_sequence
+        self.until(session, lambda s: s.state.turn_sequence > initial_turn
+            and s.state.pending_decision is not None and s.state.pending_decision.kind == "priority")
+        self.assertEqual({"creature"}, engine._effective_type_parts(session.state.cards[source.object_id])[0])
+        self.cast(session, "A", blink, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[source.object_id]
+        self.assertNotEqual(old_id, returned.logical_object_id)
+        self.assertEqual({"enchantment"}, engine._effective_type_parts(returned)[0])
+        self.replay(session, load=True)
+
+    def test_cast_trigger_returns_only_the_original_source_to_its_owner(self):
+        cases = (("loss", "Turn to Frog"), ("reentry", "Flicker of Fate"), ("ownership", "Ambush Viper"))
+        for seed, (mode, response) in enumerate(cases, 849005):
+            with self.subTest(mode=mode):
+                session = self.session(seed)
+                engine = session.engine
+                source = self.add(engine, "Jackalope Herd", seat="B" if mode == "ownership" else "A")
+                own = self.add(engine, "Ornithopter", zone="hand")
+                interrupt = self.add(engine, response, seat="B", zone="hand")
+                for card in (source, interrupt):
+                    self.assert_closed(session, card)
+                if mode == "ownership":
+                    engine.change_control(source.object_id, "A", reason="Prepared controller-owner distinction")
+                    self.assertEqual(("B", "A"), (source.owner, source.controller))
+                self.prepare(session)
+                session.state.players["B"].mana_pool.update({"C": 2, "U": 1, "W": 1, "G": 1})
+                self.checkpoint(session)
+                if mode != "reentry":
+                    self.cast(session, "B", interrupt, [source.ref] if mode == "loss" else [])
+                    self.assertEqual(0, self.trigger_count(session, source))
+                    self.assertIsNone(self.resolve(session))
+                if mode == "loss":
+                    self.assertTrue(any(operation.op == "remove_all_abilities"
+                        for effect in session.state.continuous_effects for operation in effect.operations))
+
+                self.cast(session, "A", own)
+                self.assertEqual(0 if mode == "loss" else 1, self.trigger_count(session, source))
+                if mode == "reentry":
+                    original = source.logical_object_id
+                    self.cast(session, "B", interrupt, [source.ref])
+                    self.resolve_top(session)
+                    self.assertNotEqual(original, session.state.cards[source.object_id].logical_object_id)
+                    self.assertEqual(1, self.trigger_count(session, source))
+                elif mode == "ownership":
+                    self.assertEqual("A", session.state.stack[-1].controller)
+                    self.resolve_top(session)
+                    self.assertEqual(["spell"], [item.kind for item in session.state.stack])
+                    self.assertIn(source.object_id, session.state.players["B"].zones["hand"])
+                    self.assertNotIn(source.object_id, session.state.players["A"].zones["hand"])
+
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("hand" if mode == "ownership" else "battlefield",
+                    session.state.cards[source.object_id].zone)
+                self.assertEqual("battlefield", session.state.cards[own.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_temporary_duration_mutant_is_killed_by_native_animation(self):
+        from unittest.mock import patch
+        from quorune import continuous_effect_state as owner
+        from quorune.continuous_effects import ContinuousEffectDuration
+        from quorune.resolution_characteristic_model import INDEFINITE_SOURCE_ANIMATION_VERSION
+
+        original = owner._characteristic_effect_timing
+
+        def temporary(host, effect, *, actor, source):
+            if effect.get("schema_version") == INDEFINITE_SOURCE_ANIMATION_VERSION:
+                return ContinuousEffectDuration.UNTIL_END_OF_TURN, None, None
+            return original(host, effect, actor=actor, source=source)
+
+        with patch.object(owner, "_characteristic_effect_timing", side_effect=temporary):
+            with self.assertRaisesRegex(AssertionError, "Animation must belong to the battlefield incarnation"):
+                self.test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry()

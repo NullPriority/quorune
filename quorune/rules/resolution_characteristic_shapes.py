@@ -12,11 +12,30 @@ from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC,
     FIXED_TARGET_COLOR_VERSION, decode_fixed_target_color, fixed_target_color_schema,
     DERIVED_CHARACTERISTIC_CAPABILITY, RECIPIENT_MANA_VALUE, DerivedResolutionCharacteristicsSpec,
+    IndefiniteSourceAnimationSpec, INDEFINITE_SOURCE_ANIMATION_CAPABILITY, INDEFINITE_SOURCE_ANIMATION_MECHANIC,
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
     FixedResolutionModifierSpec, FixedResolutionSubtypeSettingSpec, decode_temporary_creature_type_choice,
     fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
+
+
+_CONTINUOUS_EFFECT_MECHANIC_OWNERS = frozenset({
+    "continuous.power_toughness.fixed_anthem",
+    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+    "continuous.resolution.declaration_rules_until_end_of_turn",
+    "combat.declaration.source_block_pair",
+    "continuous.resolution.fixed_keyword_zone_object",
+    INDEFINITE_SOURCE_ANIMATION_CAPABILITY,
+    FIXED_TARGET_COLOR_CAPABILITY,
+})
+
+
+def continuous_resolution_covered_mechanics(supplied: set[str]) -> set[str]:
+    covered = {"cr-611-continuous-effects"} if supplied.intersection(_CONTINUOUS_EFFECT_MECHANIC_OWNERS) else set()
+    if INDEFINITE_SOURCE_ANIMATION_CAPABILITY in supplied:
+        covered.add(INDEFINITE_SOURCE_ANIMATION_MECHANIC)
+    return covered
 
 
 def fixed_target_color_node_capabilities(*, effects, target_schema, mechanic_ids):
@@ -99,10 +118,16 @@ def temporary_creature_type_runtime_dependencies(program):
 
 def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema: Any, mechanic_ids: Any) -> tuple[str, ...]:
     mechanics=set(mechanic_ids)
-    if PERMANENT_CHARACTERISTIC_MECHANIC not in mechanics or 'cr-611-continuous-effects' not in mechanics or len(effects)!=1:return ()
+    if ('cr-611-continuous-effects' not in mechanics or len(effects) != 1
+            or not mechanics.intersection({PERMANENT_CHARACTERISTIC_MECHANIC, INDEFINITE_SOURCE_ANIMATION_MECHANIC})):
+        return ()
     try:spec,selection=fixed_resolution_characteristic_instruction(effects[0])
     except (TypeError,ValueError,KeyError):return ()
-    if isinstance(spec, FixedResolutionSubtypeSettingSpec):
+    if isinstance(spec, IndefiniteSourceAnimationSpec):
+        return spec.capability_dependencies if (
+            target_schema is None and INDEFINITE_SOURCE_ANIMATION_MECHANIC in mechanics
+        ) else ()
+    if PERMANENT_CHARACTERISTIC_MECHANIC not in mechanics or isinstance(spec, FixedResolutionSubtypeSettingSpec):
         return ()
     dependencies={PERMANENT_CHARACTERISTIC_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn',
                   *next_turn_effect_dependencies(effects[0]), *source_tap_effect_dependencies(effects[0])}

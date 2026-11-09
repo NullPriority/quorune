@@ -31963,6 +31963,89 @@
     {
       "applicability": {
         "exclusions": [
+          "other recipients",
+          "event-dependent protection",
+          "indefinite noncreature forms"
+        ],
+        "inputs": [
+          "original battlefield incarnation",
+          "fixed creature subtypes and base statistics",
+          "optional fixed keyword or color protection"
+        ],
+        "outputs": [
+          "same-timestamp type, ability, and base-stat components",
+          "one incarnation-scoped effect across cleanup"
+        ],
+        "summary": "Set the original source's fixed creature form for its battlefield incarnation. The layered effect can grant fixed keywords and protection from one color."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "dependency_fail_closed_rationale": "Binding independently infers the indefinite lifetime capability and any fixed protection or keyword requirements from the strict descriptor.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.indefinite_source_animation",
+      "implementation_components": [
+        "quorune.compiler.fixed_resolution_characteristics._indefinite_source_animation",
+        "quorune.resolution_characteristic_model.IndefiniteSourceAnimationSpec",
+        "quorune.resolution_characteristic_model.fixed_resolution_characteristic_instruction",
+        "quorune.continuous_effect_state.apply_fixed_resolution_characteristics"
+      ],
+      "implementation_mutation_rationale": "The real animation witness fails when its canonical characteristic owner substitutes a temporary duration.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry",
+        "test_opal_guardian_animates_after_countered_opponent_spell_and_protects"
+      ],
+      "multiplayer_tests": [
+        "test_opal_guardian_animates_after_countered_opponent_spell_and_protects"
+      ],
+      "negative_tests": [
+        "test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry",
+        "test_indefinite_source_animation_requires_duration_and_protection_authority",
+        "test_opal_guardian_animates_after_countered_opponent_spell_and_protects"
+      ],
+      "official_rules": [
+        "205.1a",
+        "400.7",
+        "601.2i",
+        "603.4",
+        "611.2a",
+        "613.1d",
+        "613.1f",
+        "613.4b",
+        "702.16b"
+      ],
+      "positive_tests": [
+        "test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry",
+        "test_opal_guardian_animates_after_countered_opponent_spell_and_protects"
+      ],
+      "privacy_tests": [
+        "test_opal_guardian_animates_after_countered_opponent_spell_and_protects"
+      ],
+      "replay_tests": [
+        "test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry",
+        "test_opal_guardian_animates_after_countered_opponent_spell_and_protects"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "dynamic quantities outside independently assured scalar amount composition",
           "mixed target roles",
           "chosen or protection abilities",

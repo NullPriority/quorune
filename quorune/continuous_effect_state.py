@@ -257,6 +257,10 @@ def matching_battlefield_objects(
 
 
 def _characteristic_effect_timing(host, effect, *, actor, source):
+    from .resolution_characteristic_model import INDEFINITE_SOURCE_ANIMATION_VERSION
+
+    if effect.get("schema_version") == INDEFINITE_SOURCE_ANIMATION_VERSION:
+        return ContinuousEffectDuration.ZONE_OBJECT, None, None
     if SOURCE_TAP_EFFECT_FIELD not in effect:
         expiry = actor if NEXT_TURN_EFFECT_FIELD in effect else None
         return ContinuousEffectDuration.UNTIL_END_OF_TURN, expiry, None
@@ -327,7 +331,9 @@ def apply_fixed_resolution_characteristics(
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     refs = [card.ref for card in affected]
-    if history is not None:
+    if duration is ContinuousEffectDuration.ZONE_OBJECT:
+        duration_label = "for this battlefield incarnation"
+    elif history is not None:
         duration_label = "until the source untaps or leaves the battlefield"
     else:
         duration_label = "until your next turn" if expiry_player is not None else "until end of turn"

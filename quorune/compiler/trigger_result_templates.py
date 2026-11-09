@@ -50,8 +50,13 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         combat_removal = optional_blocked_combat_removal_template(binding, body)
         if combat_removal is not None:
             return combat_removal, True
-    result = _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
+    compiled, current = _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
         _allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=_allow_optional)
+    if binding.event.value == "spell.cast" and compiled[1] == ({"op": "bounce", "card": "$source"},):
+        from .source_self_effect_templates import pin_source_result_incarnation
+
+        compiled = pin_source_result_incarnation(compiled)
+    result = compiled, current
     if result[0][0] is not None or not _allow_payment:
         return result
     from .reflexive_payment_templates import binding_aware_reflexive_payment_template

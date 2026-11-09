@@ -7,7 +7,7 @@ from typing import Any, Mapping
 
 from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
-from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS, FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import thaw_value
 from .source_tap_effect import SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
@@ -26,11 +26,14 @@ SUBTYPE_GRANT_INSTRUCTION_VERSION = 12
 CHOSEN_SUBTYPE_SETTING_VERSION = 15
 CHOSEN_SUBTYPE_CHOICE_VERSION = 2
 DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION = 16
+INDEFINITE_SOURCE_ANIMATION_VERSION = 17
+INDEFINITE_SOURCE_ANIMATION_MECHANIC = "indefinite-source-animation"
+INDEFINITE_SOURCE_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_source_animation"
 DERIVED_CHARACTERISTIC_CAPABILITY = "continuous.resolution.derived_base_power_toughness"
 RECIPIENT_MANA_VALUE = "recipient_mana_value"
 FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
-    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
+    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, INDEFINITE_SOURCE_ANIMATION_VERSION,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
 # Every non-retaining animation in this closed model sets Creature alone.
@@ -145,7 +148,9 @@ class FixedResolutionCharacteristicsSpec:
             raise ValueError("Characteristic keywords cannot be null")
         return cls(**values)
 
-    def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
+    def layer_operations(
+        self, *, granted_abilities: tuple[ContinuousOperation, ...] = (),
+    ) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
         result: list[tuple[Layer, str, tuple[ContinuousOperation, ...]]] = []
         types: list[ContinuousOperation] = []
         if self.card_types is not None:
@@ -167,12 +172,55 @@ class FixedResolutionCharacteristicsSpec:
             operation = ContinuousOperation("set_colors",self.colors) if self.colors else ContinuousOperation("remove_all_colors")
             result.append((Layer.COLOR,"5",(operation,)))
         abilities = ((ContinuousOperation("remove_all_abilities"),) if self.remove_all_abilities else ()) + tuple(
-            ContinuousOperation("add_ability",keyword) for keyword in self.keywords)
+            ContinuousOperation("add_ability",keyword) for keyword in self.keywords) + granted_abilities
         if abilities:
             result.append((Layer.ABILITY,"6",abilities))
         result.append((Layer.POWER_TOUGHNESS,"7b",(
             ContinuousOperation("set_power_toughness",(self.base_power,self.base_toughness)),)))
         return tuple(result)
+
+
+@dataclass(frozen=True, slots=True)
+class IndefiniteSourceAnimationSpec:
+    settings: FixedResolutionCharacteristicsSpec
+    protection_color: str | None = None
+
+    def __post_init__(self) -> None:
+        settings = self.settings
+        if (not isinstance(settings, FixedResolutionCharacteristicsSpec)
+                or settings.card_types != ("Creature",) or not settings.creature_subtypes
+                or settings.retain_types or settings.remove_all_abilities or settings.colors is not None):
+            raise ValueError("Indefinite source animation requires a closed creature form")
+        if self.protection_color is not None and (
+            type(self.protection_color) is not str or self.protection_color not in tuple("WUBRG")
+        ):
+            raise ValueError("Indefinite source protection requires one fixed color")
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> IndefiniteSourceAnimationSpec:
+        if not isinstance(value, Mapping) or set(value) != {"settings", "protection_color"}:
+            raise ValueError("Indefinite source animation fields are malformed")
+        return cls(FixedResolutionCharacteristicsSpec.from_dict(value["settings"]), value["protection_color"])
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"settings": self.settings.to_dict(), "protection_color": self.protection_color}
+
+    @property
+    def capability_dependencies(self) -> tuple[str, ...]:
+        return (INDEFINITE_SOURCE_ANIMATION_CAPABILITY,
+                *(capability for keyword in self.settings.keywords
+                  for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]),
+                *(("protection.typed.debt",) if self.protection_color is not None else ()))
+
+    def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
+        from .ability_fragments import ProtectionQualityKind, ProtectionSpec, ability_fragment_to_dict
+
+        if self.protection_color is None:
+            return self.settings.layer_operations()
+        protection = ProtectionSpec(ProtectionQualityKind.COLOR, self.protection_color)
+        return self.settings.layer_operations(granted_abilities=(
+            ContinuousOperation("add_ability_fragment", ability_fragment_to_dict(protection)),
+        ))
 
 
 @dataclass(frozen=True, slots=True)
@@ -336,10 +384,19 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
+    if value.get("schema_version") == INDEFINITE_SOURCE_ANIMATION_VERSION:
+        if (type(value["schema_version"]) is not int or value.get("op") != CHARACTERISTIC_OPERATION
+                or set(value) != expected | {"card"}):
+            raise ValueError("Indefinite animation requires its closed versioned instruction")
+        card = value["card"]
+        if (type(card) is not str or not card
+                or (card.startswith("$") if resolved else card != "$source.zone_object")):
+            raise ValueError("Indefinite animation requires its exact source incarnation")
+        return IndefiniteSourceAnimationSpec.from_dict(value["characteristics"]), card
     from .next_turn_effect import split_next_turn_effect
 
     value, source_tapped = split_source_tap_effect(value)

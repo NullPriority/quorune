@@ -4,11 +4,14 @@ from typing import Any, Mapping
 from ..suspect_model import SUSPECT_OPERATION
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, DERIVED_CHARACTERISTIC_CAPABILITY, DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
-    fixed_resolution_characteristic_instruction,
+    INDEFINITE_SOURCE_ANIMATION_VERSION, fixed_resolution_characteristic_instruction,
 )
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    if value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == INDEFINITE_SOURCE_ANIMATION_VERSION:
+        spec, _selection = fixed_resolution_characteristic_instruction(value)
+        return spec.capability_dependencies
     if value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION:
         fixed_resolution_characteristic_instruction(value)
         return (DERIVED_CHARACTERISTIC_CAPABILITY,)

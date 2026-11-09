@@ -374,6 +374,14 @@ incarnation's declared attack or its controller's committed cast. A Class
 ability also requires its current level membership. Offers and submissions use
 the same land-play and cast permission, with ordinary timing and costs.
 
+Indefinite source animation uses the same layered resolution owner as fixed
+characteristic changes. The current source incarnation receives the creature
+type, base statistics and any fixed abilities at one timestamp. The
+intervening enchantment condition uses live types at trigger and resolution.
+A source that leaves and returns has a new incarnation.
+Cast triggers with a direct source return likewise resolve against the original
+battlefield incarnation.
+
 Fuse is a hand-only casting method selected through the ordinary cast offer and
 proposal. It creates one spell with both halves' names, types, colors, and
 combined printed mana cost and mana value. Casting a single half retains that

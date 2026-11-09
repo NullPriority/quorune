@@ -13,12 +13,13 @@ from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_CHOICE_VERSION, PERMANENT_CHARACTERISTIC_MECHANIC,
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, RECIPIENT_MANA_VALUE,
     SUBTYPE_GRANT_INSTRUCTION_VERSION, DerivedResolutionCharacteristicsSpec,
-    FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec,
+    FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec, IndefiniteSourceAnimationSpec,
+    INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_SOURCE_ANIMATION_MECHANIC,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
 from .fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
-from .fixed_target_effect_sequences import _animation_description, _keyword_list
+from .fixed_target_effect_sequences import _animation_description, _COLOR_NAMES, _keyword_list
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 
 
@@ -149,6 +150,43 @@ def _derived_target_animation(body: str, *, cast_x_available: bool):
             ("cr-611-continuous-effects", PERMANENT_CHARACTERISTIC_MECHANIC, "cr-115-targets"))
 
 
+_INDEFINITE_SOURCE_ANIMATION = re.compile(
+    r"(?P<subject>.+?) becomes a (?P<p>[0-9]{1,2})/(?P<t>[0-9]{1,2}) "
+    r"(?P<description>[^.]+?) creature(?: with (?P<abilities>[^.]+))?", re.I,
+)
+_FIXED_PROTECTION_SUFFIX = re.compile(
+    r"(?:^|,? and )protection from (?P<color>white|blue|black|red|green)$", re.I,
+)
+
+
+def _indefinite_source_animation(text, *, source_name, source_is_permanent, source_card_types):
+    match = _INDEFINITE_SOURCE_ANIMATION.fullmatch(text.removesuffix("."))
+    if match is None:
+        return None
+    selected = _subject(match["subject"], source_name=source_name,
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if selected != ({"card": "$source.zone_object"}, None):
+        return None
+    parsed = _animation_description(match["description"])
+    if parsed is None or parsed[0] is not None or not parsed[1]:
+        return None
+    abilities = match["abilities"] or ""
+    protection = _FIXED_PROTECTION_SUFFIX.search(abilities)
+    color = _COLOR_NAMES[protection["color"].casefold()] if protection is not None else None
+    if protection is not None:
+        abilities = abilities[:protection.start()]
+    keywords = _keyword_list(abilities, extended=True) if abilities else ()
+    if keywords is None:
+        return None
+    settings = FixedResolutionCharacteristicsSpec(card_types=("Creature",), creature_subtypes=parsed[1],
+        keywords=keywords, base_power=int(match["p"]), base_toughness=int(match["t"]))
+    spec = IndefiniteSourceAnimationSpec(settings, color)
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": INDEFINITE_SOURCE_ANIMATION_VERSION,
+        "characteristics": spec.to_dict(), "card": "$source.zone_object"}
+    return ("indefinite-source-animation-v1", (effect,), None,
+        ("cr-611-continuous-effects", INDEFINITE_SOURCE_ANIMATION_MECHANIC))
+
+
 def fixed_resolution_characteristics_effect_template(
     text: str, *, source_name: str, source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
@@ -172,7 +210,9 @@ def fixed_resolution_characteristics_effect_template(
     if prefix is not None:body=prefix['body']
     else:
         suffix=re.fullmatch(r"(?P<body>.+?) until end of turn(?P<rider>\. (?:It's|They're) still (?:a land|lands|a planeswalker|planeswalkers)\.)?\.?",normalized,re.I)
-        if suffix is None:return None
+        if suffix is None:
+            return _indefinite_source_animation(normalized, source_name=source_name,
+                source_is_permanent=source_is_permanent, source_card_types=source_card_types)
         body=suffix['body']+(suffix['rider'] or '')
     body=body.rstrip('.')
     derived = _derived_target_animation(body, cast_x_available=cast_x_available)

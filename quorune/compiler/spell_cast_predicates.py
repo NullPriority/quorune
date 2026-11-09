@@ -14,7 +14,7 @@ _CONTROLLER_SPELL_CAST_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _SPELL_CAST_TRIGGER = re.compile(
-    r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
+    r"^When(?:ever)? (?P<relation>you cast|an opponent casts|a player casts) "
     r"(?P<quality>a spell|a creature spell|an artifact spell|"
     r"an enchantment spell|an instant spell|a sorcery spell|"
     r"an instant or sorcery spell|a noncreature spell), "
