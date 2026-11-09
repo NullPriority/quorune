@@ -3,10 +3,11 @@ from __future__ import annotations
 """Compile complete activated-ability discovery descriptors once."""
 
 from dataclasses import replace
+from hashlib import sha256
 import re
 from typing import Any, Iterable, Mapping
 
-from ..abilities import ActivatedAbility
+from ..abilities import ActivatedAbility, parse_activated_abilities
 from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
 from ..carddb import CardRecord
 from ..card_programs.admission import CARD_PROGRAM_ADMISSION_FIELD, CompleteCardProgramAdmission
@@ -243,6 +244,28 @@ def _ability_id(program: SemanticProgram) -> str | None:
     return value
 
 
+def _reviewed_channel_catalog(record, program, ability):
+    """Keep an existing reviewed Channel price when its result has no typed price."""
+    provenance = program.provenance
+    if (record.faces or program.active_zone != "hand" or not ability.discard_source
+            or program.trust_level != "trusted" or program.requires_arbiter or program.cost_schema is not None
+            or provenance.get("review_status") != "reviewed"
+            or provenance.get("source_oracle_hash") != sha256(record.oracle_text.encode("utf-8")).hexdigest()
+            or not provenance.get("source_rulings_hash")):
+        return None
+    matches = tuple(
+        previous for previous in parse_activated_abilities(
+            card_name=record.name, oracle_text=record.oracle_text, keywords=record.keywords,
+        )
+        if previous.ability_id == ability.ability_id and previous.zones == ("hand",)
+        and previous.discard_source and previous.generic_reduction_per_legendary_creature == 1
+        and not previous.uncompiled_costs
+    )
+    if len(matches) != 1:
+        return None
+    return _specialize_compiled_ability(matches[0], source_name=record.name)
+
+
 def _catalog_ability_for_program(
     record: CardRecord,
     program: SemanticProgram,
@@ -294,7 +317,9 @@ def _catalog_ability_for_program(
         ability = matches[0]
     if (ability.ability_local_mana_reduction is not None
             and ABILITY_LOCAL_MANA_REDUCTION_FIELD not in (program.cost_schema or {})):
-        return None
+        ability = _reviewed_channel_catalog(record, program, ability)
+        if ability is None:
+            return None
     target_schema = (
         FrozenMap(program.target_schema)
         if program.target_schema is not None

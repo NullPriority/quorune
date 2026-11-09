@@ -8305,7 +8305,7 @@
           "measurement_probe_id": "batched-card-support-current-census-v2"
         },
         {
-          "bundle_id": "bundle:batched-commander-exact-support-v876",
+          "bundle_id": "bundle:batched-commander-exact-support-v869",
           "member_family_ids": [
             "activated_cost:complete-alternate-additional-cost-grammar",
             "activated_cost:restricted-payment-predicates",
@@ -8788,11 +8788,11 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v876-batched-commander-exact-support",
-      "compiler_version": "oracle-ir-v876",
-      "bundle_id": "bundle:batched-commander-exact-support-v876",
+      "transition_id": "oracle-ir-v869-batched-commander-exact-support",
+      "compiler_version": "oracle-ir-v878",
+      "bundle_id": "bundle:batched-commander-exact-support-v869",
       "candidate_ids": [
-        "bundle:batched-commander-exact-support-v876"
+        "bundle:batched-commander-exact-support-v869"
       ],
       "family_ids": [
         "activated_cost:complete-alternate-additional-cost-grammar",
@@ -9233,7 +9233,7 @@
         "zone.turn_history.permanent_death"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:batched-commander-exact-support-v876"
+      "measurement_id": "measurement:batched-commander-exact-support-v869"
     },
     "forecast_corrections": [
       {
