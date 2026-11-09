@@ -1385,9 +1385,14 @@ shared count and resolution-revalidation capability, and supports a single-
 graveyard constraint through target ownership. The same scalar leaves also feed
 the existing optional and closed-sequence compilers. Heterogeneous roles,
 divided or dynamic quantities, linked results, compound or conditional tails,
-hand returns from other players' graveyards, destinations without a reviewed
-scalar owner, and unsupported characteristic dependencies remain source-spanned
-residuals.
+multiple-target hand returns from other players' graveyards, destinations
+without a reviewed scalar owner, and unsupported characteristic dependencies
+remain source-spanned residuals.
+
+Single-target public graveyard returns use an any-owner card predicate and a
+versioned result that shares the replacement-aware owner-hand commit. The
+closed sequence and mode compilers retain this target scope, and spell copies
+use it when validating a new target.
 
 `compiler/target_set_result_sequences.py` binds explicit `them` and `those`
 follow-ups to one bounded tap or untap target set. Each later counter or fixed

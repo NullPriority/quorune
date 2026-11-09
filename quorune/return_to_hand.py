@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
+from .rules.graveyard_card_targets import GraveyardReturnScope
 from .rules.single_object_zone_transition import (
     SingleObjectDestination,
     SingleObjectOrigin,
@@ -108,9 +109,12 @@ def prepare_graveyard_card_return_to_owner_hand(
     actor: str,
     reason: str,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
+    scope: GraveyardReturnScope = GraveyardReturnScope.OWN,
 ) -> ReturnToHandPlan:
+    if not isinstance(scope, GraveyardReturnScope):
+        raise ReturnToHandError("Graveyard return scope is unsupported")
     card = host.state.cards.get(request.object_id)
-    if card is None or card.owner != actor:
+    if card is None or (scope is GraveyardReturnScope.OWN and card.owner != actor):
         raise ReturnToHandError(
             "Graveyard return requires a card owned by the acting player"
         )
@@ -145,12 +149,16 @@ def validate_return_to_hand_plan(
 def validate_graveyard_card_return_to_hand_plan(
     host: ReturnToHandHost,
     plan: ReturnToHandPlan,
+    *,
+    scope: GraveyardReturnScope = GraveyardReturnScope.OWN,
 ) -> None:
+    if not isinstance(scope, GraveyardReturnScope):
+        raise ReturnToHandError("Graveyard return scope is unsupported")
     if (
         not isinstance(plan, ReturnToHandPlan)
         or plan.requested_destination is not SingleObjectDestination.OWNER_HAND
         or plan.entry.origin is not SingleObjectOrigin.GRAVEYARD
-        or plan.entry.owner != plan.actor
+        or (scope is GraveyardReturnScope.OWN and plan.entry.owner != plan.actor)
     ):
         raise ReturnToHandError(
             "Graveyard card return requires a typed own-graveyard hand plan"
@@ -213,8 +221,10 @@ def commit_return_to_owner_hand(
 def commit_graveyard_card_return_to_owner_hand(
     host: ReturnToHandHost,
     plan: ReturnToHandPlan,
+    *,
+    scope: GraveyardReturnScope = GraveyardReturnScope.OWN,
 ) -> ReturnToHandResult:
-    validate_graveyard_card_return_to_hand_plan(host, plan)
+    validate_graveyard_card_return_to_hand_plan(host, plan, scope=scope)
     return _committed_return_result(
         host,
         plan,
@@ -253,6 +263,7 @@ def return_graveyard_card_to_owner_hand(
     reason: str,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
     target_snapshot: Mapping[str, Any] | None = None,
+    scope: GraveyardReturnScope = GraveyardReturnScope.OWN,
 ) -> ReturnToHandResult | None:
     if target_snapshot is not None:
         from .selection.target_query import target_identity_matches_snapshot
@@ -267,7 +278,9 @@ def return_graveyard_card_to_owner_hand(
             actor=actor,
             reason=reason,
             replacement_selections=replacement_selections,
+            scope=scope,
         ),
+        scope=scope,
     )
 
 

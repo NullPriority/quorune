@@ -31,7 +31,7 @@ from ..rules.capabilities import (
     capability_dependencies_for_node,
 )
 from .modal_program_closure import is_closed_fixed_modal_program
-from .public_zone_program_closure import is_closed_reanimation_effect_program,is_closed_own_graveyard_return_program
+from .public_zone_program_closure import is_closed_reanimation_effect_program,is_closed_graveyard_return_program
 from .source_transform_program_closure import is_closed_source_transform_program
 from .resolution_characteristic_program_closure import is_closed_resolution_characteristic_program
 from ..rules.enlist_shapes import is_closed_enlist_reflexive_program
@@ -1164,12 +1164,12 @@ def _is_closed_targeted_return_to_hand_program(
     )
 
 
-def _is_closed_targeted_own_graveyard_return_program(
+def _is_closed_targeted_graveyard_return_program(
     program: SemanticProgram,
 ) -> bool:
     """Recognize only the reviewed own-graveyard card return family."""
 
-    return is_closed_own_graveyard_return_program(program)
+    return is_closed_graveyard_return_program(program)
 
 
 def _is_closed_public_graveyard_card_exile_program(
@@ -1301,7 +1301,7 @@ def _closed_effect_recognizers():
         _is_closed_mass_destruction_program,
         _is_closed_targeted_exile_program,
         _is_closed_targeted_return_to_hand_program,
-        _is_closed_targeted_own_graveyard_return_program,
+        _is_closed_targeted_graveyard_return_program,
         _is_closed_public_graveyard_card_exile_program,
         _is_closed_fixed_public_zone_move_set_program,
         _is_closed_targeted_tap_state_program,

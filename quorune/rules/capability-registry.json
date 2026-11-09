@@ -6598,6 +6598,109 @@
     {
       "applicability": {
         "exclusions": [
+          "multiple-target and variable cardinalities",
+          "hidden origin zones",
+          "unrepresented card predicates",
+          "unrepresented chained mechanics",
+          "returns to the resolving controller’s hand"
+        ],
+        "inputs": [
+          "one source-spanned mandatory target clause",
+          "one public graveyard card matching the printed type domain",
+          "the original announced logical incarnation and typed public return scope",
+          "the applicable destination replacement selections"
+        ],
+        "outputs": [
+          "shared offer and accepted target legality",
+          "one owner-hand zone request and replacement-aware destination",
+          "new logical object identity and principal-scoped hand projection"
+        ],
+        "summary": "Return one legal physical card from any public graveyard to its owner’s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "card.return.own_graveyard_to_owner_hand",
+        "target.revalidate_resolution",
+        "variant.commander.zone_return"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the public scope, shared return owner, or Commander destination authority prevents the complete clause from binding. The runtime also requires the matching public target scope and versioned result.",
+      "dependency_fail_closed_status": "passed",
+      "id": "card.return.public_graveyard_to_owner_hand",
+      "implementation_components": [
+        "quorune.compiler.return_to_hand_templates.TargetedPublicGraveyardReturnToHandEffectTemplate",
+        "quorune.compiler.return_to_hand_templates.targeted_public_graveyard_return_to_hand_effect_template",
+        "quorune.rules.graveyard_card_targets.public_graveyard_return_target_spec",
+        "quorune.rules.graveyard_card_targets.public_graveyard_return_payload_dependencies",
+        "quorune.rules.graveyard_card_targets.public_graveyard_return_runtime_dependencies",
+        "quorune.semantic_runtime.return_to_hand_handlers.ReturnGraveyardCardToOwnerHandHandler",
+        "quorune.return_to_hand.return_graveyard_card_to_owner_hand",
+        "quorune.rules.graveyard_card_targets.GraveyardReturnScope",
+        "quorune.semantic_runtime.intents.ReturnGraveyardCardToOwnerHandIntent",
+        "quorune.return_to_hand.prepare_graveyard_card_return_to_owner_hand",
+        "quorune.return_to_hand.commit_graveyard_card_return_to_owner_hand"
+      ],
+      "implementation_mutation_rationale": "Omitting the public compiler leaf prevents the public clause from compiling exactly. The owned-graveyard control stays exact. Runtime shape checks reject changing the public zone, owner scope, target count, or result version.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_conspire_returns_cards_to_different_owners",
+        "test_pulse_of_murasa_gains_life_only_when_original_target_is_legal",
+        "test_naya_charm_announces_only_selected_modes_graveyard_target"
+      ],
+      "multiplayer_tests": [
+        "test_original_conspire_returns_cards_to_different_owners",
+        "test_pulse_of_murasa_gains_life_only_when_original_target_is_legal",
+        "test_naya_charm_announces_only_selected_modes_graveyard_target"
+      ],
+      "negative_tests": [
+        "test_public_graveyard_return_lowering_and_runtime_scope",
+        "test_public_graveyard_return_dependencies_fail_closed",
+        "test_original_conspire_returns_cards_to_different_owners",
+        "test_pulse_of_murasa_gains_life_only_when_original_target_is_legal",
+        "test_naya_charm_announces_only_selected_modes_graveyard_target"
+      ],
+      "official_rules": [
+        "108.3",
+        "115.1a",
+        "400.2",
+        "400.3",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "positive_tests": [
+        "test_public_graveyard_return_lowering_and_runtime_scope",
+        "test_original_conspire_returns_cards_to_different_owners",
+        "test_pulse_of_murasa_gains_life_only_when_original_target_is_legal",
+        "test_naya_charm_announces_only_selected_modes_graveyard_target"
+      ],
+      "privacy_tests": [
+        "test_original_conspire_returns_cards_to_different_owners"
+      ],
+      "replay_tests": [
+        "test_original_conspire_returns_cards_to_different_owners",
+        "test_pulse_of_murasa_gains_life_only_when_original_target_is_legal",
+        "test_naya_charm_announces_only_selected_modes_graveyard_target"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "explicit effects that make it day or night",
           "shared-team turns",
           "copied, granted, text-changed, modal, token, and arbitrary ordinary double-faced forms",
@@ -85164,7 +85267,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 758,
+  "registry_version": 759,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

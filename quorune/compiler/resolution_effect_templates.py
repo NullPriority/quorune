@@ -81,6 +81,7 @@ from .reanimation_followup_templates import fixed_reanimation_followup_template
 from .public_zone_move_templates import public_zone_move_effect_template
 from .return_to_hand_templates import (
     targeted_own_graveyard_return_to_hand_effect_template,
+    targeted_public_graveyard_return_to_hand_effect_template,
     targeted_return_to_hand_effect_template,
 )
 from .self_counter_keyword_actions import (
@@ -148,6 +149,7 @@ _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
     targeted_exile_effect_template,
     targeted_return_to_hand_effect_template,
     targeted_own_graveyard_return_to_hand_effect_template,
+    targeted_public_graveyard_return_to_hand_effect_template,
     targeted_counter_effect_template,
     targeted_controller_payment_template,
 )

@@ -32,7 +32,7 @@ from .prepared_creature_power_damage_shapes import prepared_creature_power_damag
 from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from ..delayed_object_model import delayed_object_node_capabilities
 from .delayed_counter_shapes import delayed_counter_node_capabilities
-from .graveyard_card_targets import targeted_own_graveyard_return_node_capabilities
+from .graveyard_card_targets import targeted_graveyard_return_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .public_zone_move_capability_shapes import (
     fixed_owner_zone_move_node_capabilities, fixed_public_zone_move_set_node_capabilities,
@@ -218,7 +218,7 @@ def effect_node_capabilities(
         targeted_destruction_node_capabilities,
         targeted_exile_node_capabilities,
         targeted_return_to_hand_node_capabilities,
-        targeted_own_graveyard_return_node_capabilities, fixed_target_reanimation_node_capabilities,
+        targeted_graveyard_return_node_capabilities, fixed_target_reanimation_node_capabilities,
         public_graveyard_card_exile_node_capabilities,
         fixed_owner_zone_move_node_capabilities,
         fixed_public_zone_move_set_node_capabilities,

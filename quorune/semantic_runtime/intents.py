@@ -11,6 +11,7 @@ from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
+from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
@@ -334,12 +335,17 @@ class ReturnGraveyardCardToOwnerHandIntent:
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     target_snapshot: FrozenMap | None = None
+    scope: GraveyardReturnScope = GraveyardReturnScope.OWN
 
     def __post_init__(self) -> None:
         if not all((self.actor, self.object_ref, self.reason)):
             raise ValueError(
                 "Graveyard-return intents require actor, object, and reason"
             )
+        if not isinstance(self.scope, GraveyardReturnScope):
+            raise ValueError("Graveyard-return intent scope is unsupported")
+        if self.scope is GraveyardReturnScope.PUBLIC and self.target_snapshot is None:
+            raise ValueError("Public graveyard return requires its announced target incarnation")
         if self.target_snapshot is not None:
             snapshot=self.target_snapshot
             if (not isinstance(snapshot,Mapping) or set(snapshot)!={'ref','object_id','zone_change_counter'}

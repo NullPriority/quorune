@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed typed targets for one card in the acting player's graveyard."""
+"""Closed typed targets and return authority for public graveyard cards."""
 
 from dataclasses import dataclass
 from enum import Enum
@@ -11,6 +11,11 @@ from ..creature_subtypes import canonical_creature_subtype
 
 class GraveyardCardTargetError(ValueError):
     """A graveyard-card target descriptor is outside the represented grammar."""
+
+
+class GraveyardReturnScope(str, Enum):
+    OWN = "own"
+    PUBLIC = "public"
 
 
 class GraveyardCardTargetKind(str, Enum):
@@ -79,6 +84,7 @@ class PublicGraveyardCardTargetKind(str, Enum):
     PERMANENT_CARD = "permanent card"
     SORCERY_CARD = "sorcery card"
     ARTIFACT_OR_ENCHANTMENT_CARD = "artifact or enchantment card"
+    CREATURE_OR_LAND_CARD = "creature or land card"
     INSTANT_OR_SORCERY_CARD = "instant or sorcery card"
     NONCREATURE_CARD = "noncreature card"
     NONLAND_CARD = "nonland card"
@@ -104,6 +110,7 @@ class PublicGraveyardCardTargetKind(str, Enum):
                 "artifact",
                 "enchantment",
             ),
+            PublicGraveyardCardTargetKind.CREATURE_OR_LAND_CARD: ("creature", "land"),
             PublicGraveyardCardTargetKind.INSTANT_OR_SORCERY_CARD: (
                 "instant",
                 "sorcery",
@@ -544,6 +551,68 @@ class OwnGraveyardCardTargetSpec:
                 "Graveyard target schema is not canonical"
             )
         return spec
+
+
+GRAVEYARD_RETURN_OPERATION = "return_graveyard_card_to_owner_hand"
+PUBLIC_GRAVEYARD_RETURN_VERSION = 3
+PUBLIC_GRAVEYARD_RETURN_CAPABILITY = "card.return.public_graveyard_to_owner_hand"
+PUBLIC_GRAVEYARD_RETURN_KINDS = (
+    PublicGraveyardCardTargetKind.CARD,
+    PublicGraveyardCardTargetKind.CREATURE_CARD,
+    PublicGraveyardCardTargetKind.ARTIFACT_OR_ENCHANTMENT_CARD,
+    PublicGraveyardCardTargetKind.CREATURE_OR_LAND_CARD,
+)
+
+
+def public_graveyard_return_effect() -> dict[str, Any]:
+    return {"op": GRAVEYARD_RETURN_OPERATION, "card": "$target.0", "schema_version": PUBLIC_GRAVEYARD_RETURN_VERSION}
+
+
+def public_graveyard_return_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    version = effect.get("schema_version")
+    if effect.get("op") != GRAVEYARD_RETURN_OPERATION or version != PUBLIC_GRAVEYARD_RETURN_VERSION:
+        return ()
+    if type(version) is not int or dict(effect) != public_graveyard_return_effect():
+        raise GraveyardCardTargetError("Public graveyard return requires one versioned target operand")
+    return (PUBLIC_GRAVEYARD_RETURN_CAPABILITY, "card.return.own_graveyard_to_owner_hand", "target.revalidate_resolution")
+
+
+def public_graveyard_return_target_spec(schema: Mapping[str, Any]) -> PublicGraveyardCardTargetSpec:
+    spec = PublicGraveyardCardTargetSpec.from_target_schema(schema)
+    if spec.owner_relation != "any" or spec.kind not in PUBLIC_GRAVEYARD_RETURN_KINDS:
+        raise GraveyardCardTargetError("Public graveyard return target predicate is outside the closed family")
+    return spec
+
+
+def targeted_graveyard_return_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if len(effects) == 1 and effects[0].get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION:
+        if not {"return-to-owner-hand", "cr-115-targets"}.issubset(mechanic_ids):
+            return ()
+        try:
+            public_graveyard_return_target_spec(target_schema)
+            return public_graveyard_return_payload_dependencies(effects[0])
+        except (GraveyardCardTargetError, TypeError):
+            return ()
+    return targeted_own_graveyard_return_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+
+
+def public_graveyard_return_runtime_dependencies(program):
+    from ..replacement.immutable import thaw_value
+
+    returns = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_RETURN_OPERATION)
+    if not returns:
+        return ()
+    schema = thaw_value(program.target_schema)
+    public_scope = isinstance(schema, Mapping) and schema.get("zones") == ["graveyard"] and schema.get("owner_relation") == "any"
+    if not public_scope and not any(effect.get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION for effect in returns):
+        return ()
+    public_graveyard_return_target_spec(schema)
+    required = public_graveyard_return_payload_dependencies(returns[0])
+    if len(returns) != 1 or not required:
+        raise GraveyardCardTargetError("Public graveyard return requires its closed versioned result")
+    return required
 
 
 def targeted_own_graveyard_return_node_capabilities(

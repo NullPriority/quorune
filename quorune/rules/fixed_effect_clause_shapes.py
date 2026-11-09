@@ -53,7 +53,7 @@ from .fixed_resolution_characteristic_shapes import (
 )
 from .prevention_component_shapes import fixed_prevention_component_capabilities
 from .graveyard_card_targets import (
-    targeted_own_graveyard_return_node_capabilities,
+    targeted_graveyard_return_node_capabilities,
 )
 from .node_capability_shapes import (
     fixed_amass_node_capabilities,
@@ -226,7 +226,7 @@ _COMPONENT_RESOLVERS = (
     targeted_counter_node_capabilities,
     targeted_destruction_node_capabilities,
     targeted_exile_node_capabilities,
-    targeted_own_graveyard_return_node_capabilities,
+    targeted_graveyard_return_node_capabilities,
     targeted_return_to_hand_node_capabilities,
     targeted_tap_state_node_capabilities,
     public_graveyard_card_exile_node_capabilities,

@@ -8,6 +8,10 @@ from typing import Any, Mapping
 from ..rules.graveyard_card_targets import (
     GraveyardCardTargetKind,
     OwnGraveyardCardTargetSpec,
+    PUBLIC_GRAVEYARD_RETURN_KINDS,
+    PublicGraveyardCardTargetKind,
+    PublicGraveyardCardTargetSpec,
+    public_graveyard_return_effect,
 )
 from .direct_target import (
     DirectPermanentTargetSpec,
@@ -161,6 +165,36 @@ class TargetedOwnGraveyardReturnToHandEffectTemplate:
             target_schema=self.target_schema,
             mechanics=self.mechanics,
         )
+
+
+@dataclass(frozen=True, slots=True)
+class TargetedPublicGraveyardReturnToHandEffectTemplate:
+    target: PublicGraveyardCardTargetSpec
+
+    def compiled(self):
+        return compiled_direct_target(
+            template_id=f"return-target-{self.target.slug}-from-public-graveyard-v1",
+            effects=(public_graveyard_return_effect(),),
+            target_schema=self.target.to_target_schema(),
+            mechanics=("return-to-owner-hand", "cr-115-targets"),
+        )
+
+
+_PUBLIC_GRAVEYARD_RETURN = re.compile(
+    r"return target (?P<target>" + "|".join(re.escape(kind.value) for kind in PUBLIC_GRAVEYARD_RETURN_KINDS)
+    + r") from a graveyard to its owner['’]s hand\.?",
+    re.IGNORECASE,
+)
+
+
+def targeted_public_graveyard_return_to_hand_effect_template(
+    text: str,
+) -> TargetedPublicGraveyardReturnToHandEffectTemplate | None:
+    match = _PUBLIC_GRAVEYARD_RETURN.fullmatch(text.strip())
+    if match is None:
+        return None
+    kind = PublicGraveyardCardTargetKind(match["target"].casefold())
+    return TargetedPublicGraveyardReturnToHandEffectTemplate(PublicGraveyardCardTargetSpec(kind))
 
 
 def targeted_return_to_hand_effect_template(
@@ -319,7 +353,9 @@ __all__ = [
     "GraveyardCardTargetKind",
     "ReturnToHandTarget",
     "TargetedOwnGraveyardReturnToHandEffectTemplate",
+    "TargetedPublicGraveyardReturnToHandEffectTemplate",
     "TargetedReturnToHandEffectTemplate",
     "targeted_own_graveyard_return_to_hand_effect_template",
+    "targeted_public_graveyard_return_to_hand_effect_template",
     "targeted_return_to_hand_effect_template",
 ]

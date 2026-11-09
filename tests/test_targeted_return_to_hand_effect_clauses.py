@@ -465,7 +465,7 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
 
     def test_unsupported_return_variants_remain_material_residuals(self):
         for text in (
-            "Return target creature card from a graveyard to its owner's hand.",
+            "Return target creature card from a library to its owner's hand.",
             "Return target creature to its controller's hand.",
             "Return target creature or spell to its owner's hand.",
         ):

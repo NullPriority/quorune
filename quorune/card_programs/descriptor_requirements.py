@@ -10,6 +10,10 @@ from ..resolution_characteristic_model import (
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
     version = value.get("schema_version")
+    if value.get("op") == "return_graveyard_card_to_owner_hand":
+        from ..rules.graveyard_card_targets import public_graveyard_return_payload_dependencies
+
+        return public_graveyard_return_payload_dependencies(value)
     if (value.get("op") == CHARACTERISTIC_OPERATION and type(version) is int
             and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS):
         spec, _selection = fixed_resolution_characteristic_instruction(value)
