@@ -654,11 +654,15 @@ def _resolution_body(
         "activated_ability",
         GRANTED_ACTIVATED_ABILITY_KIND,
     }:
-        abilities = parse_activated_abilities(
-            card_name=face_name or record.name,
-            oracle_text=text,
-            keywords=_face_keywords(record, face_index),
-        )
+        from ..activation_condition_model import PUBLIC_ACTIVATION_FIELD, public_activation_descriptor
+        from .activated_costs import parse_compiled_activation_line
+
+        source_name = face_name or record.name
+        keywords = _face_keywords(record, face_index)
+        abilities, timing = parse_compiled_activation_line(text, card_name=source_name, keywords=keywords)
+        permission = public_activation_descriptor(timing) if timing is not None else None
+        if (node.cost or {}).get(PUBLIC_ACTIVATION_FIELD) != permission:
+            return None
         if len(abilities) != 1:
             return None
         return _activated_effect_material(abilities[0],source_name=face_name or record.name)

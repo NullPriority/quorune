@@ -2941,6 +2941,100 @@
     {
       "applicability": {
         "exclusions": [
+          "nonbattlefield and phased-out sources",
+          "mana abilities",
+          "unrepresented timing and action bodies",
+          "private zone permission and implicit foreign activator authority"
+        ],
+        "inputs": [
+          "one source-spanned public activation permission",
+          "the current battlefield source and its effective ability",
+          "the acting principal, priority, and represented timing",
+          "independently bound costs, targets and result"
+        ],
+        "outputs": [
+          "matching activation offer and accepted command scope",
+          "the activating seat pays the cost and controls the stack ability",
+          "principal-scoped selection, rollback, and replay"
+        ],
+        "summary": "A trusted battlefield ability can expressly allow every player to activate it. The shared actor check keeps the activating seat separate from the source controller and binds printed timing to the live action."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The permission owns the actor scope only. Each current executable program independently carries its cost, target and effect requirements. Withdrawing this permission prevents its program from closing.",
+      "dependency_fail_closed_status": "not_applicable",
+      "id": "activation.permission.public_battlefield",
+      "implementation_components": [
+        "quorune.activation_condition_model.public_activation_program_timing",
+        "quorune.compiler.activated_costs.public_activation_material",
+        "quorune.compiler.activated_mana_nodes.activated_oracle_node",
+        "quorune.rules.activation.query.activation_actor_allowed",
+        "quorune.rules.activation.query.activation_offer_candidates",
+        "quorune.rules.activation.proposal.build_activation_proposal",
+        "quorune.rules.activation.restriction_requirements.activation_restriction_runtime_dependencies",
+        "quorune.rules.activation.availability._source_cost_availability"
+      ],
+      "implementation_mutation_rationale": "The native witness rejects an offer path that drops explicit foreign actor permission. The ordinary foreign source, wrong turn, malformed descriptor, target protection and wrong payer controls preserve independent legality.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_foreign_priority_activation_preserves_controller_cost_and_target_protection",
+        "test_public_sorcery_activation_uses_activator_turn_and_returns_owner_card",
+        "test_noncontroller_pays_own_land_and_draws_with_foreign_activation"
+      ],
+      "multiplayer_tests": [
+        "test_foreign_priority_activation_preserves_controller_cost_and_target_protection",
+        "test_public_sorcery_activation_uses_activator_turn_and_returns_owner_card",
+        "test_noncontroller_pays_own_land_and_draws_with_foreign_activation"
+      ],
+      "negative_tests": [
+        "test_public_activation_permission_is_closed_and_required",
+        "test_foreign_priority_activation_preserves_controller_cost_and_target_protection",
+        "test_public_sorcery_activation_uses_activator_turn_and_returns_owner_card",
+        "test_noncontroller_pays_own_land_and_draws_with_foreign_activation"
+      ],
+      "official_rules": [
+        "109.5",
+        "113.8",
+        "117.1b",
+        "307.5",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_public_activation_permission_is_closed_and_required",
+        "test_foreign_priority_activation_preserves_controller_cost_and_target_protection",
+        "test_public_sorcery_activation_uses_activator_turn_and_returns_owner_card",
+        "test_noncontroller_pays_own_land_and_draws_with_foreign_activation"
+      ],
+      "privacy_tests": [
+        "test_foreign_priority_activation_preserves_controller_cost_and_target_protection"
+      ],
+      "replay_tests": [
+        "test_foreign_priority_activation_preserves_controller_cost_and_target_protection",
+        "test_public_sorcery_activation_uses_activator_turn_and_returns_owner_card",
+        "test_noncontroller_pays_own_land_and_draws_with_foreign_activation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unsupported source mana-cost symbols",
           "independently unsupported cost or result siblings",
           "unrepresented granted Power-up modifiers"
@@ -85267,7 +85361,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 759,
+  "registry_version": 760,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

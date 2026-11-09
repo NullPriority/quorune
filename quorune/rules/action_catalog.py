@@ -20,6 +20,7 @@ from .action_proposals import (
     freeze_json,
 )
 from .activation.proposal import build_activation_offer
+from .activation.query import activation_offer_candidates
 from .activation_costs import activation_choice_candidates
 from .casting.proposal import build_cast_offer
 from .casting.face_queries import offered_cast_methods,candidate_zone_cast_permission
@@ -33,6 +34,7 @@ from .room_unlock import build_room_unlock_offers
 class ActionCatalogHost(Protocol):
     state: Any
     active_seats: list[str]
+    semantics: Any
 
     def _compiled_zone_cast_permission(self, seat: str, card: Any) -> bool: ...
 
@@ -265,48 +267,35 @@ def _ability_offers(
     mana: list[dict[str, Any]] = []
     offers: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
-    player = host.state.players[seat]
-    for zone in ("battlefield", "hand", "graveyard", "exile", "command"):
-        for object_id in player.zones[zone]:
-            card = host.state.cards[object_id]
-            if zone == "battlefield":
-                if card.controller != seat or card.phased_out:
-                    continue
-            elif card.owner != seat:
-                continue
-            for ability in host._activated_abilities(card):
-                if zone not in ability.zones:
-                    continue
-                hint = _ability_hint(host, seat, card, ability)
-                result = build_activation_offer(host, seat, card, ability)
-                if result.status != "payable":
-                    if result.status in {"unpayable", "unresolved"} or result.reason == "mandatory_target_unavailable":
-                        diagnostics.append(
-                            {
-                                **hint,
-                                "id": f"activate:{card.ref}:{ability.ability_id}",
-                                "status": result.status,
-                                "reason": result.reason,
-                            }
-                        )
-                    continue
-                assert result.offer is not None
-                if ability.mana_ability:
-                    mana.append(hint)
-                ordinary_mana = ability.mana_ability and not (
-                    ability.choices
-                    or ability.life_payment
-                    or ability.energy_payment
-                    or ability.random_discard_payment
-                    or ability.discard_source
-                    or ability.sacrifice_source
-                    or ability.exile_source
-                    or ability.source_counter_removal_cost is not None
-                    or ability.uncompiled_costs
-                )
-                if not ordinary_mana:
-                    strategic.append(hint)
-                offers.append(result.offer.to_dict())
+    for card, ability in activation_offer_candidates(host, seat):
+        hint = _ability_hint(host, seat, card, ability)
+        result = build_activation_offer(host, seat, card, ability)
+        if result.status != "payable":
+            if result.status in {"unpayable", "unresolved"} or result.reason == "mandatory_target_unavailable":
+                diagnostics.append({
+                    **hint,
+                    "id": f"activate:{card.ref}:{ability.ability_id}",
+                    "status": result.status,
+                    "reason": result.reason,
+                })
+            continue
+        assert result.offer is not None
+        if ability.mana_ability:
+            mana.append(hint)
+        ordinary_mana = ability.mana_ability and not (
+            ability.choices
+            or ability.life_payment
+            or ability.energy_payment
+            or ability.random_discard_payment
+            or ability.discard_source
+            or ability.sacrifice_source
+            or ability.exile_source
+            or ability.source_counter_removal_cost is not None
+            or ability.uncompiled_costs
+        )
+        if not ordinary_mana:
+            strategic.append(hint)
+        offers.append(result.offer.to_dict())
     return strategic, mana, offers, diagnostics
 
 

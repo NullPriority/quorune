@@ -4,6 +4,9 @@ from hashlib import sha256
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility, CostChoice
+from ...activation_condition_model import (
+    PUBLIC_ACTIVATION_CAPABILITY, PublicActivationTiming, public_activation_program_timing,
+)
 from ...ability_fragments import (
     canonical_ability_fragments,
     granted_activated_specs,
@@ -53,6 +56,57 @@ def activated_abilities(
     abilities.sort(key=lambda ability: ability.line_index)
     abilities.extend(_typed_granted_abilities(data))
     return tuple(abilities)
+
+
+def activation_actor_allowed(host, seat: str, source: Any, ability: ActivatedAbility) -> bool:
+    """Keep printed public permission on the current trusted result program."""
+    if source.zone not in ability.zones:
+        return False
+    if source.zone != "battlefield":
+        return source.owner == seat
+    if source.phased_out:
+        return False
+    if source.controller == seat:
+        return True
+    if ability.mana_ability:
+        return False
+    program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+    if program is None or PUBLIC_ACTIVATION_CAPABILITY not in program.capability_dependencies:
+        return False
+    try:
+        timing = public_activation_program_timing(program)
+    except ValueError:
+        return False
+    return (timing is not None
+            and ability.sorcery_speed == (timing is PublicActivationTiming.SORCERY)
+            and host.semantic_program_is_current_trusted(program))
+
+
+def activation_offer_candidates(host, seat: str):
+    player = host.state.players[seat]
+    for zone in ("battlefield", "hand", "graveyard", "exile", "command"):
+        for object_id in player.zones[zone]:
+            source = host.state.cards[object_id]
+            if (zone == "battlefield" and (source.phased_out or source.controller != seat)
+                    or zone != "battlefield" and source.owner != seat):
+                continue
+            for ability in host._activated_abilities(source):
+                if activation_actor_allowed(host, seat, source, ability):
+                    yield source, ability
+
+    if not any(PUBLIC_ACTIVATION_CAPABILITY in program.capability_dependencies
+               for program in host.semantics.programs_for_event("activate")):
+        return
+    for controller in host.active_seats:
+        if controller == seat:
+            continue
+        for object_id in host.state.players[controller].zones["battlefield"]:
+            source = host.state.cards[object_id]
+            if source.zone != "battlefield" or source.controller != controller or source.phased_out:
+                continue
+            for ability in host._activated_abilities(source):
+                if activation_actor_allowed(host, seat, source, ability):
+                    yield source, ability
 
 
 def _typed_granted_abilities(

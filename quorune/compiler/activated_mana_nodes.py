@@ -7,11 +7,12 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..activation_usage import ActivationLimit
-from ..activation_condition_model import activation_restriction_spec
+from ..activation_condition_model import (
+    PUBLIC_ACTIVATION_CAPABILITY, PublicActivationTiming, activation_restriction_spec,
+)
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
 from ..abilities import (
     ActivatedAbility,
-    parse_activated_abilities,
 )
 from ..color_set_mana_abilities import (
     color_set_mana_handler_descriptor,
@@ -41,6 +42,7 @@ from ..self_zone_move import (
 from .activated_costs import (
     activated_ability_cost,
     activated_ability_cost_capabilities,
+    parse_compiled_activation_line,
 )
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
@@ -512,10 +514,13 @@ def _activated_cost_dependency_gate(
     *,
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
+    public_timing: PublicActivationTiming | None = None,
 ) -> DependencyGate:
     """Add closed typed cost ownership without weakening effect blockers."""
 
     additional = activated_ability_cost_capabilities(ability)
+    if public_timing is not None:
+        additional = (*additional, PUBLIC_ACTIVATION_CAPABILITY)
     if not additional:
         return gate
     cost_gate = explicit_capabilities_gate(
@@ -724,10 +729,8 @@ def activated_oracle_node(
             capability_profile=capability_profile,
             residuals=residuals,
         )
-    abilities = parse_activated_abilities(
-        card_name=card_name,
-        oracle_text=line if parse_line is None else parse_line,
-        keywords=keywords,
+    abilities, public_timing = parse_compiled_activation_line(
+        line if parse_line is None else parse_line, card_name=card_name, keywords=keywords,
     )
     if not abilities:
         return None
@@ -782,11 +785,10 @@ def activated_oracle_node(
     lowerable = not residual_ids and (
         template is not None or ability.mana_ability
     )
-    dependencies = mechanics if template is not None else ()
     gate = _activated_effect_dependency_gate(
         effects=effects,
         target_schema=target_schema,
-        mechanics=dependencies,
+        mechanics=mechanics if template is not None else (),
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
@@ -796,6 +798,7 @@ def activated_oracle_node(
         gate,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        public_timing=public_timing,
     )
     if lowerable and gate.blockers:
         residual_ids.append(
@@ -827,7 +830,7 @@ def activated_oracle_node(
             if ability.mana_ability and template is None
             else template
         ),
-        cost=activated_ability_cost(ability),
+        cost=activated_ability_cost(ability, public_timing=public_timing),
         effects=effects,
         target_schema=target_schema,
         handlers=handlers,

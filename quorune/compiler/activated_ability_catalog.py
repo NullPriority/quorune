@@ -6,7 +6,7 @@ from dataclasses import replace
 import re
 from typing import Any, Iterable, Mapping
 
-from ..abilities import ActivatedAbility, parse_activated_abilities
+from ..abilities import ActivatedAbility
 from ..carddb import CardRecord
 from ..card_programs.admission import CARD_PROGRAM_ADMISSION_FIELD, CompleteCardProgramAdmission
 from ..color_set_mana_abilities import (
@@ -48,6 +48,7 @@ from ..semantic_runtime.mana_abilities import (
     fixed_mana_specs_from_descriptors,
 )
 from ..semantics import SemanticProgram
+from .activated_costs import parse_compiled_activated_abilities
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
 from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation, fixed_blight_activation
@@ -84,7 +85,7 @@ def compile_activated_ability_catalog(
                 ability,
                 source_name=face_name,
             )
-            for ability in parse_activated_abilities(
+            for ability in parse_compiled_activated_abilities(
                 card_name=face_name,
                 oracle_text=station_source if not record.faces else oracle_text,
                 keywords=keywords,

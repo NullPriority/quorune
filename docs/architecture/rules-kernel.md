@@ -1476,6 +1476,13 @@ parser. Discard-self and exile-self activation costs use the same destination-
 replacement continuation as casting costs: a competing choice rolls the
 complete priority action back, keeps the continuation private to the affected
 activator, and resumes the exact source-pinned action before stack placement.
+
+An explicit public battlefield activation permission belongs to the trusted
+result program. Offer discovery and command submission both check the live
+source, its effective ability, and the declared timing. The activating player
+chooses targets, pays costs, and controls the stack ability. The source keeps
+its current controller. Sorcery timing uses the activating player's turn.
+
 Exactly one fixed positive named-counter removal from the current battlefield
 source is also part of the pinned catalog. Offer and commit read the same
 public counter state, pin the source incarnation, and pay through the canonical

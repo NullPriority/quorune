@@ -32,6 +32,7 @@ from .model import (
     ActivationProposalResult,
 )
 from .offer_payload import activation_offer_cost_hint
+from .query import activation_actor_allowed
 
 
 class ActivationProposalHost(Protocol):
@@ -124,13 +125,7 @@ def _resolve_activation_source(
         controlled_only=False,
         owned_only=False,
     )
-    if source.zone == "battlefield":
-        if source.controller != request.actor:
-            raise ActivationProposalError(
-                "You do not control that ability source",
-                reason="wrong_controller",
-            )
-    elif source.owner != request.actor:
+    if source.zone != "battlefield" and source.owner != request.actor:
         raise ActivationProposalError(
             "You do not own that nonbattlefield ability source",
             reason="wrong_owner",
@@ -142,12 +137,19 @@ def _select_ability(
     host: ActivationProposalHost,
     source: Any,
     selector: str | int | None,
+    *,
+    actor: str,
 ) -> ActivatedAbility:
     abilities = tuple(
         ability
         for ability in host._activated_abilities(source)
-        if source.zone in ability.zones
+        if activation_actor_allowed(host, actor, source, ability)
     )
+    if not abilities and source.zone == "battlefield" and source.controller != actor:
+        raise ActivationProposalError(
+            "You do not control that ability source",
+            reason="wrong_controller",
+        )
     try:
         return choose_ability(abilities, selector)
     except ValueError as exc:
@@ -313,7 +315,7 @@ def build_activation_proposal(
             reason="pilot_semantic_key",
         )
     source = _resolve_activation_source(host, request)
-    ability = _select_ability(host, source, request.ability_selector)
+    ability = _select_ability(host, source, request.ability_selector, actor=request.actor)
     from ...activation_x import chosen_activation_x
     try: announced_x = chosen_activation_x(ability, response)
     except ValueError as exc: raise ActivationProposalError(str(exc),reason='invalid_activation_x') from exc
@@ -558,7 +560,7 @@ def build_activation_offer(
     )
     try:
         resolved = _resolve_activation_source(host, request)
-        selected = _select_ability(host, resolved, request.ability_selector)
+        selected = _select_ability(host, resolved, request.ability_selector, actor=seat)
         _validate_activation_cost_contract(host, request, resolved, selected)
         _validate_activation_timing_costs(host, request, resolved, selected)
     except ActivationProposalError as exc:

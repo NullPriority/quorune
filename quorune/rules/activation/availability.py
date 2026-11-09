@@ -235,8 +235,11 @@ def _source_cost_availability(
         return "unavailable", "summoning_sickness"
     if ability.discard_source and zone != "hand":
         return "unavailable", "discard_source_wrong_zone"
-    if ability.sacrifice_source and zone != "battlefield":
-        return "unavailable", "sacrifice_source_wrong_zone"
+    if ability.sacrifice_source:
+        if zone != "battlefield":
+            return "unavailable", "sacrifice_source_wrong_zone"
+        if card.controller != seat:
+            return "unavailable", "sacrifice_source_not_controlled"
     if ability.granting_attachment_payment is not None:
         from .granting_attachment import payable_granting_attachment
         if payable_granting_attachment(host, seat, card, ability.granting_attachment_payment) is None:
