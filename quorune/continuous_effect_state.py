@@ -280,7 +280,9 @@ def apply_fixed_resolution_characteristics(
     host: Any, effect: Mapping[str, Any], *, actor: str, reason: str,
 ) -> list[str]:
     """Commit a versioned fixed result through the existing multi-layer owner."""
-    from .resolution_characteristic_model import fixed_resolution_characteristic_instruction
+    from .resolution_characteristic_model import (
+        DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
+    )
     from .errors import GameRuleError
 
     instruction = {key: value for key, value in effect.items()
@@ -290,12 +292,12 @@ def apply_fixed_resolution_characteristics(
         # clears a stale reference before this instruction reaches its owner.
         instruction['card']='stale-resolved-reference'
         try:
-            fixed_resolution_characteristic_instruction(instruction)
+            fixed_resolution_characteristic_instruction(instruction, resolved=True)
         except (TypeError,ValueError,KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         return []
     try:
-        spec, selection = fixed_resolution_characteristic_instruction(instruction)
+        spec, selection = fixed_resolution_characteristic_instruction(instruction, resolved=True)
         if isinstance(selection, ObjectQuerySpec):
             from .rules.resolution_characteristic_shapes import fixed_resolution_characteristic_set_is_closed
             if not fixed_resolution_characteristic_set_is_closed(selection):
@@ -311,6 +313,12 @@ def apply_fixed_resolution_characteristics(
         if timing is None:
             return []
         duration, expiry_player, history = timing
+        if isinstance(spec, DerivedResolutionCharacteristicsSpec):
+            from .public_quantity_reductions import public_mana_value
+
+            amount = (public_mana_value(host._effective_card_data(affected[0], maximum_layer=Layer.COPY))
+                      if spec.quantity == RECIPIENT_MANA_VALUE else spec.quantity)
+            spec = spec.materialize(amount)
         components = tuple(ResolutionContinuousComponent(*value) for value in spec.layer_operations())
         create_resolution_continuous_effect_components(
             host, source=source, targets=affected, components=components, duration=duration,

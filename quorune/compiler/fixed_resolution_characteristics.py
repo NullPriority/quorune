@@ -11,7 +11,9 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_CHOICE_VERSION, PERMANENT_CHARACTERISTIC_MECHANIC,
-    SUBTYPE_GRANT_INSTRUCTION_VERSION, FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec,
+    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, RECIPIENT_MANA_VALUE,
+    SUBTYPE_GRANT_INSTRUCTION_VERSION, DerivedResolutionCharacteristicsSpec,
+    FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
@@ -22,6 +24,14 @@ from .public_state_queries import fixed_characteristic_battlefield_query_subject
 
 _BASE = re.compile(r"(?P<subject>.+?) (?:has|have) base power and toughness (?P<p>\d+)/(?P<t>\d+)(?P<tail>.*)",re.I)
 _ANIMATE = re.compile(r"(?P<subject>.+?) becomes? (?:an? )?(?:(?P<p>\d+)/(?P<t>\d+) (?P<description>.+)|(?P<base_description>.+?) with base power and toughness (?P<bp>\d+)/(?P<bt>\d+))(?P<tail>.*)",re.I)
+_MANA_VALUE_ANIMATION = re.compile(
+    r"target noncreature artifact becomes an artifact creature with power and toughness each equal to its mana value",
+    re.I,
+)
+_X_BASE_ANIMATION = re.compile(
+    r"target creature becomes an? (?P<definition>.+?) with base power and toughness each equal to X(?: plus (?P<offset>1))?",
+    re.I,
+)
 _PLAYER_SET_SCHEMA = {"zones":["player"],"categories":["player"],"player_relation":"any","count":1}
 _CHOSEN_SUBTYPE = re.compile(
     r"(?P<subject>.+?) becomes (?:the|a) creature type of your choice until end of turn\.", re.I,
@@ -107,10 +117,43 @@ def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,
     return {"predicate":query.to_dict()},None
 
 
+def _derived_target_animation(body: str, *, cast_x_available: bool):
+    mana_value = _MANA_VALUE_ANIMATION.fullmatch(body)
+    x_base = _X_BASE_ANIMATION.fullmatch(body) if cast_x_available else None
+    if mana_value is not None:
+        target = direct_permanent_target_spec("target noncreature artifact")
+        settings = FixedResolutionCharacteristicsSpec(
+            card_types=("Artifact", "Creature"), retain_types=True, retain_creature_subtypes=True,
+        )
+        spec = DerivedResolutionCharacteristicsSpec(settings, RECIPIENT_MANA_VALUE)
+    elif x_base is not None:
+        from ..query_effect_amount_model import CastXAmountSpec
+
+        parsed = _animation_description(x_base["definition"])
+        if parsed is None:
+            return None
+        colors, subtypes = parsed
+        if not colors or not subtypes:
+            return None
+        target = direct_permanent_target_spec("target creature")
+        settings = FixedResolutionCharacteristicsSpec(
+            card_types=("Creature",), creature_subtypes=subtypes, colors=colors, retain_types=True,
+        )
+        spec = DerivedResolutionCharacteristicsSpec(settings, CastXAmountSpec(), int(x_base["offset"] or 0))
+    else:
+        return None
+    assert target is not None
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
+              "characteristics": spec.to_dict(), "card": "$target.0"}
+    return ("fixed-resolution-characteristics-derived-base-v1", (effect,), target.to_target_schema(),
+            ("cr-611-continuous-effects", PERMANENT_CHARACTERISTIC_MECHANIC, "cr-115-targets"))
+
+
 def fixed_resolution_characteristics_effect_template(
     text: str, *, source_name: str, source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
     source_attachment_relation: AttachmentReferenceKind | None = None,
+    cast_x_available: bool = False,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
     chosen = _chosen_subtype_template(text, source_is_permanent=source_is_permanent,
@@ -132,6 +175,9 @@ def fixed_resolution_characteristics_effect_template(
         if suffix is None:return None
         body=suffix['body']+(suffix['rider'] or '')
     body=body.rstrip('.')
+    derived = _derived_target_animation(body, cast_x_available=cast_x_available)
+    if derived is not None:
+        return derived
     subtype = _additive_subtype_result(body)
     if subtype is not None:
         return subtype

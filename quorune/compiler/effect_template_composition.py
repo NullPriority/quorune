@@ -141,6 +141,7 @@ def reviewed_contextual_effect_template(
             source_is_permanent=source_context.get("source_is_permanent"),
             source_card_types=tuple(source_context.get("source_card_types", ())),
             source_attachment_relation=source_context.get("source_attachment_relation"),
+            cast_x_available=cast_x_available,
         ) or current
 
     if bargain_available is True:

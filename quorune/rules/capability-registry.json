@@ -31171,6 +31171,96 @@
     {
       "applicability": {
         "exclusions": [
+          "Live static base stats, multi-target effects, and other timing or amount formulas."
+        ],
+        "inputs": [
+          "One legal target incarnation and a closed artifact mana-value or declared-X animation."
+        ],
+        "outputs": [
+          "Type, color and base-stat components locked to that incarnation through cleanup.",
+          "A numeric layer-7b value sealed before state-based actions."
+        ],
+        "summary": "Bind the revalidated permanent's mana value or the spell's announced X to both base stats and apply the closed characteristic result until cleanup."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Runtime binding independently validates the exact target predicate, the amount descriptor, and the characteristic result.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.derived_base_power_toughness",
+      "implementation_components": [
+        "quorune.resolution_characteristic_model.DerivedResolutionCharacteristicsSpec",
+        "quorune.rules.resolution_characteristic_shapes.validate_derived_characteristic_program",
+        "quorune.compiler.fixed_resolution_characteristics._derived_target_animation",
+        "quorune.continuous_effect_state.apply_fixed_resolution_characteristics"
+      ],
+      "implementation_mutation_rationale": "Replacing the actual target mana value with a fixed value fails the native printed animation witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_karns_touch_zero_value_artifact_land_dies_to_toughness",
+        "test_actual_toymaker_pays_tap_and_discard_before_animating_a_foreign_artifact",
+        "test_actual_fractalize_sets_announced_x_plus_one_and_keeps_the_artifact_type",
+        "test_actual_animation_reads_the_copy_value_of_sculpting_steel",
+        "test_actual_sydri_offers_her_second_ability_after_animation"
+      ],
+      "multiplayer_tests": [
+        "test_actual_karns_touch_binds_mana_value_and_keeps_the_artifacts_abilities",
+        "test_actual_toymaker_pays_tap_and_discard_before_animating_a_foreign_artifact",
+        "test_derived_animation_checks_noncreature_status_again_after_a_response"
+      ],
+      "negative_tests": [
+        "test_derived_animation_requires_its_independent_amount_and_target_authority",
+        "test_derived_animation_checks_noncreature_status_again_after_a_response"
+      ],
+      "official_rules": [
+        "202.3a",
+        "202.3e",
+        "205.1a",
+        "205.1b",
+        "302.6",
+        "608.2b",
+        "611.2c",
+        "611.2d",
+        "613.4b",
+        "704.5f"
+      ],
+      "positive_tests": [
+        "test_actual_karns_touch_binds_mana_value_and_keeps_the_artifacts_abilities",
+        "test_actual_fractalize_sets_announced_x_plus_one_and_keeps_the_artifact_type"
+      ],
+      "privacy_tests": [
+        "test_actual_karns_touch_binds_mana_value_and_keeps_the_artifacts_abilities",
+        "test_actual_toymaker_pays_tap_and_discard_before_animating_a_foreign_artifact"
+      ],
+      "replay_tests": [
+        "test_actual_karns_touch_binds_mana_value_and_keeps_the_artifacts_abilities",
+        "test_actual_karns_touch_zero_value_artifact_land_dies_to_toughness",
+        "test_actual_toymaker_pays_tap_and_discard_before_animating_a_foreign_artifact",
+        "test_actual_fractalize_sets_announced_x_plus_one_and_keeps_the_artifact_type",
+        "test_derived_animation_checks_noncreature_status_again_after_a_response"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "choices, prohibitions, indefinite or next-turn durations",
           "triggered-fragment removals, dynamic values and unrepresented selections",
           "unsupported complete-card siblings"

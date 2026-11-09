@@ -285,6 +285,11 @@ def _value_runtime_requirements(program):
             from ..rules.damage_capability_shapes import variable_damage_allocation_program_requirements
 
             required.update(variable_damage_allocation_program_requirements(program))
+        from ..resolution_characteristic_model import DERIVED_CHARACTERISTIC_CAPABILITY
+        if DERIVED_CHARACTERISTIC_CAPABILITY in amounts:
+            from ..rules.resolution_characteristic_shapes import validate_derived_characteristic_program
+
+            required.update(validate_derived_characteristic_program(program))
         if FIXED_TOP_EXILE_CAPABILITY in amounts:
             from ..rules.discover_capability_shapes import validate_fixed_top_exile_program_scope
             validate_fixed_top_exile_program_scope(program)

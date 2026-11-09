@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed values for one fixed multi-layer resolution characteristic result."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
@@ -25,8 +25,12 @@ FIXED_TARGET_COLOR_ZONES = ("battlefield", "stack")
 SUBTYPE_GRANT_INSTRUCTION_VERSION = 12
 CHOSEN_SUBTYPE_SETTING_VERSION = 15
 CHOSEN_SUBTYPE_CHOICE_VERSION = 2
+DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION = 16
+DERIVED_CHARACTERISTIC_CAPABILITY = "continuous.resolution.derived_base_power_toughness"
+RECIPIENT_MANA_VALUE = "recipient_mana_value"
 FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
+    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
 # Every non-retaining animation in this closed model sets Creature alone.
@@ -172,6 +176,60 @@ class FixedResolutionCharacteristicsSpec:
 
 
 @dataclass(frozen=True, slots=True)
+class DerivedResolutionCharacteristicsSpec:
+    """One resolved quantity supplies both base stats of a selected object."""
+
+    settings: FixedResolutionCharacteristicsSpec
+    quantity: Any
+    offset: int = 0
+
+    def __post_init__(self) -> None:
+        from .query_effect_amount_model import CastXAmountSpec
+
+        if (not isinstance(self.settings, FixedResolutionCharacteristicsSpec)
+                or self.settings.card_types is None or self.settings.base_power or self.settings.base_toughness
+                or self.settings.keywords or self.settings.remove_all_abilities
+                or type(self.offset) is not int or self.offset not in (0, 1)):
+            raise ValueError("Derived base stats require closed animation settings")
+        if self.quantity == RECIPIENT_MANA_VALUE:
+            if self.offset or self.settings != FixedResolutionCharacteristicsSpec(
+                    card_types=("Artifact", "Creature"), retain_types=True, retain_creature_subtypes=True):
+                raise ValueError("Recipient mana value requires a type-retaining artifact animation")
+        elif not (self.quantity == CastXAmountSpec() or type(self.quantity) is int and self.quantity >= 0):
+            raise ValueError("Derived base stats require mana value or nonnegative announced X")
+
+    def to_dict(self) -> dict[str, Any]:
+        from .query_effect_amount_model import CastXAmountSpec
+
+        settings = self.settings.to_dict()
+        del settings["base_power"], settings["base_toughness"]
+        quantity = self.quantity.to_dict() if isinstance(self.quantity, CastXAmountSpec) else self.quantity
+        return {"settings": settings, "quantity": quantity, "offset": self.offset}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any], *, resolved: bool = False) -> DerivedResolutionCharacteristicsSpec:
+        from .query_effect_amount_model import CastXAmountSpec
+
+        if (not isinstance(value, Mapping) or set(value) != {"settings", "quantity", "offset"}
+                or not isinstance(value["settings"], Mapping)
+                or {"base_power", "base_toughness"} & set(value["settings"])):
+            raise ValueError("Derived characteristic fields are malformed")
+        quantity = value["quantity"]
+        if quantity != RECIPIENT_MANA_VALUE:
+            if resolved:
+                if type(quantity) is not int:
+                    raise ValueError("The declared base amount was not resolved")
+            else:
+                quantity = CastXAmountSpec.from_dict(quantity)
+        settings = FixedResolutionCharacteristicsSpec.from_dict({**value["settings"], "base_power": 0, "base_toughness": 0})
+        return cls(settings, quantity, value["offset"])
+
+    def materialize(self, amount: int) -> FixedResolutionCharacteristicsSpec:
+        base = amount + self.offset
+        return replace(self.settings, base_power=base, base_toughness=base)
+
+
+@dataclass(frozen=True, slots=True)
 class FixedResolutionSubtypeGrantSpec:
     """A retained creature subtype and optional keyword additions."""
 
@@ -277,8 +335,8 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 
 def fixed_resolution_characteristic_instruction(
-    value: Mapping[str, Any],
-) -> tuple[FixedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
+    value: Mapping[str, Any], *, resolved: bool = False,
+) -> tuple[FixedResolutionCharacteristicsSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
@@ -302,6 +360,10 @@ def fixed_resolution_characteristic_instruction(
         spec = FixedResolutionSubtypeGrantSpec.from_dict(value["characteristics"])
     elif version == CHOSEN_SUBTYPE_SETTING_VERSION:
         spec = FixedResolutionSubtypeSettingSpec.from_dict(value["characteristics"])
+    elif version == DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION:
+        if "card" not in value or not resolved and value["card"] != "$target.0":
+            raise ValueError("Derived base stats require one declared target")
+        spec = DerivedResolutionCharacteristicsSpec.from_dict(value["characteristics"], resolved=resolved)
     else:
         spec = FixedResolutionCharacteristicsSpec.from_dict(value["characteristics"])
     if "card" in value:

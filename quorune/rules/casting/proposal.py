@@ -562,6 +562,14 @@ def _cast_program_and_cost(
             ),
         )
     semantic_key,program=selected_cast_program(host,request,record,face,method_spec,card)
+    raw_x = response.get("x")
+    if raw_x is not None and type(raw_x) is not int and program is not None:
+        from ...query_effect_amount_model import cast_x_runtime_dependencies
+        from ...resolution_characteristic_model import DERIVED_CHARACTERISTIC_CAPABILITY
+
+        if (DERIVED_CHARACTERISTIC_CAPABILITY in program.capability_dependencies
+                and cast_x_runtime_dependencies(program.effects)):
+            raise CastProposalError("Cast X must be a nonnegative integer", reason="invalid_cast_x")
     alternative_base, suppress_source_costs = _rules_authorized_cost_base(
         request,
         method_spec,

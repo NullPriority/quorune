@@ -11,6 +11,7 @@ from ..source_tap_effect import source_tap_effect_dependencies
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC,
     FIXED_TARGET_COLOR_VERSION, decode_fixed_target_color, fixed_target_color_schema,
+    DERIVED_CHARACTERISTIC_CAPABILITY, RECIPIENT_MANA_VALUE, DerivedResolutionCharacteristicsSpec,
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
     FixedResolutionModifierSpec, FixedResolutionSubtypeSettingSpec, decode_temporary_creature_type_choice,
     fixed_resolution_characteristic_instruction,
@@ -105,6 +106,20 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
         return ()
     dependencies={PERMANENT_CHARACTERISTIC_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn',
                   *next_turn_effect_dependencies(effects[0]), *source_tap_effect_dependencies(effects[0])}
+    if isinstance(spec, DerivedResolutionCharacteristicsSpec):
+        from ..compiler.direct_target import DirectPermanentTargetSpec
+        from ..query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
+
+        if selection != "$target.0" or "cr-115-targets" not in mechanics:
+            return ()
+        if spec.quantity == RECIPIENT_MANA_VALUE:
+            expected = DirectPermanentTargetSpec(types_any=("artifact",), types_none=("creature",))
+        else:
+            expected = DirectPermanentTargetSpec(types_any=("creature",))
+            dependencies.add(DECLARED_AMOUNT_CAPABILITY)
+        if target_schema != expected.to_target_schema():
+            return ()
+        return tuple(sorted({*dependencies, DERIVED_CHARACTERISTIC_CAPABILITY, "target.revalidate_resolution"}))
     if isinstance(spec, FixedResolutionModifierSpec):
         all_creatures = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
         return tuple(sorted(dependencies)) if target_schema is None and selection == all_creatures else ()
@@ -137,3 +152,15 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
         if 'cr-115-targets' not in mechanics:return ()
         dependencies.add('target.revalidate_resolution')
     return tuple(sorted(dependencies))
+
+
+def validate_derived_characteristic_program(program) -> tuple[str, ...]:
+    owners = fixed_resolution_characteristic_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if DERIVED_CHARACTERISTIC_CAPABILITY not in owners:
+        raise ValueError("Derived base stats require a complete animation and its exact target schema")
+    spec, _selection = fixed_resolution_characteristic_instruction(program.effects[0])
+    if spec.quantity != RECIPIENT_MANA_VALUE and (program.event != "resolve" or not program.ability_id.startswith("spell:")):
+        raise ValueError("Announced X for base stats requires its spell's cast")
+    return owners

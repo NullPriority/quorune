@@ -1670,9 +1670,15 @@ correlated with lost types under CR 205.1a. Unqualified artifact-creature
 wording retains all prior types and subtypes, while a specified creature subtype
 replaces only creature subtypes under CR 205.1b. An explicit "still" or
 "in addition" rider retains all prior subtype sets. Existing version-1 source
-descriptors retain their historical operation path. Copy, dynamic/chosen values, text/control,
+descriptors retain their historical operation path. Copy, other derived values, text/control,
 attached-object subjects, declarations, quoted grants, conditional/optional
 instructions, unsupported keywords, and other durations remain residual.
+
+The derived base-stat instruction reads the revalidated noncreature artifact's
+mana value or the spell's announced X before creating the continuous effect.
+The resulting numeric pair applies to the same incarnation in layer 7b through
+cleanup. A color and creature-subtype animation can add the printed offset to
+X and retain the recipient's unrelated types and subtypes.
 
 The temporary creature-type choice accepts the source, the source Aura's
 enchanted creature, one declared creature target, or the closed sets of all
