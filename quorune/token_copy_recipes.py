@@ -59,9 +59,12 @@ class TokenCopyExceptionSpec:
             for value in (self.power, self.toughness)
         ):
             raise TokenCopyRecipeError("Copy base stats require two nonnegative fixed integers")
+        allowed_subtypes = CREATURE_SUBTYPES | {"food", "equipment", "vehicle"}
+        if self.schema_version == 3:
+            allowed_subtypes = allowed_subtypes | {"cave"}
         for field_name, allowed in (
             ("add_card_types", frozenset({"artifact", "creature", "enchantment"})),
-            ("add_subtypes", CREATURE_SUBTYPES | {"food", "equipment", "vehicle"}),
+            ("add_subtypes", allowed_subtypes),
             ("add_keywords", FIXED_CHARACTERISTIC_KEYWORDS),
         ):
             object.__setattr__(self, field_name, _unique_words(getattr(self, field_name), allowed=allowed, label=field_name))
@@ -164,7 +167,7 @@ def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCop
     if exception.creature_subtypes is not None:
         subtypes.difference_update(CREATURE_SUBTYPES)
         subtypes.update(exception.creature_subtypes)
-    subtypes.update(exception.add_subtypes)
+    subtypes.update(value for value in exception.add_subtypes if value != "cave" or "land" in card_types)
     if exception.card_types is not None or exception.remove_legendary or exception.add_card_types or exception.add_subtypes or exception.creature_subtypes is not None:
         ordered_types = [value for value in ("kindred", "artifact", "battle", "creature", "enchantment", "land", "planeswalker") if value in card_types]
         left = " ".join(value.title() for value in (*sorted(supertypes), *ordered_types))

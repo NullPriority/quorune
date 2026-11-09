@@ -83052,7 +83052,7 @@
           "copied typed programs and entry instructions",
           "decline retains original entry"
         ],
-        "summary": "Capture optional intrinsic copy-entry selection as a typed canonical replacement over current public permanent choices, preserving copiable values, exceptions, physical card identity and copied entry/program ownership. Fixed additive subtype/card-type descriptions and other-creature-types wording consume exact copy exceptions; changes remain copiable. One quoted exact activated/triggered child can become part of creature-copy entry values; unresolved, static, recursive and unbound-value grants reject. Acquired intrinsic copy abilities use immutable captured forms and one shared occurrence per ability across candidate alternatives; only the selected final form contributes entry results."
+        "summary": "Capture optional intrinsic copy-entry selection as a typed canonical replacement over current public permanent choices, preserving copiable values, exceptions, physical card identity and copied entry/program ownership. Fixed additive subtype/card-type descriptions and other-creature-types wording consume exact copy exceptions; changes remain copiable. One quoted exact activated/triggered child can become part of creature-copy entry values; unresolved, static, recursive and unbound-value grants reject. Acquired intrinsic copy abilities use immutable captured forms and one shared occurrence per ability across candidate alternatives; only the selected final form contributes entry results. The tapped version sets entry status on acceptance and supports a public graveyard land card with an additive Cave subtype."
       },
       "blockers": [],
       "dependencies": [
@@ -83082,6 +83082,7 @@
       "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness. Omitting the shared selection predicate admits an ineligible actual artifact into Masterwork choices and is detected by its native witness. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. Copiable-grant omission and exact source-return promotion omission are detected by original admitted Mercurial/Clone/Humble actions and normal registration, without forced trust. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face. Acquired-copy and final counter-producer omissions are killed by native trusted nested-copy consequences; shared-occurrence omission is killed by independent accept/decline alternative consumption.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_tapped_land_copies_can_decline_and_preserve_the_selected_values",
         "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
         "test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -83105,6 +83106,7 @@
         "test_unchosen_counter_producer_does_not_leak_and_nested_final_counter_applies"
       ],
       "multiplayer_tests": [
+        "test_actual_tapped_land_copies_can_decline_and_preserve_the_selected_values",
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
         "test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
@@ -83115,6 +83117,8 @@
         "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
       ],
       "negative_tests": [
+        "test_actual_tapped_land_copies_can_decline_and_preserve_the_selected_values",
+        "test_tapped_copy_choice_preserves_its_exact_descriptor_and_selection",
         "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_controller_qualified_copy_cannot_choose_an_opponent_creature",
         "test_copiable_quoted_grants_consume_one_closed_child_and_keep_near_misses_residual",
@@ -83133,6 +83137,9 @@
         "test_unselected_copier_candidate_does_not_break_safe_clone_choice"
       ],
       "official_rules": [
+        "614.1c",
+        "205.3d",
+        "205.3i",
         "115.10a",
         "201.5",
         "613.1g",
@@ -83154,6 +83161,8 @@
         "616.1g"
       ],
       "positive_tests": [
+        "test_actual_tapped_land_copies_can_decline_and_preserve_the_selected_values",
+        "test_tapped_copy_choice_preserves_its_exact_descriptor_and_selection",
         "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
         "test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -83182,6 +83191,7 @@
         "test_qualified_copy_originals_bind_and_dependencies_fail_closed"
       ],
       "privacy_tests": [
+        "test_actual_tapped_land_copies_can_decline_and_preserve_the_selected_values",
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_copy_added_activation_is_copiable_and_uses_its_own_source",
         "test_actual_copy_of_copy_keeps_both_connive_triggers_and_private_choices",
@@ -83191,6 +83201,7 @@
         "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay"
       ],
       "replay_tests": [
+        "test_actual_tapped_land_copies_can_decline_and_preserve_the_selected_values",
         "test_actual_clever_nonland_choice_ignores_hexproof_and_preserves_decline_death",
         "test_actual_clone_inherits_phantasmal_target_trigger_on_its_own_source",
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",

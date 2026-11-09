@@ -29,6 +29,26 @@ from quorune.util import stable_json
 
 
 class EntryCopyContractTests(unittest.TestCase):
+    def test_tapped_copy_choice_preserves_its_exact_descriptor_and_selection(self):
+        from quorune.compiler.entry_copy_templates import entry_copy_spec
+        from quorune.entry_copy import EntryCopySpec
+
+        printed = "You may have this land enter tapped as a copy of any land card in a graveyard, except it's a Cave in addition to its other types."
+        spec = entry_copy_spec(printed, source_name="Generic Copier")
+        self.assertEqual(6, spec.schema_version)
+        self.assertTrue(spec.tapped)
+        self.assertEqual(("graveyard",), spec.selection.zones)
+        self.assertEqual(("land",), spec.selection.types_all)
+        self.assertEqual(("cave",), spec.exception.add_subtypes)
+        self.assertEqual(spec, EntryCopySpec.from_dict(spec.to_dict()))
+        for text in (printed.replace("enter tapped", "enter"),
+                     printed.replace("any land card", "target land card"),
+                     printed.replace("any land card in a graveyard", "any land on the battlefield")):
+            self.assertIsNone(entry_copy_spec(text, source_name="Generic Copier"), text)
+        for value in (False, 1, None):
+            with self.assertRaises(ValueError):
+                EntryCopySpec.from_dict({**spec.to_dict(), "tapped": value})
+
     def test_entry_copy_with_unrepresented_target_sibling_rejects_whole_runtime_admission(self):
         from high_risk_interaction_support import _record, _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime
@@ -173,6 +193,75 @@ class EntryCopyRuntimeTests(unittest.TestCase):
     checkpoint = _witnesses.checkpoint
     resolve = _witnesses.resolve
     replay = _witnesses.replay
+
+    def test_actual_tapped_land_copies_can_decline_and_preserve_the_selected_values(self):
+        import json
+        from quorune.record import authoritative_state_hash
+
+        for index, (name, zone, land, subtypes) in enumerate((
+            ("Vesuva", "battlefield", "Generic Bound Plains", {"plains"}),
+            ("Echoing Deeps", "graveyard", "Forest", {"forest", "cave"}),
+        )):
+            with self.subTest(card=name):
+                session = self.session(357518 + index)
+                engine = session.engine
+                source = self.add(engine, name, zone="hand")
+                original_oracle = source.oracle_id
+                target = self.add(engine, land, seat="B", zone=zone, ref="permitted-land-copy")
+                wrong_zone = "graveyard" if zone == "battlefield" else "battlefield"
+                decoy = self.add(engine, land, seat="C", zone=wrong_zone, ref="wrong-zone-copy")
+                creature = self.add(engine, "Generic Bound Body", seat="B", zone=zone, ref="nonland-copy")
+                hidden = self.add(engine, land, seat="D", zone="hand", ref="hidden-copy")
+                self.assertFalse(target.tapped)
+                if zone == "battlefield":
+                    target.counters["+1/+1"] = 2
+                offer = self.ready(session, source, {})
+                self.assertEqual(f"play-land:{source.ref}", offer["id"])
+                self.checkpoint(session)
+                result = session.act("pilot:A", {"action_id": offer["id"]})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("replacement.order", session.state.pending_decision.kind)
+                self.assertEqual("hand", session.state.cards[source.object_id].zone)
+                self.assertEqual(("pilot:A",), tuple(session.pending_principals()))
+                for seat in "BCD":
+                    self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+                packet = session.packet("pilot:A", full=True)
+                self.assertNotIn(hidden.ref, json.dumps(packet))
+                options = packet["decision"]["ctx"]["options"]
+                choices = [row for row in options if not row.get("decline")]
+                self.assertEqual(1, len(choices))
+                choice, = choices
+                self.assertIn(target.ref, choice["id"])
+                self.assertNotIn(decoy.ref, choice["id"])
+                self.assertNotIn(creature.ref, choice["id"])
+                before = authoritative_state_hash(session.state)
+                rejected = session.act("pilot:B", {"action_id": "choose", "replacement": choice["id"]})
+                self.assertFalse(rejected.ok, rejected.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+
+                declined = self.replay(session, load=True)
+                decline = next(row for row in options if row.get("decline"))
+                result = declined.act("pilot:A", {"action_id": "choose", "replacement": decline["id"]})
+                self.assertTrue(result.ok, result.summary)
+                unchanged = declined.state.cards[source.object_id]
+                self.assertEqual("battlefield", unchanged.zone)
+                self.assertFalse(unchanged.tapped)
+                self.assertEqual(name, declined.engine.display_name(source.object_id))
+                self.replay(declined, load=True)
+
+                session = self.replay(session, load=True)
+                result = session.act("pilot:A", {"action_id": "choose", "replacement": choice["id"]})
+                self.assertTrue(result.ok, result.summary)
+                current = session.state.cards[source.object_id]
+                self.assertEqual("battlefield", current.zone)
+                self.assertTrue(current.tapped)
+                self.assertFalse(current.counters)
+                self.assertEqual(original_oracle, current.oracle_id)
+                self.assertEqual(land, session.engine.display_name(source.object_id))
+                _, actual_subtypes, _ = session.engine._type_parts(session.engine._effective_card_data(current)["type_line"])
+                self.assertEqual(subtypes, actual_subtypes)
+                self.assertEqual(zone, session.state.cards[target.object_id].zone)
+                self.replay(session, load=True)
 
     def test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay(self):
         from quorune.record import authoritative_state_hash

@@ -6,7 +6,8 @@ from dataclasses import replace
 import re
 
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
-    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY)
+    ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY,
+    ENTRY_COPY_TAPPED_HANDLER, ENTRY_COPY_TAPPED_CAPABILITIES)
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
@@ -41,6 +42,8 @@ def _entry_copy_value_exception(text,*,source_name):
         return TokenCopyExceptionSpec(schema_version=3,card_types=('artifact',),add_subtypes=('vehicle',))
     if normalized.casefold()=="it's an artifact":
         return TokenCopyExceptionSpec(schema_version=3,card_types=('artifact',))
+    if normalized.casefold() == "it's a cave in addition to its other types":
+        return TokenCopyExceptionSpec(schema_version=3, add_subtypes=('cave',))
     if normalized.casefold()=="it's an artifact creature in addition to its other types, and its power and toughness are equal to this creature's power and toughness":
         return TokenCopyExceptionSpec(schema_version=3,add_card_types=('artifact','creature'),retain_source_stats=True)
     return _fixed_exception(text)
@@ -51,7 +54,7 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
     normalized=' '.join(text.strip().split())
     raid=re.fullmatch(r'Raid [—-] If you attacked this turn, (?P<copy>You may have .+)',normalized,re.I)
     if raid is not None:text=raid['copy'];predicate=EntryCopyPredicate('controller_attacked_this_turn')
-    match = re.fullmatch(r'You may have (?P<source>.+?) enter as a copy of '
+    match = re.fullmatch(r'You may have (?P<source>.+?) enter (?P<tapped>tapped )?as a copy of '
         r'(?P<subject>.+?)(?:, except (?P<exception>.+?))?\.?', ' '.join(text.strip().split()), re.I)
     if match is None or not (source_self_permanent_type(match['source']) is not None
             or SourceReferenceSpec(source_name).matches(match['source'])):
@@ -74,6 +77,8 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
         if union['first'].casefold() == union['second'].casefold():
             return None
         query = ObjectQuerySpec(zones=('battlefield',), types_any=(union['first'], union['second']))
+    elif subject.casefold() == 'land card in a graveyard' and match['tapped']:
+        query = ObjectQuerySpec(zones=('graveyard',), types_all=('land',))
     elif subject.casefold()=='creature card in a graveyard':
         query=ObjectQuerySpec(zones=('graveyard',),types_all=('creature',))
     else:
@@ -96,6 +101,13 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
     else:exception = _entry_copy_value_exception(exception_text,source_name=source_name)
     if exception is None:
         return None
+    if match['tapped']:
+        if predicate is not None or conditional is not None:
+            return None
+        try:
+            return EntryCopySpec(query, exception, schema_version=6, tapped=True)
+        except ValueError:
+            return None
     try:
         if conditional is not None:return EntryCopySpec(query,exception,schema_version=5,conditional_exception=conditional)
         if predicate is not None:return EntryCopySpec(query,exception,schema_version=4,predicate=predicate)
@@ -115,11 +127,19 @@ def entry_copy_node(*, node_id, line, material_line, span, source_name,
     spec = entry_copy_spec(material_line, source_name=source_name)
     if spec is None:
         return None
+    handler, capabilities = {
+        1: (ENTRY_COPY_HANDLER, (ENTRY_COPY_CAPABILITY,)),
+        2: (ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES),
+        3: (ENTRY_COPY_VALUES_HANDLER, (ENTRY_COPY_CAPABILITY, ENTRY_COPY_VALUES_CAPABILITY)),
+        4: (ENTRY_COPY_PREDICATE_HANDLER, (ENTRY_COPY_CAPABILITY, ENTRY_COPY_PREDICATE_CAPABILITY)),
+        5: (CONDITIONAL_COPY_HANDLER, (ENTRY_COPY_CAPABILITY, CONDITIONAL_COPY_CAPABILITY)),
+        6: (ENTRY_COPY_TAPPED_HANDLER, ENTRY_COPY_TAPPED_CAPABILITIES),
+    }[spec.schema_version]
     return runtime_handler_node(node_id=node_id, line=line, span=span,
         compiled=(f'intrinsic-entry-copy-v{spec.schema_version}',
-            {'handler_id': {1:ENTRY_COPY_HANDLER,2:ENTRY_COPY_QUERY_HANDLER,3:ENTRY_COPY_VALUES_HANDLER,4:ENTRY_COPY_PREDICATE_HANDLER,5:CONDITIONAL_COPY_HANDLER}[spec.schema_version],
+            {'handler_id': handler,
             'schema_version': spec.schema_version, 'event': 'zone.change', 'copy': spec.to_dict()},
-            ENTRY_COPY_CAPABILITY if spec.schema_version == 1 else ENTRY_COPY_QUERY_CAPABILITIES if spec.schema_version==2 else (ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY) if spec.schema_version==3 else (ENTRY_COPY_CAPABILITY,ENTRY_COPY_PREDICATE_CAPABILITY) if spec.schema_version==4 else (ENTRY_COPY_CAPABILITY,CONDITIONAL_COPY_CAPABILITY)),
+            capabilities),
         kind='replacement_effect', event='zone.change', active_zone='all',
         runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         dependency_reason='Intrinsic copy entry requires the canonical copy/replacement owner.',

@@ -909,6 +909,141 @@
       "produced_mana": [],
       "faces": [],
       "cmc": 1.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Echoing Deeps",
+      "oracle_id": "2ef88214-f46d-473e-a55b-795a647e2f03",
+      "oracle_text": "You may have this land enter tapped as a copy of any land card in a graveyard, except it's a Cave in addition to its other types.\n{T}: Add {C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Land — Cave"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Vesuva",
+      "oracle_id": "4001b868-ada1-43f4-92e2-27ab0e80c913",
+      "oracle_text": "You may have this land enter tapped as a copy of any land on the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-03-19",
+      "toughness": null,
+      "type_line": "Land"
     }
   ],
   "rulings": [
@@ -1121,6 +1256,54 @@
       "published_at": "2011-01-01",
       "source": "wotc",
       "comment": "Destroying or unequipping the Echo Circlet after blockers have been declared will not undo any blocks made by the equipped creature."
+    },
+    {
+      "comment": "Any enters-the-battlefield abilities of the copied land card will trigger when Echoing Deeps enters the battlefield. Any \"as [this land] enters the battlefield\" or \"[this land] enters the battlefield with\" abilities of the chosen land card will also work.",
+      "oracle_id": "2ef88214-f46d-473e-a55b-795a647e2f03",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Echoing Deeps copies exactly what was printed on the original land card, with the noted exception.",
+      "oracle_id": "2ef88214-f46d-473e-a55b-795a647e2f03",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose to have Echoing Deeps not copy anything, it enters the battlefield untapped.",
+      "oracle_id": "2ef88214-f46d-473e-a55b-795a647e2f03",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters-the-battlefield abilities of the copied land will trigger if Vesuva is entering the battlefield. Any \"As [this land] enters the battlefield\" or \"[This land] enters the battlefield with\" abilities of the copied land will also work.",
+      "oracle_id": "4001b868-ada1-43f4-92e2-27ab0e80c913",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Vesuva somehow enters the battlefield at the same time as another land, Vesuva can't become a copy of that land. You may choose only a land that's already on the battlefield.",
+      "oracle_id": "4001b868-ada1-43f4-92e2-27ab0e80c913",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied land is copying something else, Vesuva uses the copiable values of that land. In most cases, Vesuva will be a copy of whatever that land is copying.",
+      "oracle_id": "4001b868-ada1-43f4-92e2-27ab0e80c913",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't choose a land on the battlefield, Vesuva enters the battlefield untapped as itself, and will not be able to tap for mana.",
+      "oracle_id": "4001b868-ada1-43f4-92e2-27ab0e80c913",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vesuva copies exactly what is printed on the land it's copying and nothing else (unless it's copying a land that's copying something else; see below). It doesn't copy whether a land is tapped or untapped, whether it has any counters on it or Auras attached to it, or any non-copy effects that changed its types, and so on.",
+      "oracle_id": "4001b868-ada1-43f4-92e2-27ab0e80c913",
+      "published_at": "2021-03-19",
+      "source": "wotc"
     }
   ]
 }

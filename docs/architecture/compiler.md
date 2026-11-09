@@ -1924,6 +1924,11 @@ save/load and replay. Unknown quoted exceptions, hidden-zone references,
 unrepresented copy selectors and unsupported copied programs remain
 outside the represented composition.
 
+The tapped copy production sets tapped status in the accepted replacement
+alongside the copied values. Its graveyard form selects a public land card
+and can add Cave while retaining the copied land types. Declining the copy
+leaves entry status to the other applicable replacements.
+
 `compiler/conditional_granted_ability_templates.py` wraps one independently
 exact quoted child with the existing closed public-state characteristic
 grammar. It retains fixed coupled keywords and power/toughness modifiers in
