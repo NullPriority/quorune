@@ -85888,6 +85888,96 @@
     {
       "applicability": {
         "exclusions": [
+          "ordered multi-card sets",
+          "hidden-origin targeting",
+          "unrepresented linked destination instructions"
+        ],
+        "inputs": [
+          "one required or optional card in a controlled, public, or opponent graveyard",
+          "closed type and source exclusion filters",
+          "printed owner library edge"
+        ],
+        "outputs": [
+          "current selected incarnation moves through the canonical zone owner",
+          "empty optional moves leave independent instructions available"
+        ],
+        "summary": "Move a bound required or optional card from the indicated public graveyard to the printed top or bottom of its owner's library with shared target revalidation."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.single_owner_move.fixed_destination",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Unsupported origins, cardinalities, and movement fields fail the versioned shape before promotion.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.single_owner_move.graveyard_library_target",
+      "implementation_components": [
+        "quorune.compiler.fixed_owner_zone_move_templates._targeted_bounded_graveyard_library_move",
+        "quorune.rules.public_zone_move_capability_shapes.fixed_owner_zone_move_node_capabilities",
+        "quorune.semantic_runtime.direct_target_fields.bound_mutation_target_overrides",
+        "quorune.effect_runtime.zones_and_attachments._apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the bounded graveyard compiler prevents exact admission of the public top-edge instruction.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay",
+        "test_original_recluse_excludes_its_current_graveyard_object",
+        "test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+      ],
+      "multiplayer_tests": [
+        "test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay",
+        "test_original_recluse_excludes_its_current_graveyard_object",
+        "test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+      ],
+      "negative_tests": [
+        "test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes",
+        "test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay",
+        "test_original_recluse_excludes_its_current_graveyard_object",
+        "test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+      ],
+      "official_rules": [
+        "109.5",
+        "115.1",
+        "115.3",
+        "400.3",
+        "400.7",
+        "401.2",
+        "608.2b",
+        "608.2c"
+      ],
+      "positive_tests": [
+        "test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes",
+        "test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay",
+        "test_original_recluse_excludes_its_current_graveyard_object",
+        "test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+      ],
+      "privacy_tests": [
+        "test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay",
+        "test_original_recluse_excludes_its_current_graveyard_object",
+        "test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 3
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Exile replacements and nonbattlefield moves",
           "Current zone substitutions",
           "Missing historical fact modes"
@@ -85978,7 +86068,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 766,
+  "registry_version": 767,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

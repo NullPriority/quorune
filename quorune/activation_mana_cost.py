@@ -154,8 +154,9 @@ def fixed_complex_activation_mana_options(
         ):
             color = next(part for part in parts if part != "2")
             choices = (("generic", 2), ("mana", color))
-        elif len(parts) == 2 and parts[1] == "P" and parts[0] in _COLORS:
-            choices = (("mana", parts[0]), ("life", 2))
+        elif (len(parts) in (2, 3) and parts[-1] == "P"
+                and len(set(parts[:-1])) == len(parts) - 1 and set(parts[:-1]).issubset(_COLORS)):
+            choices = [*(('mana', color) for color in parts[:-1]), ('life', 2)]
         elif symbol == "S":
             choices = (("snow", 1),)
         else:

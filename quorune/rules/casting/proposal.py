@@ -25,7 +25,7 @@ from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
 from ...morph import FACE_DOWN_CAST_METHODS, MORPH_CAST_METHOD
 from ...printed_mana_cost_model import (
-    PRINTED_MANA_COST_VERSION_FIELD, STRICT_ANNOUNCED_CAST_X_VERSION, cast_snow_mana_required,
+    PHYREXIAN_MANA_COST_VERSION, PRINTED_MANA_COST_VERSION_FIELD, STRICT_ANNOUNCED_CAST_X_VERSION, cast_snow_mana_required,
 )
 from ...semantic_runtime.static_cast_rules import (
     static_cast_prohibition_reason,
@@ -727,7 +727,9 @@ def build_cast_proposal(
     if not request.ignore_priority:
         host._check_priority(request.actor)
     response = request.response()
-    if getattr(host.state, PRINTED_MANA_COST_VERSION_FIELD, None) == STRICT_ANNOUNCED_CAST_X_VERSION:
+    if getattr(host.state, PRINTED_MANA_COST_VERSION_FIELD, None) in (
+        STRICT_ANNOUNCED_CAST_X_VERSION, PHYREXIAN_MANA_COST_VERSION,
+    ):
         try:
             announced_cost_x(response.get("x"))
         except AdditionalCostError as exc:
@@ -886,7 +888,8 @@ def _cast_offer_payload(
             if key in {"id", "kind", "requirements", "snow", "choice_schema", "label", "permission_source"}
         }
         from ..optional_life_cost_model import optional_life_cost_amount
-        life_payment=optional_life_cost_amount(raw)
+        from ...printed_mana_cost_model import printed_phyrexian_life_payment
+        life_payment=optional_life_cost_amount(raw) + printed_phyrexian_life_payment(raw)
         if life_payment:
             projected['additional_life']=life_payment
         if public_schema is not None:

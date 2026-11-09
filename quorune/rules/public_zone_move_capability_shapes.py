@@ -20,6 +20,8 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_c
 from ..public_zone_moves import (
     FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     FIXED_OWNER_ZONE_MOVE_MECHANIC,
+    GRAVEYARD_LIBRARY_TARGET_CAPABILITY,
+    GRAVEYARD_LIBRARY_TARGET_FIELD,
     PublicZoneMoveError,
     PublicZoneMoveSetSpec,
     PublicZoneSeatRelation,
@@ -173,6 +175,29 @@ def _closed_owner_zone_target_schema(value: Mapping[str, Any] | None) -> bool:
     return False
 
 
+def _closed_graveyard_library_target(effect, target_schema) -> bool:
+    if (set(effect) != {"op", "card", "destination", "position", GRAVEYARD_LIBRARY_TARGET_FIELD}
+            or type(effect[GRAVEYARD_LIBRARY_TARGET_FIELD]) is not int or effect[GRAVEYARD_LIBRARY_TARGET_FIELD] != 1
+            or effect["op"] != "move" or effect["card"] != "$target.0" or effect["destination"] != "library"
+            or effect["position"] not in ("top", "bottom") or not isinstance(target_schema, Mapping)):
+        return False
+    schema = dict(target_schema)
+    if "source_exclusion" in schema and schema.pop("source_exclusion") is not True:
+        return False
+    if "up_to" in schema:
+        up_to = schema.pop("up_to")
+        if type(up_to) is not int or up_to != 1 or "count" in schema:
+            return False
+        schema["count"] = 1
+    for spec in (OwnGraveyardCardTargetSpec, PublicGraveyardCardTargetSpec):
+        try:
+            spec.from_target_schema(schema)
+        except (GraveyardCardTargetError, TypeError, ValueError):
+            continue
+        return True
+    return False
+
+
 def _closed_return_choice(effect: Mapping[str, Any]) -> bool:
     if set(effect) != {
         "op",
@@ -230,6 +255,9 @@ def fixed_owner_zone_move_node_capabilities(
     if FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if GRAVEYARD_LIBRARY_TARGET_FIELD in effect:
+        return ((FIXED_OWNER_ZONE_MOVE_CAPABILITY, GRAVEYARD_LIBRARY_TARGET_CAPABILITY, "target.revalidate_resolution")
+                if _closed_graveyard_library_target(effect, target_schema) else ())
     if _closed_return_choice(effect):
         return (
             (FIXED_OWNER_ZONE_MOVE_CAPABILITY,)

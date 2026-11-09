@@ -5,6 +5,7 @@ from ...scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, PaidCr
 from ...adventure import adventure_stack_context
 from ...omen import omen_stack_context
 from ..optional_life_cost_model import optional_life_cost_amount
+from ...printed_mana_cost_model import printed_phyrexian_life_payment
 from .turn_cast_grants import underlying_cast_cost_option_id, commit_turn_cast_grant_use
 
 from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
@@ -282,6 +283,13 @@ def _pay_fixed_life_additional_cost(
         importance=1,
         changed_players=[proposal.seat],
     )
+
+
+def _pay_cast_choice_life_costs(host, proposal, card, selected_option) -> None:
+    if printed_life := printed_phyrexian_life_payment(selected_option):
+        _pay_fixed_life_additional_cost(host, proposal, card, selected_option, printed_life)
+    if optional_life := optional_life_cost_amount(selected_option):
+        _pay_fixed_life_additional_cost(host, proposal, card, selected_option, optional_life)
 
 
 def _commit_counter_placement_additional_cost(
@@ -1486,8 +1494,7 @@ def _commit_cast_costs_and_stack(
     try:validate_cast_waterbend(host,proposal.seat,card,selected_option)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_waterbend_after_mana') from exc
     _commit_tap_costs(host, proposal, card)
-    if optional_life := optional_life_cost_amount(selected_option):
-        _pay_fixed_life_additional_cost(host,proposal,card,selected_option,optional_life)
+    _pay_cast_choice_life_costs(host, proposal, card, selected_option)
     with blight_cast_replacement_scope(blight_payment):
         costs = _commit_additional_costs(
             host, proposal, response, card, selected_option, program=program, blight_payment=blight_payment,

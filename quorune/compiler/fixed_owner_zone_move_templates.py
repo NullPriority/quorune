@@ -14,7 +14,7 @@ from ..attachment_references import (
     AttachmentReferenceSpec,
 )
 from ..object_predicate import ObjectQuerySpec
-from ..public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
+from ..public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC, GRAVEYARD_LIBRARY_TARGET_FIELD
 from ..rules.source_references import (
     SourceReferenceSpec,
     source_self_permanent_type,
@@ -24,7 +24,10 @@ from ..util import stable_json
 from .fixed_entry_return_requirements import FixedEntryReturnRequirementSpec
 from .direct_target import direct_permanent_target_spec
 from .return_to_hand_templates import _own_graveyard_characteristic_target
-from ..rules.graveyard_card_targets import GraveyardCardTargetKind, OwnGraveyardCardTargetSpec
+from ..rules.graveyard_card_targets import (
+    GraveyardCardTargetKind, OwnGraveyardCardTargetSpec,
+    PublicGraveyardCardTargetKind, PublicGraveyardCardTargetSpec,
+)
 
 
 class FixedOwnerZoneMoveReference(str, Enum):
@@ -47,6 +50,7 @@ class FixedOwnerZoneMoveTemplate:
     attachment_reference: AttachmentReferenceSpec | None = None
     choice_query: ObjectQuerySpec | None = None
     choice_players: str | None = None
+    graveyard_library_target: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.reference, FixedOwnerZoneMoveReference):
@@ -72,12 +76,20 @@ class FixedOwnerZoneMoveTemplate:
         targeted = self.reference is FixedOwnerZoneMoveReference.TARGET
         attached = self.reference is FixedOwnerZoneMoveReference.SOURCE_ATTACHMENT
         selected = self.reference is FixedOwnerZoneMoveReference.PUBLIC_CHOICE
+        if type(self.graveyard_library_target) is not bool or (
+            self.graveyard_library_target and (not targeted or self.destination != "library"
+                or self.library_position not in {"top", "bottom"})
+        ):
+            raise ValueError("Graveyard library movement requires a targeted library edge")
         if targeted:
             if self.target_schema is None:
                 raise ValueError("Targeted owner-zone moves require a target schema")
             schema = deepcopy(dict(self.target_schema))
             group = TargetGroup.from_mapping(schema)
-            if group.min_targets != 1 or group.max_targets != 1:
+            if self.graveyard_library_target and group.zones != ("graveyard",):
+                raise ValueError("Graveyard library movement requires a graveyard target")
+            minimum = {0, 1} if self.graveyard_library_target else {1}
+            if group.min_targets not in minimum or group.max_targets != 1:
                 raise ValueError("Owner-zone moves require exactly one target")
             object.__setattr__(self, "target_schema", schema)
         elif self.target_schema is not None:
@@ -119,6 +131,8 @@ class FixedOwnerZoneMoveTemplate:
             ),
             "choice_players": self.choice_players,
         }
+        if self.graveyard_library_target:
+            identity[GRAVEYARD_LIBRARY_TARGET_FIELD] = 1
         digest = hashlib.sha256(stable_json(identity).encode("utf-8")).hexdigest()
         return f"fixed-owner-zone-move-{digest[:16]}-v1"
 
@@ -155,6 +169,8 @@ class FixedOwnerZoneMoveTemplate:
         }
         if self.library_position is not None:
             effect["position"] = self.library_position
+        if self.graveyard_library_target:
+            effect[GRAVEYARD_LIBRARY_TARGET_FIELD] = 1
         return (effect,)
 
     @property
@@ -300,6 +316,44 @@ def _targeted_own_graveyard_library_move(text: str) -> FixedOwnerZoneMoveTemplat
     return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET, destination="library",
         subject_id="own-graveyard-" + subject.replace(" ", "-"), target_schema=spec.to_target_schema(),
         library_position="top" if match["edge"].casefold() == "on top of" else "bottom")
+
+
+def _targeted_bounded_graveyard_library_move(text: str) -> FixedOwnerZoneMoveTemplate | None:
+    match = re.fullmatch(
+        r"Put (?:(?P<optional>up to one )(?P<other>other )?|(?P<another>another )?)target (?P<subject>.+?) "
+        r"from (?P<origin>your|a|an opponent['’]s) graveyard (?P<edge>on top of|on the bottom of) "
+        r"(?P<library>your|its owner['’]s|their) library\.?",
+        " ".join(text.strip().replace("’", "'").split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    origin, library, subject = (match[name].casefold() for name in ("origin", "library", "subject"))
+    optional = match["optional"] is not None
+    other = bool(match["other"] or match["another"])
+    if not optional and not other and (origin == "your" or (
+            origin == "a" and subject == "card" and match["edge"].casefold() == "on the bottom of")):
+        return None
+    if origin == "your" and library in {"your", "its owner's"}:
+        kind = next((kind for kind in GraveyardCardTargetKind if kind.value == subject), None)
+        spec = OwnGraveyardCardTargetSpec(kind) if kind is not None else (
+            _own_graveyard_characteristic_target(subject.removesuffix(" card")) if subject.endswith(" card") else None)
+    elif (origin, library) in {("a", "its owner's"), ("an opponent's", "their"), ("an opponent's", "its owner's")}:
+        kind = next((kind for kind in PublicGraveyardCardTargetKind if kind.value == subject), None)
+        spec = PublicGraveyardCardTargetSpec(kind, "opponent" if origin == "an opponent's" else "any") if kind else None
+    else:
+        return None
+    if spec is None:
+        return None
+    schema = spec.to_target_schema()
+    if optional:
+        schema.pop("count")
+        schema["up_to"] = 1
+    if other:
+        schema["source_exclusion"] = True
+    return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET, destination="library",
+        subject_id="graveyard-card-" + subject.replace(" ", "-"), target_schema=schema,
+        library_position="top" if match["edge"].casefold() == "on top of" else "bottom",
+        graveyard_library_target=True)
 
 
 def _targeted_public_card_owner_move(
@@ -481,6 +535,7 @@ def fixed_owner_zone_move_effect_template(
     return (
         _targeted_owner_library_move(text)
         or _targeted_public_card_owner_move(text)
+        or _targeted_bounded_graveyard_library_move(text)
         or _targeted_owner_hand_move(text)
         or _public_choice_owner_hand_move(text)
         or _source_or_attachment_owner_move(

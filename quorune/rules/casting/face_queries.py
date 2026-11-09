@@ -37,6 +37,28 @@ def current_printed_cast_mana_cost(host,card,record):
     return str(face.get('mana_cost') or '') if face is not None else record.mana_cost
 
 
+def printed_phyrexian_cast_options(mana_cost: str, *, x_value: int, commander_tax: int) -> list[dict[str, Any]]:
+    """Price printed symbols while retaining the chosen mana and life components."""
+    from ...activation_mana_cost import fixed_complex_activation_mana_options
+    from ...printed_mana_cost_model import PRINTED_PHYREXIAN_LIFE_FIELD
+    from ...util import mana_cost_to_vector
+
+    if type(x_value) is not int or x_value < 0 or type(commander_tax) is not int or commander_tax < 0:
+        raise ValueError("Printed Phyrexian cast price requires nonnegative integer X and tax")
+    base, symbols = mana_cost_to_vector(mana_cost)
+    if not any(symbol.endswith("/P") for symbol in symbols):
+        return []
+    base["GENERIC"] += x_value * symbols.count("X") + commander_tax
+    variants = fixed_complex_activation_mana_options(base, tuple(symbol for symbol in symbols if symbol != "X"))
+    if any(variant.snow_payment for variant in variants):
+        return []
+    return [
+        {"id": f"printed-phyrexian-{index}", "kind": "hybrid", "requirements": dict(variant.requirements),
+         **({PRINTED_PHYREXIAN_LIFE_FIELD: variant.life_payment} if variant.life_payment else {})}
+        for index, variant in enumerate(variants, start=1)
+    ]
+
+
 def cast_resolution_is_trusted(host,record,face,program):
     return host.semantic_program_is_current_trusted(program) if program is not None else host._trusted_generic_spell(prospective_cast_record(record,face))
 

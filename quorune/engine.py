@@ -2995,18 +2995,31 @@ class CommanderEngine(
         record = self.card_record(card)
         if record is None:
             return [], False
-        from .rules.casting.face_queries import current_printed_cast_mana_cost
+        from .rules.casting.face_queries import current_printed_cast_mana_cost, printed_phyrexian_cast_options
         from .printed_mana_cost_model import (
-            PRINTED_MANA_COST_VERSION_FIELD, SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION,
+            PHYREXIAN_MANA_COST_VERSION, PRINTED_MANA_COST_VERSION_FIELD,
+            SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION,
         )
         mana_cost = current_printed_cast_mana_cost(self,card,record)
         cost_version = getattr(self.state, PRINTED_MANA_COST_VERSION_FIELD, None)
         if cost_version is not None and not mana_cost.strip():
             return [], False
+        symbols = parse_mana_symbols(mana_cost)
+        if cost_version == PHYREXIAN_MANA_COST_VERSION and any(symbol.endswith("/P") for symbol in symbols):
+            has_x = "X" in symbols
+            if has_x and x_value is None and not hint:
+                raise GameRuleError(f"Casting {record.name} requires an explicit X value")
+            commander_tax = (2 * self.state.players[seat].commander_casts.get(card.oracle_id, 0)
+                             if card.zone == "command" and card.is_commander else 0)
+            try:
+                return printed_phyrexian_cast_options(mana_cost, x_value=0 if x_value is None else x_value,
+                                                      commander_tax=commander_tax), has_x
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
         variants = [self._mana_vector(None)]
         has_x = False
         snow = 0
-        for symbol in parse_mana_symbols(mana_cost):
+        for symbol in symbols:
             if symbol.isdigit():
                 for variant in variants:
                     variant["GENERIC"] += int(symbol)
@@ -3015,7 +3028,9 @@ class CommanderEngine(
                 for variant in variants:
                     variant[symbol] += 1
                 continue
-            if symbol == "S" and cost_version in (SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION):
+            if symbol == "S" and cost_version in (
+                SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION, PHYREXIAN_MANA_COST_VERSION,
+            ):
                 snow += 1
                 continue
             if symbol == "X":

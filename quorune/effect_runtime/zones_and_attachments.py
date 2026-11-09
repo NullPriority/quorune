@@ -33,6 +33,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
 from ..target_protection_engine_adapter import protection_verdict_for_ref
 from ..protection import ProtectionVerdict
+from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
@@ -56,12 +57,22 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         from ..rules.attacking_card_entry import apply_attacking_entry_move
 
         return apply_attacking_entry_move(host, effect, actor=actor, reason=reason)
+    graveyard_library_target = GRAVEYARD_LIBRARY_TARGET_FIELD in effect
+    if graveyard_library_target:
+        version = effect[GRAVEYARD_LIBRARY_TARGET_FIELD]
+        if (type(version) is not int or version != 1 or op != "move"
+                or effect.get("destination") != "library" or effect.get("position") not in ("top", "bottom")):
+            raise GameRuleError("Invalid graveyard library target movement")
+        if effect["card"] is None:
+            return None
     implicit_zones = {
         "sacrifice": {"battlefield"},
         "destroy": {"battlefield"},
         "bounce": {"battlefield"},
         "discard": {"hand"},
     }
+    if graveyard_library_target:
+        implicit_zones["move"] = {"graveyard"}
     followup = None
     if 'hand_entry_query' in effect:
         from ..hand_entry_move import resolve_selected_hand_entry_card

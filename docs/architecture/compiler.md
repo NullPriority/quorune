@@ -3188,9 +3188,21 @@ the owner's library top or bottom. The complete origin, ownership, predicate,
 and incarnation remain resolution-time checks. Live registration promotes
 these programs only through the same closed shape used by CardProgram
 admission; private library projection does not publish the ordered contents.
+The versioned graveyard-library target also admits one optional card, public
+and opponent graveyards, and the printed exclusion of the source. An empty
+optional target skips its move and leaves independent effects available. An
+announced sole target that becomes illegal still follows the common target
+revalidation rule for the entire resolving spell or ability.
 Heterogeneous spell-or-permanent targets, hidden selection, broader mass
 choices, controller destinations, alternative costs, delayed or linked moves,
 and arbitrary positions remain source-spanned residuals.
+
+The printed-price authority for Phyrexian casting symbols expands each
+symbol into its canonical colored mana and life choices. The offer and
+accepted proposal use the same mana vector and selected life amount, with
+Commander tax and announced X applied to the vector. The existing life
+owner validates and commits the selected payment. Saved checkpoints retain
+their recorded printed-price authority.
 
 `compiler/library_search_templates.py` owns fixed restrictive searches of the
 controller's library across spell, triggered, activated, and modal bodies. The

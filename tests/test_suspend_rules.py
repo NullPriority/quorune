@@ -886,7 +886,7 @@ class PrintedManaCostAuthorityTests(unittest.TestCase):
         fields = format_state_versions(reloaded.state)
         self.assertNotIn("printed_mana_cost_version", fields)
         self.assertNotIn("printed_mana_cost_version", reloaded.state.to_dict())
-        for invalid in (True, None, 0, 4):
+        for invalid in (True, None, 0, 9):
             with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "printed mana cost"):
                 GameState.from_dict({**reloaded.state.to_dict(), "printed_mana_cost_version": invalid})
         with self.assertRaisesRegex(ValueError, "Printed mana cost authority provenance"):

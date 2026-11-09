@@ -275194,6 +275194,124 @@
     },
     {
       "common": {
+        "applicability_note": "Move a bound required or optional card from the indicated public graveyard to the printed top or bottom of its owner's library with shared target revalidation.",
+        "capability_id": "zone.single_owner_move.graveyard_library_target",
+        "official_rule_ids": [
+          "109.5",
+          "115.1",
+          "115.3",
+          "400.3",
+          "400.7",
+          "401.2",
+          "608.2b",
+          "608.2c"
+        ],
+        "supported_profiles": [
+          "traditional",
+          "commander_duel",
+          "commander_review"
+        ]
+      },
+      "references": [
+        [
+          28284,
+          "interaction",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+        ],
+        [
+          28285,
+          "interaction",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
+        ],
+        [
+          28286,
+          "interaction",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
+        ],
+        [
+          28287,
+          "multiplayer",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+        ],
+        [
+          28288,
+          "multiplayer",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
+        ],
+        [
+          28289,
+          "multiplayer",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
+        ],
+        [
+          28290,
+          "mutation",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes"
+        ],
+        [
+          28291,
+          "negative",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes"
+        ],
+        [
+          28292,
+          "negative",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+        ],
+        [
+          28293,
+          "negative",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
+        ],
+        [
+          28294,
+          "negative",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
+        ],
+        [
+          28295,
+          "positive",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes"
+        ],
+        [
+          28296,
+          "positive",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+        ],
+        [
+          28297,
+          "positive",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
+        ],
+        [
+          28298,
+          "positive",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
+        ],
+        [
+          28299,
+          "privacy",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
+        ],
+        [
+          28300,
+          "replay",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
+        ],
+        [
+          28301,
+          "replay",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
+        ],
+        [
+          28302,
+          "replay",
+          "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
+        ]
+      ]
+    },
+    {
+      "common": {
         "applicability_note": "Original death-count results consume committed public facts. Qualified and legacy journal modes retain independent replay behavior.",
         "capability_id": "zone.turn_history.permanent_death",
         "official_rule_ids": [
@@ -275213,97 +275331,97 @@
       },
       "references": [
         [
-          28284,
+          28303,
           "interaction",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          28285,
+          28304,
           "interaction",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          28286,
+          28305,
           "interaction",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          28287,
+          28306,
           "multiplayer",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          28288,
+          28307,
           "multiplayer",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          28289,
+          28308,
           "mutation",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_permanent_death_dependency_is_inferred_and_subtype_mutation_is_killed"
         ],
         [
-          28290,
+          28309,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          28291,
+          28310,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          28292,
+          28311,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_legacy_missing_permanent_death_mode_replays_without_new_facts"
         ],
         [
-          28293,
+          28312,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_permanent_death_dependency_is_inferred_and_subtype_mutation_is_killed"
         ],
         [
-          28294,
+          28313,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathFactTests.test_qualified_facts_require_exact_mode_shape_and_current_turn"
         ],
         [
-          28295,
+          28314,
           "positive",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          28296,
+          28315,
           "positive",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          28297,
+          28316,
           "positive",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          28298,
+          28317,
           "privacy",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          28299,
+          28318,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          28300,
+          28319,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          28301,
+          28320,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          28302,
+          28321,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_legacy_missing_permanent_death_mode_replays_without_new_facts"
         ]

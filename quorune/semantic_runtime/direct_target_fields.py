@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, ImmutableValueError, freeze_value
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
+from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from ..selection.target_query import target_identity_matches_snapshot
@@ -29,6 +30,8 @@ _MUTATING_TARGET_FIELDS = {
 def bound_mutation_target_overrides(host, effect, item, resolve_reference):
     """Omit mutations of a bound incarnation lost during earlier instructions."""
     field = _MUTATING_TARGET_FIELDS.get(effect.get('op'))
+    if effect.get('op') == 'move' and GRAVEYARD_LIBRARY_TARGET_FIELD in effect:
+        field = 'card'
     reference = effect.get(field) if field is not None else None
     if not isinstance(reference, str) or not reference.startswith('$target'):
         return {}

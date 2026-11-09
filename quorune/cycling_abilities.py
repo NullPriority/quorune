@@ -57,8 +57,10 @@ _TYPECYCLING_LABELS: dict[str, tuple[str, dict[str, list[str]]]] = {
     "wizard": ("Wizard", {"subtypes_any": ["wizard"]}),
     "sliver": ("Sliver", {"subtypes_any": ["sliver"]}),
 }
+_TYPECYCLING_LABEL_PATTERN = "|".join(re.escape(value) for value in _TYPECYCLING_LABELS)
+PRINTED_CYCLING_KEYWORD_PATTERN = re.compile(rf"\b(?:{_TYPECYCLING_LABEL_PATTERN})?cycling\b", re.IGNORECASE)
 _TYPECYCLING = re.compile(
-    rf"^(?P<label>{'|'.join(re.escape(value) for value in _TYPECYCLING_LABELS)})"
+    rf"^(?P<label>{_TYPECYCLING_LABEL_PATTERN})"
     rf"cycling\s+(?P<cost>{_ORDINARY_COST})\.?$",
     re.IGNORECASE,
 )

@@ -1534,6 +1534,7 @@
         "test_casting_spells_rules",
         "test_action_proposals",
         "test_static_mana_spending",
+        "test_fixed_public_zone_moves",
         "test_suspend_rules"
       ]
     },
