@@ -1989,6 +1989,44 @@
       "resolution": "Verify the declared recovery IDs against the exact pinned base and head in both gates. Require unchanged ability carriers and no additional card-state, residual or failure changes. Preserve conservative history and the five-hundred-card floor for feature delivery. A recovery row requires a fresh cohort frontier.",
       "run_id": 42427426053,
       "summary": "Rules scheduler generation rejected a defect batch whose pinned receipts showed fourteen existing exact programs regain strict admission with unchanged ability carriers, residuals and failures. Replaying the same receipts also reproduced the PR delivery-floor rejection locally."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-01",
+        "PR / Windows / functional-01"
+      ],
+      "head_sha": "ac087cade704aec0b11c3b52a3b1b34b5b7d03d4",
+      "id": "ci-20261109-pr557-legacy-cast-placement-fixtures",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_cast_source_placement.CastSourcePlacementTests.test_manifest_binds_initial_source_placement_marker_and_legacy_absence",
+        "test_cast_source_placement.CastSourcePlacementTests.test_marker_roundtrip_rejects_boolean_and_legacy_absence_keeps_old_payload",
+        "test_cast_source_placement.CastSourcePlacementTests.test_new_state_subscriptions_fail_closed_on_a_legacy_placement_checkpoint",
+        "test_cast_source_placement.CastSourcePlacementTests.test_real_additional_sacrifice_cast_preserves_versioned_timestamp_order_and_replay"
+      ],
+      "resolution": "Omit both markers from pre-placement fixtures. Verify the intermediate placement-only format and preserve rejection of a mixed checkpoint. The existing placement impact route selects the repaired module.",
+      "run_id": 42576199462,
+      "summary": "Four legacy placement witnesses created a checkpoint that retained target announcement timing after clearing initial stack placement. The compatibility decoder rejected that combination before the legacy paths ran."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Windows / functional-08",
+        "PR / Windows Certification"
+      ],
+      "head_sha": "ac087cade704aec0b11c3b52a3b1b34b5b7d03d4",
+      "id": "ci-20261109-pr557-cast-target-fact-witness",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_cast_creature_targets.CastCreatureTargetActionTests.test_cast_target_fact_omission_mutant_is_killed_by_actual_trigger_outcome",
+        "test_capability_implementation_mutations.PatchTargetIntegrityTests.test_literal_patch_targets_resolve_before_mutation_execution"
+      ],
+      "resolution": "Patch the reader used by the cast completion caller through a literal target covered by the patch-target guard. Assert that the reader was called and the expected Repartee trigger was absent.",
+      "run_id": 42576199462,
+      "summary": "The cast-target omission witness mocked the old reader name after it moved into the spell-cast event owner. The Windows shard failed before exercising the mutation, and Windows certification reported the failed shard dependency."
     }
   ],
   "known_flaky_tests": [],
@@ -2049,7 +2087,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "8e2317befc6cfa769d0be9e0839284c220cb058fc07b878e9329945e76451842",
+  "source_fingerprint": "14ef5f7a47af49a7501b5239b655dd8b3a5df7ef2c03079999aeaa67cf5dd0d4",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -2059,13 +2097,13 @@
       "flaky_test": 10,
       "generated_artifact_drift": 10,
       "infrastructure": 1,
-      "missing_affected_test": 47,
+      "missing_affected_test": 49,
       "source_correctness": 32,
       "windows_compatibility": 4
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 100,
-    "escape_count": 109,
+    "deterministic_escape_count": 102,
+    "escape_count": 111,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

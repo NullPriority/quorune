@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "8e2317befc6cfa769d0be9e0839284c220cb058fc07b878e9329945e76451842"
+verified: "14ef5f7a47af49a7501b5239b655dd8b3a5df7ef2c03079999aeaa67cf5dd0d4"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 109
-- Deterministic escapes: 100
+- Escapes: 111
+- Deterministic escapes: 102
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -138,6 +138,8 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261025-pr536-private-reference-token-collision` | [40149579140](https://github.com/NullPriority/quorune/actions/runs/40149579140) | `flaky_test` | `not_applicable` | Assign the three private fixture references a colon-delimited value before the initial checkpoint. The separator is absent from base64url capabilities; retain every original full-decision privacy, principal, ordering, zone-replacement and replay assertion. The exact native method passes. |
 | `ci-20261025-pr536-unrelated-history-certification-scope` | [40149579140](https://github.com/NullPriority/quorune/actions/runs/40149579140) | `source_correctness` | `not_applicable` | Resolve the exact checked HEAD once and use that immutable revision for both history scans. Keep the existing forbidden paths, secret patterns and10MiB limits. Actual temporary Git repositories prove unrelated branches do not affect certification while oversized tracked files and deleted forbidden/oversized ancestry still fail. Run the full repository validator after canonical finalization before republishing. |
 | `ci-20261108-pr556-admission-recovery-policy` | [42427426053](https://github.com/NullPriority/quorune/actions/runs/42427426053) | `source_correctness` | `added` | Verify the declared recovery IDs against the exact pinned base and head in both gates. Require unchanged ability carriers and no additional card-state, residual or failure changes. Preserve conservative history and the five-hundred-card floor for feature delivery. A recovery row requires a fresh cohort frontier. |
+| `ci-20261109-pr557-legacy-cast-placement-fixtures` | [42576199462](https://github.com/NullPriority/quorune/actions/runs/42576199462) | `missing_affected_test` | `not_applicable` | Omit both markers from pre-placement fixtures. Verify the intermediate placement-only format and preserve rejection of a mixed checkpoint. The existing placement impact route selects the repaired module. |
+| `ci-20261109-pr557-cast-target-fact-witness` | [42576199462](https://github.com/NullPriority/quorune/actions/runs/42576199462) | `missing_affected_test` | `not_applicable` | Patch the reader used by the cast completion caller through a literal target covered by the patch-target guard. Assert that the reader was called and the expected Repartee trigger was absent. |
 
 ## Measurement limitations
 

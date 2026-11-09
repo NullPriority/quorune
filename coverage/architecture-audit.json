@@ -56047,7 +56047,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 142,
+        "primary_test_count": 141,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_source_counter_targets",
@@ -56078,7 +56078,6 @@
           "test_blight",
           "test_boast_restrictions",
           "test_capability_implementation_mutations",
-          "test_cast_creature_targets",
           "test_cast_source_placement",
           "test_casting_payment_keywords",
           "test_casualty_compiler",
@@ -56148,7 +56147,8 @@
           "test_morph_rules",
           "test_multikicker_entry_counters",
           "test_mutate_cast_metadata",
-          "test_nonmana_buyback_costs"
+          "test_nonmana_buyback_costs",
+          "test_nonmana_kicker"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -62543,7 +62543,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "399cb676aeb651d0f722f720f6f464cd1f4cf2d5c8aec0821fdf4dfe570d064a",
+      "fingerprint": "ff56b09a64a9c0e8b8fded0780b24f2d7f59418335ad7963613562a80755b44e",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

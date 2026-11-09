@@ -1814,6 +1814,44 @@
         "test_pr_body_policy.PullRequestBodyPolicyTests.test_support_delivery_requires_500_actual_net_whole_cards"
       ],
       "resolution": "Verify the declared recovery IDs against the exact pinned base and head in both gates. Require unchanged ability carriers and no additional card-state, residual or failure changes. Preserve conservative history and the five-hundred-card floor for feature delivery. A recovery row requires a fresh cohort frontier."
+    },
+    {
+      "id": "ci-20261109-pr557-legacy-cast-placement-fixtures",
+      "run_id": 42576199462,
+      "head_sha": "ac087cade704aec0b11c3b52a3b1b34b5b7d03d4",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "Four legacy placement witnesses created a checkpoint that retained target announcement timing after clearing initial stack placement. The compatibility decoder rejected that combination before the legacy paths ran.",
+      "failed_surfaces": [
+        "PR / Python / functional-01",
+        "PR / Windows / functional-01"
+      ],
+      "regressions": [
+        "test_cast_source_placement.CastSourcePlacementTests.test_manifest_binds_initial_source_placement_marker_and_legacy_absence",
+        "test_cast_source_placement.CastSourcePlacementTests.test_marker_roundtrip_rejects_boolean_and_legacy_absence_keeps_old_payload",
+        "test_cast_source_placement.CastSourcePlacementTests.test_new_state_subscriptions_fail_closed_on_a_legacy_placement_checkpoint",
+        "test_cast_source_placement.CastSourcePlacementTests.test_real_additional_sacrifice_cast_preserves_versioned_timestamp_order_and_replay"
+      ],
+      "resolution": "Omit both markers from pre-placement fixtures. Verify the intermediate placement-only format and preserve rejection of a mixed checkpoint. The existing placement impact route selects the repaired module."
+    },
+    {
+      "id": "ci-20261109-pr557-cast-target-fact-witness",
+      "run_id": 42576199462,
+      "head_sha": "ac087cade704aec0b11c3b52a3b1b34b5b7d03d4",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "The cast-target omission witness mocked the old reader name after it moved into the spell-cast event owner. The Windows shard failed before exercising the mutation, and Windows certification reported the failed shard dependency.",
+      "failed_surfaces": [
+        "PR / Windows / functional-08",
+        "PR / Windows Certification"
+      ],
+      "regressions": [
+        "test_cast_creature_targets.CastCreatureTargetActionTests.test_cast_target_fact_omission_mutant_is_killed_by_actual_trigger_outcome",
+        "test_capability_implementation_mutations.PatchTargetIntegrityTests.test_literal_patch_targets_resolve_before_mutation_execution"
+      ],
+      "resolution": "Patch the reader used by the cast completion caller through a literal target covered by the patch-target guard. Assert that the reader was called and the expected Repartee trigger was absent."
     }
   ],
   "recent_pull_requests": [
