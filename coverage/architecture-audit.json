@@ -2564,84 +2564,84 @@
           "classification": "compiler_binding",
           "file": "quorune/compiler/activated_ability_catalog.py",
           "flow_id": "card-identity-flow:03195a6c99e41749c0f6",
-          "line": 64,
+          "line": 65,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 64,
+          "source_line": 65,
           "symbol": "_face_material"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/activated_ability_catalog.py",
           "flow_id": "card-identity-flow:84daa7999f5949b866c9",
-          "line": 68,
+          "line": 69,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 68,
+          "source_line": 69,
           "symbol": "_face_material"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/activated_ability_catalog.py",
           "flow_id": "card-identity-flow:e2cf5bbb7fdc54cd4d6b",
-          "line": 206,
+          "line": 207,
           "selector": "{'front', 'back'}",
           "sink_kind": "static_membership",
           "source_field": "face_id",
           "source_kind": "mapping_get",
-          "source_line": 202,
+          "source_line": 203,
           "symbol": "_program_face_id"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/activated_ability_catalog.py",
           "flow_id": "card-identity-flow:89f987710dbbea7a9e2d",
-          "line": 207,
+          "line": 208,
           "selector": "'front'",
           "sink_kind": "static_identity_comparison",
           "source_field": "face_id",
           "source_kind": "mapping_get",
-          "source_line": 202,
+          "source_line": 203,
           "symbol": "_program_face_id"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/activated_ability_catalog.py",
           "flow_id": "card-identity-flow:e0bde0b0a7e6ab283356",
-          "line": 454,
+          "line": 479,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 454,
+          "source_line": 479,
           "symbol": "_append_catalog_carriers"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/activated_ability_catalog.py",
           "flow_id": "card-identity-flow:9bc6eb736e0db83ad18b",
-          "line": 457,
+          "line": 482,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 457,
+          "source_line": 482,
           "symbol": "_append_catalog_carriers"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/activated_ability_catalog.py",
           "flow_id": "card-identity-flow:e96185570058079acc03",
-          "line": 458,
+          "line": 483,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 458,
+          "source_line": 483,
           "symbol": "_append_catalog_carriers"
         },
         {
@@ -21590,7 +21590,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1941,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "3d8943b9bc0da07072bb0a3a03b537fdf30c81b4dad20abaecfcc00984b05a15",
+      "source_fingerprint": "e4438f47b743aef27be9bf2bcc8401d1fad00e39e4b9c33dacb8b4da564f59f9",
       "uncovered_high_risk_pairs": 40
     },
     "migration_queue": [],
@@ -21979,7 +21979,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 328002,
+      "logical_lines": 328025,
       "methods": {
         "dunder": 966,
         "private": 1091,
@@ -23080,6 +23080,13 @@
           "physical_lines": 576
         },
         {
+          "file": "quorune/compiler/activated_ability_catalog.py",
+          "functions_and_methods": 19,
+          "language": "python",
+          "logical_lines": 526,
+          "physical_lines": 584
+        },
+        {
           "file": "quorune/rules/public_zone_move_capability_shapes.py",
           "functions_and_methods": 13,
           "language": "python",
@@ -23169,13 +23176,6 @@
           "language": "python",
           "logical_lines": 503,
           "physical_lines": 542
-        },
-        {
-          "file": "quorune/compiler/activated_ability_catalog.py",
-          "functions_and_methods": 18,
-          "language": "python",
-          "logical_lines": 503,
-          "physical_lines": 559
         },
         {
           "file": "quorune/card_programs/runtime_requirements.py",
@@ -35338,7 +35338,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 363964,
+      "physical_lines": 363989,
       "python_file_count": 1846,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -35356,7 +35356,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 7078,
+      "top_level_functions": 7079,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -35853,7 +35853,7 @@
           ],
           "file": "quorune/compiler/activated_ability_catalog.py",
           "lines": [
-            64
+            65
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -35867,11 +35867,26 @@
           ],
           "file": "quorune/compiler/activated_ability_catalog.py",
           "lines": [
-            69
+            70
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
           "symbol": "_face_material"
+        },
+        {
+          "access_kind": "attribute",
+          "classification": "compiler_input",
+          "expressions": [
+            "record.oracle_text"
+          ],
+          "file": "quorune/compiler/activated_ability_catalog.py",
+          "lines": [
+            253,
+            258
+          ],
+          "member": "oracle_text",
+          "rationale": "Bounded compilation, validation, or corpus input.",
+          "symbol": "_reviewed_channel_catalog"
         },
         {
           "access_kind": "local_name",
@@ -35881,7 +35896,7 @@
           ],
           "file": "quorune/compiler/activated_ability_catalog.py",
           "lines": [
-            91
+            92
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -36831,7 +36846,7 @@
         }
       ],
       "by_classification": {
-        "compiler_input": 71,
+        "compiler_input": 72,
         "display_only_metadata": 14,
         "generated_provenance": 13,
         "reviewed_historical_compatibility": 3
@@ -36845,7 +36860,7 @@
       ],
       "prohibited_runtime_interpretation": [],
       "prohibited_runtime_interpretation_count": 0,
-      "total_accesses": 101
+      "total_accesses": 102
     },
     "semantic_handlers": {
       "engine_string_dispatch_branch_count": 3,
@@ -60841,7 +60856,7 @@
           "capability.casting.cost.undaunted",
           "capability.casting.disguise.fixed_mana"
         ],
-        "runtime_oracle_text_accesses": 52,
+        "runtime_oracle_text_accesses": 53,
         "state_authority": {
           "classified_module_access": {
             "none": 472,
@@ -64357,7 +64372,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1497,
     "compiler_module_physical_lines": 1565,
-    "compiler_version": "oracle-ir-v869",
+    "compiler_version": "oracle-ir-v878",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -64766,6 +64781,7 @@
           "parse_activated_abilities": [
             "quorune/abilities.py:1433",
             "quorune/card_overrides/game_record_v3.py:6",
+            "quorune/compiler/activated_ability_catalog.py:10",
             "quorune/compiler/activated_costs.py:6",
             "quorune/compiler/attached_granted_ability_nodes.py:8",
             "quorune/compiler/max_speed_nodes.py:7",
@@ -65098,7 +65114,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 894,
         "exact_nodes": 1013,
-        "fingerprint": "090d4400785305551723092a8e71afe1da819868e09246756292768e602d77c2",
+        "fingerprint": "cd6377b12b946832574968334f9bd38e22a32d9b313133e7531a54447819af13",
         "grammar_source_fingerprint": "83b67b9e2c576576f0ddda1711871184d03a82113277536d77f6146db69ea38d",
         "identity_fingerprint": "eeeb3e729cc83453c7437dd6fb97c6d4600562305e6c24ffdff972116a6e2a06",
         "present": true,
@@ -65110,7 +65126,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 919,
         "exact_nodes": 1051,
-        "fingerprint": "0a2cf052e2cd1a76ab3ef156557b156ec798d93c3b12c1ee46ec61f1790011a6",
+        "fingerprint": "d329e5c7e0af934f8c4f4141f255c413eca9501c040d25c80010c4c672901cb6",
         "grammar_source_fingerprint": "83b67b9e2c576576f0ddda1711871184d03a82113277536d77f6146db69ea38d",
         "identity_fingerprint": "fd0d592032d03d15572631b271a40853a092659575a5a340b08df9e3937e598a",
         "present": true,
@@ -65129,7 +65145,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "0b5d553bd8e8716ff24dd62af96fbb3191334d064ecc61753ca3c7f2e358555d",
+      "fingerprint": "8e373047849814d0bef2fc486e7d57d884ab4a228c0a1e5990525983b31c6853",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
