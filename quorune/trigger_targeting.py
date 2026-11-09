@@ -173,7 +173,7 @@ def _linked_loop_position(state, item, schema, participants):
         # or targeting-crime facts. Keep their actual journal in the checkpoint.
         history["events"] = [event for event in history["events"]
             if event["kind"] != "crime_committed" and (
-                event["kind"] not in {"permanent_entered", "permanent_left"}
+                event["kind"] not in {"permanent_entered", "permanent_left", "card_arrived_exile"}
                 or (event.get("object_incarnation") or "").rpartition("@")[0] not in participants
             )]
     stack = payload["stack"][0]

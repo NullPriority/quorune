@@ -391,6 +391,9 @@ class LinkedAbilityExileNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertIsNone(session.state.priority_player)
         self.assertEqual(["A", "B", "C", "D"], session.state.active_seats())
         self.assertEqual(1, sum(event.code == "game.draw" for event in session.state.events))
+        self.assertGreaterEqual(
+            sum(event.kind == "card_arrived_exile" for event in session.state.turn_history.events), 3,
+        )
         self.replay(session, load=True)
 
     def test_mandatory_ring_loop_draws_after_resume_and_a_legal_response_can_interrupt(self):
