@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "a063e425ade89bdb2c0c98e96e909edb23632d4cdab42a3649fb323385e2663f"
+verified: "26d64cdb0159fef87889c742b64e3c16c6873d23aa1da030fdd6ac757a3ffe99"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -52,6 +52,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Conceited Witch // Price of Beauty | 191 | 29 | 6 | 4 | 0 | 20 | `exact` |
 | Crystal Fragments // Summon: Alexander | 189 | 27 | 6 | 7 | 4 | 8 | `blocked` |
 | Kaito, Dancing Shadow | 187 | 36 | 6 | 5 | 4 | 2 | `blocked` |
+| Mila, Crafty Companion // Lukka, Wayward Bonder | 187 | 34 | 4 | 6 | 10 | 3 | `blocked` |
 | Rowan, Scholar of Sparks // Will, Scholar of Frost | 187 | 33 | 4 | 8 | 10 | 4 | `blocked` |
 | Dorothea, Vengeful Victim // Dorothea's Retribution | 186 | 37 | 5 | 7 | 0 | 2 | `exact` |
 | Kaito, Cunning Infiltrator | 186 | 41 | 6 | 5 | 0 | 2 | `exact` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 184 | 23 | 6 | 5 | 8 | 8 | `blocked` |
 | Megatron, Tyrant // Megatron, Destructive Force | 184 | 19 | 5 | 5 | 11 | 18 | `blocked` |
 | Optimus Prime, Hero // Optimus Prime, Autobot Leader | 184 | 24 | 5 | 6 | 7 | 16 | `blocked` |
-| Tales of Master Seshiro // Seshiro's Living Legacy | 184 | 28 | 7 | 5 | 4 | 6 | `blocked` |
 | Animate Dead | 131 | 16 | 5 | 3 | 5 | 5 | `blocked` |
