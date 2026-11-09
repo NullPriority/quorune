@@ -18284,6 +18284,100 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented colors or ordinary payment",
+          "temporary casting grants",
+          "unbound graveyard targets"
+        ],
+        "inputs": [
+          "surviving public instant or sorcery target",
+          "resolving controller and exact incarnation",
+          "canonical free cast option"
+        ],
+        "outputs": [
+          "atomic cast with additional costs and original owner",
+          "resume parent before priority"
+        ],
+        "summary": "Offer one surviving public graveyard target for a free cast during resolution, with canonical costs, ownership, and an optional incarnation-bound exile rider."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "A supported choice must retain its exact graveyard target and current resolving authorization.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.resolution.targeted_graveyard",
+      "implementation_components": [
+        "quorune.compiler.targeted_graveyard_cast_templates.targeted_graveyard_cast_template",
+        "quorune.rules.graveyard_card_targets.targeted_graveyard_cast_runtime_dependencies",
+        "quorune.semantic_choices.targeted_graveyard_cast.TargetedGraveyardCastChoiceHandler",
+        "quorune.semantic_choices.targeted_graveyard_cast.execute_targeted_graveyard_cast",
+        "quorune.rules.resolving_cast_payments.commit_resolving_cast",
+        "quorune.rules.cast_grant_riders.CastGrantRiderBinding"
+      ],
+      "implementation_mutation_rationale": "Removing the closed target and cast instruction leaves the source unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_arcane_heist_encodes_before_priority_and_exiles_the_borrowed_spell",
+        "test_original_graveyard_cast_entry_triggers_preserve_scope_and_destination",
+        "test_borrowed_cast_cost_replacement_resumes_the_same_parent_and_pays_once"
+      ],
+      "multiplayer_tests": [
+        "test_original_memory_plunder_binds_the_borrowed_card_and_resumes_before_priority",
+        "test_original_arcane_heist_encodes_before_priority_and_exiles_the_borrowed_spell",
+        "test_borrowed_cast_cost_replacement_resumes_the_same_parent_and_pays_once"
+      ],
+      "negative_tests": [
+        "test_targeted_graveyard_cast_requires_exact_scope_and_rider",
+        "test_original_memory_plunder_binds_the_borrowed_card_and_resumes_before_priority"
+      ],
+      "official_rules": [
+        "107.3b",
+        "108.3",
+        "118.9d",
+        "400.3",
+        "400.7",
+        "601.2a",
+        "601.2f",
+        "608.2b",
+        "608.2g"
+      ],
+      "positive_tests": [
+        "test_targeted_graveyard_cast_requires_exact_scope_and_rider",
+        "test_original_memory_plunder_binds_the_borrowed_card_and_resumes_before_priority",
+        "test_original_arcane_heist_encodes_before_priority_and_exiles_the_borrowed_spell",
+        "test_original_graveyard_cast_entry_triggers_preserve_scope_and_destination",
+        "test_borrowed_cast_cost_replacement_resumes_the_same_parent_and_pays_once"
+      ],
+      "privacy_tests": [
+        "test_original_memory_plunder_binds_the_borrowed_card_and_resumes_before_priority",
+        "test_borrowed_cast_cost_replacement_resumes_the_same_parent_and_pays_once"
+      ],
+      "replay_tests": [
+        "test_original_memory_plunder_binds_the_borrowed_card_and_resumes_before_priority",
+        "test_original_arcane_heist_encodes_before_priority_and_exiles_the_borrowed_spell",
+        "test_original_graveyard_cast_entry_triggers_preserve_scope_and_destination",
+        "test_borrowed_cast_cost_replacement_resumes_the_same_parent_and_pays_once"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "self-spell timing riders",
           "additional or alternative costs",
           "free casts",

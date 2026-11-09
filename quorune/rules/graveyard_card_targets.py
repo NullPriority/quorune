@@ -652,6 +652,42 @@ def is_closed_opposing_graveyard_return_program(program):
     return bool(required) and set(required).issubset(program.capability_dependencies)
 
 
+def targeted_graveyard_cast_schema(owner_relation):
+    return PublicGraveyardCardTargetSpec(
+        PublicGraveyardCardTargetKind.INSTANT_OR_SORCERY_CARD, owner_relation,
+    ).to_target_schema()
+
+
+def targeted_graveyard_cast_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..replacement.immutable import FrozenMap, thaw_value
+    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_CAPABILITY, GRAVEYARD_CAST_MECHANIC, validate_graveyard_cast_effect
+
+    if len(effects) != 1 or not isinstance(target_schema, Mapping) or GRAVEYARD_CAST_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        effect = effects[0]
+        validate_graveyard_cast_effect(effect)
+        if thaw_value(FrozenMap(target_schema)) != targeted_graveyard_cast_schema(effect["owner_relation"]):
+            return ()
+    except (ValueError, TypeError):
+        return ()
+    return GRAVEYARD_CAST_CAPABILITY, "target.revalidate_resolution"
+
+
+def targeted_graveyard_cast_runtime_dependencies(program):
+    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_MECHANIC, GRAVEYARD_CAST_OPERATION
+
+    effects = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_CAST_OPERATION)
+    if not effects:
+        return ()
+    required = targeted_graveyard_cast_node_capabilities(
+        effects=effects, target_schema=program.target_schema, mechanic_ids=(GRAVEYARD_CAST_MECHANIC,),
+    )
+    if not required:
+        raise GraveyardCardTargetError("A graveyard cast requires its closed target and resolving permission")
+    return required
+
+
 def public_graveyard_return_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
     version = effect.get("schema_version")
     if effect.get("op") != GRAVEYARD_RETURN_OPERATION or version != PUBLIC_GRAVEYARD_RETURN_VERSION:

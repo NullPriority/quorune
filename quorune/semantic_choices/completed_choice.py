@@ -15,7 +15,9 @@ from .model import SemanticChoiceCompletion, SemanticChoiceContinuation, Semanti
 
 
 def _intent_types():
+    from ..targeted_graveyard_cast_model import GraveyardCastIntent
     return {cls.__name__:cls for cls in (
+        GraveyardCastIntent,
         typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,

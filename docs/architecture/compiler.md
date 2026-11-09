@@ -243,7 +243,7 @@ authorize entry when material siblings remain unclosed. The separate
 boundary for optional opening reveals. It closes the complete clause around
 one represented result and a first-global-upkeep, first-own-upkeep or
 first-own-main timing. Result lowering happens at compilation through the
-existing fixed Scry, token, mana, actual-life-transfer and library-selection
+existing fixed Scry, Mill, token, mana, actual-life-transfer and library-selection
 owners. Paid reveals, unknown results and unrepresented timing remain residual.
 
 The existing binary additional-cost production also accepts a canonical
@@ -3672,6 +3672,15 @@ that body independently with the final Cipher instruction removed. Unknown
 companions and malformed keyword rows remain residual. The existing semantic
 choice, continuous grant, trigger and one-shot casting owners implement the
 lifecycle; see [ADR 0135](../adr/0135-cipher-linked-grants-and-copy-casting.md).
+
+Targeted graveyard casts bind one surviving instant or sorcery card to the
+resolving instruction. The ordinary cast offer prices its additional costs,
+applies prohibitions and projects legal targets. Acceptance rechecks the same
+card incarnation and offer, then uses the resolving-cast payment transaction.
+The child spell retains its owner and uses the resolving player's control.
+The parent completes its remaining instructions before priority resumes.
+An optional exile rider records the child spell's owner and stack incarnation
+and participates in ordinary destination replacement.
 
 `compiler/station_context_nodes.py` binds one or two increasing positive Station symbols
 to independently compiled children. Thresholds accumulate; the explicit pinned

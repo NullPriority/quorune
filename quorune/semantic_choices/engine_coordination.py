@@ -469,6 +469,14 @@ class SemanticChoiceCoordinationMixin:
     ) -> tuple[Mapping[str, Any], ...]:
         from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
         from ..fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
+        from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_OPERATION
+
+        if effect.get("op") == GRAVEYARD_CAST_OPERATION:
+            from .targeted_graveyard_cast import targeted_graveyard_cast_options
+            try:
+                return targeted_graveyard_cast_options(self, item=stack_item, actor=actor, effect=effect)
+            except (ValueError, TypeError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
 
         if effect.get("op") == FIXED_TOP_EXILE_OFFER_OPERATION:
             from ..discover_casting import fixed_top_exile_cast_options

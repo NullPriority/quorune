@@ -66,6 +66,10 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     from .graveyard_card_targets import OPPOSING_GRAVEYARD_RETURN_MECHANIC, opposing_graveyard_return_sequence_capabilities
     if OPPOSING_GRAVEYARD_RETURN_MECHANIC in mechanics:
         return opposing_graveyard_return_sequence_capabilities(effects=effects, target_schema=target_schema)
+    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_MECHANIC
+    if GRAVEYARD_CAST_MECHANIC in mechanics:
+        from .graveyard_card_targets import targeted_graveyard_cast_node_capabilities
+        return targeted_graveyard_cast_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     from ..compiler.target_set_result_sequences import TARGET_SET_SEQUENCE_MECHANIC
     if TARGET_SET_SEQUENCE_MECHANIC in mechanics:
         from .target_set_result_sequences import target_set_result_sequence_capabilities

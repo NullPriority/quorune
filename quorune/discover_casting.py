@@ -148,7 +148,7 @@ def _fixed_top_cast_option_pairs(host, *, actor, card, progress):
     pairs = []
     for method, face in offered_cast_methods(host, card):
         result = build_cast_offer(host, actor, card, cast_method=method, face_name=face,
-                                  resolving_exile_payment=progress.fixed_top_payment)
+                                  resolving_payment=progress.fixed_top_payment)
         if result.offer is None:
             continue
         offer = result.offer.to_dict(include_fingerprint=False)

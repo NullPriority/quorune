@@ -1355,6 +1355,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'library.order.fixed_hand_to_top': 'fixed-hand-to-library-top',
         'library.order.graveyard_targets': 'ordered-graveyard-library-targets',
         'card.return.opponent_graveyard_to_owner_hand': 'opposing-graveyard-return-then-targeted-result',
+        'casting.resolution.targeted_graveyard': 'targeted-resolving-graveyard-cast',
         'permanent.untap.fixed_land_choice':'fixed-untargeted-land-untap',
         'library.shuffle.fixed_controller':'fixed-controller-shuffle',
         'trigger.state.fixed_public_condition':'fixed-public-state-trigger',

@@ -11243,6 +11243,26 @@
       ]
     },
     {
+      "id": "targeted-resolving-graveyard-cast",
+      "patterns": [
+        "quorune/compiler/targeted_graveyard_cast_templates.py",
+        "quorune/targeted_graveyard_cast_model.py",
+        "quorune/semantic_choices/targeted_graveyard_cast.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/rules/resolving_cast_payments.py",
+        "quorune/rules/cast_grant_riders.py",
+        "quorune/opening_reveal_model.py",
+        "tests/fixtures/targeted-graveyard-cast-cards.json",
+        "tests/test_targeted_graveyard_cast.py"
+      ],
+      "test_modules": [
+        "test_targeted_graveyard_cast",
+        "test_opening_hand_reveal",
+        "test_discover_rules",
+        "test_cipher_native"
+      ]
+    },
+    {
       "id": "discover-controller-contract",
       "patterns": [
         "quorune/compiler/scalar_effect_amounts.py",

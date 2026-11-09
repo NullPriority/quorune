@@ -25,12 +25,13 @@ class OpeningRevealSpec:
 
     def required_capabilities(self):
         from .rules.node_capability_shapes import fixed_scry_node_capabilities
+        from .rules.mill_capability_shapes import fixed_mill_node_capabilities
         from .rules.fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
         from .rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
         from .rules.actual_life_transfer import actual_life_transfer_capabilities
         from .rules.library_selection_capability_shapes import fixed_library_selection_node_capabilities
         effects=tuple(thaw_value(e) for e in self.effects)
-        for resolver in (fixed_scry_node_capabilities,fixed_resolution_mana_capabilities,fixed_token_creation_node_capabilities,
+        for resolver in (fixed_scry_node_capabilities,fixed_mill_node_capabilities,fixed_resolution_mana_capabilities,fixed_token_creation_node_capabilities,
                 actual_life_transfer_capabilities,fixed_library_selection_node_capabilities):
             capabilities=resolver(effects=effects,target_schema=None,mechanic_ids=set(self.mechanics))
             if capabilities:return tuple(capabilities)

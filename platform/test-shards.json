@@ -776,6 +776,7 @@
       "test_spree_mode_costs",
       "test_stack_counter_rules",
       "test_static_player_restrictions",
+      "test_targeted_graveyard_cast",
       "test_targeting_v070",
       "test_token_article_composition",
       "test_token_copy_values",

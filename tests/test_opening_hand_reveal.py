@@ -170,7 +170,8 @@ class OpeningRevealRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'opening-reveal.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/opening-hand-reveal-cards.json'],path)
+            ROOT/'tests/fixtures/opening-hand-reveal-cards.json',
+            ROOT/'tests/fixtures/targeted-graveyard-cast-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
 
     @classmethod
@@ -205,6 +206,24 @@ class OpeningRevealRuntimeTests(unittest.TestCase):
     def fund_priority(self,session,actor,mana):
         e=session.engine;e.permissions.invalidate_current();e.state.pending_decision=None;e.state.priority_passes=[]
         e.state.players[actor].mana_pool.update(mana);e._grant_priority(actor);e.pump();self.checkpoint(session)
+
+    def test_original_chancellor_of_the_spires_mills_each_opponent_at_first_upkeep(self):
+        session = self.session(103660, {"A": ["Chancellor of the Spires"]})
+        source = self.card(session, "Chancellor of the Spires")
+        for seat in "BCD":
+            for index in range(7):
+                card = self.add(session.engine, "Generic Bound Plains", seat=seat, zone="library",
+                                ref=f"chancellor-mill-{seat}-{index}")
+                card.known_to = []
+                card.revealed_to = []
+        self.checkpoint(session)
+        self.keep(session)
+        self.action(session, "Reveal Chancellor of the Spires")
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([0, 7, 7, 7], [len(session.state.players[seat].zones["graveyard"]) for seat in "ABCD"])
+        self.replay(session, load=True)
 
     def test_actual_sphinx_reveal_stays_in_hand_until_start_and_scry_is_private_loaded_and_replayed(self):
         session=self.session(103630,{'A':['Sphinx of Foresight'],'B':['Leyline of Sanctity']})

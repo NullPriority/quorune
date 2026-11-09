@@ -35,7 +35,8 @@ class ZoneObjectStateError(ValueError):
 def mark_cast_grant_rider(card: CardInstance, binding) -> None:
     from .rules.cast_grant_riders import CAST_GRANT_RIDER_FIELD, CastGrantRiderBinding
     if (not isinstance(binding, CastGrantRiderBinding) or card.zone != 'stack' or not card.is_card_object
-            or binding.logical_object_id != card.logical_object_id or binding.caster != card.owner):
+            or binding.logical_object_id != card.logical_object_id or (binding.owner or binding.caster) != card.owner
+            or binding.owner is not None and binding.caster != card.controller):
         raise ZoneObjectStateError('Casting follow-up requires its original owned spell incarnation')
     card.annotations[CAST_GRANT_RIDER_FIELD] = binding.to_dict()
 

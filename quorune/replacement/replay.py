@@ -1250,6 +1250,7 @@ def _decode_semantic_intent_continuation(
             "incubate",
             "discover_cleanup",
             "discover_cast",
+            "targeted_graveyard_cast",
             "life_change",
             "life_loss_batch",
             "library_selection",

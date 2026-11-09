@@ -65,6 +65,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/battle_cry_resolution_model.py':return 'domain'
     if relative=='quorune/battle_cry_resolution.py':return 'rules'
     if relative=='quorune/entry_x_amount_model.py':return 'domain'
+    if relative == "quorune/targeted_graveyard_cast_model.py":
+        return "domain"
     if relative=='quorune/ravenous_model.py':return 'domain'
     if relative=='quorune/fixed_top_exile.py':return 'rules'
     if relative=='quorune/variable_resolution_mana_model.py':return 'rules'
@@ -598,6 +600,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == "quorune/targeted_graveyard_cast_model.py":
+        return "casting_activation_and_costs"
     if relative in {
         "quorune/shared_type_doors.py", "quorune/rules/room_unlock.py", "quorune/rules/room_copy_values.py",
     }:

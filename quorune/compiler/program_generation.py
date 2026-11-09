@@ -1204,6 +1204,11 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
     return _node_capabilities_close_program(program, fixed_owner_zone_move_node_capabilities)
 
 
+def _is_closed_targeted_graveyard_cast_program(program: SemanticProgram) -> bool:
+    from ..rules.graveyard_card_targets import targeted_graveyard_cast_node_capabilities
+    return _node_capabilities_close_program(program, targeted_graveyard_cast_node_capabilities)
+
+
 
 def _closed_effect_recognizers():
     from ..preparation import is_closed_activated_preparation_program
@@ -1234,6 +1239,7 @@ def _closed_effect_recognizers():
         is_closed_quantified_counter_target_program,
         is_closed_any_number_target_program,
         is_closed_opposing_graveyard_return_program,
+        _is_closed_targeted_graveyard_cast_program,
         closed_fused_program,
         is_closed_library_search_prohibition_program,
         is_closed_announced_target_set_program,

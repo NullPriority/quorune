@@ -8772,6 +8772,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/targeted_graveyard_cast_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/targeted_spell_costs.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -21388,6 +21403,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_choices/targeted_graveyard_cast.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_choices/token_and_copy.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
@@ -25199,6 +25229,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/targeted_graveyard_cast_model.py",
+      "layer": "domain",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/targeted_spell_costs.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -26219,5 +26261,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "581a4992e85fc8616b2f6912df52e63870df1c3c7b3be2e86fdc69785408d833"
+  "fingerprint": "1b48d67f5f64aff50ac8505790231d76993221f9a3323bf10c60a3a66df5f117"
 }

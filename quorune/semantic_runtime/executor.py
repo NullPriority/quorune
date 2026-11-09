@@ -5,6 +5,7 @@ from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
+from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
@@ -816,6 +817,10 @@ def _execute_tap_state_intent(
 
 
 def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent, GraveyardCastIntent):
+        from ..semantic_choices.targeted_graveyard_cast import execute_targeted_graveyard_cast
+        execute_targeted_graveyard_cast(sink, intent)
+        return intent.effect["player"]
     if isinstance(intent,DiscoverCastIntent):
         from ..discover_casting import execute_discover_cast
         execute_discover_cast(sink,intent)
@@ -1000,7 +1005,7 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             result = sink.move_objects_simultaneously_intent(intent)
             results.append((intent.actor, result))
             continue
-        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent)):
+        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,GraveyardCastIntent)):
             results.append((_execute_resolving_cast_choice(sink,intent),None))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):

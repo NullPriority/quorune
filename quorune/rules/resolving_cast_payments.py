@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Replay canonical cost choices inside one atomic rules-authorized exile cast."""
+"""Replay canonical cost choices inside one atomic rules-authorized cast."""
 
 from ..errors import GameRuleError
 from ..replacement.immutable import thaw_value
@@ -10,6 +10,16 @@ from .random_discard_additional_cost import freeze_random_spell_cost_response
 
 def commit_resolving_exile_cast(host, *, actor, response, payment_id, replacement_selections=(),
                                force_without_mana_cost=True):
+    return commit_resolving_cast(
+        host, actor=actor, response=response, payment_id=payment_id, origin="exile",
+        replacement_selections=replacement_selections, force_without_mana_cost=force_without_mana_cost,
+    )
+
+
+def commit_resolving_cast(host, *, actor, response, payment_id, origin, replacement_selections=(),
+                         force_without_mana_cost=True):
+    if origin not in ("exile", "graveyard") or origin == "graveyard" and not force_without_mana_cost:
+        raise GameRuleError("Resolving cast origin and price are unsupported")
     if type(payment_id) is not str or not payment_id:
         raise GameRuleError('A resolving cast payment requires its server identity')
     if any(type(key) is not str or key.startswith('_') for key in response):
@@ -21,7 +31,7 @@ def commit_resolving_exile_cast(host, *, actor, response, payment_id, replacemen
         try:
             with host.transaction():
                 host._cast(actor,{**payload,'_mana_replacement_selections':journal},
-                    authorized_from_zone='exile',force_without_mana_cost=force_without_mana_cost,
+                    authorized_from_zone=origin,force_without_mana_cost=force_without_mana_cost,
                     ignore_priority=True,ignore_timing=True,during_resolution=True)
                 if index!=len(selections):
                     raise GameRuleError('The resolving cast contains unused cost replacement choices')

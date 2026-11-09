@@ -61,6 +61,10 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
     linked_reanimation = fixed_reanimation_followup_template(material_line) if spell else None
     if linked_reanimation is not None and linked_reanimation.followup.exile_on_leave:
         return None
+    if spell and "without paying its mana cost" in material_line.casefold():
+        from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
+        if targeted_graveyard_cast_template(material_line) is not None:
+            return None
     if spell and re.search(r"\bskip\b", material_line, re.I):
         if TURN_SKIP_MECHANIC in compile_effect(material_line, card_name=source_name)[3]:
             return None

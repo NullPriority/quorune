@@ -2,6 +2,7 @@ from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..incubate_model import IncubateIntent,decode_incubate_intent_identity
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent,decode_discover_cast_identity,decode_discover_cleanup_identity
+from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyard_cast_identity
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
 from ..discard_result_model import DiscardWholeHandsResultIntent, decode_discard_result_identity
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
@@ -366,6 +367,7 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     if isinstance(intent,IncubateIntent):return 'incubate',intent.identity()
     if isinstance(intent,DiscoverCleanupIntent):return 'discover_cleanup',intent.identity()
     if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
+    if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
     if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
     if isinstance(intent, DiscardWholeHandsResultIntent):return 'discard_hand_result', intent.identity()
     if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
@@ -775,6 +777,9 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind == 'targeted_graveyard_cast':
+        try:return decode_graveyard_cast_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind=='discover_cast':
         try:return decode_discover_cast_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1237,6 +1242,7 @@ def with_replacement_selections(
     selections: Sequence[str | FrozenMap | Mapping[str, Any]],
 ) -> (
     DiscoverCastIntent
+    | GraveyardCastIntent
     | DiscoverCleanupIntent
     | IncubateIntent
     | PlaceCountersIntent
@@ -1261,6 +1267,7 @@ def with_replacement_selections(
             *DESTRUCTION_INTENT_TYPES,
             *CHAMPION_INTENT_TYPES,
             DiscoverCastIntent,
+            GraveyardCastIntent,
             DiscoverCleanupIntent,
             IncubateIntent,
             EncodeCipherIntent,
