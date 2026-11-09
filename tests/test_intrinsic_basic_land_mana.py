@@ -243,7 +243,7 @@ class IntrinsicBasicLandManaTests(unittest.TestCase):
         blocked = CapabilityRegistry(copy.deepcopy(registry_value))
         blocked.mark_evidence_verified("0" * 64)
         with self.assertRaisesRegex(
-            ValueError, "intrinsic basic-land mana capability is blocked"
+            ValueError, "intrinsic_basic_land_mana capability is blocked"
         ):
             compile_card_program(
                 _RulingsDatabase(),

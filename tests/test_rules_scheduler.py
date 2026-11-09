@@ -6281,7 +6281,7 @@ class RulesSchedulerTests(unittest.TestCase):
                 ability=ability,
             )
         )
-        self.assertFalse(
+        self.assertTrue(
             _matches_probe(
                 probe_id,
                 "Whenever equipped creature attacks alone, draw a card.",
@@ -6289,11 +6289,19 @@ class RulesSchedulerTests(unittest.TestCase):
                 ability=ability,
             )
         )
-        self.assertFalse(
+        self.assertTrue(
             _matches_probe(
                 probe_id,
                 "Whenever equipped creature attacks, put a +1/+1 counter "
                 "on it.",
+                card_record=equipment,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                probe_id,
+                "Whenever equipped creature attacks alone or blocks, draw a card.",
                 card_record=equipment,
                 ability=ability,
             )
