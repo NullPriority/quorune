@@ -7,7 +7,8 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import keep_all, load_assets, make_session, pass_current
+from common import ROOT, keep_all, load_assets, make_session, pass_current
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardRecord
 from quorune.casting_payment_keywords import (
     AffinitySpec,
@@ -91,6 +92,44 @@ class CastingPaymentKeywordCompilerTests(unittest.TestCase):
             capability_registry=self.capabilities,
             capability_profile="commander_review",
         )
+
+    def test_battlefield_payment_grants_bind_the_kind_predicate_and_origin(self):
+        from quorune.semantic_runtime.spell_payment_grants import SPELL_PAYMENT_GRANT_CAPABILITY
+
+        def witness():
+            ir = self.compile("Noncreature spells you cast from exile have convoke.", keywords=())
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            self.assertIn(SPELL_PAYMENT_GRANT_CAPABILITY, node.capability_dependencies)
+            self.assertIn("casting.payment.convoke", node.capability_dependencies)
+            descriptor, = node.handlers
+            spec, = default_cast_cost_component_registry().lower(descriptor, None)
+            self.assertEqual("exile", spec.origin)
+            self.assertEqual(("creature",), spec.predicate.excluded_types)
+            return descriptor
+
+        descriptor = witness()
+        malformed = {**descriptor, "grant": {**descriptor["grant"], "kind": "delve"}}
+        with self.assertRaises(SemanticNodeError):
+            default_cast_cost_component_registry().lower(malformed, None)
+        for text in (
+            "Noncreature spells you cast from a hidden zone have convoke.",
+            "The first noncreature spell you cast each turn has convoke.",
+            "Artifact spells your opponents cast have convoke.",
+        ):
+            self.assertNotEqual("exact", self.compile(text, keywords=()).status, text)
+        with mock.patch("quorune.compiler.spell_payment_grant_templates.spell_payment_grant_handler", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        from quorune.rules.capabilities import CapabilityRegistry
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        blocked = next(row for row in raw["capabilities"] if row["id"] == SPELL_PAYMENT_GRANT_CAPABILITY)
+        blocked.update(status="blocked", blockers=["Withdraw spell payment grant authority"])
+        registry = CapabilityRegistry(raw)
+        registry.mark_evidence_verified(self.capabilities.evidence_fingerprint)
+        held = compile_oracle_card(self.record("Artifact spells you cast have convoke.", keywords=()),
+            capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", held.status)
 
     def test_affinity_quality_compiles_closed_effective_queries(self):
         for text, query_count in (
@@ -768,6 +807,163 @@ class CastingPaymentKeywordRuntimeTests(unittest.TestCase):
             replay = replay_record(game_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+
+class BattlefieldSpellPaymentGrantTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "spell-payment-grants.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/scryfall-exact-lists.json",
+            ROOT / "tests/fixtures/battlefield-spell-payment-grant-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Spell payment grants", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 20),
+        ], ["Generic Bound Commander"])
+
+    def test_actual_chief_engineer_grants_convoke_only_to_its_controllers_artifact_spells(self):
+        session = self.session(70251021)
+        engine = session.engine
+        provider = self.add(engine, "Chief Engineer", seat="B")
+        engine.change_control(provider.object_id, "A", reason="spell payment grant fixture")
+        payer = self.add(engine, "Generic Bound Body", ref="own-convoke-creature")
+        foreign = self.add(engine, "Generic Bound Body", seat="B", ref="other-convoke-creature")
+        ring = self.add(engine, "Sol Ring", zone="hand")
+        other = self.add(engine, "Lone Missionary", zone="hand")
+        hidden = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="private-grant-control")
+        for card in (provider, ring, other):
+            self.assert_closed(session, card)
+        self.prepare(session)
+        self.checkpoint(session)
+        offer = build_cast_offer(engine, "A", ring)
+        self.assertEqual("payable", offer.status)
+        refs = offer.cost_options[0].to_dict()["choice_schema"]["convoke_cards"]["legal_refs"]
+        self.assertEqual({provider.ref, payer.ref}, set(refs))
+        self.assertEqual("unpayable", build_cast_offer(engine, "A", other).status)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(f"cast:{ring.ref}", {row["id"] for row in actions})
+        self.assertNotIn(f"cast:{other.ref}", {row["id"] for row in actions})
+        self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:A", full=True)))
+        before = authoritative_state_hash(session.state)
+        for actor, refs in (("B", [payer.ref]), ("A", [foreign.ref])):
+            result = session.act(f"pilot:{actor}", {"action_id": f"cast:{ring.ref}", "convoke_cards": refs, "pay": "auto"})
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": f"cast:{ring.ref}", "convoke_cards": [payer.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[payer.object_id].tapped)
+        self.assertEqual("stack", session.state.cards[ring.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_statuary_and_teval_use_their_canonical_payment_resources(self):
+        for index, (name, kind) in enumerate((("Inspiring Statuary", "improvise"), ("Teval, Arbiter of Virtue", "delve"))):
+            with self.subTest(provider=name):
+                session = self.session(70251022 + index)
+                engine = session.engine
+                provider = self.add(engine, name)
+                spell = self.add(engine, "Lone Missionary", zone="hand")
+                control = self.add(engine, "Sol Ring", zone="hand")
+                if kind == "improvise":
+                    payer = provider
+                    foreign = self.add(engine, "Generic Bound Mentor", seat="C", ref="other-improvise-artifact")
+                else:
+                    payer = self.add(engine, "Generic Bound Growth", zone="graveyard", ref="own-delve-card")
+                    foreign = self.add(engine, "Generic Bound Growth", seat="C", zone="graveyard", ref="other-delve-card")
+                self.assert_closed(session, provider)
+                self.assert_closed(session, spell)
+                self.prepare(session, mana={"W": 1})
+                self.checkpoint(session)
+                field = f"{kind}_cards"
+                offer = build_cast_offer(engine, "A", spell)
+                self.assertEqual("payable", offer.status)
+                self.assertEqual([payer.ref], offer.cost_options[0].to_dict()["choice_schema"][field]["legal_refs"])
+                if kind == "improvise":
+                    other = build_cast_offer(engine, "A", control)
+                    self.assertTrue(all(field not in option.to_dict().get("choice_schema", {}) for option in other.cost_options))
+                before = authoritative_state_hash(session.state)
+                failed = session.act("pilot:A", {"action_id": f"cast:{spell.ref}", field: [foreign.ref], "pay": "auto"})
+                self.assertFalse(failed.ok, failed.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                life = session.state.players["A"].life
+                result = session.act("pilot:A", {"action_id": f"cast:{spell.ref}", field: [payer.ref], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                current = session.state.cards[payer.object_id]
+                if kind == "improvise":
+                    self.assertTrue(current.tapped)
+                else:
+                    self.assertEqual("exile", current.zone)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(life + (4 if kind == "improvise" else 2), session.state.players["A"].life)
+                self.replay(session, load=True)
+
+    def test_actual_fallaji_grant_rechecks_the_provider_after_mana_payment(self):
+        session = self.session(70251027)
+        engine = session.engine
+        provider = self.add(engine, "Fallaji Wayfarer")
+        spell = self.add(engine, "Baleful Strix", zone="hand")
+        for card in (provider, spell):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        self.assertEqual({"W", "U", "B", "R", "G"}, set(engine._effective_card_data(provider)["colors"]))
+        self.assertEqual(("G",), engine.card_record(provider).color_identity)
+        offer = build_cast_offer(engine, "A", spell)
+        self.assertEqual("payable", offer.status)
+        self.assertIn(provider.ref, offer.cost_options[0].to_dict()["choice_schema"]["convoke_cards"]["legal_refs"])
+        command = {"action_id": f"cast:{spell.ref}", "convoke_cards": [provider.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        pay = engine._pay_for_cost
+
+        def pay_then_remove_provider(*args, **kwargs):
+            paid = pay(*args, **kwargs)
+            engine.move_card(provider.object_id, "graveyard", log=False)
+            return paid
+
+        with mock.patch.object(engine, "_pay_for_cost", side_effect=pay_then_remove_provider) as payment:
+            rejected = session.act("pilot:A", command)
+            payment.assert_called_once()
+        self.assertFalse(rejected.ok, rejected.summary)
+        self.assertIn("spell payment ability was lost", rejected.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[provider.object_id].tapped)
+        self.assertEqual("stack", session.state.cards[spell.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_dazzling_theater_grant_requires_its_unlocked_door(self):
+        from quorune.shared_type_doors import SharedTypeDoors
+
+        faces = ("Dazzling Theater", "Prop Room")
+        for index, face in enumerate(faces):
+            with self.subTest(unlocked=face):
+                session = self.session(70251032 + index)
+                engine = session.engine
+                room = self.add(engine, "Dazzling Theater // Prop Room")
+                room.shared_type_doors = SharedTypeDoors(faces, (face,))
+                payer = self.add(engine, "Generic Bound Body", ref="room-convoke-creature")
+                spell = self.add(engine, "Lone Missionary", zone="hand")
+                self.assert_closed(session, room)
+                self.prepare(session, mana={"C": 1})
+                self.checkpoint(session)
+                offer = build_cast_offer(engine, "A", spell)
+                if face == "Prop Room":
+                    self.assertEqual("unpayable", offer.status)
+                    continue
+                self.assertEqual("payable", offer.status)
+                command = {"action_id": f"cast:{spell.ref}", "convoke_cards": [payer.ref], "pay": "auto"}
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertTrue(session.state.cards[payer.object_id].tapped)
+                self.replay(session, load=True)
 
 
 if __name__ == "__main__":

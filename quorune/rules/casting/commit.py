@@ -1483,21 +1483,8 @@ def _commit_cast_costs_and_stack(
         if mana_replay is not None:
             mana_replay.validate()
         payment_triggers = capture_spell_mana_payment(host, player=proposal.seat, spent=spent)
-    from .emerge_costs import validate_emerge_after_mana_payment
-    try:
-        validate_emerge_after_mana_payment(host, proposal.seat, card, selected_option)
-    except ValueError as exc:
-        raise CastProposalError(str(exc), reason='stale_emerge_sacrifice') from exc
-    try:
-        conspire_tap_cards(host, proposal.seat, card, selected_option)
-    except ValueError as exc:
-        raise CastProposalError(str(exc), reason='stale_conspire_after_mana') from exc
-    from .additional_tap_costs import validate_fixed_tap_payment
-    try:validate_fixed_tap_payment(host,proposal.seat,card,selected_option)
-    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_fixed_tap_after_mana') from exc
-    from .waterbend_costs import validate_cast_waterbend
-    try:validate_cast_waterbend(host,proposal.seat,card,selected_option)
-    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_waterbend_after_mana') from exc
+    from .post_mana_checks import revalidate_resources_after_mana
+    revalidate_resources_after_mana(host, proposal, card, selected_option, details)
     _commit_tap_costs(host, proposal, card)
     _pay_cast_choice_life_costs(host, proposal, card, selected_option)
     with blight_cast_replacement_scope(blight_payment):

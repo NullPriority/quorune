@@ -4124,6 +4124,14 @@ graveyard-to-exile identities. Both pay only generic mana after the represented
 total cost is determined. Delve composes with Convoke in one payment proposal;
 parallel tap-payment families remain fail closed.
 
+Compiled battlefield grants supply those same payment mechanics to the
+controller's qualifying spell. The closed subject grammar covers all spells,
+artifact and nonartifact spells, creature and noncreature spells, legendary
+creature spells, multicolored spells, and the printed exile-origin restriction.
+The selected cast option supplies the spell characteristics. Current layer-6
+component presence and the active face or unlocked door govern the grant.
+The payment plan checks the grant again after mana abilities resolve.
+
 Fixed ordinary or colored-hybrid `Evoke` costs lower to typed alternative-cost
 branches carrying one immutable payment marker. Permanent-spell resolution
 turns that marker into an ordinary normalized entry-trigger occurrence, so its

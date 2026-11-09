@@ -6,6 +6,7 @@ from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from .face_queries import build_cast_cost_options
+from .option_expansion import bind_granted_payment_mechanics
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
 from .additional_zone_costs import select_zone_change_additional_cost
 from ...casting_payment_keywords import (
@@ -185,12 +186,10 @@ def _compiled_payment_mechanics(
                 "schema_version": compiled_convoke[0].schema_version,
             }
         )
-    compiled_delve = compiled_by_kind["delve"]
-    if compiled_delve:
-        mechanics.append(compiled_delve[0].to_dict())
-    compiled_improvise = compiled_by_kind["improvise"]
-    if compiled_improvise:
-        mechanics.append(compiled_improvise[0].to_dict())
+    for kind in ("delve", "improvise"):
+        specs = compiled_by_kind[kind]
+        if specs:
+            mechanics.append(specs[0].to_dict())
     for kind in compiled_by_kind:
         declared = kind in declared_kinds
         printed = kind in printed_keywords
@@ -521,7 +520,8 @@ def _initial_options(
     from .entwine_costs import with_entwine_mode_cost_options
     expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
     from .option_expansion import expand_optional_resource_costs
-    expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
+    expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
+        mechanics=mechanics, mandatory=mandatory, cast_type_line=cast_type_line)
     from .aftermath import with_aftermath_stack_context
     from .assist_costs import ASSIST_OPTION_FIELD
     if schema.get("compiled_assist") is True:
@@ -1330,6 +1330,7 @@ def _finalize_option(
     cast_type_line: str | None,
 ) -> CastCostOption | None:
     option = copy.deepcopy(option)
+    mechanics = bind_granted_payment_mechanics(option, mechanics, response, hint=hint)
     if announced_additional_cost_dependencies({'additional_costs': list(mandatory_costs)}) and mechanics:
         return None
     selected_additional_costs = option.pop(

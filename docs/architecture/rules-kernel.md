@@ -1929,7 +1929,12 @@ selected creature is excluded from the mana-source plan, then revalidated for
 current physical/logical identity, controller, Creature type, color, tap state,
 and phasing before the canonical mana and tap owners mutate state. Hybrid,
 Phyrexian, snow, broader cost ordering or restriction, payment replacement,
-granted or removed Convoke, and rules-text equivalents fail closed.
+unrepresented grant or removal forms, and rules-text equivalents fail closed.
+
+A current typed battlefield source can grant Convoke, Improvise, or Delve to
+the caster's qualifying spell. The shared cost query checks the prospective
+spell face and origin. Redundant grants share a single payment choice, and
+revalidation after mana abilities protects the atomic cast if a grant is lost.
 
 Source-pinned self and battlefield static spell-cost modifiers enter that same
 total-cost stage. The selected face or current layer-6 source supplies one

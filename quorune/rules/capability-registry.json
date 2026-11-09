@@ -16519,7 +16519,7 @@
       "applicability": {
         "exclusions": [
           "Convoke-equivalent rules text",
-          "Convoke granted or removed after compilation",
+          "unrepresented grants and keyword removal forms",
           "unrepresented cost increases, reductions, floors, restrictions, or ordering choices",
           "hybrid, phyrexian, snow, or other non-WUBRGC total-cost symbols",
           "cost-payment replacement effects",
@@ -27333,6 +27333,106 @@
       ],
       "replay_tests": [
         "test_actual_galazeth_retains_restricted_units_after_source_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "ordinal and one-shot payment grants",
+          "unknown spell predicates or casting origins",
+          "unrepresented mixed tap-payment combinations"
+        ],
+        "inputs": [
+          "complete typed battlefield source ability",
+          "current controller and ability presence",
+          "selected prospective spell characteristics and declared casting origin"
+        ],
+        "outputs": [
+          "existing Convoke, Improvise or Delve payment choice",
+          "redundant same-kind grants",
+          "current permission revalidation and atomic payment rollback"
+        ],
+        "summary": "Complete current battlefield abilities can grant a represented spell Convoke, Improvise, or Delve. The shared cast query uses the caster, selected spell characteristics and declared origin. Payment authority is rechecked after mana abilities and before the remaining costs."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "Removing the grant capability keeps the printed provider residual. Each handler independently requires its selected payment capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.ability.spell_payment_grant",
+      "implementation_components": [
+        "quorune.compiler.spell_payment_grant_templates.spell_payment_grant_handler",
+        "quorune.semantic_runtime.spell_payment_grants.SpellPaymentGrantHandler",
+        "quorune.semantic_runtime.spell_payment_grants.active_spell_payment_grants",
+        "quorune.semantic_runtime.spell_payment_grants.matching_spell_payment_kinds",
+        "quorune.semantic_runtime.spell_payment_grants.revalidate_spell_payment_grant",
+        "quorune.rules.casting.option_expansion.expand_optional_resource_costs",
+        "quorune.rules.casting.commit._commit_cast_costs_and_stack",
+        "quorune.rules.casting.post_mana_checks.revalidate_resources_after_mana"
+      ],
+      "implementation_mutation_rationale": "Removing the source compiler is detected by the exact origin and predicate witness. The Fallaji witness exercises the removal guard after a real mana payment.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_chief_engineer_grants_convoke_only_to_its_controllers_artifact_spells",
+        "test_actual_statuary_and_teval_use_their_canonical_payment_resources",
+        "test_actual_fallaji_grant_rechecks_the_provider_after_mana_payment",
+        "test_actual_dazzling_theater_grant_requires_its_unlocked_door"
+      ],
+      "multiplayer_tests": [
+        "test_actual_chief_engineer_grants_convoke_only_to_its_controllers_artifact_spells",
+        "test_actual_statuary_and_teval_use_their_canonical_payment_resources",
+        "test_actual_fallaji_grant_rechecks_the_provider_after_mana_payment",
+        "test_actual_dazzling_theater_grant_requires_its_unlocked_door"
+      ],
+      "negative_tests": [
+        "test_battlefield_payment_grants_bind_the_kind_predicate_and_origin",
+        "test_actual_chief_engineer_grants_convoke_only_to_its_controllers_artifact_spells",
+        "test_actual_statuary_and_teval_use_their_canonical_payment_resources",
+        "test_actual_fallaji_grant_rechecks_the_provider_after_mana_payment",
+        "test_actual_dazzling_theater_grant_requires_its_unlocked_door"
+      ],
+      "official_rules": [
+        "601.2a",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "611.3a",
+        "611.3b",
+        "702.51a",
+        "702.51d",
+        "702.66a",
+        "702.126a",
+        "702.126c"
+      ],
+      "positive_tests": [
+        "test_battlefield_payment_grants_bind_the_kind_predicate_and_origin",
+        "test_actual_chief_engineer_grants_convoke_only_to_its_controllers_artifact_spells",
+        "test_actual_statuary_and_teval_use_their_canonical_payment_resources",
+        "test_actual_fallaji_grant_rechecks_the_provider_after_mana_payment",
+        "test_actual_dazzling_theater_grant_requires_its_unlocked_door"
+      ],
+      "privacy_tests": [
+        "test_actual_chief_engineer_grants_convoke_only_to_its_controllers_artifact_spells"
+      ],
+      "replay_tests": [
+        "test_actual_chief_engineer_grants_convoke_only_to_its_controllers_artifact_spells",
+        "test_actual_statuary_and_teval_use_their_canonical_payment_resources",
+        "test_actual_fallaji_grant_rechecks_the_provider_after_mana_payment",
+        "test_actual_dazzling_theater_grant_requires_its_unlocked_door"
       ],
       "required_evidence": [
         "positive",

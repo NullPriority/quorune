@@ -46,8 +46,41 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
     return expand_replicate_costs(expanded, schema, response=response, hint=hint)
 
 
-def expand_optional_resource_costs(host, seat, card, expanded, *, suppress_source_costs, mechanics, mandatory):
+def expand_optional_resource_costs(host, seat, card, expanded, *, suppress_source_costs, mechanics, mandatory,
+                                   cast_type_line=None):
     """Existing price owners retain their own selection and composition guards."""
+    from ...semantic_runtime.spell_payment_grants import (
+        SPELL_PAYMENT_GRANT_EVENT, SPELL_PAYMENT_GRANT_FIELD, active_spell_payment_grants, granted_payment_mechanics,
+        matching_spell_payment_kinds,
+    )
+    from .source_placement import cast_payment_read_host
+
+    grants = ()
+    if host.semantics.programs_for_event(SPELL_PAYMENT_GRANT_EVENT):
+        payment_host = cast_payment_read_host(host, seat)
+        grants = active_spell_payment_grants(payment_host, seat)
+    if not grants:
+        return _expand_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
+                                      mechanics=mechanics, mandatory=mandatory)
+    intrinsic = {str(value.get("kind") or "").casefold() for value in mechanics}
+    matches = {}
+    result = []
+    for option in expanded:
+        type_line = option.get("cast_type_line") or cast_type_line
+        if type_line not in matches:
+            kinds = matching_spell_payment_kinds(payment_host, seat, card, grants, origin=card.zone,
+                cast_type_line=type_line, face_down=suppress_source_costs)
+            matches[type_line] = [kind for kind in kinds if kind not in intrinsic]
+        added = matches[type_line]
+        priced = _expand_resource_costs(host, seat, card, [option], suppress_source_costs=suppress_source_costs,
+            mechanics=[*mechanics, *granted_payment_mechanics(added)], mandatory=mandatory)
+        if added:
+            priced = [{**value, SPELL_PAYMENT_GRANT_FIELD: added} for value in priced]
+        result.extend(priced)
+    return result
+
+
+def _expand_resource_costs(host, seat, card, expanded, *, suppress_source_costs, mechanics, mandatory):
     from .conspire_costs import expand_conspire_options
     expanded = expand_conspire_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
         mechanics=mechanics, mandatory=mandatory)
@@ -56,3 +89,15 @@ def expand_optional_resource_costs(host, seat, card, expanded, *, suppress_sourc
     from .bargain_costs import expand_bargain_options
     expanded = expand_bargain_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
     return expanded
+
+
+def bind_granted_payment_mechanics(option, mechanics, response, *, hint):
+    from ...semantic_runtime.spell_payment_grants import SPELL_PAYMENT_GRANT_FIELD, granted_payment_mechanics
+
+    granted = option.pop(SPELL_PAYMENT_GRANT_FIELD, ())
+    if not granted:
+        return mechanics
+    used = {kind: response[f"{kind}_cards"] for kind in granted if not hint and response.get(f"{kind}_cards")}
+    if used:
+        option[SPELL_PAYMENT_GRANT_FIELD] = used
+    return [*mechanics, *granted_payment_mechanics(granted)]

@@ -262,6 +262,8 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
     event = binding.event.value
+    if event == "spell.cast" and re.fullmatch(r"You (?:gain|lose) life equal to its mana value\.?", text.strip(), re.I):
+        text = re.sub(r"\bits mana value\b", "that spell's mana value", text, flags=re.I)
     if event == COUNTER_PLACEMENT_EVENT and not counter_placement_condition_names_kind(binding.event_condition):
         event = None
     return scalar_effect_amount_template(

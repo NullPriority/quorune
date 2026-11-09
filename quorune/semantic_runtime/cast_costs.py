@@ -46,6 +46,7 @@ from ..replicate_model import FixedManaReplicateSpec
 from ..conspire_model import FixedConspireSpec
 from ..casualty_model import FixedCasualtySpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
+from .spell_payment_grants import SPELL_PAYMENT_GRANT_HANDLERS, SpellPaymentGrantHandler, SpellPaymentGrantSpec
 from .context import SemanticNodeError
 from .paid_entry_copy import PaidEntryCopyCostHandler
 from .multikicker import FixedManaMultikickerHandler
@@ -583,6 +584,7 @@ class CastCostComponentRegistry(
         | FixedConspireSpec
         | FixedCasualtySpec
         | FixedBargainSpec
+        | SpellPaymentGrantSpec
         | SpliceSpec
         | DeclaredCostReductionSpec
         | FixedActivationCostModifierSpec,
@@ -630,6 +632,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             TurnCastGrantHandler(),
             *turn_cast_rider_handlers(),
             *qualified_turn_grant_handlers(),
+            *(SpellPaymentGrantHandler(kind) for kind in SPELL_PAYMENT_GRANT_HANDLERS),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())
