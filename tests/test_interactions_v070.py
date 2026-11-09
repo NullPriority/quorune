@@ -106,33 +106,45 @@ class InteractionKernelTests(unittest.TestCase):
         engine.move_card(pitch.object_id, "hand")
         self.set_window(engine, "A", active="B")
 
-        action = next(
-            row
-            for row in engine._priority_action_hints("A")["actions"]
-            if row.get("card") == force.ref
-        )
-        pitch_option = next(
-            option
-            for option in action["cost_options"]
-            if option["id"] == "pitch"
-        )
+        engine._grant_priority("A")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row.get("card") == force.ref)
+        pitch_option, = [option for option in action["cost_options"]
+                         if option["choice_schema"].get("exile_cards")]
         self.assertEqual(
             [pitch.ref],
-            pitch_option["choice_schema"]["exile_card"]["legal_refs"],
+            pitch_option["choice_schema"]["exile_cards"]["legal_refs"],
         )
-        engine._cast(
-            "A",
-            {
-                "card": force.ref,
-                "targets": [target.ref],
-                "cost_option": "pitch",
-                "exile_card": pitch.ref,
-            },
-        )
-        self.assertEqual("exile", pitch.zone)
-        self.assertEqual("pitch", engine.state.stack[-1].context["cost_option"])
-        self.resolve_top(engine)
-        self.assertEqual("exile", self.card(engine, "Sol Ring", "B").zone)
+        command = {
+            "action_id": action["id"],
+            "targets": [target.ref],
+            "cost_option": pitch_option["id"],
+            "exile_cards": [pitch.ref],
+        }
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {**command, "exile_cards": [force.ref]})
+        self.assertFalse(rejected.ok, rejected.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("exile", session.state.cards[pitch.object_id].zone)
+        self.assertEqual(pitch_option["id"], session.state.stack[-1].context["cost_option"])
+        for _ in range(4):
+            if session.state.cards[force.object_id].zone != "stack":
+                break
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual("exile", self.card(session.engine, "Sol Ring", "B").zone)
+        with tempfile.TemporaryDirectory() as directory:
+            game = Path(directory) / "typed-force-pitch"
+            session.save(game)
+            replay = replay_record(game, self.db, verify=True)
+            self.assertTrue(replay["ok"], replay)
+            self.assertEqual(authoritative_state_hash(session.state), replay["final_state_hash"])
 
         other = self.make_session(711)
         other_engine = other.engine
