@@ -1317,7 +1317,7 @@ class FixedManaRuntimeTests(unittest.TestCase):
         ring, ability = self._ring(session)
         engine = session.engine
         with mock.patch(
-            "quorune.compiler.activated_ability_catalog.parse_activated_abilities",
+            "quorune.compiler.activated_ability_catalog.parse_compiled_activated_abilities",
             side_effect=AssertionError("runtime activation discovery recompiled Oracle"),
         ):
             rediscovered = engine._activated_abilities(ring)
@@ -1368,7 +1368,7 @@ class FixedManaRuntimeTests(unittest.TestCase):
             "_effective_card_data",
             return_value=changed,
         ), mock.patch(
-            "quorune.compiler.activated_ability_catalog.parse_activated_abilities",
+            "quorune.compiler.activated_ability_catalog.parse_compiled_activated_abilities",
             side_effect=AssertionError("runtime activation discovery recompiled Oracle"),
         ):
             abilities = engine._activated_abilities(ring)

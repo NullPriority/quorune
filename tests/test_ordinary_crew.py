@@ -960,7 +960,7 @@ class OrdinaryCrewRuntimeTests(unittest.TestCase):
         with mock.patch.object(
             engine, "_effective_card_data", side_effect=changed
         ), mock.patch(
-            "quorune.compiler.activated_ability_catalog.parse_activated_abilities",
+            "quorune.compiler.activated_ability_catalog.parse_compiled_activated_abilities",
             side_effect=AssertionError("runtime activation discovery recompiled Oracle"),
         ):
             abilities = engine._activated_abilities(source)
