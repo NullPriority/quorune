@@ -928,6 +928,7 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
                 )
 
     def test_reentered_source_remains_excluded_from_another_return_payment(self):
+        """Replay one archived physical-reference exclusion."""
         session = self.session(121085)
         engine = session.engine
         source = self.add_card(
@@ -938,6 +939,12 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
             zone="hand",
         )
         program = self.register_typed_event_trigger(engine, source)
+        legacy_effects = deepcopy(program.effects)
+        legacy_choice = legacy_effects[0]["then_by_choice"]["return"][0]
+        self.assertEqual("$source.zone_object", legacy_choice["exclude_ref"])
+        legacy_choice["exclude_ref"] = "$source"
+        program = replace(program, effects=legacy_effects)
+        engine.semantics.put(program)
         engine.move_card(
             source.object_id,
             "battlefield",
@@ -964,6 +971,9 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
         self.assertNotEqual(old_incarnation, source.logical_object_id)
 
         self.resolve_top(engine)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
         selected_return = session.act(
             "pilot:A",
             {"action_id": "choose", "choice": "return"},
@@ -975,6 +985,12 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
             getattr(engine.state.pending_decision, "kind", None),
         )
         self.assertEqual("battlefield", source.zone)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "legacy-entry-return-exclusion"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(authoritative_state_hash(engine.state), replay["final_state_hash"])
 
 
 if __name__ == "__main__":

@@ -198,7 +198,25 @@ def _resolve_effect_mapping(host, value, item):
                 lambda reference: resolve_semantic_value(host, reference, item))}
     except (TypeError, ValueError) as exc:
         raise SemanticNodeError(str(exc)) from exc
-    return {key: resolve_semantic_value(host, child, item) for key, child in value.items()}
+    source_exclusion = (
+        value.get("op") == "choose_cards_apnap"
+        and value.get("then") == "return_owner_hand"
+        and value.get("exclude_ref") == "$source.zone_object"
+    )
+    if source_exclusion:
+        source_id = item.source_object_id
+        source_incarnation = item.context.get("source_logical_object_id")
+        if (
+            type(source_id) is not str
+            or not source_id
+            or type(source_incarnation) is not str
+            or not source_incarnation
+        ):
+            raise SemanticNodeError("Entry return exclusion requires the triggering source incarnation")
+    resolved = {key: resolve_semantic_value(host, child, item) for key, child in value.items()}
+    if source_exclusion and resolved["exclude_ref"] is None:
+        del resolved["exclude_ref"]
+    return resolved
 
 
 def resolve_semantic_value(

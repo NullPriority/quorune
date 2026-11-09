@@ -1293,6 +1293,7 @@
       "test_emblem_creation",
       "test_empty_permanent_views",
       "test_entry_color_composition",
+      "test_entry_return_incarnation",
       "test_exact_mana_families",
       "test_exile_rules",
       "test_expanded_basic_type_setting",

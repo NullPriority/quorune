@@ -40,7 +40,7 @@ def _choice_is_closed(effect: Mapping[str, Any]) -> bool:
         or not str(effect.get("prompt")).strip()
         or (
             "exclude_ref" in effect
-            and effect.get("exclude_ref") != "$source"
+            and effect.get("exclude_ref") not in ("$source", "$source.zone_object")
         )
     ):
         return False

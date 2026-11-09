@@ -4049,6 +4049,16 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 **arguments,
             ),
         )
+        branch = node.effects[0]["then_by_choice"]["return"][0]
+        self.assertEqual("$source.zone_object", branch["exclude_ref"])
+        legacy = deepcopy(node.effects[0])
+        legacy["then_by_choice"]["return"][0]["exclude_ref"] = "$source"
+        self.assertEqual(
+            ("choice.controller.fixed_return_owner_hand",),
+            fixed_entry_return_node_capabilities(effects=(legacy,), **arguments),
+        )
+        wrong_incarnation = deepcopy(node.effects[0])
+        wrong_incarnation["then_by_choice"]["return"][0]["exclude_ref"] = "$target.0"
         unexpected_field = deepcopy(node.effects[0])
         unexpected_field["unsupported"] = True
         wrong_option = deepcopy(node.effects[0])
@@ -4066,6 +4076,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             wrong_option,
             wrong_fallback,
             open_return,
+            wrong_incarnation,
         ):
             with self.subTest(mutant=mutant):
                 self.assertEqual(

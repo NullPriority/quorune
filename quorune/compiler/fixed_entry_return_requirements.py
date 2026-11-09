@@ -133,7 +133,7 @@ class FixedEntryReturnRequirementSpec:
             "prompt": "Choose the required permanent(s) to return.",
         }
         if self.excludes_source:
-            effect["exclude_ref"] = "$source"
+            effect["exclude_ref"] = "$source.zone_object"
         if full_payment:
             effect["require_full_count"] = True
             effect["fallback_effects"] = [
