@@ -3492,6 +3492,8 @@ then requires the source grammar, emitted effects, target relation, closed
 capability shape, and declared capability closure to agree. The normal pinned
 corpus includes the fixed source Exploit result as a composing carrier; its
 inner target effect retains the same independent grammar and shape checks.
+Transform event wrappers also reconstruct their printed event binding, including
+the paired entry or death event when present.
 For paired Overload and Cleave sources, the audit reconstructs each resolution
 body from the retained printed source and checks the fixed price, program role,
 body fingerprint, and alternative-cost capability before the ordinary target

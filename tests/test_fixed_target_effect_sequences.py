@@ -842,6 +842,33 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
         with self.assertRaises(TargetEffectAssuranceError):
             TargetEffectCorpusCollector().observe(record, mutated_ir)
 
+    def test_corpus_assurance_checks_transform_target_effect_and_printed_event(self):
+        for trigger in ("enters or transforms into", "transforms into"):
+            with self.subTest(trigger=trigger):
+                text = f"Whenever this creature {trigger} Fixture, target creature gets +4/+4 until end of turn."
+                record = self.record(text, type_line="Creature — Human")
+                ir = compile_oracle_card(
+                    record, capability_registry=self.capabilities, capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                face, = ir.faces
+                node, = face.nodes
+                collector = TargetEffectCorpusCollector()
+                collector.observe(record, ir)
+                self.assertEqual(1, len(collector._observations))
+
+                def mutated_ir(changed):
+                    return replace(ir, faces=(replace(face, nodes=(changed,)),))
+
+                changed_event = replace(node, event_condition={"field": "card", "op": "eq", "value": "$source.ref"})
+                with self.assertRaisesRegex(TargetEffectAssuranceError, "lost its printed event binding"):
+                    TargetEffectCorpusCollector().observe(record, mutated_ir(changed_event))
+                missing_authority = replace(node, capability_dependencies=tuple(
+                    value for value in node.capability_dependencies if value != "permanent.transform.face_change"
+                ))
+                with self.assertRaisesRegex(TargetEffectAssuranceError, "lost required capabilities"):
+                    TargetEffectCorpusCollector().observe(record, mutated_ir(missing_authority))
+
     def test_corpus_assurance_validates_both_source_bound_paid_spell_variants(self):
         collector = TargetEffectCorpusCollector()
         for keyword, body, cost in (
