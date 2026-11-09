@@ -24,6 +24,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         committed_occurrence_history_version=history.committed_occurrence_history_version,
         damage_life_history_version=history.damage_life_history_version,
         permanent_death_history_version=history.permanent_death_history_version,
+        public_movement_history_version=history.public_movement_history_version,
         first_life_gain_history_version=history.first_life_gain_history_version,
     )
 

@@ -119,6 +119,13 @@ clears the facts and retains the mode. Older checkpoints omit the marker and
 continue to record only their existing history facts. The initial checkpoint
 and record manifest must agree on the mode.
 
+The optional `turn_history.public_movement_history_version` is `1` in new
+games and is mirrored in manifest format provenance. It records committed
+permanent arrivals in an owner's hand or graveyard, card arrivals in exile,
+and the artifact subtypes of sacrificed permanents. Graveyard arrivals retain
+prior battlefield types. Exile facts carry no characteristics. Earlier
+checkpoints omit the mode and keep their original turn-history hashes.
+
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
 during replay. The mode survives journal reset and turn rollover. A

@@ -109,12 +109,19 @@ TurnHistoryEventKind = Literal[
     "permanent_damaged",
     "permanent_entered",
     "permanent_left",
+    "permanent_arrived_hand",
+    "permanent_arrived_graveyard",
+    "card_arrived_exile",
+    "artifact_subtype_sacrificed",
     "card_arrived_graveyard",
     "card_milled_graveyard",
 ]
 
 
 COMMITTED_OCCURRENCE_HISTORY_KINDS = frozenset({"spell_warped", "card_left_graveyard"})
+PUBLIC_MOVEMENT_HISTORY_KINDS = frozenset({
+    "permanent_arrived_hand", "permanent_arrived_graveyard", "card_arrived_exile", "artifact_subtype_sacrificed",
+})
 
 
 @dataclass(frozen=True, slots=True)
@@ -167,6 +174,8 @@ class TurnHistoryEvent:
             or self.types or type(self.amount) is not int or self.amount != 0
         ):
             raise ValueError("Committed occurrence history requires an actor and its exact object incarnation")
+        if self.kind in PUBLIC_MOVEMENT_HISTORY_KINDS:
+            self._validate_public_movement()
         if self.kind == 'first_life_gain' and (
             type(self.target) is not str or not self.target or self.target_kind != 'player'
             or any(value is not None for value in (self.actor, self.object_incarnation, self.target_object_incarnation, self.origin))
@@ -198,6 +207,28 @@ class TurnHistoryEvent:
         if self.kind=='card_milled_graveyard' and (type(self.object_incarnation) is not str or not self.object_incarnation):
             raise ValueError('Mill arrival history needs its exact graveyard incarnation')
 
+    def _validate_public_movement(self) -> None:
+        if (type(self.actor) is not str or not self.actor
+                or type(self.object_incarnation) is not str or not self.object_incarnation
+                or self.target_object_incarnation is not None or self.origin is not None
+                or type(self.amount) is not int or self.amount != 0):
+            raise ValueError("Public movement history requires a seat and a committed incarnation")
+        if self.kind == "artifact_subtype_sacrificed":
+            from .type_subtype_vocabulary import ARTIFACT_SUBTYPES
+
+            if (self.target_kind != "artifact_subtype" or type(self.target) is not str
+                    or self.target not in ARTIFACT_SUBTYPES or self.types):
+                raise ValueError("Sacrifice history requires one canonical artifact subtype")
+        elif self.target is not None or self.target_kind is not None:
+            raise ValueError("Movement history cannot carry a target")
+        elif self.kind == "card_arrived_exile":
+            if self.types:
+                raise ValueError("Card exile history carries no characteristics")
+        elif (not self.types or not isinstance(self.types, tuple)
+                or any(type(value) is not str or not value or value != value.casefold() for value in self.types)
+                or self.types != tuple(sorted(set(self.types)))):
+            raise ValueError("Permanent arrival history requires its prior types")
+
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["types"] = list(self.types)
@@ -212,9 +243,10 @@ class TurnHistoryEvent:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "TurnHistoryEvent":
         payload = dict(data)
-        if payload.get("kind") == "permanent_died":
+        if payload.get("kind") in {"permanent_died", *PUBLIC_MOVEMENT_HISTORY_KINDS}:
             if not isinstance(payload.get("types"), (list, tuple)):
-                raise ValueError("Permanent death history requires explicit card types")
+                family = "Permanent death" if payload.get("kind") == "permanent_died" else "Public movement"
+                raise ValueError(f"{family} history requires explicit card types")
             payload["types"] = tuple(payload["types"])
         else:
             payload["types"] = tuple(str(value) for value in payload.get("types", ()))
@@ -249,6 +281,7 @@ class TurnHistory:
     committed_occurrence_history_version: int | None = None
     damage_life_history_version: int | None = None
     permanent_death_history_version: int | None = None
+    public_movement_history_version: int | None = None
     first_life_gain_history_version: int | None = None
 
     def __post_init__(self) -> None:
@@ -274,6 +307,9 @@ class TurnHistory:
         death_version = self.permanent_death_history_version
         if death_version is not None and (type(death_version) is not int or death_version != 1):
             raise ValueError("Unsupported permanent death history version")
+        movement_version = self.public_movement_history_version
+        if movement_version is not None and (type(movement_version) is not int or movement_version != 1):
+            raise ValueError("Unsupported public movement history version")
         life_gain_version = self.first_life_gain_history_version
         if life_gain_version is not None and (type(life_gain_version) is not int or life_gain_version != 1):
             raise ValueError('Unsupported first life gain history version')
@@ -290,6 +326,8 @@ class TurnHistory:
             raise ValueError("Committed occurrence facts require complete history")
         if death_version is None and any(event.kind == "permanent_died" for event in self.events):
             raise ValueError("Permanent death facts require complete history")
+        if movement_version is None and any(event.kind in PUBLIC_MOVEMENT_HISTORY_KINDS for event in self.events):
+            raise ValueError("Public movement facts require complete history")
         first_gainers = [event.target for event in self.events if event.kind == 'first_life_gain']
         if first_gainers and (life_gain_version is None or len(first_gainers) != len(set(first_gainers))):
             raise ValueError('First life gain facts require versioned history and unique gaining seats')
@@ -338,6 +376,8 @@ class TurnHistory:
                if self.damage_life_history_version is not None else {}),
             **({"permanent_death_history_version": 1}
                if self.permanent_death_history_version is not None else {}),
+            **({"public_movement_history_version": 1}
+               if self.public_movement_history_version is not None else {}),
             **({'first_life_gain_history_version': 1} if self.first_life_gain_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
@@ -359,6 +399,8 @@ class TurnHistory:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "TurnHistory":
         previous = data.get("previous_turn")
+        if "public_movement_history_version" in data and data["public_movement_history_version"] is None:
+            raise ValueError("Unsupported public movement history version")
         if previous is not None and not isinstance(previous, dict):
             raise ValueError("Previous-turn spell history must be an object")
         if isinstance(previous, dict) and set(previous) != {
@@ -379,6 +421,7 @@ class TurnHistory:
             committed_occurrence_history_version=data.get("committed_occurrence_history_version"),
             damage_life_history_version=data.get("damage_life_history_version"),
             permanent_death_history_version=data.get("permanent_death_history_version"),
+            public_movement_history_version=data.get("public_movement_history_version"),
             first_life_gain_history_version=data.get('first_life_gain_history_version'),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[

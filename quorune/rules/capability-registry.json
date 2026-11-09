@@ -24750,6 +24750,98 @@
     {
       "applicability": {
         "exclusions": [
+          "Uncommitted moves, unsupported destinations, and previous-turn conditions."
+        ],
+        "inputs": [
+          "Committed zone-change occurrence with destination, prior permanent characteristics and actor facts.",
+          "A closed history query bound to the represented source controller and incarnation."
+        ],
+        "outputs": [
+          "A condition checked at trigger discovery and resolution.",
+          "Versioned movement facts without characteristics of exiled cards."
+        ],
+        "summary": "Check committed public movement and qualified sacrifice occurrences from a versioned current-turn journal."
+      },
+      "blockers": [],
+      "dependencies": [
+        "condition.history.fixed_public_query"
+      ],
+      "dependency_fail_closed_rationale": "The condition independently declares the movement history capability and requires the complete journal mode.",
+      "dependency_fail_closed_status": "passed",
+      "id": "condition.history.public_movement",
+      "implementation_components": [
+        "quorune.zone_trigger_processing.record_zone_change_history",
+        "quorune.public_history_query_model.PublicHistoryQuerySpec",
+        "quorune.public_history_query_model.matching_public_history_events",
+        "quorune.compiler.public_history_conditions.fixed_public_history_condition"
+      ],
+      "implementation_mutation_rationale": "Reading the wrong destination owner flips a native Barrin end-step trigger.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_food_sacrifice_separates_exile_arrival_and_graveyard_triggers",
+        "test_actual_kami_requires_its_own_graveyard_and_an_enchantment_arrival",
+        "test_actual_white_glove_counts_prior_human_controller_at_death",
+        "test_actual_ennis_ignores_exiled_token_and_a_late_card_exile"
+      ],
+      "multiplayer_tests": [
+        "test_actual_barrin_uses_hand_owner_instead_of_previous_controller",
+        "test_actual_food_sacrifice_separates_exile_arrival_and_graveyard_triggers",
+        "test_actual_white_glove_counts_prior_human_controller_at_death"
+      ],
+      "negative_tests": [
+        "test_original_movement_history_triggers_require_independent_runtime_authority",
+        "test_movement_history_queries_require_their_exact_facts_and_version",
+        "test_actual_food_sacrifice_separates_exile_arrival_and_graveyard_triggers",
+        "test_actual_white_glove_counts_prior_human_controller_at_death",
+        "test_actual_ennis_ignores_exiled_token_and_a_late_card_exile"
+      ],
+      "official_rules": [
+        "111.7",
+        "113.6m",
+        "400.3",
+        "400.7",
+        "603.4",
+        "603.6",
+        "603.10a",
+        "608.2a",
+        "700.4",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_actual_barrin_uses_hand_owner_instead_of_previous_controller",
+        "test_actual_food_sacrifice_separates_exile_arrival_and_graveyard_triggers",
+        "test_actual_kami_requires_its_own_graveyard_and_an_enchantment_arrival"
+      ],
+      "privacy_tests": [
+        "test_actual_food_sacrifice_separates_exile_arrival_and_graveyard_triggers",
+        "test_actual_kami_requires_its_own_graveyard_and_an_enchantment_arrival"
+      ],
+      "replay_tests": [
+        "test_actual_barrin_uses_hand_owner_instead_of_previous_controller",
+        "test_actual_food_sacrifice_separates_exile_arrival_and_graveyard_triggers",
+        "test_actual_kami_requires_its_own_graveyard_and_an_enchantment_arrival",
+        "test_actual_white_glove_counts_prior_human_controller_at_death",
+        "test_actual_ennis_ignores_exiled_token_and_a_late_card_exile"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Current-object substitutions",
           "Missing event modes",
           "Previous turns or arbitrary predicates"

@@ -209,6 +209,10 @@
           ],
           "type": "integer"
         },
+        "public_movement_history_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "profile": {
           "enum": [
             "commander_duel",

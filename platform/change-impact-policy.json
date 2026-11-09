@@ -10052,6 +10052,7 @@
     {
       "id": "public-history-queries",
       "patterns": [
+        "quorune/zone_trigger_processing.py",
         "quorune/public_history_query_model.py",
         "quorune/compiler/public_history_conditions.py",
         "tests/test_public_history_queries.py",

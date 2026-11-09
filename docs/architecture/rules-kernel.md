@@ -2347,6 +2347,12 @@ Missing or stale history is unavailable, including inside Boolean conditions
 and zero-count comparisons. Intervening conditions retain the existing checks
 at occurrence and resolution under the trigger's locked controller.
 
+Movement facts come from the committed zone-change occurrence after replacement.
+A hand or graveyard arrival of a permanent uses its destination owner and its
+prior battlefield types. A card exile condition also counts face-down arrivals.
+Sacrifice predicates use the previous controller and the artifact's prior
+subtypes. Source-excluding death queries compare logical incarnations.
+
 Qualified history modes also seal a completed cast's original zone and an
 arriving card's graveyard types. Cast-origin conditions count a spell even if
 it is later countered. Descent counts permanent cards arriving from anywhere

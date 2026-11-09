@@ -53,6 +53,9 @@ class ZoneTriggerProcessingHost(Protocol):
         actor: str,
         object_incarnation: str,
         types: set[str],
+        target: str | None = None,
+        target_kind: str | None = None,
+        origin: str | None = None,
         creature_subtypes: tuple[str, ...] | None = None,
         token: bool | None = None,
     ) -> None: ...
@@ -260,6 +263,20 @@ def record_zone_change_history(
         )
     moved = occurrence.origin != occurrence.destination
     history = getattr(getattr(host, "state", None), "turn_history", None)
+    movement_history = getattr(history, "public_movement_history_version", None) == 1
+    if movement_history and moved:
+        if physical and occurrence.destination == "exile" and occurrence.card_object:
+            host._record_turn_history(
+                "card_arrived_exile", actor=occurrence.owner,
+                object_incarnation=occurrence.current_logical_object_id, types=set(),
+            )
+        if (permanent and previous_types and occurrence.origin == "battlefield"
+                and occurrence.destination in {"hand", "graveyard"}):
+            kind = "permanent_arrived_hand" if occurrence.destination == "hand" else "permanent_arrived_graveyard"
+            host._record_turn_history(
+                kind, actor=occurrence.owner, object_incarnation=occurrence.previous_logical_object_id,
+                types=previous_types,
+            )
     if (
         permanent and moved and occurrence.origin == "battlefield"
         and getattr(history, "departure_history_version", None) == 1
@@ -291,6 +308,17 @@ def record_zone_change_history(
             object_incarnation=occurrence.previous_logical_object_id,
             types=previous_types,
         )
+        if movement_history and "artifact" in previous_types:
+            from .type_subtype_vocabulary import ARTIFACT_SUBTYPES
+
+            subtypes = {value for event in normalized if event.kind == "permanent.leave"
+                        for value in event.context.get("subtypes", ())}
+            for subtype in sorted(subtypes & ARTIFACT_SUBTYPES):
+                host._record_turn_history(
+                    "artifact_subtype_sacrificed", actor=occurrence.previous_controller,
+                    object_incarnation=occurrence.previous_logical_object_id, types=set(),
+                    target=subtype, target_kind="artifact_subtype",
+                )
 
 
 __all__ = [

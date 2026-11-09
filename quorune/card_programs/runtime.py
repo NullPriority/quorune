@@ -140,7 +140,8 @@ class _FixedPublicStateSnapshotResolver:
             return self._power_aggregate_result(source, condition)
         if condition.history_query is not None:
             from ..public_history_query_model import public_history_query_value
-            return public_history_query_value(self.state,source.controller,condition.history_query)
+            return public_history_query_value(self.state,source.controller,condition.history_query,
+                                              source_incarnation=getattr(source,"logical_object_id",None))
         if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
             if self.public_object_resolver is None:
                 return None
