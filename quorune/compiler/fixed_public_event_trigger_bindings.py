@@ -979,8 +979,16 @@ def _public_damage_spec(
 
 
 def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> FixedPublicEventBindingSpec | None:
-    from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY, defended_player_or_planeswalker_condition
+    from ..qualified_attack_model import (
+        QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_VARIANT,
+        defended_player_or_planeswalker_condition, source_attacks_battle_condition,
+    )
 
+    battle = re.fullmatch(r"(?:When|Whenever) this creature attacks a battle, (?P<body>.+)", material_line, re.I)
+    if battle is not None:
+        return _spec("creature.attacks", QUALIFIED_ATTACK_VARIANT, battle["body"],
+            "fixed-counter-public-attack-trigger-v1", "trigger-event-normalized-public-action",
+            condition=source_attacks_battle_condition(), capabilities=(QUALIFIED_ATTACK_CAPABILITY,))
     saddled = re.fullmatch(r"(?:When|Whenever) (?P<source>.+?) attacks while saddled, (?P<body>.+)",
         material_line, re.I)
     if saddled is not None and _source_subject(saddled["source"], card_name=card_name):

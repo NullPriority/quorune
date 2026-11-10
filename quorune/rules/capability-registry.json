@@ -62391,7 +62391,11 @@
         "test_actual_battlegrace_results_reach_the_attacker_and_never_its_returned_incarnation",
         "test_actual_fervent_charge_binds_each_declared_attacker_without_buffing_idle_creatures",
         "test_actual_rafiq_double_strike_reaches_the_lone_attacker_and_both_damage_steps",
-        "test_actual_renegade_freighter_crew_then_attack_preserves_vehicle_result_identity"
+        "test_actual_renegade_freighter_crew_then_attack_preserves_vehicle_result_identity",
+        "test_attack_multiplier_ignores_a_new_incarnation",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack"
       ],
       "multiplayer_tests": [
         "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
@@ -62400,16 +62404,23 @@
         "test_actual_battlegrace_results_reach_the_attacker_and_never_its_returned_incarnation",
         "test_actual_fervent_charge_binds_each_declared_attacker_without_buffing_idle_creatures",
         "test_actual_rafiq_double_strike_reaches_the_lone_attacker_and_both_damage_steps",
-        "test_actual_renegade_freighter_crew_then_attack_preserves_vehicle_result_identity"
+        "test_actual_renegade_freighter_crew_then_attack_preserves_vehicle_result_identity",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack"
       ],
       "negative_tests": [
         "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
         "test_actual_asari_queued_result_does_not_follow_a_blinked_attacker",
         "test_actual_atarka_grants_double_strike_to_the_other_dragon_and_changes_both_damage_steps",
         "test_actual_battlegrace_results_reach_the_attacker_and_never_its_returned_incarnation",
+        "test_attack_multiplier_ignores_a_new_incarnation",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
         "test_attack_result_owner_withdrawal_keeps_unrelated_qualified_token_result",
         "test_attacker_result_pronoun_and_explicit_observer_keep_distinct_sealed_roles",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
         "test_existing_public_attack_pronoun_results_pin_the_attacker_and_keep_unknown_siblings_residual",
+        "test_multiplier_occurrence_owner_withdrawal_and_malformed_grant_fail_closed",
         "test_occurrence_characteristic_shape_rejects_unbound_relative_quantities_and_changed_roles",
         "test_runtime_attack_occurrence_result_owner_cannot_be_omitted",
         "test_runtime_attack_result_dependency_is_inferred_without_declaration",
@@ -62431,12 +62442,16 @@
         "test_actual_fervent_charge_binds_each_declared_attacker_without_buffing_idle_creatures",
         "test_actual_rafiq_double_strike_reaches_the_lone_attacker_and_both_damage_steps",
         "test_actual_renegade_freighter_crew_then_attack_preserves_vehicle_result_identity",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
         "test_attacker_result_pronoun_and_explicit_observer_keep_distinct_sealed_roles",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
         "test_existing_public_attack_pronoun_results_pin_the_attacker_and_keep_unknown_siblings_residual",
         "test_occurrence_characteristic_shape_rejects_unbound_relative_quantities_and_changed_roles"
       ],
       "privacy_tests": [
-        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once"
+        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants"
       ],
       "replay_tests": [
         "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
@@ -62445,7 +62460,11 @@
         "test_actual_battlegrace_results_reach_the_attacker_and_never_its_returned_incarnation",
         "test_actual_fervent_charge_binds_each_declared_attacker_without_buffing_idle_creatures",
         "test_actual_rafiq_double_strike_reaches_the_lone_attacker_and_both_damage_steps",
-        "test_actual_renegade_freighter_crew_then_attack_preserves_vehicle_result_identity"
+        "test_actual_renegade_freighter_crew_then_attack_preserves_vehicle_result_identity",
+        "test_attack_multiplier_ignores_a_new_incarnation",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack"
       ],
       "required_evidence": [
         "positive",
@@ -74887,7 +74906,8 @@
         "inputs": [
           "Effective public attacker characteristics after declaration",
           "Current source controller and ability",
-          "Closed independently represented effect body"
+          "Closed independently represented effect body",
+          "Closed original recipient kind for the source attacking a battle"
         ],
         "outputs": [
           "One trigger for each matching declared attacker",
@@ -74918,14 +74938,16 @@
         "test_actual_linden_seals_white_at_declaration_across_later_white_and_black_changes",
         "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
         "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
-        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce"
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack"
       ],
       "multiplayer_tests": [
         "test_actual_inkcaster_requires_named_counter_and_queued_result_survives_counter_removal",
         "test_actual_linden_seals_white_at_declaration_across_later_white_and_black_changes",
         "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
         "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
-        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce"
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack"
       ],
       "negative_tests": [
         "test_actual_inkcaster_requires_named_counter_and_queued_result_survives_counter_removal",
@@ -74934,6 +74956,7 @@
         "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
         "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
         "test_attack_fact_execution_marker_round_trips_and_absence_preserves_historical_state",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
         "test_closed_subject_queries_share_exact_effects_and_keep_singular_scope",
         "test_runtime_qualified_attack_capability_cannot_be_omitted",
         "test_sealed_fact_requirements_reject_malformed_fields_without_widening_old_damage",
@@ -74956,6 +74979,7 @@
         "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
         "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
         "test_attack_fact_execution_marker_round_trips_and_absence_preserves_historical_state",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
         "test_closed_subject_queries_share_exact_effects_and_keep_singular_scope",
         "test_sealed_fact_requirements_reject_malformed_fields_without_widening_old_damage"
       ],
@@ -74969,7 +74993,8 @@
         "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
         "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
         "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
-        "test_attack_fact_execution_marker_round_trips_and_absence_preserves_historical_state"
+        "test_attack_fact_execution_marker_round_trips_and_absence_preserves_historical_state",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack"
       ],
       "required_evidence": [
         "positive",
@@ -88450,12 +88475,13 @@
     {
       "applicability": {
         "inputs": [
-          "Closed source, single creature target, or controlled creature set",
+          "Closed source, creature target, controlled creature set, attack occurrence, or equipped creature",
           "Effective signed characteristics at resolution"
         ],
         "outputs": [
           "Locked additive layer 7c effects through cleanup",
-          "Independently sampled amounts per current affected incarnation"
+          "Independently sampled amounts per current affected incarnation",
+          "Shared effect timestamp for the optional fixed first strike grant"
         ],
         "exclusions": [
           "Variable repetition and unrepresented recipient bindings"
@@ -88477,17 +88503,34 @@
       "implementation_mutation_rationale": "Clamping a negative power changes Unleash Fury's native result. Omitting the compiler production leaves the original residual.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
         "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
         "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
         "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
         "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
       ],
       "multiplayer_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
         "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
         "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
         "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
       ],
       "negative_tests": [
+        "test_attack_multiplier_ignores_a_new_incarnation",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_multiplier_occurrence_owner_withdrawal_and_malformed_grant_fail_closed",
         "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
         "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
         "test_stat_multiplier_requires_exact_capability_and_kills_the_unsigned_mutation",
@@ -88497,7 +88540,10 @@
         "107.1b",
         "107.2",
         "208.3",
+        "400.7",
+        "508.3a",
         "608.2b",
+        "608.2h",
         "611.2a",
         "611.2c",
         "613.4c",
@@ -88505,18 +88551,35 @@
         "701.10b",
         "701.10c",
         "701.11b",
-        "701.11c"
+        "701.11c",
+        "701.14a",
+        "701.14b",
+        "702.7a"
       ],
       "positive_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
         "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
         "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
         "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
         "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
       ],
       "privacy_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
         "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
       ],
       "replay_tests": [
+        "test_attack_multiplier_ignores_a_new_incarnation",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
         "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
         "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
         "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
@@ -88544,7 +88607,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 779,
+  "registry_version": 780,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

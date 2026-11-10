@@ -31,6 +31,14 @@ def qualified_attack_characteristic_result(binding,body,*,effect_template,card_n
         or binding.variant.startswith('public_attack_')
     ):
         return None
+    from .fixed_stat_multipliers import attack_occurrence_multiplier_template
+    from ..rules.attack_event_results import attack_event_characteristic_capabilities
+
+    multiplier = attack_occurrence_multiplier_template(body)
+    if multiplier is not None and attack_event_characteristic_capabilities(
+        effects=multiplier[1], target_schema=None, mechanic_ids=multiplier[3],
+    ):
+        return multiplier, True
     match=re.fullmatch(r'(?:it|that creature|that permanent) (?P<body>.+)',body,re.I)
     if match is None:return None
     other = _OTHER_CONTROLLED_CREATURES.fullmatch(match['body'])
@@ -46,7 +54,6 @@ def qualified_attack_characteristic_result(binding,body,*,effect_template,card_n
             except (ValueError, TypeError):
                 return (None, (), None, ()), False
         effects = (effect,)
-        from ..rules.attack_event_results import attack_event_characteristic_capabilities
         if attack_event_characteristic_capabilities(effects=effects,target_schema=None,mechanic_ids=compiled[3]):
             return ('fixed-attack-occurrence-characteristics-v1',effects,None,compiled[3]),True
     return (None,(),None,()),False

@@ -633,6 +633,7 @@
     "tests/fixtures/fixed-stack-mana-value-cards.json",
     "tests/fixtures/fixed-stack-spell-copy-cards.json",
     "tests/fixtures/fixed-stat-multiplier-cards.json",
+    "tests/fixtures/fixed-stat-multiplier-composition-cards.json",
     "tests/fixtures/fixed-tap-additional-cost-cards.json",
     "tests/fixtures/fixed-tap-payment-cards.json",
     "tests/fixtures/fixed-token-creation-cards.json",

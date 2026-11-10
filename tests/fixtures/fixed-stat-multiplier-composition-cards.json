@@ -1,0 +1,569 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned originals for attack, attachment, and target stat multiplier compositions",
+  "cards": [
+    {
+      "oracle_id": "69e0d9f1-f9dd-4614-ad9f-13e7153710ce",
+      "name": "Dragonclaw Strike",
+      "mana_cost": "{2/G}{2/U}{2/R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Double the power and toughness of target creature you control until end of turn. Then it fights up to one target creature an opponent controls. (Each deals damage equal to its power to the other.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Fight",
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "cmc": 6.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0347b8b7-0553-4a1f-9677-ad730470c345",
+      "name": "Junk Jet",
+      "mana_cost": "{1}{R}",
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "When this Equipment enters, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")\n{3}, Sacrifice another artifact: Double equipped creature's power until end of turn.\nEquip {1}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Equip",
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "name": "Legion Leadership // Legion Stronghold",
+      "mana_cost": "{1}{R/W} // ",
+      "type_line": "Instant // Land",
+      "oracle_text": "Legion Leadership: Until end of turn, double target creature's power and it gains first strike.\n//\nLegion Stronghold: This land enters tapped.\n{T}: Add {R} or {W}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Double"
+      ],
+      "produced_mana": [
+        "R",
+        "W"
+      ],
+      "layout": "modal_dfc",
+      "released_at": "2024-06-14",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "R",
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R/W}",
+          "name": "Legion Leadership",
+          "oracle_text": "Until end of turn, double target creature's power and it gains first strike.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Legion Stronghold",
+          "oracle_text": "This land enters tapped.\n{T}: Add {R} or {W}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Land"
+        }
+      ]
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "name": "Two-Handed Axe // Sweeping Cleave",
+      "mana_cost": "{2}{R} // {1}{R}",
+      "type_line": "Artifact — Equipment // Instant — Adventure",
+      "oracle_text": "Two-Handed Axe: Whenever equipped creature attacks, double its power until end of turn.\nEquip {1}{R}\n//\nSweeping Cleave: Target creature you control gains double strike until end of turn. (Then exile this card. You may cast the artifact later from exile.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Equip",
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "adventure",
+      "released_at": "2022-06-10",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}",
+          "name": "Two-Handed Axe",
+          "oracle_text": "Whenever equipped creature attacks, double its power until end of turn.\nEquip {1}{R}",
+          "power": null,
+          "toughness": null,
+          "type_line": "Artifact — Equipment"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Sweeping Cleave",
+          "oracle_text": "Target creature you control gains double strike until end of turn. (Then exile this card. You may cast the artifact later from exile.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant — Adventure"
+        }
+      ]
+    },
+    {
+      "oracle_id": "7100fe0c-1c2a-461a-83b3-684d44279081",
+      "name": "Wolverine, Claws Out",
+      "mana_cost": "{3}{G}",
+      "type_line": "Legendary Creature — Mutant Berserker Hero",
+      "oracle_text": "You may have Wolverine assign his combat damage as though he weren't blocked.\nWhenever a Mutant you control attacks, double its power until end of turn.",
+      "power": "2",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e75f1834-10b8-4362-adbe-847ad9909dee",
+      "name": "Thrashing Frontliner",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature — Phyrexian Lizard",
+      "oracle_text": "Trample\nWhenever this creature attacks a battle, it gets +1/+1 until end of turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bc89face-92b1-47d3-8cdb-360b7334d3b8",
+      "name": "War-Trained Slasher",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Wolverine Dinosaur",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nWhenever this creature attacks a battle, double its power until end of turn.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Menace",
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "69e0d9f1-f9dd-4614-ad9f-13e7153710ce",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If an effect instructs you to “double” a creature’s power, that creature gets +X/+0, where X is its power as that effect begins to apply. Similarly, a creature whose toughness is doubled gets +0/+X, where X is its toughness as the effect begins to apply."
+    },
+    {
+      "oracle_id": "0347b8b7-0553-4a1f-9677-ad730470c345",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Junk token to pay multiple costs. For example, you can't sacrifice a Junk token to activate its own ability and also to activate the second ability of Junk Jet."
+    },
+    {
+      "oracle_id": "0347b8b7-0553-4a1f-9677-ad730470c345",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If a creature's power is less than 0 when it's doubled, instead that creature gets -X/-0, where X is how much less than 0 its power is. For example, suppose you control Infesting Radroach, a 2/2 creature. If an effect has given Infesting Radroach -4/-0 so that it's a -2/2 creature, doubling its power gives it -2/-0, and it becomes a -4/2 creature."
+    },
+    {
+      "oracle_id": "0347b8b7-0553-4a1f-9677-ad730470c345",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If you \"double\" a creature's power more than once in a turn, each doubling effect applies independently. For example, suppose Junk Jet is attached to Infesting Radroach, a 2/2 creature. If you activate Junk Jet's second ability, Infesting Radroach will get +2/+0 when that ability resolves, making it a 4/2 creature. Doubling its power again will give it +4/+0, making it an 8/2 creature."
+    },
+    {
+      "oracle_id": "0347b8b7-0553-4a1f-9677-ad730470c345",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If an effect instructs you to \"double\" a creature's power, that creature gets +X/+0, where X is its power as that effect begins to apply."
+    },
+    {
+      "oracle_id": "0347b8b7-0553-4a1f-9677-ad730470c345",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You pay all costs and follow all normal timing rules for the card played from exile with a Junk token's ability. For example, if the exiled card is a land card, you may play it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "0347b8b7-0553-4a1f-9677-ad730470c345",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Junk tokens may require targets. If each target chosen is illegal as that spell or ability tries to resolve, it won't resolve and none of its effects happen. You won't create any Junk tokens."
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "A modal double-faced card can't be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed."
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you're playing and ignore the other face's characteristics. For example, if an effect stops you from casting creature spells, you can't cast Disciple of Freyalise, but you can still play Garden of Freyalise."
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "To double a creature's power, that creature gets +X/+0, where X is that creature's power when Legion Leadership resolves."
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \"play\") a specific modal double-faced card, you can't play it as a land."
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If an effect allows you to put a card with particular characteristics onto the battlefield without instructing you to play or cast it, you consider only the characteristics of a modal double-faced card's front face to see if that card qualifies. If it does, it enters the battlefield with its front face up. For example, if an effect allows you to put a creature card from your graveyard onto the battlefield, you can put Disciple of Freyalise onto the battlefield. However, an effect that lets you return a land card from your graveyard to your hand won't let you return Garden of Freyalise to your hand, as that card has only its front face's characteristics while in the graveyard."
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect. For example, if an effect allows you to play lands from your graveyard, you can play Garden of Freyalise, but you can't cast Disciple of Freyalise."
+    },
+    {
+      "oracle_id": "ad225ec2-ff3a-48f6-81a7-dfdd1b75e1f7",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that's being considered. On the stack or the battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "You must still follow any relevant timing rules for the permanent spell you cast from exile. Normally, you’ll be able to cast it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won’t give you permission to cast it as a permanent spell."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An adventurer card is a permanent card in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it’s in your graveyard, Altar of Bhaal is an artifact card whose mana value is 2."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it’s not possible to cast the copy from exile."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Casting a card as an Adventure isn’t casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "To double a creature's power, that creature gets +X/+0, where X is that creature's power as the triggered ability resolves."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner’s graveyard as it resolves. For as long as it remains exiled, that player may cast it as a permanent spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won’t be exiled and the spell’s controller won’t be able to cast it as a permanent later."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it’s a token) or cease to be a copy (if it’s a nontoken permanent), and so you won’t be able to cast it as an Adventure."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An effect may refer to a card, spell, or permanent that “has an Adventure.” This refers to a card, spell, or permanent that has an adventurer card’s set of alternative characteristics, even if they’re not being used and even if that card was never cast as an Adventure."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card’s normal characteristics. The spell’s color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it’s legal to cast that spell."
+    }
+  ]
+}

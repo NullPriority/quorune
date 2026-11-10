@@ -8,7 +8,10 @@ from dataclasses import dataclass
 from enum import StrEnum
 import re
 
+from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..object_predicate import ObjectQuerySpec, object_query_capabilities
+from ..qualified_attack_model import ATTACK_CHARACTERISTIC_RESULT_CAPABILITY
 from ..replacement.immutable import thaw_value
 from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION
 
@@ -19,6 +22,8 @@ STAT_MULTIPLIER_MECHANIC = "fixed-resolution-stat-multiplier"
 _BASE_CAPABILITY = "continuous.resolution.fixed_characteristics_until_end_of_turn"
 _TARGET_CAPABILITY = "target.revalidate_resolution"
 _SOURCE = "$source.zone_object"
+ATTACK_MULTIPLIER_RECIPIENT = "$event.permanent_object"
+EQUIPPED_MULTIPLIER_RECIPIENT = AttachmentReferenceSpec(AttachmentReferenceKind.EQUIPPED, "creature", schema_version=2)
 _SCALAR_TARGET = re.compile(r"\$target\.0|\$target_group\.(?:clause_[0-9]+|target_[0-9]+)\.0")
 
 
@@ -32,10 +37,13 @@ class MultipliedStat(StrEnum):
 class FixedStatMultiplier:
     factor: int
     stat: MultipliedStat
+    grant_first_strike: bool = False
 
     def __post_init__(self):
         if type(self.factor) is not int or self.factor not in (2, 3) or not isinstance(self.stat, MultipliedStat):
             raise ValueError("A fixed stat multiplier requires a closed factor and characteristic")
+        if type(self.grant_first_strike) is not bool:
+            raise ValueError("A fixed stat multiplier keyword grant must be boolean")
 
     def delta(self, power: int | None, toughness: int | None) -> tuple[int, int]:
         if any(value is not None and type(value) is not int for value in (power, toughness)):
@@ -55,18 +63,28 @@ def decode_fixed_stat_multiplier(effect, *, controller: str | None = None):
     fields = {"op", "schema_version", "factor", "stat"}
     if not is_fixed_stat_multiplier(effect) or type(effect["schema_version"]) is not int:
         raise ValueError("Fixed stat multiplier version is malformed")
+    first_strike = "grant_first_strike" in effect
+    if first_strike:
+        fields.add("grant_first_strike")
+        if effect["grant_first_strike"] is not True:
+            raise ValueError("A combined stat result grants the fixed keyword or omits the field")
     try:
-        spec = FixedStatMultiplier(effect["factor"], MultipliedStat(effect["stat"]))
+        spec = FixedStatMultiplier(effect["factor"], MultipliedStat(effect["stat"]), first_strike)
     except KeyError as exc:
         raise ValueError("Fixed stat multiplier fields are incomplete") from exc
     if set(effect) == fields | {"card"}:
         ref = effect["card"]
         if controller is not None and (ref is None or type(ref) is str and ref and not ref.startswith("$")):
             return spec, ref, False
-        if controller is None and type(ref) is str and (ref == _SOURCE or _SCALAR_TARGET.fullmatch(ref)):
-            return spec, ref, False
+        if controller is None:
+            if type(ref) is str and _SCALAR_TARGET.fullmatch(ref):
+                return spec, ref, False
+            if not first_strike and type(ref) is str and ref in {_SOURCE, ATTACK_MULTIPLIER_RECIPIENT}:
+                return spec, ref, False
+            if not first_strike and isinstance(ref, Mapping) and AttachmentReferenceSpec.from_dict(ref) == EQUIPPED_MULTIPLIER_RECIPIENT:
+                return spec, EQUIPPED_MULTIPLIER_RECIPIENT, False
         raise ValueError("Fixed stat multiplier has an unbound recipient")
-    if set(effect) != fields | {"predicate", "exclude_source"} or type(effect["exclude_source"]) is not bool:
+    if first_strike or set(effect) != fields | {"predicate", "exclude_source"} or type(effect["exclude_source"]) is not bool:
         raise ValueError("Fixed stat multiplier selection fields are closed")
     query = ObjectQuerySpec.from_dict(effect["predicate"])
     expected = ObjectQuerySpec(zones=("battlefield",), controller=controller or "$controller",
@@ -77,15 +95,28 @@ def decode_fixed_stat_multiplier(effect, *, controller: str | None = None):
 
 
 def fixed_stat_multiplier_runtime_dependencies(effect, *, target_schema):
-    _spec, subject, _exclude = decode_fixed_stat_multiplier(effect)
+    spec, subject, _exclude = decode_fixed_stat_multiplier(effect)
     required = {STAT_MULTIPLIER_CAPABILITY, _BASE_CAPABILITY}
+    if spec.grant_first_strike:
+        required.update(FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES["First Strike"])
     if isinstance(subject, ObjectQuerySpec):
         required.update(object_query_capabilities(subject))
+    elif isinstance(subject, AttachmentReferenceSpec):
+        required.add("attachment.reference.current_or_lki")
+    elif subject == ATTACK_MULTIPLIER_RECIPIENT:
+        if target_schema is not None:
+            raise ValueError("An attack multiplier requires one untargeted occurrence")
+        required.update((ATTACK_CHARACTERISTIC_RESULT_CAPABILITY, "resolution.event_object.fixed_result"))
     elif subject != _SOURCE:
         from ..compiler.direct_target import direct_permanent_target_spec
 
         schema = thaw_value(target_schema)
-        if subject != "$target.0" and isinstance(schema, Mapping):
+        if isinstance(schema, Mapping) and subject == "$target.0" and "groups" in schema:
+            groups = schema["groups"]
+            if not isinstance(groups, (list, tuple)) or not groups or not isinstance(groups[0], Mapping):
+                raise ValueError("A target sequence requires its first group")
+            schema = {key: value for key, value in groups[0].items() if key != "id"}
+        elif subject != "$target.0" and isinstance(schema, Mapping):
             from ..targets import target_group_mappings
 
             group_id = subject.split(".")[1]
@@ -111,7 +142,8 @@ def fixed_stat_multiplier_node_capabilities(*, effects, target_schema, mechanic_
 
 def apply_fixed_stat_multiplier(host, effect, *, actor, reason):
     from ..continuous_effect_state import (
-        create_resolution_continuous_effect, matching_battlefield_objects, resolution_effect_source,
+        ResolutionContinuousComponent, create_resolution_continuous_effect,
+        create_resolution_continuous_effect_components, matching_battlefield_objects, resolution_effect_source,
     )
     from ..continuous_effects import ContinuousOperation, Layer
     from ..errors import GameRuleError
@@ -140,7 +172,16 @@ def apply_fixed_stat_multiplier(host, effect, *, actor, reason):
             if "creature" in current.types:
                 groups[spec.delta(current.effective_power, current.effective_toughness)].append(card)
         for (power, toughness), cards in groups.items():
-            if (power or toughness) and create_resolution_continuous_effect(
+            if spec.grant_first_strike:
+                components = [ResolutionContinuousComponent(
+                    Layer.ABILITY, "6", (ContinuousOperation("add_ability", "First Strike"),),
+                )]
+                if power or toughness:
+                    components.append(ResolutionContinuousComponent(
+                        Layer.POWER_TOUGHNESS, "7c", (ContinuousOperation("modify_power_toughness", (power, toughness)),),
+                    ))
+                create_resolution_continuous_effect_components(host, source=source, targets=cards, components=components)
+            elif (power or toughness) and create_resolution_continuous_effect(
                 host, source=source, targets=cards, layer=Layer.POWER_TOUGHNESS, sublayer="7c",
                 operations=(ContinuousOperation("modify_power_toughness", (power, toughness)),),
             ) is None:

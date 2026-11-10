@@ -19,6 +19,9 @@ from ..creature_power_damage_model import (
 )
 from ..replacement.immutable import thaw_value
 from ..creature_subtypes import canonical_creature_subtype
+from .fixed_stat_multipliers import (
+    STAT_MULTIPLIER_MECHANIC, fixed_stat_multiplier_runtime_dependencies, is_fixed_stat_multiplier,
+)
 
 
 _ATTACHED_CREATURE = {
@@ -240,7 +243,7 @@ def fixed_creature_power_damage_node_capabilities(
     target = effect.get("target")
     lki = effect.get("source_lki")
     direct = source == "$target.0"
-    prep_dependency: str | None = None
+    prep_dependencies: tuple[str, ...] = ()
     if len(effects) == 2:
         prep = effects[0]
         if not direct:
@@ -253,9 +256,7 @@ def fixed_creature_power_damage_node_capabilities(
             and (prep.get("power"), prep.get("toughness")) != (0, 0)
             and "cr-611-continuous-effects" in mechanics
         ):
-            prep_dependency = (
-                "continuous.resolution.fixed_characteristics_until_end_of_turn"
-            )
+            prep_dependencies = ("continuous.resolution.fixed_characteristics_until_end_of_turn",)
         elif set(prep) == {"op", "card", "counter", "amount", "source"} and (
             prep.get("op") == "place_counters"
             and prep.get("card") == "$target.0"
@@ -265,7 +266,13 @@ def fixed_creature_power_damage_node_capabilities(
             and prep.get("source") == "$source"
             and "cr-122-counters" in mechanics
         ):
-            prep_dependency = "counter.producer.fixed_effect"
+            prep_dependencies = ("counter.producer.fixed_effect",)
+        elif (kind == "fight" and is_fixed_stat_multiplier(prep) and prep.get("card") == "$target.0"
+                and {STAT_MULTIPLIER_MECHANIC, "cr-611-continuous-effects"} <= mechanics):
+            try:
+                prep_dependencies = fixed_stat_multiplier_runtime_dependencies(prep, target_schema=target_schema)
+            except (TypeError, ValueError):
+                return ()
         else:
             return ()
     if direct:
@@ -306,8 +313,7 @@ def fixed_creature_power_damage_node_capabilities(
         "damage.result.multitype_permanent",
         "target.revalidate_resolution",
     }
-    if prep_dependency is not None:
-        dependencies.add(prep_dependency)
+    dependencies.update(prep_dependencies)
     if multiplier == 2:
         dependencies.add(CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY)
     if kind == "bite" and isinstance(target_group, Mapping) and target_group.get(

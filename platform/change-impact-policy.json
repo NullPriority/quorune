@@ -10298,6 +10298,30 @@
       ]
     },
     {
+      "id": "stat-multiplier-recipient-and-fight-composition",
+      "patterns": [
+        "quorune/attack_transition_engine_adapter.py",
+        "quorune/compiler/attack_event_results.py",
+        "quorune/compiler/creature_power_damage_templates.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/fixed_stat_multipliers.py",
+        "quorune/qualified_attack_model.py",
+        "quorune/rules/attack_event_results.py",
+        "quorune/rules/creature_power_damage_capability_shapes.py",
+        "quorune/rules/fixed_stat_multipliers.py",
+        "quorune/rules/qualified_attacks.py",
+        "tests/test_power_toughness_switch.py",
+        "tests/fixtures/fixed-stat-multiplier-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_occurrences",
+        "test_card_program_trust",
+        "test_fixed_creature_power_damage",
+        "test_power_toughness_switch",
+        "test_qualified_attack_subjects"
+      ]
+    },
+    {
       "id": "fixed-resolution-stat-multipliers",
       "patterns": [
         "quorune/compiler/fixed_stat_multipliers.py",

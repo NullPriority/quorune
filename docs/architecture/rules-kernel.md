@@ -2108,6 +2108,13 @@ measurements before applying any modifier. The continuous-effect journal locks
 the additive layer 7c results to those incarnations until cleanup. Existing
 layer 7d switches still apply after the recorded additions.
 
+An attack trigger can multiply the original attacker's stats after the
+equipment or observer leaves. A source attacking a battle matches the
+declared recipient kind. An activated equipped-creature multiplier instead
+uses the shared attachment reference at resolution. A targeted multiplier
+can share its timestamp with first strike or precede a fight on the original
+target plan. The fight requires both targets to remain legal.
+
 Named-counter zone predicates consume version-two occurrence counter maps.
 The zone owner captures departure counters before any reset, including for all
 members of a simultaneous move, and captures entry counters after committed

@@ -6,12 +6,15 @@ from ..qualified_attack_model import ATTACK_CHARACTERISTIC_RESULT_CAPABILITY
 from ..query_effect_amount_model import PublicQueryAmountSpec,PUBLIC_QUERY_AMOUNT_CAPABILITY
 from ..characteristic_fragments import CharacteristicQuantityScope,CharacteristicQuantitySpec
 from .node_capability_shapes import fixed_source_characteristics_node_capabilities
+from .fixed_stat_multipliers import fixed_stat_multiplier_node_capabilities, is_fixed_stat_multiplier
 
 
 def attack_event_characteristic_capabilities(*,effects,target_schema,mechanic_ids):
     if target_schema is not None or len(effects)!=1:return ()
     effect=effects[0]
     if effect.get('op')!='apply_source_characteristics_until_end_of_turn' or effect.get('card')!='$event.permanent_object':return ()
+    if is_fixed_stat_multiplier(effect):
+        return fixed_stat_multiplier_node_capabilities(effects=effects, target_schema=None, mechanic_ids=mechanic_ids)
     projected={**effect,'card':'$source.zone_object'};amounts=set()
     for field in ('power','toughness'):
         value=projected.get(field)

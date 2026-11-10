@@ -215,7 +215,8 @@ def fixed_resolution_characteristics_effect_template(
         return chosen
     from .fixed_stat_multipliers import fixed_stat_multiplier_effect_template
     multiplier = fixed_stat_multiplier_effect_template(text, source_name=source_name,
-        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types,
+        source_attachment_relation=source_attachment_relation)
     if multiplier is not None:
         return multiplier
     from .power_toughness_switch import power_toughness_switch_effect_template
