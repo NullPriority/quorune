@@ -1231,6 +1231,7 @@ def _closed_effect_recognizers():
     from ..rules.any_number_target_shapes import is_closed_any_number_target_program
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
+    from ..rules.next_cast_counter_protection import is_closed_next_cast_protection_program
     return (
         is_closed_activated_preparation_program,
         is_closed_target_player_sequence_program,
@@ -1248,6 +1249,7 @@ def _closed_effect_recognizers():
         _is_closed_graveyard_copy_cast_program,
         closed_fused_program,
         is_closed_library_search_prohibition_program,
+        is_closed_next_cast_protection_program,
         is_closed_announced_target_set_program,
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,

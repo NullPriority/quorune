@@ -6,6 +6,12 @@ from ...cast_source_placement_model import cast_source_placement_version
 from .public_conditions import prospective_cost_condition_view
 from ...characteristic_read_frames import CharacteristicReadHost as _ProspectiveCharacteristicReadHost
 from ...characteristic_read_frames import CharacteristicStateView
+from ..cast_cascade_grants import (
+    CastCascadeScope, announced_cascade_context, commit_cast_cascade_grants, reserve_cast_cascade_grants,
+)
+from ..next_cast_counter_protection import (
+    NextCastProtectionScope, announced_protection_context, commit_next_cast_protection, reserve_next_cast_protection,
+)
 
 
 def revalidate_cast_source(host, proposal, details, response):
@@ -86,6 +92,27 @@ def prospective_fixed_tap_price_host(host, seat, source_object_id, tapped):
 
 def power_sacrifice_read_host(host, actor, source_object_id):
     return prospective_sacrifice_read_host(host, actor, source_object_id)
+
+
+@dataclass(frozen=True, slots=True)
+class AnnouncedCastGrants:
+    """Keep both reservations with the proposed spell until its costs are accepted."""
+
+    cascade: tuple[CastCascadeScope, ...]
+    protection: tuple[NextCastProtectionScope, ...]
+
+    @classmethod
+    def reserve(cls, host, proposal):
+        return cls(reserve_cast_cascade_grants(host, proposal), reserve_next_cast_protection(host, proposal))
+
+    def context(self):
+        return {**announced_cascade_context(self.cascade), **announced_protection_context(self.protection)}
+
+    def commit(self, host, proposal):
+        stats = host.state.players[proposal.seat].stats
+        turn_sequence = host.state.turn_sequence
+        commit_cast_cascade_grants(stats, turn_sequence, self.cascade)
+        commit_next_cast_protection(stats, turn_sequence, self.protection)
 
 
 def observe_cast_source_placement(host, item) -> None:

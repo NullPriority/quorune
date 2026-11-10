@@ -158,6 +158,10 @@ def _apply_next_spell_improvise_or_next_spell_uncounterable(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.next_cast_counter_protection import is_versioned_next_cast_protection
+
+    if is_versioned_next_cast_protection(effect):
+        return _apply_next_cast_protection(host, effect, actor=actor, reason=reason)
     op = operation
     seat = str(effect.get("player") or actor)
     host.state.players[seat].stats[op] = True
@@ -176,6 +180,22 @@ def _apply_next_spell_improvise_or_next_spell_uncounterable(
         importance=1,
         changed_players=[seat],
     )
+    return True
+
+
+def _apply_next_cast_protection(host, effect, *, actor, reason):
+    from ..rules.next_cast_counter_protection import grant_next_cast_protection, next_cast_protection_effect_scope
+
+    if actor not in host.active_seats:
+        raise GameRuleError("Next-cast protection requires the active ability controller")
+    try:
+        scope = next_cast_protection_effect_scope({key: value for key, value in effect.items()
+            if key not in {"reason", "_runtime_source"}}, actor=actor)
+        grant_next_cast_protection(host.state.players[actor].stats, host.state.turn_sequence, scope)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(actor, "effect.next_cast_counter_protection", f"{actor} gains next-spell counter protection.",
+        {"player": actor, "scope": scope.value, "reason": reason}, importance=1, changed_players=[actor])
     return True
 
 

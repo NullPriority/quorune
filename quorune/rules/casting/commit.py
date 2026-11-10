@@ -77,10 +77,7 @@ from ...trigger_processing import enqueue_trigger_batch
 from ..target_announcements import (
     collect_legacy_paid_ward_occurrences, dispatch_legacy_paid_target_announcements,
 )
-from ..cast_cascade_grants import (
-    announced_cascade_context, commit_cast_cascade_grants, reserve_cast_cascade_grants,
-)
-from .source_placement import observe_cast_source_placement
+from .source_placement import AnnouncedCastGrants, observe_cast_source_placement
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
 from ..casting_additional_costs import (
@@ -1428,15 +1425,14 @@ def _prepare_cast_announcement(host, proposal, card, record, program, selected_o
         if host.semantics.programs_for_event(CASCADE_GRANT_EVENT):
             prepared_item.context[CAST_ANNOUNCEMENT_MARKER] = True
     try:
-        reserved_cascade = reserve_cast_cascade_grants(host, proposal)
+        grants = AnnouncedCastGrants.reserve(host, proposal)
     except ValueError as exc:
-        raise CastProposalError(str(exc), reason="stale_cast_cascade_grant") from exc
-    cascade_context = announced_cascade_context(reserved_cascade)
+        raise CastProposalError(str(exc), reason="stale_announced_cast_grant") from exc
     if prepared_item is not None:
-        prepared_item.context.update(cascade_context)
+        prepared_item.context.update(grants.context())
         host.state.stack.append(prepared_item)
         observe_cast_source_placement(host, prepared_item)
-    return prepared_item, reserved_cascade, cascade_context
+    return prepared_item, grants
 
 
 def _commit_cast_costs_and_stack(
@@ -1478,7 +1474,7 @@ def _commit_cast_costs_and_stack(
     if 'waterbend_payment' in selected_option:
         from ..waterbend_payments import bind_waterbend_response
         bind_waterbend_response(response,selected_option['waterbend_payment'])
-    prepared_item, reserved_cascade, cascade_context = _prepare_cast_announcement(
+    prepared_item, grants = _prepare_cast_announcement(
         host, proposal, card, record, program, selected_option, details, response,
     )
     from .splice_costs import announce_splice_sources
@@ -1524,7 +1520,7 @@ def _commit_cast_costs_and_stack(
         costs,
         existing_item=prepared_item,
     )
-    item.context.update(cascade_context)
+    item.context.update(grants.context())
     if prepared_item is not None:
         prepared_item.mana_colors_spent=item.mana_colors_spent
         prepared_item.mana_spent_counts=item.mana_spent_counts
@@ -1534,9 +1530,9 @@ def _commit_cast_costs_and_stack(
         selected_option.get("announced_additional_x", response.get("x")))
     commit_reveal_additional_costs(host,proposal,card,item,selected_option)
     try:
-        commit_cast_cascade_grants(host.state.players[proposal.seat].stats, host.state.turn_sequence, reserved_cascade)
+        grants.commit(host, proposal)
     except ValueError as exc:
-        raise CastProposalError(str(exc), reason="stale_cast_cascade_grant") from exc
+        raise CastProposalError(str(exc), reason="stale_announced_cast_grant") from exc
     item.notes = str(response.get("note") or "")
     prior_spell_count = prior_storm_spell_count(host)
     prior_controller_spell_count = _prior_controller_spell_count(

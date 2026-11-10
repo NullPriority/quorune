@@ -10,7 +10,12 @@ from ..resolution_characteristic_model import (
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
     from ..rules.cast_cascade_grants import CAST_CASCADE_OPERATION, cast_cascade_payload_dependencies
+    from ..rules.next_cast_counter_protection import (
+        is_versioned_next_cast_protection, next_cast_protection_payload_dependencies,
+    )
     from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_OPERATION, next_spell_payment_payload_dependencies
+    if is_versioned_next_cast_protection(value):
+        return next_cast_protection_payload_dependencies(value)
     if value.get("op") == CAST_CASCADE_OPERATION:
         return cast_cascade_payload_dependencies(value)
     if value.get("op") == NEXT_SPELL_PAYMENT_OPERATION:

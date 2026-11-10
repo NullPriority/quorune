@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from common import (
     advance_fixture_turn,
@@ -1282,10 +1283,13 @@ class ExactZimoneClosureTests(unittest.TestCase):
             {source.ref for source in engine.available_mana_sources("B")},
         )
 
+    @patch("quorune.compiler.temporary_player_rule_templates._next_cast_protection_template", new=lambda text: None)
     def test_mistrise_marks_only_the_next_spell_uncounterable(self):
         session = self.make_session(1010)
         engine = session.engine
         village = self.card(engine, "B", "Mistrise Village")
+        legacy = engine.semantics.get(f"{village.oracle_id}:ability:ab3")
+        self.assertEqual([{"op": "next_spell_uncounterable", "player": "$controller"}], list(legacy.effects))
         forest = self.card(engine, "B", "Forest")
         spell = self.card(engine, "B", "Sol Ring")
         engine.move_card(forest.object_id, "battlefield", controller="B")

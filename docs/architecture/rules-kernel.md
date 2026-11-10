@@ -2035,6 +2035,14 @@ damage, prevention, and entry participation remain blocked. New rules work must
 identify event/replacement participation and use capability IDs from the
 versioned registry.
 
+Resolved next-cast counter protection keeps a turn-bound scope for the next
+spell, creature spell, or instant or sorcery spell. The cast announcement
+binds the scope using the selected spell type. Cast completion consumes the
+reserved scope after payment. Cleanup expires unused scopes. Target selection
+uses the counter effect's normal predicate, and independent resolution
+instructions continue after the counter attempt. Legacy next-spell flags
+retain their original recorded execution path.
+
 Every committed move of a physical nontoken card into a graveyard from another
 zone also emits `card.enter_graveyard`. This after-transition occurrence seals
 the destination characteristics, current logical incarnation and graveyard

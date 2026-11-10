@@ -2152,6 +2152,33 @@
       ]
     },
     {
+      "id": "next-cast-counter-protection-contract",
+      "patterns": [
+        "quorune/card_programs/activation_result_equivalence.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/compiler/temporary_player_rule_templates.py",
+        "quorune/effect_runtime/state_and_permissions.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/source_placement.py",
+        "quorune/rules/next_cast_counter_protection.py",
+        "quorune/rules/next_spell_payment.py",
+        "quorune/stack_counter.py",
+        "tests/fixtures/next-cast-counter-protection-cards.json",
+        "tests/test_exact_zimone_closure.py",
+        "tests/test_stack_counter_rules.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_cascade_rules",
+        "test_cast_source_placement",
+        "test_exact_zimone_closure",
+        "test_fixed_stack_spell_copy",
+        "test_stack_counter_rules"
+      ]
+    },
+    {
       "id": "temporary-cast-cascade-grant-contract",
       "patterns": [
         "quorune/card_programs/descriptor_requirements.py",

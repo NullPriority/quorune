@@ -46,24 +46,29 @@ def is_closed_next_spell_payment_program(program):
 
 def temporary_player_rule_node_capabilities(**shape):
     from .cast_cascade_grants import cast_cascade_node_capabilities
+    from .next_cast_counter_protection import next_cast_protection_node_capabilities
     from .temporary_cast_restrictions import temporary_cast_node_capabilities
 
     return (next_spell_payment_node_capabilities(**shape) or cast_cascade_node_capabilities(**shape)
-            or temporary_cast_node_capabilities(**shape))
+            or next_cast_protection_node_capabilities(**shape) or temporary_cast_node_capabilities(**shape))
 
 
 def temporary_cast_grant_covered_mechanics(supplied):
     from .cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC
+    from .next_cast_counter_protection import NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC
 
     return {mechanic for capability, mechanic in ((NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_MECHANIC),
-        (CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC)) if capability in supplied}
+        (CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC),
+        (NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC)) if capability in supplied}
 
 
 def expire_temporary_cast_ability_grants(stats):
     from .cast_cascade_grants import expire_cast_cascade_grants
+    from .next_cast_counter_protection import expire_next_cast_protection
 
     expire_next_spell_payments(stats)
     expire_cast_cascade_grants(stats)
+    expire_next_cast_protection(stats)
 
 
 @dataclass(frozen=True, slots=True)

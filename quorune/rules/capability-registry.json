@@ -87950,6 +87950,93 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Resolve a closed next-cast counter protection and bind its eligible scope through the authoritative cast transaction.",
+        "inputs": [
+          "one resolved controller-scoped result",
+          "selected spell type at announcement",
+          "accepted casting costs"
+        ],
+        "outputs": [
+          "one protected cast incarnation",
+          "remaining scopes after consumption",
+          "ordinary counter targeting and resolution"
+        ],
+        "exclusions": [
+          "other players and future turns",
+          "spells already cast and copies that were not cast",
+          "unsupported type or result qualifiers"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The original clause and its versioned runtime descriptor independently require the scoped protection capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "stack.counter.prohibition.next_cast",
+      "implementation_components": [
+        "quorune.compiler.temporary_player_rule_templates._next_cast_protection_template",
+        "quorune.rules.next_cast_counter_protection.next_cast_protection_effect_scope",
+        "quorune.rules.next_cast_counter_protection.reserve_next_cast_protection",
+        "quorune.rules.next_cast_counter_protection.commit_next_cast_protection",
+        "quorune.stack_counter.stack_item_can_be_countered"
+      ],
+      "implementation_mutation_rationale": "Omitting the typed result producer restores the original clause residual. Native casts distinguish eligibility, rollback, and independent draw.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
+      ],
+      "multiplayer_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
+      ],
+      "negative_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable",
+        "test_village_unused_window_expires_during_cleanup",
+        "test_next_cast_protection_dependency_and_compiler_omission_fail_closed"
+      ],
+      "official_rules": [
+        "101.2",
+        "514.2",
+        "601.2a",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2f",
+        "701.6a"
+      ],
+      "positive_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
+      ],
+      "privacy_tests": [
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws"
+      ],
+      "replay_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable",
+        "test_village_unused_window_expires_during_cleanup"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -87958,7 +88045,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 774,
+  "registry_version": 775,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

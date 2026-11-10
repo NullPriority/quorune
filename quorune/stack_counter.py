@@ -5,6 +5,7 @@ from typing import Any, Protocol
 
 from .errors import GameRuleError
 from .model import StackItem
+from .rules.next_cast_counter_protection import announced_cast_is_protected
 from .semantic_runtime.static_cast_rules import static_stack_item_uncounterable
 from .zone_trigger_events import ZoneTransitionKind, counter_destination_fields
 from .combat_entry_activations import cleanup_ninjutsu_reveal
@@ -64,7 +65,7 @@ def stack_item_can_be_countered(
     host: StackCounterHost,
     item: StackItem,
 ) -> bool:
-    if item.context.get("cant_be_countered"):
+    if item.context.get("cant_be_countered") or announced_cast_is_protected(item):
         return False
     if static_stack_item_uncounterable(host, item):
         return False
