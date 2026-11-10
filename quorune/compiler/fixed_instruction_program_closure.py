@@ -21,6 +21,7 @@ from ..rules.detain import is_closed_permanent_action_prohibition_program
 from ..rules.distinct_sacrifices import is_closed_distinct_sacrifice_program
 from ..drawing.captured_hand import is_closed_captured_draw_cast_program
 from ..dungeon_progress import is_closed_venture_program
+from ..initiative_model import is_closed_initiative_program
 
 
 def is_closed_fixed_instruction_program(program):
@@ -29,6 +30,7 @@ def is_closed_fixed_instruction_program(program):
         is_closed_distinct_sacrifice_program,
         is_closed_captured_draw_cast_program,
         is_closed_venture_program,
+        is_closed_initiative_program,
         is_closed_incubate_program,
         is_closed_fixed_endure_program,
         is_closed_fixed_blight_program,

@@ -55,7 +55,7 @@ from .tap_state_event_capability_shapes import tap_state_event_player_node_capab
 from .scheduled_player_shapes import scheduled_player_node_capabilities
 from .impulse_access_capability_shapes import fixed_impulse_access_node_capabilities
 from .monarch_capability_shapes import fixed_monarch_node_capabilities
-from ..dungeon_progress import venture_node_capabilities
+from ..initiative_model import dungeon_choice_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .champion_capability_shapes import champion_node_capabilities
 from .transform_capability_shapes import source_transform_node_capabilities
@@ -182,7 +182,7 @@ def effect_node_capabilities(
         event_player_sacrifice_node_capabilities,
         fixed_impulse_access_node_capabilities,
         fixed_monarch_node_capabilities,
-        venture_node_capabilities,
+        dungeon_choice_node_capabilities,
         ring_temptation_node_capabilities,
         champion_node_capabilities,
         source_transform_node_capabilities,

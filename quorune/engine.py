@@ -910,6 +910,8 @@ class CommanderEngine(
             )
         if self.state.day_night not in {None, "day", "night"}:
             raise StateInvariantError("The day/night designation is invalid")
+        if self.state.initiative is not None and self.state.initiative not in self.active_seats:
+            raise StateInvariantError("The initiative belongs to a player still in the game")
         history = self.state.turn_history
         if history is not None:
             if history.schema_version != 1:
@@ -6747,6 +6749,8 @@ class CommanderEngine(
             self._log(seat, "player.eliminated", f"{seat} left the game: {reason}.", {"reason": reason}, importance=3, changed_players=[seat])
 
         remaining = self.active_seats
+        from .initiative_runtime import transfer_departing_initiative
+        transfer_departing_initiative(self, active_before_departure)
         if departing_monarch:
             if not remaining:
                 previous = self.state.monarch

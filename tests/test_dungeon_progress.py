@@ -22,6 +22,41 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_initiative_compiler_and_damage_subject_are_closed(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from test_bound_effect_programs import record
+        from quorune.initiative_model import (
+            INHERENT_INITIATIVE_TAKE, INITIATIVE_TRIGGER_PLAYER, TAKE_INITIATIVE_CAPABILITY,
+            TAKE_INITIATIVE_FIELD, initiative_effect_player, initiative_instruction,
+        )
+        from quorune.initiative_runtime import initiative_combat_triggers
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        options = {"capability_registry": load_default_capability_registry(), "capability_profile": "commander_review"}
+        source = replace(record("You take the initiative."), oracle_id="fixture:closed-initiative")
+        ir = compile_oracle_card(source, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        effect, = node.effects
+        initiative_instruction(effect)
+        self.assertIn(TAKE_INITIATIVE_CAPABILITY, node.capability_dependencies)
+        with self.assertRaises(ValueError):
+            initiative_instruction({**effect, TAKE_INITIATIVE_FIELD: {"schema_version": True}})
+        probe = replace(source, oracle_id="fixture:missing-initiative-producer")
+        with patch("quorune.oracle_ir.fixed_initiative_effect_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(probe, **options).status)
+        copy = SimpleNamespace(semantic_key=INHERENT_INITIATIVE_TAKE, controller="D",
+                               context={INITIATIVE_TRIGGER_PLAYER: "A"})
+        self.assertEqual("A", initiative_effect_player(copy, INHERENT_INITIATIVE_TAKE))
+        event = {"source_controller": "A", "target_kind": "player", "target": "B", "source_types": ("creature",)}
+        host = SimpleNamespace(state=SimpleNamespace(initiative="B"), active_seats=("A", "B", "C", "D"))
+        self.assertEqual((), initiative_combat_triggers(host, (
+            SimpleNamespace(**event, was_dealt=False, combat=True),
+            SimpleNamespace(**event, was_dealt=True, combat=False),
+        )))
+
     def test_venture_compiler_binds_only_a_closed_entry_mode(self):
         from unittest.mock import patch
         from test_bound_effect_programs import record
@@ -287,7 +322,8 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         cls.temporary = TemporaryDirectory()
         path = Path(cls.temporary.name) / "venture.sqlite3"
         names = ("bound-effect-program-cards.json", "dungeon-cards.json", "venture-dungeon-cards.json",
-                 "paid-sacrifice-creature-stat-cards.json")
+                 "paid-sacrifice-creature-stat-cards.json", "initiative-dungeon-cards.json",
+                 "fixed-extra-turn-cards.json")
         build_fixture_database([ROOT / "tests/fixtures" / name for name in names], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -415,4 +451,98 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(((DungeonId.LOST_MINE, 1),), journey.completed_by_dungeon)
         self.assertTrue(any(event.code == "stack.resolve" and event.details["stack"] == final.ref
                             for event in session.state.events))
+        self.replay(session)
+
+    def test_original_initiative_retake_and_upkeep_advance_the_same_undercity(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.initiative_model import INHERENT_INITIATIVE_VENTURE, TAKE_INITIATIVE_CAPABILITY
+
+        session = self.session(726001)
+        sneak = self.add(session.engine, "Aarakocra Sneak", zone="hand")
+        explorer = self.add(session.engine, "Underdark Explorer", zone="hand")
+        warp = self.add(session.engine, "Time Warp", zone="hand")
+        for card in (sneak, explorer, warp):
+            self.assert_closed(session, card)
+        program, = [program for program in session.engine.semantics.programs_for_oracle(sneak.oracle_id)
+                    if TAKE_INITIATIVE_CAPABILITY in program.capability_dependencies]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != TAKE_INITIATIVE_CAPABILITY)
+        forged = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + TAKE_INITIATIVE_CAPABILITY, binding["blockers"])
+        self.prepare(session, mana={"C": 10, "U": 3, "B": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", sneak)
+        self.assertEqual("semantic.search", self.resolve(session).kind)
+        self.assertEqual("A", session.state.initiative)
+        self.assertEqual("A", session.packet("spectator", full=True)["state"]["game"]["initiative"])
+        first = session.state.players["A"].dungeon_journey.active
+        self.assertEqual(DungeonVisit(DungeonRoomRef(DungeonId.UNDERCITY, 0), 1), first)
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        self._choose(session, cards=[])
+        self.assertIsNone(self.resolve(session))
+
+        self.cast_for(session, "A", explorer)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("undercity:1", "undercity:2"), self._room_options(session))
+        self.assertEqual(["A", "A"], [event.actor for event in session.state.events if event.code == "initiative.taken"])
+        self._choose(session, choice="undercity:2")
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        private = session.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self._choose(session, cards={"top": private, "bottom": []})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(DungeonVisit(DungeonRoomRef(DungeonId.UNDERCITY, 2), 1),
+                         session.state.players["A"].dungeon_journey.active)
+
+        self.cast_for(session, "A", warp, ["A"])
+        self.assertIsNone(self.resolve(session))
+        self.until(session, lambda game: any(item.semantic_key == INHERENT_INITIATIVE_VENTURE
+                                             for item in game.state.stack))
+        self.assertEqual("upkeep", session.state.step)
+        self.assertTrue(session.state.current_turn.extra)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("undercity:4", "undercity:5"), self._room_options(session))
+        self.replay(session, load=True)
+
+    def test_simultaneous_combat_damage_transfers_the_initiative_once_on_resolution(self):
+        from quorune.initiative_model import INHERENT_INITIATIVE_TAKE, INHERENT_INITIATIVE_VENTURE, initiative_effect_player
+
+        session = self.session(726002)
+        first = self.add(session.engine, "Grizzly Bears", ref="initiative-bear-1")
+        second = self.add(session.engine, "Grizzly Bears", ref="initiative-bear-2")
+        for bear in (first, second):
+            bear.acquired_control_turn_count = -1
+        self.prepare(session)
+        session.state.initiative = "B"
+        self.checkpoint(session)
+        self.attack(session, [(first, "B"), (second, "B")])
+        self.until(session, lambda game: any(item.semantic_key == INHERENT_INITIATIVE_TAKE for item in game.state.stack))
+        transfers = [item for item in session.state.stack if item.semantic_key == INHERENT_INITIATIVE_TAKE]
+        transfer, = transfers
+        self.assertEqual(("B", "A"), (transfer.controller, initiative_effect_player(transfer, INHERENT_INITIATIVE_TAKE)))
+        self.assertIsNone(transfer.source_object_id)
+        self.assertEqual("B", session.state.initiative)
+        self.assertEqual(36, session.state.players["B"].life)
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual("A", session.state.initiative)
+        venture, = [item for item in session.state.stack if item.semantic_key == INHERENT_INITIATIVE_VENTURE]
+        self.assertEqual(("A", None), (venture.controller, venture.source_object_id))
+        self.assertEqual("semantic.search", self.resolve(session).kind)
+        self._choose(session, cards=[])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(DungeonVisit(DungeonRoomRef(DungeonId.UNDERCITY, 0), 1),
+                         session.state.players["A"].dungeon_journey.active)
+        session = self.replay(session, load=True)
+        self.priority(session, "A")
+        result = session.act("pilot:A", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("B", session.state.initiative)
+        self.assertIsNone(session.state.players["A"].dungeon_journey.active)
+        self.assertEqual([INHERENT_INITIATIVE_VENTURE], [item.semantic_key for item in session.state.stack])
+        decision = self.resolve(session)
+        self.assertEqual(("semantic.search", ("B",)), (decision.kind, tuple(decision.actors)))
+        result = session.act("pilot:B", {"action_id": "choose", "cards": []})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
         self.replay(session)

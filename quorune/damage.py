@@ -1395,6 +1395,8 @@ def _collect_damage_result_triggers(
         if host._semantic_pause_annotation() is not None:
             break
     if host._semantic_pause_annotation() is None:
+        from .initiative_runtime import initiative_combat_triggers
+        trigger_batch.extend(initiative_combat_triggers(host, result.events))
         for event in result.events:
             if not event.was_dealt:
                 continue

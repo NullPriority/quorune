@@ -5,13 +5,17 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from itertools import chain
 
-from .dungeon_catalog import DUNGEON_CATALOG
+from .dungeon_catalog import DUNGEON_CATALOG, VentureMode
 from .dungeon_progress import (
     DUNGEON_ROOM_EVENT, DUNGEON_VENTURE_FIELD, DungeonJourney, DungeonRoomRef, DungeonVisit, VentureProgressIntent,
     accept_venture, complete_finished_dungeon, prepare_venture, venture_instruction,
 )
 from .errors import GameRuleError, StateInvariantError
 from .game_object_store import GameObjectStore
+from .initiative_model import (
+    INHERENT_INITIATIVE_TAKE, INHERENT_INITIATIVE_VENTURE, TAKE_INITIATIVE_FIELD,
+    initiative_effect_player, initiative_instruction,
+)
 from .model import CardInstance, StackItem
 from .target_source import BOUND_TARGETING_SOURCE_VERSION, TARGETING_SOURCE_CONTEXT, capture_targeting_source
 from .trigger_processing import enqueue_trigger_batch
@@ -43,12 +47,18 @@ def validate_venture_room_offers(host, offer) -> None:
         _room_program(host, room)
 
 
-def check_venture_instruction(host, item, effect) -> None:
+def check_dungeon_choice_instruction(host, item, effect) -> None:
+    if TAKE_INITIATIVE_FIELD in effect:
+        initiative_instruction(effect, actor=initiative_effect_player(item, INHERENT_INITIATIVE_TAKE))
     if DUNGEON_VENTURE_FIELD in effect:
-        mode = venture_instruction(effect, actor=item.controller)
-        current = host.state.players[item.controller].dungeon_journey or DungeonJourney()
-        offer, _ = prepare_venture(item.controller, current, mode)
-        validate_venture_room_offers(host, offer)
+        player = initiative_effect_player(item, INHERENT_INITIATIVE_VENTURE)
+        mode = venture_instruction(effect, actor=player)
+        if item.semantic_key == INHERENT_INITIATIVE_VENTURE and mode is not VentureMode.UNDERCITY:
+            raise GameRuleError("The inherent initiative ability must venture into Undercity")
+        if player in host.active_seats:
+            current = host.state.players[player].dungeon_journey or DungeonJourney()
+            offer, _ = prepare_venture(player, current, mode)
+            validate_venture_room_offers(host, offer)
 
 
 def _current_source(host, owner: str, visit: DungeonVisit) -> CardInstance:
@@ -136,7 +146,8 @@ def _trigger_room(host, owner: str, source: CardInstance, program) -> None:
 def commit_venture_progress(host, intent: VentureProgressIntent) -> str:
     owner = intent.offer.owner
     stack = next((item for item in host.state.stack if item.ref == intent.stack_ref), None)
-    if (owner not in host.active_seats or stack is None or stack.controller != owner
+    if (owner not in host.active_seats or stack is None
+            or initiative_effect_player(stack, INHERENT_INITIATIVE_VENTURE) != owner
             or not stack.context.get("currently_resolving")):
         raise GameRuleError("Venture lost the active resolving controller")
     player = host.state.players[owner]

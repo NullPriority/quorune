@@ -373,11 +373,10 @@ def _intrinsic_trigger_items(
     if event_kind != "step.begin" or context.get("step") != "upkeep":
         return ()
     from .suspend import suspend_upkeep_trigger_items
+    from .initiative_runtime import initiative_upkeep_triggers
 
-    return suspend_upkeep_trigger_items(
-        host,
-        active_player=str(context.get("player") or ""),
-    )
+    player = str(context.get("player") or "")
+    return (*suspend_upkeep_trigger_items(host, active_player=player), *initiative_upkeep_triggers(host, player))
 
 
 def collect_trigger_items(

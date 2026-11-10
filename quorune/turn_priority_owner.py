@@ -101,6 +101,9 @@ class TurnPriorityDecisionOwner:
         if event.code in {
             "land.play",
             "monarch.change",
+            "initiative.taken",
+            "dungeon.venture",
+            "dungeon.completed",
             "player.speed",
             "game.day_night",
             "permanent.transform",
@@ -260,6 +263,8 @@ class TurnPriorityDecisionOwner:
                 )
             self.state.priority_passes = []
             self.host._eliminate_players([seat], reason="conceded")
+            if getattr(self.state, "initiative", None) is not None and self.state.pending_trigger_batches and not self.state.game_over:
+                self.complete_special_action(self.host._next_active_after(seat))
         else:
             raise GameRuleError(f"Unsupported priority action {action}")
 

@@ -12,6 +12,7 @@ from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
 from ..dungeon_progress import VentureProgressIntent
+from ..initiative_model import TakeInitiativeIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
@@ -1542,6 +1543,7 @@ SemanticIntent: TypeAlias = (
     | MillCardsIntent
     | BecomeMonarchIntent
     | VentureProgressIntent
+    | TakeInitiativeIntent
     | SetPermanentTappedIntent
     | ProhibitNextUntapIntent
     | SetPermanentsTappedIntent

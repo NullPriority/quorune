@@ -82261,6 +82261,91 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented player-selection grammar",
+          "noncombat and prevented damage"
+        ],
+        "inputs": [
+          "fixed controller instruction or recorded inherent trigger player",
+          "committed simultaneous combat damage",
+          "live holder and turn boundary"
+        ],
+        "outputs": [
+          "public initiative holder",
+          "one combat transfer per damaging controller per event",
+          "source-less Venture into Undercity triggers"
+        ],
+        "summary": "Assign the initiative to the affected player and queue its source-less upkeep, combat transfer, and taking triggers through ordinary APNAP placement."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_damage",
+        "trigger.placement.apnap",
+        "variant.dungeon.venture"
+      ],
+      "dependency_fail_closed_rationale": "Removing the initiative declaration still leaves its exact instruction subject to the independent runtime dependency check.",
+      "dependency_fail_closed_status": "passed",
+      "id": "variant.initiative.take",
+      "implementation_components": [
+        "quorune.compiler.venture_templates.fixed_initiative_effect_template",
+        "quorune.initiative_model.initiative_effect_player",
+        "quorune.initiative_runtime.commit_take_initiative",
+        "quorune.initiative_runtime.initiative_combat_triggers",
+        "quorune.initiative_runtime.initiative_upkeep_triggers",
+        "quorune.initiative_runtime.transfer_departing_initiative"
+      ],
+      "implementation_mutation_rationale": "Removing the fixed initiative producer leaves the entire printed instruction unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_initiative_retake_and_upkeep_advance_the_same_undercity",
+        "test_simultaneous_combat_damage_transfers_the_initiative_once_on_resolution"
+      ],
+      "multiplayer_tests": [
+        "test_original_initiative_retake_and_upkeep_advance_the_same_undercity",
+        "test_simultaneous_combat_damage_transfers_the_initiative_once_on_resolution"
+      ],
+      "negative_tests": [
+        "test_initiative_compiler_and_damage_subject_are_closed",
+        "test_original_initiative_retake_and_upkeep_advance_the_same_undercity"
+      ],
+      "official_rules": [
+        "603.3b",
+        "701.49d",
+        "726.1",
+        "726.2",
+        "726.3",
+        "726.4"
+      ],
+      "positive_tests": [
+        "test_initiative_compiler_and_damage_subject_are_closed",
+        "test_original_initiative_retake_and_upkeep_advance_the_same_undercity",
+        "test_simultaneous_combat_damage_transfers_the_initiative_once_on_resolution"
+      ],
+      "privacy_tests": [
+        "test_original_initiative_retake_and_upkeep_advance_the_same_undercity"
+      ],
+      "replay_tests": [
+        "test_original_initiative_retake_and_upkeep_advance_the_same_undercity",
+        "test_simultaneous_combat_damage_transfers_the_initiative_once_on_resolution"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "combat-damage transfer trigger",
           "monarch end-step draw",
           "player-leaves transfer"
@@ -89996,7 +90081,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 798,
+  "registry_version": 799,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

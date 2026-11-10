@@ -6,6 +6,7 @@ from ..dungeon_catalog import DUNGEON_CATALOG
 from ..dungeon_progress import (
     DungeonJourney, VentureOffer, VentureProgressIntent, prepare_venture, venture_instruction,
 )
+from ..initiative_model import TAKE_INITIATIVE_FIELD, TakeInitiativeIntent, initiative_instruction
 from ..replacement.immutable import FrozenMap
 from .model import (
     AutoContinue, ScalarChoice, SemanticChoiceCompletion, SemanticChoiceError,
@@ -26,10 +27,23 @@ def _option(room):
     return {"id": room.choice_id, "label": f"{name} — {definition.rooms[room.index].label}"}
 
 
+def prepare_dungeon_choice(effect, context):
+    if context.actor not in context.query.active_seats:
+        return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue(reason="The affected player has left the game."))
+    if TAKE_INITIATIVE_FIELD in effect:
+        try:
+            initiative_instruction(effect, actor=context.actor)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+            preparation_intents=(TakeInitiativeIntent(context.actor, context.stack_ref),),
+            auto_continue=AutoContinue(reason="The affected player takes the initiative."))
+    return prepare_venture_choice(effect, context)
+
+
 def prepare_venture_choice(effect, context):
     actor = context.actor
-    if actor != context.stack_controller or actor not in context.query.active_seats:
-        raise SemanticChoiceError("Venture requires the active resolving controller")
     try:
         mode = venture_instruction(effect, actor=actor)
     except ValueError as exc:

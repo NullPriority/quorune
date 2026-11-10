@@ -682,6 +682,7 @@
     "tests/fixtures/incubate-cards.json",
     "tests/fixtures/independent-target-clause-cards.json",
     "tests/fixtures/inherited-rule-composition-cards.json",
+    "tests/fixtures/initiative-dungeon-cards.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/intrinsic-empty-spell-resolution-cards.json",
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",

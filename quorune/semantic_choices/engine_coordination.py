@@ -719,10 +719,10 @@ class SemanticChoiceCoordinationMixin:
             effect = bind_endure_instruction(self, item, effect)
             from ..drawing.miracle_casting import bind_miracle_cast_instruction
             from ..drawing.captured_hand_casting import bind_captured_draw_offer
-            from ..dungeon_runtime import check_venture_instruction
+            from ..dungeon_runtime import check_dungeon_choice_instruction
             effect = bind_miracle_cast_instruction(item, effect)
             effect = bind_captured_draw_offer(item, effect)
-            check_venture_instruction(self, item, effect)
+            check_dungeon_choice_instruction(self, item, effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         handler = registry.handler_for_operation(str(effect.get("op") or ""))

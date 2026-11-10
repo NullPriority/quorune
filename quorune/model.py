@@ -1235,6 +1235,7 @@ class GameState:
     turn_history: TurnHistory | None = field(default_factory=TurnHistory)
     # CR 725 designation. ``None`` means no player has become the monarch.
     monarch: str | None = None
+    initiative: str | None = None
     # CR 731 public game designation. ``None`` is the initial state and also
     # preserves historical Game Record v3 payloads that predate day/night.
     day_night: Literal["day", "night"] | None = None
@@ -1451,6 +1452,7 @@ class GameState:
                 else {}
             ),
             "monarch": self.monarch,
+            **({"initiative": self.initiative} if self.initiative is not None else {}),
             **(
                 {"day_night": self.day_night}
                 if self.day_night is not None
@@ -1579,6 +1581,7 @@ class GameState:
                 else None
             ),
             monarch=data.get("monarch"),
+            initiative=data.get("initiative"),
             day_night=data.get("day_night"),
             pending_trigger_batches=cls._pending_trigger_batches_from_dict(
                 data.get("pending_trigger_batches", [])

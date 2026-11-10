@@ -732,6 +732,7 @@ class StateProjector:
                 "over": self.state.game_over,
                 "winner": self.state.winner,
                 "monarch": self.state.monarch,
+                **({"initiative": self.state.initiative} if self.state.initiative is not None else {}),
                 **(
                     {"day_night": self.state.day_night}
                     if self.state.day_night is not None

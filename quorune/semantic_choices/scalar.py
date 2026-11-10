@@ -459,10 +459,10 @@ class ChooseOptionHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
-        if "venture" in effect:
-            from .venture import prepare_venture_choice
+        if "venture" in effect or "take_initiative" in effect:
+            from .venture import prepare_dungeon_choice
 
-            return prepare_venture_choice(effect, context)
+            return prepare_dungeon_choice(effect, context)
         if "attacking_card_entry" in effect:
             from .attacking_card_entry import prepare_attacking_card_entry_choice
 

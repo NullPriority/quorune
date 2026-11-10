@@ -171,6 +171,7 @@
       "quorune/emblems.py": "typed immutable emblem-creation preparation and authoritative public noncard command-object construction owner (ADR0142)",
       "quorune/engine.py": "legacy authoritative transaction and mutation boundary",
       "quorune/game_object_store.py": "canonical in-place current-object registration/detachment owner shared by copies, tokens, emblems and physical composition; preserves map aliases and validates edits before mutation",
+      "quorune/initiative_runtime.py": "typed initiative designation and source-less trigger materialization owner",
       "quorune/impulse_access.py": "typed fixed library-top exile, temporary ordinary-play permission, and duration-expiry owner delegating zone movement to the canonical zone-transition owner",
       "quorune/life_change.py": "replacement-capable typed life-event transaction owner behind represented rules transactions",
       "quorune/life_state.py": "canonical typed life-total mutation owner behind represented rules transactions",

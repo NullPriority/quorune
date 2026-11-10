@@ -664,6 +664,13 @@ execution owner retires completed visits with the other prepared state changes
 and publishes the resulting completion events after the moves. The player
 projection includes the public journey after the first venture.
 
+`initiative_runtime.py` owns the public designation and materializes its
+three inherent triggered abilities. Taking the initiative again still queues
+a Venture trigger. Combat-damage occurrences group by the damaging creatures'
+controller for each simultaneous batch. A transfer trigger keeps the
+previous holder as its controller and the attacker as its affected player.
+The existing APNAP queue handles those triggers and upkeep occurrences.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining
