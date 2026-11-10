@@ -7,6 +7,8 @@ from typing import Any, Protocol
 from .ability_fragments import (
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
+    canonical_ability_fragments,
+    spell_cast_keyword_trigger_specs,
 )
 from .cast_timing import type_line_has_card_type
 from .errors import GameRuleError, StateInvariantError
@@ -16,6 +18,7 @@ from .selection.exile_cast import (
     mana_value_of_cost,
 )
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
+from .semantic_runtime.battlefield_cascade_grants import CASCADE_GRANT_EVENT
 
 
 CASCADE_SEMANTIC_KEY = "builtin:cascade"
@@ -91,9 +94,16 @@ def cascade_trigger_items(
     """Materialize one ordinary trigger occurrence per typed Cascade instance."""
 
     specs = compiled_cascade_specs(host, card)
-    if not specs:
+    has_grants = bool(host.semantics.programs_for_event(CASCADE_GRANT_EVENT))
+    if not specs and not has_grants:
         return ()
     effective = host._effective_card_data(card)
+    if has_grants:
+        specs += tuple(fragment for fragment in spell_cast_keyword_trigger_specs(
+            canonical_ability_fragments(effective.get("ability_fragments", ()))
+        ) if fragment.kind is SpellCastKeywordTriggerKind.CASCADE)
+    if not specs:
+        return ()
     source_mana_value = mana_value_of_cost(
         str(effective.get("mana_cost") or ""),
         x_value=int(spell.x_value or 0),

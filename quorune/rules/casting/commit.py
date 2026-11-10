@@ -1458,6 +1458,9 @@ def _commit_cast_costs_and_stack(
         prepared_item=_create_spell_item(host,proposal,card,record,program,selected_option,details,{},
             _AdditionalCostCommit([],[],{},{},[],[]),preparing=True)
         prepared_item.x_value=selected_option.get('announced_target_x',selected_option.get('announced_additional_x',response.get('x')))
+        from ...semantic_runtime.battlefield_cascade_grants import CASCADE_GRANT_EVENT, CAST_ANNOUNCEMENT_MARKER
+        if host.semantics.programs_for_event(CASCADE_GRANT_EVENT):
+            prepared_item.context[CAST_ANNOUNCEMENT_MARKER] = True
         host.state.stack.append(prepared_item)
         observe_cast_source_placement(host, prepared_item)
     from .splice_costs import announce_splice_sources

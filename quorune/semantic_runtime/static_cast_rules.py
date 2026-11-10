@@ -21,6 +21,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import ObjectQueryResult, object_matches_query, object_query_result
 from ..rules.capabilities import load_default_capability_registry
 from ..static_player_restriction_model import StaticPlayerRestrictionSpec, StaticPlayerRestrictionKind
+from .battlefield_cascade_grants import BattlefieldCascadeGrantHandler, BattlefieldCascadeGrantSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
@@ -269,7 +270,7 @@ class SplitSecondHandler:
 
 
 class StaticCastRuleRegistry(
-    RuntimeComponentRegistry[StaticCastRuleSourceContext, StaticCastRule]
+    RuntimeComponentRegistry[StaticCastRuleSourceContext, StaticCastRule | BattlefieldCascadeGrantSpec]
 ):
     pass
 
@@ -279,6 +280,7 @@ def default_static_cast_rule_registry() -> StaticCastRuleRegistry:
     registry = StaticCastRuleRegistry(
         (
             SplitSecondHandler(),
+            BattlefieldCascadeGrantHandler(),
             StaticCastRuleHandler(
                 STATIC_CAST_TIMING_HANDLER_ID,
                 StaticCastRuleKind.TIMING_PERMISSION,

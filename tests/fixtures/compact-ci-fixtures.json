@@ -441,6 +441,7 @@
     "tests/fixtures/batch-interaction-recovery-cards.json",
     "tests/fixtures/batched-public-assurance-cards.json",
     "tests/fixtures/batched-support-assurance-cards.json",
+    "tests/fixtures/battlefield-cascade-grant-cards.json",
     "tests/fixtures/battlefield-library-selection-cards.json",
     "tests/fixtures/battlefield-spell-payment-grant-cards.json",
     "tests/fixtures/battlefield-target-reduction-cards.json",

@@ -87772,6 +87772,91 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "A live battlefield ability grants a bounded number of separate Cascade instances to qualifying spells its controller casts.",
+        "inputs": [
+          "current complete source ability and caster",
+          "committed spell face, origin, mana value and typed characteristics"
+        ],
+        "outputs": [
+          "current layer-six keyword and distinct ability instances",
+          "one ordinary cast-trigger occurrence per instance"
+        ],
+        "exclusions": [
+          "copied spells, unsupported source timing and unrepresented grant conditions",
+          "retroactive trigger creation after the cast"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.keyword.cascade"
+      ],
+      "dependency_fail_closed_rationale": "Compiler closure and the runtime handler independently require the live grant capability and the ordinary Cascade owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.ability.battlefield_cascade_grant",
+      "implementation_components": [
+        "quorune.compiler.battlefield_cascade_grants.battlefield_cascade_grant_handler",
+        "quorune.semantic_runtime.battlefield_cascade_grants.BattlefieldCascadeGrantSpec",
+        "quorune.semantic_runtime.battlefield_cascade_grants.BattlefieldCascadeGrantHandler",
+        "quorune.semantic_runtime.battlefield_cascade_grants.battlefield_cascade_stack_effects",
+        "quorune.cascade.cascade_trigger_items"
+      ],
+      "implementation_mutation_rationale": "Omitting the compiler producer restores the printed grant residual. The cast witnesses also distinguish missing, combined or late instances.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library",
+        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify"
+      ],
+      "multiplayer_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library"
+      ],
+      "negative_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify",
+        "test_battlefield_cascade_dependency_and_compiler_omission_fail_closed"
+      ],
+      "official_rules": [
+        "601.2i",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "702.85a",
+        "702.85c"
+      ],
+      "positive_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library"
+      ],
+      "privacy_tests": [
+        "test_cast_grant_survives_source_removal_and_preserves_private_library"
+      ],
+      "replay_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library",
+        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -87780,7 +87865,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 772,
+  "registry_version": 773,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -205,6 +205,13 @@ def _source_permanent_participation_template(
 ) -> StaticRuntimeTemplate | None:
     if global_alternative := _global_alternative_template(text):
         return global_alternative
+    from .battlefield_cascade_grants import battlefield_cascade_grant_handler
+
+    cascade_grant = battlefield_cascade_grant_handler(text)
+    if cascade_grant is not None:
+        return StaticRuntimeTemplate(compiled=cascade_grant, kind="static_ability", event=cascade_grant[1]["event"],
+            active_zone="battlefield", runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Battlefield Cascade requires a current static ability and the shared cast trigger")
     goad_prohibition = static_goad_prohibition_handler(text)
     if goad_prohibition is not None:
         return StaticRuntimeTemplate(

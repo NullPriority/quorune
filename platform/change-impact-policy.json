@@ -2152,6 +2152,27 @@
       ]
     },
     {
+      "id": "battlefield-cascade-grant-contract",
+      "patterns": [
+        "quorune/cascade.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/compiler/battlefield_cascade_grants.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/semantic_runtime/battlefield_cascade_grants.py",
+        "quorune/semantic_runtime/static_cast_rules.py",
+        "tests/fixtures/battlefield-cascade-grant-cards.json",
+        "tests/test_cascade_rules.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_cascade_rules",
+        "test_casting_payment_keywords",
+        "test_fixed_sacrifice_additional_costs",
+        "test_storm_rules"
+      ]
+    },
+    {
       "id": "source-relative-effect-count-contract",
       "patterns": [
         "quorune/query_effect_amount_model.py",

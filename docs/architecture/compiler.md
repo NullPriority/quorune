@@ -3035,9 +3035,15 @@ then delegates the optional cast to the generic one-shot exile-cast choice
 owner. That owner revalidates the selected face, no-mana alternative,
 additional costs, targets, and spell program before casting; the canonical
 zone owner simultaneously returns every uncast card to the library bottom in
-a deterministic random order. CR 702.85b action windows, replacement-choice
-suspension during the sequential exile loop, and granted, copied,
-text-changed, conditional, or face-down Cascade remain fail-closed.
+a deterministic random order. A closed battlefield grant uses the current
+source ability, caster, spell characteristics, cast origin, and announced mana
+value after payment. The stack's layer-six evaluator supplies one or two
+Cascade instances. Each instance joins the same trigger batch as printed
+Cascade. A later loss of the grant removes the current ability from the spell
+and leaves the collected triggers intact. CR 702.85b action windows,
+replacement-choice suspension during the exile loop, unrepresented temporary
+or history-dependent grants, copied triggers, text changes, and intrinsic
+conditional or face-down Cascade remain fail-closed.
 
 `compiler/storm_nodes.py` owns ordinary printed Storm as one independently
 source-spanned stack-zone trigger per instance. The casting transaction reads
