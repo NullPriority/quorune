@@ -7,7 +7,10 @@ import re
 from ..discover_model import (DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION,
     QUALIFIED_SCAN_MECHANIC, QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_TARGET)
 from ..replacement.immutable import thaw_value
-from ..fixed_top_exile import CHOSEN_IMPULSE_MECHANIC, CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_MECHANIC, FIXED_TOP_EXILE_OPERATION
+from ..fixed_top_exile import (
+    CHOSEN_IMPULSE_MECHANIC, CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_MECHANIC, FIXED_TOP_EXILE_OPERATION,
+    RESOLVING_TOP_PLAY_MECHANIC, RESOLVING_TOP_PLAY_SCOPE,
+)
 from ..impulse_access_model import ImpulseAccessDuration
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .declared_effect_amounts import declared_effect_amount_template
@@ -68,6 +71,10 @@ def _fixed_top_exile_template(text, *, source_name, event):
     body = text.strip()
     if chosen := _chosen_impulse_template(body):
         return chosen
+    if re.fullmatch(r"Exile the top two cards of your library\. You may play them\.?", body, re.I):
+        effect = {"op": FIXED_TOP_EXILE_OPERATION, "schema_version": 3, "player": "$controller",
+                  "scope": RESOLVING_TOP_PLAY_SCOPE, "count": 2}
+        return "fixed-top-exile-resolving-play-v1", (effect,), None, (RESOLVING_TOP_PLAY_MECHANIC,)
     supplier = decline = None
     if _EACH_TOP_CAST.fullmatch(body):
         scope = "each_library"

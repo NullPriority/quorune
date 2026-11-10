@@ -85059,6 +85059,100 @@
     },
     {
       "applicability": {
+        "summary": "Play any captured fixed own-library exile result during one resolution, with normal spell costs and current land allowances.",
+        "inputs": [
+          "fixed own-library top exile",
+          "resolving controller and exact public incarnations",
+          "current casting and land options"
+        ],
+        "outputs": [
+          "paid spells on the stack",
+          "legal land plays using their current quota and entry choices",
+          "continued resolution after each play"
+        ],
+        "exclusions": [
+          "future play permissions",
+          "additional land plays",
+          "land play on another turn",
+          "unrepresented variable exile counts"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.exile.fixed_top_resolving_cast"
+      ],
+      "dependency_fail_closed_rationale": "Persisted room-body descriptors independently require the resolving play capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.exile.fixed_top_resolving_play",
+      "implementation_components": [
+        "quorune.compiler.discover_templates._fixed_top_exile_template",
+        "quorune.fixed_top_exile.ResolvingExileLandPlayIntent",
+        "quorune.rules.land_play_permissions.resolving_exile_land_play_response",
+        "quorune.discover_casting.fixed_top_exile_cast_options",
+        "quorune.semantic_choices.fixed_top_exile.FixedTopExileHandler",
+        "quorune.engine.CommanderEngine._play_land"
+      ],
+      "implementation_mutation_rationale": "Malformed closed shapes are rejected. Native tests distinguish paid casts from unavailable options, last land quota, and intervening trigger placement.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_runestone_land_enables_paid_cast_and_holds_landfall_until_resolution_ends",
+        "test_runestone_uses_current_land_quota_and_the_selected_life_payment"
+      ],
+      "multiplayer_tests": [
+        "test_runestone_land_enables_paid_cast_and_holds_landfall_until_resolution_ends",
+        "test_runestone_off_turn_allows_paid_sorcery_and_excludes_land"
+      ],
+      "negative_tests": [
+        "test_runestone_land_enables_paid_cast_and_holds_landfall_until_resolution_ends",
+        "test_runestone_off_turn_allows_paid_sorcery_and_excludes_land",
+        "test_runestone_room_body_requires_independent_resolving_play_authority",
+        "test_runestone_uses_current_land_quota_and_the_selected_life_payment"
+      ],
+      "official_rules": [
+        "305.1",
+        "305.2a",
+        "305.2b",
+        "305.3",
+        "400.7i",
+        "400.7j",
+        "406.3",
+        "601.1a",
+        "601.2",
+        "608.2g",
+        "609.3",
+        "712.11"
+      ],
+      "positive_tests": [
+        "test_runestone_land_enables_paid_cast_and_holds_landfall_until_resolution_ends",
+        "test_runestone_off_turn_allows_paid_sorcery_and_excludes_land",
+        "test_runestone_uses_current_land_quota_and_the_selected_life_payment"
+      ],
+      "privacy_tests": [
+        "test_runestone_land_enables_paid_cast_and_holds_landfall_until_resolution_ends"
+      ],
+      "replay_tests": [
+        "test_runestone_land_enables_paid_cast_and_holds_landfall_until_resolution_ends",
+        "test_runestone_off_turn_allows_paid_sorcery_and_excludes_land",
+        "test_runestone_uses_current_land_quota_and_the_selected_life_payment"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
         "exclusions": [
           "modified Champion subject grammar",
           "unrepresented source-specific championed-result bodies"
@@ -89507,7 +89601,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 792,
+  "registry_version": 793,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

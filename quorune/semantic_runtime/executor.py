@@ -5,6 +5,7 @@ from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
+from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
@@ -819,6 +820,9 @@ def _execute_tap_state_intent(
 
 
 def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent, ResolvingExileLandPlayIntent):
+        sink._play_land(intent.actor, {}, resolving=intent)
+        return intent.actor, None
     if isinstance(intent, ExileGraveyardCopiesIntent):
         from ..semantic_choices.graveyard_copy_cast import execute_exile_graveyard_copies
         return intent.actor, execute_exile_graveyard_copies(sink, intent)
@@ -1022,7 +1026,7 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             results.append((intent.actor, result))
             continue
         if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
-                               GraveyardCastIntent,ExileGraveyardCopiesIntent)):
+                               GraveyardCastIntent,ExileGraveyardCopiesIntent,ResolvingExileLandPlayIntent)):
             results.append(_execute_resolving_cast_choice(sink,intent))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):

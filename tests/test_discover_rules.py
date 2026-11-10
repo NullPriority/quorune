@@ -1075,7 +1075,8 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([ROOT / "tests/fixtures" / name for name in (
             "bound-effect-program-cards.json", "discover-cards.json", "global-alternative-cost-cards.json",
             "morph-rules-cards.json", "prototype-cards.json", "chosen-impulse-access-cards.json",
-            "declared-impulse-access-cards.json", "end-step-impulse-access-cards.json")], path)
+            "declared-impulse-access-cards.json", "end-step-impulse-access-cards.json",
+            "resolving-top-play-cards.json")], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -1512,6 +1513,183 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         self.until(session, lambda game: game.state.step == "end_step" and game.state.pending_decision is not None)
         self.assertFalse(self.has_exiled_instant_offer(session, exiled))
         self.replay(session)
+
+    def test_runestone_room_body_requires_independent_resolving_play_authority(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.fixed_top_exile import RESOLVING_TOP_PLAY_CAPABILITY, RESOLVING_TOP_PLAY_SCOPE, validate_fixed_top_exile
+        from quorune.oracle_ir import compile_oracle_card
+
+        dungeon = self.db.lookup("Dungeon of the Mad Mage")
+        source = self.db.lookup("Generic Resolving Exile Play Fixture")
+        room = next(line for line in dungeon.oracle_text.splitlines() if line.startswith("Runestone Caverns — "))
+        self.assertEqual(room.split(" — ", 1)[1].split(" (Leads to:", 1)[0], source.oracle_text)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(source, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effect, = ir.faces[0].nodes[0].effects
+        self.assertEqual(RESOLVING_TOP_PLAY_SCOPE, validate_fixed_top_exile(effect))
+        for mutation in ({"count": True}, {"count": 1}, {"player": "B"}, {"schema_version": 2},
+                         {"duration": "until_end_of_turn"}):
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                validate_fixed_top_exile({**effect, **mutation})
+        later = replace(source, oracle_id="generic-deferred-top-play-witness",
+                        oracle_text=source.oracle_text.rstrip(".") + " this turn.")
+        deferred = compile_oracle_card(later, **options)
+        self.assertEqual("exact", deferred.status, deferred.material_residuals)
+        self.assertNotIn(RESOLVING_TOP_PLAY_CAPABILITY, deferred.faces[0].nodes[0].capability_dependencies)
+        probe = replace(source, oracle_id="runestone-play-producer-mutation")
+        with patch("quorune.compiler.discover_templates._fixed_top_exile_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(probe, **options).status)
+        session = self.session(60828042)
+        card = self.add(session.engine, source.name, zone="hand")
+        self.assert_closed(session, card)
+        program, = [p for p in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if RESOLVING_TOP_PLAY_CAPABILITY in p.capability_dependencies]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != RESOLVING_TOP_PLAY_CAPABILITY)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(result["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + RESOLVING_TOP_PLAY_CAPABILITY, result["blockers"])
+
+    def resolve_runestone_fixture(self, session, source):
+        self.assert_closed(session, source)
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        pending = self.resolve(session)
+        self.assertIsNotNone(pending)
+        self.assertEqual("semantic.choice", pending.kind)
+        packet = session.packet("pilot:A", full=True)["decision"]
+        action, = [action for action in packet["legal_actions"] if action["id"] == "choose"]
+        self.assertEqual(["play", "decline"], action["choice_schema"]["legal_values"])
+        self.assertEqual({"field": "choice", "value": "play"}, action["choice_schema"]["cast_options_when"])
+
+    @staticmethod
+    def resolving_play_command(option, **fields):
+        return {"action_id": "choose", "choice": "play", "cast": {"cost_option": option["id"], **fields}}
+
+    def test_runestone_land_enables_paid_cast_and_holds_landfall_until_resolution_ends(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(60828043)
+        engine = session.engine
+        source = self.add(engine, "Generic Resolving Exile Play Fixture", zone="hand")
+        lagac = self.add(engine, "Spitfire Lagac")
+        hidden = self.add(engine, "Grizzly Bears", zone="library", ref="runestone-private-third")
+        spell = self.add(engine, "Lightning Bolt", zone="library", ref="runestone-bolt")
+        land = self.add(engine, "Mountain", zone="library", ref="runestone-mountain")
+        self.assert_closed(session, lagac)
+        self.prepare(session)
+        self.resolve_runestone_fixture(session, source)
+        land_option, = self.options(session)
+        self.assertEqual(("land", land.ref), (land_option["kind"], land_option["card"]))
+        self.assertNotIn(hidden.ref, str(session.packet("pilot:B", full=True)))
+        before = authoritative_state_hash(session.state)
+        for principal, command in (("pilot:B", self.resolving_play_command(land_option)),
+                                   ("pilot:A", self.resolving_play_command(land_option, targets=["B"]))):
+            self.assertFalse(session.act(principal, command).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "choice": "play", "cost_option": land_option["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", session.state.cards[land.object_id].zone)
+        self.assertEqual(0, session.state.players["A"].land_plays_remaining)
+        self.assertEqual([source.object_id], [item.card_object_id for item in session.state.stack])
+        self.assertEqual(40, session.state.players["D"].life)
+        cast_option, = self.options(session)
+        self.assertEqual(spell.ref, cast_option["card"])
+        before = authoritative_state_hash(session.state)
+        for stale in (self.resolving_play_command(land_option), self.resolving_play_command(cast_option, targets=["invalid"])):
+            self.assertFalse(session.act("pilot:A", stale).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", self.resolving_play_command(cast_option, targets=["D"]))
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual("stack", session.state.cards[spell.object_id].zone)
+        self.assertTrue(session.state.cards[land.object_id].tapped)
+        self.assertEqual(40, session.state.players["D"].life)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((39, 39, 36), tuple(session.state.players[seat].life for seat in "BCD"))
+        self.replay(session, load=True)
+
+    def test_runestone_off_turn_allows_paid_sorcery_and_excludes_land(self):
+        session = self.session(60828044)
+        engine = session.engine
+        source = self.add(engine, "Generic Resolving Exile Play Fixture", zone="hand")
+        spell = self.add(engine, "Divination", zone="library", ref="runestone-off-turn-sorcery")
+        land = self.add(engine, "Mountain", zone="library", ref="runestone-off-turn-land")
+        self.prepare(session, active="B", mana={"U": 1, "C": 2})
+        self.resolve_runestone_fixture(session, source)
+        option, = self.options(session)
+        self.assertEqual(spell.ref, option["card"])
+        self.assertEqual(1, option["requirements"]["U"])
+        result = session.act("pilot:A", self.resolving_play_command(option))
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("stack", engine.state.cards[spell.object_id].zone)
+        self.assertEqual("exile", engine.state.cards[land.object_id].zone)
+        self.assertNotIn("temporary_play_permission", engine.state.cards[land.object_id].annotations)
+        self.assertIsNone(self.resolve(session))
+        self.replay(session)
+
+    def test_runestone_uses_current_land_quota_and_the_selected_life_payment(self):
+        for extra in (False, True):
+            with self.subTest(extra=extra):
+                session = self.session(60828045 + int(extra))
+                engine = session.engine
+                source = self.add(engine, "Generic Resolving Exile Play Fixture", zone="hand")
+                if extra:
+                    exploration = self.add(engine, "Exploration")
+                    self.assert_closed(session, exploration)
+                land = self.add(engine, "Blood Crypt", zone="library", ref="runestone-shockland")
+                later = self.add(engine, "Mountain", zone="library", ref="runestone-second-land")
+                self.prepare(session)
+                self.resolve_runestone_fixture(session, source)
+                choices = [option for option in self.options(session) if option["card"] == land.ref]
+                self.assertEqual({False, True}, {option["pay_life"] for option in choices})
+                paid, = [option for option in choices if option["pay_life"]]
+                result = session.act("pilot:A", self.resolving_play_command(paid))
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("battlefield", engine.state.cards[land.object_id].zone)
+                self.assertFalse(engine.state.cards[land.object_id].tapped)
+                self.assertEqual(38, session.state.players["A"].life)
+                if extra:
+                    final_option, = self.options(session)
+                    self.assertEqual(later.ref, final_option["card"])
+                    result = session.act("pilot:A", self.resolving_play_command(final_option))
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("battlefield", engine.state.cards[later.object_id].zone)
+                else:
+                    self.assertEqual("exile", engine.state.cards[later.object_id].zone)
+                    self.assertNotIn("temporary_play_permission", engine.state.cards[later.object_id].annotations)
+                self.assertEqual("graveyard", engine.state.cards[source.object_id].zone)
+                self.replay(session)
+
+    def test_runestone_offers_both_modal_faces_and_keeps_declined_cards_exiled(self):
+        session = self.session(60828047)
+        engine = session.engine
+        source = self.add(engine, "Generic Resolving Exile Play Fixture", zone="hand")
+        self.add(engine, "Exploration")
+        self.add(engine, "Grizzly Bears", zone="graveyard")
+        modal = self.add(engine, "Bala Ged Recovery // Bala Ged Sanctuary", zone="library")
+        later = self.add(engine, "Mountain", zone="library", ref="runestone-declined-land")
+        self.assert_closed(session, modal)
+        self.prepare(session, mana={"G": 1, "C": 2})
+        self.resolve_runestone_fixture(session, source)
+        options = [option for option in self.options(session) if option["card"] == modal.ref]
+        self.assertEqual({"Bala Ged Recovery", "Bala Ged Sanctuary"}, {option["face"] for option in options})
+        land, = [option for option in options if option["kind"] == "land"]
+        result = session.act("pilot:A", {"action_id": "choose", "choice": "play", "cost_option": land["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("Bala Ged Sanctuary", engine.state.cards[modal.object_id].active_face)
+        remaining, = self.options(session)
+        self.assertEqual(later.ref, remaining["card"])
+        declined = session.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+        self.assertTrue(declined.ok, declined.summary)
+        self.assertEqual("exile", engine.state.cards[later.object_id].zone)
+        self.assertNotIn("temporary_play_permission", engine.state.cards[later.object_id].annotations)
+        self.replay(session, load=True)
 
     def test_fixed_top_exile_requires_its_scope_and_runtime_capability(self):
         from dataclasses import replace

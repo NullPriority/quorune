@@ -286,6 +286,7 @@ from .rules.land_play_permissions import (
     land_play_face_type_line,
     land_play_timing_matches,
     land_play_timing_window,
+    resolving_exile_land_play_response,
     selected_land_play_permission,
 )
 from .rules.zone_action_permissions import (
@@ -2417,15 +2418,16 @@ class CommanderEngine(
         except SemanticNodeError as exc:
             raise GameRuleError(str(exc)) from exc
 
-    def _play_land(self, seat: str, response: Mapping[str, Any]) -> None:
-        self._check_priority(seat)
-        timing = land_play_timing_window(self.state, seat)
-        if timing is None:
-            self._sorcery_timing(seat)
+    def _play_land(self, seat: str, response: Mapping[str, Any], *, resolving=None) -> None:
+        if resolving is None:
+            self._check_priority(seat)
+            timing = land_play_timing_window(self.state, seat)
+            if timing is None:
+                self._sorcery_timing(seat)
+        else:
+            response = resolving_exile_land_play_response(self, seat, resolving)
         player = self.state.players[seat]
-        selected_permission = selected_land_play_permission(
-            self, seat, response
-        )
+        selected_permission = selected_land_play_permission(self, seat, response if resolving is None else {})
         raw_from = str(response.get("from") or "hand")
         card = self._resolve_object(
             seat,
@@ -2458,9 +2460,9 @@ class CommanderEngine(
             face = legal_faces[0]
         if not legal_faces:
             raise GameRuleError(f"{card.printed_name} is not a land")
-        if not land_play_timing_matches(timing, card, record, face):
+        if resolving is None and not land_play_timing_matches(timing, card, record, face):
             self._sorcery_timing(seat)
-        if not self._compiled_land_play_permission(seat, card):
+        if resolving is None and not self._compiled_land_play_permission(seat, card):
             raise GameRuleError(
                 f"Playing {card.printed_name} from {card.zone} is not "
                 "authorized by a compiled zone permission."
@@ -2514,6 +2516,8 @@ class CommanderEngine(
             changed_players=[seat],
         )
         dispatch_semantic_event(self, LAND_PLAY_EVENT, {"player": seat, "from": origin})
+        if resolving is not None:
+            return
         # CR 117.5 and 704.3 require state-based actions and waiting triggers
         # to be handled before the active player receives priority after this
         # special action.  Without this boundary, an enters trigger created by

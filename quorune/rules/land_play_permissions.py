@@ -7,6 +7,8 @@ from typing import Any, Literal
 
 from ..cast_timing import type_line_has_card_type
 from ..errors import GameRuleError
+from ..fixed_top_exile import ResolvingExileLandPlayIntent
+from ..replacement.immutable import thaw_value
 from .temporary_cast_timing import (
     TemporaryCastTimingScope, consume_temporary_play_timing, has_next_creature_card_timing,
 )
@@ -40,6 +42,46 @@ def land_play_timing_matches(window, card, record, face) -> bool:
     type_line = land_play_face_type_line(record, face)
     return (window == "next_creature_card" and type_line_has_card_type(type_line, "land")
             and TemporaryCastTimingScope.NEXT_CREATURE_CARD.matches(type_line, physical_card=card.object_kind == "card"))
+
+
+def resolving_exile_land_play_options(host, actor, card):
+    """Offer ordinary land faces and entry choices during an authorized resolution."""
+    from ..discover_model import discover_options_fingerprint
+
+    if (actor not in host.active_seats or host.state.active_player != actor or not land_play_permission_options(host, actor)
+            or card.zone != "exile" or card.owner != actor or not card.is_card_object or card.face_down):
+        return ()
+    record = host.card_record(card)
+    if record is None:
+        return ()
+    result = []
+    for face in host._land_play_faces(record):
+        face_name = str(face.get("name")) if face is not None else None
+        life = host._land_entry_life_amount(record, face)
+        option = {"kind": "land", "card": card.ref, "face": face_name, "requirements": {},
+                  "label": f"Play {face_name or card.printed_name}", "pay_life": False}
+        result.append(option)
+        if 0 < life <= host.state.players[actor].life:
+            result.append({**option, "label": f"{option['label']} and pay {life} life", "pay_life": True})
+    return tuple({**option, "id": "fixed-top-land:" + discover_options_fingerprint((option,))} for option in result)
+
+
+def resolving_exile_land_play_response(host, actor, intent):
+    from ..discover_casting import require_discover_resolution
+
+    if not isinstance(intent, ResolvingExileLandPlayIntent) or intent.actor != actor:
+        raise GameRuleError("Resolving land play requires its typed controller authorization")
+    require_discover_resolution(host, actor=actor, stack_ref=intent.stack_ref)
+    identity = intent.card
+    card = host.state.cards.get(identity.object_id)
+    if card is None or card.ref != identity.ref or card.logical_object_id != identity.logical_object_id:
+        raise GameRuleError("The resolving land play lost its captured exile incarnation")
+    option = next((row for row in resolving_exile_land_play_options(host, actor, card)
+                   if row["id"] == intent.option_id), None)
+    if option is None:
+        raise GameRuleError("The resolving land play is unavailable")
+    return {"card": card.ref, "from": "exile", "face": option["face"], "pay_life": option["pay_life"],
+            "_entry_replacement_selections": [thaw_value(value) for value in intent.replacement_selections]}
 
 
 def selected_land_play_permission(

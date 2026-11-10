@@ -7,7 +7,8 @@ from ..discover_model import DiscoverCastIntent, ExileCastProgress, discover_opt
 from ..fixed_top_exile import (
     CHOSEN_IMPULSE_GRANT_FIELD, CHOSEN_IMPULSE_SCOPE,
     FIXED_TOP_EXILE_CAPABILITY, FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
-    FIXED_TOP_EXILE_RULES, fixed_top_exile_result_rows, validate_fixed_top_exile,
+    FIXED_TOP_EXILE_RULES, RESOLVING_TOP_PLAY_SCOPE, ResolvingExileLandPlayIntent,
+    fixed_top_exile_result_rows, validate_fixed_top_exile,
 )
 from ..replacement.immutable import FrozenMap
 from ..rules.library_selection import LibrarySelectionObjectIdentity
@@ -21,7 +22,7 @@ def _offer(instruction, results):
 
 
 def _decline(effect):
-    damage = effect["instruction"]["decline"]
+    damage = effect["instruction"].get("decline")
     return (FrozenMap(damage),) if damage is not None else ()
 
 
@@ -45,7 +46,7 @@ def _prepare_exile(effect, context):
         owners = (effect["supplier"],)
     else:
         owners = (context.actor,)
-    count = effect["count"] if scope == CHOSEN_IMPULSE_SCOPE else 1
+    count = effect.get("count", 1)
     captured = tuple((owner, identity) for owner in owners if owner in context.query.active_seats
                      for identity in _capture_library_tops(context.query, owner, count))
     refs = tuple(identity.ref for _, identity in captured)
@@ -111,15 +112,42 @@ def _prepare_offer(effect, context):
     if effect["instruction"]["scope"] == CHOSEN_IMPULSE_SCOPE:
         return _prepare_chosen_impulse(effect, context, rows)
     options = tuple(context.query.authorized_cast_options())
+    play = effect["instruction"]["scope"] == RESOLVING_TOP_PLAY_SCOPE
     if not options:
+        reason = "No remaining exiled card can be played." if play else "No remaining exiled card can be cast."
         return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
-            auto_continue=AutoContinue(reason="No remaining exiled card can be cast.", prepend_effects=_decline(effect)))
-    prompt = "Choose an exiled card to cast now, or finish resolving."
-    return SemanticChoicePreparation(request=SemanticChoiceRequest(prompt=prompt, choice=CastOrDeclineChoice(options),
+            auto_continue=AutoContinue(reason=reason, prepend_effects=_decline(effect)))
+    selection = "play" if play else "cast"
+    prompt = f"Choose an exiled card to {selection} now, or finish resolving."
+    return SemanticChoicePreparation(request=SemanticChoiceRequest(prompt=prompt,
+        choice=CastOrDeclineChoice(options, selection=selection),
         public_context=FrozenMap({"stack": context.stack_ref, "operation": FIXED_TOP_EXILE_OFFER_OPERATION,
                                  "cast_options": list(options)})),
         continuation_effect=FrozenMap({**effect, "_stack_ref": context.stack_ref,
                                        "_options_fingerprint": discover_options_fingerprint(options)}))
+
+
+def _land_play_intent(actor, stack_ref, identity, option, submission):
+    if (set(submission) - {"cost_option", "face", "cast_method", "targets", "modes", "auto_pay", "pay"}
+            or submission.get("face") not in (None, option.get("face"))
+            or submission.get("cast_method") is not None or submission.get("targets") not in (None, (), [])
+            or submission.get("modes") not in (None, (), [])
+            or (submission.get("auto_pay") is not None and submission["auto_pay"] is not True)
+            or submission.get("pay") not in (None, "auto")):
+        raise SemanticChoiceError("Land play accepts its sealed entry option")
+    return ResolvingExileLandPlayIntent(actor, stack_ref, identity, option["id"])
+
+
+def _play_intent(actor, stack_ref, scope, owner, identity, chosen, options, cast):
+    if chosen.get("kind") == "land":
+        if scope != RESOLVING_TOP_PLAY_SCOPE:
+            raise SemanticChoiceError("This resolving choice authorizes spells only")
+        return _land_play_intent(actor, stack_ref, identity, chosen, cast)
+    payment = "paid" if scope in {"controller_library", RESOLVING_TOP_PLAY_SCOPE} else "free"
+    progress = ExileCastProgress(None, (identity,), identity.ref, owner, payment)
+    group = tuple(option for option in options if option["card"] == identity.ref and option.get("kind") != "land")
+    return DiscoverCastIntent(actor, stack_ref, progress, discover_options_fingerprint(group),
+                              FrozenMap({**cast, "cost_option": chosen["id"]}))
 
 
 def _complete_offer(continuation, response, query):
@@ -132,17 +160,26 @@ def _complete_offer(continuation, response, query):
     actor = effect["instruction"]["player"]
     if actor not in query.active_seats:
         raise SemanticChoiceError("Fixed top exile choice belongs to an inactive player")
-    if effect["instruction"]["scope"] == CHOSEN_IMPULSE_SCOPE:
+    scope = effect["instruction"]["scope"]
+    if scope == CHOSEN_IMPULSE_SCOPE:
         return _complete_chosen_impulse(effect, rows, response, query, saved["_options_fingerprint"])
     options = tuple(query.authorized_cast_options())
     if discover_options_fingerprint(options) != saved["_options_fingerprint"]:
         raise SemanticChoiceError("Fixed top exile casting options changed")
     choice = response.get("choice")
     cast = response.get("cast")
+    if scope == RESOLVING_TOP_PLAY_SCOPE:
+        submitted = {key: value for key, value in response.items()
+                     if key not in {"action", "action_id", "cast", "choice", "choice_schema"}}
+        if isinstance(cast, Mapping) and submitted.keys() & cast.keys():
+            raise SemanticChoiceError("A play option cannot submit the same field twice")
+        if cast is None or isinstance(cast, Mapping):
+            cast = {**(cast or {}), **submitted} or None
     if choice == "decline" and cast is None:
         return SemanticChoiceCompletion(prepend_effects=_decline(effect))
-    if choice != "cast" or (cast is not None and not isinstance(cast, Mapping)):
-        raise SemanticChoiceError("Choose one authorized cast or finish resolving")
+    selection = "play" if scope == RESOLVING_TOP_PLAY_SCOPE else "cast"
+    if choice != selection or (cast is not None and not isinstance(cast, Mapping)):
+        raise SemanticChoiceError(f"Choose one authorized {selection} or finish resolving")
     cast = dict(cast or {})
     selected = cast.get("cost_option")
     matches = [option for option in options if selected is None or option["id"] == selected]
@@ -153,14 +190,9 @@ def _complete_offer(continuation, response, query):
     if len(candidates) != 1:
         raise SemanticChoiceError("The casting option lost its captured exile incarnation")
     owner, identity = candidates[0]
-    scope = effect["instruction"]["scope"]
-    payment = "paid" if scope == "controller_library" else "free"
-    progress = ExileCastProgress(None, (identity,), identity.ref, owner, payment)
-    group = tuple(option for option in options if option["card"] == identity.ref)
-    intent = DiscoverCastIntent(actor, continuation.stack_ref, progress, discover_options_fingerprint(group),
-                                FrozenMap({**cast, "cost_option": chosen["id"]}))
+    intent = _play_intent(actor, continuation.stack_ref, scope, owner, identity, chosen, options, cast)
     remaining = [row for row in effect["results"] if row["identity"]["ref"] != identity.ref]
-    follow = (_offer(effect["instruction"], remaining),) if remaining and scope == "each_library" else ()
+    follow = (_offer(effect["instruction"], remaining),) if remaining and scope in {"each_library", RESOLVING_TOP_PLAY_SCOPE} else ()
     return SemanticChoiceCompletion(intents=(intent,), prepend_effects=follow)
 
 

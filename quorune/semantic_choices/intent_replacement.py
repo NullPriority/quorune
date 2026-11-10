@@ -2,6 +2,7 @@ from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..incubate_model import IncubateIntent,decode_incubate_intent_identity
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent,decode_discover_cast_identity,decode_discover_cleanup_identity
+from ..fixed_top_exile import ResolvingExileLandPlayIntent, validate_resolving_land_play_identity
 from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyard_cast_identity
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
@@ -368,6 +369,7 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     if isinstance(intent,IncubateIntent):return 'incubate',intent.identity()
     if isinstance(intent,DiscoverCleanupIntent):return 'discover_cleanup',intent.identity()
     if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
+    if isinstance(intent, ResolvingExileLandPlayIntent):return 'resolving_exile_land_play', intent.identity()
     if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
     if isinstance(intent,ExileGraveyardCopiesIntent):return 'exile_graveyard_copies',intent.identity()
     if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
@@ -785,6 +787,9 @@ def validate_semantic_intent_identity(
     if kind == 'exile_graveyard_copies':
         try:return decode_exile_graveyard_copies_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'resolving_exile_land_play':
+        try:return validate_resolving_land_play_identity(value)
+        except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind=='discover_cast':
         try:return decode_discover_cast_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1247,6 +1252,7 @@ def with_replacement_selections(
     selections: Sequence[str | FrozenMap | Mapping[str, Any]],
 ) -> (
     DiscoverCastIntent
+    | ResolvingExileLandPlayIntent
     | GraveyardCastIntent
     | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
@@ -1273,6 +1279,7 @@ def with_replacement_selections(
             *DESTRUCTION_INTENT_TYPES,
             *CHAMPION_INTENT_TYPES,
             DiscoverCastIntent,
+            ResolvingExileLandPlayIntent,
             GraveyardCastIntent,
             ExileGraveyardCopiesIntent,
             DiscoverCleanupIntent,

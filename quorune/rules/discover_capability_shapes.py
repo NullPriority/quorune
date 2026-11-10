@@ -7,7 +7,7 @@ from ..discover_model import (DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND
 from ..replacement.immutable import FrozenMap
 from ..fixed_top_exile import (
     CHOSEN_IMPULSE_MECHANIC, CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_MECHANIC, FIXED_TOP_EXILE_OPERATION,
-    validate_fixed_top_exile,
+    OWN_LIBRARY_EXILE_SCOPES, RESOLVING_TOP_PLAY_MECHANIC, RESOLVING_TOP_PLAY_SCOPE, validate_fixed_top_exile,
 )
 
 
@@ -20,8 +20,9 @@ def discover_node_capabilities(*,effects,target_schema,mechanic_ids):
     mechanic = {DISCOVER_OPERATION: 'discover', NONLAND_SCAN_OPERATION: NONLAND_SCAN_MECHANIC,
                 QUALIFIED_SCAN_OPERATION: QUALIFIED_SCAN_MECHANIC,
                 FIXED_TOP_EXILE_OPERATION: FIXED_TOP_EXILE_MECHANIC}.get(operation)
-    if operation == FIXED_TOP_EXILE_OPERATION and effects[0].get("scope") == CHOSEN_IMPULSE_SCOPE:
-        mechanic = CHOSEN_IMPULSE_MECHANIC
+    if operation == FIXED_TOP_EXILE_OPERATION:
+        mechanic = {CHOSEN_IMPULSE_SCOPE: CHOSEN_IMPULSE_MECHANIC,
+                    RESOLVING_TOP_PLAY_SCOPE: RESOLVING_TOP_PLAY_MECHANIC}.get(effects[0].get("scope"), mechanic)
     if mechanic is None or mechanic not in mechanic_ids:
         return ()
     try:
@@ -43,7 +44,7 @@ def is_closed_discover_program(program):
 
 def _legacy_fixed_top_instructions(value):
     if isinstance(value, Mapping):
-        if value.get("op") == FIXED_TOP_EXILE_OPERATION and validate_fixed_top_exile(value) != CHOSEN_IMPULSE_SCOPE:
+        if value.get("op") == FIXED_TOP_EXILE_OPERATION and validate_fixed_top_exile(value) not in OWN_LIBRARY_EXILE_SCOPES:
             yield value
         for child in value.values():
             yield from _legacy_fixed_top_instructions(child)

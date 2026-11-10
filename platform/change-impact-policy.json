@@ -11667,6 +11667,7 @@
         "tests/fixtures/chosen-impulse-access-cards.json",
         "tests/fixtures/declared-impulse-access-cards.json",
         "tests/fixtures/end-step-impulse-access-cards.json",
+        "tests/fixtures/resolving-top-play-cards.json",
         "quorune/semantic_choices/defaults.py",
         "quorune/semantic_choices/engine_coordination.py",
         "quorune/semantic_choices/intent_replacement.py",

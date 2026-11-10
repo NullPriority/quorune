@@ -6,7 +6,8 @@ from .discover_model import (ExileCastProgress, discover_spell_qualifies, discov
     QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_STEP_OPERATION, validate_qualified_scan_effect)
 from .errors import GameRuleError,StateInvariantError
 from .fixed_top_exile import (CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
-    fixed_top_exile_result_rows, validate_fixed_top_exile)
+    RESOLVING_TOP_PLAY_SCOPE, fixed_top_exile_result_rows, validate_fixed_top_exile)
+from .rules.land_play_permissions import resolving_exile_land_play_options
 from .replacement.immutable import thaw_value
 from .rules.casting.face_queries import offered_cast_methods, prospective_cast_card
 from .rules.casting.proposal import _static_cast_rule_state, build_cast_offer
@@ -134,7 +135,7 @@ def fixed_top_exile_cast_options(host, *, item, actor, effect):
     scope = instruction["scope"]
     if scope == CHOSEN_IMPULSE_SCOPE:
         return ()
-    payment = "paid" if scope == "controller_library" else "free"
+    payment = "paid" if scope in {"controller_library", RESOLVING_TOP_PLAY_SCOPE} else "free"
     options = []
     for owner, identity in rows:
         card = host.state.cards.get(identity.object_id)
@@ -150,6 +151,8 @@ def fixed_top_exile_cast_options(host, *, item, actor, effect):
                 continue
         progress = ExileCastProgress(None, (identity,), identity.ref, owner, payment)
         options.extend(public for public, _ in _fixed_top_cast_option_pairs(host, actor=actor, card=card, progress=progress))
+        if scope == RESOLVING_TOP_PLAY_SCOPE:
+            options.extend(resolving_exile_land_play_options(host, actor, card))
     return tuple(options)
 
 

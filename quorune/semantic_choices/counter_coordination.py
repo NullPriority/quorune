@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
 from ..discover_model import DiscoverCastIntent
+from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
 
@@ -283,6 +284,7 @@ def continue_semantic_completion(
                     *DESTRUCTION_INTENT_TYPES,
                     *CHAMPION_INTENT_TYPES,
                     DiscoverCastIntent,
+                    ResolvingExileLandPlayIntent,
                     GraveyardCastIntent,
                     PlaceCountersOnSetIntent,
                     MoveCountersIntent,

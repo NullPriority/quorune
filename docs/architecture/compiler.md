@@ -4321,6 +4321,13 @@ instruction binds the announced X of a resolving spell or the original X
 sealed by a self-entry event. A zero count produces an empty result, and a
 short library supplies its remaining top cards.
 
+The immediate fixed-top play form captures the controller's two exile results.
+Each selection uses the current paid spell options or legal land faces. A land
+play requires the controller's turn and spends the ordinary land allowance.
+The choice recomputes costs, targets, land entry options and remaining objects
+after every play. The enclosing instruction continues between plays. Waiting
+triggers enter the stack after it finishes.
+
 Fixed impulse access can end as its controller's next end step begins. The
 turn-step owner expires this window before priority at that boundary. A grant
 created during an end step applies through the already-begun step and waits
