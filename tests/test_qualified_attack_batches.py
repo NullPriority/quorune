@@ -176,6 +176,7 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'qualified-attack-batches.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/power-toughness-switch-cards.json',
             ROOT/'tests/fixtures/qualified-attack-batch-cards.json',
             ROOT/'tests/fixtures/defender-declaration-numeric-cards.json',
             ROOT/'tests/fixtures/attack-declaration-power-cards.json'],path)
@@ -408,10 +409,12 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
         self.assertTrue(declared_attack_power_recheck(
             program, item.context, source_object_id=hunter.object_id, controller="A",
         ))
+        incomplete = deepcopy(item.context["attack_transition"])
+        del next(row for row in incomplete["participants"] if row["object_id"] == hunter.object_id)["power"]
         for changed in (
             {"defender": "C"},
             {"source_logical_object_id": "unrelated-incarnation"},
-            {ATTACK_BATCH_CONTEXT: item.context[ATTACK_BATCH_CONTEXT][1:]},
+            {"attack_transition": incomplete},
         ):
             with self.subTest(changed=tuple(changed)), self.assertRaises(ValueError):
                 declared_attack_power_recheck(program, {**item.context, **changed},
@@ -438,6 +441,22 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
     def test_pack_tactics_counts_negative_power(self):
         session, hunter = self._attack_with_negative_power()
         self.assertEqual(0, self.trigger_count(session, hunter))
+        self.replay(session, load=True)
+
+    def test_pack_tactics_reads_power_after_a_precombat_pump(self):
+        session = self.session(50890107)
+        hunter, automaton = self._ready_attackers(session, "Gnoll Hunter", "Universal Automaton")
+        pump = self.add(session.engine, "Infuriate", zone="hand")
+        self.assert_closed(session, hunter)
+        self.prepare(session, mana={"R": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", pump, [automaton.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(4, session.engine._numeric_stat(automaton.object_id, "power"))
+        self.attack(session, [(hunter, "B"), (automaton, "C")])
+        self.assertEqual(1, self.trigger_count(session, hunter))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 1}, session.state.cards[hunter.object_id].counters)
         self.replay(session, load=True)
 
     def test_pack_tactics_negative_power_control_kills_clamped_sum(self):

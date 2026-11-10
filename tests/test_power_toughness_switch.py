@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
@@ -96,7 +97,11 @@ class PowerToughnessSwitchRuntimeTests(unittest.TestCase):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / "switch.sqlite3"
         build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/additional-conditional-modifier-cards.json",
+            ROOT / "tests/fixtures/all-blocker-requirement-cards.json",
+            ROOT / "tests/fixtures/attack-declaration-power-cards.json",
             ROOT / "tests/fixtures/fixed-entwine-cards.json",
+            ROOT / "tests/fixtures/fixed-stat-multiplier-cards.json",
             ROOT / "tests/fixtures/power-toughness-switch-cards.json"], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -111,6 +116,115 @@ class PowerToughnessSwitchRuntimeTests(unittest.TestCase):
     @staticmethod
     def stats(session, card):
         return tuple(session.engine._numeric_stat(card.object_id, value) for value in ("power", "toughness"))
+
+    assert_closed = actions.SelfPublicZoneRuntimeTests.assert_closed
+
+    def test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta(self):
+        session = self.session(7011001)
+        target = self.add(session.engine, "Char-Rumbler", seat="B")
+        fury = self.add(session.engine, "Unleash Fury", zone="hand")
+        pump = self.add(session.engine, "Infuriate", zone="hand")
+        private = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand", ref="stat-multiplier-private")
+        self.assert_closed(session, fury)
+        self.fund(session, {"C": 1, "R": 3})
+        self.assertEqual((-1, 3), self.stats(session, target))
+        self.cast(session, "A", fury, [target.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((-2, 3), self.stats(session, target))
+        self.cast(session, "A", pump, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((1, 5), self.stats(session, target))
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence > turn
+            or game.state.pending_decision.kind == "cleanup.discard")
+        if session.state.turn_sequence == turn:
+            context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+            cards = [row["id"] for row in context["hand"][:context["count"]]]
+            result = session.act("pilot:A", {"action_id": "discard", "cards": cards})
+            self.assertTrue(result.ok, result.summary)
+        self.assertGreater(session.state.turn_sequence, turn)
+        self.assertEqual((-1, 3), self.stats(session, target))
+        self.replay(session, load=True)
+
+    def test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer(self):
+        session = self.session(7011002)
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        fury = self.add(session.engine, "Unleash Fury", zone="hand")
+        image = self.add(session.engine, "Twisted Image", zone="hand")
+        self.assert_closed(session, fury)
+        self.fund(session, {"C": 1, "R": 1, "U": 2})
+        self.cast(session, "A", fury, [target.ref])
+        self.cast(session, "A", image, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((6, 8), self.stats(session, target))
+        self.replay(session, load=True)
+
+    def test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently(self):
+        session = self.session(7011003)
+        positive = self.add(session.engine, "Generic Bound Body")
+        negative = self.add(session.engine, "Char-Rumbler")
+        opponent = self.add(session.engine, "Generic Bound Body", seat="B", ref="opponent-stats")
+        late = self.add(session.engine, "Goblin Piker", zone="hand")
+        spell = self.add(session.engine, "Double Trouble", zone="hand")
+        self.assert_closed(session, spell)
+        self.fund(session, {"C": 5, "R": 2})
+        self.cast(session, "A", spell)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((4, 6), self.stats(session, positive))
+        self.assertEqual((-2, 3), self.stats(session, negative))
+        self.assertEqual((2, 6), self.stats(session, opponent))
+        self.cast(session, "A", late)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((2, 1), self.stats(session, late))
+        self.replay(session, load=True)
+
+    def test_stat_multiplier_activates_on_the_original_targ_nar_incarnation(self):
+        session = self.session(7011004)
+        source = self.add(session.engine, "Targ Nar, Demon-Fang Gnoll")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        self.assert_closed(session, source)
+        self.fund(session, {"C": 4, "R": 2, "G": 2, "W": 1})
+        def double_source():
+            actions_now = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            offer = next(row for row in actions_now if row["id"].startswith(f"activate:{source.ref}:"))
+            result = session.act("pilot:A", {"action_id": offer["id"], "pay": "manual",
+                "payment": {"C": 2, "R": 1, "G": 1}})
+            self.assertTrue(result.ok, result.summary)
+        double_source()
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((4, 4), self.stats(session, source))
+        original_identity = source.logical_object_id
+        double_source()
+        self.cast(session, "A", blink, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(original_identity, session.state.cards[source.object_id].logical_object_id)
+        self.assertEqual((2, 2), self.stats(session, source))
+        self.replay(session, load=True)
+
+    def test_stat_multiplier_requires_exact_capability_and_kills_the_unsigned_mutation(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.fixed_stat_multipliers import (
+            STAT_MULTIPLIER_CAPABILITY, FixedStatMultiplier, MultipliedStat,
+        )
+
+        self.assertEqual((-6, 4), FixedStatMultiplier(3, MultipliedStat.BOTH).delta(-3, 2))
+        with self.assertRaises(ValueError):
+            FixedStatMultiplier(True, MultipliedStat.POWER)
+        session = self.session(7011005)
+        source = self.add(session.engine, "Unleash Fury", zone="hand")
+        self.assert_closed(session, source)
+        program = next(p for p in session.engine.semantics.programs_for_oracle(source.oracle_id)
+            if STAT_MULTIPLIER_CAPABILITY in p.capability_dependencies)
+        deps = tuple(dep for dep in program.capability_dependencies if dep != STAT_MULTIPLIER_CAPABILITY)
+        invalid = replace(program, capability_dependencies=deps,
+            capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(invalid, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + STAT_MULTIPLIER_CAPABILITY, result["blockers"])
+        original = self.db.lookup("Unleash Fury")
+        with patch("quorune.compiler.fixed_stat_multipliers.fixed_stat_multiplier_effect_template", return_value=None):
+            self.assertTrue(compile_oracle_card(original, capability_registry=self.registry).material_residuals)
 
     def test_real_switch_draw_and_spliced_switch_follow_layer_7d_then_expire(self):
         session = self.session(6130401)

@@ -10285,6 +10285,37 @@
       ]
     },
     {
+      "id": "full-effective-power-in-declared-attack-transitions",
+      "patterns": [
+        "quorune/attack_transition_engine_adapter.py",
+        "quorune/rules/attack_batches.py"
+      ],
+      "test_modules": [
+        "test_attack_transitions",
+        "test_card_program_trust",
+        "test_qualified_attack_batches",
+        "test_qualified_attack_subjects"
+      ]
+    },
+    {
+      "id": "fixed-resolution-stat-multipliers",
+      "patterns": [
+        "quorune/compiler/fixed_stat_multipliers.py",
+        "quorune/compiler/fixed_resolution_characteristics.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py",
+        "quorune/rules/fixed_stat_multipliers.py",
+        "quorune/rules/target_characteristic_sets.py",
+        "tests/test_power_toughness_switch.py",
+        "tests/fixtures/fixed-stat-multiplier-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_continuous_effect_components",
+        "test_power_toughness_switch",
+        "test_qualified_attack_batches"
+      ]
+    },
+    {
       "id": "declared-attack-power-conditions",
       "patterns": [
         "quorune/attack_batch_model.py",

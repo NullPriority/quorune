@@ -137,16 +137,7 @@ def declared_attack_power_total(context, *, source_object_id, source_logical_obj
     ):
         raise ValueError("Declared attack power lost the source's original declaration")
 
-    rows = _sealed_rows(context)
-    facts = {row["reference"]: row["characteristics"] for row in rows}
-    try:
-        by_id = {assignment.attacker_object_id: facts[participants[assignment.attacker_object_id].reference]
-                 for assignment in event.assignments}
-    except KeyError as exc:
-        raise ValueError("Declared attack power requires every declared attacker") from exc
-    if tuple(FrozenMap(row) for row in rows) != seal_attack_declaration(event, by_id):
-        raise ValueError("Declared attack power snapshots differ from the original declaration")
-    powers = tuple(row["characteristics"][ATTACK_FACT_PREFIX + "power"] for row in rows)
+    powers = tuple(participants[row.attacker_object_id].power for row in event.assignments)
     if any(power is None for power in powers):
         raise ValueError("Declared attack power requires resolved power for each attacker")
     return sum(powers)

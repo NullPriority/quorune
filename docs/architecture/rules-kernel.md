@@ -2102,6 +2102,12 @@ and power snapshots. A creature put onto the battlefield attacking never joins
 that declaration. Later movement or power changes leave the historical
 comparison intact.
 
+Fixed power and toughness multipliers read each recipient's signed effective
+characteristics at resolution. A controlled creature set takes all of its
+measurements before applying any modifier. The continuous-effect journal locks
+the additive layer 7c results to those incarnations until cleanup. Existing
+layer 7d switches still apply after the recorded additions.
+
 Named-counter zone predicates consume version-two occurrence counter maps.
 The zone owner captures departure counters before any reset, including for all
 members of a simultaneous move, and captures entry counters after committed

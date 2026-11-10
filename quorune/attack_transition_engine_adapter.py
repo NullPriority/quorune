@@ -58,6 +58,12 @@ class EngineAttackTransitionQuery(AttackTransitionQuery):
         self._fragment_cache: dict[str, tuple[Any, ...]] = {}
         self._training_power_required: bool | None = None
         self._attacker_ids: tuple[str, ...] | None = None
+        from .attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
+
+        self._declared_power_required = any(
+            DECLARED_ATTACK_POWER_COVERAGE in program.coverage
+            for program in engine.semantics.programs_for_event("creature.attacks")
+        )
 
     def turn_sequence(self) -> int:
         return self._engine.state.turn_sequence
@@ -172,7 +178,8 @@ class EngineAttackTransitionQuery(AttackTransitionQuery):
                 self._engine._numeric_stat(card.object_id, "power")
                 if card.object_id in self.attacker_object_ids()
                 and (
-                    self._requires_training_power_snapshot()
+                    self._declared_power_required
+                    or self._requires_training_power_snapshot()
                     or any(
                         spec.kind is CombatKeywordTriggerKind.MENTOR
                         for spec in trigger_specs

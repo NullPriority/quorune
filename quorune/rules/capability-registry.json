@@ -88353,7 +88353,7 @@
     {
       "applicability": {
         "inputs": [
-          "One normalized source attack and its sealed declaration",
+          "One normalized source attack with full effective power sealed on each declared participant",
           "A fixed positive total-power threshold"
         ],
         "outputs": [
@@ -88379,18 +88379,21 @@
         "quorune.compiler.public_trigger_conditions.bind_public_intervening_trigger",
         "quorune.rules.attack_batches.declared_attack_power_total",
         "quorune.rules.attack_batches.declared_attack_power_recheck",
-        "quorune.rules.event_subscriptions.source_event_intervening_recheck"
+        "quorune.rules.event_subscriptions.source_event_intervening_recheck",
+        "quorune.attack_transition_engine_adapter.EngineAttackTransitionQuery.participant"
       ],
       "implementation_mutation_rationale": "Clamping negative attack power makes the native five-power declaration qualify. Withdrawing the producer restores the original material residual.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
         "test_pack_tactics_rechecks_original_six_power_across_defenders",
         "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
         "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
       ],
       "multiplayer_tests": [
         "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
         "test_pack_tactics_rechecks_original_six_power_across_defenders",
         "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
         "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
@@ -88413,6 +88416,7 @@
       ],
       "positive_tests": [
         "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
         "test_pack_tactics_rechecks_original_six_power_across_defenders",
         "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
         "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
@@ -88423,9 +88427,100 @@
       "replay_tests": [
         "test_pack_tactics_counts_negative_power",
         "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
         "test_pack_tactics_rechecks_original_six_power_across_defenders",
         "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
         "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "inputs": [
+          "Closed source, single creature target, or controlled creature set",
+          "Effective signed characteristics at resolution"
+        ],
+        "outputs": [
+          "Locked additive layer 7c effects through cleanup",
+          "Independently sampled amounts per current affected incarnation"
+        ],
+        "exclusions": [
+          "Variable repetition and unrepresented recipient bindings"
+        ],
+        "summary": "A fixed power or toughness multiplier samples each current recipient at resolution and locks its signed additive result."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "dependency_fail_closed_rationale": "Runtime binding independently requires the new capability and validates the typed factor, statistic and recipient.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.fixed_stat_multiplier",
+      "implementation_components": [
+        "quorune.compiler.fixed_stat_multipliers.fixed_stat_multiplier_effect_template",
+        "quorune.rules.fixed_stat_multipliers.FixedStatMultiplier",
+        "quorune.rules.fixed_stat_multipliers.apply_fixed_stat_multiplier"
+      ],
+      "implementation_mutation_rationale": "Clamping a negative power changes Unleash Fury's native result. Omitting the compiler production leaves the original residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "multiplayer_tests": [
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "negative_tests": [
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_requires_exact_capability_and_kills_the_unsigned_mutation",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "official_rules": [
+        "107.1b",
+        "107.2",
+        "208.3",
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.4c",
+        "701.10a",
+        "701.10b",
+        "701.10c",
+        "701.11b",
+        "701.11c"
+      ],
+      "positive_tests": [
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "privacy_tests": [
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "replay_tests": [
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
       ],
       "required_evidence": [
         "positive",
@@ -88449,7 +88544,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 778,
+  "registry_version": 779,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

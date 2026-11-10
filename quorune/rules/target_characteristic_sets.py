@@ -7,10 +7,20 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..keyword_counters import keyword_counter_mechanic
 from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, next_turn_effect_dependencies, split_next_turn_effect
 from ..source_tap_effect import SOURCE_TAP_EFFECT_FIELD, source_tap_effect_dependencies, split_source_tap_effect
-from .power_toughness_switch import is_power_toughness_switch, power_toughness_switch_runtime_dependencies
+from .power_toughness_switch import (
+    SWITCH_CAPABILITY, SWITCH_MECHANIC, is_power_toughness_switch, power_toughness_switch_runtime_dependencies,
+)
+from .fixed_stat_multipliers import (
+    STAT_MULTIPLIER_CAPABILITY, STAT_MULTIPLIER_MECHANIC,
+    is_fixed_stat_multiplier, fixed_stat_multiplier_runtime_dependencies,
+)
 
 TARGET_CHARACTERISTIC_SET_CAPABILITY='continuous.resolution.fixed_target_characteristic_set'
 OPERATION='apply_source_characteristics_until_end_of_turn'
+RESOLUTION_STAT_MECHANIC_CAPABILITIES = {
+    SWITCH_MECHANIC: (SWITCH_CAPABILITY,),
+    STAT_MULTIPLIER_MECHANIC: (STAT_MULTIPLIER_CAPABILITY,),
+}
 
 
 def decode_target_characteristics(effect,*,allow_zero_result=False):
@@ -93,6 +103,8 @@ def characteristic_set_runtime_dependencies(program):
                 dependencies.update(cap for keyword in keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])
             elif is_power_toughness_switch(value):
                 dependencies.update(power_toughness_switch_runtime_dependencies(value, target_schema=program.target_schema))
+            elif is_fixed_stat_multiplier(value):
+                dependencies.update(fixed_stat_multiplier_runtime_dependencies(value, target_schema=program.target_schema))
             for child in value.values():visit(child)
         elif isinstance(value,(list,tuple)):
             for child in value:visit(child)
