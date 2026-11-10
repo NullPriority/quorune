@@ -574,6 +574,9 @@ same closed public and declared-amount owners, preserving their distinct
 binding schemas. Previous-clause target references require the complete
 printed independent-target context. Linked Exert results retain their exact
 printed event key and mandatory amount, target and Exert dependencies.
+Fixed source damage uses the normal damage source and target owners. The
+version-two source prevention descriptor creates a combat-only shield for the
+original battlefield incarnation through end of turn.
 
 Runtime ownership checks preserve the producer's scope. Symbolic amounts are
 projected through their existing amount owner; modal and conditional results

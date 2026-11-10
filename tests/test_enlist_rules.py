@@ -5,6 +5,8 @@ import json,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
 from common import ROOT
+from quorune.card_programs import bind_card_program_runtime
+from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.engine import TURN_STEPS
@@ -79,6 +81,24 @@ class ExertAttackCompilerTests(unittest.TestCase):
         self.assertNotEqual('exact',compile_oracle_card(record(text,'Creature'),capability_registry=registry).status)
 
 
+    def test_exert_combat_prevention_binds_only_the_original_source(self):
+        from quorune.source_prevention import source_prevention_dependencies
+        from test_bound_effect_programs import record
+
+        text = ("You may exert this creature as it attacks. When you do, "
+                "prevent all combat damage that would be dealt to it this turn.")
+        ir = compile_oracle_card(record(text, 'Creature'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        result = next(node for node in ir.faces[0].nodes if node.event == 'permanent.exerted')
+        effect, = result.effects
+        self.assertIsNone(result.target_schema)
+        self.assertEqual(('$source.zone_object', 'combat', 2),
+                         (effect['subject'], effect['damage_kind'], effect['source_subject_version']))
+        for change in ({'subject': '$source'}, {'damage_kind': 'any'}, {'source_subject_version': 1}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                source_prevention_dependencies({**effect, **change})
+
+
 class ExertAttackRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -119,6 +139,130 @@ class ExertAttackRuntimeTests(unittest.TestCase):
         resumed=self.replay(s,load=True);self.resolve(resumed)
         data=resumed.engine._effective_card_data(resumed.state.cards[source.object_id])
         self.assertEqual((3,3),(int(data['power']),int(data['toughness'])));self.replay(resumed,load=True)
+
+    def assert_closed(self, session, name):
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(name), semantic_registry=session.engine.semantics,
+            capability_registry=self.registry, capability_profile='commander_review',
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+
+    def test_original_glorybringer_keeps_its_exert_cost_and_uses_source_lki(self):
+        for has_target in (False, True):
+            with self.subTest(has_target=has_target):
+                session = self.session(358017 + has_target)
+                engine = session.engine
+                source = self.add(engine, 'Glorybringer')
+                dragon = self.add(engine, 'Glorybringer', seat='B', ref='opposing-dragon')
+                friendly = self.add(engine, 'Generic Bound Body', ref='friendly-non-dragon')
+                blink = self.add(engine, 'Ephemerate', zone='hand')
+                target = self.add(engine, 'Generic Bound Body', seat='C') if has_target else None
+                engine.state.players['A'].mana_pool['W'] = 1
+                self.assert_closed(session, 'Glorybringer')
+                self.attacks(session)
+                key = self.exert_key(session, source)
+                self.checkpoint(session)
+
+                accepted = session.act('pilot:A', {
+                    'action_id': 'attack', 'attackers': {source.ref: 'B'}, 'exert': {source.ref: [key]},
+                })
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(['A'], engine.state.cards[source.object_id].annotations['exert_next_untap_players'])
+                if target is None:
+                    self.assertFalse(engine.state.stack)
+                    self.assertEqual('priority', engine.state.pending_decision.kind)
+                    self.replay(session, load=True)
+                    continue
+
+                self.assertEqual('semantic.target', engine.state.pending_decision.kind)
+                before = authoritative_state_hash(engine.state)
+                for ineligible in (dragon, friendly):
+                    rejected = session.act('pilot:A', {'action_id': 'choose', 'targets': [ineligible.ref]})
+                    self.assertFalse(rejected.ok)
+                    self.assertEqual(before, authoritative_state_hash(engine.state))
+                accepted = session.act('pilot:A', {'action_id': 'choose', 'targets': [target.ref]})
+                self.assertTrue(accepted.ok, accepted.summary)
+                item, = engine.state.stack
+                self.assertEqual(key, item.semantic_key)
+                incarnation = source.logical_object_id
+                action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                              if row.get('card') == blink.ref)
+                accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [source.ref], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertNotEqual(incarnation, session.state.cards[source.object_id].logical_object_id)
+                self.assertEqual(4, session.state.cards[target.object_id].marked_damage)
+                self.replay(session)
+
+    def pass_until(self, session, predicate):
+        for _ in range(32):
+            if predicate(session):
+                return
+            self.assertEqual('priority', session.state.pending_decision.kind)
+            accepted = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.fail('Combat did not reach the expected priority or decision')
+
+    def test_original_avenger_shield_prevents_combat_and_allows_noncombat_damage(self):
+        session = self.session(358020)
+        engine = session.engine
+        source = self.add(engine, "Oketra's Avenger")
+        source.acquired_control_turn_count = -1
+        blocker = self.add(engine, 'Grizzly Bears', seat='B')
+        shock = self.add(engine, 'Shock', seat='B', zone='hand')
+        self.add(engine, 'Mountain', seat='B')
+        self.assert_closed(session, "Oketra's Avenger")
+        self.attacks(session)
+        key = self.exert_key(session, source)
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {
+            'action_id': 'attack', 'attackers': {source.ref: 'B'}, 'exert': {source.ref: [key]},
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        shield, = engine.state.damage_prevention_shields
+        self.assertEqual(('combat', source.ref), (shield.damage_kind.value, shield.subject.ref))
+        self.pass_until(session, lambda current: current.state.pending_decision.kind == 'combat.blockers')
+        accepted = session.act('pilot:B', {'action_id': 'block', 'blocks': {blocker.ref: source.ref}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.pass_until(session, lambda current: current.state.cards[blocker.object_id].zone == 'graveyard'
+                        and tuple(current.pending_principals()) == ('pilot:B',))
+        self.assertEqual('battlefield', session.state.cards[source.object_id].zone)
+        self.assertEqual(0, session.state.cards[source.object_id].marked_damage)
+        action = next(row for row in session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+                      if row.get('card') == shock.ref)
+        accepted = session.act('pilot:B', {'action_id': action['id'], 'targets': [source.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.replay(session)
+
+    def test_original_avenger_blink_does_not_shield_the_returned_creature(self):
+        session = self.session(358021)
+        engine = session.engine
+        source = self.add(engine, "Oketra's Avenger")
+        source.acquired_control_turn_count = -1
+        blink = self.add(engine, 'Ephemerate', zone='hand')
+        engine.state.players['A'].mana_pool['W'] = 1
+        self.attacks(session)
+        key = self.exert_key(session, source)
+        incarnation = source.logical_object_id
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {
+            'action_id': 'attack', 'attackers': {source.ref: 'B'}, 'exert': {source.ref: [key]},
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                      if row.get('card') == blink.ref)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [source.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(incarnation, session.state.cards[source.object_id].logical_object_id)
+        self.assertFalse(session.state.damage_prevention_shields)
+        self.replay(session, load=True)
 
     def test_original_naga_draw_uses_locked_controller_private_projection_and_replay(self):
         s=self.session(358002);e=s.engine;source=self.add(e,'Watchful Naga');source.acquired_control_turn_count=-1
