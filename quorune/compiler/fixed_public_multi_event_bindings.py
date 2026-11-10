@@ -304,6 +304,37 @@ def _opponent_cast_or_source_death_spec(
     )
 
 
+def _color_cast_or_land_entry_spec(material_line):
+    match = re.fullmatch(
+        r"Whenever you cast a (?P<color>white|blue|black|red|green) spell or "
+        r"(?:a|an) (?P<subtype>Plains|Island|Swamp|Mountain|Forest) you control enters, "
+        r"(?P<body>you gain 1 life\.?)", material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from .spell_cast_predicates import fixed_spell_cast_binding_spec
+
+    body = match["body"]
+    cast = fixed_spell_cast_binding_spec(f"Whenever you cast a {match['color']} spell, {body}")
+    if cast is None:
+        return None
+    entry = {"all": [
+        {"field": "controller", "op": "eq", "value": "$source.controller"},
+        {"field": "subtypes", "op": "contains_any", "value": [match["subtype"].casefold()]},
+    ]}
+    subscriptions = (
+        FixedEventSubscription("spell.cast", cast.subject.event_condition),
+        FixedEventSubscription("land.enter", entry),
+    )
+    return _spec(
+        "spell.cast", "independent_dual_event", body,
+        "fixed-color-cast-or-land-entry-trigger-v1", "cr-603-handling-triggered-abilities",
+        condition=fixed_event_subscription_condition(subscriptions),
+        capabilities=("trigger.subscription.fixed_multi_event", "trigger.event.normalized_spell_cast",
+                      "trigger.event.normalized_zone_change"),
+    )
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
@@ -311,7 +342,7 @@ def fixed_public_multi_event_binding_spec(
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one exact two-event source subscription with one active zone."""
 
-    paired = _source_block_pair_spec(material_line)
+    paired = _source_block_pair_spec(material_line) or _color_cast_or_land_entry_spec(material_line)
     if paired is not None:return paired
 
     cast_or_death = _opponent_cast_or_source_death_spec(material_line, card_name=card_name)

@@ -70,6 +70,7 @@ class LandPlayTriggerNativeTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([
             ROOT / "tests/fixtures/bound-effect-program-cards.json",
             ROOT / "tests/fixtures/land-play-trigger-cards.json",
+            ROOT / "tests/fixtures/color-cast-land-entry-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -88,6 +89,69 @@ class LandPlayTriggerNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(before, authoritative_state_hash(session.state))
         result = session.act("pilot:A", command)
         self.assertTrue(result.ok, result.summary)
+
+    def test_staff_printed_pairs_use_one_independent_multi_event_ability(self):
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+
+        names = (
+            ("Staff of the Mind Magus", "U", "island"),
+            ("Staff of the Sun Magus", "W", "plains"),
+            ("Staff of the Death Magus", "B", "swamp"),
+            ("Staff of the Flame Magus", "R", "mountain"),
+            ("Staff of the Wild Magus", "G", "forest"),
+        )
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        session = self.session(718041)
+        for name, color, subtype in names:
+            with self.subTest(name=name):
+                card = self.add(session.engine, name)
+                self.assert_closed(session, card)
+                record = self.db.lookup(name, fuzzy=False)
+                ir = compile_oracle_card(record, **options)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
+                cast, entry = [sub.to_dict() for sub in subscriptions.subscriptions]
+                self.assertEqual(("spell.cast", "land.enter"), (cast["event"], entry["event"]))
+                controller = {"field": "controller", "op": "eq", "value": "$source.controller"}
+                self.assertEqual({"all": [controller, {"field": "colors", "op": "contains_any", "value": [color]}]},
+                                 cast["condition"])
+                self.assertEqual({"all": [controller, {"field": "subtypes", "op": "contains_any", "value": [subtype]}]},
+                                 entry["condition"])
+        probe = replace(self.db.lookup(names[0][0]), oracle_id="cast-or-land-entry-producer-mutation")
+        with patch("quorune.compiler.fixed_public_multi_event_bindings._color_cast_or_land_entry_spec", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(probe, **options).status)
+
+    def test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry(self):
+        session = self.session(718042)
+        engine = session.engine
+        staff = self.add(engine, "Staff of the Mind Magus")
+        exploration = self.add(engine, "Exploration")
+        opposing_spell = self.add(engine, "Unsummon", seat="B", zone="hand")
+        opposing_creature = self.add(engine, "Grizzly Bears", seat="B")
+        blue_spell = self.add(engine, "Divination", zone="hand")
+        island = self.add(engine, "Hallowed Fountain", zone="hand")
+        mountain = self.add(engine, "Mountain", zone="hand")
+        self.assert_closed(session, staff)
+        self.assert_closed(session, exploration)
+        session.state.players["B"].mana_pool["U"] = 1
+        self.prepare(session, mana={"U": 1, "C": 2})
+        self.checkpoint(session)
+        self.cast_for(session, "B", opposing_spell, [opposing_creature.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(40, session.state.players["A"].life)
+        self.cast_for(session, "A", blue_spell)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(41, session.state.players["A"].life)
+        self.play_land(session, island)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(42, session.state.players["A"].life)
+        self.play_land(session, mountain)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(42, session.state.players["A"].life)
+        self.replay(session, load=True)
 
     def test_actual_play_waits_for_apnap_and_burgeoning_entry_does_not_repeat_it(self):
         session = self.session(718001)

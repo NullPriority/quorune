@@ -80115,7 +80115,8 @@
           "one independently closed qualified public subject entering or dying/leaving",
           "unqualified source blocks or becomes blocked pair; per-blocker and qualified pairs require separate exact grammar",
           "A scheduled step composes with one independently exact source-entry or controller-spell-cast prefix in the battlefield zone. Each subscription keeps its complete source/controller/color/phase predicate and one shared body. Nested, cross-zone, intervening and branch-relative result grammar remains residual. Runtime binding infers subscription authority directly from descriptors even if the coverage marker is omitted.",
-          "one opponent spell during the source controller's turn and one source-death occurrence"
+          "one opponent spell during the source controller's turn and one source-death occurrence",
+          "one controller spell-color predicate and one land subtype entering under that controller"
         ],
         "outputs": [
           "one CardProgram ability",
@@ -80142,9 +80143,10 @@
         "quorune.rules.event_subscriptions.FixedEventSubscriptionSet",
         "quorune.trigger_discovery._selected_event_subscription",
         "quorune.trigger_discovery.semantic_event_matches",
-        "quorune.compiler.fixed_public_multi_event_bindings._opponent_cast_or_source_death_spec"
+        "quorune.compiler.fixed_public_multi_event_bindings._opponent_cast_or_source_death_spec",
+        "quorune.compiler.fixed_public_multi_event_bindings._color_cast_or_land_entry_spec"
       ],
-      "implementation_mutation_rationale": "Focused compiler tests remove the shared multi-event parser and block the subscription capability, while runtime witnesses require both distinct events to reach the same typed body. Replacing only the becomes-blocked subscription with a valid attack subscription is killed by actual multiblocker combat consequences, while preserving closed two-event model validation.",
+      "implementation_mutation_rationale": "Focused compiler tests remove the shared multi-event parser and block the subscription capability, while runtime witnesses require both distinct events to reach the same typed body. Replacing only the becomes-blocked subscription with a valid attack subscription is killed by actual multiblocker combat consequences, while preserving closed two-event model validation. Removing the color-cast or land-entry producer leaves the printed ability residual.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80169,7 +80171,8 @@
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
       ],
       "multiplayer_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80191,7 +80194,8 @@
         "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
       ],
       "negative_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80224,7 +80228,9 @@
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
         "test_verified_each_event_dependency_withdrawal_keeps_single_upkeep_control",
         "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_staff_printed_pairs_use_one_independent_multi_event_ability",
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
       ],
       "official_rules": [
         "603.2",
@@ -80271,7 +80277,9 @@
         "test_schedule_and_cast_keep_separate_complete_predicates_and_one_source_span",
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_staff_printed_pairs_use_one_independent_multi_event_ability",
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
       ],
       "privacy_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80311,7 +80319,8 @@
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
       ],
       "required_evidence": [
         "positive",
@@ -89687,7 +89696,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 794,
+  "registry_version": 795,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

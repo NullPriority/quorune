@@ -861,6 +861,9 @@ prefix in either printed order. Its step, phase and active-player predicates
 remain separate from the entry's source or the cast's controller and color
 predicates. These scheduled pairs admit a shared independently closed body;
 event-relative result pronouns require a separate exact composition.
+A color-cast or land-entry pair binds the casting controller and spell color
+separately from the controller and subtype of the entering land. Both events
+execute the same typed life result.
 Each subscription
 retains its own source, controller and characteristic predicates; one shared
 result remains one ability. Event alias normalization retains a source-specific

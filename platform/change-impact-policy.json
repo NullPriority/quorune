@@ -3704,6 +3704,7 @@
         "quorune/rules/event_player_result_shapes.py",
         "tests/test_land_play_triggers.py",
         "tests/fixtures/land-play-trigger-cards.json",
+        "tests/fixtures/color-cast-land-entry-cards.json",
         "tests/test_repeatable_object_action_triggers.py",
         "tests/fixtures/repeatable-object-action-triggers.json",
         "quorune/compiler/fixed_public_event_trigger_bindings.py",
