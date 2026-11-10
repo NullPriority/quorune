@@ -87400,6 +87400,101 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Read an attached creature's current goad causes from its Aura and Equipment abilities and combine them with committed timed designations.",
+        "inputs": [
+          "reciprocal current attachment and current creature type",
+          "current source subtype, ability, and controller",
+          "current goad prohibitions and timed designations"
+        ],
+        "outputs": [
+          "one pair of declaration requirements per goading player",
+          "public goading seats",
+          "attached cause ends with source applicability",
+          "same-player Goad instruction remains redundant"
+        ],
+        "exclusions": [
+          "global or linked live goad subjects",
+          "condition- or duration-qualified clauses",
+          "open prefix or independent body siblings"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "attachment.reference.current_or_lki",
+        "combat.declaration.typed_components",
+        "combat.goad.prohibition.controller_creatures"
+      ],
+      "dependency_fail_closed_rationale": "The compiler withdraws exact support if the static goad reader or typed declaration capability is blocked. The runtime fragment rejects unsupported attachment types, versions, and additional fields.",
+      "dependency_fail_closed_status": "passed",
+      "id": "combat.goad.attached_creature",
+      "implementation_components": [
+        "quorune.declaration_fragments.AttachedGoadSpec",
+        "quorune.compiler.combat_metadata_templates.attached_goad_handler",
+        "quorune.semantic_runtime.combat_metadata.AttachedGoadFragmentHandler",
+        "quorune.semantic_runtime.combat_metadata.active_attached_goaders",
+        "quorune.semantic_runtime.combat_metadata.active_goading_players",
+        "quorune.declaration_requirement_runtime.typed_attacker_requirements",
+        "quorune.projection.StateProjector"
+      ],
+      "implementation_mutation_rationale": "Removing attached goad lowering makes an otherwise closed attached stat and goad sentence material again.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
+        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
+      ],
+      "multiplayer_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player"
+      ],
+      "negative_tests": [
+        "test_attached_goad_rejects_open_grammar_and_malformed_descriptors",
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime"
+      ],
+      "official_rules": [
+        "101.2",
+        "113.12",
+        "301.5a",
+        "303.4b",
+        "508.1d",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "701.15b",
+        "701.15c",
+        "701.15d"
+      ],
+      "positive_tests": [
+        "test_closed_attached_goad_composes_only_with_closed_prefixes",
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
+      ],
+      "privacy_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime"
+      ],
+      "replay_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
+        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -87408,7 +87503,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 767,
+  "registry_version": 768,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

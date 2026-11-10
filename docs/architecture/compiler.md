@@ -514,7 +514,11 @@ the selected player's identity. A later bound clause may goad the existing
 creature target while preserving its original target schema and incarnation.
 Optional fixed Goad uses the ordinary apply-or-decline continuation. The
 goader remains the resolving controller, and source departure does not shorten
-the designation's next-turn duration. Continuous “is goaded” text, linked result
+the designation's next-turn duration. A continuous attached-creature clause
+reads its current Aura or Equipment ability and its controller. A closed
+characteristic or declaration prefix can share that clause. The declaration
+solver and public projection combine current attached causes with committed
+designations once per goading player. Other continuous subjects, linked result
 sets, variable target cardinalities and other durations remain residuals.
 
 Fixed Connive accepts a complete single-object instruction with a represented

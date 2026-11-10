@@ -297,7 +297,7 @@ from .semantic_runtime.action_permissions import (
 from .semantic_runtime.casting_activation_metadata import (
     active_loyalty_cost_modifiers,
 )
-from .semantic_runtime.combat_metadata import active_goad_prohibitions
+from .semantic_runtime.combat_metadata import active_goading_players, active_goad_prohibitions
 from .semantic_runtime import (
     AddManaIntent,
     AddSubtypeIntent,
@@ -4381,7 +4381,7 @@ class CommanderEngine(
         if predicate.token is not None and card.is_token != predicate.token:
             return False
         if predicate.goaded is not None:
-            goaded = bool(self._active_goad_designations(card))
+            goaded = bool(active_goading_players(self, card))
             if goaded != predicate.goaded:
                 return False
         if predicate.tapped is not None and card.tapped != predicate.tapped:
@@ -4992,41 +4992,9 @@ class CommanderEngine(
                     card,
                     active_seats=self.active_seats,
                     error_type=GameRuleError,
+                    goading_players=active_goading_players(self, card),
                 )
             )
-            for designation in self._active_goad_designations(card):
-                requirements.extend(
-                    (
-                        DeclarationRequirement(
-                            requirement_id=(
-                                f"attack:{card.ref}:goad:{designation.player}:attack"
-                            ),
-                            kind="choose",
-                            variable=card.ref,
-                            label=(
-                                f"{self.display_name(card.object_id)} attacks "
-                                f"this combat if able because {designation.player} "
-                                "goaded it."
-                            ),
-                        ),
-                        DeclarationRequirement(
-                            requirement_id=(
-                                f"attack:{card.ref}:goad:{designation.player}:other"
-                            ),
-                            kind="choose_option_in",
-                            variable=card.ref,
-                            options=tuple(
-                                seat
-                                for seat in self.active_seats
-                                if seat not in {active, designation.player}
-                            ),
-                            label=(
-                                f"{self.display_name(card.object_id)} attacks "
-                                f"a player other than {designation.player} if able."
-                            ),
-                        ),
-                    )
-                )
         domains, restrictions, restriction_gaps = (
             self._declaration_restrictions("attack", domains)
         )

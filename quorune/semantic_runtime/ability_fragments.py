@@ -1521,6 +1521,7 @@ class AbilityFragmentRegistry(
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
     from .all_colors import AllColorsDefinitionHandler
+    from .combat_metadata import AttachedGoadFragmentHandler
     from .rampage_fragment import RampageFragmentHandler
     from .landwalk_permissions import LandwalkPermissionFragmentHandler
     from .counter_permissions import CounterProhibitionAbilityFragmentHandler
@@ -1545,6 +1546,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ExertAttackFragmentHandler(),
             AsUnblockedAssignmentFragmentHandler(),
             ToughnessAssignmentFragmentHandler(),
+            AttachedGoadFragmentHandler(),
             UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             AttachedUntapRestraintHandler(),

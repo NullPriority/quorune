@@ -25,6 +25,7 @@ from .semantic_runtime.action_permissions import (
     land_play_permission_options,
     library_top_visibility,
 )
+from .semantic_runtime.combat_metadata import active_goading_players
 from .semantic_runtime.hand_visibility import hand_is_public
 from .record import (
     authoritative_state_hash,
@@ -85,6 +86,7 @@ def _state_projector(
             library_top_visibility(engine, owner, viewer or "") is not None
         ),
         hand_visibility_resolver=lambda owner: hand_is_public(engine, owner),
+        goading_players_resolver=lambda card: active_goading_players(engine, card),
         land_play_count_resolver=lambda seat: len(
             land_play_permission_options(engine, seat)
         ),

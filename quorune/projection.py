@@ -96,6 +96,7 @@ class StateProjector:
         ) = None,
         land_play_count_resolver: Callable[[str], int] | None = None,
         hand_visibility_resolver: Callable[[str], bool] | None = None,
+        goading_players_resolver: Callable[[CardInstance], tuple[str, ...]] | None = None,
     ):
         self.card_db = card_db
         self.state = state
@@ -106,6 +107,7 @@ class StateProjector:
         )
         self.land_play_count_resolver = land_play_count_resolver
         self.hand_visibility_resolver = hand_visibility_resolver
+        self.goading_players_resolver = goading_players_resolver
 
     @staticmethod
     def seat_for(principal: str) -> str | None:
@@ -421,10 +423,13 @@ class StateProjector:
             )
         if card.attacking:
             obj["atk"] = card.attacking
-        if card.goaded_by:
-            obj["goad"] = sorted(
-                designation.player for designation in card.goaded_by
-            )
+        goaders = (
+            self.goading_players_resolver(card)
+            if self.goading_players_resolver is not None and card.zone == "battlefield" and card.attachments
+            else tuple(designation.player for designation in card.goaded_by)
+        )
+        if goaders:
+            obj["goad"] = sorted(goaders)
         if card.monstrous_value is not None:
             obj["monstrous"] = card.monstrous_value
         if card.suspected_at is not None:

@@ -39,6 +39,7 @@ from .characteristic_fragments import (
     QueryPowerToughnessDefinitionSpec,
 )
 from .declaration_fragments import (
+    AttachedGoadSpec,
     DeclarationCostTemplate,
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
@@ -822,6 +823,7 @@ StaticAbilityFragment: TypeAlias = (
     | MutateSpec
     | AsUnblockedAssignmentPermission
     | ToughnessAssignmentSpec
+    | AttachedGoadSpec
     | UmbraArmorSpec
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
@@ -910,6 +912,8 @@ def ability_fragment_to_dict(
     elif isinstance(fragment, AsUnblockedAssignmentPermission):
         kind = "as_unblocked_assignment"
     elif isinstance(fragment,ToughnessAssignmentSpec):kind='toughness_assignment_rule'
+    elif isinstance(fragment, AttachedGoadSpec):
+        kind = "attached_goad"
     elif isinstance(fragment, UmbraArmorSpec):
         kind = 'umbra_armor'
     elif isinstance(fragment, DeclarationCostTemplate):
@@ -1050,6 +1054,11 @@ def ability_fragment_from_dict(
     if value["kind"] == "as_unblocked_assignment":
         return AsUnblockedAssignmentPermission.from_dict(value["value"])
     if value['kind']=='toughness_assignment_rule':return ToughnessAssignmentSpec.from_dict(value['value'])
+    if value["kind"] == "attached_goad":
+        try:
+            return AttachedGoadSpec.from_dict(value["value"])
+        except ValueError as exc:
+            raise AbilityFragmentError(str(exc)) from exc
     if value['kind'] == 'umbra_armor':
         return UmbraArmorSpec.from_dict(value['value'])
     if value["kind"] == "declaration_cost":
@@ -1121,6 +1130,7 @@ def canonical_ability_fragments(
                 MutateSpec,
                 AsUnblockedAssignmentPermission,
                 ToughnessAssignmentSpec,
+                AttachedGoadSpec,
                 UmbraArmorSpec,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,

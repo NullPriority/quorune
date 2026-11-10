@@ -6,7 +6,11 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
+from ..ability_fragments import canonical_ability_fragments
+from ..attachments import attached_object_identity
 from ..card_program_faces import program_matches_face
+from ..characteristic_evaluation import type_parts
+from ..declaration_fragments import ATTACHED_GOAD_CAPABILITY, ATTACHED_GOAD_HANDLER_ID, AttachedGoadSpec
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -98,6 +102,25 @@ class GoadProhibitionRegistry(
     pass
 
 
+@dataclass(frozen=True, slots=True)
+class AttachedGoadFragmentHandler:
+    handler_id: str = ATTACHED_GOAD_HANDLER_ID
+    schema_version: int = 1
+    family: str = "ability.static.attached_goad"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("611.3a", "701.15b", "701.15c", "701.15d")
+    capability_dependencies: tuple[str, ...] = (ATTACHED_GOAD_CAPABILITY,)
+
+    def validate(self, descriptor):
+        from .ability_fragments import _fragment
+
+        return _fragment(descriptor, handler_id=self.handler_id, event=self.event, expected_type=AttachedGoadSpec)
+
+    def lower(self, descriptor, context):
+        del context
+        return (self.validate(descriptor),)
+
+
 @lru_cache(maxsize=1)
 def default_goad_prohibition_registry() -> GoadProhibitionRegistry:
     registry = GoadProhibitionRegistry((GoadProhibitionHandler(),))
@@ -107,6 +130,7 @@ def default_goad_prohibition_registry() -> GoadProhibitionRegistry:
 
 class CombatMetadataHost(Protocol):
     semantics: Any
+    state: Any
 
     def _semantic_event_sources(
         self,
@@ -117,6 +141,12 @@ class CombatMetadataHost(Protocol):
     def card_record(self, card: Any) -> Any: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+
+    def _goad_prohibition_source(self, card: Any) -> Any: ...
+
+    def _active_goad_designations(self, card: Any) -> Sequence[Any]: ...
 
 
 def active_goad_prohibitions(
@@ -157,12 +187,48 @@ def active_goad_prohibitions(
     )
 
 
+def active_attached_goaders(host: CombatMetadataHost, card: Any) -> tuple[str, ...]:
+    """Read live goad causes from the current reciprocal attachment sources."""
+
+    if card.zone != "battlefield" or card.phased_out or not card.attachments:
+        return ()
+    types, _, _ = type_parts(str(host._effective_card_data(card).get("type_line") or ""))
+    if "creature" not in types:
+        return ()
+    goaders: set[str] = set()
+    for source_id in card.attachments:
+        source = host.state.cards.get(source_id)
+        if source is None:
+            continue
+        target = attached_object_identity(host.state.cards, source)
+        if target is None or target.object_id != card.object_id:
+            continue
+        data = host._effective_card_data(source)
+        _, subtypes, _ = type_parts(str(data.get("type_line") or ""))
+        if any(
+            isinstance(fragment, AttachedGoadSpec) and fragment.source_subtype in subtypes
+            for fragment in canonical_ability_fragments(data.get("ability_fragments", ()))
+        ):
+            goaders.add(source.controller)
+    if goaders and host._goad_prohibition_source(card) is not None:
+        return ()
+    return tuple(sorted(goaders))
+
+
+def active_goading_players(host: CombatMetadataHost, card: Any) -> tuple[str, ...]:
+    timed = tuple(designation.player for designation in host._active_goad_designations(card))
+    return tuple(dict.fromkeys((*timed, *active_attached_goaders(host, card))))
+
+
 __all__ = [
     "GOAD_PROHIBITION_EVENT",
     "GOAD_PROHIBITION_HANDLER_ID",
     "GoadProhibition",
     "GoadProhibitionHandler",
     "GoadProhibitionRegistry",
+    "AttachedGoadFragmentHandler",
+    "active_attached_goaders",
+    "active_goading_players",
     "active_goad_prohibitions",
     "default_goad_prohibition_registry",
 ]

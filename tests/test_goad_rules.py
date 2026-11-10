@@ -7,7 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 from unittest import mock
 
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
 from inherited_composition_fixture import InheritedNativeFixture
 import test_qualified_public_history as history
 from quorune.card_programs import compile_card_program
@@ -17,6 +17,7 @@ from scripts.build_test_database import build_fixture_database
 from quorune.compiler.combat_metadata_templates import (
     static_goad_prohibition_handler,
 )
+from quorune.declaration_fragments import ATTACHED_GOAD_CAPABILITY, ATTACHED_GOAD_HANDLER_ID
 from quorune.engine import GameRuleError
 from quorune.model import CardInstance, CombatState, TurnEntry
 from quorune.oracle_ir import (
@@ -34,9 +35,192 @@ from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.combat_metadata import (
     GOAD_PROHIBITION_EVENT,
     GOAD_PROHIBITION_HANDLER_ID,
+    AttachedGoadFragmentHandler,
+    active_goading_players,
     default_goad_prohibition_registry,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from test_granted_skulk import record
+
+
+class AttachedGoadCompilerTests(unittest.TestCase):
+    def test_closed_attached_goad_composes_only_with_closed_prefixes(self):
+        capabilities = load_default_capability_registry()
+        cases = (
+            ("Enchanted creature is goaded.", "Enchantment — Aura", "aura", 1),
+            ("Equipped creature gets +2/+0 and is goaded.", "Artifact — Equipment", "equipment", 2),
+            ("Enchanted creature gets +3/+3, must be blocked if able, and is goaded.", "Enchantment — Aura", "aura", 3),
+            ("Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and deathtouch, and is goaded.", "Enchantment — Aura", "aura", 2),
+        )
+        for text, kind, subtype, count in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(record(text, kind), capability_registry=capabilities)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual(1, node.span.line)
+                self.assertEqual(count, len(node.handlers))
+                self.assertIn(ATTACHED_GOAD_CAPABILITY, node.capability_dependencies)
+                self.assertEqual(ATTACHED_GOAD_HANDLER_ID, node.handlers[-1]["handler_id"])
+                self.assertEqual(subtype, node.handlers[-1]["fragment"]["value"]["source_subtype"])
+
+    def test_attached_goad_rejects_open_grammar_and_malformed_descriptors(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        capabilities = load_default_capability_registry()
+        for text in (
+            "Enchanted creature is goaded until your next turn.",
+            "Enchanted creature gets +2/+2 as long as it's attacking and is goaded.",
+            "Enchanted creature can play lands from its graveyard and is goaded.",
+            "Other creatures with the same name as this creature are goaded.",
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(record(text, "Enchantment — Aura"), capability_registry=capabilities)
+                self.assertTrue(ir.material_residuals)
+
+        exact = record("Enchanted creature is goaded.", "Enchantment — Aura")
+        descriptor = compile_oracle_card(exact, capability_registry=capabilities).faces[0].nodes[0].handlers[0]
+        for change in ({"source_subtype": "land"}, {"schema_version": True}, {"duration": "turn"}):
+            invalid = {**descriptor, "fragment": {**descriptor["fragment"], "value": {
+                **descriptor["fragment"]["value"], **change,
+            }}}
+            with self.subTest(change=change), self.assertRaises(SemanticNodeError):
+                AttachedGoadFragmentHandler().validate(invalid)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        for capability in (ATTACHED_GOAD_CAPABILITY, "combat.declaration.typed_components"):
+            blocked = deepcopy(raw)
+            row = next(item for item in blocked["capabilities"] if item["id"] == capability)
+            row.update(status="blocked", blockers=["fixture dependency withdrawal"])
+            ir = compile_oracle_card(exact, capability_registry=CapabilityRegistry(blocked))
+            self.assertTrue(ir.material_residuals, capability)
+
+    def test_attached_goad_compiler_mutant_is_killed(self):
+        card = record("Enchanted creature gets +2/+2 and is goaded.", "Enchantment — Aura")
+        capabilities = load_default_capability_registry()
+        self.assertEqual("exact", compile_oracle_card(card, capability_registry=capabilities).status)
+        with mock.patch("quorune.compiler.runtime_templates.attached_goad_handler", return_value=None):
+            self.assertTrue(compile_oracle_card(card, capability_registry=capabilities).material_residuals)
+
+
+class AttachedGoadNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "attached-goad.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "fixed-goad-instruction-cards.json",
+            fixtures / "attached-exile-activation-cards.json",
+            fixtures / "attached-goad-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Attached goad", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def declaration(self, session, kind, seat):
+        self.until(session, lambda s: s.state.pending_decision is not None
+            and s.state.pending_decision.kind == kind and s.state.pending_decision.actors == [seat])
+        self.assertEqual(kind, session.packet(f"pilot:{seat}", full=True)["decision"]["kind"])
+        return session.state.pending_decision.payload_by_actor[seat]["declaration_constraints"]
+
+    def test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime(self):
+        for remove in (False, True):
+            with self.subTest(remove=remove):
+                session = self.session(701_150_041 + int(remove))
+                engine = session.engine
+                aura = self.add(engine, "Shiny Impetus", zone="hand")
+                instruction = self.add(engine, "Disrupt Decorum", zone="hand")
+                removal = self.add(engine, "Disenchant", zone="hand") if remove else None
+                body = self.add(engine, "Generic Bound Body", seat="B")
+                private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="goad-private-card")
+                body.acquired_control_turn_count = -1
+                for card in (aura, instruction):
+                    self.assert_closed(session, card)
+                if removal is not None:
+                    self.assert_closed(session, removal)
+                self.prepare(session, mana={"C": 10, "R": 6, "W": 2})
+                self.checkpoint(session)
+                self.cast(session, "A", aura, [body.ref])
+                self.assertIsNone(self.resolve(session))
+                self.cast(session, "A", instruction)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual([], session.state.cards[body.object_id].goaded_by)
+                if removal is not None:
+                    self.cast(session, "A", removal, [aura.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual("graveyard", session.state.cards[aura.object_id].zone)
+
+                spectator = session.packet("spectator", full=True)
+                projected = next(obj for obj in spectator["state"]["players"]["B"]["bf"] if obj["id"] == body.ref)
+                self.assertEqual(None if remove else ["A"], projected.get("goad"))
+                self.assertNotIn(private.ref, json.dumps(spectator))
+                self.assertEqual(2 if remove else 4, engine._numeric_stat(body.object_id, "power"))
+                constraints = self.declaration(session, "combat.attackers", "B")
+                self.assertEqual(0 if remove else 2, constraints["maximum_requirements"])
+                attack_a = {"action_id": "attack", "attackers": {body.ref: "A"}}
+                before = authoritative_state_hash(session.state)
+                if remove:
+                    result = session.act("pilot:B", attack_a)
+                else:
+                    self.assertFalse(session.act("pilot:B", attack_a).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    other = next(req for req in constraints["requirements"] if req["kind"] == "choose_option_in")
+                    self.assertEqual(["C", "D"], other["options"])
+                    result = session.act("pilot:B", {"action_id": "attack", "attackers": {body.ref: "C"}})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(0 if remove else 1, self.trigger_count(session, aura))
+                if not remove:
+                    self.assertIsNone(self.resolve(session))
+                    treasure = [c for c in session.state.cards.values() if c.is_token and c.printed_name == "Treasure Token"]
+                    self.assertEqual(["A"], [c.controller for c in treasure])
+                self.replay(session, load=True)
+
+    def test_actual_predatory_impetus_requires_a_block_from_the_defending_player(self):
+        session = self.session(701_150_043)
+        aura = self.add(session.engine, "Predatory Impetus", zone="hand")
+        attacker = self.add(session.engine, "Generic Bound Body", seat="B", ref="predatory-attacker")
+        blocker = self.add(session.engine, "Generic Bound Body", seat="C", ref="predatory-blocker")
+        attacker.acquired_control_turn_count = -1
+        self.assert_closed(session, aura)
+        self.prepare(session, mana={"C": 7, "G": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", aura, [attacker.ref])
+        self.assertIsNone(self.resolve(session))
+        self.declaration(session, "combat.attackers", "B")
+        result = session.act("pilot:B", {"action_id": "attack", "attackers": {attacker.ref: "C"}})
+        self.assertTrue(result.ok, result.summary)
+        constraints = self.declaration(session, "combat.blockers", "C")
+        self.assertEqual(1, constraints["maximum_requirements"])
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:C", {"action_id": "block", "blocks": {}}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:C", {"action_id": "block", "blocks": {blocker.ref: attacker.ref}})
+        self.assertTrue(result.ok, result.summary)
+        self.replay(session, load=True)
+
+    def test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad(self):
+        session = self.session(701_150_044)
+        engine = session.engine
+        aura = self.add(engine, "Eye of Nidhogg", zone="hand")
+        body = self.add(engine, "Generic Bound Body", seat="B")
+        self.assert_closed(session, aura)
+        self.prepare(session, mana={"C": 8, "B": 4})
+        self.checkpoint(session)
+        self.cast(session, "A", aura, [body.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[body.object_id]
+        data = engine._effective_card_data(current)
+        _, subtypes, _ = engine._type_parts(data["type_line"])
+        self.assertEqual({"dragon"}, subtypes)
+        self.assertEqual({"B"}, set(data["colors"]))
+        self.assertEqual(("4", "2"), (str(data["power"]), str(data["toughness"])))
+        self.assertTrue({"flying", "deathtouch"}.issubset(kw.casefold() for kw in data["keywords"]))
+        self.assertEqual(("A",), active_goading_players(engine, current))
+        self.replay(session, load=True)
 
 
 class FixedGoadInstructionRuntimeTests(unittest.TestCase):

@@ -11,6 +11,7 @@ from ..permanent_designations import (
     PermanentDesignationError,
     advance_class_level,
 )
+from ..semantic_runtime.combat_metadata import active_goading_players
 from ..trigger_processing import schedule_delayed_trigger
 from .player_speed import apply_speed_increase
 
@@ -109,15 +110,7 @@ def _apply_goad(
             importance=1,
         )
         return card.ref
-    existing = next(
-        (
-            designation
-            for designation in host._active_goad_designations(card)
-            if designation.player == actor
-        ),
-        None,
-    )
-    if existing is not None:
+    if actor in active_goading_players(host, card):
         host._log(
             actor,
             "permanent.goad.redundant",

@@ -44,17 +44,20 @@
       "status": "blocked",
       "assertion_kind": "unsupported_fail_closed",
       "reviewed": true,
-      "implementation_components": ["GoadDesignation", "GoadProhibitionHandler", "CommanderEngine._goad_prohibition_source", "CommanderEngine._attack_declaration_problem", "DeclarationProblem", "StateProjector"],
+      "implementation_components": ["GoadDesignation", "GoadProhibitionHandler", "AttachedGoadSpec", "active_goading_players", "DeclarationProblem", "StateProjector"],
       "executable_test_ids": [
         "tests.test_goad_rules.GoadRuleTests.test_single_goad_requires_another_player_when_available_and_replays",
         "tests.test_goad_rules.GoadRuleTests.test_goad_in_duel_still_requires_attacking_the_goader",
         "tests.test_goad_rules.GoadRuleTests.test_zone_change_removes_the_noncopiable_designation",
-        "tests.test_goad_rules.GoadRuleTests.test_typed_goad_prohibition_is_controller_scoped_and_replays"
+        "tests.test_goad_rules.GoadRuleTests.test_typed_goad_prohibition_is_controller_scoped_and_replays",
+        "tests.test_goad_rules.AttachedGoadNativeTests.test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "tests.test_goad_rules.AttachedGoadNativeTests.test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
+        "tests.test_goad_rules.AttachedGoadCompilerTests.test_attached_goad_rejects_open_grammar_and_malformed_descriptors"
       ],
       "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
       "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
-      "blockers": ["continuous_effects_that_designate_creatures_as_goaded_are_not_generic"],
-      "notes": ["Represented designations are public, noncopiable, removed on zone change, and produce the two independently maximized attack requirements. Continuous 'is goaded' effects remain outside this slice."]
+      "blockers": ["unrepresented_continuous_goad_subjects_conditions_and_durations"],
+      "notes": ["Goad is public and noncopiable. Timed designations end on zone change. A current Aura or Equipment contributes its controller through the live attachment. The shared solver applies one pair of requirements per goading player. Other continuous goad subjects, conditions, and durations remain outside this slice."]
     },
     {
       "rule_id": "701.15c",

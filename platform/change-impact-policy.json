@@ -71,12 +71,18 @@
       "id": "fixed-goad-instruction-contract",
       "patterns": [
         "quorune/compiler/goad_templates.py",
+        "quorune/compiler/combat_metadata_templates.py",
         "quorune/goad_instruction.py",
+        "quorune/declaration_fragments.py",
+        "quorune/declaration_requirement_runtime.py",
+        "quorune/semantic_runtime/combat_metadata.py",
+        "quorune/projection.py",
         "quorune/rules/goad_capability_shapes.py",
         "quorune/compiler/fixed_instruction_program_closure.py",
         "quorune/compiler/bound_effect_programs.py",
         "quorune/turn_step_owner.py",
         "quorune/record_state_provenance.py",
+        "tests/fixtures/attached-goad-cards.json",
         "tests/fixtures/fixed-goad-instruction-cards.json"
       ],
       "test_modules": [
@@ -85,6 +91,7 @@
         "test_fixed_counter_event_triggers",
         "test_card_program_trust",
         "test_attack_keyword_triggers",
+        "test_bound_static_declarations",
         "test_declare_attackers_rules",
         "test_high_risk_interaction_assurance"
       ]

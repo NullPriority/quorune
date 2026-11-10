@@ -23,7 +23,7 @@ from .cast_cost_modifier_templates import (
     static_fixed_spell_cost_reduction_handler,
 )
 from .static_cast_rule_templates import static_cast_rule_handler
-from .combat_metadata_templates import static_goad_prohibition_handler
+from .combat_metadata_templates import attached_goad_handler, static_goad_prohibition_handler
 from .fixed_characteristic_settings import fixed_characteristic_setting_handler
 from .continuous_templates import (
     attached_fixed_characteristics_handler,
@@ -568,6 +568,13 @@ def _constant_static_characteristic_template(text, *, source_name, source_is_cla
     if attached is not None:
         return StaticRuntimeTemplate(compiled=attached, kind="static_ability", event="characteristics.evaluate",
             dependency_reason="Generic attached characteristics require a trusted continuous-effect capability")
+    goad = None if source_is_class else attached_goad_handler(text, source_name=source_name or "source")
+    if goad is not None:
+        return StaticRuntimeTemplate(
+            compiled=goad, kind="static_ability", event="characteristics.evaluate",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Attached goad requires its current static ability and declaration owners",
+        )
     setting = None if source_is_class else fixed_characteristic_setting_handler(text, source_name=source_name)
     if setting is not None:
         return StaticRuntimeTemplate(compiled=setting, kind="static_ability", event="characteristics.evaluate",
