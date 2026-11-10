@@ -676,6 +676,10 @@ history or initiative designation. A named completion condition uses the
 recorded dungeon identity. When only an aggregate completion count is
 available, an unknown named result stays unavailable.
 
+The ordered effect compiler composes a closed Venture or initiative action
+with independently validated instructions. The ordinary target revalidation
+owner determines whether the spell resolves before any of its instructions run.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining

@@ -348,7 +348,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         path = Path(cls.temporary.name) / "venture.sqlite3"
         names = ("bound-effect-program-cards.json", "dungeon-cards.json", "venture-dungeon-cards.json",
                  "paid-sacrifice-creature-stat-cards.json", "initiative-dungeon-cards.json",
-                 "fixed-extra-turn-cards.json", "dungeon-status-cards.json")
+                 "fixed-extra-turn-cards.json", "dungeon-status-cards.json", "venture-followup-cards.json")
         build_fixture_database([ROOT / "tests/fixtures" / name for name in names], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -370,6 +370,49 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
                    and not action.get("mana_ability")]
         result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
         self.assertTrue(result.ok, result.summary)
+
+    def test_bar_the_gate_requires_a_legal_target_to_venture(self):
+        for target_removed in (False, True):
+            with self.subTest(target_removed=target_removed):
+                session = self.session(701490 + target_removed)
+                gate = self.add(session.engine, "Bar the Gate", zone="hand")
+                creature = self.add(session.engine, "Grizzly Bears", seat="B", zone="hand")
+                answer = self.add(session.engine, "Counterspell", seat="C", zone="hand") if target_removed else None
+                self.assert_closed(session, gate)
+                session.state.players["A"].mana_pool.update({"C": 2, "U": 1})
+                session.state.players["C"].mana_pool["U"] = 2
+                self.prepare(session, actor="B", active="B", mana={"C": 1, "G": 1})
+                self.checkpoint(session)
+                self.cast_for(session, "B", creature)
+                target = session.state.stack[-1].ref
+                self.cast_for(session, "A", gate, [target])
+                if answer is not None:
+                    self.cast_for(session, "C", answer, [target])
+                decision = self.resolve(session)
+                self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+                if target_removed:
+                    self.assertIsNone(decision)
+                    self.assertIsNone(session.state.players["A"].dungeon_journey)
+                else:
+                    self.assertEqual("semantic.choice", decision.kind)
+                    self._choose(session, choice="mad_mage:0")
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual(DungeonRoomRef(DungeonId.MAD_MAGE, 0), session.state.players["A"].dungeon_journey.active.room)
+                self.replay(session)
+
+    def test_fates_reversal_ventures_with_zero_announced_targets(self):
+        session = self.session(701492)
+        reversal = self.add(session.engine, "Fates' Reversal", zone="hand")
+        self.assert_closed(session, reversal)
+        self.prepare(session, mana={"C": 1, "B": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", reversal)
+        self.assertEqual([], session.state.stack[-1].targets)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self._choose(session, choice="mad_mage:0")
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(DungeonRoomRef(DungeonId.MAD_MAGE, 0), session.state.players["A"].dungeon_journey.active.room)
+        self.replay(session, load=True)
 
     def _reach_last_room(self, seed, *, reenter=False, status_watch=False):
         from quorune.card_programs import bind_semantic_program_runtime

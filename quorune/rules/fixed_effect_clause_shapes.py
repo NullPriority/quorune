@@ -104,6 +104,7 @@ from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
 from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
 from .impulse_access_capability_shapes import fixed_impulse_access_node_capabilities
 from .monarch_capability_shapes import fixed_monarch_node_capabilities
+from ..initiative_model import dungeon_choice_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
 from .transform_capability_shapes import source_transform_node_capabilities
@@ -178,6 +179,7 @@ _COMPONENT_RESOLVERS = (
     tap_state_event_player_node_capabilities,
     fixed_impulse_access_node_capabilities,
     fixed_monarch_node_capabilities,
+    dungeon_choice_node_capabilities,
     ring_temptation_node_capabilities,
     event_player_sacrifice_node_capabilities,
     source_transform_node_capabilities,

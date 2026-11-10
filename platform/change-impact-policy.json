@@ -4634,6 +4634,7 @@
         "tests/fixtures/dungeon-status-cards.json",
         "tests/fixtures/initiative-dungeon-cards.json",
         "tests/fixtures/venture-dungeon-cards.json",
+        "tests/fixtures/venture-followup-cards.json",
         "tests/test_dungeon_progress.py"
       ],
       "test_modules": [
