@@ -616,6 +616,11 @@ keep the scalar owner's current-incarnation and last-known-information timing;
 public object counts retain their existing query owner. Linked excess damage,
 die-roll results, unknown quantities and unrepresented siblings remain residual.
 
+A cast-event mana value can supply the amount for an independently closed
+optional counter target set. The target schema retains its printed bounds
+and revalidates the chosen incarnations at resolution. A committed spell
+with mana value zero places no counters.
+
 `compiler/fixed_resolution_mana.py` lowers complete fixed symbol bundles into
 the existing mana effect, one instruction per represented color or colorless
 quantity. A represented spending restriction remains attached to every unit.

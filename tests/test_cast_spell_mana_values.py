@@ -74,14 +74,16 @@ class CastSpellManaValueCompilerTests(unittest.TestCase):
 
     def test_cast_values_compose_with_independent_result_and_player_owners(self):
         registry=load_default_capability_registry()
+        counter_body="put a number of +1/+1 counters equal to that spell's mana value on up to one target creature."
         bodies=("draw cards equal to that spell's mana value.","that player loses life equal to that spell's mana value.",
             "this enchantment deals damage equal to that spell's mana value to that player.",
-            "this enchantment deals damage equal to that spell's mana value to target opponent.")
+            "this enchantment deals damage equal to that spell's mana value to target opponent.", counter_body)
         for body in bodies:
             record=replace(query_record('Whenever an opponent casts a spell, '+body),type_line='Enchantment')
             ir=compile_oracle_card(record,capability_registry=registry)
             self.assertEqual('exact',ir.status,(body,ir.material_residuals));self.assertIn(CAPABILITY,ir.faces[0].nodes[0].capability_dependencies)
         for text in ("Whenever you cast or copy an instant or sorcery spell, draw cards equal to that spell's mana value.",
+                "Whenever you gain life, " + counter_body,
                 "Counter target spell. Draw cards equal to that spell's mana value.",
                 "Whenever you cast a spell, draw cards equal to that spell's power."):
             self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=registry).status)

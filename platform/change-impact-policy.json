@@ -10515,6 +10515,8 @@
       "test_modules": [
         "test_cast_spell_mana_values",
         "test_scalar_effect_amounts",
+        "test_fixed_counter_placement_target_sets",
+        "test_nonmodal_face_mana_value",
         "test_event_player_fixed_damage",
         "test_mana_spent_amounts",
         "test_card_program_trust"

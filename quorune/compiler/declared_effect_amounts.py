@@ -59,11 +59,13 @@ _RESULT_FIELDS = {
 }
 
 
-def _result_slot(operation: str, path: tuple[str, ...]) -> bool:
+def _result_slot(operation: str, path: tuple[str, ...], *, cast_event_counter_targets: bool = False) -> bool:
     return path in tuple((field,) for field in _RESULT_FIELDS.get(operation, ())) or (
         operation == "create_token" and path in {("characteristics", "power"), ("characteristics", "toughness")}
     ) or (
         operation == "search" and counted_search_mana_value_slot(path)
+    ) or (
+        cast_event_counter_targets and operation == "place_counters_on_targets" and path == ("amount",)
     )
 
 
@@ -84,7 +86,7 @@ def _fixed_x_projection(body: str, value: int) -> str:
 
 def declared_effect_amount_template(
     text: str, *, source_name: str, compile_fixed: EffectCompiler,
-    cast_x_available: bool = False, forbid_public_x: bool = False,
+    cast_x_available: bool = False, forbid_public_x: bool = False, cast_event_counter_targets: bool = False,
 ) -> CompiledEffectTemplate | None:
     """Vary only result slots; prove the entire fixed schema stays invariant."""
     if type(cast_x_available) is not bool or type(forbid_public_x) is not bool:
@@ -139,7 +141,7 @@ def declared_effect_amount_template(
             return deepcopy(a)
         if isinstance(a, Mapping) and isinstance(b, Mapping) and set(a) == set(b):
             return {key:project(a[key], b[key], operation, (*path, key)) for key in a}
-        if not _result_slot(operation, path):
+        if not _result_slot(operation, path, cast_event_counter_targets=cast_event_counter_targets):
             raise PublicQueryAmountError("X changed something other than a result slot")
         if operation == "search" and quantity is not None:
             raise PublicQueryAmountError("Counted search bounds require announced or sealed entry X")

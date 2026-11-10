@@ -947,6 +947,13 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
             from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
             if amount.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
                 return None
+    if effect.get("op") == "place_counters_on_targets" and type(effect.get("amount")) is int and effect["amount"] == 0:
+        from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin
+
+        raw_amount = raw_effect.get("amount")
+        if (isinstance(raw_amount, Mapping) and raw_amount.get("kind") == SCALAR_AMOUNT_KIND
+            and raw_amount.get("origin") == ScalarAmountOrigin.CAST_SPELL_MANA_VALUE.value):
+            return None
     if effect.get("op") == "mill":
         from ..milling import event_mill_recipient_has_left
         if event_mill_recipient_has_left(host, raw_effect, effect):

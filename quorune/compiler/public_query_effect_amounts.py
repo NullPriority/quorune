@@ -644,6 +644,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.node_capability_shapes import (
         fixed_damage_node_capabilities, fixed_draw_node_capabilities,
         fixed_scry_node_capabilities,
+        fixed_counter_placement_target_set_node_capabilities,
         fixed_player_counter_placement_node_capabilities,
         fixed_source_characteristics_node_capabilities,
         fixed_target_characteristics_node_capabilities,
@@ -702,6 +703,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             attack_event_characteristic_capabilities,
             fixed_resolution_characteristic_set_node_capabilities,
             fixed_counter_placement_node_capabilities,
+            fixed_counter_placement_target_set_node_capabilities,
             fixed_player_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)

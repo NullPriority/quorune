@@ -57971,7 +57971,8 @@
         "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
         "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
         "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
-        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature"
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature",
+        "test_dusty_parlor_uses_cast_value_after_discount_with_optional_live_target"
       ],
       "multiplayer_tests": [
         "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
@@ -57979,7 +57980,8 @@
         "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
         "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
         "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
-        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature"
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature",
+        "test_dusty_parlor_uses_cast_value_after_discount_with_optional_live_target"
       ],
       "negative_tests": [
         "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
@@ -57990,6 +57992,7 @@
         "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature",
         "test_cast_values_compose_with_independent_result_and_player_owners",
         "test_declared_cast_scalar_cache_is_bound_to_the_cast_identity_and_value",
+        "test_dusty_parlor_uses_cast_value_after_discount_with_optional_live_target",
         "test_missing_bad_and_non_cast_facts_are_unavailable_without_creating_a_cache",
         "test_new_scalar_schema_round_trips_and_legacy_schema_is_unchanged",
         "test_reader_uses_committed_spell_value_not_actual_spend_or_a_current_object",
@@ -58012,6 +58015,7 @@
         "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature",
         "test_cast_values_compose_with_independent_result_and_player_owners",
         "test_declared_cast_scalar_cache_is_bound_to_the_cast_identity_and_value",
+        "test_dusty_parlor_uses_cast_value_after_discount_with_optional_live_target",
         "test_new_scalar_schema_round_trips_and_legacy_schema_is_unchanged",
         "test_reader_uses_committed_spell_value_not_actual_spend_or_a_current_object"
       ],
@@ -58026,7 +58030,8 @@
         "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
         "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
         "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
-        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature"
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature",
+        "test_dusty_parlor_uses_cast_value_after_discount_with_optional_live_target"
       ],
       "required_evidence": [
         "positive",
@@ -91156,7 +91161,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 815,
+  "registry_version": 816,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
