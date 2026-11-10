@@ -734,6 +734,9 @@ def public_query_amount_shape_context(
         return declared_amount_shape_context(effects, mechanics, target_schema=target_schema)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
         return tuple(effects), set(mechanics)
+    if len(effects) == 1 and effects[0].get("op") == "resolve_stack_counter_followup":
+        # The stack owner validates the nested quantity without projecting it as a standalone amount.
+        return tuple(effects), set(mechanics)
     if len(effects) > 1 and (composed := _composed_query_shape_context(effects, mechanics)) is not None:
         return composed
     projected = _fixed_shape_effects(effects)

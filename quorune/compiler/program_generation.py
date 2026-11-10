@@ -1217,6 +1217,7 @@ def _is_closed_graveyard_copy_cast_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     from ..preparation import is_closed_activated_preparation_program
+    from ..rules.stack_counter_followup import is_closed_stack_counter_followup_program
     from ..rules.target_player_sequences import is_closed_target_player_sequence_program
     from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
     from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
@@ -1262,6 +1263,7 @@ def _closed_effect_recognizers():
         is_closed_fixed_modal_program,
         is_closed_fixed_effect_payment_program,
         is_closed_stack_controller_payment_program,
+        is_closed_stack_counter_followup_program,
         _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,

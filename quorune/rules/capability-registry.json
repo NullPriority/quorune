@@ -63925,6 +63925,94 @@
       "version": 1
     },
     {
+      "id": "stack.counter.controller_followup",
+      "version": 1,
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "official_rules": [
+        "115.1a",
+        "115.5",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.6a"
+      ],
+      "blockers": [],
+      "dependencies": [
+        "stack.counter.effect"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The complete printed Psychic Strike witness detects removal of the bounded compiler lowering.",
+      "implementation_components": [
+        "quorune.compiler.stack_counter_followup.stack_counter_followup_template",
+        "quorune.rules.stack_counter_followup.stack_counter_followup_node_capabilities",
+        "quorune.rules.stack_counter_followup.materialize_stack_counter_followup",
+        "quorune.semantic_choices.stack_counter_followup.StackCounterFollowupHandler",
+        "quorune.stack_counter.counter_stack_item"
+      ],
+      "applicability": {
+        "summary": "Read the current controller of one legal stack target, then run the ordinary counter instruction and the closed ordered followup through their existing owners.",
+        "inputs": [
+          "one declared spell or ability target",
+          "one closed controller-bound mill, draw, life loss, or discard instruction",
+          "optional closed result for the resolving controller"
+        ],
+        "outputs": [
+          "ordinary replacement-aware counter attempt",
+          "resolved controller for the ordered result",
+          "private draw or discard under the existing choice owner"
+        ],
+        "exclusions": [
+          "owner-relative results or conditional results keyed to counter success",
+          "optional or multiple stack targets",
+          "unsupported linked token, spell, or random results"
+        ]
+      },
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "positive_tests": [
+        "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
+        "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
+        "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands"
+      ],
+      "negative_tests": [
+        "test_countermand_skips_followup_when_its_original_stack_target_disappears",
+        "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands",
+        "test_counter_followup_withdrawal_and_omitted_compiler_rule_are_detected"
+      ],
+      "interaction_tests": [
+        "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
+        "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
+        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver"
+      ],
+      "multiplayer_tests": [
+        "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
+        "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller"
+      ],
+      "privacy_tests": [
+        "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller",
+        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver"
+      ],
+      "replay_tests": [
+        "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
+        "test_countermand_skips_followup_when_its_original_stack_target_disappears",
+        "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller",
+        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver"
+      ]
+    },
+    {
       "applicability": {
         "exclusions": [
           "nonmana, hybrid, Phyrexian and repeated payment",
@@ -88685,7 +88773,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 781,
+  "registry_version": 782,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

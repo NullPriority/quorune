@@ -143,6 +143,12 @@ def _resolve_typed_semantic_value(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get("op") == "resolve_stack_counter_followup":
+        from ..rules.stack_counter_followup import materialize_stack_counter_followup
+        try:
+            return materialize_stack_counter_followup(value, resolve=lambda operand: resolve_semantic_value(host, operand, item))
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 3:
         from ..rules.stack_controller_payment_cost import bind_stack_controller_quantity_payment
 

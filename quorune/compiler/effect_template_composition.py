@@ -136,6 +136,16 @@ def reviewed_contextual_effect_template(
         )
         if followup is not None:
             return followup
+        from .stack_counter_followup import stack_counter_followup_template
+        counter_followup = stack_counter_followup_template(
+            body, compile_component=lambda clause: reviewed_effect_template_composition(
+                clause, source_name=card_name,
+                compile_atomic=lambda value: compile_atomic(value, card_name=card_name, **source_context),
+                compile_fixed=lambda value: compile_fixed(value, card_name=card_name, **source_context),
+            ),
+        )
+        if counter_followup is not None:
+            return counter_followup
         current = compile_atomic(body, card_name=card_name, **source_context)
         if current[0] is not None:
             return current

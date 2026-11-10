@@ -618,6 +618,9 @@ def targeted_counter_node_capabilities(
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed direct stack-counter grammar."""
 
+    if effects and effects[0].get("op") == "resolve_stack_counter_followup":
+        from .stack_counter_followup import stack_counter_followup_node_capabilities
+        return stack_counter_followup_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if len(effects) == 1 and effects[0].get("op") == "counter_unless_pay":
         from .stack_controller_payment_shapes import stack_controller_payment_node_capabilities
         return stack_controller_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)

@@ -80,6 +80,49 @@ class MixedStackCounterTargetTests(unittest.TestCase):
                 'Counter target legendary activated ability.'):
             self.assertIsNone(targeted_counter_effect_template(text))
 
+    def test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands(self):
+        from quorune.compiler.stack_counter_followup import stack_counter_followup_template
+        from quorune.oracle_ir import _reviewed_effect_template
+        from quorune.rules.stack_counter_followup import (
+            STACK_COUNTER_FOLLOWUP_CAPABILITY, STACK_TARGET_CONTROLLER, bound_stack_counter_instructions,
+            materialize_stack_counter_followup, stack_counter_followup_node_capabilities,
+        )
+
+        def compile_text(value):
+            return stack_counter_followup_template(
+                value, compile_component=lambda clause: _reviewed_effect_template(clause, card_name='Followup Fixture'),
+            )
+
+        _, effects, schema, mechanics = compile_text(
+            'Counter target spell. Its controller loses life equal to the number of creatures you control.',
+        )
+        raw, = effects
+        self.assertIn(STACK_COUNTER_FOLLOWUP_CAPABILITY, stack_counter_followup_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=mechanics,
+        ))
+        calls = []
+
+        def resolve(reference):
+            calls.append(reference)
+            return {'$target.0': 'S7', STACK_TARGET_CONTROLLER: 'C'}[reference]
+
+        bound = materialize_stack_counter_followup(raw, resolve=resolve)
+        counter, loss = bound_stack_counter_instructions(bound, active_seats=('A', 'B', 'C'))
+        self.assertEqual(['$target.0', STACK_TARGET_CONTROLLER], calls)
+        self.assertEqual({'op': 'counter_stack_target', 'stack': 'S7'}, counter)
+        self.assertEqual('C', loss['player'])
+        self.assertEqual(raw['followups'][0]['amount'], loss['amount'])
+        self.assertEqual({'op': raw['op'], 'stack': None}, materialize_stack_counter_followup(raw, resolve=lambda _: None))
+        for forged in ({**raw, 'schema_version': True}, {**raw, 'stack': '$target.1'},
+                       {**raw, 'followups': [{**raw['followups'][0], 'player': '$controller'}]}):
+            self.assertEqual((), stack_counter_followup_node_capabilities(
+                effects=(forged,), target_schema=schema, mechanic_ids=mechanics,
+            ))
+        for near in ('Counter target spell. If it was countered this way, its controller mills two cards.',
+                     'Counter target spell. Its owner draws a card.',
+                     'Counter target spell. Its controller mills two cards. Draw a card.'):
+            self.assertIsNone(compile_text(near))
+
     def test_accepting_every_mixed_stack_predicate_is_detected(self):
         method='test_mixed_counter_predicates_keep_each_restriction_on_its_own_branch'
         with patch.object(predicates,'target_predicate_matches',return_value=True):
@@ -150,6 +193,134 @@ class MixedStackCounterRuntimeTests(unittest.TestCase):
         if payment is not None:command.update(pay='manual',payment=payment)
         self.reject(s,command,seat='D')
         result=s.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
+
+    def test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts(self):
+        for i, (name, payment, zone) in enumerate((
+            ('Opt', {'U': 1}, 'graveyard'), ('Carnage Tyrant', {'C': 4, 'G': 2}, 'battlefield'),
+        )):
+            with self.subTest(target=name):
+                s, counter, private = self.fixture(115100250 + i, 'Psychic Strike')
+                target = self.add(s.engine, name, seat='B', zone='hand')
+                self.assertTrue(self.binding(s, target)['strict_capability_ready'])
+                self.prepare(s, mana={'C': 1, 'U': 1, 'B': 1})
+                self.checkpoint(s)
+                self.cast(s, target, seat='B', payment=payment)
+                libraries = {seat: len(s.state.players[seat].zones['library']) for seat in 'ABCD'}
+                self.counter(s, counter, s.state.stack[-1].ref, payment={'C': 1, 'U': 1, 'B': 1})
+                self.assertIsNone(self.settle(s))
+                self.assertEqual(zone, s.state.cards[target.object_id].zone)
+                libraries['B'] -= 2
+                self.assertEqual(libraries, {seat: len(s.state.players[seat].zones['library']) for seat in 'ABCD'})
+                self.private_replay(s, private)
+
+    def test_countermand_skips_followup_when_its_original_stack_target_disappears(self):
+        for i, (name, payment) in enumerate((('Countermand', {'C': 2, 'U': 2}), ('Dream Fracture', {'C': 1, 'U': 2}))):
+            with self.subTest(card=name):
+                s, counter, private = self.fixture(115100252 + i, name)
+                target = self.add(s.engine, 'Opt', seat='B', zone='hand')
+                response = self.add(s.engine, 'Counterspell', seat='C', zone='hand')
+                s.state.players['C'].mana_pool.update({'U': 2})
+                self.prepare(s, mana=payment)
+                self.checkpoint(s)
+                self.cast(s, target, seat='B', payment={'U': 1})
+                target_ref = s.state.stack[-1].ref
+                libraries = {seat: len(s.state.players[seat].zones['library']) for seat in 'AB'}
+                self.counter(s, counter, target_ref, payment=payment)
+                self.cast(s, response, [target_ref], seat='C', payment={'U': 2})
+                self.assertIsNone(self.settle(s))
+                self.assertEqual(libraries, {seat: len(s.state.players[seat].zones['library']) for seat in 'AB'})
+                self.assertEqual('graveyard', s.state.cards[target.object_id].zone)
+                self.assertEqual('graveyard', s.state.cards[counter.object_id].zone)
+                self.private_replay(s, private)
+
+    def test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller(self):
+        s, counter, private = self.fixture(115100253, 'Dismal Failure')
+        target = self.add(s.engine, 'Opt', seat='B', zone='hand')
+        hidden = self.add(s.engine, 'Fugitive Wizard', seat='B', zone='hand', ref='bound-discard-choice')
+        self.prepare(s, mana={'C': 2, 'U': 2})
+        self.checkpoint(s)
+        self.cast(s, target, seat='B', payment={'U': 1})
+        self.counter(s, counter, s.state.stack[-1].ref, payment={'C': 2, 'U': 2})
+        decision = self.resolve(s)
+        self.assertIsNotNone(decision)
+        self.assertEqual(['pilot:B'], s.pending_principals())
+        self.assertEqual('graveyard', s.state.cards[target.object_id].zone)
+        self.assertIn(hidden.ref, json.dumps(s.packet('pilot:B', full=True)))
+        for seat in 'ACD':
+            self.assertNotIn(hidden.ref, json.dumps(s.packet('pilot:' + seat, full=True)))
+        command = {'action_id': 'choose', 'cards': [hidden.ref]}
+        self.reject(s, command, seat='A')
+        s = self.replay(s, load=True)
+        result = s.act('pilot:B', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.settle(s))
+        self.assertEqual('graveyard', s.state.cards[hidden.object_id].zone)
+        self.private_replay(s, private)
+
+    def test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller(self):
+        for count in (0, 2):
+            with self.subTest(creatures=count):
+                s, counter, private = self.fixture(115100254 + count, 'Deny the Witch')
+                rod = self.add(s.engine, 'Rod of Ruin', seat='B')
+                for i in range(count):
+                    self.add(s.engine, 'Fugitive Wizard', ref=f'counter-query-creature-{i}')
+                self.prepare(s, mana={'C': 1, 'W': 1, 'U': 1, 'B': 1})
+                self.checkpoint(s)
+                self.activate(s, rod, seat='B', targets=['C'])
+                self.assertEqual('activated_ability', s.state.stack[-1].kind)
+                self.counter(s, counter, s.state.stack[-1].ref, payment={'C': 1, 'W': 1, 'U': 1, 'B': 1})
+                self.assertIsNone(self.settle(s))
+                self.assertEqual([40, 40 - count, 40, 40], [s.state.players[seat].life for seat in 'ABCD'])
+                self.private_replay(s, private)
+
+    def test_dream_fracture_draws_for_the_stack_controller_then_the_resolver(self):
+        s, counter, private = self.fixture(115100255, 'Dream Fracture')
+        target = self.add(s.engine, 'Opt', seat='B', zone='hand')
+        self.prepare(s, mana={'C': 1, 'U': 2})
+        self.checkpoint(s)
+        self.cast(s, target, seat='B', payment={'U': 1})
+        self.counter(s, counter, s.state.stack[-1].ref, payment={'C': 1, 'U': 2})
+        hands = {seat: set(s.state.players[seat].zones['hand']) for seat in 'ABCD'}
+        event_start = len(s.state.events)
+        self.assertIsNone(self.settle(s))
+        self.assertEqual(['B', 'A'], [event.actor for event in s.state.events[event_start:] if event.code == 'card.draw'])
+        for seat in 'AB':
+            drawn, = set(s.state.players[seat].zones['hand']) - hands[seat]
+            ref = s.state.cards[drawn].ref
+            for other in 'ABCD':
+                self.assertEqual(seat == other, ref in json.dumps(s.packet('pilot:' + other, full=True)))
+        self.assertEqual('graveyard', s.state.cards[target.object_id].zone)
+        self.private_replay(s, private)
+
+    def test_counter_followup_withdrawal_and_omitted_compiler_rule_are_detected(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        record = self.db.lookup('Psychic Strike')
+
+        def witness():
+            self.assertEqual('exact', compile_oracle_card(record, capability_registry=self.registry).status)
+
+        witness()
+        with patch('quorune.compiler.stack_counter_followup.stack_counter_followup_template', return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        value = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        dependency = 'stack.counter.effect'
+        next(row for row in value['capabilities'] if row['id'] == dependency).update(
+            status='blocked', blockers=['withdrawn counter authority'], dependency_fail_closed_status='not_run',
+        )
+        registry = CapabilityRegistry(value)
+        index = build_index(registry_value=value,
+            declaration_source=read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json'),
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        ir = compile_oracle_card(record, capability_registry=registry)
+        self.assertNotEqual('exact', ir.status)
+        self.assertTrue(any(dependency in blocker for residual in ir.material_residuals for blocker in residual.blockers))
 
     def test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color(self):
         for i,(target_name,allowed,color) in enumerate((('Opt',True,'R'),('Opt',True,'G'),
