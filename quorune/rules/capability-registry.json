@@ -14887,7 +14887,7 @@
         "quorune.zone_object_keyword_grants.commit_zone_object_keyword_grant",
         "quorune.trigger_processing.enqueue_trigger_batch",
         "quorune.trigger_processing.schedule_delayed_trigger",
-        "quorune.effect_runtime.zones_and_attachments._apply_move_if_in_zone",
+        "quorune.effect_runtime.linked_zone_movement._apply_move_if_in_zone",
         "quorune.impulse_access_model.TemporaryCastPermissionGrant",
         "quorune.impulse_access.grant_temporary_cast_permission",
         "quorune.impulse_access.temporary_play_permission_is_current",
@@ -17275,7 +17275,7 @@
         "quorune.rules.classic_flash.classic_flash_offer_fields",
         "quorune.rules.classic_flash.commit_classic_flash_permission",
         "quorune.trigger_processing.schedule_delayed_trigger",
-        "quorune.effect_runtime.zones_and_attachments._apply_move_if_in_zone"
+        "quorune.effect_runtime.linked_zone_movement._apply_move_if_in_zone"
       ],
       "implementation_mutation_rationale": "Fresh full-original compiler and accepted-cast schedule omissions, stale-incarnation guard removal, and an incorrect locked-controller sacrifice filter all fail their actual gameplay assertions.",
       "implementation_mutation_status": "killed",
@@ -24395,7 +24395,7 @@
         "quorune.compiler.generated_program_identity.generated_ability_id",
         "quorune.compiler.keyword_nodes.keyword_node_plans",
         "quorune.compiler.myriad_nodes.fixed_myriad_keyword_node",
-        "quorune.effect_runtime.zones_and_attachments._apply_move_if_in_zone",
+        "quorune.effect_runtime.linked_zone_movement._apply_move_if_in_zone",
         "quorune.rules.action_catalog.build_priority_action_catalog",
         "quorune.rules.activation.commit.commit_activation",
         "quorune.rules.casting.commit.commit_cast",
@@ -89347,6 +89347,92 @@
     {
       "applicability": {
         "exclusions": [
+          "from-anywhere triggers",
+          "variable positions, multi-object moves, and additional unrepresented choices",
+          "unrepresented linked results"
+        ],
+        "inputs": [
+          "one sealed source departure from the battlefield",
+          "original public card reference, owner, and zone-change counter",
+          "one fixed owner-library position or shuffle"
+        ],
+        "outputs": [
+          "the matching first-destination incarnation moves through the existing zone owner",
+          "a mandatory shuffle continues after a stale or absent card",
+          "the trigger controller retains any printed optional choice"
+        ],
+        "summary": "Move an original battlefield departure to its owner's library using the recorded first destination. Fixed positions and shuffles retain their separate rules outcomes."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the event library capability or removing its departure version leaves the exact source unresolved.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.return.fixed_event_library",
+      "implementation_components": [
+        "quorune.compiler.event_card_return_templates.source_departure_library_binding",
+        "quorune.compiler.event_card_return_templates.event_library_move_template",
+        "quorune.event_card_return.event_library_move_runtime_dependencies",
+        "quorune.event_card_return.validate_event_library_move",
+        "quorune.effect_runtime.linked_zone_movement.apply_move_if_in_zone"
+      ],
+      "implementation_mutation_rationale": "Omitting the source-departure binding eliminates the pinned dual-departure result.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_alabaster_dragon_shuffles_after_its_graveyard_card_is_exiled",
+        "test_original_oketra_departure_choice_uses_controller_and_owner"
+      ],
+      "multiplayer_tests": [
+        "test_original_alabaster_dragon_shuffles_after_its_graveyard_card_is_exiled",
+        "test_original_oketra_departure_choice_uses_controller_and_owner"
+      ],
+      "negative_tests": [
+        "test_original_alabaster_dragon_shuffles_after_its_graveyard_card_is_exiled",
+        "test_original_oketra_departure_choice_uses_controller_and_owner",
+        "test_source_library_move_binds_the_departure_and_rejects_unversioned_roles"
+      ],
+      "official_rules": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "608.2d",
+        "701.24c"
+      ],
+      "positive_tests": [
+        "test_original_alabaster_dragon_shuffles_after_its_graveyard_card_is_exiled",
+        "test_original_oketra_departure_choice_uses_controller_and_owner",
+        "test_source_library_move_binds_the_departure_and_rejects_unversioned_roles"
+      ],
+      "privacy_tests": [
+        "test_original_oketra_departure_choice_uses_controller_and_owner"
+      ],
+      "replay_tests": [
+        "test_original_alabaster_dragon_shuffles_after_its_graveyard_card_is_exiled",
+        "test_original_oketra_departure_choice_uses_controller_and_owner"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "targeted returns",
           "milled-this-way-only or linked batch restrictions",
           "multi-card or arbitrary predicate choices",
@@ -91365,7 +91451,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 820,
+  "registry_version": 821,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

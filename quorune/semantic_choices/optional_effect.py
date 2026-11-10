@@ -56,6 +56,15 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    if operation == "move_if_in_zone":
+        from ..event_card_return import is_event_library_move, validate_event_library_move
+
+        if is_event_library_move(effect):
+            try:
+                validate_event_library_move(effect, resolved=True)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return
     if operation == "attach":
         from ..rules.attachment_actions import (
             ENTRY_ATTACHMENT_VERSION, TARGETED_EQUIPMENT_VERSION,

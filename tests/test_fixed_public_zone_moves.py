@@ -10,6 +10,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.attachment_references import AttachmentReferenceKind
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.commander_zones import (
@@ -26,7 +27,7 @@ from quorune.compiler.fixed_owner_zone_move_templates import (
     fixed_owner_zone_move_effect_template,
     FixedOwnerZoneMoveReference,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.model import CardInstance, StackItem
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.object_query import ObjectQueryResult
@@ -279,6 +280,48 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
             capability_registry=capabilities or self.capabilities,
             capability_profile="commander_review",
         )
+
+    def test_source_library_move_binds_the_departure_and_rejects_unversioned_roles(self):
+        from types import SimpleNamespace
+        from quorune.event_card_return import (
+            EVENT_LIBRARY_MOVE_CAPABILITY, EVENT_LIBRARY_MOVE_VERSION, event_library_move_runtime_dependencies,
+        )
+
+        text = ("When this creature dies or is put into exile from the battlefield, "
+                "you may put it into its owner's library third from the top.")
+        ir = self.compile(text, type_line="Creature — Test")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        wrapper, = node.effects
+        movement, = wrapper["effects"]
+        self.assertEqual("permanent.leave", node.event)
+        self.assertEqual(3, movement["position"])
+        self.assertIsNone(node.target_schema)
+        program = SimpleNamespace(
+            effects=node.effects, event=node.event, event_condition=node.event_condition,
+            active_zone=node.active_zone, target_schema=node.target_schema, coverage=node.mechanics,
+        )
+        self.assertIn(EVENT_LIBRARY_MOVE_CAPABILITY, event_library_move_runtime_dependencies(program))
+        for changed in (
+            {key: value for key, value in movement.items() if key != EVENT_LIBRARY_MOVE_VERSION},
+            {**movement, "owner": "$controller"},
+            {**movement, "expected_zone_change_counter": 1},
+        ):
+            program.effects = ({**wrapper, "effects": [changed]},)
+            with self.assertRaises(ValueError):
+                event_library_move_runtime_dependencies(program)
+        program.effects = node.effects
+        program.event_condition = {"field": "to", "op": "eq", "value": "exile"}
+        with self.assertRaises(ValueError):
+            event_library_move_runtime_dependencies(program)
+        blocked = deepcopy(self.registry_value)
+        capability = next(row for row in blocked["capabilities"] if row["id"] == EVENT_LIBRARY_MOVE_CAPABILITY)
+        capability.update(status="blocked", blockers=["withdrawn event library move owner"])
+        registry = CapabilityRegistry(blocked)
+        registry.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", self.compile(text, type_line="Creature — Test", capabilities=registry).status)
+        with patch("quorune.compiler.event_card_return_templates.source_departure_library_binding", return_value=None):
+            self.assertNotEqual("exact", self.compile(text, type_line="Creature — Test").status)
 
     def test_fixed_public_zone_moves_compile_across_effect_contexts(self):
         contexts = (
@@ -3346,6 +3389,89 @@ class TargetedOwnerLibraryRuntimeTests(unittest.TestCase):
         self.assertEqual("graveyard", session.state.cards[remover.object_id].zone)
         self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
         self.replay(session, load=True)
+
+
+class EventLibraryDepartureNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "departed-library.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/fixed-public-zone-move-cards.json",
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Departed library moves",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 14)],
+            ["Generic Bound Commander"],
+        )
+
+    def test_original_oketra_departure_choice_uses_controller_and_owner(self):
+        for exile in (False, True):
+            with self.subTest(exile=exile):
+                session = self.session(725_300 + int(exile))
+                engine = session.engine
+                god = self.add(engine, "God-Eternal Oketra", seat="B")
+                engine.change_control(god.object_id, "A")
+                removal = self.add(engine, "Swords to Plowshares" if exile else "Murder", seat="C", zone="hand")
+                self.assert_closed(session, god)
+                self.assert_closed(session, removal)
+                self.prepare(session)
+                session.state.players["C"].mana_pool.update({"W": 1} if exile else {"C": 1, "B": 2})
+                owner_library = list(session.state.players["B"].zones["library"])
+                controller_library = list(session.state.players["A"].zones["library"])
+                self.checkpoint(session)
+                self.cast(session, "C", removal, [god.ref])
+                decision = self.resolve(session)
+                self.assertEqual("semantic.choice", decision.kind)
+                self.assertEqual(["A"], decision.actors)
+                self.assertEqual("exile" if exile else "graveyard", session.state.cards[god.object_id].zone)
+                command = {"action_id": "choose", "choice": "apply" if exile else "decline"}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:B", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                if exile:
+                    self.assertEqual("library", session.state.cards[god.object_id].zone)
+                    owner_library.insert(len(owner_library) - 2, god.object_id)
+                else:
+                    self.assertEqual("graveyard", session.state.cards[god.object_id].zone)
+                self.assertEqual(owner_library, session.state.players["B"].zones["library"])
+                self.assertEqual(controller_library, session.state.players["A"].zones["library"])
+                self.replay(session)
+
+    def test_original_alabaster_dragon_shuffles_after_its_graveyard_card_is_exiled(self):
+        session = self.session(725_310)
+        engine = session.engine
+        dragon = self.add(engine, "Alabaster Dragon")
+        crypt = self.add(engine, "Tormod's Crypt", seat="B")
+        removal = self.add(engine, "Murder", seat="C", zone="hand")
+        for card in (dragon, crypt, removal):
+            self.assert_closed(session, card)
+        self.prepare(session)
+        session.state.players["C"].mana_pool.update({"C": 1, "B": 2})
+        self.checkpoint(session)
+        self.cast(session, "C", removal, [dragon.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[dragon.object_id].zone)
+        self.priority(session, "B")
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"].startswith("activate:" + crypt.ref + ":"))
+        activated = session.act("pilot:B", {"action_id": offer["id"], "targets": ["A"], "pay": "auto"})
+        self.assertTrue(activated.ok, activated.summary)
+        self.resolve_top(session)
+        self.assertEqual("exile", session.state.cards[dragon.object_id].zone)
+        before = list(session.state.players["A"].zones["library"])
+        self.assertIsNone(self.resolve(session))
+        after = session.state.players["A"].zones["library"]
+        self.assertEqual("exile", session.state.cards[dragon.object_id].zone)
+        self.assertCountEqual(before, after)
+        self.assertNotEqual(before, after)
+        self.replay(session)
 
 
 if __name__ == "__main__":

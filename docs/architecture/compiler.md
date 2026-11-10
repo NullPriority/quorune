@@ -3342,6 +3342,12 @@ remain source-spanned residuals. Commander-profile trust also requires the
 typed CR 903.9 owner choice; the compiler never excludes commanders from an
 otherwise universal Oracle instruction.
 
+A source's fixed library-placement trigger binds the original public
+incarnation from its own battlefield departure. The trigger controller makes
+any optional choice, and placement uses the captured card owner's library.
+Shuffle instructions still shuffle that library when the original card has
+since moved. A fixed scry follows through the existing scry owner.
+
 One-card graveyard exile also accepts the closed `your graveyard` and
 `an opponent's graveyard` owner relations. They reuse the public-card type
 predicate and existing target plan for offers, choices, and resolution. The

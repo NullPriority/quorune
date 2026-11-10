@@ -720,6 +720,9 @@
     {
       "id": "fixed-owner-zone-move-contract",
       "patterns": [
+        "quorune/effect_runtime/linked_zone_movement.py",
+        "quorune/event_card_return.py",
+        "quorune/compiler/event_card_return_templates.py",
         "quorune/compiler/public_exile_followup_templates.py",
         "quorune/rules/public_exile_result_model.py",
         "quorune/rules/committed_quantity_followups.py",

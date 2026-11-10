@@ -236,7 +236,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     scheduled=scheduled_player_result(binding,body,effect_template=effect_template,card_name=card_name)
     if scheduled is not None:return scheduled
     from .event_card_return_templates import event_card_return_template
-    returned = event_card_return_template(binding, body, card_name=card_name)
+    returned = event_card_return_template(binding, body, card_name=card_name, effect_template=effect_template)
     if returned is not None:
         return returned, False
     sacrifice = target_announcement_bound_result(binding, body, card_name=card_name)

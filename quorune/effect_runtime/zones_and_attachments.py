@@ -10,7 +10,6 @@ from ..rules.attachment_actions import (
     validate_entry_equipment_attachment, validate_targeted_equipment_attachment,
 )
 from ..aura import legal_aura_target_refs
-from ..zone_object_cleanup import resolve_zone_object_cleanup_group
 from ..continuous_effects import ContinuousOperation, Layer
 from ..continuous_effect_state import (
     ContinuousEffectStateError,
@@ -24,11 +23,6 @@ from ..effect_contracts import (
     effect_family_contract,
     REANIMATE_OPERATION,
 )
-from ..impulse_access import grant_temporary_cast_permission
-from ..impulse_access_model import (
-    TemporaryCastPermissionError,
-    TemporaryCastPermissionGrant,
-)
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..model import CardInstance
 from ..milling import mill_cards, MillRequest
@@ -39,6 +33,7 @@ from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
+from .linked_zone_movement import apply_move_if_in_zone
 
 _EXILE_ZONE = "exile"
 
@@ -148,136 +143,6 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
             actor=actor, source=source, followup=followup)
     return moved
 
-
-
-def _apply_move_if_in_zone(
-    host: Any,
-    effect: Mapping[str, Any],
-    *,
-    actor: str,
-    operation: str,
-    reason: str,
-) -> Any:
-    if "cards" in effect:
-        return resolve_zone_object_cleanup_group(
-            host,
-            effect,
-            actor=actor,
-            operation=operation,
-            reason=reason,
-        )
-    op = operation
-    expected_zone = str(effect.get("from") or "")
-    raw_grant = effect.get("then_cast_permission")
-    try:
-        grant = (
-            TemporaryCastPermissionGrant.from_dict(raw_grant)
-            if isinstance(raw_grant, Mapping)
-            else None
-        )
-    except TemporaryCastPermissionError as exc:
-        raise GameRuleError(str(exc)) from exc
-    if raw_grant is not None and grant is None:
-        raise GameRuleError("Linked cast permission must be a typed object")
-    if grant is not None and grant.player != actor:
-        raise GameRuleError("Linked cast-permission player changed")
-    try:
-        card = host._resolve_object(
-            actor,
-            str(effect["card"]),
-        )
-    except GameRuleError:
-        host._log(
-            actor,
-            "effect.linked_object_missing",
-            "A linked object no longer exists in the game.",
-            {
-                "object": str(effect["card"]),
-                "expected_zone": expected_zone,
-                "reason": "object_absent",
-            },
-            importance=2,
-        )
-        return None
-    if not expected_zone or card.zone != expected_zone or card.phased_out:
-        return None
-    expected_counter = effect.get(
-        "expected_zone_change_counter"
-    )
-    expected_identity = effect.get(
-        "expected_object_identity"
-    )
-    identity_mismatch = (
-        expected_counter is not None
-        and card.zone_change_counter
-        != int(expected_counter)
-    ) or (
-        expected_identity is not None
-        and card.logical_object_id
-        != str(expected_identity)
-    )
-    if identity_mismatch:
-        host._log(
-            actor,
-            "effect.linked_object_missing",
-            (
-                f"{card.ref} is no longer the object linked by "
-                "the effect."
-            ),
-            {
-                "object": card.ref,
-                "expected_zone": expected_zone,
-                "reason": "object_identity_changed",
-            },
-            importance=2,
-            changed_objects=[card.object_id],
-        )
-        return None
-    required_controller = effect.get("required_controller")
-    if (
-        required_controller is not None
-        and card.controller != str(required_controller)
-    ):
-        return None
-    destination = str(effect.get("destination") or "graveyard")
-    moved = host.move_card(
-        card.object_id,
-        destination,
-        controller=effect.get("controller"),
-        tapped=(
-            bool(effect["tapped"])
-            if "tapped" in effect
-            else None
-        ),
-        position=(
-            effect["position"]
-            if effect.get("position") is not None
-            else "top"
-        ),
-        reason=reason,
-        semantic_events=True,
-        transition_kind=(
-            ZoneTransitionKind.SACRIFICE
-            if effect.get("transition_kind") == "sacrifice"
-            else ZoneTransitionKind.ORDINARY
-        ),
-        replacement_selections=tuple(
-            effect.get("_replacement_selections") or ()
-        ),
-        aura_target_ref=(
-            str(effect["_aura_target_ref"])
-            if effect.get("_aura_target_ref") is not None
-            else None
-        ),
-    )
-    if grant is not None and card.zone == destination:
-        grant_temporary_cast_permission(
-            host,
-            card=card,
-            grant=grant,
-            reason=reason,
-        )
-    return moved
 
 
 def _apply_prepare_graveyard_creature_aura(
@@ -1536,7 +1401,7 @@ HANDLERS = {
     'exile_top_library_card': _apply_exile_top_library_card,
     'mill': _apply_mill,
     'move': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
-    'move_if_in_zone': _apply_move_if_in_zone,
+    'move_if_in_zone': apply_move_if_in_zone,
     'pump_controlled_creatures': _apply_pump_controlled_creatures,
     REANIMATE_OPERATION: _apply_reanimate,
     'reveal_top_permanent': _apply_reveal_top_permanent,

@@ -929,12 +929,14 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
     if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
         return None
     if raw_effect.get('op') == 'offer_optional_effect':
+        from ..event_card_return import unavailable_optional_event_library_move
         from ..rules.attachment_actions import unavailable_optional_equipment_attachment
 
         if unavailable_optional_combat_removal(host, raw_effect, effect):
             return None
         try:
-            if unavailable_optional_equipment_attachment(host, raw_effect, effect):
+            if (unavailable_optional_equipment_attachment(host, raw_effect, effect)
+                or unavailable_optional_event_library_move(host, raw_effect, effect)):
                 return None
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
