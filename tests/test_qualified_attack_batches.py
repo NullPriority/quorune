@@ -25,6 +25,25 @@ from scripts.build_test_database import build_fixture_database
 
 
 class QualifiedAttackBatchCompilerTests(unittest.TestCase):
+    def test_defended_attack_filter_binds_recipient_kind_and_source_controller(self):
+        from quorune.qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY
+        from quorune.rules.qualified_attacks import qualified_attack_runtime_dependencies
+
+        text = 'Whenever a creature attacks you or a planeswalker you control, draw a card.'
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(query_record(text), capability_registry=registry)
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        defender = {'field': 'defending_player', 'op': 'eq', 'value': '$source.controller'}
+        kind = {'field': 'attacked_recipient_kind', 'op': 'in', 'value': ['player', 'planeswalker']}
+        self.assertEqual({'all': [defender, kind]}, node.event_condition)
+        self.assertIn(QUALIFIED_ATTACK_CAPABILITY, node.capability_dependencies)
+        program = SimpleNamespace(event=node.event, event_condition=node.event_condition)
+        self.assertEqual((QUALIFIED_ATTACK_CAPABILITY,), qualified_attack_runtime_dependencies(program))
+        for invalid in (kind, {'any': [defender, kind]}, {'all': [defender, {**kind, 'value': ['battle']}]}):
+            with self.assertRaises(ValueError):
+                qualified_attack_runtime_dependencies(SimpleNamespace(event=node.event, event_condition=invalid))
+
     def test_batch_subjects_and_explicit_grouping_are_closed_and_versioned(self):
         registry=load_default_capability_registry()
         for head,minimum,group in (
@@ -163,6 +182,33 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+
+    def test_search_the_premises_ignores_protected_siege_attacks(self):
+        session = self.session(508631100)
+        source = self.add(session.engine, 'Search the Premises', seat='B')
+        walker = self.add(session.engine, 'Jace Beleren', seat='B')
+        walker.counters['loyalty'] = 3
+        battle = self.add(session.engine, 'Invasion of Zendikar')
+        battle.battle_protector = 'B'
+        battle.counters['defense'] = 3
+        recipients = ('B', walker.ref, battle.ref, 'C')
+        attackers = [self.add(session.engine, 'Grizzly Bears', ref=f'investigate-attacker-{i}') for i in range(4)]
+        for attacker in attackers:
+            attacker.acquired_control_turn_count = -1
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, list(zip(attackers, recipients, strict=True)))
+        triggered = [item for item in session.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual(2, len(triggered))
+        self.assertEqual({attacker.ref for attacker in attackers[:2]}, {item.context['card'] for item in triggered})
+        self.assertTrue(all(item.controller == 'B' and not item.targets for item in triggered))
+        self.assertIsNone(self.resolve(session))
+        clues = [card for card in session.state.cards.values()
+                 if card.is_token and card.zone == 'battlefield' and card.controller == 'B'
+                 and 'clue' in session.engine._type_parts(session.engine._effective_card_data(card)['type_line'])[1]]
+        self.assertEqual(2, len(clues))
+        self.replay(session)
 
     def test_runtime_batch_capability_and_coverage_cannot_be_omitted(self):
         from quorune.card_programs.binding import bind_semantic_program_runtime

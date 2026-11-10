@@ -303,6 +303,7 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
             if is_saddled(engine.state.cards[object_id]))
         from .rules.attack_batches import seal_attack_declaration
         from .attack_batch_model import ATTACK_BATCH_CONTEXT
+        from .qualified_attack_model import ATTACK_RECIPIENT_KIND_FIELD
         declaration_context = ({ATTACK_BATCH_CONTEXT:seal_attack_declaration(event,characteristic_contexts)}
             if any(characteristic_contexts.values()) else {})
         from .rules.attacking_card_entry import graveyard_attacking_entry_sources
@@ -343,7 +344,7 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                         **({SADDLED_ATTACK_FIELD: True} if source.object_id in saddled_attackers else {}),
                         **characteristic_contexts[assignment.attacker_object_id],
                         **declaration_context,
-                        **({'attacked_recipient_kind':assignment.recipient.kind.value} if declaration_context else {}),
+                        **({ATTACK_RECIPIENT_KIND_FIELD: assignment.recipient.kind.value} if declaration_context else {}),
                     },
                     sources=semantic_sources,
                     trigger_batch=stack_items,

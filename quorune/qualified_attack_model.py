@@ -9,6 +9,14 @@ ATTACK_FACT_BOOLEANS = frozenset({'token', 'tapped', 'attacking', 'blocking', 'e
     'modified', 'monstrous', 'entered_this_turn', 'commander'})
 ATTACK_FACT_NUMBERS = frozenset({'power', 'toughness', 'total_counters'})
 QUALIFIED_ATTACK_FULL_STATS_VERSION = 2
+ATTACK_RECIPIENT_KIND_FIELD = 'attacked_recipient_kind'
+
+
+def defended_player_or_planeswalker_condition():
+    return {'all': [
+        {'field': 'defending_player', 'op': 'eq', 'value': '$source.controller'},
+        {'field': ATTACK_RECIPIENT_KIND_FIELD, 'op': 'in', 'value': ['player', 'planeswalker']},
+    ]}
 
 
 def qualified_attack_facts_version(value):

@@ -4,9 +4,10 @@ from collections.abc import Mapping
 from types import SimpleNamespace
 
 from ..qualified_attack_model import (ATTACK_FACT_PREFIX, ATTACK_FACT_COLLECTIONS,
-    ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS, QUALIFIED_ATTACK_CAPABILITY,
-    QUALIFIED_ATTACK_FULL_STATS_VERSION, qualified_attack_facts_version)
+    ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS, ATTACK_RECIPIENT_KIND_FIELD, QUALIFIED_ATTACK_CAPABILITY,
+    QUALIFIED_ATTACK_FULL_STATS_VERSION, defended_player_or_planeswalker_condition, qualified_attack_facts_version)
 from ..object_query import exact_numeric_characteristic
+from ..replacement.immutable import thaw_value
 
 
 def attack_characteristic_context(host, card):
@@ -29,6 +30,14 @@ def attack_characteristic_context(host, card):
     return {ATTACK_FACT_PREFIX + name: value for name, value in facts.items()}
 
 
+def _has_defended_recipient_scope(condition, expected):
+    if condition == expected:
+        return True
+    return (isinstance(condition, Mapping) and set(condition) == {'all'}
+            and isinstance(condition['all'], (list, tuple))
+            and any(_has_defended_recipient_scope(child, expected) for child in condition['all']))
+
+
 def qualified_attack_runtime_dependencies(program):
     from .event_subscriptions import FixedEventSubscriptionSet
     subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
@@ -40,10 +49,15 @@ def qualified_attack_runtime_dependencies(program):
         return tuple(sorted(required))
     found = False
     version = False
+    recipient_scope = None
     def visit(value):
-        nonlocal found, version
+        nonlocal found, version, recipient_scope
         if isinstance(value, Mapping):
             field = value.get('field')
+            if field == ATTACK_RECIPIENT_KIND_FIELD:
+                recipient_scope = defended_player_or_planeswalker_condition()
+                if thaw_value(value) != recipient_scope['all'][1]:
+                    raise ValueError('Declared defender kind requires the closed player-or-planeswalker filter')
             if isinstance(field, str) and field.startswith(ATTACK_FACT_PREFIX):
                 found = True
                 if set(value) != {'field', 'op', 'value'}:
@@ -70,4 +84,7 @@ def qualified_attack_runtime_dependencies(program):
     visit(program.event_condition)
     if found and (not version or program.event != 'creature.attacks'):
         raise ValueError('Qualified attacker conditions require a versioned declared-attack occurrence')
-    return (QUALIFIED_ATTACK_CAPABILITY,) if found else ()
+    if recipient_scope is not None and (program.event != 'creature.attacks'
+            or not _has_defended_recipient_scope(thaw_value(program.event_condition), recipient_scope)):
+        raise ValueError('Declared defender kind requires the source controller as the defending player')
+    return (QUALIFIED_ATTACK_CAPABILITY,) if found or recipient_scope is not None else ()
