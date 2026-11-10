@@ -22,6 +22,8 @@ from .closed_effect_programs import (
     _partition,
     _sentence_partition,
 )
+from .library_search_templates import FixedLibrarySearchTemplate, fixed_library_search_effect_template
+from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, OPTIONAL_EFFECT_OPERATION
 
 
 BOUND_EFFECT_PROGRAM_MECHANIC = "bound-effect-program"
@@ -34,6 +36,12 @@ _TARGET_CONTROLLER_DAMAGE = re.compile(
     r"(?P<source>.+?) deals (?P<amount>[1-9][0-9]*) damage to that "
     r"(?P<kind>permanent|artifact|battle|creature|enchantment|land|planeswalker)"
     r"['’]s controller\.",
+    re.IGNORECASE,
+)
+_TARGET_CONTROLLER_SEARCH = re.compile(
+    r"(?:Its controller|(?P<opponent>That player)|That "
+    r"(?P<kind>permanent|artifact|battle|creature|enchantment|land|planeswalker)['’]s controller) "
+    r"may search their library for (?P<body>.+)\.",
     re.IGNORECASE,
 )
 _CONTROLLER_PREFIX_OPS = frozenset({
@@ -125,6 +133,10 @@ def target_controller_prefix_matches(effect: Mapping[str, Any]) -> bool:
     )
 
 
+def target_controller_search_prefix_matches(effect: Mapping[str, Any]) -> bool:
+    return target_controller_prefix_matches(effect) and effect["op"] in {"destroy", "exile_permanent"}
+
+
 def _target_type_is_guaranteed(schema: Mapping[str, Any], kind: str) -> bool:
     if kind == "permanent" or kind in schema.get("types_all", ()):
         return True
@@ -161,6 +173,44 @@ def _target_controller_damage_tail(
         damage[0], ({**expected, "target": target_controller_reference()},), None,
         (*damage[3], TARGET_CONTROLLER_INFORMATION_MECHANIC),
     )
+
+
+def _target_controller_search_program(
+    clauses: tuple[str, ...] | None,
+    compile_component: ComponentCompiler,
+) -> BoundEffectProgramTemplate | None:
+    if clauses is None or (match := _TARGET_CONTROLLER_SEARCH.fullmatch(clauses[1])) is None:
+        return None
+    first = compile_component(clauses[0])
+    schema = first[2]
+    if (
+        first[0] is None or schema is None or not _public_single_target(schema)
+        or schema["categories"] != ["permanent"] or schema.get("up_to")
+        or len(first[1]) != 1 or not target_controller_search_prefix_matches(first[1][0])
+    ):
+        return None
+    if match["opponent"] is not None and schema.get("controller_relation") != "opponent":
+        return None
+    if match["kind"] is not None and not _target_type_is_guaranteed(schema, match["kind"].casefold()):
+        return None
+    search = fixed_library_search_effect_template(f"Search your library for {match['body']}.")
+    if not isinstance(search, FixedLibrarySearchTemplate) or (
+        search.destination != "battlefield" or search.count != 1 or search.optional_count
+    ):
+        return None
+    _, (search_effect,), _, mechanics = search.compiled()
+    chooser = target_controller_reference()
+    optional_search = (
+        "fixed-target-controller-optional-library-search-v1",
+        ({"op": OPTIONAL_EFFECT_OPERATION, "player": chooser,
+          "effects": [{**search_effect, "searching_player": chooser}]},),
+        None,
+        (*mechanics, FIXED_OPTIONAL_EFFECT_MECHANIC, TARGET_CONTROLLER_INFORMATION_MECHANIC),
+    )
+    following = tuple(compile_component(clause) for clause in clauses[2:])
+    if any(component[2] is not None for component in following):
+        return None
+    return _program((first, optional_search, *following), schema=schema)
 
 
 def _single_target_reference(text: str, compile_component: ComponentCompiler, *, conditional_tail=None):
@@ -258,6 +308,10 @@ def bound_effect_program_template(
     target_count = len(_TARGET_WORD.findall(normalized))
     if target_count > 1:
         return None
+    if target_count == 1:
+        affected_search = _target_controller_search_program(_sentence_partition(normalized), compile_component)
+        if affected_search is not None:
+            return affected_search
     if _UNSAFE_LINKAGE.search(linkage_text):
         clauses = _sentence_partition(normalized)
         if (

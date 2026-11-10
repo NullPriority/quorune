@@ -45124,7 +45124,8 @@
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
         "test_original_rig_selects_a_flying_target_before_apply_or_decline",
         "test_original_slice_and_dice_cycles_through_mass_damage_before_its_draw",
-        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "multiplayer_tests": [
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
@@ -45154,7 +45155,8 @@
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
         "test_original_rig_selects_a_flying_target_before_apply_or_decline",
-        "test_original_slice_and_dice_cycles_through_mass_damage_before_its_draw"
+        "test_original_slice_and_dice_cycles_through_mass_damage_before_its_draw",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "negative_tests": [
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
@@ -45190,7 +45192,9 @@
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
         "test_unestablished_or_new_object_pronouns_are_not_rebound_to_source",
-        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary"
+        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "official_rules": [
         "109.5",
@@ -45239,7 +45243,9 @@
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
         "test_original_slice_and_dice_cycles_through_mass_damage_before_its_draw",
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
-        "test_spell_trigger_and_activation_share_optional_effect_lowering"
+        "test_spell_trigger_and_activation_share_optional_effect_lowering",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "privacy_tests": [
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
@@ -45264,7 +45270,8 @@
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
-        "test_original_rig_selects_a_flying_target_before_apply_or_decline"
+        "test_original_rig_selects_a_flying_target_before_apply_or_decline",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "replay_tests": [
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
@@ -45294,7 +45301,8 @@
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
         "test_original_rig_selects_a_flying_target_before_apply_or_decline",
-        "test_original_slice_and_dice_cycles_through_mass_damage_before_its_draw"
+        "test_original_slice_and_dice_cycles_through_mass_damage_before_its_draw",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "required_evidence": [
         "positive",
@@ -45310,7 +45318,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 11
+      "version": 12
     },
     {
       "applicability": {
@@ -50103,14 +50111,16 @@
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_generated_search_uses_effective_hidden_characteristics_and_replays",
         "test_multi_land_search_commits_one_tapped_simultaneous_batch",
-        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "multiplayer_tests": [
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "negative_tests": [
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
@@ -50118,7 +50128,9 @@
         "test_fixed_search_shape_and_dependencies_fail_closed",
         "test_named_linked_attachment_compound_and_open_searches_remain_residual",
         "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
-        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype"
+        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "official_rules": [
         "109.2a",
@@ -50138,21 +50150,25 @@
         "test_fixed_search_compiles_across_spell_trigger_activation_and_modal_contexts",
         "test_multi_tapped_land_search_compiles_as_one_closed_batch",
         "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
-        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype"
+        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "privacy_tests": [
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "replay_tests": [
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "required_evidence": [
         "positive",
@@ -50168,7 +50184,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 3
+      "version": 4
     },
     {
       "applicability": {
@@ -62227,13 +62243,15 @@
         "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
-        "test_cindervines_resolves_after_sacrificing_the_source"
+        "test_cindervines_resolves_after_sacrificing_the_source",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "multiplayer_tests": [
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
         "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
-        "test_structural_distortion_uses_departure_controller_after_a_real_response"
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "negative_tests": [
         "test_bound_effect_exclusions_and_malformed_shapes",
@@ -62242,7 +62260,9 @@
         "test_prevention_component_rejects_derived_amounts_open_scopes_and_missing_owner",
         "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
         "test_target_controller_damage_requires_one_typed_public_antecedent",
-        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target"
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "official_rules": [
         "115.1",
@@ -62266,12 +62286,15 @@
         "test_target_controller_damage_requires_one_typed_public_antecedent",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
-        "test_cindervines_resolves_after_sacrificing_the_source"
+        "test_cindervines_resolves_after_sacrificing_the_source",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "privacy_tests": [
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
-        "test_structural_distortion_uses_departure_controller_after_a_real_response"
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "replay_tests": [
         "test_counter_choice_resumes_after_prior_effect_once",
@@ -62283,7 +62306,8 @@
         "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
-        "test_cindervines_resolves_after_sacrificing_the_source"
+        "test_cindervines_resolves_after_sacrificing_the_source",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "required_evidence": [
         "positive",
@@ -62299,7 +62323,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -63917,7 +63941,8 @@
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
-        "test_cindervines_resolves_after_sacrificing_the_source"
+        "test_cindervines_resolves_after_sacrificing_the_source",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "multiplayer_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
@@ -63930,7 +63955,8 @@
         "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
-        "test_structural_distortion_uses_departure_controller_after_a_real_response"
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "negative_tests": [
         "test_entry_controller_damage_requires_its_runtime_authority",
@@ -63943,7 +63969,9 @@
         "test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed",
         "test_verified_controller_information_withdrawal_blocks_corrected_originals",
         "test_target_controller_damage_requires_one_typed_public_antecedent",
-        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target"
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "official_rules": [
         "400.7",
@@ -63967,7 +63995,9 @@
         "test_target_controller_damage_requires_one_typed_public_antecedent",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
-        "test_cindervines_resolves_after_sacrificing_the_source"
+        "test_cindervines_resolves_after_sacrificing_the_source",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search",
+        "test_optional_search_requires_the_controller_of_one_closed_removal_target"
       ],
       "privacy_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
@@ -63977,7 +64007,8 @@
         "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
-        "test_structural_distortion_uses_departure_controller_after_a_real_response"
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "replay_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
@@ -63992,7 +64023,8 @@
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
-        "test_cindervines_resolves_after_sacrificing_the_source"
+        "test_cindervines_resolves_after_sacrificing_the_source",
+        "test_original_removal_offers_only_its_affected_controller_the_optional_search"
       ],
       "required_evidence": [
         "positive",
@@ -64008,7 +64040,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 4
+      "version": 5
     },
     {
       "applicability": {
@@ -90840,7 +90872,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 809,
+  "registry_version": 810,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

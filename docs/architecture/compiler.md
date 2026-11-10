@@ -2513,6 +2513,17 @@ unsupported leaves, and unrepresented conditional or optional linkage remain
 residual. Whole-program integration may admit these bounded combinations while
 the original unbound leaf composition correctly continues to reject them.
 
+A fixed optional library search can follow destruction or exile of one
+mandatory, nonmodal battlefield target. The same controller reference binds
+both the optional decision and the private search of that player's library.
+A legal indestructible target still provides its controller. Declining
+leaves the library in order. Applying the search shuffles even when the
+player finds no card. Later untargeted instructions keep the resolving
+spell or ability's controller.
+The generated activation catalog omits the legacy controller-only fetch
+descriptor when the ordered program binds the search to the target's
+controller.
+
 `compiler/announced_damage_templates.py` lowers one fixed-total divided-damage
 clause to an allocation and a single bounded group of distinct targets.
 The same target predicates serve spells, activated abilities, and supported

@@ -163,6 +163,48 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         with patch("quorune.compiler.bound_effect_programs._target_controller_damage_tail", return_value=None):
             self.assertNotEqual("exact", self.compile(text).status)
 
+    def test_optional_search_requires_the_controller_of_one_closed_removal_target(self):
+        from types import SimpleNamespace
+        from quorune.rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
+        from quorune.target_controller_information import (
+            TARGET_CONTROLLER_INFORMATION_CAPABILITY, target_controller_reference,
+        )
+
+        tail = "Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle."
+        ir = self.compile("Exile target creature. " + tail + " Draw a card.")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        first, optional, draw = node.effects
+        search, = optional["effects"]
+        self.assertEqual("exile_permanent", first["op"])
+        self.assertEqual("draw", draw["op"])
+        self.assertEqual(target_controller_reference(), optional["player"])
+        self.assertEqual(target_controller_reference(), search["searching_player"])
+        self.assertTrue(search["enters_tapped_override"])
+        expected = {TARGET_CONTROLLER_INFORMATION_CAPABILITY, "effect.choice.optional_fixed", "library.search.fixed_to_battlefield"}
+        self.assertTrue(expected <= set(node.capability_dependencies))
+        program = SimpleNamespace(target_schema=node.target_schema, effects=node.effects, coverage=node.mechanics)
+        self.assertTrue(expected <= set(closed_effect_program_runtime_dependencies(program)))
+        for wrapper in (
+            {**optional, "player": "$controller"},
+            {**optional, "effects": [{**search, "searching_player": target_controller_reference(1)}]},
+            {**optional, "effects": [{**search, "destination": "hand"}]},
+        ):
+            with self.subTest(wrapper=wrapper):
+                forged = SimpleNamespace(target_schema=node.target_schema, effects=(first, wrapper, draw), coverage=node.mechanics)
+                with self.assertRaisesRegex(ValueError, "preceding closed target instruction"):
+                    closed_effect_program_runtime_dependencies(forged)
+        for text in (
+            "Destroy target creature. " + tail.replace("Its controller", "That player"),
+            "Destroy target land. " + tail.replace("Its controller", "That creature's controller"),
+            "Destroy up to one target creature. " + tail,
+            "Tap target creature. " + tail,
+            "Destroy target creature. " + tail + " Rewrite history.",
+            "Choose one or both —\n• Draw a card.\n• Destroy target creature. " + tail,
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", self.compile(text).status)
+
     def test_linked_followups_require_one_guaranteed_target_and_closed_rider(self):
         prefix = "Gain control of target artifact until end of turn. "
         text = prefix + "Untap that artifact. It gains haste until end of turn."

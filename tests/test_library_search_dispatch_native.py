@@ -90,6 +90,120 @@ class LibrarySearchDispatchNativeTests(InheritedNativeFixture,unittest.TestCase)
         before=authoritative_state_hash(s.state);result=s.act('pilot:'+seat,command)
         self.assertFalse(result.ok,result.summary);self.assertEqual(before,authoritative_state_hash(s.state))
 
+    def test_original_removal_offers_only_its_affected_controller_the_optional_search(self):
+        cases = (
+            ("Path to Exile", "Generic Bound Body", "exile", "select"),
+            ("Cleansing Wildfire", "Darksteel Citadel", "battlefield", "decline"),
+            ("Path to Exile", "Generic Bound Body", "hand", "illegal"),
+            ("Cleansing Wildfire", "Darksteel Citadel", "battlefield", "empty"),
+        )
+        for index, (name, target_name, final_zone, outcome) in enumerate(cases):
+            with self.subTest(card=name, outcome=outcome):
+                session = self.session(6082300 + index)
+                source = self.add(session.engine, name, zone="hand")
+                target = self.add(session.engine, target_name, seat="B")
+                session.engine.change_control(target.object_id, "C")
+                basic = self.add(session.engine, "Wastes", seat="C", zone="library", ref="affected-search-basic")
+                untyped = self.add(session.engine, "Terramorphic Expanse", seat="C", zone="library", ref="affected-search-nonbasic")
+                wrong = self.add(session.engine, "Mountain", seat="B", zone="library", ref="affected-search-other-library")
+                if outcome == "illegal":
+                    reply = self.add(session.engine, "Unsummon", seat="C", zone="hand")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"W": 1, "R": 1, "C": 1})
+                session.state.players["C"].mana_pool["U"] = 1
+                self.checkpoint(session)
+                library = tuple(session.state.players["C"].zones["library"])
+                hand_size = len(session.state.players["A"].zones["hand"])
+                shuffle_counts = {seat: session.state.players[seat].stats.get("shuffle_count", 0) for seat in "ABCD"}
+                self.cast_for(session, "A", source, [target.ref])
+                if outcome == "illegal":
+                    self.cast_for(session, "C", reply, [target.ref])
+                decision = self.resolve(session)
+                self.assertEqual(final_zone, session.state.cards[target.object_id].zone)
+                if outcome == "illegal":
+                    self.assertIsNone(decision)
+                else:
+                    self.assertEqual("semantic.choice", decision.kind)
+                    self.assertEqual(["pilot:C"], list(session.pending_principals()))
+                    self.reject(session, "A", {"action_id": "choose", "choice": "apply"})
+                    self.reject(session, "B", {"action_id": "choose", "choice": "decline"})
+                    choice = "decline" if outcome == "decline" else "apply"
+                    result = session.act("pilot:C", {"action_id": "choose", "choice": choice})
+                    self.assertTrue(result.ok, result.summary)
+                    if outcome != "decline":
+                        self.assertEqual("semantic.search", session.state.pending_decision.kind)
+                        schema = session.packet("pilot:C", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+                        self.assertIn(basic.ref, schema["legal_refs"])
+                        self.assertNotIn(untyped.ref, schema["legal_refs"])
+                        self.assertNotIn(wrong.ref, schema["legal_refs"])
+                        for seat in "ABD":
+                            packet = json.dumps(session.packet(f"pilot:{seat}", full=True))
+                            self.assertNotIn(basic.ref, packet)
+                            self.assertNotIn(untyped.ref, packet)
+                        self.reject(session, "C", {"action_id": "choose", "search_cards": [wrong.ref]})
+                        self.reject(session, "A", {"action_id": "choose", "search_cards": [basic.ref]})
+                        if outcome == "select":
+                            session = self.replay(session, load=True)
+                        result = session.act("pilot:C", {"action_id": "choose", "search_cards": [basic.ref] if outcome == "select" else []})
+                        self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(hand_size - 1 + int(name == "Cleansing Wildfire"),
+                                 len(session.state.players["A"].zones["hand"]))
+                for seat in "ABCD":
+                    expected = shuffle_counts[seat] + int(seat == "C" and outcome in {"select", "empty"})
+                    self.assertEqual(expected, session.state.players[seat].stats.get("shuffle_count", 0))
+                if outcome in {"decline", "illegal"}:
+                    self.assertEqual(library, tuple(session.state.players["C"].zones["library"]))
+                found = session.state.cards[basic.object_id]
+                if outcome == "select":
+                    self.assertEqual(("battlefield", "C", True), (found.zone, found.controller, found.tapped))
+                else:
+                    self.assertEqual("library", found.zone)
+                self.replay(session)
+
+    def test_original_demolition_field_keeps_two_private_searches_in_printed_order(self):
+        session = self.session(6082304)
+        source = self.add(session.engine, "Demolition Field")
+        target = self.add(session.engine, "Darksteel Citadel", seat="C")
+        cards = {
+            "A": self.add(session.engine, "Mountain", zone="library", ref="field-search-A"),
+            "C": self.add(session.engine, "Wastes", seat="C", zone="library", ref="field-search-C"),
+        }
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2})
+        self.checkpoint(session)
+        initial = {seat: session.state.players[seat].stats.get("shuffle_count", 0) for seat in "AC"}
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        activate = next(
+            row for row in rows
+            if row["id"].startswith(f"activate:{source.ref}:")
+            and target.ref in (row.get("target_schema") or {}).get("legal_refs", ())
+        )
+        result = session.act("pilot:A", {"action_id": activate["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        for seat, other in (("C", "A"), ("A", "C")):
+            self.assertEqual([f"pilot:{seat}"], list(session.pending_principals()))
+            self.reject(session, other, {"action_id": "choose", "choice": "apply"})
+            result = session.act(f"pilot:{seat}", {"action_id": "choose", "choice": "apply"})
+            self.assertTrue(result.ok, result.summary)
+            self.assertEqual("semantic.search", session.state.pending_decision.kind)
+            schema = session.packet(f"pilot:{seat}", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+            self.assertIn(cards[seat].ref, schema["legal_refs"])
+            self.assertNotIn(cards[other].ref, schema["legal_refs"])
+            self.reject(session, other, {"action_id": "choose", "search_cards": [cards[seat].ref]})
+            if seat == "A":
+                session = self.replay(session, load=True)
+            result = session.act(f"pilot:{seat}", {"action_id": "choose", "search_cards": [cards[seat].ref]})
+            self.assertTrue(result.ok, result.summary)
+            selected = session.state.cards[cards[seat].object_id]
+            self.assertEqual(("battlefield", seat, False), (selected.zone, selected.controller, selected.tapped))
+            self.assertEqual(initial[seat] + 1, session.state.players[seat].stats["shuffle_count"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.replay(session)
+
     def begin(self,name,seed):
         s=self.session(seed);mage=self.add(s.engine,name,zone='hand')
         cards={name:self.add(s.engine,name,zone='library',ref='numeric-search-'+str(index))

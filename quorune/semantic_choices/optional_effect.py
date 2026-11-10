@@ -91,6 +91,10 @@ def _represented_effect(
         return
     if operation == 'search':
         from ..rules.library_search_capability_shapes import fixed_library_search_node_capabilities, fixed_type_to_hand_search_node_capabilities
+        if "searching_player" in effect:
+            if effect["searching_player"] != actor:
+                raise SemanticChoiceError("Optional search must use the chooser's library")
+            effect = {key: value for key, value in effect.items() if key != "searching_player"}
         mechanics=('fixed-library-search-to-battlefield','fixed-library-search-to-hand')
         if not any(resolver(effects=(effect,),target_schema=None,mechanic_ids=mechanics)
                 for resolver in (fixed_library_search_node_capabilities,fixed_type_to_hand_search_node_capabilities)):
