@@ -2134,6 +2134,28 @@
       ]
     },
     {
+      "id": "public-named-quantity-contract",
+      "patterns": [
+        "quorune/carddb_characteristics.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/compiler/collection_quantity_templates.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/rules/room_copy_values.py",
+        "tests/fixtures/public-named-quantity-cards.json",
+        "tests/test_public_zone_quantities.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_copy_objects",
+        "test_face_down_copy",
+        "test_nonmodal_face_mana_value",
+        "test_public_quantity_mana",
+        "test_public_query_effect_amounts",
+        "test_public_zone_quantities"
+      ]
+    },
+    {
       "id": "public-quantity-mana-contract",
       "patterns": [
         "quorune/public_quantity_mana*.py",

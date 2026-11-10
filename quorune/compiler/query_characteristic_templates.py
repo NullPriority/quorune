@@ -22,7 +22,7 @@ from ..keyword_abilities import (
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_pattern
 from .creature_subtypes import canonical_creature_subtype
-from .collection_quantity_templates import collection_quantity, fixed_quantity_arithmetic, additive_quantity, public_card_quantity
+from .collection_quantity_templates import collection_quantity, fixed_quantity_arithmetic, additive_quantity, public_card_quantity, named_collection_quantity
 from .noncreature_quantity_subtypes import noncreature_quantity_subtype_fields
 
 
@@ -286,16 +286,18 @@ def query_characteristic_quantity(
     definition_extensions: bool = False,
 ) -> CharacteristicQuantitySpec | None:
     text = " ".join(value.strip().rstrip(".").split())
+    def compile_count(objects):
+        return query_characteristic_quantity(objects, source_name=source_name, definition_extensions=definition_extensions)
+
+    named = named_collection_quantity(text, compile_count=compile_count)
+    if named is not None:
+        return named
     from .public_zone_quantities import public_zone_quantity
     zone=public_zone_quantity(text)
     if zone is not None:return zone
     if text.casefold() in {'opponent you have','opponents you have'}:
         return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT,schema_version=2)
-    reduced = collection_quantity(
-        text, compile_count=lambda objects: query_characteristic_quantity(
-            objects, source_name=source_name, definition_extensions=definition_extensions,
-        ),
-    )
+    reduced = collection_quantity(text, compile_count=compile_count)
     if reduced is not None:
         return reduced
     source = SourceReferenceSpec(source_name).regex_pattern

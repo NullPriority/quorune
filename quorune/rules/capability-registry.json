@@ -87516,6 +87516,110 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Count objects with one literal English rules name through the existing public quantity evaluator.",
+        "inputs": [
+          "version-seven named count and one closed public zone predicate",
+          "current public type and controller or graveyard owner",
+          "effective battlefield copy and Room names or printed graveyard face names"
+        ],
+        "outputs": [
+          "one count per matching object",
+          "ordinary source exclusion, active roster, and type filtering",
+          "existing consumers for spell amounts, mana, and characteristic definitions or modifiers"
+        ],
+        "exclusions": [
+          "hidden-zone predicates",
+          "chosen-name and different-name quantities",
+          "unrepresented conjunctions and open object qualifiers"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "permanent.shared_type_doors.lifecycle"
+      ],
+      "dependency_fail_closed_rationale": "The compiler leaves a material residual when the name-count authority is absent. Runtime binding independently infers the capability from the version-seven quantity.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.public_named_count",
+      "implementation_components": [
+        "quorune.characteristic_fragments.CharacteristicQuantitySpec",
+        "quorune.characteristic_fragments.characteristic_quantity_capabilities",
+        "quorune.compiler.collection_quantity_templates.named_collection_quantity",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.carddb_characteristics.public_object_rules_names",
+        "quorune.rules.room_copy_values.current_room_rules_names"
+      ],
+      "implementation_mutation_rationale": "Omitting the literal-name production eliminates the exact Powerstone Shard quantity. Native controls independently distinguish nameless, nonmatching, opposing, and wrong-zone objects.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_public_name_facts_distinguish_faces_rooms_and_literal_separators",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "multiplayer_tests": [
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "negative_tests": [
+        "test_literal_name_codec_preserves_old_shapes_and_rejects_nonpublic_domains",
+        "test_public_name_facts_distinguish_faces_rooms_and_literal_separators",
+        "test_original_named_owners_close_and_runtime_requires_the_dependency",
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private"
+      ],
+      "official_rules": [
+        "201.2",
+        "201.2a",
+        "201.5",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "707.2",
+        "708.2a",
+        "709.4a",
+        "709.5",
+        "712.8a",
+        "715.4"
+      ],
+      "positive_tests": [
+        "test_literal_name_codec_preserves_old_shapes_and_rejects_nonpublic_domains",
+        "test_original_named_owners_close_and_runtime_requires_the_dependency",
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "privacy_tests": [
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private"
+      ],
+      "replay_tests": [
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -87524,7 +87628,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 769,
+  "registry_version": 770,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -779,6 +779,7 @@
     "tests/fixtures/public-exile-followup-cards.json",
     "tests/fixtures/public-history-query-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
+    "tests/fixtures/public-named-quantity-cards.json",
     "tests/fixtures/public-negative-color-cards.json",
     "tests/fixtures/public-negative-keyword-cards.json",
     "tests/fixtures/public-negative-supertype-cards.json",

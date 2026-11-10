@@ -10,6 +10,37 @@ from .fixed_numbers import fixed_number
 from ..object_predicate import ObjectQuerySpec
 
 
+_NAMED_COUNT_RELATION = (
+    r"on the battlefield|you control|your opponents control|an opponent controls|"
+    r"in your graveyard|in all graveyards|in your opponents['’] graveyards|in an opponent['’]s graveyard"
+)
+_NAME_CONNECTORS = frozenset("a an and at by for from in into of on the to under upon with".split())
+
+
+def named_collection_quantity(text: str, *, compile_count) -> CharacteristicQuantitySpec | None:
+    if text.casefold().count(" named ") != 1:
+        return None
+    suffix = re.fullmatch(rf"(?P<objects>.+?) named (?P<name>.+?) (?P<relation>{_NAMED_COUNT_RELATION})", text, re.I)
+    prefix = re.fullmatch(rf"(?P<objects>.+?) (?P<relation>{_NAMED_COUNT_RELATION}) named (?P<name>.+)", text, re.I)
+    match = suffix or prefix
+    if match is None:
+        return None
+    name = match["name"]
+    words = re.findall(r"[^\W_]+(?:['’\-][^\W_]+)*", name)
+    if (not re.fullmatch(r"(?:[^\W_]|[ ,.'’\-])+", name) or not words
+            or not words[0][0].isupper()
+            or any(word[0].islower() and word not in _NAME_CONNECTORS for word in words)):
+        return None
+    quantity = compile_count(f"{match['objects']} {match['relation']}")
+    if quantity is None or quantity.schema_version != 1 or quantity.query is None:
+        return None
+    query = replace(quantity.query, token=False) if quantity.query.zones == ("graveyard",) else quantity.query
+    try:
+        return replace(quantity, query=query, schema_version=7, literal_name=name)
+    except ValueError:
+        return None
+
+
 def fixed_devotion_condition(text: str):
     from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
     match = re.fullmatch(r'(?P<quantity>your devotion to (?:white|blue|black|red|green)(?: and (?:white|blue|black|red|green))?) is less than (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)', text, re.I)
@@ -123,7 +154,8 @@ def fixed_quantity_arithmetic(value: str, *, compile_value) -> CharacteristicQua
     else:
         multiplier = fixed_number(multiple.group("multiplier").split()[0])
     try:
-        return replace(quantity, schema_version=5 if quantity.schema_version==5 else 2, multiplier=quantity.multiplier * multiplier,
+        version = quantity.schema_version if quantity.schema_version in {5, 7} else 2
+        return replace(quantity, schema_version=version, multiplier=quantity.multiplier * multiplier,
                        offset=quantity.offset * multiplier + offset)
     except ValueError:
         return None
@@ -132,7 +164,8 @@ def fixed_quantity_arithmetic(value: str, *, compile_value) -> CharacteristicQua
 def public_card_quantity(quantity, source_text: str):
     """Make the card domain explicit only for new versioned value forms."""
     if quantity is not None and quantity.query is not None and quantity.query.zones == ("graveyard",) and re.search(r"\bcards?\b", source_text, re.IGNORECASE):
-        return replace(quantity, schema_version=2, query=replace(quantity.query, token=False))
+        return replace(quantity, schema_version=7 if quantity.schema_version == 7 else 2,
+            query=replace(quantity.query, token=False))
     return quantity
 
 

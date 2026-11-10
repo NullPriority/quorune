@@ -54,6 +54,9 @@ class CharacteristicQuantityReduction(str, Enum):
     DEVOTION = "devotion"
 
 
+PUBLIC_NAMED_COUNT_CAPABILITY = "quantity_expression.public_named_count"
+
+
 @dataclass(frozen=True, slots=True)
 class CharacteristicQuantitySpec:
     """One cycle-safe public quantity used by a later-layer modifier."""
@@ -69,10 +72,13 @@ class CharacteristicQuantitySpec:
     offset: int = 0
     terms: tuple["CharacteristicQuantitySpec", ...] = ()
     mana_colors: tuple[str, ...] = ()
+    literal_name: str | None = None
 
     def __post_init__(self) -> None:
         self._validate_reduction_version()
         self._validate_scope_and_exclusions()
+        if self.schema_version == 7:
+            self._validate_named_count()
         if self.schema_version==5:
             from .public_zone_quantity_model import validate_public_zone_quantity
             try:validate_public_zone_quantity(self)
@@ -101,10 +107,12 @@ class CharacteristicQuantitySpec:
         self._validate_object_query()
 
     def _validate_reduction_version(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7}:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
+        if (self.literal_name is not None) != (self.schema_version == 7):
+            raise CharacteristicFragmentError("Literal names require their public count version")
         if not isinstance(self.reduction, CharacteristicQuantityReduction) or (
             self.schema_version == 1 and (self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT or self.multiplier != 1 or self.offset != 0)
         ):
@@ -121,6 +129,22 @@ class CharacteristicQuantitySpec:
             object.__setattr__(self, "mana_colors", tuple(self.mana_colors))
         elif self.mana_colors:
             raise CharacteristicFragmentError("Only colored symbol reductions carry mana colors")
+
+    def _validate_named_count(self) -> None:
+        name = self.literal_name
+        if (type(name) is not str or not name or name != " ".join(name.split())
+                or any(ord(character) < 32 for character in name)):
+            raise CharacteristicFragmentError("A named count requires one canonical literal name")
+        query = self.query
+        if (not isinstance(query, ObjectQuerySpec) or query.zones not in {("battlefield",), ("graveyard",)}
+                or self.scope not in {CharacteristicQuantityScope.CONTROLLER_ZONE,
+                    CharacteristicQuantityScope.OPPONENT_ZONES, CharacteristicQuantityScope.ALL_ZONES}
+                or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+                or self.exclude_attached_object):
+            raise CharacteristicFragmentError("Named counts require one public battlefield or graveyard collection")
+        if query != ObjectQuerySpec(zones=query.zones, types_all=query.types_all, types_any=query.types_any,
+                token=False if query.zones == ("graveyard",) else query.token):
+            raise CharacteristicFragmentError("Named counts require a closed type filter and a card-only graveyard")
 
     def _validate_current_value(self) -> None:
         if (self.query is not None or self.counter_name is not None or self.exclude_source
@@ -321,8 +345,9 @@ class CharacteristicQuantitySpec:
             "exclude_source": self.exclude_source,
             "exclude_attached_object": self.exclude_attached_object,
             **({"reduction": self.reduction.value, "multiplier": self.multiplier, "offset": self.offset,
-                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5, 6} else {}),
+                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5, 6, 7} else {}),
             **({"terms": [term.to_dict() for term in self.terms]} if self.schema_version == 3 else {}),
+            **({"literal_name": self.literal_name} if self.schema_version == 7 else {}),
         }
 
     @classmethod
@@ -337,16 +362,20 @@ class CharacteristicQuantitySpec:
             "exclude_source",
         }
         extended = {*expected, "exclude_attached_object"}
+        reduced = {*extended, "reduction", "multiplier", "offset", "mana_colors"}
         if not isinstance(value, Mapping) or frozenset(value) not in {
             frozenset(expected),
             frozenset(extended),
-            frozenset({*extended, "reduction", "multiplier", "offset", "mana_colors"}),
-            frozenset({*extended, "reduction", "multiplier", "offset", "mana_colors", "terms"}),
+            frozenset(reduced),
+            frozenset({*reduced, "terms"}),
+            frozenset({*reduced, "literal_name"}),
         }:
             raise CharacteristicFragmentError(
                 "Characteristic quantities have a closed schema"
             )
-        if (value.get("schema_version") in {2, 3, 4, 5, 6}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
+        version = value.get("schema_version")
+        if ((version in {2, 3, 4, 5, 6, 7}) != ("reduction" in value)
+                or (version == 3) != ("terms" in value) or (version == 7) != ("literal_name" in value)):
             raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
         try:
             scope = CharacteristicQuantityScope(value["scope"])
@@ -383,6 +412,7 @@ class CharacteristicQuantitySpec:
             offset=value.get("offset", 0),
             terms=terms,
             mana_colors=tuple(mana_colors),
+            literal_name=value.get("literal_name"),
         )
 
 
@@ -780,6 +810,9 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         if value.get('schema_version')==6 and {'scope','query','counter_name','exclude_source'}<=set(value):
             CharacteristicQuantitySpec.from_dict(value)
             own=(*own,'quantity_expression.keyword_layer_count')
+        if value.get('schema_version')==7 and {'scope','query','counter_name','exclude_source'}<=set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own=(*own,PUBLIC_NAMED_COUNT_CAPABILITY)
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
         if (value.get('schema_version')==4 and value.get('scope') in {'controller_life_total','opponent_poison_counters','attached_object'}
                 and {'scope','query','counter_name','exclude_source'}<=set(value)):

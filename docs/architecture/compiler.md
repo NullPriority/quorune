@@ -2049,6 +2049,13 @@ count. Fixed static increases lower to typed current components; existing
 quantity consumers declare the devotion producer dependency at admission.
 Unknown colors, unsupported increases and unrepresented siblings remain residual.
 
+Literal name counts use version-seven quantities over current battlefield
+objects or public graveyard cards. The printed English name remains fixed
+when the ability is copied. Each object contributes once if one of its rules
+names matches. The reader uses effective copy values, unlocked Room doors,
+and the printed face rules in graveyards. Nameless and phased-out objects
+contribute zero. Earlier quantity descriptors retain their serialized fields.
+
 Counted token wording can use a complete public value after “equal to,” while
 the ordinary fixed-token parser still owns the entire definition and abilities.
 The quantity resolves once before the shared token replacement transaction.
