@@ -22,6 +22,47 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope(self):
+        from unittest.mock import patch
+
+        from test_qualified_zone_event_queries import query_record
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
+        from quorune.dungeon_progress import DUNGEON_COMPLETED_EVENT, DUNGEON_VENTURE_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticProgram
+
+        registry = load_default_capability_registry()
+        deps = ("trigger.effect.fixed_event",)
+        spec = fixed_public_event_binding_spec("Whenever you complete a dungeon, draw a card.")
+        self.assertEqual(DUNGEON_COMPLETED_EVENT, spec.event)
+        forged = SemanticProgram("fixture:completion", "Dungeon completion", event=spec.event,
+                                 active_zone="battlefield", event_condition=spec.condition,
+                                 capability_dependencies=deps,
+                                 capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + DUNGEON_VENTURE_CAPABILITY, binding["blockers"])
+        self.assertIsNone(fixed_public_event_binding_spec("Whenever an opponent completes a dungeon, draw a card."))
+
+        group = "Whenever one or more creature cards are put into your graveyard from anywhere, "
+        body = "venture into the dungeon."
+        limit = " This ability triggers only once each turn."
+
+        def compile_line(text):
+            return compile_oracle_card(query_record(text), capability_registry=registry)
+
+        full = group + body + limit
+        exact = compile_line(full)
+        self.assertEqual("exact", exact.status)
+        self.assertEqual(full, exact.faces[0].nodes[0].text)
+        self.assertEqual({"schema_version": 1, "kind": "once_per_turn"}, exact.faces[0].nodes[0].trigger_limit)
+        self.assertNotEqual("exact", compile_line(group + body).status)
+        self.assertNotEqual("exact", compile_line(group + "draw a card." + limit).status)
+        with patch("quorune.compiler.trigger_limit_nodes._CREATURE_CARD_GRAVEYARD_GROUP") as omitted:
+            omitted.fullmatch.return_value = None
+            self.assertNotEqual("exact", compile_line(full).status)
+
     def test_owned_room_multiplier_rejects_unrepresented_scope_and_missing_capability(self):
         from unittest.mock import patch
 
@@ -400,12 +441,12 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual("semantic.choice", session.state.pending_decision.kind)
         return tuple(option["id"] for option in session.packet("pilot:A", full=True)["decision"]["ctx"]["options"])
 
-    def _order_two_room_triggers(self, session):
+    def _order_triggers(self, session, count):
         self.assertEqual("trigger.order", session.state.pending_decision.kind)
         packet = session.packet("pilot:A", full=True)["decision"]
         refs = [row["id"] for row in packet["ctx"]["triggers"]]
-        self.assertEqual(2, len(refs))
-        self.assertEqual(2, len(set(refs)))
+        self.assertEqual(count, len(refs))
+        self.assertEqual(count, len(set(refs)))
         command = {"action_id": "order", "triggers": refs}
         before = session.state.to_dict()
         self.assertFalse(session.act("pilot:B", command).ok)
@@ -464,7 +505,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(DungeonRoomRef(DungeonId.MAD_MAGE, 0), session.state.players["A"].dungeon_journey.active.room)
         self.replay(session, load=True)
 
-    def _reach_last_room(self, seed, *, reenter=False, status_watch=False, room_multiplier=False):
+    def _reach_last_room(self, seed, *, reenter=False, status_watch=False, room_multiplier=False, completion_watch=False):
         from quorune.card_programs import bind_semantic_program_runtime
         from quorune.dungeon_progress import DUNGEON_VENTURE_CAPABILITY
         from quorune.record import authoritative_state_hash
@@ -472,11 +513,24 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         session = self.session(seed)
         veteran = self.add(session.engine, "Veteran Dungeoneer", zone="hand")
         maps = tuple(self.add(session.engine, "Dungeon Map", ref=f"venture-map-{index}") for index in range(3))
+        mana = {"C": 13, "W": 1, "R": 1}
         if room_multiplier:
             hama = self.add(session.engine, "Hama Pashar, Ruin Seeker", zone="hand", ref="venture-hama")
             other_hama = self.add(session.engine, "Hama Pashar, Ruin Seeker", seat="B", ref="venture-other-hama")
             self.assert_closed(session, hama)
             self.assert_closed(session, other_hama)
+            mana.update(C=14, W=2, U=1)
+        if completion_watch:
+            completion_sources = (
+                self.add(session.engine, "Sefris of the Hidden Ways", zone="hand", ref="venture-sefris"),
+                self.add(session.engine, "Varis, Silverymoon Ranger", zone="hand", ref="venture-varis"),
+            )
+            crawler = self.add(session.engine, "Dungeon Crawler", zone="graveyard", ref="venture-crawler")
+            self.add(session.engine, "Dungeon Crawler", seat="B", zone="graveyard", ref="venture-other-crawler")
+            self.add(session.engine, "Grizzly Bears", zone="graveyard", ref="venture-reanimation")
+            for card in (*completion_sources, crawler):
+                self.assert_closed(session, card)
+            mana.update(C=14, W=2, U=1, B=1, G=2)
         if reenter:
             self.add(session.engine, "Clattering Skeletons", ref="venture-skeletons")
             self.add(session.engine, "Fling", zone="hand", ref="venture-fling")
@@ -495,7 +549,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         binding = bind_semantic_program_runtime(forged, capability_registry=self.registry, profile="commander_review")
         self.assertFalse(binding["strict"])
         self.assertIn("capability:undeclared_runtime_dependency:" + DUNGEON_VENTURE_CAPABILITY, binding["blockers"])
-        self.prepare(session, mana=({"C": 14, "W": 2, "U": 1} if room_multiplier else {"C": 13, "W": 1, "R": 1}))
+        self.prepare(session, mana=mana)
         self.checkpoint(session)
         self.cast_for(session, "A", veteran)
         self.assertEqual("semantic.choice", self.resolve(session).kind)
@@ -529,7 +583,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(("lost_mine:3", "lost_mine:4"), self._room_options(session))
         self._choose(session, choice="lost_mine:3")
         if room_multiplier:
-            self._order_two_room_triggers(session)
+            self._order_triggers(session, 2)
         self.assertEqual("semantic.target", session.state.pending_decision.kind)
         room_item = session.state.stack[-1]
         self.assertEqual(("dungeon-room:lost_mine:3", source.object_id), (room_item.semantic_key, room_item.source_object_id))
@@ -545,17 +599,103 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual({"+1/+1": 1}, session.state.cards[veteran.object_id].counters)
         if room_multiplier:
             self.assertEqual({"+1/+1": 1}, session.state.cards[hama.object_id].counters)
+        if completion_watch:
+            for card in completion_sources:
+                self.cast_for(session, "A", card)
+                self.assertIsNone(self.resolve(session))
 
         self._activate_map(session, maps[2])
         self.resolve_top(session)
         if room_multiplier:
-            self._order_two_room_triggers(session)
+            self._order_triggers(session, 2)
         final = session.state.stack[-1]
         journey = session.state.players["A"].dungeon_journey
         self.assertEqual(DungeonRoomRef(DungeonId.LOST_MINE, 6), journey.active.room)
         self.assertEqual(0, journey.completed)
         self.assertEqual("dungeon-room:lost_mine:6", final.semantic_key)
         return session, source, final
+
+    def test_original_completion_observers_return_their_cards_and_create_the_wolf(self):
+        from quorune.record import authoritative_state_hash
+
+        session, source, final = self._reach_last_room(309005, completion_watch=True)
+        self.assertEqual([final.ref], [item.ref for item in session.state.stack])
+        self.resolve_top(session)
+        self.assertNotIn(source.object_id, session.state.cards)
+        self._order_triggers(session, 3)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        before = authoritative_state_hash(session.state)
+        for seat, target in (("B", "venture-reanimation"), ("A", "venture-other-crawler")):
+            self.assertFalse(session.act(f"pilot:{seat}", {"action_id": "choose", "targets": [target]}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        self._choose(session, targets=["venture-reanimation"])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self._choose(session, choice="apply")
+        self.assertIsNone(self.resolve(session))
+        zones = {card.ref: card.zone for card in session.state.cards.values()}
+        self.assertEqual("hand", zones["venture-crawler"])
+        self.assertEqual("graveyard", zones["venture-other-crawler"])
+        self.assertEqual("battlefield", zones["venture-reanimation"])
+        wolves = [card for card in session.state.cards.values()
+                  if card.printed_name == "Wolf Token" and card.zone == "battlefield"]
+        self.assertEqual(["A"], [card.controller for card in wolves])
+        self.replay(session)
+
+    def test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn(self):
+        session = self.session(603201)
+        for object_id in tuple(session.state.players["A"].zones["hand"]):
+            session.engine.move_card(object_id, "library", log=False)
+        source = self.add(session.engine, "Sefris of the Hidden Ways")
+        reunion = tuple(self.add(session.engine, "Cathartic Reunion", zone="hand", ref=f"venture-reunion-{i}")
+                        for i in range(3))
+        creatures = tuple(self.add(session.engine, "Grizzly Bears", zone="hand", ref=f"venture-discard-{i}")
+                          for i in range(4))
+        self.add(session.engine, "Mountain", ref="venture-reunion-mountain")
+        self.add(session.engine, "Generic Bound Plains", ref="venture-reunion-plains")
+        warp = self.add(session.engine, "Time Warp", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 5, "R": 2, "U": 2})
+        self.checkpoint(session)
+
+        def cast_reunion(index):
+            self.priority(session, "A")
+            action = self.action(session, "A", session.state.cards[reunion[index].object_id])
+            if index == 0:
+                discarded = creatures[:2]
+            else:
+                land = next(session.state.cards[object_id] for object_id in session.state.players["A"].zones["hand"]
+                            if session.state.cards[object_id].printed_name == "Generic Bound Plains")
+                discarded = (creatures[index + 1], land)
+            result = session.act("pilot:A", {"action_id": action["id"],
+                                             "discard_cards": [card.ref for card in discarded], "pay": "auto"})
+            self.assertTrue(result.ok, result.summary)
+            self.assertTrue(all(session.state.cards[card.object_id].zone == "graveyard" for card in discarded))
+
+        cast_reunion(0)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self._choose(session, choice="mad_mage:0")
+        self.assertIsNone(self.resolve(session))
+        cast_reunion(1)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(DungeonRoomRef(DungeonId.MAD_MAGE, 0), session.state.players["A"].dungeon_journey.active.room)
+        turn = session.state.turn_sequence
+        self.cast_for(session, "A", warp, ["A"])
+        self.assertIsNone(self.resolve(session))
+        self.until(session, lambda game: game.state.turn_sequence > turn and game.state.phase == "precombat_main")
+        self.assertTrue(session.state.current_turn.extra)
+        cast_reunion(2)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(DungeonRoomRef(DungeonId.MAD_MAGE, 1), session.state.players["A"].dungeon_journey.active.room)
+        packet = session.packet("pilot:A", full=True)["decision"]
+        visible = packet["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        self._choose(session, cards={"top": visible, "bottom": []})
+        self.assertIsNone(self.resolve(session))
+        self.replay(session, load=True)
 
     def test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion(self):
         session, source, final = self._reach_last_room(309004, room_multiplier=True)

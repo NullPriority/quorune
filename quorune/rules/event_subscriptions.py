@@ -11,6 +11,7 @@ from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
     FixedPublicStateConditionSpec,
 )
+from ..dungeon_progress import DUNGEON_COMPLETED_EVENT, DUNGEON_VENTURE_CAPABILITY
 from ..errors import GameRuleError
 from ..replacement.immutable import FrozenMap, freeze_value, thaw_value
 from ..scheduled_player import (
@@ -194,6 +195,17 @@ def fixed_event_subscription_condition(
     """Serialize one compiler-owned fixed subscription set."""
 
     return FixedEventSubscriptionSet(tuple(subscriptions)).to_condition()
+
+
+def dungeon_completion_dependencies(program, subscriptions: FixedEventSubscriptionSet | None) -> tuple[str, ...]:
+    if subscriptions is not None and subscriptions.subscription_for(DUNGEON_COMPLETED_EVENT) is not None:
+        raise EventSubscriptionError("Dungeon completion requires a single event subscription")
+    if program.event != DUNGEON_COMPLETED_EVENT:
+        return ()
+    player = {"battlefield": "$source.controller", "graveyard": "$source.owner"}.get(program.active_zone)
+    if player is None or program.event_condition != {"field": "player", "op": "eq", "value": player}:
+        raise EventSubscriptionError("Dungeon completion requires a source-relative completion subscription")
+    return (DUNGEON_VENTURE_CAPABILITY,)
 
 
 def _upkeep_hand_condition_leaf(condition: Mapping[str, Any] | None) -> Mapping[str, Any] | None:

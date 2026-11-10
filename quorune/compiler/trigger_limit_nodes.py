@@ -10,6 +10,7 @@ from ..rules.trigger_limits import (TriggerLimitSpec,trigger_limit_capabilities,
     OPTIONAL_RESULT_LIMIT_KIND, departure_trigger_limit_event, supported_optional_result_limit,
     supported_trigger_limit_subscriptions)
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..dungeon_progress import DUNGEON_VENTURE_FIELD
 from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, append_residual
 
@@ -18,6 +19,10 @@ _RESOLUTION_LIMIT = re.compile(r"(?P<body>.+) Do this only once each turn\.", re
 _SACRIFICE_GROUP = re.compile(
     r"(?P<head>(?:When|Whenever) you sacrifice) one or more (?P<other>other )?"
     r"(?P<subject>[^,]+?)(?P<turn> during your turn)?, (?P<result>.+)",
+    re.IGNORECASE,
+)
+_CREATURE_CARD_GRAVEYARD_GROUP = re.compile(
+    r"Whenever one or more creature cards are put into your graveyard from anywhere, (?P<result>.+)",
     re.IGNORECASE,
 )
 
@@ -32,6 +37,7 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
     private_residuals = []
     material = match["body"]
     group = _SACRIFICE_GROUP.fullmatch(material) if resolution_match is None else None
+    graveyard_group = _CREATURE_CARD_GRAVEYARD_GROUP.fullmatch(material) if resolution_match is None else None
     if group is not None:
         plural = group["subject"].casefold()
         if not plural.endswith("s"):
@@ -39,6 +45,8 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
         subject = plural.removesuffix("s")
         article = "another" if group["other"] else "a"
         material = f"{group['head']} {article} {subject}{group['turn'] or ''}, {group['result']}"
+    if graveyard_group is not None:
+        material = f"Whenever a creature card is put into your graveyard from anywhere, {graveyard_group['result']}"
     inner_arguments.update(line=match["body"], material_line=material, residuals=private_residuals)
     node = compile_inner(**inner_arguments)
     if (node is None or not node.exact or node.kind != "triggered_ability"
@@ -54,6 +62,12 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
             effect.get("op") == "grant_declaration_restriction_until_end_of_turn"
             or effect.get("op") == "damage_each_opponent" and type(effect.get("amount")) is int
         ):
+            return None
+    if graveyard_group is not None:
+        # The first eligible arrival consumes the turn's trigger use. The fixed
+        # result does not depend on which card or how many cards moved.
+        if (node.event != "card.enter_graveyard" or node.target_schema is not None or len(node.effects) != 1
+                or node.effects[0].get("op") != "choose_option" or DUNGEON_VENTURE_FIELD not in node.effects[0]):
             return None
     if resolution_match is not None:
         if not (supported_trigger_limit_subscriptions(node.event, node.event_condition)

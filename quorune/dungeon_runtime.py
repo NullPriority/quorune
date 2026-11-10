@@ -7,7 +7,8 @@ from itertools import chain
 
 from .dungeon_catalog import DUNGEON_CATALOG, VentureMode
 from .dungeon_progress import (
-    DUNGEON_ROOM_EVENT, DUNGEON_VENTURE_FIELD, DungeonJourney, DungeonRoomRef, DungeonVisit, VentureProgressIntent,
+    DUNGEON_COMPLETED_EVENT, DUNGEON_ROOM_EVENT, DUNGEON_VENTURE_FIELD,
+    DungeonJourney, DungeonRoomRef, DungeonVisit, VentureProgressIntent,
     accept_venture, complete_finished_dungeon, prepare_venture, venture_instruction,
 )
 from .errors import GameRuleError, StateInvariantError
@@ -23,7 +24,6 @@ from .trigger_processing import enqueue_trigger_batch
 from .zone_transitions import ZoneTransitionOwner
 
 
-DUNGEON_COMPLETED_EVENT = "dungeon.completed"
 _ORIGINAL_ROOM_TRIGGER = "original_dungeon_room_trigger"
 
 

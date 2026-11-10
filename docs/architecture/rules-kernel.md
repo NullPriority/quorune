@@ -667,6 +667,13 @@ execution owner retires completed visits with the other prepared state changes
 and publishes the resulting completion events after the moves. The player
 projection includes the public journey after the first venture.
 
+Completion triggers observe the completing player through their current
+battlefield controller or graveyard owner. Targeted returns choose a creature
+card during trigger placement, and self-returns keep the source's original
+graveyard incarnation. A once-per-turn Venture trigger on a group of creature
+cards reaching its controller's graveyard uses the first eligible committed
+arrival and consumes its use before going on the stack.
+
 `initiative_runtime.py` owns the public designation and materializes its
 three inherent triggered abilities. Taking the initiative again still queues
 a Venture trigger. Combat-damage occurrences group by the damaging creatures'

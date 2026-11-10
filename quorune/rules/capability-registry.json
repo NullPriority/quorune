@@ -73518,7 +73518,8 @@
         ],
         "outputs": [
           "one card.enter_graveyard event after the transition",
-          "existing APNAP placement and independently closed result path"
+          "existing APNAP placement and independently closed result path",
+          "bounded once-per-turn fixed Venture result on a qualifying group"
         ],
         "summary": "After-transition graveyard-entry facts for physical nontoken cards from any non-graveyard origin and closed public observer card type/color and graveyard-owner subscriptions."
       },
@@ -73533,7 +73534,8 @@
       "implementation_components": [
         "quorune.zone_trigger_events.normalized_zone_trigger_events",
         "quorune.compiler.fixed_public_event_trigger_bindings._anywhere_graveyard_spec",
-        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence"
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.compiler.trigger_limit_nodes.limited_trigger_node"
       ],
       "implementation_mutation_rationale": "Parser omission prevents exact admission; destination-fact diagnostics distinguish after-event identity, types and colors from departure LKI, while simultaneous native deaths distinguish surviving observers from departed observers.",
       "implementation_mutation_status": "killed",
@@ -73541,13 +73543,15 @@
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
-        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers"
+        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "multiplayer_tests": [
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
-        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers"
+        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "negative_tests": [
         "test_anywhere_graveyard_event_reads_destination_facts_and_observers",
@@ -73555,7 +73559,8 @@
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
-        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers"
+        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+        "test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
       ],
       "official_rules": [
         "400.7",
@@ -73571,7 +73576,8 @@
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
-        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers"
+        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "privacy_tests": [
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
@@ -73583,7 +73589,8 @@
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
-        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers"
+        "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "required_evidence": [
         "positive",
@@ -73599,7 +73606,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -80756,16 +80763,19 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_counter_events_draw_once_and_replay",
-        "test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract"
+        "test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "multiplayer_tests": [
-        "test_actual_counter_events_draw_once_and_replay"
+        "test_actual_counter_events_draw_once_and_replay",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "negative_tests": [
         "test_unsupported_action_limits_and_departures_remain_residual",
         "test_codec_rejects_malformed_limit_and_preserves_old_shape",
         "test_departure_shape_and_forged_trust_binding_fail_closed",
-        "test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract"
+        "test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract",
+        "test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
       ],
       "official_rules": [
         "400.7",
@@ -80776,13 +80786,15 @@
       ],
       "positive_tests": [
         "test_closed_limit_preserves_span_and_dependency",
-        "test_actual_counter_events_draw_once_and_replay"
+        "test_actual_counter_events_draw_once_and_replay",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "privacy_tests": [
         "test_actual_counter_events_draw_once_and_replay"
       ],
       "replay_tests": [
-        "test_actual_counter_events_draw_once_and_replay"
+        "test_actual_counter_events_draw_once_and_replay",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "required_evidence": [
         "positive",
@@ -80798,7 +80810,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 3
+      "version": 4
     },
     {
       "applicability": {
@@ -82227,9 +82239,10 @@
           "native room choice",
           "command-zone dungeon incarnation",
           "APNAP room ability",
-          "state-based completion and named completion history"
+          "state-based completion and named completion history",
+          "one player-relative completion occurrence after dungeon removal"
         ],
-        "summary": "Advance the resolving controller along the current dungeon graph, enter the authorized dungeon pool, trigger the exact room program and record each completed dungeon."
+        "summary": "Advance the resolving controller along the current dungeon graph, enter the authorized dungeon pool, trigger the exact room program and record each completed dungeon. Source-relative battlefield or graveyard observers can use the committed completion event."
       },
       "blockers": [],
       "dependencies": [
@@ -82276,21 +82289,27 @@
         "quorune.semantic_choices.venture.prepare_venture_choice",
         "quorune.dungeon_runtime.commit_venture_progress",
         "quorune.dungeon_runtime.prepare_dungeon_completions",
-        "quorune.trigger_processing.enqueue_trigger_batch"
+        "quorune.trigger_processing.enqueue_trigger_batch",
+        "quorune.rules.event_subscriptions.dungeon_completion_dependencies"
       ],
       "implementation_mutation_rationale": "Removing the whole-body producer leaves the fixed venture sentence unresolved.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
-        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending"
+        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "multiplayer_tests": [
         "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
-        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending"
+        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "negative_tests": [
         "test_venture_compiler_binds_only_a_closed_entry_mode",
-        "test_original_venture_announces_targets_and_completes_after_the_last_trigger"
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
+        "test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
       ],
       "official_rules": [
         "309.2c",
@@ -82308,14 +82327,18 @@
       "positive_tests": [
         "test_venture_compiler_binds_only_a_closed_entry_mode",
         "test_dungeon_room_pack_preserves_the_original_source_spans",
-        "test_original_venture_announces_targets_and_completes_after_the_last_trigger"
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "privacy_tests": [
         "test_original_venture_announces_targets_and_completes_after_the_last_trigger"
       ],
       "replay_tests": [
         "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
-        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending"
+        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf",
+        "test_original_sefris_consumes_one_graveyard_trigger_use_per_actual_turn"
       ],
       "required_evidence": [
         "positive",
@@ -82331,7 +82354,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -88422,7 +88445,7 @@
     {
       "applicability": {
         "exclusions": [
-          "new event heads",
+          "unrepresented event heads",
           "Aura enchanted-object departure exception",
           "battlefield return",
           "another card",
@@ -88463,20 +88486,23 @@
         "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
         "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
         "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
-        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
       ],
       "multiplayer_tests": [
         "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
         "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
         "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
-        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
       ],
       "negative_tests": [
         "test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract",
         "test_verified_return_authority_withdrawal_keeps_ordinary_upkeep_draw",
         "test_marker_codec_is_closed_and_descriptor_owns_authority",
         "test_typed_existing_move_skips_a_new_incarnation",
-        "test_optional_mana_prefix_is_preserved_and_unknown_prefix_cannot_be_discarded"
+        "test_optional_mana_prefix_is_preserved_and_unknown_prefix_cannot_be_discarded",
+        "test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
       ],
       "official_rules": [
         "108.4a",
@@ -88488,7 +88514,8 @@
       ],
       "positive_tests": [
         "test_existing_event_heads_keep_owner_relative_predicates_and_graveyard_zone",
-        "test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust"
+        "test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
       ],
       "privacy_tests": [
         "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
@@ -88497,7 +88524,8 @@
         "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
         "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
         "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
-        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
       ],
       "required_evidence": [
         "positive",
@@ -88513,7 +88541,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -90156,7 +90184,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 800,
+  "registry_version": 801,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -7,6 +7,9 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..dungeon_progress import (
+    DUNGEON_COMPLETED_EVENT, DUNGEON_COMPLETION_TRIGGER_VARIANT, DUNGEON_VENTURE_CAPABILITY,
+)
 from ..life_change import FIRST_LIFE_GAIN_CAPABILITY, FIRST_LIFE_GAIN_EVENT
 from ..class_levels import CLASS_MECHANIC_ID
 from ..rules.source_references import SourceReferenceSpec
@@ -1083,6 +1086,14 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
 
 
 def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    dungeon = re.fullmatch(r"Whenever you complete a dungeon, (?P<body>.+)", material_line, re.IGNORECASE)
+    if dungeon is not None:
+        return _spec(
+            DUNGEON_COMPLETED_EVENT, DUNGEON_COMPLETION_TRIGGER_VARIANT, dungeon["body"],
+            "fixed-counter-dungeon-completion-trigger-v1", "cr-603-handling-triggered-abilities",
+            condition={"field": "player", "op": "eq", "value": "$source.controller"},
+            capabilities=(DUNGEON_VENTURE_CAPABILITY,),
+        )
     cycle = _PUBLIC_CYCLE_TRIGGER.fullmatch(material_line)
     if cycle is not None:
         source_self = cycle.group("source") is not None

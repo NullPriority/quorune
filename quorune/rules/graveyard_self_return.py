@@ -1,4 +1,5 @@
 """Closed triggered source-return instruction authority and validation."""
+from ..dungeon_progress import DUNGEON_COMPLETED_EVENT
 from ..life_change import FIRST_LIFE_GAIN_EVENT
 
 
@@ -7,6 +8,7 @@ GRAVEYARD_SELF_RETURN_VERSION='triggered_graveyard_hand_version'
 GRAVEYARD_SELF_RETURN_EVENTS = frozenset({
     "step.begin", "spell.cast", "land.enter", "permanent.enter", "creature.enter",
     "artifact.enter", "enchantment.enter", "permanent.sacrificed", FIRST_LIFE_GAIN_EVENT, "card.second_draw",
+    DUNGEON_COMPLETED_EVENT,
 })
 
 

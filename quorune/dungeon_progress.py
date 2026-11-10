@@ -13,6 +13,8 @@ DUNGEON_VENTURE_FIELD = "venture"
 DUNGEON_VENTURE_CAPABILITY = "variant.dungeon.venture"
 DUNGEON_VENTURE_MECHANIC = "venture-into-the-dungeon"
 DUNGEON_ROOM_EVENT = "dungeon.room"
+DUNGEON_COMPLETED_EVENT = "dungeon.completed"
+DUNGEON_COMPLETION_TRIGGER_VARIANT = "controller_completed_dungeon"
 
 
 def _require_fields(value: Any, fields: set[str], label: str) -> None:
