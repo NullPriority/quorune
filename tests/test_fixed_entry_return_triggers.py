@@ -577,12 +577,13 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
                         candidate_count=available,
                     )
                     seed += 1
-                    selected_return = session.act(
-                        "pilot:A",
-                        {"action_id": "choose", "choice": "return"},
-                    )
-                    self.assertTrue(selected_return.ok, selected_return.summary)
                     if available == count:
+                        self.assertEqual("semantic.choice", session.engine.state.pending_decision.kind)
+                        selected_return = session.act(
+                            "pilot:A",
+                            {"action_id": "choose", "choice": "return"},
+                        )
+                        self.assertTrue(selected_return.ok, selected_return.summary)
                         returned = session.act(
                             "pilot:A",
                             {
@@ -596,13 +597,9 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
                             all(card.zone == "hand" for card in candidates)
                         )
                     else:
-                        self.assertNotEqual(
-                            "choice.apnap",
-                            getattr(
-                                session.engine.state.pending_decision,
-                                "kind",
-                                None,
-                            ),
+                        self.assertNotIn(
+                            getattr(session.engine.state.pending_decision, "kind", None),
+                            {"semantic.choice", "choice.apnap"},
                         )
                         self.assertEqual("graveyard", source.zone)
                         self.assertTrue(
@@ -713,11 +710,10 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
         )
         fallback_engine._stabilize()
         self.resolve_top(fallback_engine)
-        fallback_choice = fallback_session.act(
-            "pilot:A",
-            {"action_id": "choose", "choice": "return"},
+        self.assertNotIn(
+            getattr(fallback_engine.state.pending_decision, "kind", None),
+            {"semantic.choice", "choice.apnap"},
         )
-        self.assertTrue(fallback_choice.ok, fallback_choice.summary)
         self.assertEqual("graveyard", fallback.zone)
 
         removed_session = self.session(121073)
@@ -916,12 +912,18 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
                     )
 
                 self.resolve_top(engine)
-                result = session.act(
-                    "pilot:A",
-                    {"action_id": "choose", "choice": "sacrifice"},
-                )
-
-                self.assertTrue(result.ok, result.summary)
+                if reenter:
+                    self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+                    result = session.act(
+                        "pilot:A",
+                        {"action_id": "choose", "choice": "sacrifice"},
+                    )
+                    self.assertTrue(result.ok, result.summary)
+                else:
+                    self.assertNotIn(
+                        getattr(engine.state.pending_decision, "kind", None),
+                        {"semantic.choice", "choice.apnap"},
+                    )
                 self.assertEqual(
                     "battlefield" if reenter else "graveyard",
                     source.zone,
