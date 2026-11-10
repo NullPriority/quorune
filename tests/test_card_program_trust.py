@@ -452,6 +452,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.draw.result_quantity",
                 "replacement.fixed_additional_token",
                 "replacement.token_quantity",
+                "replacement.life.gain.addition",
                 "replacement.life.gain.multiplier",
                 "life.gain.prohibition",
                 "damage.prevention.prohibition",

@@ -17,6 +17,11 @@ _DOUBLE_CONTROLLER_LIFE_GAIN = re.compile(
     re.IGNORECASE,
 )
 
+_PLUS_CONTROLLER_LIFE_GAIN = re.compile(
+    rf"^If you would gain life, you gain that much life plus (?P<amount>{FIXED_COUNT_PATTERN}) instead\.?$",
+    re.IGNORECASE,
+)
+
 
 def static_life_gain_prohibition_handler(text):
     from ..life_gain_permission import (FixedLifeGainProhibitionSpec,LIFE_GAIN_PROHIBITION_CAPABILITY,
@@ -35,6 +40,22 @@ def static_life_handler(
 ) -> tuple[str, Mapping[str, Any], str] | None:
     """Lower one closed static life-change replacement wording family."""
 
+    addition = _PLUS_CONTROLLER_LIFE_GAIN.fullmatch(text)
+    if addition is not None:
+        amount = fixed_number(addition["amount"])
+        if amount <= 0:
+            return None
+        return (
+            "life-gain-fixed-addition-controller-static-v1",
+            {
+                "handler_id": "replacement.life.gain.addition.v1",
+                "schema_version": 1,
+                "event": "life.change",
+                "condition": {"affected_player_relation": "source_controller"},
+                "modification": {"addition": amount},
+            },
+            "life.gain.replacement.static_addition",
+        )
     if _DOUBLE_CONTROLLER_LIFE_GAIN.fullmatch(text) is None:
         return None
     return (

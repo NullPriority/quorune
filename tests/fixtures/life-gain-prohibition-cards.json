@@ -1900,6 +1900,55 @@
       "released_at": "2026-06-26",
       "toughness": null,
       "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "f297648b-0dda-4c58-a3eb-fdabdfb42177",
+      "name": "Heron of Hope",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Bird",
+      "oracle_text": "Flying\nIf you would gain life, you gain that much life plus 1 instead.\n{1}{W}: This creature gains lifelink until end of turn.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -2574,6 +2623,30 @@
       "published_at": "2019-10-04",
       "source": "wotc",
       "comment": "Deathless Knight must be in your graveyard immediately after you gain life for its last ability to trigger. If you gain life due to damage from a source with lifelink, and that damage is dealt at the same time that lethal damage is dealt to Deathless Knight, it won't be in your graveyard until state-based actions are performed a moment later, and so the ability can't trigger."
+    },
+    {
+      "oracle_id": "f297648b-0dda-4c58-a3eb-fdabdfb42177",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, Heron of Hope's second ability will apply to those two events separately. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, and/or planeswalkers at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will apply only once."
+    },
+    {
+      "oracle_id": "f297648b-0dda-4c58-a3eb-fdabdfb42177",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you control two Heron of Hopes and you would gain life, you gain that much life plus 2. A third Heron of Hope has you gain that much life plus 3, and so on."
+    },
+    {
+      "oracle_id": "f297648b-0dda-4c58-a3eb-fdabdfb42177",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won't cause Heron of Hope's second ability to apply, even though it will cause your team's life total to increase."
+    },
+    {
+      "oracle_id": "f297648b-0dda-4c58-a3eb-fdabdfb42177",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "The middle ability of Heron of Hope applies just once to each life-gaining event, whether it's 1 life from Impassioned Orator or 4 life from Dawning Angel. If you gain an amount of life \"for each\" of something or \"equal to the number\" of something, that life is gained as one event and the ability of Heron of Hope applies only once."
     }
   ]
 }

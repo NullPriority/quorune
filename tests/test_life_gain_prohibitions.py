@@ -30,6 +30,45 @@ from quorune.rules.evidence_storage import read_evidence_document
 
 
 class LifeGainPermissionKernelTests(DamageReplacementPipelineBase):
+    def test_fixed_life_gain_addition_only_changes_positive_controller_gains(self):
+        from quorune.compiler.life_templates import static_life_handler
+        from quorune.replacement import ReplaceableEvent, resolve_replacements
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.semantic_runtime.life_replacements import LifeGainAdditionHandler, LifeReplacementSourceContext
+
+        text = 'If you would gain life, you gain that much life plus 1 instead.'
+        _, descriptor, capability = static_life_handler(text)
+        self.assertEqual('life.gain.replacement.static_addition', capability)
+        context = LifeReplacementSourceContext('fixture:gain-source', 'A')
+        handler = LifeGainAdditionHandler()
+        effect = handler.replacement_effect(descriptor, context)
+        for seat, direction, amount, expected in (('A', 'gain', 3, 4), ('B', 'gain', 3, 3),
+                                                   ('A', 'gain', 0, 0), ('A', 'loss', 3, 3)):
+            event = ReplaceableEvent(event_id=f'life:{seat}:{direction}:{amount}', kind='life.change',
+                                     affected_player=seat, payload={'direction': direction, 'amount': amount})
+            selections = (effect.effect_id,) if seat == 'A' and direction == 'gain' and amount > 0 else ()
+            resolved = resolve_replacements(event, (effect,), selections=selections)
+            self.assertEqual(expected, resolved.payload['amount'])
+        for invalid in ({**descriptor, 'schema_version': True},
+                        {**descriptor, 'condition': {'affected_player_relation': 'opponent'}},
+                        *({**descriptor, 'modification': {'addition': amount}} for amount in (0, -1, True))):
+            with self.assertRaises(SemanticNodeError):
+                handler.replacement_effect(invalid, context)
+        self.assertIsNone(static_life_handler(text.replace('plus 1', 'plus X')))
+        self.assertIsNone(static_life_handler(text + ' Draw a card.'))
+
+    def test_fixed_life_gain_addition_amount_mutation_is_detected(self):
+        from quorune.semantic_runtime.life_replacements import LifeGainAdditionHandler
+
+        original = LifeGainAdditionHandler.replacement_effect
+
+        def different_amount(handler, descriptor, context):
+            return original(handler, {**descriptor, 'modification': {'addition': 2}}, context)
+
+        with patch.object(LifeGainAdditionHandler, 'replacement_effect', different_amount):
+            with self.assertRaises(AssertionError):
+                self.test_fixed_life_gain_addition_only_changes_positive_controller_gains()
+
     def test_closed_global_and_opponent_scopes_use_current_controller_and_immutable_snapshots(self):
         opponents = FixedLifeGainProhibitionSpec('opponent')
         self.assertEqual(opponents,FixedLifeGainProhibitionSpec.from_dict(opponents.to_dict()))
@@ -223,6 +262,60 @@ class LifeGainProhibitionRuntimeTests(unittest.TestCase):
         for other in 'ABCD':
             if other != seat:self.assertNotIn(ref,json.dumps(s.packet('pilot:'+other,full=True)))
         self.assertIn(ref,json.dumps(s.packet('pilot:'+seat,full=True)))
+
+    def test_heron_and_boon_offer_both_replacement_orders_and_replay_privately(self):
+        for index, (label, expected) in enumerate((('add to life gained', 8), ('multiply life gained', 7))):
+            with self.subTest(first=label):
+                session = self.session(119710907 + index)
+                heron = self.add(session.engine, 'Heron of Hope', zone='hand')
+                self.add(session.engine, 'Boon Reflection')
+                gain = self.add(session.engine, 'Revitalize', zone='hand')
+                private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand')
+                self.assertTrue(self.binding(session, heron)['strict_capability_ready'])
+                self.prepare(session, mana={'C': 4, 'W': 2})
+                self.checkpoint(session)
+                self.cast(session, heron, payment={'C': 3, 'W': 1})
+                self.assertIsNone(self.settle(session))
+                self.cast(session, gain, payment={'C': 1, 'W': 1})
+                decision = self.resolve(session)
+                self.assertEqual('replacement.order', decision.kind)
+                self.assertEqual(['pilot:A'], session.pending_principals())
+                self.assertEqual(40, session.state.players['A'].life)
+                options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+                self.assertEqual(2, len(options))
+                option = next(row for row in options if label in row['label'])
+                command = {'action_id': 'choose', 'replacement': option['id']}
+                self.reject(session, command, seat='B')
+                self.assertNotIn(option['id'], json.dumps(session.packet('pilot:B', full=True)))
+                session = self.replay(session, load=True)
+                result = session.act('pilot:A', command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.settle(session))
+                self.assertEqual([40 + expected, 40, 40, 40], [session.state.players[seat].life for seat in 'ABCD'])
+                self.private_replay(session, private)
+
+    def test_life_gain_addition_blocks_when_replacement_order_authority_is_withdrawn(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        path = ROOT / 'quorune/rules/capability-registry.json'
+        raw = json.loads(path.read_text(encoding='utf-8'))
+        owner = 'damage.result.replacement_order'
+        next(row for row in raw['capabilities'] if row['id'] == owner).update(
+            status='blocked', blockers=['withdrawn life replacement order'], dependency_fail_closed_status='not_run',
+        )
+        registry = CapabilityRegistry(raw)
+        declarations = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json')
+        index = build_index(registry_value=raw, declaration_source=declarations,
+                            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        card = self.db.lookup('Heron of Hope')
+        self.assertEqual('exact', compile_oracle_card(card, capability_registry=self.registry).status)
+        ir = compile_oracle_card(card, capability_registry=registry)
+        self.assertNotEqual('exact', ir.status)
+        self.assertTrue(any(owner in blocker for residual in ir.material_residuals for blocker in residual.blockers))
 
     def test_originals_normally_bind_complete_sources_and_current_permission_scopes(self):
         from quorune.card_programs.binding import bind_semantic_program_runtime

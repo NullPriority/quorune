@@ -51444,6 +51444,84 @@
     {
       "applicability": {
         "exclusions": [
+          "zero, prohibited, or opponent life gain",
+          "life loss",
+          "dynamic or conditional added amounts"
+        ],
+        "inputs": [
+          "positive life-gain event for the active source controller",
+          "trusted battlefield runtime component",
+          "canonical replacement-order continuation"
+        ],
+        "outputs": [
+          "modified life-gain amount",
+          "private ordering choice when replacements compete",
+          "validated life-state plan and replay journal"
+        ],
+        "summary": "Add one fixed positive amount to each eligible life-gain event for the source controller, using the existing life-change and replacement-order owners."
+      },
+      "blockers": [],
+      "dependencies": [
+        "damage.result.replacement_order"
+      ],
+      "dependency_fail_closed_rationale": "",
+      "dependency_fail_closed_status": "passed",
+      "id": "life.gain.replacement.static_addition",
+      "implementation_components": [
+        "quorune.semantic_runtime.life_replacements.LifeGainAdditionHandler",
+        "quorune.life_change.prepare_life_change_batch",
+        "quorune.life_change.commit_life_change_batch",
+        "quorune.compiler.life_templates.static_life_handler"
+      ],
+      "implementation_mutation_rationale": "The executable replacement witness rejects a changed amount in the compiler-owned fixed addition handler.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_heron_and_boon_offer_both_replacement_orders_and_replay_privately"
+      ],
+      "multiplayer_tests": [
+        "test_heron_and_boon_offer_both_replacement_orders_and_replay_privately"
+      ],
+      "negative_tests": [
+        "test_fixed_life_gain_addition_only_changes_positive_controller_gains",
+        "test_life_gain_addition_blocks_when_replacement_order_authority_is_withdrawn"
+      ],
+      "official_rules": [
+        "119.10",
+        "120.4c",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "positive_tests": [
+        "test_fixed_life_gain_addition_only_changes_positive_controller_gains",
+        "test_heron_and_boon_offer_both_replacement_orders_and_replay_privately"
+      ],
+      "privacy_tests": [
+        "test_heron_and_boon_offer_both_replacement_orders_and_replay_privately"
+      ],
+      "replay_tests": [
+        "test_heron_and_boon_offer_both_replacement_orders_and_replay_privately"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "dynamic multipliers",
           "life-gain prevention",
           "life-total exchange and setting"
@@ -88607,7 +88685,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 780,
+  "registry_version": 781,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
