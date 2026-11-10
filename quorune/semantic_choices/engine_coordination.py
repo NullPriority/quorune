@@ -469,9 +469,14 @@ class SemanticChoiceCoordinationMixin:
         stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
         from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
+        from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
         from ..fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
         from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_OPERATION
         from ..rules.graveyard_copy_cast_model import GRAVEYARD_COPY_OFFER
+
+        if CAPTURED_DRAW_CAST_FIELD in effect and "_captured" in effect:
+            from ..drawing.captured_hand_casting import captured_draw_cast_options
+            return captured_draw_cast_options(self, item=stack_item, actor=actor, effect=effect)
 
         if effect.get("op") == GRAVEYARD_COPY_OFFER:
             from .graveyard_copy_cast import graveyard_copy_cast_options
@@ -710,7 +715,9 @@ class SemanticChoiceCoordinationMixin:
             effect = bind_connive_instruction(self, item, effect)
             effect = bind_endure_instruction(self, item, effect)
             from ..drawing.miracle_casting import bind_miracle_cast_instruction
+            from ..drawing.captured_hand_casting import bind_captured_draw_offer
             effect = bind_miracle_cast_instruction(item, effect)
+            effect = bind_captured_draw_offer(item, effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         handler = registry.handler_for_operation(str(effect.get("op") or ""))

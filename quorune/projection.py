@@ -203,15 +203,16 @@ class StateProjector:
             or seat in card.revealed_to
             for seat in seats
         ) or (card.zone == 'hand' and (
-            self._hand_is_public(card.owner) or self._miracle_card_is_revealed(card)
+            self._hand_is_public(card.owner) or self._scoped_hand_card_is_revealed(card)
         ))
 
     def _hand_is_public(self, owner: str) -> bool:
         return self.hand_visibility_resolver is not None and self.hand_visibility_resolver(owner)
 
-    def _miracle_card_is_revealed(self, card: CardInstance) -> bool:
+    def _scoped_hand_card_is_revealed(self, card: CardInstance) -> bool:
+        from .drawing.captured_hand import captured_draw_is_public
         from .drawing.miracle_triggers import miracle_reveal_active
-        return miracle_reveal_active(self.state, card)
+        return miracle_reveal_active(self.state, card) or captured_draw_is_public(self.state, card)
 
     def _effective(self, card: CardInstance) -> dict[str, Any]:
         try:
@@ -621,7 +622,7 @@ class StateProjector:
             if known:
                 return {'known_hand': [self._obj(card, principal) for card in known]}
         else:
-            revealed = [oid for oid in identities if self._miracle_card_is_revealed(self.state.cards[oid])]
+            revealed = [oid for oid in identities if self._scoped_hand_card_is_revealed(self.state.cards[oid])]
             if revealed:
                 return {'known_hand': self._zone(revealed, principal, public_unordered=True)}
         return {}

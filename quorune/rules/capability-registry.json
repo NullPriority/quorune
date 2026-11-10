@@ -83629,6 +83629,93 @@
     {
       "applicability": {
         "exclusions": [
+          "replacement-result cards",
+          "other hand cards",
+          "later casting windows",
+          "land plays",
+          "variable draw counts"
+        ],
+        "inputs": [
+          "fixed controller draw count of two through four",
+          "same resolving stack object",
+          "canonical original draw results"
+        ],
+        "outputs": [
+          "public reveal of surviving original hand incarnations",
+          "one optional native cast with applicable additional costs",
+          "ordinary parent completion and trigger ordering"
+        ],
+        "summary": "Reveal original fixed draw results and optionally cast one of those current hand incarnations during the same resolution with its mana cost waived."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.draw.library_to_hand"
+      ],
+      "dependency_fail_closed_rationale": "Independent payload binding requires this capability even when a supplied program omits its declaration.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.draw.revealed_result_cast",
+      "implementation_components": [
+        "quorune.compiler.draw_templates.fixed_captured_draw_cast_effect_template",
+        "quorune.drawing.transaction.commit_prepared_draw_result",
+        "quorune.drawing.captured_hand_casting.capture_drawn_hand_card",
+        "quorune.drawing.captured_hand_casting.captured_draw_cast_options",
+        "quorune.drawing.captured_hand_casting.execute_captured_draw_cast",
+        "quorune.rules.resolving_cast_payments.commit_resolving_cast"
+      ],
+      "implementation_mutation_rationale": "Removing the exact compiler producer leaves the printed draw and free-cast instruction unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_mad_wizard_casts_an_original_draw_after_a_private_dredge_choice",
+        "test_mad_wizard_keeps_generated_replacement_draws_private"
+      ],
+      "multiplayer_tests": [
+        "test_mad_wizard_casts_an_original_draw_after_a_private_dredge_choice"
+      ],
+      "negative_tests": [
+        "test_mad_wizard_room_body_uses_closed_draw_cast_contract",
+        "test_mad_wizard_keeps_generated_replacement_draws_private",
+        "test_mad_wizard_offer_requires_independent_runtime_authority"
+      ],
+      "official_rules": [
+        "107.3b",
+        "118.9d",
+        "121.2",
+        "121.6c",
+        "601.2",
+        "608.2g",
+        "701.20a"
+      ],
+      "positive_tests": [
+        "test_mad_wizard_room_body_uses_closed_draw_cast_contract",
+        "test_mad_wizard_casts_an_original_draw_after_a_private_dredge_choice"
+      ],
+      "privacy_tests": [
+        "test_mad_wizard_casts_an_original_draw_after_a_private_dredge_choice",
+        "test_mad_wizard_keeps_generated_replacement_draws_private"
+      ],
+      "replay_tests": [
+        "test_mad_wizard_casts_an_original_draw_after_a_private_dredge_choice",
+        "test_mad_wizard_keeps_generated_replacement_draws_private"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "specifically-drawn-card actions other than public reveal followed by discard unless land",
           "hidden-zone continuous type changes",
           "conditional characteristics",
@@ -89696,7 +89783,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 795,
+  "registry_version": 796,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

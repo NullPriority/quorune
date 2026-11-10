@@ -1250,6 +1250,7 @@ def _decode_semantic_intent_continuation(
             "incubate",
             "discover_cleanup",
             "discover_cast",
+            "resolving_captured_draw_cast",
             "targeted_graveyard_cast",
             "exile_graveyard_copies",
             "life_change",

@@ -458,6 +458,7 @@
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",
+    "tests/fixtures/captured-draw-cast-cards.json",
     "tests/fixtures/cast-creature-targets.json",
     "tests/fixtures/cast-spell-mana-value-cards.json",
     "tests/fixtures/casting-activation-metadata-cards.json",

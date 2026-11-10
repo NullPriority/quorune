@@ -2,6 +2,7 @@ from __future__ import annotations
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
 from ..discover_model import DiscoverCastIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
+from ..drawing.captured_hand import ResolveCapturedDrawCastIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
 
@@ -285,6 +286,7 @@ def continue_semantic_completion(
                     *CHAMPION_INTENT_TYPES,
                     DiscoverCastIntent,
                     ResolvingExileLandPlayIntent,
+                    ResolveCapturedDrawCastIntent,
                     GraveyardCastIntent,
                     PlaceCountersOnSetIntent,
                     MoveCountersIntent,
@@ -317,7 +319,7 @@ def continue_semantic_completion(
             return False
         expected = None
         replacement_selections = ()
-    if item not in host.state.stack:
+    if not any(candidate.ref == continuation.stack_ref for candidate in host.state.stack):
         return True
     remaining = [
         *(thaw_value(value) for value in completion.prepend_effects),

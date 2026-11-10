@@ -35,7 +35,7 @@ def commit_resolving_exile_cast(host, *, actor, response, payment_id, replacemen
 
 def commit_resolving_cast(host, *, actor, response, payment_id, origin, replacement_selections=(),
                          force_without_mana_cost=True):
-    if origin not in ("exile", "graveyard") or origin == "graveyard" and not force_without_mana_cost:
+    if origin not in ("exile", "graveyard", "hand") or origin != "exile" and not force_without_mana_cost:
         raise GameRuleError("Resolving cast origin and price are unsupported")
     if type(payment_id) is not str or not payment_id:
         raise GameRuleError('A resolving cast payment requires its server identity')

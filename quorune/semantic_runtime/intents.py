@@ -10,6 +10,7 @@ from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
+from ..drawing.captured_hand import CaptureDrawnHandCard, RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
@@ -80,7 +81,7 @@ class DrawCardsIntent:
         if any(
             not isinstance(
                 action,
-                (RevealDrawnCard, DiscardDrawnCardUnlessType),
+                (RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard),
             )
             for action in actions
         ):
@@ -1595,6 +1596,8 @@ SemanticIntent: TypeAlias = (
     | MiracleCastChoiceIntent
     | DiscoverCastIntent
     | ResolvingExileLandPlayIntent
+    | RevealCapturedDrawsIntent
+    | ResolveCapturedDrawCastIntent
     | GraveyardCastIntent
     | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent

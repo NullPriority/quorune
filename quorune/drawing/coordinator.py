@@ -18,6 +18,7 @@ from ..semantic_runtime.draw_replacements import (
     current_dredge_operation,
 )
 from ..semantic_runtime.draw_restrictions import current_draw_permission
+from .captured_hand import CaptureDrawnHandCard
 from .continuation import (
     DrawDecisionContinuation,
     DrawResume,
@@ -142,6 +143,9 @@ def begin_draw_sequence(
         reason=reason,
         private=private,
     )
+    if prepared_count != count:
+        # A historical instruction replacement creates its own draws.
+        post_draw_actions = tuple(action for action in post_draw_actions if not isinstance(action, CaptureDrawnHandCard))
     _continue_draw_sequence(
         host,
         seat,

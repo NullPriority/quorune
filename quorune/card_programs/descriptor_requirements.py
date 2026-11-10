@@ -21,8 +21,9 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     if impulse := declared_impulse_access_dependencies(value) or next_end_step_impulse_dependencies(value):
         return impulse
     from ..rules.distinct_sacrifices import distinct_sacrifice_payload_dependencies
-    if distinct_sacrifices := distinct_sacrifice_payload_dependencies(value):
-        return distinct_sacrifices
+    from ..drawing.captured_hand import captured_draw_cast_payload_dependencies
+    if owned_choice := distinct_sacrifice_payload_dependencies(value) or captured_draw_cast_payload_dependencies(value):
+        return owned_choice
     if CHOSEN_IMPULSE_GRANT_FIELD in value:
         raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
     if TEMPORARY_CAST_TIMING_FIELD in value:

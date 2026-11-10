@@ -3,6 +3,7 @@ from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..incubate_model import IncubateIntent,decode_incubate_intent_identity
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent,decode_discover_cast_identity,decode_discover_cleanup_identity
 from ..fixed_top_exile import ResolvingExileLandPlayIntent, validate_resolving_land_play_identity
+from ..drawing.captured_hand import ResolveCapturedDrawCastIntent, validate_captured_draw_cast_identity
 from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyard_cast_identity
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
@@ -363,14 +364,21 @@ def _create_token_intent_identity(
     return identity
 
 
+def _resolving_cast_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] | None:
+    if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
+    if isinstance(intent, ResolvingExileLandPlayIntent):return 'resolving_exile_land_play', intent.identity()
+    if isinstance(intent, ResolveCapturedDrawCastIntent):return 'resolving_captured_draw_cast', intent.identity()
+    if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
+    return None
+
+
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
 
     if isinstance(intent,IncubateIntent):return 'incubate',intent.identity()
     if isinstance(intent,DiscoverCleanupIntent):return 'discover_cleanup',intent.identity()
-    if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
-    if isinstance(intent, ResolvingExileLandPlayIntent):return 'resolving_exile_land_play', intent.identity()
-    if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
+    if cast_identity := _resolving_cast_intent_identity(intent):
+        return cast_identity
     if isinstance(intent,ExileGraveyardCopiesIntent):return 'exile_graveyard_copies',intent.identity()
     if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
     if isinstance(intent, DiscardWholeHandsResultIntent):return 'discard_hand_result', intent.identity()
@@ -790,6 +798,11 @@ def validate_semantic_intent_identity(
     if kind == 'resolving_exile_land_play':
         try:return validate_resolving_land_play_identity(value)
         except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'resolving_captured_draw_cast':
+        try:
+            return validate_captured_draw_cast_identity(value)
+        except (ValueError, TypeError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if kind=='discover_cast':
         try:return decode_discover_cast_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1253,6 +1266,7 @@ def with_replacement_selections(
 ) -> (
     DiscoverCastIntent
     | ResolvingExileLandPlayIntent
+    | ResolveCapturedDrawCastIntent
     | GraveyardCastIntent
     | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
@@ -1280,6 +1294,7 @@ def with_replacement_selections(
             *CHAMPION_INTENT_TYPES,
             DiscoverCastIntent,
             ResolvingExileLandPlayIntent,
+            ResolveCapturedDrawCastIntent,
             GraveyardCastIntent,
             ExileGraveyardCopiesIntent,
             DiscoverCleanupIntent,

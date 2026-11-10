@@ -61,6 +61,9 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     """Route independently owned special shapes before ordinary leaf composition."""
     from .controlled_return import CONTROLLED_RETURN_FIELD, controlled_return_node_capabilities
     from .distinct_sacrifices import DISTINCT_SACRIFICE_FIELD, distinct_sacrifice_node_capabilities
+    from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD, captured_draw_cast_node_capabilities
+    if len(effects) == 1 and CAPTURED_DRAW_CAST_FIELD in effects[0]:
+        return captured_draw_cast_node_capabilities(effects=effects, target_schema=target_schema)
     if len(effects) == 1 and DISTINCT_SACRIFICE_FIELD in effects[0]:
         return distinct_sacrifice_node_capabilities(effects=effects, target_schema=target_schema)
     if len(effects) == 1 and CONTROLLED_RETURN_FIELD in effects[0]:

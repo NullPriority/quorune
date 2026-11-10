@@ -6,6 +6,7 @@ from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
+from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
@@ -820,6 +821,12 @@ def _execute_tap_state_intent(
 
 
 def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent, RevealCapturedDrawsIntent):
+        from ..drawing.captured_hand_casting import commit_captured_draw_reveal
+        return intent.actor, commit_captured_draw_reveal(sink, intent)
+    if isinstance(intent, ResolveCapturedDrawCastIntent):
+        from ..drawing.captured_hand_casting import execute_captured_draw_cast
+        return intent.actor, execute_captured_draw_cast(sink, intent)
     if isinstance(intent, ResolvingExileLandPlayIntent):
         sink._play_land(intent.actor, {}, resolving=intent)
         return intent.actor, None
@@ -1026,7 +1033,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             results.append((intent.actor, result))
             continue
         if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
-                               GraveyardCastIntent,ExileGraveyardCopiesIntent,ResolvingExileLandPlayIntent)):
+                               GraveyardCastIntent,ExileGraveyardCopiesIntent,ResolvingExileLandPlayIntent,
+                               RevealCapturedDrawsIntent,ResolveCapturedDrawCastIntent)):
             results.append(_execute_resolving_cast_choice(sink,intent))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):

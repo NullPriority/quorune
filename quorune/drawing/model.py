@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Sequence
 
+from .captured_hand import CaptureDrawnHandCard
+
 from ..replacement import (
     ReplaceableEvent,
     ReplacementBatchChoice,
@@ -107,6 +109,7 @@ DrawnCardAction = (
     RevealDrawnCard
     | RevealDrawnCardBySource
     | DiscardDrawnCardUnlessType
+    | CaptureDrawnHandCard
 )
 
 
@@ -116,6 +119,13 @@ def drawn_card_action_from_dict(
     if not isinstance(value, Mapping):
         raise DrawError("Drawn-card actions must be objects")
     action = value.get("action")
+    if action == "capture_drawn_hand_card":
+        if set(value) != {"action", "stack_ref", "count"}:
+            raise DrawError("Drawn-card capture fields are invalid")
+        try:
+            return CaptureDrawnHandCard(value["stack_ref"], value["count"])
+        except ValueError as exc:
+            raise DrawError(str(exc)) from exc
     if action == "reveal":
         if set(value) != {"action", "public"}:
             raise DrawError("Drawn-card reveal fields are invalid")
@@ -151,17 +161,7 @@ def _drawn_card_actions(
     values: Sequence[DrawnCardAction], *, field: str
 ) -> tuple[DrawnCardAction, ...]:
     result = tuple(values)
-    if any(
-        not isinstance(
-            value,
-            (
-                RevealDrawnCard,
-                RevealDrawnCardBySource,
-                DiscardDrawnCardUnlessType,
-            ),
-        )
-        for value in result
-    ):
+    if any(not isinstance(value, DrawnCardAction) for value in result):
         raise DrawError(f"{field} must contain typed drawn-card actions")
     return result
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any, Callable, Mapping
 
+from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate, explicit_capabilities_gate
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -55,6 +56,19 @@ def trigger_ability_word_material_line(material_line: str) -> str:
         return material_line
     from .oracle_source_text import without_ability_word_label
     return without_ability_word_label(material_line) or material_line
+
+
+def fixed_captured_draw_cast_effect_template(text: str) -> DrawEffectTemplate | None:
+    match = re.fullmatch(
+        r"draw (?P<count>two|three|four) cards and reveal them\. "
+        r"you may cast one of them without paying its mana cost\.?",
+        text.strip(), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    effect = {"op": "choose_objects", "player": "$controller",
+              CAPTURED_DRAW_CAST_FIELD: {"schema_version": 1, "count": fixed_number(match["count"])}}
+    return "fixed-revealed-draw-result-cast-v1", (effect,), None, ("cr-121-drawing-a-card",)
 
 
 def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:

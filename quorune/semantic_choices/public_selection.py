@@ -6,6 +6,7 @@ from typing import Any, Mapping
 from ..replacement.immutable import FrozenMap
 from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
 from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD
+from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
 from ..semantic_runtime.intents import (
     CreateTokenIntent,
     LifeChangeIntent,
@@ -71,6 +72,9 @@ class PublicObjectChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if CAPTURED_DRAW_CAST_FIELD in effect:
+            from .captured_draw_cast import prepare_captured_draw_cast
+            return prepare_captured_draw_cast(effect, context)
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import prepare_distinct_sacrifices
             return prepare_distinct_sacrifices(effect, context)
@@ -150,6 +154,9 @@ class PublicObjectChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        if CAPTURED_DRAW_CAST_FIELD in effect:
+            from .captured_draw_cast import complete_captured_draw_cast
+            return complete_captured_draw_cast(continuation, response, query)
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import complete_distinct_sacrifices
             return complete_distinct_sacrifices(continuation, response, query)

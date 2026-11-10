@@ -86,6 +86,16 @@ and resumes from the exact remaining count without growing the Python call stack
 continues an APNAP batch, draw-step entry, or the exact next spell instruction.
 `drawing/continuation.py` owns that strict immutable Game Record v3 value.
 
+`drawing/captured_hand.py` represents the fixed draw, reveal, and optional
+cast instruction. The draw transaction retains the hand incarnation produced
+by each surviving original draw. Replacement-created draws carry their own
+instructions. After the sequence, `drawing/captured_hand_casting.py` reveals
+the retained cards together and binds the optional cast to the current
+resolution. Canonical cast offers and commits preserve legal faces, targets,
+additional costs, and cost replacement choices with the mana cost waived.
+The reveal lasts through the cast or decline choice. Players retain the
+knowledge they gained while it was public.
+
 `drawing/reveal_coordination.py` owns battlefield reveal-policy discovery,
 private reveal/decline decisions and exact source validation. Its completion
 delegates card and history changes to the draw transaction, then returns to

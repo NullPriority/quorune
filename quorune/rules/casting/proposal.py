@@ -960,14 +960,14 @@ def build_cast_offer(
     face_name: str | None = None,
     splice_declaration: Mapping[str, Any] | None = None,
     resolving_payment: Literal["free", "paid"] | None = None,
-    resolving_origin: Literal["exile", "graveyard"] = "exile",
+    resolving_origin: Literal["exile", "graveyard", "hand"] = "exile",
 ) -> CastProposalResult:
     """Use the casting proposal queries to advertise one executable action."""
 
     if resolving_payment is not None and (
         card.zone != resolving_origin
         or resolving_payment not in ("free", "paid")
-        or resolving_origin not in {"exile", "graveyard"}
+        or resolving_origin not in {"exile", "graveyard", "hand"}
         or resolving_payment == "paid" and resolving_origin != "exile"
     ):
         return CastProposalResult("unavailable", "zone_permission")

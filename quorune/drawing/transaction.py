@@ -7,6 +7,7 @@ from ..cast_timing import type_line_has_card_type
 from ..model import CardInstance, GameState
 from ..player_result_events import CardDrawEvent, dispatch_card_draw_event
 from ..zone_trigger_events import ZoneTransitionKind
+from .captured_hand import CaptureDrawnHandCard
 from .model import (
     DiscardDrawnCardUnlessType,
     DrawError,
@@ -294,6 +295,11 @@ def _apply_drawn_card_actions(
             continue
         if isinstance(action, RevealDrawnCardBySource):
             # CR 121.9 actions were applied before the card entered the hand.
+            continue
+        if isinstance(action, CaptureDrawnHandCard):
+            from .captured_hand_casting import capture_drawn_hand_card
+
+            capture_drawn_hand_card(host, actor=resolution.player, card=current, action=action)
             continue
         if isinstance(action, DiscardDrawnCardUnlessType):
             if type_line_has_card_type(type_line, action.card_type):

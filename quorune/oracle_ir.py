@@ -53,7 +53,7 @@ from .compiler.dependency_gate import (
 )
 from .compiler.draw_templates import (
     draw_reveal_or_trigger_nodes,
-    fixed_draw_effect_template, trigger_ability_word_material_line,
+    fixed_captured_draw_cast_effect_template, fixed_draw_effect_template, trigger_ability_word_material_line,
 )
 from .compiler.delayed_draw_templates import (
     fixed_next_turn_upkeep_draw_effect_template,
@@ -179,7 +179,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v925"
+ORACLE_COMPILER_VERSION = "oracle-ir-v926"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -277,7 +277,7 @@ def _effect_template(
     delayed_draw = fixed_next_turn_upkeep_draw_effect_template(normalized)
     if delayed_draw is not None:
         return delayed_draw.compiled()
-    draw_template = fixed_draw_effect_template(normalized)
+    draw_template = fixed_captured_draw_cast_effect_template(normalized) or fixed_draw_effect_template(normalized)
     if draw_template is not None:
         return draw_template
     player_result = fixed_player_result_template(normalized,source_name=card_name)

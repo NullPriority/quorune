@@ -21,6 +21,37 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_mad_wizard_room_body_uses_closed_draw_cast_contract(self):
+        from unittest.mock import patch
+        from test_bound_effect_programs import record
+        from quorune.drawing.captured_hand import (
+            CAPTURED_DRAW_CAST_CAPABILITY, CAPTURED_DRAW_CAST_FIELD, captured_draw_cast_instruction,
+        )
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        payload = json.loads((ROOT / "tests/fixtures/dungeon-cards.json").read_bytes())
+        dungeon = next(card for card in payload["cards"] if card["name"] == "Dungeon of the Mad Mage")
+        body, = (line.split(" — ", 1)[1] for line in dungeon["oracle_text"].splitlines()
+                 if line.startswith("Mad Wizard's Lair — "))
+        options = {"capability_registry": load_default_capability_registry(), "capability_profile": "commander_review"}
+        source = record(body)
+        ir = compile_oracle_card(source, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        effect, = node.effects
+        self.assertEqual(3, captured_draw_cast_instruction(effect))
+        self.assertIn(CAPTURED_DRAW_CAST_CAPABILITY, node.capability_dependencies)
+        for payload_change in ({"count": True}, {"count": 6}, {"schema_version": 2}, {"from": "library"}):
+            mutated = {**effect, CAPTURED_DRAW_CAST_FIELD: {**effect[CAPTURED_DRAW_CAST_FIELD], **payload_change}}
+            with self.subTest(payload_change=payload_change), self.assertRaises(ValueError):
+                captured_draw_cast_instruction(mutated)
+        later = replace(source, oracle_id="fixture:later-cast-draw", oracle_text=body.rstrip(".") + " this turn.")
+        self.assertNotEqual("exact", compile_oracle_card(later, **options).status)
+        probe = replace(source, oracle_id="fixture:missing-draw-cast-producer")
+        with patch("quorune.oracle_ir.fixed_captured_draw_cast_effect_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(probe, **options).status)
+
     def test_pinned_room_names_and_edges_match_the_printed_sources(self):
         payload = json.loads((ROOT / "tests/fixtures/dungeon-cards.json").read_bytes())
         cards = {row["name"]: row for row in payload["cards"]}
