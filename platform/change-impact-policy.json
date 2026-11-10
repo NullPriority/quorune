@@ -11499,10 +11499,14 @@
         "quorune/card_programs/descriptor_requirements.py",
         "quorune/mana_value_limit.py",
         "tests/fixtures/battlefield-library-selection-cards.json",
+        "tests/fixtures/revealed-entry-followup-cards.json",
         "tests/test_battlefield_library_selection.py"
       ],
       "test_modules": [
         "test_battlefield_library_selection",
+        "test_dungeon_progress",
+        "test_discover_rules",
+        "test_next_turn_duration",
         "test_mana_value_limit",
         "test_fixed_library_selection",
         "test_library_selection_remainders",

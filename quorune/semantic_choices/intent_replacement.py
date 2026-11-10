@@ -23,6 +23,7 @@ from ..affected_permanents import (
     AffectedPermanentSetSpec,
 )
 from ..entry_counter_model import EntryCounterError, EffectEntryCounter
+from ..library_battlefield_model import LIBRARY_SHUFFLE_REMAINDER, RevealedCreatureEntryFollowup
 from ..library_order_model import LibraryArrivalOrder
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime import (
@@ -306,6 +307,7 @@ def _library_selection_intent_identity(
                 "remainder_order": intent.arrangement.remainder_order,
                 **({'selected_destination':intent.arrangement.selected_destination} if intent.arrangement.selected_destination!='hand' else {}),
                 **({'entry_tapped':intent.arrangement.entry_tapped} if intent.arrangement.selected_destination=='battlefield' else {}),
+                **({"entry_followup": intent.arrangement.entry_followup.to_dict()} if intent.arrangement.entry_followup is not None else {}),
             },
             _REASON_FIELD: intent.reason,
             "source_stack_ref": intent.source_stack_ref,
@@ -747,6 +749,8 @@ def _validate_library_selection_intent_identity(
     expected_fields=(_LIBRARY_SELECTION_ARRANGEMENT_FIELDS|{'selected_destination','entry_tapped'} if new_entry else
         _LIBRARY_SELECTION_ARRANGEMENT_FIELDS|{'selected_destination'} if isinstance(raw,Mapping) and 'selected_destination' in raw else
         _LIBRARY_SELECTION_ARRANGEMENT_FIELDS)
+    if new_entry and raw.get("remainder_destination") == LIBRARY_SHUFFLE_REMAINDER:
+        expected_fields = expected_fields | {"entry_followup"}
     if (
         not isinstance(raw, Mapping)
         or set(raw) != expected_fields
@@ -768,6 +772,7 @@ def _validate_library_selection_intent_identity(
             remainder_order=raw["remainder_order"],
             selected_destination=raw.get('selected_destination','hand'),
             entry_tapped=raw.get('entry_tapped',False),
+            entry_followup=RevealedCreatureEntryFollowup.from_dict(raw["entry_followup"]) if "entry_followup" in raw else None,
         )
         intent = LibrarySelectionIntent(
             actor=value["actor"],

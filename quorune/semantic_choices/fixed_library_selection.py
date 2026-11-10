@@ -4,6 +4,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from ..library_battlefield_model import LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION, RevealedCreatureEntryFollowup
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap
@@ -112,6 +113,16 @@ def _identity(row: Any) -> LibrarySelectionObjectIdentity:
         raise SemanticChoiceError(str(exc)) from exc
 
 
+def _arrangement(effect, looked, selected, remainder):
+    followup = effect.get("entry_followup")
+    return LibrarySelectionArrangement(
+        looked=looked, selected_refs=selected, remainder_refs=remainder,
+        remainder_destination=effect["remainder_destination"], remainder_order=effect["remainder_order"],
+        selected_destination=effect.get("selected_destination", "hand"), entry_tapped=effect.get("entry_tapped", False),
+        entry_followup=RevealedCreatureEntryFollowup.from_dict(followup) if followup is not None else None,
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class FixedLibrarySelectionChoiceHandler:
     operation: str = "fixed_library_selection"
@@ -174,7 +185,7 @@ class FixedLibrarySelectionChoiceHandler:
         context: SemanticChoiceContext,
     ) -> tuple[tuple[ObjectQuerySpec, ...], ...]:
         version_two=type(effect.get('schema_version')) is int and effect.get('schema_version')==2
-        if type(effect.get('schema_version')) is int and effect.get('schema_version')==3:
+        if type(effect.get('schema_version')) is int and effect.get('schema_version') in (3, LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION):
             from ..library_battlefield_model import validate_library_battlefield_effect,fixed_selection_without_entry_fields
             try:validate_library_battlefield_effect(effect)
             except (TypeError,ValueError,KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -305,24 +316,16 @@ class FixedLibrarySelectionChoiceHandler:
             ),
         ) if refs else ()
 
-        deterministic = policy == "all_matching" or not refs
+        deterministic = (policy == "all_matching" or not refs
+                         or effect.get("schema_version") == LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION and not legal_refs)
         needs_remainder_order = (
             effect["remainder_order"] == "chosen"
             and len(refs) - effective_minimum > 1
         )
         if deterministic and not needs_remainder_order:
             selected = legal_refs if policy == "all_matching" else ()
-            arrangement = LibrarySelectionArrangement(
-                looked=identities,
-                selected_refs=selected,
-                remainder_refs=tuple(
-                    ref for ref in refs if ref not in set(selected)
-                ),
-                remainder_destination=str(effect["remainder_destination"]),
-                remainder_order=str(effect["remainder_order"]),
-                selected_destination=str(effect.get('selected_destination','hand')),
-                entry_tapped=effect.get('entry_tapped',False),
-            )
+            remainder = tuple(ref for ref in refs if ref not in selected)
+            arrangement = _arrangement(effect, identities, selected, remainder)
             return SemanticChoicePreparation(
                 request=None,
                 continuation_effect=continuation,
@@ -530,16 +533,8 @@ class FixedLibrarySelectionChoiceHandler:
                 "Selected cards do not satisfy the issued characteristics"
             )
         try:
-            arrangement = LibrarySelectionArrangement(
-                looked=looked,
-                selected_refs=selected,
-                remainder_refs=remainder,
-                remainder_destination=str(effect["remainder_destination"]),
-                remainder_order=str(effect["remainder_order"]),
-                selected_destination=str(effect.get('selected_destination','hand')),
-                entry_tapped=effect.get('entry_tapped',False),
-            )
-        except LibrarySelectionError as exc:
+            arrangement = _arrangement(effect, looked, selected, remainder)
+        except ValueError as exc:
             raise SemanticChoiceError(str(exc)) from exc
         return SemanticChoiceCompletion(
             intents=(

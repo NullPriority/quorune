@@ -232,8 +232,16 @@ replacement choices suspend the whole procedure before either group moves.
 Saved intent identities carry entry status only for this destination; old hand
 and top/exile identities retain their existing bytes.
 
-Aura-capable or ambiguous selectors, attacking entry, linked post-entry grants
-and graveyard remainders remain outside this battlefield shape. Another player's
+A version-four fixed selection reveals the controller's top ten cards and
+requires one available creature choice. The selected card enters with the
+printed counters through the shared replacement-aware entry owner. The
+resulting battlefield incarnation gains hexproof through the controller's
+next turn boundary. The canonical whole-library shuffle follows, including
+when the revealed prefix contains no creature. Pending entry choices retain
+the exact revealed identities, counter instruction, and pending shuffle.
+
+Aura-capable or ambiguous selectors, attacking entry, other linked post-entry
+grants and graveyard remainders remain compiler residuals. Another player's
 library, conditional or payment instructions, unowned numeric, chosen and name
 predicates, other exile, cast or play destinations, and unowned preceding or
 trailing effects also remain material compiler residuals.

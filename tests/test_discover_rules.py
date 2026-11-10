@@ -1078,7 +1078,8 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
             "declared-impulse-access-cards.json", "end-step-impulse-access-cards.json",
             "resolving-top-play-cards.json", "distinct-sacrifice-cards.json", "captured-draw-cast-cards.json",
             "draw-rules-cards.json", "fixed-top-order-cards.json", "paid-sacrifice-creature-stat-cards.json",
-            "bargain-cards.json", "external-entry-tapped-cards.json")], path)
+            "bargain-cards.json", "external-entry-tapped-cards.json", "revealed-entry-followup-cards.json",
+            "counter-doubling-cards.json", "counter-placement-event-cards.json", "fixed-extra-turn-cards.json")], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -1719,6 +1720,99 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
         self.assertEqual(0, session.state.players["A"].land_plays_remaining)
         self.replay(session, load=True)
+
+    def test_throne_replaces_entry_counters_and_expires_hexproof_on_the_actual_next_turn(self):
+        from dataclasses import replace
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.library_battlefield_model import LIBRARY_REVEALED_ENTRY_FOLLOWUP_CAPABILITY
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(60828057)
+        engine = session.engine
+        source = self.add(engine, "Generic Resolving Revealed Entry Fixture", zone="hand")
+        scales = self.add(engine, "Hardened Scales", ref="throne-entry-scales")
+        doubler = self.add(engine, "Branching Evolution", ref="throne-entry-doubler")
+        warp = self.add(engine, "Time Warp", zone="hand", ref="throne-extra-turn")
+        deeper = self.add(engine, "Grizzly Bears", zone="library", ref="throne-unrevealed-creature")
+        for index in range(8):
+            self.add(engine, "Generic Bound Plains", zone="library", ref=f"throne-revealed-land-{index}")
+        spare = self.add(engine, "Wall of Omens", zone="library", ref="throne-other-creature")
+        selected = self.add(engine, "Grizzly Bears", zone="library", ref="throne-chosen-creature")
+        for card in (source, scales, doubler, warp):
+            self.assert_closed(session, card)
+        program, = session.engine.semantics.programs_for_oracle(source.oracle_id)
+        deps = tuple(cap for cap in program.capability_dependencies if cap != LIBRARY_REVEALED_ENTRY_FOLLOWUP_CAPABILITY)
+        forged = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + LIBRARY_REVEALED_ENTRY_FOLLOWUP_CAPABILITY,
+                      binding["blockers"])
+        self.prepare(session, mana={"C": 3, "U": 2})
+        self.checkpoint(session)
+        initial_shuffles = session.state.players["A"].stats.get("shuffle_count", 0)
+        start_turn = session.state.turn_sequence
+        self.cast_for(session, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        menu = session.packet("pilot:A", full=True)["decision"]
+        action, = [action for action in menu["legal_actions"] if action["id"] == "choose"]
+        schema = action["choice_schema"]
+        self.assertEqual({selected.ref, spare.ref}, set(schema["legal_refs"]))
+        self.assertNotIn(deeper.ref, str(session.packet("spectator", full=True)))
+        original = session.state.cards[selected.object_id].logical_object_id
+        before = authoritative_state_hash(session.state)
+        for seat, cards in (("B", [selected.ref]), ("A", []), ("A", [deeper.ref]), ("A", [selected.ref, spare.ref])):
+            result = session.act("pilot:" + seat, {"action_id": "choose", "cards": cards})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": "choose", "cards": [selected.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual("library", session.state.cards[selected.object_id].zone)
+        self.assertEqual(initial_shuffles, session.state.players["A"].stats.get("shuffle_count", 0))
+        session = self.replay(session, load=True)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        choice = next(option["id"] for option in options if scales.ref in option["id"])
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": choice})
+        self.assertTrue(result.ok, result.summary)
+        current = session.state.cards[selected.object_id]
+        self.assertEqual(("battlefield", {"+1/+1": 8}), (current.zone, current.counters))
+        self.assertNotEqual(original, current.logical_object_id)
+        effect, = session.state.continuous_effects
+        self.assertEqual("until_next_turn", effect.duration.value)
+        self.assertEqual("A", effect.expires_on_next_turn_of)
+        self.assertEqual(current.logical_object_id, effect.locked_objects[0].logical_object_id)
+        self.assertEqual("Hexproof", effect.operations[0].value)
+        self.assertEqual(initial_shuffles + 1, session.state.players["A"].stats["shuffle_count"])
+        self.assertEqual("library", session.state.cards[spare.object_id].zone)
+        self.assertNotIn(spare.ref, str(session.packet("pilot:B", full=True)["state"]["players"]["A"]))
+        self.cast_for(session, "A", warp, ["A"])
+        self.assertIsNone(self.resolve(session))
+        self.assertIn(effect, session.state.continuous_effects)
+        self.until(session, lambda game: game.state.turn_sequence > start_turn)
+        self.assertEqual("A", session.state.active_player)
+        self.assertTrue(session.state.current_turn.extra)
+        self.assertEqual([], session.state.continuous_effects)
+        self.replay(session, load=True)
+
+    def test_throne_shuffles_when_the_public_prefix_has_no_creature(self):
+        session = self.session(60828058)
+        engine = session.engine
+        source = self.add(engine, "Generic Resolving Revealed Entry Fixture", zone="hand")
+        deeper = self.add(engine, "Grizzly Bears", zone="library", ref="throne-creature-after-the-prefix")
+        for index in range(10):
+            self.add(engine, "Generic Bound Plains", zone="library", ref=f"throne-public-plains-{index}")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        initial_shuffles = session.state.players["A"].stats.get("shuffle_count", 0)
+        self.cast_for(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial_shuffles + 1, session.state.players["A"].stats["shuffle_count"])
+        self.assertEqual("library", session.state.cards[deeper.object_id].zone)
+        self.assertEqual([], session.state.continuous_effects)
+        self.assertNotIn(deeper.ref, str(session.packet("spectator", full=True)))
+        self.replay(session)
 
     def test_mad_wizard_offer_requires_independent_runtime_authority(self):
         from dataclasses import replace

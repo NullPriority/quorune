@@ -7,6 +7,7 @@ import random
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..model import CardInstance
+from ..library_battlefield_model import LIBRARY_SHUFFLE_REMAINDER, RevealedCreatureEntryFollowup
 from .library_partition import (
     LibraryPartitionError,
     OrderedLibraryPartition,
@@ -70,6 +71,7 @@ class LibrarySelectionArrangement:
     remainder_order: str
     selected_destination: str='hand'
     entry_tapped: bool=False
+    entry_followup: RevealedCreatureEntryFollowup | None = None
 
     def __post_init__(self) -> None:
         looked = tuple(self.looked)
@@ -85,6 +87,7 @@ class LibrarySelectionArrangement:
                 "graveyard",
                 "library_bottom",
                 "exile",
+                LIBRARY_SHUFFLE_REMAINDER,
             }
             or self.selected_destination not in {'hand','library_top','battlefield'}
             or type(self.entry_tapped) is not bool
@@ -106,6 +109,12 @@ class LibrarySelectionArrangement:
             )
         except LibraryPartitionError as exc:
             raise LibrarySelectionError(str(exc)) from exc
+        if ((self.remainder_destination == LIBRARY_SHUFFLE_REMAINDER) != (self.entry_followup is not None)
+                or self.entry_followup is not None and (
+                    not isinstance(self.entry_followup, RevealedCreatureEntryFollowup)
+                    or self.selected_destination != "battlefield" or self.remainder_order != "random"
+                    or self.entry_tapped or len(selected) > 1)):
+            raise LibrarySelectionError("The whole-library shuffle requires its revealed entry followup")
         if not looked:
             if selected or remainder:
                 raise LibrarySelectionError(

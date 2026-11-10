@@ -21,6 +21,40 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_throne_room_body_closes_the_public_entry_and_shuffle_contract(self):
+        from unittest.mock import patch
+        from test_bound_effect_programs import record
+        from quorune.library_battlefield_model import (
+            LIBRARY_REVEALED_ENTRY_FOLLOWUP_CAPABILITY, LIBRARY_SHUFFLE_REMAINDER, validate_library_battlefield_effect,
+        )
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        payload = json.loads((ROOT / "tests/fixtures/dungeon-cards.json").read_bytes())
+        dungeon = next(card for card in payload["cards"] if card["name"] == "Undercity // The Initiative")
+        body, = (line.split(" — ", 1)[1] for line in dungeon["oracle_text"].splitlines()
+                 if line.startswith("Throne of the Dead Three — "))
+        options = {"capability_registry": load_default_capability_registry(), "capability_profile": "commander_review"}
+        source = record(body)
+        ir = compile_oracle_card(source, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        effect, = node.effects
+        self.assertIn(LIBRARY_REVEALED_ENTRY_FOLLOWUP_CAPABILITY, node.capability_dependencies)
+        self.assertEqual((10, True, 1, 1, LIBRARY_SHUFFLE_REMAINDER, {"counters": 3}),
+                         tuple(effect[key] for key in ("look_count", "public_reveal", "minimum", "maximum",
+                                                      "remainder_destination", "entry_followup")))
+        for mutation in ({"public_reveal": False}, {"minimum": 0}, {"look_count": 11},
+                         {"entry_followup": {"counters": True}}, {"remainder_destination": "library_bottom"}):
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                validate_library_battlefield_effect({**effect, **mutation})
+        later = replace(source, oracle_id="fixture:longer-library-entry-grant",
+                        oracle_text=body.replace("until your next turn", "until the end of your next turn"))
+        self.assertNotEqual("exact", compile_oracle_card(later, **options).status)
+        probe = replace(source, oracle_id="fixture:missing-entry-followup-producer")
+        with patch("quorune.compiler.library_battlefield_templates._revealed_creature_entry_followup", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(probe, **options).status)
+
     def test_mad_wizard_room_body_uses_closed_draw_cast_contract(self):
         from unittest.mock import patch
         from test_bound_effect_programs import record
