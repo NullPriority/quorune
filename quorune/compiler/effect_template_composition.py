@@ -195,12 +195,19 @@ def reviewed_contextual_effect_template(
     )
     if fixed_payment is not None:
         return fixed_payment
-    return reviewed_effect_template_composition(
-        text, source_name=card_name,
-        cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
-        compile_atomic=atomic_with_characteristics,
-        compile_fixed=partial(compile_fixed,card_name=card_name,**source_context),
-    )
+    def compose(body: str, *, card_name: str) -> CompiledEffectTemplate:
+        return reviewed_effect_template_composition(
+            body, source_name=card_name,
+            cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
+            compile_atomic=atomic_with_characteristics,
+            compile_fixed=partial(compile_fixed, card_name=card_name, **source_context),
+        )
+
+    compiled = compose(text, card_name=card_name)
+    if compiled[0] is None and source_context.get("source_is_permanent") is True:
+        from .source_self_effect_templates import source_declaration_sequence
+        return source_declaration_sequence(text, card_name=card_name, compile_effect=compose) or compiled
+    return compiled
 
 
 def reviewed_effect_template_composition(

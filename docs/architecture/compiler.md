@@ -697,14 +697,20 @@ changes do not remove its resolved prohibition. A changed predicate before
 resolution prevents creation for that target.
 
 Fixed temporary blocker restrictions use a closed descriptor for a blocker
-subtype, an artifact-or-fixed-color exception, or a fixed maximum blocker power.
-The existing declaration solver reads current blocker characteristics. The
-resolved rule stays on the selected creature incarnation through ability loss
-and source departure, expires in cleanup, and does not undo an existing block.
+subtype, an artifact-or-fixed-color exception, a maximum blocker power, or an
+exception for creatures with haste or defender. The declaration solver reads
+each blocker's current characteristics. A resolved rule stays on the selected
+creature incarnation through ability loss and source departure, expires in
+cleanup, and does not undo an existing block. A self-rule binds the original
+battlefield incarnation and skips its own instruction if that object has left.
 The runtime binder independently decodes these descriptors and requires their
-fixed-blocker capability.
-Chosen qualities, player-relative blockers, two-creature relationships, group
+fixed-blocker capability. Chosen qualities, player-relative blockers, group
 targets and other durations remain outside this production.
+
+A source declaration rule can follow an independently typed characteristic
+change or counter placement on that source. A linked Exert result may also
+pair a self-rule with the controller's scry. Each instruction keeps its printed
+position and resolves independently when the original permanent is unavailable.
 
 A separate source-specific production lowers "target creature can't block this
 creature this turn". Its typed journal entry locks both the chosen blocker and

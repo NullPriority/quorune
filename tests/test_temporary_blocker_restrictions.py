@@ -22,6 +22,13 @@ import test_provoke_rules as controls
 from quorune.rules.evidence_storage import read_evidence_document
 
 NAMES = ('Tower of Coireall', "Joven's Tools", 'Firefright Mage', 'Ghirapur Guide')
+SOURCE_AND_QUALIFIED_ORIGINALS = (
+    'Gingerbrute', 'Resilient Roadrunner', 'Tin Street Dodger', 'Departed Deckhand',
+    'Kumena, Tyrant of Orazca', 'Speed, Young Avenger', "Rhonas's Stalwart", 'Cephalid Inkshrouder',
+    'Vectis Agents', 'Clockwork Droid', 'Kappa Cannoneer', 'Razzle-Dazzler', 'Creeping Tar Pit',
+    'Dimir Keyrune', 'Chromium, the Mutable',
+    'Tiger Shark, Abyssal Hunter', 'Ant-Man, Reformed Rogue',
+)
 CAPABILITY = 'combat.declaration.temporary_blocker_predicate'
 
 
@@ -68,12 +75,18 @@ class TemporaryBlockerRestrictionTests(unittest.TestCase):
             'payment': payment, 'targets': list(targets)})
         self.assertTrue(result.ok, result.summary)
 
-    def activate(self, session, source, target, payment=None, cost_cards=()):
+    def activate(self, session, source, target=None, payment=None, cost_cards=(), *, label_contains=None):
         self.priority(session, 'A')
-        actions = [r for r in self.legal(session) if r['id'].startswith('activate:'+source.ref+':')]
+        actions = [row for row in self.legal(session)
+                   if row['id'].startswith('activate:'+source.ref+':')
+                   and (label_contains is None or label_contains in row['label'])]
         self.assertEqual(1, len(actions), source.printed_name)
-        self.assertIn(target.ref, actions[0]['target_schema']['legal_refs'])
-        command = {'action_id': actions[0]['id'], 'targets': [target.ref], 'pay': 'manual' if payment else 'auto'}
+        command = {'action_id': actions[0]['id'], 'pay': 'manual' if payment else 'auto'}
+        if target is not None:
+            self.assertIn(target.ref, actions[0]['target_schema']['legal_refs'])
+            command['targets'] = [target.ref]
+        else:
+            self.assertIsNone(actions[0].get('target_schema'))
         if payment: command['payment'] = payment
         if cost_cards: command['cost_cards'] = [c.ref for c in cost_cards]
         before = authoritative_state_hash(session.state)
@@ -207,11 +220,289 @@ class TemporaryBlockerRestrictionTests(unittest.TestCase):
         self.assertEqual('battlefield', session.state.cards[ordinary.object_id].zone)
         self.replay(session)
 
+    def test_new_originals_bind_their_complete_programs(self):
+        for index, name in enumerate(SOURCE_AND_QUALIFIED_ORIGINALS):
+            with self.subTest(name=name):
+                session = self.session(755090 + index)
+                source = self.add(session.engine, name)
+                ir = compile_oracle_card(self.db.lookup(name), capability_registry=self.registry,
+                                         capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                binding = self.binding(session, source)
+                self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+
+    def test_source_keyword_rules_read_live_blocker_abilities(self):
+        for index, (name, payment) in enumerate((('Gingerbrute', {'C': 1}), ('Tin Street Dodger', {'R': 1}))):
+            with self.subTest(name=name):
+                session = self.session(755110 + index)
+                source = self.add(session.engine, name)
+                ordinary = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+                permitted = self.add(session.engine, 'Wall of Omens', seat='B')
+                haste = self.add(session.engine, 'Expedite', seat='B', zone='hand')
+                self.prepare(session, mana=payment)
+                session.state.players['B'].mana_pool['R'] = 1
+                self.checkpoint(session)
+                self.activate(session, source, payment=payment, label_contains="can't be blocked")
+                self.assertIsNone(self.resolve(session))
+                if name == 'Gingerbrute':
+                    self.cast(session, 'B', haste, {'R': 1}, [permitted.ref])
+                    self.assertIsNone(self.resolve(session))
+                self.attack(session, {source.ref: 'B'})
+                self.blockers(session)
+                self.block(session, {ordinary.ref: [source.ref]}, valid=False)
+                self.block(session, {permitted.ref: [source.ref]})
+                self.advance(session, lambda current: current.state.phase == 'postcombat_main')
+                self.assertEqual(40, session.state.players['B'].life)
+                self.replay(session)
+
+    def test_new_keyword_rule_skips_the_returned_source(self):
+        session = self.session(755112)
+        source = self.add(session.engine, 'Gingerbrute')
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        blink = self.add(session.engine, 'Ephemerate', zone='hand')
+        identity = source.logical_object_id
+        self.prepare(session, mana={'C': 1, 'W': 1})
+        self.checkpoint(session)
+        self.activate(session, source, payment={'C': 1}, label_contains="can't be blocked")
+        self.cast(session, 'A', blink, {'W': 1}, [source.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(identity, session.state.cards[source.object_id].logical_object_id)
+        self.attack(session, {source.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]})
+        self.replay(session)
+
+    def test_deckhand_targets_another_creature_and_allows_the_spirit(self):
+        session = self.session(755113)
+        source = self.add(session.engine, 'Departed Deckhand')
+        chosen = self.add(session.engine, 'Generic Blocker Attacker')
+        chosen.acquired_control_turn_count = -1
+        ordinary = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        spirit = self.add(session.engine, 'Spectral Sailor', seat='B')
+        payment = {'C': 3, 'U': 1}
+        self.prepare(session, mana=payment)
+        self.checkpoint(session)
+        action, = [row for row in self.legal(session) if row['id'].startswith('activate:'+source.ref+':')]
+        self.assertNotIn(source.ref, action['target_schema']['legal_refs'])
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:A', {'action_id': action['id'], 'targets': [source.ref], 'pay': 'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.activate(session, source, chosen, payment)
+        self.assertIsNone(self.resolve(session))
+        self.attack(session, {chosen.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {ordinary.ref: [chosen.ref]}, valid=False)
+        self.block(session, {spirit.ref: [chosen.ref]})
+        self.replay(session)
+
+    def test_kumena_short_name_binds_the_source_after_a_real_merfolk_payment(self):
+        session = self.session(755114)
+        source = self.add(session.engine, 'Kumena, Tyrant of Orazca')
+        source.acquired_control_turn_count = -1
+        merfolk = self.add(session.engine, 'Merfolk of the Pearl Trident')
+        other = self.add(session.engine, 'Generic Blocker Attacker')
+        other.acquired_control_turn_count = -1
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        self.prepare(session)
+        self.checkpoint(session)
+        self.activate(session, source, cost_cards=[merfolk], label_contains="can't be blocked")
+        self.assertTrue(session.state.cards[merfolk.object_id].tapped)
+        self.assertFalse(session.state.cards[source.object_id].tapped)
+        self.assertIsNone(self.resolve(session))
+        self.attack(session, {source.ref: 'B', other.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]}, valid=False)
+        self.block(session, {blocker.ref: [other.ref]})
+        self.replay(session)
+
+    def test_tar_pit_retains_land_type_and_applies_its_declaration_rule(self):
+        session = self.session(755115)
+        source = self.add(session.engine, 'Creeping Tar Pit')
+        source.acquired_control_turn_count = -1
+        other = self.add(session.engine, 'Generic Blocker Attacker')
+        other.acquired_control_turn_count = -1
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        payment = {'C': 1, 'U': 1, 'B': 1}
+        self.prepare(session, mana=payment)
+        self.checkpoint(session)
+        self.activate(session, source, payment=payment, label_contains='Elemental creature')
+        self.assertIsNone(self.resolve(session))
+        effective = session.engine._effective_card_data(session.state.cards[source.object_id])
+        types, subtypes = effective['type_line'].split(' — ', 1)
+        self.assertEqual({'land', 'creature'}, set(types.casefold().split()))
+        self.assertEqual('Elemental', subtypes)
+        self.assertEqual((3, 2), tuple(session.engine._numeric_stat(source.object_id, key) for key in ('power', 'toughness')))
+        self.attack(session, {source.ref: 'B', other.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]}, valid=False)
+        self.block(session, {blocker.ref: [other.ref]})
+        self.replay(session)
+
+    def test_inkshrouder_pays_discard_and_resolves_both_source_effects(self):
+        session = self.session(755116)
+        source = self.add(session.engine, 'Cephalid Inkshrouder')
+        source.acquired_control_turn_count = -1
+        other = self.add(session.engine, 'Generic Blocker Attacker')
+        other.acquired_control_turn_count = -1
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        discarded = self.add(session.engine, 'Generic Bound Growth', zone='hand')
+        self.prepare(session)
+        self.checkpoint(session)
+        self.activate(session, source, cost_cards=[discarded])
+        self.assertEqual('graveyard', session.state.cards[discarded.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        effective = session.engine._effective_card_data(session.state.cards[source.object_id])
+        self.assertIn('shroud', {keyword.casefold() for keyword in effective['keywords']})
+        self.attack(session, {source.ref: 'B', other.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]}, valid=False)
+        self.block(session, {blocker.ref: [other.ref]})
+        self.replay(session)
+
+    def test_cannoneer_keeps_counter_placement_before_its_declaration_rule(self):
+        session = self.session(755117)
+        source = self.add(session.engine, 'Kappa Cannoneer')
+        source.acquired_control_turn_count = -1
+        other = self.add(session.engine, 'Generic Blocker Attacker')
+        other.acquired_control_turn_count = -1
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        artifact = self.add(session.engine, 'Sol Ring', zone='hand')
+        self.prepare(session, mana={'C': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', artifact, {'C': 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[source.object_id].counters.get('+1/+1'))
+        self.attack(session, {source.ref: 'B', other.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]}, valid=False)
+        self.block(session, {blocker.ref: [other.ref]})
+        self.replay(session)
+
+    def test_exert_scry_is_private_and_resolves_when_the_droid_leaves(self):
+        session = self.session(755118)
+        source = self.add(session.engine, 'Clockwork Droid')
+        source.acquired_control_turn_count = -1
+        blink = self.add(session.engine, 'Ephemerate', zone='hand')
+        self.prepare(session)
+        self.advance(session, lambda current: current.state.pending_decision.kind == 'combat.attackers')
+        rows = session.packet('pilot:A', full=True)['decision']['ctx']['exert']
+        key, = [option['value'] for row in rows if row['value'] == source.ref for option in row['options']]
+        session.state.players['A'].mana_pool['W'] = 1
+        identity = source.logical_object_id
+        self.checkpoint(session)
+        result = session.act('pilot:A', {'action_id': 'attack', 'attacks': {source.ref: 'B'},
+                                         'exert': {source.ref: [key]}})
+        self.assertTrue(result.ok, result.summary)
+        self.cast(session, 'A', blink, {'W': 1}, [source.ref])
+        decision = self.resolve(session)
+        self.assertEqual('semantic.choice', decision.kind)
+        self.assertEqual(['A'], decision.actors)
+        self.assertNotEqual(identity, session.state.cards[source.object_id].logical_object_id)
+        top_id = session.state.players['A'].zones['library'][-1]
+        top_ref = session.state.cards[top_id].ref
+        self.assertIn(top_ref, json.dumps(session.packet('pilot:A', full=True)))
+        for viewer in 'BCD':
+            self.assertNotIn(top_ref, json.dumps(session.packet('pilot:'+viewer, full=True)))
+        response = {'action_id': 'choose', 'cards': {'top': [], 'bottom': [top_ref]}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B', response).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        result = session.act('pilot:A', response)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(top_id, session.state.players['A'].zones['library'][0])
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(any(event.code == 'combat.declaration_restriction' for event in session.state.events))
+        self.replay(session)
+
+    def test_speed_qualifies_its_reflexive_target_at_announcement_and_resolution(self):
+        session = self.session(755119)
+        source = self.add(session.engine, 'Speed, Young Avenger')
+        source.acquired_control_turn_count = -1
+        ordinary = self.add(session.engine, 'Generic Blocker Ordinary', ref='speed-nonhaste-candidate')
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        haste = self.add(session.engine, 'Expedite', zone='hand')
+        remove_haste = self.add(session.engine, 'Humble', seat='B', zone='hand')
+        self.prepare(session, mana={'C': 1, 'R': 1})
+        session.state.players['B'].mana_pool.update({'C': 1, 'W': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', haste, {'R': 1}, [ordinary.ref])
+        decision = self.resolve(session)
+        self.assertEqual('semantic.choice', decision.kind)
+        result = session.act('pilot:A', {'action_id': 'choose', 'pay': True})
+        self.assertTrue(result.ok, result.summary)
+        decision = self.resolve(session)
+        self.assertEqual('semantic.target', decision.kind)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A', {'action_id': 'choose', 'targets': [ordinary.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', {'action_id': 'choose', 'targets': [source.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.cast(session, 'B', remove_haste, {'C': 1, 'W': 1}, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self.attack(session, {source.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]})
+        self.replay(session)
+
+    def test_tiger_shark_resolves_its_paid_source_rule_and_attack_connive(self):
+        session = self.session(755120)
+        source = self.add(session.engine, 'Tiger Shark, Abyssal Hunter')
+        source.acquired_control_turn_count = -1
+        other = self.add(session.engine, 'Generic Blocker Attacker')
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        private = self.add(session.engine, 'Generic Bound Growth', zone='hand', ref='shark-private-discard')
+        payment = {'C': 4, 'U': 1}
+        self.prepare(session, mana=payment)
+        self.checkpoint(session)
+        self.activate(session, source, payment=payment)
+        self.assertFalse(any(session.state.players['A'].mana_pool.values()))
+        self.assertIsNone(self.resolve(session))
+        self.attack(session, {source.ref: 'B', other.ref: 'B'})
+        decision = self.resolve(session)
+        self.assertEqual('semantic.choice', decision.kind)
+        self.assertEqual(['A'], decision.actors)
+        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:B', full=True)))
+        result = session.act('pilot:A', {'action_id': 'choose', 'cards': [private.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('graveyard', session.state.cards[private.object_id].zone)
+        self.assertEqual(1, session.state.cards[source.object_id].counters.get('+1/+1'))
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]}, valid=False)
+        self.block(session, {blocker.ref: [other.ref]})
+        self.replay(session)
+
+    def test_ant_man_cast_trigger_changes_power_then_limits_blocks(self):
+        session = self.session(755121)
+        source = self.add(session.engine, 'Ant-Man, Reformed Rogue')
+        source.acquired_control_turn_count = -1
+        other = self.add(session.engine, 'Generic Blocker Attacker')
+        blocker = self.add(session.engine, 'Generic Blocker Ordinary', seat='B')
+        target = self.add(session.engine, 'Generic Blocker Ordinary', seat='C', ref='ant-man-blue-spell-target')
+        blue = self.add(session.engine, 'Unsummon', zone='hand')
+        self.prepare(session, mana={'U': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', blue, {'U': 1}, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.engine._numeric_stat(source.object_id, 'power'))
+        hand_before = len(session.state.players['A'].zones['hand'])
+        self.attack(session, {source.ref: 'B', other.ref: 'B'})
+        self.blockers(session)
+        self.block(session, {blocker.ref: [source.ref]}, valid=False)
+        self.block(session, {blocker.ref: [other.ref]})
+        self.advance(session, lambda current: current.state.phase == 'postcombat_main')
+        self.assertEqual(39, session.state.players['B'].life)
+        self.assertEqual(hand_before + 1, len(session.state.players['A'].zones['hand']))
+        self.replay(session)
+
     def test_fixed_descriptor_and_sentence_boundaries_are_closed(self):
         from quorune.fixed_blocker_restrictions import FixedBlockerRestrictionSpec
         from quorune.compiler.fixed_blocker_restrictions import fixed_blocker_restriction_template
         for spec in (FixedBlockerRestrictionSpec('subtype', 'wall'), FixedBlockerRestrictionSpec('subtype', 'wall', True),
-                FixedBlockerRestrictionSpec('artifact_or_color', 'R', True), FixedBlockerRestrictionSpec('power_at_most', 2)):
+                FixedBlockerRestrictionSpec('artifact_or_color', 'R', True), FixedBlockerRestrictionSpec('power_at_most', 2),
+                FixedBlockerRestrictionSpec('keyword', 'haste', True, schema_version=2)):
             self.assertEqual(spec, FixedBlockerRestrictionSpec.from_dict(spec.to_dict()))
         base = FixedBlockerRestrictionSpec('subtype', 'wall').to_dict()
         for change in ({'schema_version': True}, {'schema_version': 2}, {'kind': 'arbitrary'}, {'quality': 'unknown'},
@@ -221,7 +512,9 @@ class TemporaryBlockerRestrictionTests(unittest.TestCase):
                 "Target creature can't be blocked by creatures of the chosen color this turn.",
                 "Target creature can't be blocked by creatures that player controls this turn.",
                 "Target creature can't block this creature this turn.",
-                "Target creature can't be blocked by Unknowns this turn."):
+                "Target creature can't be blocked by Unknowns this turn.",
+                "Target creature can't be blocked this turn except by creatures with flying.",
+                "Another permanent can't be blocked this turn except by creatures with haste."):
             self.assertIsNone(fixed_blocker_restriction_template(text), text)
 
     def test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires(self):
@@ -285,7 +578,7 @@ class TemporaryBlockerRestrictionTests(unittest.TestCase):
         self.replay(session)
 
     def test_runtime_binding_requires_the_new_owner_independently(self):
-        for i, name in enumerate(NAMES):
+        for i, name in enumerate((*NAMES, 'Gingerbrute')):
             session = self.session(755070+i)
             source = self.add(session.engine, name)
             programs = [p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if CAPABILITY in p.capability_dependencies]
@@ -297,12 +590,14 @@ class TemporaryBlockerRestrictionTests(unittest.TestCase):
             bound = bind_semantic_program_runtime(stripped, capability_registry=self.registry, profile='commander_review')
             self.assertFalse(bound['strict'])
             self.assertIn('capability:undeclared_runtime_dependency:'+CAPABILITY, bound['blockers'])
-            changed = deepcopy(program.effects[0])
-            changed['restriction']['quality'] = 'unknown'
-            malformed = replace(program, effects=(changed,))
-            bound = bind_semantic_program_runtime(malformed, capability_registry=self.registry, profile='commander_review')
-            self.assertFalse(bound['strict'])
-            self.assertTrue(any(b.startswith('runtime_fixed_blocker:invalid:') for b in bound['blockers']), bound['blockers'])
+            bad_quality = deepcopy(program.effects[0])
+            bad_quality['restriction']['quality'] = 'unknown'
+            unsealed_source = {**program.effects[0], 'card': '$source'}
+            for changed in (bad_quality, unsealed_source):
+                malformed = replace(program, effects=(changed,))
+                bound = bind_semantic_program_runtime(malformed, capability_registry=self.registry, profile='commander_review')
+                self.assertFalse(bound['strict'])
+                self.assertTrue(any(b.startswith('runtime_fixed_blocker:invalid:') for b in bound['blockers']), bound['blockers'])
 
     def test_canonically_verified_owner_withdrawal_leaves_originals_residual(self):
         from quorune.rules.evidence import validate_capability_evidence_index

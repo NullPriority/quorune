@@ -52,7 +52,11 @@ mine mountain plains planet power-plant sphere swamp tower town urza's
 DIRECT_PERMANENT_TYPES = _DIRECT_TYPE_ANY_VALUES | {"permanent"}
 _DIRECT_SUPERTYPES = frozenset({"basic", "legendary", "snow"})
 _DIRECT_KEYWORDS = frozenset(
-    {"defender", "flying", "horsemanship", "islandwalk", "shadow"}
+    {"defender", "flying", "haste", "horsemanship", "islandwalk", "shadow"}
+)
+_DIRECT_KEYWORD_SUBJECT = re.compile(
+    r"(?P<body>.+) (?P<relation>with|without) "
+    rf"(?P<keyword>{'|'.join(sorted(_DIRECT_KEYWORDS))})"
 )
 _DIRECT_COLORS = frozenset({"W", "U", "B", "R", "G"})
 _DIRECT_COLOR_WORDS = {
@@ -359,11 +363,7 @@ def _closed_direct_characteristic_fields(
         return {"types_any": (token_type,), "token": True}
 
     keyword_fields: dict[str, tuple[str, ...]] = {}
-    keyword_match = re.fullmatch(
-        r"(?P<body>.+) (?P<relation>with|without) "
-        r"(?P<keyword>defender|flying|horsemanship|islandwalk|shadow)",
-        phrase,
-    )
+    keyword_match = _DIRECT_KEYWORD_SUBJECT.fullmatch(phrase)
     if keyword_match is not None:
         phrase = keyword_match.group("body")
         keyword_fields[

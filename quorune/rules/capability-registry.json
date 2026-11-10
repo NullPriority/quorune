@@ -23683,17 +23683,17 @@
           "changing existing declared blocks"
         ],
         "inputs": [
-          "one shared revalidated creature target",
+          "one revalidated creature target or the original battlefield source",
           "closed immutable fixed blocker descriptor",
           "current blocker characteristics",
-          "existing resolving-source identity and target incarnation"
+          "sealed source or target incarnation"
         ],
         "outputs": [
           "typed source-option block prohibition",
           "ordinary allowed-blocker and current-characteristic contrasts",
           "existing replay-pinned duration effect and cleanup expiry"
         ],
-        "summary": "Resolve a target-anchored fixed blocker subtype, artifact-or-fixed-color exception, or fixed maximum blocker power rule through the existing declaration solver and end-of-turn journal."
+        "summary": "Resolve fixed blocker subtype, color, power or keyword restrictions through the declaration solver and end-of-turn journal for one target or the original source."
       },
       "blockers": [],
       "dependencies": [
@@ -23722,7 +23722,11 @@
         "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
         "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
         "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
-        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+        "test_source_keyword_rules_read_live_blocker_abilities",
+        "test_new_keyword_rule_skips_the_returned_source",
+        "test_deckhand_targets_another_creature_and_allows_the_spirit",
+        "test_speed_qualifies_its_reflexive_target_at_announcement_and_resolution"
       ],
       "multiplayer_tests": [
         "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
@@ -23731,7 +23735,9 @@
         "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
         "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
         "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
-        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+        "test_source_keyword_rules_read_live_blocker_abilities",
+        "test_speed_qualifies_its_reflexive_target_at_announcement_and_resolution"
       ],
       "negative_tests": [
         "test_runtime_binding_requires_the_new_owner_independently",
@@ -23743,7 +23749,9 @@
         "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
         "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
         "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
-        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+        "test_new_keyword_rule_skips_the_returned_source",
+        "test_speed_qualifies_its_reflexive_target_at_announcement_and_resolution"
       ],
       "official_rules": [
         "509.1",
@@ -23766,7 +23774,9 @@
         "test_fixed_descriptor_and_sentence_boundaries_are_closed",
         "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
         "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
-        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+        "test_source_keyword_rules_read_live_blocker_abilities",
+        "test_deckhand_targets_another_creature_and_allows_the_spirit"
       ],
       "privacy_tests": [
         "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
@@ -23781,7 +23791,11 @@
         "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
         "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
         "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
-        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+        "test_source_keyword_rules_read_live_blocker_abilities",
+        "test_new_keyword_rule_skips_the_returned_source",
+        "test_deckhand_targets_another_creature_and_allows_the_spirit",
+        "test_speed_qualifies_its_reflexive_target_at_announcement_and_resolution"
       ],
       "required_evidence": [
         "positive",
@@ -23797,7 +23811,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -88884,7 +88898,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 784,
+  "registry_version": 785,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

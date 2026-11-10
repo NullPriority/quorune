@@ -12,7 +12,7 @@ from .damage_templates import source_pronoun_damage_effect_template
 from .static_runtime_nodes import runtime_handler_node
 from .dependency_gate import explicit_capabilities_gate
 from .ir_model import OracleNode, append_residual
-from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
+from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation, source_declaration_sequence
 
 
 _SELF_COMBAT_SHIELD = re.compile(
@@ -32,7 +32,12 @@ def _exert_result(body, *, source_name, effect_template):
         }
         return 'exert-source-combat-prevention-v1', (effect,), None, ('cr-615-prevention-effects',)
     normalized = normalized_source_result_body(body) or body
-    return effect_template(normalized, card_name=source_name)
+    compiled = effect_template(normalized, card_name=source_name)
+    if compiled[0] is not None:
+        return compiled
+    return source_declaration_sequence(
+        body, card_name=source_name, compile_effect=effect_template, allow_pronoun=True,
+    ) or compiled
 
 
 def exert_attack_nodes(*,record,face_id,node_id,line,material_line,span,source_name,

@@ -16,6 +16,7 @@ from .public_state_queries import fixed_battlefield_query_subject
 from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
 from ..declaration_rule_effects import declaration_group_query_is_closed
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..rules.source_references import SourceReferenceSpec
 from .fixed_blocker_restrictions import FixedBlockerRestrictionTemplate, fixed_blocker_restriction_template
 from .source_block_pairs import SourceBlockPairTemplate, source_block_pair_template
 from .temporary_all_blockers import TemporaryAllBlockerTemplate, temporary_all_blocker_template
@@ -143,7 +144,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
 
     def __post_init__(self) -> None:
         temporary_declaration_restriction(self.restriction)
-        if self.card_reference not in {"$source", "$target.0"}:
+        if self.card_reference not in {"$source", "$source.zone_object", "$target.0"}:
             raise ValueError("Temporary declaration subject is unsupported")
         if self.creature_subtype is not None and (
             self.card_reference != "$target.0"
@@ -163,12 +164,13 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
             return f"temporary-target-{self.target_spec.slug}-{self.restriction.replace('_', '-')}-eot-v2"
         subject = (
             "temporary-source"
-            if self.card_reference == "$source"
+            if self.card_reference != "$target.0"
             else f"temporary-target-{self.creature_subtype}"
             if self.creature_subtype is not None
             else "activated-target"
         )
-        return f"{subject}-{self.restriction.replace('_', '-')}-eot-v1"
+        version = 2 if self.card_reference == "$source.zone_object" else 1
+        return f"{subject}-{self.restriction.replace('_', '-')}-eot-v{version}"
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
@@ -182,7 +184,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
 
     @property
     def target_schema(self) -> Mapping[str, Any] | None:
-        if self.card_reference == "$source":
+        if self.card_reference != "$target.0":
             return None
         if self.target_spec is not None:
             return self.target_spec.to_target_schema()
@@ -243,7 +245,9 @@ def temporary_declaration_restriction_effect_template(
         return requirement
     if source_pair := source_block_pair_template(normalized, allow_source=allow_source):
         return source_pair
-    if fixed_blocker := fixed_blocker_restriction_template(normalized):
+    if fixed_blocker := fixed_blocker_restriction_template(
+        normalized, card_name=card_name, allow_source=allow_source,
+    ):
         return fixed_blocker
     group = _group_declaration_template(normalized)
     if group is not None:
@@ -281,11 +285,15 @@ def temporary_declaration_restriction_effect_template(
         part.strip().casefold() for part in card_name.split("//")
     )
     source_names.discard("")
-    if source not in source_names:
+    if source in source_names:
+        reference = "$source"
+    elif any(SourceReferenceSpec(name).matches(source) for name in card_name.split("//") if name.strip()):
+        reference = "$source.zone_object"
+    else:
         return None
     return ActivatedTemporaryDeclarationRestrictionTemplate(
         _RESTRICTION_KINDS[source_match.group("restriction").casefold()],
-        card_reference="$source",
+        card_reference=reference,
     )
 
 
