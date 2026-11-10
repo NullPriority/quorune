@@ -38,6 +38,7 @@ class GraveyardExilePaymentCompilerTests(unittest.TestCase):
         self.assertNotIn('target_snapshot',literal)
         from quorune.semantic_runtime.intents import ReturnGraveyardCardToOwnerHandIntent
         from quorune.replacement.immutable import FrozenMap
+        from quorune.rules.graveyard_card_targets import GraveyardReturnScope
         from quorune.semantic_choices.model import SemanticChoiceContinuation,SemanticChoiceFrame,SemanticChoiceCompletion
         from quorune.semantic_choices.completed_choice import encode_remaining_completion,decode_remaining_completion
         intent=ReturnGraveyardCardToOwnerHandIntent(actor='A',object_ref='stable-ref',reason='Original target',
@@ -48,8 +49,23 @@ class GraveyardExilePaymentCompilerTests(unittest.TestCase):
                 stack_object='original-stack',instruction_pointer=0,controller='A'))
         completion=SemanticChoiceCompletion(intents=(intent,))
         encoded=encode_remaining_completion(continuation,'A',{},completion,0)
+        self.assertNotIn("scope", encoded["intents"][0]["fields"])
         restored=decode_remaining_completion(json.loads(json.dumps(encoded)))
         self.assertEqual(completion.intents,restored[3].intents)
+
+        public = replace(intent, scope=GraveyardReturnScope.PUBLIC)
+        completion = SemanticChoiceCompletion(intents=(public,))
+        encoded = encode_remaining_completion(continuation, "A", {}, completion, 0)
+        fields = encoded["intents"][0]["fields"]
+        self.assertEqual("public", fields["scope"])
+        restored = decode_remaining_completion(json.loads(json.dumps(encoded)))
+        self.assertEqual((public,), restored[3].intents)
+        self.assertIs(GraveyardReturnScope.PUBLIC, restored[3].intents[0].scope)
+
+        fields["scope"] = "own"
+        with self.assertRaisesRegex(ValueError, "invalid graveyard-return scope"):
+            decode_remaining_completion(encoded)
+
     def test_new_exile_schema_round_trips_and_old_payment_payload_is_unchanged(self):
         spec=FixedEffectPaymentSpec('exile',schema_version=3,amount=2,predicate=ObjectQuerySpec(
             zones=('graveyard',),owner='$controller',token=False,known_to_actor=True))

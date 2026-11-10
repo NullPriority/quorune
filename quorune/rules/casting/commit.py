@@ -62,6 +62,7 @@ from ...morph import (
     MORPH_CAST_METHOD,
     MorphError,
 )
+from ...cast_event_type_model import CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD, cast_event_type_line
 from ..spell_cast_events import SpellCastEvent, cast_creature_target_controllers
 from ...selection.exile_cast import mana_value_of_cost
 from ...zone_object_state import (
@@ -1131,10 +1132,14 @@ def _dispatch_cast_events(
             transition_kind=transition_kind,
             trigger_batch=trigger_batch,
         )
-    cast_types, cast_subtypes, cast_supertypes = host._type_parts(
-        proposal.type_line
-    )
     effective_spell = host._effective_card_data(card)
+    cast_types, cast_subtypes, cast_supertypes = host._type_parts(
+        cast_event_type_line(
+            getattr(host.state, CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD, None),
+            proposal.type_line,
+            effective_spell,
+        )
+    )
     cast_colors = tuple(effective_spell.get("colors") or ())
     mana_cost = str(effective_spell.get("mana_cost") or "")
     host._record_turn_history(

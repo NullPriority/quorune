@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..semantic_runtime import intents as typed
 from ..semantic_runtime.domain_intent import DomainEffectIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
@@ -76,6 +77,8 @@ def _intent_data(intent):
         values.pop("paid_creature")
     if isinstance(intent, typed.MoveObjectsSimultaneouslyIntent) and intent.library_order is None:
         values.pop("library_order")
+    if isinstance(intent, typed.ReturnGraveyardCardToOwnerHandIntent) and intent.scope is GraveyardReturnScope.OWN:
+        values.pop("scope")
     return _data(values)
 
 
@@ -142,10 +145,16 @@ def decode_remaining_completion(value):
             expected_fields.remove("paid_creature")
         if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent) and "library_order" not in values:
             expected_fields.remove("library_order")
+        if cls is typed.ReturnGraveyardCardToOwnerHandIntent and "scope" not in values:
+            expected_fields.remove("scope")
         if set(values) != expected_fields:
             raise SemanticChoiceError('Completed choice intent has unknown kind or fields')
         values={key:_restore(child) for key,child in values.items()}
         if 'transition_kind' in values:values['transition_kind']=ZoneTransitionKind(values['transition_kind'])
+        if cls is typed.ReturnGraveyardCardToOwnerHandIntent and "scope" in values:
+            if values["scope"] != GraveyardReturnScope.PUBLIC.value:
+                raise SemanticChoiceError("Completed choice has an invalid graveyard-return scope")
+            values["scope"] = GraveyardReturnScope.PUBLIC
         intent=cls(**values)
         if _intent_data(intent) != _data(encoded['fields']):
             raise SemanticChoiceError('Completed choice intent data are not canonical')

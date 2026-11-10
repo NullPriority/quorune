@@ -2971,6 +2971,11 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "creature.attacks",
             ),
             (
+                "Whenever equipped creature attacks alone, you may draw a card.",
+                "Artifact — Equipment",
+                "creature.attacks",
+            ),
+            (
                 "When enchanted creature dies, you gain 2 life.",
                 "Enchantment — Aura",
                 "creature.dies",
@@ -3333,6 +3338,12 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "Creature — Human",
                 ("creature.attacks", "creature.blocks"),
             ),
+            (
+                "Whenever an enchantment you control enters and whenever you fully "
+                "unlock a Room, draw a card.",
+                "Creature — Fixture",
+                ("permanent.enter", "room.fully_unlocked"),
+            ),
         )
         for text, type_line, expected_events in cases:
             with self.subTest(text=text):
@@ -3379,8 +3390,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         cases = (
             "Whenever your commander enters or attacks, draw a card.",
             "When you cycle this card and when this creature dies, draw a card.",
-            "Whenever an enchantment you control enters and whenever you fully "
-            "unlock a Room, draw a card.",
+            "Whenever an enchantment you control enters and whenever an opponent "
+            "fully unlocks a Room, draw a card.",
             "When this creature enters or the creature it haunts dies, draw a card.",
             "Whenever another creature you control with an unrepresented quality enters or dies, draw a card.",
             "Whenever this creature enters or becomes renowned, draw a card.",
@@ -3620,7 +3631,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         cases = (
             "Whenever an opponent discards one or more cards, you may draw a card.",
             "Whenever you sacrifice a green creature, you may gain 2 life.",
-            "Whenever equipped creature attacks alone, you may draw a card.",
+            "Whenever equipped creature attacks alone with power 4 or greater, "
+            "you may draw a card.",
             "Whenever enchanted permanent dies, you may gain 2 life.",
             "Whenever equipped creature deals damage to each opponent simultaneously, you "
             "may draw a card.",

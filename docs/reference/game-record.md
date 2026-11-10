@@ -276,6 +276,12 @@ absence retains the earlier transition order and remains absent on serialization
 Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
 See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
 
+Current checkpoints carry `cast_event_type_snapshot_version` 1, mirrored in
+manifest format provenance. The cast event and turn history take their type
+facts from the effective stack spell when casting completes. Historical
+checkpoints without the marker retain proposal type facts for exact replay.
+Malformed versions and manifest/checkpoint mismatches reject before replay.
+
 New checkpoints carry `printed_mana_cost_version: 3`, mirrored in manifest
 format provenance. The cast proposal checks that a submitted X is a nonnegative
 integer before payment or stack placement. Version two represents printed snow
@@ -530,6 +536,9 @@ consequences, bound to the original parent, payer, response and suspended
 intent. Save/load resumes that unpaid work without checking or charging the
 already-committed resource again. Continuations without this field retain
 their existing decoding and validation path.
+An unrestricted public graveyard return stores its explicit scope and the
+announced target incarnation. Owner-only graveyard returns keep the historical
+payload with implicit owner scope.
 
 A version-two temporary creature-type choice stores the resolving controller,
 the printed type exclusion, and either the selected object's incarnation or

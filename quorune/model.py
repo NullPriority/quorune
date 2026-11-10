@@ -36,6 +36,12 @@ from .cast_face_offers import (
     selected_face_state_fields,
     split_permanent_face_values_version,
 )
+from .cast_event_type_model import (
+    CURRENT_CAST_EVENT_TYPE_SNAPSHOT_VERSION,
+    cast_event_type_snapshot_fields,
+    cast_event_type_snapshot_version,
+    read_cast_event_type_snapshot_version,
+)
 from .cast_source_placement_model import (
     cast_placement_state_fields, cast_source_placement_version, read_target_announcement_timing_version,
 )
@@ -1238,6 +1244,7 @@ class GameState:
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
     target_announcement_timing_version: int | None = None
+    cast_event_type_snapshot_version: int | None = CURRENT_CAST_EVENT_TYPE_SNAPSHOT_VERSION
     phasing_lifecycle_version: int | None = 1
     printed_mana_cost_version: int | None = CURRENT_PRINTED_MANA_COST_VERSION
     explore_action_version: int | None = 1
@@ -1323,6 +1330,7 @@ class GameState:
         modal_dfc_transform_version(self.modal_dfc_transform_version)
         transform_event_characteristics_version(self.transform_event_characteristics_version)
         face_status_timestamp_version(self.face_status_timestamp_version)
+        cast_event_type_snapshot_version(self.cast_event_type_snapshot_version)
         face_down_characteristics_version(self.face_down_characteristics_version)
         library_selection_knowledge_version(self.library_selection_knowledge_version)
         characteristic_query_boundary_version(self.characteristic_query_boundary_version)
@@ -1373,6 +1381,7 @@ class GameState:
             ),
             **selected_face_state_fields(self.cast_face_offers_version, self.split_permanent_face_values_version),
             **cast_placement_state_fields(self.cast_source_placement_version, self.target_announcement_timing_version),
+            **cast_event_type_snapshot_fields(self.cast_event_type_snapshot_version),
             **({"phasing_lifecycle_version": phasing_version} if phasing_version is not None else {}),
             **printed_mana_cost_format_fields(self.printed_mana_cost_version),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
@@ -1465,6 +1474,7 @@ class GameState:
             ),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
             target_announcement_timing_version=read_target_announcement_timing_version(data),
+            cast_event_type_snapshot_version=read_cast_event_type_snapshot_version(data),
             phasing_lifecycle_version=phasing_lifecycle_version(data.get("phasing_lifecycle_version")),
             printed_mana_cost_version=read_printed_mana_cost_version(data),
             explore_action_version=explore_action_version(data.get('explore_action_version')),

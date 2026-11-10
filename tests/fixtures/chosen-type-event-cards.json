@@ -673,6 +673,105 @@
       "released_at": "2024-11-15",
       "toughness": null,
       "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Changeling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Turtleshell Changeling",
+      "oracle_id": "87f8b403-765c-4a2a-8b21-edaaaa889234",
+      "oracle_text": "Changeling (This card is every creature type.)\n{1}{U}: Switch this creature's power and toughness until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2007-10-12",
+      "toughness": "4",
+      "type_line": "Creature — Shapeshifter"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Reach",
+        "Megamorph"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Aerie Bowmasters",
+      "oracle_id": "43ace4d5-9006-4bad-bd17-3d368c20564d",
+      "oracle_text": "Reach (This creature can block creatures with flying.)\nMegamorph {5}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2015-03-27",
+      "toughness": "4",
+      "type_line": "Creature — Dog Archer"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -837,6 +936,24 @@
       "comment": "While it appears only on cards that already have other card types, kindred is a card type and will be counted by effects that refer to the number of card types among cards in a zone.",
       "oracle_id": "f07b821c-bbc1-4def-b009-6c03689478d0",
       "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to a creature may become lethal if you switch its power and toughness during that turn.",
+      "oracle_id": "87f8b403-765c-4a2a-8b21-edaaaa889234",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that switch a creature's power and toughness apply after all other effects, regardless of when those effects began to apply. For instance, if you target a 1/2 creature then give it +2/+0 later in the turn, it's a 2/3 creature, not a 4/1 creature.",
+      "oracle_id": "87f8b403-765c-4a2a-8b21-edaaaa889234",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Switching a creature's power and toughness twice (or any even number of times) effectively returns the creature to the power and toughness it had before any switches.",
+      "oracle_id": "87f8b403-765c-4a2a-8b21-edaaaa889234",
+      "published_at": "2021-03-19",
       "source": "wotc"
     }
   ],

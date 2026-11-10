@@ -179,9 +179,12 @@ unrepresented follow-up conditions remain residual.
 `compiler/chosen_type_event_bindings.py` matches represented cast, entry,
 death, and entry-or-attack subjects against the existing per-object creature
 type designation. A creature-spell subject retains its Creature gate; a
-general spell of that type can also be Kindred. Entry and death use their
-sealed public subtype facts, while attack uses its versioned declared-attack
-snapshot. Multi-event containers validate those facts within each branch.
+general spell of that type can also be Kindred. The current cast snapshot
+reads the effective stack spell when casting completes. Changeling supplies
+its current creature types, and a face-down spell has the types it actually
+carries on the stack. Entry and death use their sealed public subtype facts,
+while attack uses its versioned declared-attack snapshot. Multi-event
+containers validate those facts within each branch.
 The source's recorded choice is distinct from its owner and controller, and
 departure discovery uses the existing last-known source snapshot. A missing
 choice matches nothing; a malformed designation fails closed. Noncreature

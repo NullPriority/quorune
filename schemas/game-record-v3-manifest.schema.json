@@ -102,6 +102,10 @@
           ],
           "type": "integer"
         },
+        "cast_event_type_snapshot_version": {
+          "type": "integer",
+          "const": 1
+        },
         "cast_source_placement_version": {
           "const": 1,
           "type": "integer"

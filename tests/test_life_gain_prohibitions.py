@@ -547,7 +547,12 @@ class FirstLifeGainNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(['A'], decision.actors)
         self.assertEqual(before_life, session.state.players['A'].life)
         self.assertEqual(['A'], self.first_gainers(session))
-        self.assertFalse(any(event.kind == 'player_gained_life' for event in session.state.turn_history.events))
+        life_facts = [
+            (event.kind, event.amount)
+            for event in session.state.turn_history.events
+            if event.target == "A" and event.kind in {"player_gained_life", "player_lost_life"}
+        ]
+        self.assertCountEqual([("player_gained_life", 1), ("player_lost_life", 1)], life_facts)
         self.assertIn(top.ref, json.dumps(session.packet('pilot:A', full=True)))
         for seat in 'BCD':
             self.assertNotIn(top.ref, json.dumps(session.packet('pilot:' + seat, full=True)))

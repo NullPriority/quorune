@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT, keep_all, make_session
+from common import ROOT, advance_fixture_turn, keep_all, make_session
 from quorune.carddb import CardDatabase
 from quorune.cast_lifecycles import (
     FIXED_CAST_LIFECYCLE_CONTEXT_FIELD,
@@ -319,7 +319,7 @@ class FixedZoneCastLifecycleRuntimeTests(unittest.TestCase):
                 json.dumps(session.packet(principal, full=True)),
             )
 
-        engine.state.turn_sequence += 1
+        advance_fixture_turn(engine)
         self.prepare_main(session)
         with patch.object(engine, "_effective_static_component_keys", return_value=()):
             cast = self.action(engine, card=card, action="cast")
@@ -365,7 +365,7 @@ class FixedZoneCastLifecycleRuntimeTests(unittest.TestCase):
                 for action in engine._priority_action_hints("A")["actions"]
             )
         )
-        engine.state.turn_sequence += 1
+        advance_fixture_turn(engine)
         self.prepare_main(session, active="B")
         self.assertFalse(
             any(action.get("card") == card.ref for action in engine._priority_action_hints("A")["actions"])

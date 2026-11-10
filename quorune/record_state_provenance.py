@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from .cast_event_type_model import cast_event_type_snapshot_fields, read_cast_event_type_snapshot_version
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
 from .model import unearth_leave_replacement_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
@@ -53,6 +54,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **cast_placement_state_fields(
             getattr(state, "cast_source_placement_version", None), getattr(state, "target_announcement_timing_version", None),
         ),
+        **cast_event_type_snapshot_fields(getattr(state, "cast_event_type_snapshot_version", None)),
         **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
            if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
         **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
@@ -150,6 +152,8 @@ def validate_state_versions(
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')
     if read_target_announcement_timing_version(format_value) != getattr(state, "target_announcement_timing_version", None):
         raise ValueError("Target announcement timing provenance does not match the initial checkpoint")
+    if read_cast_event_type_snapshot_version(format_value) != getattr(state, "cast_event_type_snapshot_version", None):
+        raise ValueError("Cast event type snapshot provenance does not match the initial checkpoint")
     if read_printed_mana_cost_version(format_value) != getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None):
         raise ValueError("Printed mana cost authority provenance does not match the initial checkpoint")
     from .transform_timestamp_model import (

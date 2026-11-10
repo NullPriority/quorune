@@ -657,8 +657,23 @@ class OracleIRTests(unittest.TestCase):
         )
 
     def test_exact_keyword_capability_promotes_beside_residual_ability(self):
-        record = self.db.lookup("Faerie Mastermind")
+        base = self.db.lookup("Faerie Mastermind")
+        record = replace(
+            base,
+            oracle_id="fixture-flash-flying-residual-draw",
+            oracle_text=(
+                "Flash\nFlying\n"
+                "Whenever an opponent draws their seventh card each turn, you draw a card.\n"
+                "{3}{U}: Each player draws a card."
+            ),
+        )
         capabilities = load_default_capability_registry()
+        ir = compile_oracle_card(
+            record,
+            capability_registry=capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual([3], [residual.span.line for residual in ir.material_residuals])
 
         programs = generated_programs(
             self.db,
