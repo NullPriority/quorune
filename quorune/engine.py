@@ -148,7 +148,7 @@ from .trigger_processing import (
     collect_ward_occurrences,
     complete_trigger_order_decision,
     enqueue_trigger_batch,
-    pin_upkeep_hand_at_departure,
+    pin_player_departure_trigger_facts,
     TriggerProcessingHostMixin,
 )
 from .trigger_discovery import (
@@ -6679,7 +6679,7 @@ class CommanderEngine(
         unique = [seat for seat in unique_preserving_order(seats) if seat in self.active_seats]
         if not unique:
             return
-        pin_upkeep_hand_at_departure(self, unique)
+        pin_player_departure_trigger_facts(self, unique)
         departing_monarch = self.state.monarch in unique
         monarch_before_departure = self.state.monarch
         active_before_departure = self.state.active_player

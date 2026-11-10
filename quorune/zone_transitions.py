@@ -151,6 +151,8 @@ class ZoneTransitionOwner:
         )
         pending_before = tuple(self.state.pending_trigger_batches)
         try:
+            from .rules.event_counter_threshold import pin_event_counter_threshold_departures
+            pin_event_counter_threshold_departures(self.host, cards, error_type=StateInvariantError)
             from .target_controller_information import pin_target_controller_departures
             pin_target_controller_departures(self.host,cards,error_type=StateInvariantError)
             from .attachment_information import pin_attachment_information_departures

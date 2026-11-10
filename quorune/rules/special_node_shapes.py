@@ -60,6 +60,9 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    from .event_counter_threshold import EVENT_COUNTER_THRESHOLD_MECHANIC, event_counter_threshold_node_capabilities
+    if EVENT_COUNTER_THRESHOLD_MECHANIC in mechanics:
+        return event_counter_threshold_node_capabilities(effects, target_schema)
     from .controlled_return import CONTROLLED_RETURN_FIELD, controlled_return_node_capabilities
     from .distinct_sacrifices import DISTINCT_SACRIFICE_FIELD, distinct_sacrifice_node_capabilities
     from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD, captured_draw_cast_node_capabilities

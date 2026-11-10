@@ -2364,6 +2364,9 @@ opponent upkeep, enchanted-creature death and source-attack wrappers use these
 same existing result and event owners.
 Aura and Equipment attack triggers bind the attachment at declaration and use
 the sealed attacker for untargeted counters and temporary characteristics.
+An ordered counter threshold reads that attacker's count after placement and
+replacements, or its last-known count if the original incarnation departed.
+Only the resolving controller's original Aura can be sacrificed.
 The sole-attacker predicate reads the completed declaration. A defending-player
 target uses the seat identified by the attack assignment, and the source's
 controller makes the trigger's choices. Counter doubling and devotion read

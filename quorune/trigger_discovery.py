@@ -1379,6 +1379,8 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
         host, source=source, program=program, event=event, context=context,
         active_zone=active_zone, source_characteristics=characteristics,
     )
+    from .rules.event_counter_threshold import initial_event_counter_threshold
+    stack_context.update(initial_event_counter_threshold(program.effects))
     from .drawing.miracle_triggers import miracle_trigger_context
     from .reflexive_trigger_model import bound_reflexive_has_targets
     from .relative_power_target import bind_relative_mana_value_trigger_schema

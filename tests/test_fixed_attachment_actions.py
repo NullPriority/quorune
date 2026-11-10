@@ -38,6 +38,159 @@ FIXTURE = ROOT / "tests" / "fixtures" / "fixed-attachment-actions-cards.json"
 PRINTED_FIXTURE = ROOT / "tests" / "fixtures" / "printed-source-attachment-cards.json"
 
 
+class EventCounterThresholdTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "event-counter-threshold.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/attached-occurrence-cards.json",
+            ROOT / "tests/fixtures/manifest-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Event counter threshold", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_attached_event_counter_threshold_is_closed_and_keeps_departed_incarnation(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.event_counter_reference import EVENT_COUNTER_CONTEXT
+        from quorune.model import StackItem
+        from quorune.rules.event_counter_threshold import (
+            EVENT_COUNTER_THRESHOLD_CAPABILITY, EVENT_COUNTER_THRESHOLD_CONTEXT,
+            event_counter_threshold_count, initial_event_counter_threshold, pin_event_counter_threshold_departures,
+        )
+        from quorune.semantic_choices.event_counter_threshold import EventCounterThresholdHandler
+        from quorune.semantics import SemanticProgram
+        from quorune.trigger_batches import create_pending_trigger_batch
+
+        card = self.db.lookup("Ordeal of Thassa")
+        options = dict(capability_registry=self.registry, capability_profile="commander_review")
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = next(node for node in ir.faces[0].nodes if node.event == "creature.attacks")
+        self.assertIn(EVENT_COUNTER_THRESHOLD_CAPABILITY, node.capability_dependencies)
+        self.assertEqual(("place_counters", "sacrifice_source_if_event_counter_threshold"),
+                         tuple(effect["op"] for effect in node.effects))
+        with mock.patch("quorune.compiler.event_counter_results.event_counter_threshold_result", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
+        deps = tuple(cap for cap in node.capability_dependencies if cap != EVENT_COUNTER_THRESHOLD_CAPABILITY)
+        forged = SemanticProgram("fixture:event-counter-threshold", "Event threshold", effects=list(node.effects),
+            event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+            capability_dependencies=deps, capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + EVENT_COUNTER_THRESHOLD_CAPABILITY, binding["blockers"])
+
+        card = CardInstance(object_id="attacker", ref="bear", oracle_id="test", printed_name="Bear",
+                            owner="A", controller="A", zone="battlefield", counters={"+1/+1": 3})
+        observation = initial_event_counter_threshold(node.effects)
+        observation[EVENT_COUNTER_CONTEXT] = {"reference": card.ref, "logical_object_id": card.logical_object_id}
+        item = SimpleNamespace(context=observation)
+        waiting = StackItem(stack_id="pending-counter", ref="S2", kind="triggered_ability", controller="A",
+                            label="Counter threshold", source_object_id="aura", semantic_key=forged.key,
+                            context=dict(observation))
+        batch = create_pending_trigger_batch(batch_id="pending", ref="TB1", items=(waiting.to_dict(),),
+                                             apnap_order=("A", "B"), turn_sequence=1, priority_epoch=1)
+        host = SimpleNamespace(state=SimpleNamespace(stack=[item], pending_trigger_batches=[batch], cards={card.object_id: card}))
+        pin_event_counter_threshold_departures(host, (card,))
+        self.assertEqual(3, item.context[EVENT_COUNTER_THRESHOLD_CONTEXT]["departure_count"])
+        pending, = host.state.pending_trigger_batches[0].items
+        self.assertEqual(3, pending.event_facts[EVENT_COUNTER_THRESHOLD_CONTEXT]["departure_count"])
+        card.zone_change_counter += 1
+        card.counters.clear()
+        self.assertEqual(3, event_counter_threshold_count(host, item))
+
+        resolved = {**node.effects[1], "player": "A", "source": "ordeal", "observed": 3}
+        aura = SimpleNamespace(ref="ordeal", controller="A", phased_out=False, logical_object_id="aura@1")
+        context = SimpleNamespace(actor="A", stack_controller="A", source_logical_object_id="aura@1",
+                                  query=SimpleNamespace(object=lambda *args, **kwargs: aura))
+        handler = EventCounterThresholdHandler()
+        result = handler.prepare(resolved, context)
+        self.assertEqual(({"op": "sacrifice", "card": "ordeal"},), result.auto_continue.prepend_effects)
+        aura.controller = "B"
+        self.assertFalse(handler.prepare(resolved, context).auto_continue.prepend_effects)
+        aura.controller = "A"
+        aura.logical_object_id = "aura@2"
+        self.assertFalse(handler.prepare(resolved, context).auto_continue.prepend_effects)
+
+    def test_original_ordeal_checks_after_replacements_and_sacrifices_only_its_original_source(self):
+        from quorune.rules.event_counter_threshold import EVENT_COUNTER_THRESHOLD_CONTEXT
+
+        for index, scenario in enumerate(("replacements", "below", "source_removed", "attacker_removed")):
+            with self.subTest(scenario=scenario):
+                session = self.session(608210 + index)
+                aura = self.add(session.engine, "Ordeal of Thassa", zone="hand")
+                attacker = self.add(session.engine, "Grizzly Bears")
+                attacker.acquired_control_turn_count = -1
+                attacker.counters["+1/+1"] = {"source_removed": 2, "attacker_removed": 3}.get(scenario, 1)
+                if scenario == "replacements":
+                    scales = self.add(session.engine, "Hardened Scales")
+                    self.add(session.engine, "Branching Evolution")
+                    self.add(session.engine, "Dauthi Voidwalker", seat="B", ref="ordeal-replacement-b")
+                    self.add(session.engine, "Dauthi Voidwalker", seat="C", ref="ordeal-replacement-c")
+                if scenario == "source_removed":
+                    remove = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+                    for land_index in range(2):
+                        self.add(session.engine, "Generic Bound Plains", seat="B", ref=f"ordeal-removal-mana-{land_index}")
+                if scenario == "attacker_removed":
+                    bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+                    self.add(session.engine, "Island", seat="B")
+                self.assert_closed(session, aura)
+                self.prepare(session, mana={"C": 1, "U": 1})
+                self.checkpoint(session)
+                hand = len(session.state.players["A"].zones["hand"]) - 1
+                self.cast_for(session, "A", aura, [attacker.ref])
+                self.assertIsNone(self.resolve(session))
+                self.attack(session, [(attacker, "D")])
+                trigger, = session.state.stack
+                self.assertEqual(aura.object_id, trigger.source_object_id)
+                if scenario == "source_removed":
+                    self.cast_for(session, "B", remove, [aura.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("graveyard", session.state.cards[aura.object_id].zone)
+                if scenario == "attacker_removed":
+                    self.cast_for(session, "B", bounce, [attacker.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("hand", session.state.cards[attacker.object_id].zone)
+                    self.assertEqual(3, session.state.stack[-1].context[EVENT_COUNTER_THRESHOLD_CONTEXT]["departure_count"])
+                    session = self.replay(session, load=True)
+                if scenario == "replacements":
+                    self.assertEqual("replacement.order", self.resolve(session).kind)
+                    packet = session.packet("pilot:A", full=True)["decision"]
+                    option = next(row for row in packet["ctx"]["options"] if row.get("source") == scales.ref)
+                    before = authoritative_state_hash(session.state)
+                    command = {"action_id": "choose", "replacement": option["id"]}
+                    self.assertFalse(session.act("pilot:B", command).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    session = self.replay(session, load=True)
+                    result = session.act("pilot:A", command)
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("replacement.order", session.state.pending_decision.kind)
+                    self.assertEqual(5, session.state.cards[attacker.object_id].counters["+1/+1"])
+                    self.assertEqual("battlefield", session.state.cards[aura.object_id].zone)
+                    session = self.replay(session, load=True)
+                    packet = session.packet("pilot:A", full=True)["decision"]
+                    result = session.act("pilot:A", {"action_id": "choose", "replacement": packet["ctx"]["options"][0]["id"]})
+                    self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                destination = {"replacements": "exile", "below": "battlefield"}.get(scenario, "graveyard")
+                self.assertEqual(destination, session.state.cards[aura.object_id].zone)
+                expected_count = {"replacements": 5, "below": 2, "source_removed": 3}.get(scenario, 0)
+                self.assertEqual(expected_count, session.state.cards[attacker.object_id].counters.get("+1/+1", 0))
+                draws = 2 if scenario == "replacements" else 0
+                returned = 1 if scenario == "attacker_removed" else 0
+                self.assertEqual(hand + draws + returned, len(session.state.players["A"].zones["hand"]))
+                self.replay(session)
+
+
 ENTRY_EQUIPMENT_ORIGINALS = (
     "Dredging Claw", "Stormrider Rig", "Cloak and Dagger", "Doc Ock's Tentacles",
     "Veteran's Armaments", "Diviner's Wand", "Obsidian Battle-Axe",

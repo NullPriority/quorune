@@ -25,9 +25,10 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     from ..dungeon_progress import venture_payload_dependencies
     from ..initiative_model import initiative_payload_dependencies
     from ..rules.manifest_shapes import manifest_result_payload_dependencies
+    from ..rules.event_counter_threshold import event_counter_threshold_payload_dependencies
     if owned_choice := (distinct_sacrifice_payload_dependencies(value) or captured_draw_cast_payload_dependencies(value)
                         or venture_payload_dependencies(value) or initiative_payload_dependencies(value)
-                        or manifest_result_payload_dependencies(value)):
+                        or manifest_result_payload_dependencies(value) or event_counter_threshold_payload_dependencies(value)):
         return owned_choice
     if CHOSEN_IMPULSE_GRANT_FIELD in value:
         raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")

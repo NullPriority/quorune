@@ -380,6 +380,7 @@ def _value_runtime_requirements(program):
 
 
 def _zone_move_runtime_requirements(program, required, blockers):
+    from ..rules.event_counter_threshold import event_counter_threshold_program_dependencies
     from ..rules.graveyard_card_targets import (
         graveyard_copy_cast_runtime_dependencies,
         opposing_graveyard_return_runtime_dependencies, public_graveyard_return_runtime_dependencies,
@@ -394,6 +395,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
     )
 
     for resolver, label in (
+        (event_counter_threshold_program_dependencies, 'event_counter_threshold'),
         (spell_self_exile_runtime_dependencies, 'spell_self_exile'),
         (spell_self_shuffle_runtime_dependencies, 'spell_self_shuffle'),
         (spell_self_bottom_runtime_dependencies, 'spell_self_bottom'),

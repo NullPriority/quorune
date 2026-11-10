@@ -18,6 +18,11 @@ from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .event_counter_results import event_counter_threshold_result
+
+    threshold = event_counter_threshold_result(binding, body, effect_template=effect_template, card_name=card_name)
+    if threshold is not None:
+        return threshold
     if binding.variant in {"source_attacks", "your end step"} and body == binding.body:
         from .reanimation_templates import relative_target_reanimation_template
         event = "attack" if binding.variant == "source_attacks" else "end_step"

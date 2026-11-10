@@ -454,6 +454,16 @@ def pin_upkeep_hand_at_departure(host, departing: Sequence[str]) -> None:
         replace_pending_trigger_batch(host, index, batch)
 
 
+def pin_player_departure_trigger_facts(host, departing: Sequence[str]) -> None:
+    from .rules.event_counter_threshold import pin_event_counter_threshold_departures
+
+    pin_upkeep_hand_at_departure(host, departing)
+    pin_event_counter_threshold_departures(host, (
+        card for card in host.state.cards.values()
+        if card.owner in departing and card.zone == "battlefield" and card.face_down
+    ), error_type=StateInvariantError)
+
+
 def enqueue_trigger_batch(
     host: TriggerProcessingHost,
     items: Sequence[StackItem],

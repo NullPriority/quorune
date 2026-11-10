@@ -8556,6 +8556,8 @@
         "quorune/compiler/trigger_result_templates.py",
         "quorune/compiler/resolution_effect_templates.py",
         "quorune/rules/occurrence_object_results.py",
+        "quorune/rules/event_counter_threshold.py",
+        "quorune/semantic_choices/event_counter_threshold.py",
         "quorune/rules/destruction_regeneration_capability_shapes.py",
         "quorune/rules/effect_node_capabilities.py",
         "quorune/card_programs/runtime_requirements.py",
@@ -8569,6 +8571,7 @@
       ],
       "test_modules": [
         "test_attached_occurrences",
+        "test_fixed_attachment_actions",
         "test_object_query",
         "test_paid_mana_resolution",
         "test_fixed_counter_event_triggers",

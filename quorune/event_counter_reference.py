@@ -81,6 +81,10 @@ def resolve_block_counterpart_recipient(host, item):
 
 
 def resolve_sealed_event_object_value(host, item, value):
+    if value == "$event.counter_threshold_count":
+        from .rules.event_counter_threshold import event_counter_threshold_count
+
+        return True, event_counter_threshold_count(host, item)
     if value==DAMAGE_PERMANENT_OBJECT:
         return True,_resolve_public_incarnation(host,item.context.get(DAMAGE_PERMANENT_CONTEXT))
     if value == BLOCK_COUNTERPART_OBJECT:
