@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed current-controller Manifest and Manifest dread instructions."""
 
 import re
+from ..manifest import MANIFEST_ATTACHMENT_VERSION
 
 
 def manifest_effect_template(text: str):
@@ -13,6 +14,13 @@ def manifest_effect_template(text: str):
     return ('manifest-controller-' + mode + '-v1',
         tuple({'op': 'manifest_card', 'player': '$controller', 'mode': mode} for _ in range(2 if match['twice'] else 1)),
         None, ('manifest', *(('manifest dread',) if mode == 'dread' else ()), 'cr-701-manifest'))
+
+
+def manifest_equipment_entry_template(text: str):
+    if re.fullmatch(r"Manifest dread, then attach this Equipment to that creature\.", text.strip(), re.I) is None:
+        return None
+    effect = {"op": "manifest_card", "player": "$controller", "mode": "dread", MANIFEST_ATTACHMENT_VERSION: 1}
+    return "manifest-dread-attach-equipment-v1", (effect,), None, ("manifest", "manifest dread", "cr-701-manifest")
 
 
 def manifest_keyword_node(*, node_id, line, material_line, span, capability_registry, capability_profile, **_unused):

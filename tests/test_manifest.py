@@ -16,6 +16,48 @@ def manifest_record(text: str) -> CardRecord:
 
 
 class ManifestCompilerTests(unittest.TestCase):
+    def test_manifest_equipment_entry_requires_its_own_capability_and_closed_trigger(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.manifest import MANIFEST_ATTACHMENT_CAPABILITY, MANIFEST_ATTACHMENT_RESULT, MANIFEST_ATTACHMENT_VERSION
+        from quorune.rules.manifest_shapes import manifest_attachment_payload_dependencies
+        from quorune.semantics import SemanticProgram
+
+        body = "manifest dread, then attach this Equipment to that creature."
+        text = f"When this Equipment enters, {body}"
+        card = replace(manifest_record(text), type_line="Artifact — Equipment")
+        registry = load_default_capability_registry()
+
+        def compile_line(line):
+            return compile_oracle_card(replace(card, oracle_text=line), capability_registry=registry)
+
+        ir = compile_line(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(text, node.text)
+        self.assertEqual("permanent.enter.self", node.event)
+        self.assertEqual(1, node.effects[0][MANIFEST_ATTACHMENT_VERSION])
+        self.assertNotEqual("exact", compile_line(text.replace("that creature", "target creature")).status)
+        self.assertNotEqual("exact", compile_line(text.replace("enters", "leaves the battlefield")).status)
+        with patch("quorune.compiler.manifest_templates.manifest_equipment_entry_template", return_value=None):
+            self.assertNotEqual("exact", compile_line(text).status)
+        deps = tuple(cap for cap in node.capability_dependencies if cap != MANIFEST_ATTACHMENT_CAPABILITY)
+        forged = SemanticProgram("fixture:manifest-attachment", "Manifest attachment", effects=list(node.effects),
+                                 active_zone="battlefield", event=node.event, capability_dependencies=deps,
+                                 capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(forged, capability_registry=registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + MANIFEST_ATTACHMENT_CAPABILITY, result["blockers"])
+        wrapper = {"op": "offer_optional_effect", "player": "$controller", "effects": list(node.effects)}
+        deps = (*node.capability_dependencies, "effect.choice.optional_fixed")
+        bundled = replace(forged, effects=[wrapper], capability_dependencies=deps,
+                          capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(bundled, capability_registry=registry, profile="commander_review")
+        self.assertTrue(any("Manifest" in blocker for blocker in result["blockers"]))
+        with self.assertRaises(ValueError):
+            manifest_attachment_payload_dependencies({"op": "attach", MANIFEST_ATTACHMENT_RESULT: {}})
+
     def test_normal_and_dread_manifest_are_distinct_typed_instructions(self):
         registry = load_default_capability_registry()
         for text, mode in (('Manifest the top card of your library.', 'top'), ('Manifest dread.', 'dread')):
@@ -29,6 +71,27 @@ class ManifestCompilerTests(unittest.TestCase):
 
 
 class ManifestChoiceModelTests(unittest.TestCase):
+    def test_manifest_attachment_matches_only_the_committed_incarnations(self):
+        from types import SimpleNamespace
+
+        from quorune.manifest import MANIFEST_ATTACHMENT_RESULT, MANIFEST_MARKER, manifest_characteristics
+        from quorune.morph import MORPH_FACE_DOWN_ANNOTATION
+        from quorune.rules.manifest_shapes import manifested_attachment_is_current
+
+        source = SimpleNamespace(zone="battlefield", phased_out=False, logical_object_id="equipment@1")
+        target = SimpleNamespace(zone="battlefield", phased_out=False, face_down=True, logical_object_id="selected@2",
+                                 annotations={MANIFEST_MARKER: {"schema_version": 1},
+                                              MORPH_FACE_DOWN_ANNOTATION: manifest_characteristics()})
+        effect = {"op": "attach", "attachment_kind": "equipment", "source": "equipment", "target": "selected",
+                  MANIFEST_ATTACHMENT_RESULT: {"source": "equipment@1", "target": "selected@2"}}
+        cards = {"equipment": source, "selected": target}
+        self.assertTrue(manifested_attachment_is_current(cards, effect))
+        target.zone = "exile"
+        self.assertFalse(manifested_attachment_is_current(cards, effect))
+        target.zone = "battlefield"
+        source.logical_object_id = "equipment@3"
+        self.assertFalse(manifested_attachment_is_current(cards, effect))
+
     def test_manifest_empty_and_single_card_dread_keep_exact_cardinality(self):
         from types import SimpleNamespace
         from quorune.semantic_choices.manifest import ManifestChoiceHandler
@@ -138,6 +201,74 @@ class ManifestEntryOwnerTests(unittest.TestCase):
     checkpoint = _Witness.checkpoint
     replay = _Witness.replay
     resolve = _Witness.resolve
+    from inherited_composition_fixture import InheritedNativeFixture as _Native
+    prepare = _Native.prepare
+    priority = _Native.priority
+    action = _Native.action
+    cast_for = _Native.cast_for
+    resolve_top = _Native.resolve_top
+    assert_closed = _Native.assert_closed
+
+    def test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source(self):
+        from quorune.record import authoritative_state_hash
+
+        for removed in (False, True):
+            with self.subTest(removed=removed):
+                session = self.session(311110 + removed)
+                equipment = self.add(session.engine, "Conductive Machete", zone="hand")
+                first = self.add(session.engine, "Lightning Bolt", zone="library", ref="equipment-dread-first")
+                second = self.add(session.engine, "Viashino Firstblade", zone="library", ref="equipment-dread-second")
+                if removed:
+                    removal = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+                    for i in range(2):
+                        self.add(session.engine, "Generic Bound Plains", seat="B", ref=f"equipment-removal-mana-{i}")
+                else:
+                    self.add(session.engine, "Dauthi Voidwalker", seat="B", ref="equipment-replacement-b")
+                    self.add(session.engine, "Dauthi Voidwalker", seat="C", ref="equipment-replacement-c")
+                library = session.state.players["A"].zones["library"]
+                for card in (first, second):
+                    library.remove(card.object_id)
+                library.extend((second.object_id, first.object_id))
+                self.assert_closed(session, equipment)
+                self.prepare(session, mana={"C": 4})
+                self.checkpoint(session)
+                self.cast_for(session, "A", equipment)
+                self.resolve_top(session)
+                trigger = session.state.stack[-1]
+                self.assertEqual(equipment.object_id, trigger.source_object_id)
+                self.assertFalse(trigger.targets)
+                self.assertTrue(session.engine.semantic_program_is_current_trusted(session.engine.semantics.get(trigger.semantic_key)))
+                if removed:
+                    self.cast_for(session, "B", removal, [equipment.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("graveyard", session.state.cards[equipment.object_id].zone)
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                before = authoritative_state_hash(session.state)
+                for seat in "BCD":
+                    projected = str(session.packet(f"pilot:{seat}", full=True))
+                    self.assertNotIn(first.ref, projected)
+                    self.assertNotIn(second.ref, projected)
+                command = {"action_id": "choose", "card": second.ref}
+                self.assertFalse(session.act("pilot:B", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                if not removed:
+                    self.assertEqual("replacement.order", session.state.pending_decision.kind)
+                    self.assertTrue(session.state.cards[second.object_id].face_down)
+                    self.assertIsNone(session.state.cards[equipment.object_id].attached_to)
+                    session = self.replay(session, load=True)
+                    decision = session.packet("pilot:A", full=True)["decision"]
+                    result = session.act("pilot:A", {"action_id": "choose", "replacement": decision["ctx"]["options"][0]["id"]})
+                    self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard" if removed else "exile", session.state.cards[first.object_id].zone)
+                self.assertTrue(session.state.cards[second.object_id].face_down)
+                self.assertEqual(None if removed else second.object_id, session.state.cards[equipment.object_id].attached_to)
+                self.assertEqual(2 if removed else 4, session.engine._numeric_stat(second.object_id, "power"))
+                self.assertNotIn("Viashino Firstblade", str(session.packet("pilot:B", full=True)))
+                self.replay(session)
 
     def test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger(self):
         from quorune.record import authoritative_state_hash

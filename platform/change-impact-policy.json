@@ -5152,6 +5152,8 @@
       "patterns": [
         "quorune/manifest.py",
         "quorune/compiler/manifest_templates.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/effect_runtime/zones_and_attachments.py",
         "quorune/rules/manifest_shapes.py",
         "quorune/semantic_choices/manifest.py",
         "quorune/zone_transitions.py",

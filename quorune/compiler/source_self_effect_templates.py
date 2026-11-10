@@ -26,6 +26,10 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     guard=re.fullmatch(r'if you cast it(?P<origin> from your hand)?, (?P<body>.+)',body.strip(),re.I) if event_phrase=='enters' else None
     if guard is not None:body=guard['body'];condition=source_entry_cast_condition(origin='hand' if guard['origin'] else None)
     if event_phrase == 'enters':
+        from .manifest_templates import manifest_equipment_entry_template
+
+        if condition is None and (attachment := manifest_equipment_entry_template(body)) is not None:
+            return (*attachment, None)
         from .suspect_templates import normalize_entering_source_suspect
         body = normalize_entering_source_suspect(body)
     compiled = fixed_announced_damage_template(body, card_name=card_name, allow_source_pronoun=True)

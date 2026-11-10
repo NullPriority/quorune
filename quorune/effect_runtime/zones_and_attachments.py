@@ -484,6 +484,20 @@ def _attachment_target_is_legal(
     )
 
 
+def _apply_attach_instruction(host, effect, *, actor, operation, reason):
+    from ..manifest import MANIFEST_ATTACHMENT_RESULT
+
+    if MANIFEST_ATTACHMENT_RESULT in effect:
+        from ..rules.manifest_shapes import manifested_attachment_is_current
+
+        try:
+            if not manifested_attachment_is_current(host.state.cards, effect):
+                return None
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+    return _apply_attach(host, effect, actor=actor, operation=operation, reason=reason)
+
+
 def _apply_attach(
     host: Any,
     effect: Mapping[str, Any],
@@ -1494,7 +1508,7 @@ HANDLERS = {
     'return_linked_exiled_objects': return_linked_exiled_objects,
     'prepare_graveyard_creature_aura': _apply_prepare_graveyard_creature_aura,
     'reanimate_attached_creature_aura': _apply_reanimate_attached_creature_aura,
-    'attach': _apply_attach,
+    'attach': _apply_attach_instruction,
     'unattach': _apply_unattach,
     'create_attached_token': _apply_create_attached_token,
     'bestow_prepare': _apply_bestow_prepare,

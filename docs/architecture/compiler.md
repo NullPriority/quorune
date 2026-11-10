@@ -2335,7 +2335,10 @@ or linked creation grammar remains residual.
 Manifest instructions are represented as a separate controller-private choice
 family. Normal top-card entry and Manifest dread retain distinct modes. Dread
 selects one private looked-at card, manifests it, and then moves the remainder
-to the graveyard. Manifested normal-layout creatures with current whole-card
+to the graveyard. The Equipment entry variant then attempts to attach the
+original Equipment to the creature created by that Manifest choice. It binds
+both incarnations and uses ordinary untargeted attachment legality.
+Manifested normal-layout creatures with current whole-card
 closure may turn face up for an ordinary printed mana cost; represented Morph,
 Megamorph and Disguise alternatives retain separate offers. Complex mana and
 unsupported card-form or face-up behavior remain explicitly unavailable. See

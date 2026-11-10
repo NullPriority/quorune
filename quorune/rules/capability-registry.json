@@ -48155,6 +48155,88 @@
     {
       "applicability": {
         "exclusions": [
+          "Other trigger envelopes",
+          "Targeted attachment",
+          "Unrepresented Manifest modes"
+        ],
+        "inputs": [
+          "Original Equipment entry ability",
+          "Private Dread selection",
+          "Committed library movement and exact incarnations"
+        ],
+        "outputs": [
+          "Original Equipment attempts ordinary attachment after Manifest and the remaining move",
+          "Departed or substituted objects leave the original choice and movement intact"
+        ],
+        "summary": "A source-entry Manifest Dread result attaches the original Equipment to the manifested creature after the committed library moves."
+      },
+      "blockers": [],
+      "dependencies": [
+        "attachment.action.fixed_source",
+        "keyword_action.manifest_dread"
+      ],
+      "dependency_fail_closed_rationale": "The typed instruction independently requires the attachment owner and exact source-entry envelope. Only the choice owner produces the resolved attachment binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "keyword_action.manifest_dread.attach_equipment",
+      "implementation_components": [
+        "quorune.compiler.manifest_templates.manifest_equipment_entry_template",
+        "quorune.rules.manifest_shapes.validate_manifest_attachment_envelope",
+        "quorune.rules.manifest_shapes.manifested_attachment_is_current",
+        "quorune.semantic_choices.manifest.ManifestChoiceHandler",
+        "quorune.effect_runtime.zones_and_attachments._apply_attach"
+      ],
+      "implementation_mutation_rationale": "Omitting the bounded entry result keeps the original source line residual. The native witness verifies that attachment waits until the outstanding replacement is chosen.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source"
+      ],
+      "multiplayer_tests": [
+        "test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source"
+      ],
+      "negative_tests": [
+        "test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source",
+        "test_manifest_equipment_entry_requires_its_own_capability_and_closed_trigger",
+        "test_manifest_attachment_matches_only_the_committed_incarnations"
+      ],
+      "official_rules": [
+        "301.5c",
+        "400.7",
+        "603.2",
+        "608.2c",
+        "701.3b",
+        "701.40a",
+        "701.62a",
+        "708.2"
+      ],
+      "positive_tests": [
+        "test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source",
+        "test_manifest_equipment_entry_requires_its_own_capability_and_closed_trigger"
+      ],
+      "privacy_tests": [
+        "test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source"
+      ],
+      "replay_tests": [
+        "test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "privacy"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Monstrosity 0 or variable Monstrosity values",
           "compound instructions containing Monstrosity",
           "monstrous-matters triggers and static abilities not independently capability closed",
@@ -90336,7 +90418,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 803,
+  "registry_version": 804,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
