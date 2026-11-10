@@ -3,17 +3,44 @@ from __future__ import annotations
 """Closed current-controller Manifest and Manifest dread instructions."""
 
 import re
-from ..manifest import MANIFEST_ATTACHMENT_VERSION
+from ..manifest import MANIFEST_ATTACHMENT_VERSION, MANIFEST_COUNTERS_FIELD
+from ..query_effect_amount_model import CastXAmountSpec
 
 
 def manifest_effect_template(text: str):
-    match = re.fullmatch(r'Manifest (?P<mode>the top card of your library|dread)(?P<twice> twice)?\.', text.strip(), re.I)
-    if match is None or match['twice'] and match['mode'].casefold() != 'dread':
+    match = re.fullmatch(
+        r'Manifest (?P<mode>the top card of your library|the top two cards of your library|dread)'
+        r'(?P<twice> twice)?\.', text.strip(), re.I,
+    )
+    if match is None:
+        return _manifest_counter_template(text)
+    if match['twice'] and match['mode'].casefold() != 'dread':
         return None
-    mode = 'dread' if match['mode'].casefold() == 'dread' else 'top'
+    mode = {'dread': 'dread', 'the top two cards of your library': 'top_two'}.get(match['mode'].casefold(), 'top')
     return ('manifest-controller-' + mode + '-v1',
         tuple({'op': 'manifest_card', 'player': '$controller', 'mode': mode} for _ in range(2 if match['twice'] else 1)),
         None, ('manifest', *(('manifest dread',) if mode == 'dread' else ()), 'cr-701-manifest'))
+
+
+def _manifest_counter_template(text):
+    match = re.fullmatch(
+        r"Manifest (?P<mode>the top card of your library|dread), then put "
+        r"(?P<count>a|two|three|X) \+1/\+1 (?P<noun>counters?) on (?P<target>it|that creature)\.",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    mode = "dread" if match["mode"].casefold() == "dread" else "top"
+    count = match["count"].casefold()
+    if ((match["noun"].casefold() == "counter") != (count == "a")
+            or (mode == "dread") != (match["target"].casefold() == "that creature")
+            or mode == "dread" and count == "x"):
+        return None
+    amount = CastXAmountSpec().to_dict() if count == "x" else {"a": 1, "two": 2, "three": 3}[count]
+    effect = {"op": "manifest_card", "player": "$controller", "mode": mode,
+              MANIFEST_COUNTERS_FIELD: {"schema_version": 1, "count": amount}}
+    mechanics = ("manifest", *(("manifest dread",) if mode == "dread" else ()), "cr-701-manifest")
+    return "manifest-result-counters-v1", (effect,), None, mechanics
 
 
 def manifest_equipment_entry_template(text: str):

@@ -48050,6 +48050,165 @@
     {
       "applicability": {
         "exclusions": [
+          "Counters placed as part of entry",
+          "Arbitrary result quantities or counter kinds",
+          "Multiple manifested recipients"
+        ],
+        "inputs": [
+          "Typed Manifest instruction and exact authoritative original library or result incarnations"
+        ],
+        "outputs": [
+          "Existing owner applies the represented ordered movement or post-entry counter instruction"
+        ],
+        "summary": "Apply represented fixed or announced-X counters to the committed Manifest creature after its library moves."
+      },
+      "blockers": [],
+      "dependencies": [
+        "counter.producer.fixed_effect",
+        "keyword_action.manifest.card"
+      ],
+      "dependency_fail_closed_rationale": "Closed program payloads independently require the specific Manifest result owner. Follow-up counter instructions can only originate from the authoritative Manifest choice.",
+      "dependency_fail_closed_status": "passed",
+      "id": "keyword_action.manifest.result_counters",
+      "implementation_components": [
+        "quorune.compiler.manifest_templates._manifest_counter_template",
+        "quorune.rules.manifest_shapes.validate_manifest_result_envelope",
+        "quorune.semantic_choices.manifest.ManifestChoiceHandler",
+        "quorune.semantic_choices.manifest.ManifestCounterResultHandler"
+      ],
+      "implementation_mutation_rationale": "The bounded compiler and model witnesses distinguish a missing producer, reselected top cards, stale result identity and improper counter placement.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement",
+        "test_original_weight_room_manifests_then_counts_only_the_chosen_creature"
+      ],
+      "multiplayer_tests": [
+        "test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement",
+        "test_original_weight_room_manifests_then_counts_only_the_chosen_creature"
+      ],
+      "negative_tests": [
+        "test_manifest_result_counter_and_top_two_productions_have_closed_shapes",
+        "test_manifest_order_retains_original_positions_and_counters_require_the_result",
+        "test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement",
+        "test_original_weight_room_manifests_then_counts_only_the_chosen_creature"
+      ],
+      "official_rules": [
+        "107.3",
+        "122.6",
+        "400.7",
+        "608.2c",
+        "616.1",
+        "701.40a",
+        "701.62a"
+      ],
+      "positive_tests": [
+        "test_manifest_result_counter_and_top_two_productions_have_closed_shapes",
+        "test_manifest_order_retains_original_positions_and_counters_require_the_result",
+        "test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement",
+        "test_original_weight_room_manifests_then_counts_only_the_chosen_creature"
+      ],
+      "privacy_tests": [
+        "test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement",
+        "test_original_weight_room_manifests_then_counts_only_the_chosen_creature"
+      ],
+      "replay_tests": [
+        "test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement",
+        "test_original_weight_room_manifests_then_counts_only_the_chosen_creature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "privacy"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "Variable or unrepresented counts",
+          "Public reveal of uncommitted library identities"
+        ],
+        "inputs": [
+          "Typed Manifest instruction and exact authoritative original library or result incarnations"
+        ],
+        "outputs": [
+          "Existing owner applies the represented ordered movement or post-entry counter instruction"
+        ],
+        "summary": "Seal the original top two library cards and manifest each available card separately in original order."
+      },
+      "blockers": [],
+      "dependencies": [
+        "keyword_action.manifest.card"
+      ],
+      "dependency_fail_closed_rationale": "Closed program payloads independently require the specific Manifest result owner. Follow-up counter instructions can only originate from the authoritative Manifest choice.",
+      "dependency_fail_closed_status": "passed",
+      "id": "keyword_action.manifest.top_two",
+      "implementation_components": [
+        "quorune.compiler.manifest_templates.manifest_effect_template",
+        "quorune.rules.manifest_shapes.validate_manifest_instruction",
+        "quorune.semantic_choices.manifest._prepare_top_two",
+        "quorune.semantic_choices.intent_host.move_object_intent"
+      ],
+      "implementation_mutation_rationale": "The bounded compiler and model witnesses distinguish a missing producer, reselected top cards, stale result identity and improper counter placement.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_ambush_manifests_only_the_two_top_cards_in_order"
+      ],
+      "multiplayer_tests": [
+        "test_original_ambush_manifests_only_the_two_top_cards_in_order"
+      ],
+      "negative_tests": [
+        "test_manifest_result_counter_and_top_two_productions_have_closed_shapes",
+        "test_manifest_order_retains_original_positions_and_counters_require_the_result",
+        "test_original_ambush_manifests_only_the_two_top_cards_in_order"
+      ],
+      "official_rules": [
+        "400.7",
+        "608.2c",
+        "701.40a",
+        "701.40e",
+        "701.40f",
+        "708.2"
+      ],
+      "positive_tests": [
+        "test_manifest_result_counter_and_top_two_productions_have_closed_shapes",
+        "test_manifest_order_retains_original_positions_and_counters_require_the_result",
+        "test_original_ambush_manifests_only_the_two_top_cards_in_order"
+      ],
+      "privacy_tests": [
+        "test_original_ambush_manifests_only_the_two_top_cards_in_order"
+      ],
+      "replay_tests": [
+        "test_original_ambush_manifests_only_the_two_top_cards_in_order"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "privacy"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "otherplayerorigins",
           "unrepresentedentryprohibitions",
           "variablelinkedgrammar",
@@ -48180,7 +48339,7 @@
       "id": "keyword_action.manifest_dread.attach_equipment",
       "implementation_components": [
         "quorune.compiler.manifest_templates.manifest_equipment_entry_template",
-        "quorune.rules.manifest_shapes.validate_manifest_attachment_envelope",
+        "quorune.rules.manifest_shapes.validate_manifest_result_envelope",
         "quorune.rules.manifest_shapes.manifested_attachment_is_current",
         "quorune.semantic_choices.manifest.ManifestChoiceHandler",
         "quorune.effect_runtime.zones_and_attachments._apply_attach"
@@ -90418,7 +90577,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 804,
+  "registry_version": 805,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

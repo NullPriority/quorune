@@ -2338,6 +2338,10 @@ selects one private looked-at card, manifests it, and then moves the remainder
 to the graveyard. The Equipment entry variant then attempts to attach the
 original Equipment to the creature created by that Manifest choice. It binds
 both incarnations and uses ordinary untargeted attachment legality.
+The two-card form seals the original top two and manifests them in order.
+Counter follow-ups bind the manifested battlefield incarnation and use ordinary
+counter placement and replacement rules after the library moves. The variable
+counter form uses the spell's announced X.
 Manifested normal-layout creatures with current whole-card
 closure may turn face up for an ordinary printed mana cost; represented Morph,
 Megamorph and Disguise alternatives retain separate offers. Complex mana and

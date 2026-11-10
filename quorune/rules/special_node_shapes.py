@@ -15,9 +15,9 @@ def special_trigger_envelope_capabilities(dependencies, mechanics):
 def special_result_trigger_runtime_dependencies(program):
     """Bind executable Manifest/half-life results and their subscriptions."""
     from collections.abc import Mapping
-    from .manifest_shapes import manifest_node_capabilities, validate_manifest_attachment_envelope
+    from .manifest_shapes import manifest_node_capabilities, validate_manifest_result_envelope
     from ..fractional_quantity_model import HalfQuantitySpec,HALF_QUANTITY_KIND,HALF_LIFE_CAPABILITY
-    validate_manifest_attachment_envelope(program)
+    validate_manifest_result_envelope(program)
     required=set();manifest=False;half=False
     for effect in program.effects:
         if effect.get('op')=='manifest_card':

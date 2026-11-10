@@ -22,7 +22,7 @@ class ManifestCompilerTests(unittest.TestCase):
 
         from quorune.card_programs import bind_semantic_program_runtime
         from quorune.manifest import MANIFEST_ATTACHMENT_CAPABILITY, MANIFEST_ATTACHMENT_RESULT, MANIFEST_ATTACHMENT_VERSION
-        from quorune.rules.manifest_shapes import manifest_attachment_payload_dependencies
+        from quorune.rules.manifest_shapes import manifest_result_payload_dependencies
         from quorune.semantics import SemanticProgram
 
         body = "manifest dread, then attach this Equipment to that creature."
@@ -56,7 +56,35 @@ class ManifestCompilerTests(unittest.TestCase):
         result = bind_semantic_program_runtime(bundled, capability_registry=registry, profile="commander_review")
         self.assertTrue(any("Manifest" in blocker for blocker in result["blockers"]))
         with self.assertRaises(ValueError):
-            manifest_attachment_payload_dependencies({"op": "attach", MANIFEST_ATTACHMENT_RESULT: {}})
+            manifest_result_payload_dependencies({"op": "attach", MANIFEST_ATTACHMENT_RESULT: {}})
+
+    def test_manifest_result_counter_and_top_two_productions_have_closed_shapes(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.manifest import MANIFEST_COUNTERS_CAPABILITY, MANIFEST_TOP_TWO_CAPABILITY
+        from quorune.query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
+        from quorune.rules.manifest_shapes import manifest_result_payload_dependencies
+
+        registry = load_default_capability_registry()
+        text = "Manifest the top card of your library, then put X +1/+1 counters on it."
+        card = replace(manifest_record(text), mana_cost="{X}{G}{G}", mana_value=2)
+        ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(MANIFEST_COUNTERS_CAPABILITY, node.capability_dependencies)
+        self.assertIn(DECLARED_AMOUNT_CAPABILITY, node.capability_dependencies)
+        for invalid in (text.replace("on it", "on target creature"), text.replace("X", "five")):
+            self.assertNotEqual("exact", compile_oracle_card(replace(card, oracle_text=invalid),
+                                capability_registry=registry).status)
+        with patch("quorune.compiler.manifest_templates._manifest_counter_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=registry).status)
+        top_two = "Manifest the top two cards of your library."
+        ir = compile_oracle_card(manifest_record(top_two), capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertIn(MANIFEST_TOP_TWO_CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
+        with self.assertRaises(ValueError):
+            manifest_result_payload_dependencies({"op": "place_manifest_result_counters"})
 
     def test_normal_and_dread_manifest_are_distinct_typed_instructions(self):
         registry = load_default_capability_registry()
@@ -71,6 +99,36 @@ class ManifestCompilerTests(unittest.TestCase):
 
 
 class ManifestChoiceModelTests(unittest.TestCase):
+    def test_manifest_order_retains_original_positions_and_counters_require_the_result(self):
+        from types import SimpleNamespace
+
+        from quorune.manifest import MANIFEST_COUNTERS_FIELD
+        from quorune.semantic_choices.manifest import ManifestChoiceHandler, ManifestCounterResultHandler
+
+        rows = {ref: SimpleNamespace(ref=ref, logical_object_id=ref + "@1", phased_out=False)
+                for ref in ("first", "second", "third")}
+        library = ["first", "second", "third"]
+        query = SimpleNamespace(library_refs=lambda *_a, **_kw: tuple(library),
+                                object=lambda ref, **_kw: rows[ref])
+        context = SimpleNamespace(query=query, actor="A", stack_label="Manifest", source_ref="source")
+        handler = ManifestChoiceHandler()
+        instruction = {"op": "manifest_card", "player": "A", "mode": "top_two"}
+        preparation = handler.prepare(instruction, context)
+        self.assertEqual(["first", "second"], [intent.object_ref for intent in preparation.preparation_intents])
+        library.remove("first")
+        resumed = handler.prepare(preparation.continuation_effect, context)
+        self.assertEqual(preparation.preparation_intents, resumed.preparation_intents)
+        top = {**instruction, "mode": "top", MANIFEST_COUNTERS_FIELD: {"schema_version": 1, "count": 2}}
+        prepared = handler.prepare(top, context)
+        effect, = prepared.auto_continue.prepend_effects
+        followup = ManifestCounterResultHandler()
+        self.assertEqual((), followup.prepare(effect, context).preparation_intents)
+        rows["second"].logical_object_id = "second@2"
+        intent, = followup.prepare(effect, context).preparation_intents
+        self.assertEqual((("second",), "+1/+1", 2), (intent.object_refs, intent.counter_name, intent.amount))
+        rows["second"].logical_object_id = "second@3"
+        self.assertEqual((), followup.prepare(effect, context).preparation_intents)
+
     def test_manifest_attachment_matches_only_the_committed_incarnations(self):
         from types import SimpleNamespace
 
@@ -208,6 +266,83 @@ class ManifestEntryOwnerTests(unittest.TestCase):
     cast_for = _Native.cast_for
     resolve_top = _Native.resolve_top
     assert_closed = _Native.assert_closed
+
+    def test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement(self):
+        session = self.session(311113)
+        spell = self.add(session.engine, "Wildcall", zone="hand")
+        body = self.add(session.engine, "Viashino Firstblade", zone="library", ref="wildcall-result")
+        scales = self.add(session.engine, "Hardened Scales")
+        self.add(session.engine, "Branching Evolution")
+        library = session.state.players["A"].zones["library"]
+        library.remove(body.object_id)
+        library.append(body.object_id)
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"G": 2, "C": 2})
+        self.checkpoint(session)
+        action = self.action(session, "A", spell)
+        result = session.act("pilot:A", {"action_id": action["id"], "x": 2, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        pending = self.resolve(session)
+        self.assertEqual("replacement.order", pending.kind)
+        current = session.state.cards[body.object_id]
+        self.assertEqual(("battlefield", True, {}), (current.zone, current.face_down, current.counters))
+        session = self.replay(session, load=True)
+        packet = session.packet("pilot:A", full=True)["decision"]
+        option = next(row for row in packet["ctx"]["options"] if row.get("source") == scales.ref)
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": option["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 6}, session.state.cards[body.object_id].counters)
+        self.assertNotIn("Viashino Firstblade", str(session.packet("pilot:B", full=True)))
+        self.replay(session)
+
+    def test_original_ambush_manifests_only_the_two_top_cards_in_order(self):
+        session = self.session(311114)
+        spell = self.add(session.engine, "Ethereal Ambush", zone="hand")
+        cards = (self.add(session.engine, "Lightning Bolt", zone="library", ref="ambush-top"),
+                 self.add(session.engine, "Viashino Firstblade", zone="library", ref="ambush-next"),
+                 self.add(session.engine, "Generic Bound Body", zone="library", ref="ambush-third"))
+        library = session.state.players["A"].zones["library"]
+        for card in cards:
+            library.remove(card.object_id)
+        library.extend(card.object_id for card in reversed(cards))
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"G": 1, "U": 1, "C": 3})
+        self.checkpoint(session)
+        self.cast_for(session, "A", spell)
+        self.assertIsNone(self.resolve(session))
+        top, next_card, third = (session.state.cards[card.object_id] for card in cards)
+        self.assertEqual(("battlefield", "battlefield", "library"), (top.zone, next_card.zone, third.zone))
+        self.assertTrue(top.face_down and next_card.face_down)
+        self.assertLess(top.zone_timestamp, next_card.zone_timestamp)
+        self.assertNotIn("Lightning Bolt", str(session.packet("pilot:B", full=True)))
+        self.replay(session, load=True)
+
+    def test_original_weight_room_manifests_then_counts_only_the_chosen_creature(self):
+        session = self.session(311115)
+        room = self.add(session.engine, "Moldering Gym // Weight Room", zone="hand")
+        other = self.add(session.engine, "Lightning Bolt", zone="library", ref="room-dread-other")
+        chosen = self.add(session.engine, "Viashino Firstblade", zone="library", ref="room-dread-result")
+        library = session.state.players["A"].zones["library"]
+        for card in (other, chosen):
+            library.remove(card.object_id)
+        library.extend((chosen.object_id, other.object_id))
+        self.assert_closed(session, room)
+        self.prepare(session, mana={"G": 2, "C": 8})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row.get("card") == room.ref and row.get("face") == "Weight Room")
+        result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        result = session.act("pilot:A", {"action_id": "choose", "card": chosen.ref})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[other.object_id].zone)
+        self.assertEqual({}, session.state.cards[other.object_id].counters)
+        self.assertEqual({"+1/+1": 3}, session.state.cards[chosen.object_id].counters)
+        self.assertTrue(session.state.cards[chosen.object_id].face_down)
+        self.replay(session, load=True)
 
     def test_original_manifest_equipment_waits_for_remainder_replacement_and_uses_exact_source(self):
         from quorune.record import authoritative_state_hash
