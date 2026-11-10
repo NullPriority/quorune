@@ -37,6 +37,13 @@ def _event_player(binding,subject):
 
 def _occurrence_player(event,condition,variant,subject):
     if subject=='you':return '$controller'
+    if subject == 'its controller' and condition == {
+        'field': 'source_attachment_target_ref', 'op': 'eq', 'value': '$context.card',
+    } and (
+        event == 'creature.attacks' and variant in ATTACHED_CREATURE_ATTACK_VARIANTS
+        or event in {'creature.attacks', 'creature.blocks'} and variant == 'enchanted_creature_attacks_or_blocks'
+    ):
+        return occurrence_controller_reference()
     if subject.replace('\u2019', "'")=="that creature's controller":
         # CR 608.2h uses current information while the original blocker remains.
         if event == 'creature.blocks' and variant == 'a_creature_blocks' and condition is None:
@@ -72,7 +79,7 @@ def _bound_result_template(binding,text,*,effect_template,card_name):
 
 
 def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
-    match=re.fullmatch(r"(?P<subject>that player|they|defending player|that creature['’]s controller|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)",body,re.I)
+    match=re.fullmatch(r"(?P<subject>that player|they|defending player|that creature['’]s controller|its controller|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)",body,re.I)
     if match is None:return None
     player=_event_player(binding,match['subject'].casefold())
     if player is None:return None

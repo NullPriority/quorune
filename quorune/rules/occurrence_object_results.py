@@ -95,6 +95,12 @@ def occurrence_object_runtime_dependencies(program):
     controller=any(isinstance(e.get(field),Mapping) and e[field].get('kind')=='occurrence_controller_information'
         for e in program.effects for field in ('target','player'))
     if controller:
+        if program.event == 'creature.attacks':
+            from .event_player_result_shapes import attached_combat_controller_runtime_dependencies
+            required = attached_combat_controller_runtime_dependencies(program)
+            if not required:
+                raise ValueError('Attached combat controller information requires a closed life instruction')
+            return required
         if program.event == 'creature.blocks':
             from .event_player_result_shapes import blocking_controller_runtime_dependencies
             required = blocking_controller_runtime_dependencies(program)
