@@ -17,6 +17,7 @@ from ..keyword_abilities import (
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 from ..replacement.immutable import thaw_value
 from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, split_next_turn_effect
+from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION, TARGET_CARD_TYPE_ADDITION_VERSION
 
 
 FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
@@ -205,6 +206,16 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
     """Bind canonical public-set and attachment descriptors independently of declared owners."""
     required = set()
     for effect in program.effects:
+        if effect.get("op") == CHARACTERISTIC_OPERATION and effect.get("schema_version") == TARGET_CARD_TYPE_ADDITION_VERSION:
+            from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+
+            owners = fixed_resolution_characteristic_capabilities(
+                effects=(effect,), target_schema=program.target_schema, mechanic_ids=program.coverage,
+            )
+            if not owners:
+                raise ValueError("Target card type addition requires closed target and duration authority")
+            required.update(owners)
+            continue
         if is_attached_characteristic_effect(effect):
             owners = fixed_attached_characteristic_node_capabilities(
                 effects=(effect,), target_schema=program.target_schema, mechanic_ids=("cr-611-continuous-effects",),

@@ -7,6 +7,7 @@ import re
 from typing import Any, Mapping
 
 from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+from ..continuous_effect_model import ContinuousEffectDuration
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
@@ -16,6 +17,7 @@ from ..resolution_characteristic_model import (
     FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec, IndefiniteSourceAnimationSpec,
     INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_SOURCE_ANIMATION_MECHANIC,
     INDEFINITE_ENCHANTMENT_FORM_VERSION, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,
+    FixedResolutionCardTypeAdditionSpec, TARGET_CARD_TYPE_ADDITION_VERSION, TARGET_CARD_TYPE_ADDITION_MECHANIC,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
@@ -170,6 +172,12 @@ _INDEFINITE_SOURCE_ANIMATION = re.compile(
     r"(?P<subject>.+?) becomes a (?P<p>[0-9]{1,2})/(?P<t>[0-9]{1,2}) "
     r"(?P<description>[^.]+?) creature(?: with (?P<abilities>[^.]+))?", re.I,
 )
+_ADDITIVE_CARD_TYPE = re.compile(
+    r"(?P<subject>(?:another )?target .+?) "
+    r"(?:gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and )?"
+    r"becomes an? (?P<card_type>[A-Za-z]+) in addition to its other types",
+    re.IGNORECASE,
+)
 _FIXED_PROTECTION_SUFFIX = re.compile(
     r"(?:^|,? and )protection from (?P<color>white|blue|black|red|green)$", re.I,
 )
@@ -240,6 +248,9 @@ def fixed_resolution_characteristics_effect_template(
     if switch is not None:
         return switch
     normalized = text.strip()
+    type_addition = _additive_card_type_template(normalized)
+    if type_addition is not None:
+        return type_addition
     if any(value in normalized.casefold() for value in ('"','where',' if ',' when ','copy','all creature types')):
         return None
     prefix = re.fullmatch(r"Until end of turn, (?P<body>.+)",normalized,re.I)
@@ -326,6 +337,41 @@ def fixed_resolution_characteristics_effect_template(
             remove_all_abilities=removes,keywords=keywords,base_power=int(animation['p'] or animation['bp']),base_toughness=int(animation['t'] or animation['bt']))
     mechanics=('cr-611-continuous-effects',PERMANENT_CHARACTERISTIC_MECHANIC,*(keyword.casefold() for keyword in keywords),*(('cr-115-targets',) if schema is not None else ()))
     return ('fixed-resolution-characteristics-v2',({'op':CHARACTERISTIC_OPERATION,'schema_version':2,'characteristics':spec.to_dict(),**selection},),schema,mechanics)
+
+
+def _additive_card_type_template(text):
+    if not text.endswith("."):
+        return None
+    text = text.removesuffix(".")
+    start = "Until end of turn, "
+    end = " until end of turn"
+    if text.casefold().startswith(start.casefold()):
+        body = text[len(start):]
+        duration = ContinuousEffectDuration.UNTIL_END_OF_TURN
+    elif text.casefold().endswith(end):
+        body = text[:-len(end)]
+        duration = ContinuousEffectDuration.UNTIL_END_OF_TURN
+    else:
+        body = text
+        duration = ContinuousEffectDuration.ZONE_OBJECT
+    match = _ADDITIVE_CARD_TYPE.fullmatch(body)
+    if match is None:
+        return None
+    target = direct_permanent_target_spec(match["subject"])
+    if target is None:
+        return None
+    try:
+        spec = FixedResolutionCardTypeAdditionSpec(
+            match["card_type"].title(), duration, int(match["power"] or 0), int(match["toughness"] or 0),
+        )
+    except ValueError:
+        return None
+    if match["power"] is not None and not (spec.power or spec.toughness):
+        return None
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": TARGET_CARD_TYPE_ADDITION_VERSION,
+              "card": "$target.0", "characteristics": spec.to_dict()}
+    return ("fixed-target-card-type-addition-v1", (effect,), target.to_target_schema(),
+            ("cr-611-continuous-effects", "cr-115-targets", TARGET_CARD_TYPE_ADDITION_MECHANIC))
 
 
 _ADDITIVE_SUBTYPE = re.compile(

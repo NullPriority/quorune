@@ -21,6 +21,10 @@ from quorune.paid_sacrifice_conditions import (
 )
 from quorune.query_effect_amount_model import PublicQueryAmountError
 from quorune.record import authoritative_state_hash
+from quorune.resolution_characteristic_model import (
+    TARGET_CARD_TYPE_ADDITION_CAPABILITY, FixedResolutionCardTypeAdditionSpec,
+    fixed_resolution_characteristic_instruction,
+)
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.scalar_effect_amount_model import (
     PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_CONTEXT,
@@ -98,6 +102,51 @@ class PaidSacrificeCharacteristicTests(unittest.TestCase):
             item.context[context_key] = malformed
             with self.assertRaises(ValueError):
                 resolve_paid_sacrifice_condition(reference, item)
+
+    def test_target_card_type_addition_keeps_other_layers_and_exact_duration(self):
+        from quorune.rules.resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+
+        examples = (
+            ("Target land becomes an artifact in addition to its other types until end of turn.", "until_end_of_turn", ("4",)),
+            ("Target creature becomes an artifact in addition to its other types.", "zone_object", ("4",)),
+            ("Until end of turn, target nonartifact creature gets +1/+0 and becomes an artifact in addition to its other types.",
+             "until_end_of_turn", ("4", "7c")),
+        )
+        registry = load_default_capability_registry()
+        for text, duration, sublayers in examples:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(record(text), capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                effect, = node.effects
+                spec, ref = fixed_resolution_characteristic_instruction(effect)
+                self.assertEqual(("$target.0", "Artifact", duration), (ref, spec.card_type, spec.duration.value))
+
+                def witness():
+                    layers = spec.layer_operations()
+                    self.assertEqual(sublayers, tuple(layer[1] for layer in layers))
+                    self.assertEqual("add_types", layers[0][2][0].op)
+
+                witness()
+                with patch.object(FixedResolutionCardTypeAdditionSpec, "layer_operations", return_value=()):
+                    with self.assertRaises(AssertionError):
+                        witness()
+                self.assertIn(TARGET_CARD_TYPE_ADDITION_CAPABILITY, node.capability_dependencies)
+                forged = {**effect, "characteristics": {**effect["characteristics"], "duration": "while_source_present"}}
+                self.assertEqual((), fixed_resolution_characteristic_capabilities(
+                    effects=(forged,), target_schema=node.target_schema, mechanic_ids=node.mechanics,
+                ))
+                self.assertEqual((), fixed_resolution_characteristic_capabilities(
+                    effects=(effect,), target_schema=None, mechanic_ids=node.mechanics,
+                ))
+        open_ended = "Target land becomes an artifact in addition to its other types until your next turn."
+        self.assertNotEqual("exact", compile_oracle_card(record(open_ended), capability_registry=registry).status)
+        payload = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf8"))
+        capability = next(row for row in payload["capabilities"] if row["id"] == TARGET_CARD_TYPE_ADDITION_CAPABILITY)
+        capability.update(status="blocked", blockers=["withdrawn card type addition authority"])
+        withdrawn = CapabilityRegistry(payload)
+        withdrawn.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual("exact", compile_oracle_card(record(examples[0][0]), capability_registry=withdrawn).status)
 
 
 class PaidSacrificeCreatureStatTests(unittest.TestCase):
@@ -285,27 +334,25 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
                 self.replay(session)
 
     def test_original_foundry_helix_uses_the_effective_paid_artifact_type(self):
-        from quorune.continuous_effect_model import ContinuousOperation, Layer
-        from quorune.continuous_effect_state import (
-            ResolutionContinuousComponent, ResolutionEffectSource, create_resolution_continuous_effect_components,
-        )
-
         for granted in (False, True):
             with self.subTest(granted=granted):
                 session = self.session(704_601_242 + granted)
                 source = self.add(session.engine, "Foundry Helix", zone="hand")
                 paid = self.add(session.engine, "Grizzly Bears")
                 self.add(session.engine, "Sol Ring")
+                coating = self.add(session.engine, "Liquimetal Coating") if granted else None
                 self.assert_closed(session, source)
-                if granted:
-                    create_resolution_continuous_effect_components(
-                        session.engine, source=ResolutionEffectSource(stack_ref="paid-artifact-type-witness"),
-                        targets=(paid,), components=(ResolutionContinuousComponent(Layer.TYPE, "4", (
-                            ContinuousOperation("add_types", ("artifact",), field="card_types"),
-                        )),),
-                    )
                 self.prepare(session, mana={"W": 1, "R": 1, "C": 1})
                 self.checkpoint(session)
+                if coating is not None:
+                    self.assert_closed(session, coating)
+                    rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    ability = next(row for row in rows if row["id"].startswith(f"activate:{coating.ref}:"))
+                    result = session.act("pilot:A", {"action_id": ability["id"], "targets": [paid.ref]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual({"artifact", "creature"}, session.engine._type_parts(
+                        session.engine._effective_card_data(paid)["type_line"])[0])
                 original = self.cast_with_sacrifice(session, source, paid, ["C"])
                 receipt = original.context[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT]
                 self.assertEqual(granted, "artifact" in receipt["types"])
@@ -314,6 +361,39 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
                 self.assertEqual([44 if granted else 40, 40, 36, 40],
                                  [session.state.players[seat].life for seat in "ABCD"])
                 self.replay(session)
+
+    def test_original_transmogrant_adds_artifact_through_its_sacrifice_and_expires_on_reentry(self):
+        session = self.session(205_611_300)
+        source = self.add(session.engine, "Ashnod's Transmogrant")
+        target = self.add(session.engine, "Grizzly Bears")
+        illegal = self.add(session.engine, "Sol Ring")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"W": 1})
+        self.checkpoint(session)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        ability = next(row for row in rows if row["id"].startswith(f"activate:{source.ref}:"))
+        before = authoritative_state_hash(session.state)
+        result = session.act("pilot:A", {"action_id": ability["id"], "targets": [illegal.ref]})
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": ability["id"], "targets": [target.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        session = self.replay(session, load=True)
+        current = session.state.cards[target.object_id]
+        original_id = current.logical_object_id
+        self.assertEqual({"artifact", "creature"}, session.engine._type_parts(
+            session.engine._effective_card_data(current)["type_line"])[0])
+        self.assertEqual(1, current.counters["+1/+1"])
+        self.cast_for(session, "A", blink, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[target.object_id]
+        self.assertNotEqual(original_id, current.logical_object_id)
+        self.assertEqual({"creature"}, session.engine._type_parts(session.engine._effective_card_data(current)["type_line"])[0])
+        self.assertFalse(current.counters)
+        self.replay(session)
 
     def test_original_paid_vehicle_and_legendary_artifact_keep_their_fixed_results(self):
         cases = (

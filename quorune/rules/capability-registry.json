@@ -33341,6 +33341,87 @@
     {
       "applicability": {
         "exclusions": [
+          "type replacement",
+          "dynamic or static type sets",
+          "unsupported durations",
+          "added subtypes and keyword changes"
+        ],
+        "inputs": [
+          "one revalidated permanent target",
+          "canonical added card type",
+          "fixed printed duration and optional fixed stat deltas"
+        ],
+        "outputs": [
+          "retained original card types and correlated subtypes",
+          "ordinary layer-four operation and optional layer-seven stat delta",
+          "exact target-incarnation lifetime"
+        ],
+        "summary": "Add a fixed card type to one declared battlefield permanent for the printed duration."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "The fixed source remains unresolved when this capability is withdrawn. Runtime binding requires the versioned target and result.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.fixed_target_card_type_addition",
+      "implementation_components": [
+        "quorune.resolution_characteristic_model.FixedResolutionCardTypeAdditionSpec",
+        "quorune.compiler.fixed_resolution_characteristics._additive_card_type_template",
+        "quorune.continuous_effect_state.apply_fixed_resolution_characteristics",
+        "quorune.rules.resolution_characteristic_shapes.fixed_resolution_characteristic_capabilities"
+      ],
+      "implementation_mutation_rationale": "Omitting the layer operations fails the exact type and stat-layer witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_transmogrant_adds_artifact_through_its_sacrifice_and_expires_on_reentry"
+      ],
+      "multiplayer_tests": [
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_transmogrant_adds_artifact_through_its_sacrifice_and_expires_on_reentry"
+      ],
+      "negative_tests": [
+        "test_target_card_type_addition_keeps_other_layers_and_exact_duration",
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_transmogrant_adds_artifact_through_its_sacrifice_and_expires_on_reentry"
+      ],
+      "official_rules": [
+        "205.1b",
+        "400.7",
+        "608.2b",
+        "611.2a",
+        "613.1d",
+        "613.4c"
+      ],
+      "positive_tests": [
+        "test_target_card_type_addition_keeps_other_layers_and_exact_duration",
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_transmogrant_adds_artifact_through_its_sacrifice_and_expires_on_reentry"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_transmogrant_adds_artifact_through_its_sacrifice_and_expires_on_reentry"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "dynamic quantities outside independently assured scalar amount composition",
           "mixed target roles",
           "chosen or protection abilities",
@@ -90963,7 +91044,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 811,
+  "registry_version": 812,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

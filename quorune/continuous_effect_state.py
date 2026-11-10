@@ -286,6 +286,7 @@ def apply_fixed_resolution_characteristics(
     """Commit a versioned fixed result through the existing multi-layer owner."""
     from .resolution_characteristic_model import (
         DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
+        FixedResolutionCardTypeAdditionSpec,
     )
     from .errors import GameRuleError
 
@@ -313,7 +314,8 @@ def apply_fixed_resolution_characteristics(
             except GameRuleError:
                 return []
         source = resolution_effect_source(host, effect, fallback_card=affected[0] if affected else None)
-        timing = _characteristic_effect_timing(host, effect, actor=actor, source=source)
+        timing = ((spec.duration, None, None) if isinstance(spec, FixedResolutionCardTypeAdditionSpec)
+                  else _characteristic_effect_timing(host, effect, actor=actor, source=source))
         if timing is None:
             return []
         duration, expiry_player, history = timing

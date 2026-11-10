@@ -11,6 +11,7 @@ from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS, FIXED_CHARACTERIST
 from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import thaw_value
 from .source_tap_effect import SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
+from .type_subtype_vocabulary import CARD_TYPE_SUBTYPES
 
 
 PERMANENT_CHARACTERISTIC_MECHANIC = "fixed-source-characteristics-until-end-of-turn"
@@ -32,6 +33,9 @@ INDEFINITE_SOURCE_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_sourc
 INDEFINITE_ENCHANTMENT_FORM_VERSION = 18
 INDEFINITE_ENCHANTMENT_FORM_MECHANIC = "indefinite-enchantment-form"
 INDEFINITE_ENCHANTMENT_FORM_CAPABILITY = "continuous.resolution.indefinite_enchantment_form"
+TARGET_CARD_TYPE_ADDITION_VERSION = 20
+TARGET_CARD_TYPE_ADDITION_MECHANIC = "fixed-target-card-type-addition"
+TARGET_CARD_TYPE_ADDITION_CAPABILITY = "continuous.resolution.fixed_target_card_type_addition"
 INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS = frozenset({
     INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_ENCHANTMENT_FORM_VERSION,
 })
@@ -39,7 +43,8 @@ DERIVED_CHARACTERISTIC_CAPABILITY = "continuous.resolution.derived_base_power_to
 RECIPIENT_MANA_VALUE = "recipient_mana_value"
 FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
-    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
+    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, TARGET_CARD_TYPE_ADDITION_VERSION,
+    *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
 # Every non-retaining animation in this closed model sets Creature alone.
@@ -338,6 +343,45 @@ class FixedResolutionSubtypeGrantSpec:
 
 
 @dataclass(frozen=True, slots=True)
+class FixedResolutionCardTypeAdditionSpec:
+    card_type: str
+    duration: ContinuousEffectDuration
+    power: int = 0
+    toughness: int = 0
+
+    def __post_init__(self) -> None:
+        if (type(self.card_type) is not str or self.card_type != self.card_type.title()
+                or self.card_type.casefold() not in CARD_TYPE_SUBTYPES.keys() - {"instant", "sorcery", "kindred"}):
+            raise ValueError("Card type additions require a canonical permanent type")
+        if (not isinstance(self.duration, ContinuousEffectDuration)
+                or self.duration not in {ContinuousEffectDuration.UNTIL_END_OF_TURN, ContinuousEffectDuration.ZONE_OBJECT}
+                or type(self.power) is not int or type(self.toughness) is not int):
+            raise ValueError("Card type additions require a closed duration and fixed stat deltas")
+
+    @property
+    def capability_dependencies(self) -> tuple[str, ...]:
+        return (TARGET_CARD_TYPE_ADDITION_CAPABILITY, "target.revalidate_resolution")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"card_type": self.card_type, "duration": self.duration.value, "power": self.power,
+                "toughness": self.toughness}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> FixedResolutionCardTypeAdditionSpec:
+        if not isinstance(value, Mapping) or set(value) != {"card_type", "duration", "power", "toughness"}:
+            raise ValueError("Card type addition has a closed schema")
+        return cls(value["card_type"], ContinuousEffectDuration(value["duration"]), value["power"], value["toughness"])
+
+    def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
+        types = ContinuousOperation("add_types", (self.card_type,), field="card_types")
+        result = ((Layer.TYPE, "4", (types,)),)
+        if self.power or self.toughness:
+            modifier = FixedResolutionModifierSpec(self.power, self.toughness)
+            return (*result, *modifier.layer_operations())
+        return result
+
+
+@dataclass(frozen=True, slots=True)
 class FixedResolutionModifierSpec:
     power: int
     toughness: int
@@ -403,11 +447,18 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value.get("schema_version")
+    if type(version) is int and version == TARGET_CARD_TYPE_ADDITION_VERSION:
+        if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
+            raise ValueError("Target card type addition requires one closed instruction")
+        card = value["card"]
+        if type(card) is not str or not card or (card.startswith("$") if resolved else card != "$target.0"):
+            raise ValueError("Target card type addition requires the declared battlefield object")
+        return FixedResolutionCardTypeAdditionSpec.from_dict(value["characteristics"]), card
     if type(version) is int and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS:
         if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
             raise ValueError("Indefinite characteristics require a closed versioned instruction")

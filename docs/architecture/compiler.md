@@ -832,6 +832,13 @@ before its zone move. Resolution uses that observation for a later fixed
 instruction or to select an alternate draw count. A spell copy keeps the
 original payment observation and applies its result for the copy's controller.
 
+A fixed target can gain a card type through the ordinary layer-four owner.
+The instruction keeps the target's other types and applies any printed fixed
+stat deltas in layer seven with the same timestamp. The printed duration
+binds the change either through cleanup or to the selected battlefield
+incarnation. The added type is visible to subsequent casting costs and
+their paid-characteristic conditions.
+
 General query parsing preserves the earlier direct tap-field encoding for a
 pure tapped or untapped quantity predicate. Compound state predicates retain
 their own representation and validation. Public mana production validates a

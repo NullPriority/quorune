@@ -5,7 +5,7 @@ from ..suspect_model import SUSPECT_OPERATION
 from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, DERIVED_CHARACTERISTIC_CAPABILITY, DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
-    INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, fixed_resolution_characteristic_instruction,
+    INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, TARGET_CARD_TYPE_ADDITION_VERSION, fixed_resolution_characteristic_instruction,
 )
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
@@ -49,7 +49,7 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
 
         return public_graveyard_return_payload_dependencies(value)
     if (value.get("op") == CHARACTERISTIC_OPERATION and type(version) is int
-            and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS):
+            and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS | {TARGET_CARD_TYPE_ADDITION_VERSION}):
         spec, _selection = fixed_resolution_characteristic_instruction(value)
         return spec.capability_dependencies
     if value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION:
