@@ -437,6 +437,56 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual("exact", compiled.status)
 
+    def test_targeted_equipment_roles_reject_wrong_bindings_and_cardinality(self):
+        from quorune.compiler.fixed_attachment_templates import targeted_equipment_attachment_template
+        from quorune.rules.attachment_action_capability_shapes import (
+            targeted_equipment_attachment_node_capabilities, targeted_equipment_attachment_runtime_dependencies,
+        )
+        from quorune.rules.attachment_actions import TARGETED_EQUIPMENT_CAPABILITY, TARGETED_EQUIPMENT_VERSION
+
+        text = "Attach up to one target Equipment you control to target Rebel you control."
+        _, effects, schema, mechanics = targeted_equipment_attachment_template(
+            text, card_name="Equipment Transfer", source_is_permanent=False,
+        )
+        first, second = schema["groups"]
+        self.assertEqual(1, first["up_to"])
+        self.assertEqual(["equipment"], first["subtypes_any"])
+        self.assertEqual(1, second["count"])
+        self.assertEqual(["rebel"], second["subtypes_any"])
+        self.assertNotIn("types_any", second)
+        self.assertNotIn("globally_distinct", schema)
+        self.assertIn(TARGETED_EQUIPMENT_CAPABILITY, targeted_equipment_attachment_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=mechanics,
+        ))
+        for bad_effect in ({**effects[0], TARGETED_EQUIPMENT_VERSION: True},
+                           {**effects[0], "source": "$target_group.target_1"},
+                           {**effects[0], "target": "$target_group.target_0"}):
+            self.assertFalse(targeted_equipment_attachment_node_capabilities(
+                effects=(bad_effect,), target_schema=schema, mechanic_ids=mechanics,
+            ))
+        for bad_source in ({**first, "up_to": 2}, {**first, "subtypes_any": ["treasure"]}):
+            self.assertFalse(targeted_equipment_attachment_node_capabilities(
+                effects=effects, target_schema={"groups": [bad_source, second]}, mechanic_ids=mechanics,
+            ))
+        legacy = {"op": "attach", "attachment_kind": "equipment", "source": "$source.zone_object", "target": "$target.0"}
+        program = SimpleNamespace(effects=(legacy,), target_schema=schema, coverage=mechanics)
+        self.assertEqual((), targeted_equipment_attachment_runtime_dependencies(program))
+        for source_role, recipient_role in (("$target_group.target_1", "$source.zone_object"),
+                                            ("$target.0", "$target.1"),
+                                            ("$source.zone_object", "$target_group.target_1")):
+            program.effects = ({**legacy, "source": source_role, "target": recipient_role},)
+            with self.assertRaisesRegex(ValueError, "independently closed attachment and recipient roles"):
+                targeted_equipment_attachment_runtime_dependencies(program)
+
+        source = record("Equipment Transfer", "Attach target Equipment to target creature.", type_line="Instant")
+        self.assertEqual("exact", self.compile(source).status)
+        with mock.patch("quorune.compiler.resolution_effect_templates.targeted_equipment_attachment_template", return_value=None):
+            self.assertNotEqual("exact", self.compile(source).status)
+        for body in ("Attach target Equipment to it.", "Attach target Equipment to target enchantment."):
+            self.assertIsNone(targeted_equipment_attachment_template(
+                body, card_name="Equipment Transfer", source_is_permanent=True,
+            ))
+
     def test_source_equipment_entry_attach_is_typed_and_targeted(self):
         compiled = self.compile(
             record(
@@ -743,9 +793,11 @@ class PrintedSourceAttachmentNativeTests(InheritedNativeFixture, unittest.TestCa
         database = Path(cls.temporary.name) / "printed-source-attachment.sqlite3"
         build_fixture_database([
             fixtures / "bound-effect-program-cards.json",
+            fixtures / "changeling-characteristics-cards.json",
             fixtures / "classic-flash-cards.json",
             fixtures / "attached-exile-activation-cards.json",
             fixtures / "additional-conditional-modifier-cards.json",
+            fixtures / "nonmodal-face-mana-value-cards.json",
             PRINTED_FIXTURE,
         ], database)
         cls.db = CardDatabase(database)
@@ -764,6 +816,192 @@ class PrintedSourceAttachmentNativeTests(InheritedNativeFixture, unittest.TestCa
     def assert_attached(self, session, source, target):
         self.assertEqual(target.object_id, session.state.cards[source.object_id].attached_to)
         self.assertIn(source.object_id, session.state.cards[target.object_id].attachments)
+
+    def submit_attachment_targets(self, session, seat, action_id, equipment=None, recipient=None):
+        targets = {"target_0": [equipment.ref] if equipment is not None else []}
+        if recipient is not None:
+            targets["target_1"] = [recipient.ref]
+        command = {"action_id": action_id, "targets": targets}
+        if action_id != "choose":
+            command["pay"] = "auto"
+            offers = session.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+            self.assertIn(action_id, {row["id"] for row in offers})
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:" + seat, command)
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def choose_attachment_targets(self, session, equipment=None, recipient=None):
+        self.until(session, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "semantic.target")
+        self.submit_attachment_targets(session, "A", "choose", equipment, recipient)
+
+    def cast_attachment_witness(self, session, card, payment, targets=()):
+        self.priority(session, "A")
+        action_id = "cast:" + card.ref
+        offers = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(action_id, {row["id"] for row in offers},
+                      (session.state.phase, session.state.players["A"].mana_pool))
+        accepted = session.act("pilot:A", {"action_id": action_id, "targets": list(targets),
+                                            "pay": "manual", "payment": payment})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_targeted_equipment_moves_with_its_controller_and_keeps_revalidated_roles(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.attachment_actions import TARGETED_EQUIPMENT_CAPABILITY
+
+        session = self.session(701_300_070)
+        engine = session.engine
+        squire = self.add(engine, "Brass Squire")
+        squire.acquired_control_turn_count = -1
+        collector = self.add(engine, "Kazuul's Toll Collector")
+        barret = self.add(engine, "Barret, Avalanche Leader")
+        recipient = self.add(engine, "Universal Automaton")
+        old = self.add(engine, "Generic Bound Body", ref="attachment-old")
+        foreign_old = self.add(engine, "Generic Bound Body", seat="B", ref="attachment-foreign-old")
+        blinked = self.add(engine, "Generic Bound Body", seat="B", ref="attachment-blinked")
+        equipment = self.add(engine, "Cranial Plating", ref="attachment-our-equipment")
+        foreign = self.add(engine, "Cranial Plating", seat="B", ref="attachment-their-equipment")
+        theft = self.add(engine, "Magnetic Theft", zone="hand", ref="attachment-our-theft")
+        their_theft = self.add(engine, "Magnetic Theft", seat="B", zone="hand", ref="attachment-their-theft")
+        blink = self.add(engine, "Flicker of Fate", zone="hand")
+        private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="attachment-private")
+        self.attach(session, equipment, old)
+        self.attach(session, foreign, foreign_old)
+        for card in (squire, collector, barret, theft, blink):
+            self.assert_closed(session, card)
+        program = next(program for program in engine.semantics.programs_for_oracle(theft.oracle_id)
+                       if TARGETED_EQUIPMENT_CAPABILITY in program.capability_dependencies)
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != TARGETED_EQUIPMENT_CAPABILITY)
+        stripped = replace(program, capability_dependencies=dependencies,
+                           capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(stripped, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + TARGETED_EQUIPMENT_CAPABILITY, binding["blockers"])
+        session.state.players["B"].mana_pool["R"] = 1
+        self.prepare(session, mana={"C": 1, "W": 1, "R": 1})
+        self.checkpoint(session)
+
+        offer, = self.attachment_offers(session, squire)
+        wrong = {"action_id": offer["id"], "pay": "auto",
+                 "targets": {"target_0": [foreign.ref], "target_1": [recipient.ref]}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", wrong).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.submit_attachment_targets(session, "A", offer["id"], equipment, recipient)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, recipient)
+
+        offer, = self.attachment_offers(session, collector)
+        self.submit_attachment_targets(session, "A", offer["id"], equipment)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, collector)
+
+        self.submit_attachment_targets(session, "A", "cast:" + theft.ref, foreign, recipient)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, foreign, recipient)
+        self.assertEqual("B", session.state.cards[foreign.object_id].controller)
+        self.priority(session, "B")
+        self.submit_attachment_targets(session, "B", "cast:" + their_theft.ref, foreign, blinked)
+        incarnation = blinked.logical_object_id
+        self.cast(session, "A", blink, [blinked.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(incarnation, session.state.cards[blinked.object_id].logical_object_id)
+        self.assert_attached(session, foreign, recipient)
+
+        self.choose_attachment_targets(session, recipient=recipient)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, collector)
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        self.replay(session)
+
+    def test_targeted_equipment_entry_selects_the_entrant_and_defers_the_optional_choice(self):
+        from quorune.session import CommanderSession
+
+        session = self.session(701_300_071)
+        engine = session.engine
+        kemba = self.add(engine, "Kemba, Kha Enduring", zone="hand")
+        cat = self.add(engine, "Universal Automaton", zone="hand")
+        outfitter = self.add(engine, "Kor Outfitter", zone="hand")
+        blink = self.add(engine, "Flicker of Fate", zone="hand")
+        equipment = self.add(engine, "Cranial Plating")
+        old = self.add(engine, "Generic Bound Body", ref="entry-transfer-old")
+        self.attach(session, equipment, old)
+        for card in (kemba, cat, outfitter, blink):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3, "W": 4})
+        self.checkpoint(session)
+
+        self.cast_attachment_witness(session, kemba, {"C": 1, "W": 1})
+        self.choose_attachment_targets(session)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, old)
+        self.cast_attachment_witness(session, cat, {"C": 1})
+        self.choose_attachment_targets(session, equipment)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, cat)
+
+        self.cast_attachment_witness(session, outfitter, {"W": 2})
+        self.choose_attachment_targets(session, equipment, kemba)
+        decision = self.resolve(session)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assert_attached(session, equipment, cat)
+        declined = session.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+        self.assertTrue(declined.ok, declined.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, cat)
+
+        self.cast_attachment_witness(session, blink, {"C": 1, "W": 1}, [outfitter.ref])
+        self.choose_attachment_targets(session, equipment, kemba)
+        decision = self.resolve(session)
+        self.assertEqual("semantic.choice", decision.kind)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "optional-transfer"
+            session.save(path)
+            resumed = CommanderSession.load(self.db, path)
+            self.assertEqual(authoritative_state_hash(session.state), authoritative_state_hash(resumed.state))
+        session = resumed
+        applied = session.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(applied.ok, applied.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, kemba)
+        self.replay(session)
+
+    def test_targeted_equipment_reflexive_payment_creates_the_targeted_child_after_payment(self):
+        session = self.session(701_300_072)
+        engine = session.engine
+        vendor = self.add(engine, "Weapons Vendor", zone="hand")
+        equipment = self.add(engine, "Cranial Plating")
+        old = self.add(engine, "Generic Bound Body", ref="vendor-old-recipient")
+        recipient = self.add(engine, "Generic Bound Body", ref="vendor-new-recipient")
+        land = self.add(engine, "Generic Bound Plains", ref="vendor-payment-land")
+        self.attach(session, equipment, old)
+        self.assert_closed(session, vendor)
+        self.prepare(session, mana={"C": 3, "W": 1})
+        self.checkpoint(session)
+        self.cast_attachment_witness(session, vendor, {"C": 3, "W": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(session.state.cards[land.object_id].tapped)
+        self.until(session, lambda current: any(item.source_object_id == vendor.object_id
+                                               for item in current.state.stack))
+        parent = session.state.stack[-1]
+        self.assertFalse(parent.targets)
+        decision = self.resolve(session)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assert_attached(session, equipment, old)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", {"action_id": "choose", "pay": True}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        paid = session.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertTrue(session.state.cards[land.object_id].tapped)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        self.assertEqual(parent.ref, session.state.stack[-1].context["reflexive_parent"])
+        self.choose_attachment_targets(session, equipment, recipient)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, equipment, recipient)
+        self.replay(session)
 
     def test_actual_plating_uses_priority_and_revalidates_the_controlled_target(self):
         for stolen in (False, True):

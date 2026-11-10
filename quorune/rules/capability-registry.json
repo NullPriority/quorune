@@ -5573,6 +5573,104 @@
     {
       "applicability": {
         "exclusions": [
+          "unbound pronouns",
+          "open-ended attachment collections",
+          "unrepresented target predicates or linked companion instructions"
+        ],
+        "inputs": [
+          "complete source-spanned Equipment and recipient clauses",
+          "separate optional or required public target groups",
+          "a selected target, current source, or normalized entry occurrence as recipient"
+        ],
+        "outputs": [
+          "principal-correct target selection and resolution-time incarnation revalidation",
+          "original Equipment control, canonical protection, and exact attachment movement",
+          "no attachment when a required role is unavailable or movement is illegal"
+        ],
+        "summary": "Move one selected Equipment to its independently bound current recipient through the canonical attachment operation."
+      },
+      "blockers": [],
+      "dependencies": [
+        "attachment.action.fixed_source",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "The original Magnetic Theft's bound program fails strict validation with the targeted Equipment capability removed from its declared closure.",
+      "dependency_fail_closed_status": "passed",
+      "id": "attachment.action.targeted_equipment",
+      "implementation_components": [
+        "quorune.compiler.fixed_attachment_templates.targeted_equipment_attachment_template",
+        "quorune.rules.attachment_action_capability_shapes.targeted_equipment_attachment_node_capabilities",
+        "quorune.rules.attachment_action_capability_shapes.targeted_equipment_attachment_runtime_dependencies",
+        "quorune.rules.attachment_actions.validate_targeted_equipment_attachment",
+        "quorune.rules.attachment_actions.equipment_attachment_is_legal",
+        "quorune.effect_runtime.zones_and_attachments._apply_attach_instruction"
+      ],
+      "implementation_mutation_rationale": "Suppressing the targeted attachment production leaves a formerly exact complete synthetic spell unresolved. Mismatched role, subtype, bound, and version mutations fail closed.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_targeted_equipment_moves_with_its_controller_and_keeps_revalidated_roles",
+        "test_targeted_equipment_entry_selects_the_entrant_and_defers_the_optional_choice",
+        "test_targeted_equipment_reflexive_payment_creates_the_targeted_child_after_payment"
+      ],
+      "multiplayer_tests": [
+        "test_targeted_equipment_moves_with_its_controller_and_keeps_revalidated_roles",
+        "test_targeted_equipment_entry_selects_the_entrant_and_defers_the_optional_choice",
+        "test_targeted_equipment_reflexive_payment_creates_the_targeted_child_after_payment"
+      ],
+      "negative_tests": [
+        "test_targeted_equipment_roles_reject_wrong_bindings_and_cardinality",
+        "test_targeted_equipment_moves_with_its_controller_and_keeps_revalidated_roles",
+        "test_targeted_equipment_entry_selects_the_entrant_and_defers_the_optional_choice",
+        "test_targeted_equipment_reflexive_payment_creates_the_targeted_child_after_payment"
+      ],
+      "official_rules": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "301.5b",
+        "301.5d",
+        "603.3d",
+        "608.2b",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "702.16d",
+        "702.151b",
+        "603.12"
+      ],
+      "positive_tests": [
+        "test_targeted_equipment_roles_reject_wrong_bindings_and_cardinality",
+        "test_targeted_equipment_moves_with_its_controller_and_keeps_revalidated_roles",
+        "test_targeted_equipment_entry_selects_the_entrant_and_defers_the_optional_choice",
+        "test_targeted_equipment_reflexive_payment_creates_the_targeted_child_after_payment"
+      ],
+      "privacy_tests": [
+        "test_targeted_equipment_moves_with_its_controller_and_keeps_revalidated_roles"
+      ],
+      "replay_tests": [
+        "test_targeted_equipment_moves_with_its_controller_and_keeps_revalidated_roles",
+        "test_targeted_equipment_entry_selects_the_entrant_and_defers_the_optional_choice",
+        "test_targeted_equipment_reflexive_payment_creates_the_targeted_child_after_payment"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Auras enchanting players",
           "Auras enchanting cards outside the battlefield",
           "multiple Enchant abilities",
@@ -91172,7 +91270,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 817,
+  "registry_version": 818,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

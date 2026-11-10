@@ -35,6 +35,7 @@ from .affected_player_sacrifice_templates import (
 from .fixed_attachment_templates import (
     created_token_attachment_effect_template,
     fixed_source_attachment_effect_template,
+    targeted_equipment_attachment_template,
 )
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
@@ -127,6 +128,11 @@ def _attachment_or_zone_result(
     )
     if created_attachment is not None:
         return created_attachment
+    targeted_equipment = targeted_equipment_attachment_template(
+        text, card_name=card_name, source_is_permanent=source_is_permanent,
+    )
+    if targeted_equipment is not None:
+        return targeted_equipment
     template = (
         attached_exile_effect_template(text, source_attachment_relation=source_attachment_relation)
         or attached_destruction_template(text, source_attachment_relation=source_attachment_relation)

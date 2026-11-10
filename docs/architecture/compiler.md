@@ -3680,6 +3680,14 @@ target validation in triggered and activated abilities. The controlled or
 opposing creature relation comes from the instruction. An activated
 instruction retains its own cost and printed timing, including an explicit
 sorcery restriction when present.
+An instruction that selects an Equipment carries a separate target role for
+the Equipment. The recipient can be a second target, the source incarnation,
+or the original entrant. The printed target predicates and the final
+Equipment attachment check each retain their own authority. An empty or
+unavailable role leaves the attachment in place. Optional results bind their
+targets before the controller chooses whether to apply the instruction.
+For a reflexive payment, the separate ability created by payment owns both
+target roles.
 The keyword triggers and printed instructions to create one fixed creature
 token and attach this Equipment use the same replacement-aware token owner.
 A printed optional fixed mana payment uses the existing resolution payment

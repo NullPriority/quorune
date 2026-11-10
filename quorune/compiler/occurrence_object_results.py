@@ -67,11 +67,26 @@ def entry_permanent_result(binding, body):
 
 def entry_equipment_attachment_result(binding, body, *, card_name, effect_template):
     from ..rules.attachment_actions import ENTRY_ATTACHMENT_EVENTS, entry_equipment_attachment_effect
+    from ..event_counter_reference import EVENT_ENTRY_OBJECT
+    from .fixed_attachment_templates import targeted_equipment_attachment_template
     from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
 
+    if binding.event.value not in ENTRY_ATTACHMENT_EVENTS or binding.active_zone != "battlefield":
+        return None
+    targeted = re.fullmatch(r"(?P<optional>you may )?(?P<instruction>attach .+ to (?:it|that creature)\.)", body, re.I)
+    if targeted is not None:
+        result = targeted_equipment_attachment_template(
+            targeted["instruction"], card_name=card_name, source_is_permanent=True, entry_recipient=True,
+        )
+        if result is not None and result[1][0]["target"] == EVENT_ENTRY_OBJECT:
+            if targeted["optional"]:
+                template, effects, schema, mechanics = result
+                result = FixedOptionalEffectTemplate(
+                    template, effects, schema, (FIXED_OPTIONAL_EFFECT_MECHANIC, *mechanics),
+                ).compiled()
+            return result, True
     match = re.fullmatch(r"(?P<optional>you may )?attach this Equipment to (?:it|that creature)\.", body, re.I)
-    if (match is None or binding.event.value not in ENTRY_ATTACHMENT_EVENTS
-            or binding.active_zone != "battlefield"):
+    if match is None:
         return None
     targeted = effect_template("Attach this Equipment to target creature you control.", card_name=card_name)
     if targeted[1] != ({"op": "attach", "attachment_kind": "equipment",

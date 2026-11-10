@@ -11,6 +11,11 @@ from ..event_counter_reference import EVENT_ENTRY_OBJECT
 
 
 FIXED_SOURCE_ATTACHMENT_CAPABILITY = "attachment.action.fixed_source"
+TARGETED_EQUIPMENT_CAPABILITY = "attachment.action.targeted_equipment"
+TARGETED_EQUIPMENT_VERSION = "targeted_equipment_version"
+TARGETED_EQUIPMENT_SOURCE = "$target_group.target_0"
+TARGETED_EQUIPMENT_RECIPIENT = "$target_group.target_1"
+_TARGETED_EQUIPMENT_RECIPIENTS = (TARGETED_EQUIPMENT_RECIPIENT, "$source.zone_object", EVENT_ENTRY_OBJECT)
 ENTRY_ATTACHMENT_CAPABILITY = "attachment.action.entry_equipment"
 ENTRY_ATTACHMENT_VERSION = "entry_attachment_version"
 ENTRY_ATTACHMENT_EVENTS = frozenset({"permanent.enter", "creature.enter"})
@@ -71,6 +76,54 @@ def entry_equipment_attachment_effect():
     }
 
 
+def targeted_equipment_attachment_effect(recipient: str) -> dict[str, Any]:
+    return {
+        "op": "attach", "attachment_kind": "equipment", "source": TARGETED_EQUIPMENT_SOURCE,
+        "target": recipient, TARGETED_EQUIPMENT_VERSION: 1,
+    }
+
+
+def is_targeted_equipment_attachment(effect: Mapping[str, Any]) -> bool:
+    if TARGETED_EQUIPMENT_VERSION in effect:
+        return True
+    if effect.get("op") != "attach":
+        return False
+    source, target = effect.get("source"), effect.get("target")
+    return (
+        isinstance(source, str) and (
+            source in {"$target", "$targets"} or source.startswith(("$target.", "$target[", "$target_group."))
+        )
+    ) or isinstance(target, str) and target.startswith("$target_group.")
+
+
+def _resolved_attachment_role(value: Any) -> str | None:
+    if isinstance(value, (list, tuple)):
+        if len(value) > 1:
+            raise ValueError("An attachment role has at most one resolved target")
+        value = value[0] if value else None
+    if value is not None and (type(value) is not str or not value or value.startswith("$")):
+        raise ValueError("An attachment role requires a resolved public object reference")
+    return value
+
+
+def validate_targeted_equipment_attachment(
+    effect: Mapping[str, Any], *, resolved: bool = False,
+) -> tuple[str | None, str | None] | None:
+    fields = set(effect) - ({"_runtime_source"} if resolved else set())
+    if (fields != {"op", "attachment_kind", "source", "target", TARGETED_EQUIPMENT_VERSION}
+        or effect.get("op") != "attach" or effect.get("attachment_kind") != "equipment"
+        or type(effect.get(TARGETED_EQUIPMENT_VERSION)) is not int or effect[TARGETED_EQUIPMENT_VERSION] != 1):
+        raise ValueError("Targeted Equipment attachment requires its closed versioned instruction")
+    source, target = effect["source"], effect["target"]
+    if resolved:
+        if not isinstance(source, (list, tuple)):
+            raise ValueError("Targeted Equipment requires its own resolved target group")
+        return _resolved_attachment_role(source), _resolved_attachment_role(target)
+    if source != TARGETED_EQUIPMENT_SOURCE or target not in _TARGETED_EQUIPMENT_RECIPIENTS:
+        raise ValueError("Targeted Equipment requires the exact attachment and recipient roles")
+    return None
+
+
 def validate_entry_equipment_attachment(effect: Mapping[str, Any], *, resolved: bool = False) -> tuple[str, ...]:
     expected = entry_equipment_attachment_effect()
     fields = set(effect) - ({"_runtime_source"} if resolved else set())
@@ -91,7 +144,8 @@ def entry_equipment_attachment_runtime_dependencies(program):
     def uses_entry_attachment(value):
         if isinstance(value, Mapping):
             return (ENTRY_ATTACHMENT_VERSION in value
-                    or (value.get("op") == "attach" and value.get("target") == EVENT_ENTRY_OBJECT)
+                    or (value.get("op") == "attach" and value.get("target") == EVENT_ENTRY_OBJECT
+                        and not is_targeted_equipment_attachment(value))
                     or any(uses_entry_attachment(child) for child in value.values()))
         return isinstance(value, (list, tuple)) and any(uses_entry_attachment(child) for child in value)
 
@@ -126,16 +180,25 @@ def equipment_attachment_is_legal(host, equipment, creature) -> bool:
             and protection_verdict_for_ref(host, recipient, equipment.ref) is ProtectionVerdict.ALLOWED)
 
 
-def unavailable_optional_entry_equipment_attachment(host, raw_effect, effect) -> bool:
+def unavailable_optional_equipment_attachment(host, raw_effect, effect) -> bool:
     children = raw_effect.get("effects")
     if (not isinstance(children, (list, tuple)) or len(children) != 1
-            or not isinstance(children[0], Mapping) or ENTRY_ATTACHMENT_VERSION not in children[0]):
+            or not isinstance(children[0], Mapping)):
         return False
-    validate_entry_equipment_attachment(children[0])
+    child, = children
+    targeted = is_targeted_equipment_attachment(child)
+    if not targeted and ENTRY_ATTACHMENT_VERSION not in child:
+        return False
     resolved, = effect["effects"]
-    validate_entry_equipment_attachment(resolved, resolved=True)
+    if targeted:
+        validate_targeted_equipment_attachment(child)
+        equipment_ref, creature_ref = validate_targeted_equipment_attachment(resolved, resolved=True)
+    else:
+        validate_entry_equipment_attachment(child)
+        validate_entry_equipment_attachment(resolved, resolved=True)
+        equipment_ref, creature_ref = resolved["source"], resolved["target"]
     cards = {card.ref: card for card in host.state.cards.values() if card.zone == "battlefield" and not card.phased_out}
-    equipment, creature = cards.get(resolved["source"]), cards.get(resolved["target"])
+    equipment, creature = cards.get(equipment_ref), cards.get(creature_ref)
     return equipment is None or creature is None or not equipment_attachment_is_legal(host, equipment, creature)
 
 

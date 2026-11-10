@@ -5,7 +5,10 @@ from typing import Any, Mapping, Sequence
 
 from ..attachments import attach_objects, detach_object
 from ..rules.reconfigure import source_has_reconfigure, commit_reconfigure_attachment_effect
-from ..rules.attachment_actions import ENTRY_ATTACHMENT_VERSION, equipment_attachment_is_legal, validate_entry_equipment_attachment
+from ..rules.attachment_actions import (
+    ENTRY_ATTACHMENT_VERSION, TARGETED_EQUIPMENT_VERSION, equipment_attachment_is_legal,
+    validate_entry_equipment_attachment, validate_targeted_equipment_attachment,
+)
 from ..aura import legal_aura_target_refs
 from ..zone_object_cleanup import resolve_zone_object_cleanup_group
 from ..continuous_effects import ContinuousOperation, Layer
@@ -495,6 +498,14 @@ def _apply_attach_instruction(host, effect, *, actor, operation, reason):
                 return None
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
+    if TARGETED_EQUIPMENT_VERSION in effect:
+        try:
+            attachment, recipient = validate_targeted_equipment_attachment(effect, resolved=True)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        if attachment is None or recipient is None:
+            return None
+        effect = {**effect, "source": attachment, "target": recipient}
     return _apply_attach(host, effect, actor=actor, operation=operation, reason=reason)
 
 
@@ -555,6 +566,8 @@ def _apply_attach(
         )
         return None
     creature = _attachment_object(host, actor, creature_value)
+    if TARGETED_EQUIPMENT_VERSION in effect and (attachment.phased_out or creature.phased_out):
+        return None
     if creature.zone != "battlefield":
         details = {
             ("equipment" if legacy_equipment_shape else "attachment"): attachment.ref,

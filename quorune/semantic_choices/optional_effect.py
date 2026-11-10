@@ -57,11 +57,16 @@ def _represented_effect(
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
     if operation == "attach":
-        from ..rules.attachment_actions import ENTRY_ATTACHMENT_VERSION, validate_entry_equipment_attachment
+        from ..rules.attachment_actions import (
+            ENTRY_ATTACHMENT_VERSION, TARGETED_EQUIPMENT_VERSION,
+            validate_entry_equipment_attachment, validate_targeted_equipment_attachment,
+        )
 
-        if ENTRY_ATTACHMENT_VERSION in effect:
+        if TARGETED_EQUIPMENT_VERSION in effect or ENTRY_ATTACHMENT_VERSION in effect:
+            validate = (validate_targeted_equipment_attachment if TARGETED_EQUIPMENT_VERSION in effect
+                        else validate_entry_equipment_attachment)
             try:
-                validate_entry_equipment_attachment(effect, resolved=True)
+                validate(effect, resolved=True)
             except ValueError as exc:
                 raise SemanticChoiceError(str(exc)) from exc
             return

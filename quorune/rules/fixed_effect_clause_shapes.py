@@ -409,7 +409,9 @@ def fixed_optional_effect_node_capabilities(
         or nested[0].get("op") == OPTIONAL_EFFECT_OPERATION
     ):
         return ()
-    references_target = _contains_target_reference(nested[0])
+    from .attachment_actions import is_targeted_equipment_attachment
+
+    references_target = _contains_target_reference(nested[0]) or is_targeted_equipment_attachment(nested[0])
     if (target_schema is None) == references_target:
         return ()
     dependencies = closed_effect_component_capabilities(
