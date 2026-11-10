@@ -1078,7 +1078,7 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
             "declared-impulse-access-cards.json", "end-step-impulse-access-cards.json",
             "resolving-top-play-cards.json", "distinct-sacrifice-cards.json", "captured-draw-cast-cards.json",
             "draw-rules-cards.json", "fixed-top-order-cards.json", "paid-sacrifice-creature-stat-cards.json",
-            "bargain-cards.json")], path)
+            "bargain-cards.json", "external-entry-tapped-cards.json")], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -1691,6 +1691,33 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         self.assertTrue(declined.ok, declined.summary)
         self.assertEqual("exile", engine.state.cards[later.object_id].zone)
         self.assertNotIn("temporary_play_permission", engine.state.cards[later.object_id].annotations)
+        self.replay(session, load=True)
+
+    def test_runestone_land_entry_replacement_replays_and_resumes_the_parent(self):
+        session = self.session(60828056)
+        engine = session.engine
+        source = self.add(engine, "Generic Resolving Exile Play Fixture", zone="hand")
+        orb = self.add(engine, "Orb of Dreams", ref="runestone-orb-entry-order")
+        untap = self.add(engine, "Generic Controlled Untapped Entry", ref="runestone-untap-entry-order")
+        land = self.add(engine, "Mountain", zone="library", ref="runestone-replaced-land-entry")
+        for card in (orb, untap):
+            self.assert_closed(session, card)
+        self.prepare(session)
+        self.resolve_runestone_fixture(session, source)
+        option, = [row for row in self.options(session) if row["card"] == land.ref]
+        result = session.act("pilot:A", self.resolving_play_command(option))
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual("exile", session.state.cards[land.object_id].zone)
+        session = self.replay(session, load=True)
+        choices = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        selected = next(row["id"] for row in choices if orb.ref in row["id"])
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": selected})
+        self.assertTrue(result.ok, result.summary)
+        current = session.state.cards[land.object_id]
+        self.assertEqual(("battlefield", False), (current.zone, current.tapped))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(0, session.state.players["A"].land_plays_remaining)
         self.replay(session, load=True)
 
     def test_mad_wizard_offer_requires_independent_runtime_authority(self):
