@@ -41,20 +41,18 @@ def ability_local_mana_reduction_runtime_dependencies(program: Any) -> tuple[str
 
 def fixed_mana_spend_rule_runtime_dependencies(program: Any) -> tuple[str, ...]:
     from ..fixed_mana_abilities import FIXED_MANA_SPEND_RULE_HANDLER_ID, FixedActivatedManaAbilitySpec
-    from ..mana_spend_rules import MANA_SPEND_RULE_CAPABILITY, is_typed_mana_spend_rule
+    from ..mana_spend_rules import decode_mana_spend_rule, is_typed_mana_spend_rule
 
     catalogs = [descriptor["ability"] for descriptor in program.handlers
                 if descriptor.get("handler_id") == ACTIVATED_ABILITY_CATALOG_HANDLER_ID
                 and is_typed_mana_spend_rule(descriptor["ability"].get("mana_spend_restriction"))]
-    if not catalogs:
-        return ()
-    matching = [replace(FixedActivatedManaAbilitySpec.from_dict(descriptor["ability"]).to_activated_ability(),
-                        builtin_semantic_key=program.key)
-                for descriptor in program.handlers if descriptor.get("handler_id") == FIXED_MANA_SPEND_RULE_HANDLER_ID]
-    if (program.event != "activate" or len(catalogs) != 1 or len(matching) != 1
-            or ActivatedAbility.from_dict(catalogs[0]) != matching[0]):
+    specs = [FixedActivatedManaAbilitySpec.from_dict(descriptor["ability"])
+             for descriptor in program.handlers if descriptor.get("handler_id") == FIXED_MANA_SPEND_RULE_HANDLER_ID]
+    if catalogs and (program.event != "activate" or len(catalogs) != 1 or len(specs) != 1
+            or ActivatedAbility.from_dict(catalogs[0]) != replace(specs[0].to_activated_ability(), builtin_semantic_key=program.key)):
         raise ValueError("Typed mana catalog requires its matching fixed-output handler")
-    return (MANA_SPEND_RULE_CAPABILITY,)
+    return tuple(sorted({capability for spec in specs
+        for capability in decode_mana_spend_rule(spec.spend_restriction).capability_dependencies}))
 
 
 def activated_catalog_runtime_dependencies(program):

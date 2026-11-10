@@ -78,6 +78,7 @@ from ..target_announcements import (
     collect_legacy_paid_ward_occurrences, dispatch_legacy_paid_target_announcements,
 )
 from ...mana_spend_rules import consume_paid_mana_protection
+from ...continuous_effect_state import commit_paid_mana_haste
 from .source_placement import AnnouncedCastGrants, observe_cast_source_placement
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
@@ -1543,6 +1544,7 @@ def _commit_cast_costs_and_stack(
         proposal.seat,
     )
     if prepared_item is None:host.state.stack.append(item)
+    commit_paid_mana_haste(host, item, card)
     from ..classic_flash import commit_classic_flash_permission
     commit_classic_flash_permission(host,proposal,card)
     from ...preparation import consume_prepared_cast

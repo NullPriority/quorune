@@ -677,3 +677,224 @@ class TypedManaSpendRuleTests(unittest.TestCase):
             ir = compile_oracle_card(self.db.lookup("Cavern of Souls"), capability_registry=self.registry,
                 capability_profile="commander_review")
         self.assertTrue(ir.material_residuals)
+
+
+class PaidManaHasteAndLimitedChoiceTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = TypedManaSpendRuleTests.session
+    add = TypedManaSpendRuleTests.add
+    prepare = TypedManaSpendRuleTests.prepare
+    checkpoint = TypedManaSpendRuleTests.checkpoint
+    cast = TypedManaSpendRuleTests.cast
+    priority = TypedManaSpendRuleTests.priority
+    resolve = TypedManaSpendRuleTests.resolve
+    replay = TypedManaSpendRuleTests.replay
+    assert_closed = TypedManaSpendRuleTests.assert_closed
+    resolve_top = TypedManaSpendRuleTests.resolve_top
+    actions = TypedManaSpendRuleTests.actions
+    choose_type = TypedManaSpendRuleTests.choose_type
+    play_land = TypedManaSpendRuleTests.play_land
+    produce = TypedManaSpendRuleTests.produce
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "paid-mana-haste.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "paid-mana-haste-cards.json",
+            fixtures / "additional-conditional-modifier-cards.json",
+            fixtures / "all-blocker-requirement-cards.json",
+            fixtures / "characteristic-query-union-cards.json",
+            fixtures / "chosen-type-event-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Paid mana haste", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def advance(self, session, predicate):
+        for _ in range(100):
+            session.engine.pump()
+            if predicate(session.state):
+                return
+            decision = session.state.pending_decision
+            self.assertIsNotNone(decision)
+            commands = {"priority": {"action_id": "pass"},
+                        "combat.blockers": {"action_id": "block", "blocks": {}},
+                        "combat.attackers": {"action_id": "attack", "attackers": {}}}
+            self.assertIn(decision.kind, commands)
+            result = session.act(session.pending_principals()[0], commands[decision.kind])
+            self.assertTrue(result.ok, result.summary)
+        self.fail("The haste witness did not reach its expected turn boundary")
+
+    def attack_with(self, session, cards, *, succeeds=True):
+        self.advance(session, lambda state: state.pending_decision is not None
+            and state.pending_decision.kind == "combat.attackers")
+        before = authoritative_state_hash(session.state)
+        result = session.act("pilot:A", {"action_id": "attack", "attackers": {card.ref: "B" for card in cards}})
+        self.assertEqual(succeeds, result.ok, result.summary)
+        if succeeds:
+            self.assertTrue(all(card.object_id in session.state.combat.attackers for card in cards))
+        else:
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_hall_paid_haste_survives_resolution_and_cleanup(self):
+        from quorune.haste import has_effective_haste
+
+        session = self.session(70210001)
+        engine = session.engine
+        source = self.add(engine, "Hall of the Bandit Lord")
+        creature = self.add(engine, "Goblin Piker", zone="hand")
+        plains = session.state.cards[session.state.players["A"].zones["hand"][0]]
+        cloudshift = self.add(engine, "Cloudshift", zone="hand")
+        hidden = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="hall-private")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"R": 1})
+        self.checkpoint(session)
+        self.play_land(session, plains)
+        self.produce(session, source, "C")
+        self.assertEqual(37, session.state.players["A"].life)
+        self.cast(session, "A", creature)
+        cast_object = session.state.cards[creature.object_id]
+        self.assertTrue(has_effective_haste(engine, cast_object))
+        identity = cast_object.logical_object_id
+        copiable = engine._spell_copy_characteristics(cast_object)
+        self.assertNotIn("haste", {str(value).casefold() for value in copiable.get("keywords", ())})
+        self.resolve_top(session)
+        permanent = session.state.cards[creature.object_id]
+        self.assertEqual(identity, permanent.logical_object_id)
+        self.attack_with(session, [permanent])
+        turn = session.state.turn_sequence
+        self.advance(session, lambda state: state.turn_sequence > turn)
+        self.assertTrue(has_effective_haste(engine, session.state.cards[creature.object_id]))
+        self.produce(session, plains, "W", typed=False)
+        self.cast(session, "A", cloudshift, [creature.ref])
+        self.resolve_top(session)
+        returned = session.state.cards[creature.object_id]
+        self.assertEqual("battlefield", returned.zone)
+        self.assertNotEqual(identity, returned.logical_object_id)
+        self.assertFalse(has_effective_haste(engine, returned))
+        for viewer in "ABC":
+            self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:" + viewer, full=True)))
+        self.replay(session, load=True)
+
+    def test_generator_servant_spends_both_units_and_haste_expires(self):
+        from quorune.haste import has_effective_haste
+        from quorune.mana_provenance import mana_provenance_lots
+
+        session = self.session(70210002)
+        engine = session.engine
+        source = self.add(engine, "Generator Servant")
+        source.acquired_control_turn_count = -1
+        first = self.add(engine, "Universal Automaton", zone="hand")
+        second = self.add(engine, "Goblin Piker", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"R": 1})
+        self.checkpoint(session)
+        self.priority(session, "A")
+        action = next(row for row in self.actions(session) if row["id"].startswith(f"activate:{source.ref}:"))
+        accepted = session.act("pilot:A", {"action_id": action["id"], "mana_output": {"C": 2}, "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        lot, = mana_provenance_lots(session.state.players["A"])
+        self.assertEqual({"C": 2}, dict(lot.bundle))
+        for card in (first, second):
+            self.cast(session, "A", card)
+            self.resolve_top(session)
+            self.assertTrue(has_effective_haste(engine, session.state.cards[card.object_id]))
+        self.assertFalse(mana_provenance_lots(session.state.players["A"]))
+        self.attack_with(session, [first, second])
+        turn = session.state.turn_sequence
+        self.advance(session, lambda state: state.turn_sequence > turn)
+        for card in (first, second):
+            self.assertFalse(has_effective_haste(engine, session.state.cards[card.object_id]))
+        self.replay(session, load=True)
+
+    def test_orb_grants_haste_only_for_the_paid_dragon_cast(self):
+        from quorune.haste import has_effective_haste
+
+        for index, name in enumerate(("Dragon Hatchling", "Goblin Piker")):
+            with self.subTest(spell=name):
+                session = self.session(70210003 + index)
+                engine = session.engine
+                source = self.add(engine, "Carnelian Orb of Dragonkind")
+                creature = self.add(engine, name, zone="hand")
+                old_creature = self.add(engine, "Generic Bound Body")
+                old_creature.acquired_control_turn_count = -1
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 1})
+                self.checkpoint(session)
+                self.produce(session, source, "R")
+                self.cast(session, "A", creature)
+                self.assertEqual(index == 0, has_effective_haste(engine, session.state.cards[creature.object_id]))
+                self.resolve_top(session)
+                self.attack_with(session, [creature], succeeds=index == 0)
+                self.replay(session, load=True)
+
+    def test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_restrictions import ability_mana_spend_context, mana_restriction_allows
+
+        session = self.session(70210005)
+        engine = session.engine
+        source = self.add(engine, "Eclipsed Realms", zone="hand")
+        kindred = self.add(engine, "Tarfire", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.play_land(session, source)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        self.assertIsNone(session.packet("pilot:D", full=True).get("decision"))
+        self.assertEqual({"elemental", "elf", "faerie", "giant", "goblin", "kithkin", "merfolk", "treefolk"},
+            {option["id"].rsplit(":", 1)[1] for option in options})
+        wrong = options[0]["id"].rsplit(":", 1)[0] + ":human"
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": "choose", "choices": {"replacement": wrong}})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.choose_type(session, "goblin")
+        self.produce(session, source, "R")
+        lot, = mana_provenance_lots(session.state.players["A"])
+        self.assertTrue(mana_restriction_allows(lot.restriction, ability_mana_spend_context("Kindred Instant — Goblin")))
+        self.assertFalse(mana_restriction_allows(lot.restriction, ability_mana_spend_context("Creature — Human")))
+        self.cast(session, "A", kindred, ["B"])
+        self.resolve_top(session)
+        self.assertEqual(38, session.state.players["B"].life)
+        self.assertFalse(mana_provenance_lots(session.state.players["A"]))
+        self.replay(session, load=True)
+
+    def test_paid_haste_and_limited_designation_capabilities_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.entry_designations import LIMITED_CREATURE_TYPE_ENTRY_CAPABILITY
+        from quorune.mana_spend_rules import CHOSEN_SUBTYPE_MANA_CAPABILITY, PAID_MANA_HASTE_CAPABILITY
+
+        session = self.session(70210006)
+        orb = self.add(session.engine, "Carnelian Orb of Dragonkind")
+        realms = self.add(session.engine, "Eclipsed Realms")
+        for card, capability in ((orb, PAID_MANA_HASTE_CAPABILITY), (realms, CHOSEN_SUBTYPE_MANA_CAPABILITY),
+                                 (realms, LIMITED_CREATURE_TYPE_ENTRY_CAPABILITY)):
+            with self.subTest(capability=capability):
+                self.assert_closed(session, card)
+                program = next(program for program in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if capability in program.capability_dependencies)
+                dependencies = tuple(dep for dep in program.capability_dependencies if dep != capability)
+                unbound = replace(program, capability_dependencies=dependencies,
+                    capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+                binding = bind_semantic_program_runtime(unbound, capability_registry=self.registry, profile="commander_review")
+                self.assertIn("capability:undeclared_runtime_dependency:" + capability, binding["blockers"])
+        options = dict(capability_registry=self.registry, capability_profile="commander_review")
+        original = self.db.lookup("Eclipsed Realms")
+        with patch("quorune.fixed_mana_abilities.fixed_mana_spend_rule_template", return_value=None):
+            self.assertTrue(compile_oracle_card(self.db.lookup("Carnelian Orb of Dragonkind"), **options).material_residuals)
+            self.assertTrue(compile_oracle_card(original, **options).material_residuals)
+        with patch("quorune.compiler.entry_designation_templates._listed_creature_type_entry_handler", return_value=None):
+            self.assertTrue(compile_oracle_card(original, **options).material_residuals)
+        invalid = replace(original, oracle_text=original.oracle_text.replace("or Treefolk", "or Treasure"))
+        self.assertTrue(compile_oracle_card(invalid, **options).material_residuals)

@@ -687,6 +687,15 @@ and supertype. A counter-protection rider applies to the eligible spell that
 actually spends its lot. An unrestricted lot can also pay ordinary costs.
 The production, funding, and commit paths share these typed rules.
 
+A paid haste rider checks the spell type and any printed subtype when its
+mana is spent. The continuous-effect journal binds haste to that spell's
+incarnation and carries it to the permanent the spell becomes. Cleanup
+expires grants with a current-turn duration. A persistent grant lasts for
+that incarnation. Spell copies use the copiable characteristics of the
+original. An entry designation with a printed list offers that list through
+the same replacement choice owner. Its mana can check the bound subtype
+independently of card type when the printed restriction uses that scope.
+
 Fixed triggered mana observes a completed activation that paid its own tap
 symbol and produced mana. Current layer-six abilities select attached lands,
 qualifying permanents tapped by their controller, or lands of a specified type.

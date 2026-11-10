@@ -6,9 +6,9 @@ from dataclasses import dataclass, replace
 from typing import Any, Callable, Mapping, MutableMapping, Sequence
 
 from .util import normalize_mana_bundle
+from .mana_restrictions import mana_spend_haste_lifetime, mana_spend_protects_spell
+from .mana_spend_rules import PAID_MANA_PROTECTION_FIELD, decode_mana_spend_rule, remember_paid_mana_haste
 from .rules.mana_pool_payment import ManaPoolAllocation, unit_for_lot
-from .mana_restrictions import mana_spend_protects_spell
-from .mana_spend_rules import PAID_MANA_PROTECTION_FIELD, decode_mana_spend_rule
 
 
 MANA_PROVENANCE_KEY = "mana_provenance_v1"
@@ -704,6 +704,10 @@ class ManaProvenanceHostMixin:
             _mark_uncounterable_spell_payment(self.state.players[seat])
         if any(mana_spend_protects_spell(restriction, spend_context) for restriction in consumed):
             _mark_typed_spell_payment(self.state.players[seat])
+        for restriction in consumed:
+            lifetime = mana_spend_haste_lifetime(restriction, spend_context)
+            if lifetime is not None:
+                remember_paid_mana_haste(self.state.players[seat].stats, lifetime)
 
 
 __all__ = [

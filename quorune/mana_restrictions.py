@@ -180,6 +180,14 @@ def mana_spend_protects_spell(restriction: str, spend_context: str | None) -> bo
     return rule is not None and rule.protects(*_context_facts(spend_context))
 
 
+def mana_spend_haste_lifetime(restriction: str, spend_context: str | None):
+    rule = decode_mana_spend_rule(restriction)
+    if rule is None:
+        return None
+    kind, types, subtypes, _supertypes = _context_facts(spend_context)
+    return rule.haste_lifetime(kind, types, subtypes)
+
+
 __all__ = [
     "ability_mana_spend_context",
     "canonical_mana_spend_restriction",

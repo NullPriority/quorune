@@ -282,6 +282,9 @@ class FixedActivatedManaAbilitySpec:
             raise FixedManaAbilityError(
                 "Fixed mana spending restriction is unsupported"
             )
+        spend_rule = decode_mana_spend_rule(self.spend_restriction)
+        if spend_rule is not None and spend_rule.requires_choice and self.sacrifice_source:
+            raise FixedManaAbilityError("Source-bound mana spending requires an available designation source")
         if self.activation_limit is not None and not isinstance(
             self.activation_limit, ActivationLimit
         ):
@@ -632,7 +635,8 @@ def compile_fixed_activated_mana_ability(
             result is not None and result.kind=='damage_controller'
             and ability.builtin_semantic_key==f'builtin:mana-result-damage-controller:{result.amount}'))
         or (result is not None and (ability.sacrifice_source or ability.choices))
-        or (typed_spend is not None and (result is not None or ability.choices or ability.sacrifice_source))
+        or (typed_spend is not None and (result is not None or ability.choices
+            or ability.sacrifice_source and decode_mana_spend_rule(restriction).requires_choice))
         or ability.target_schema is not None
         or ability.crew_threshold is not None
         or not _supported_activation_constraints(ability)

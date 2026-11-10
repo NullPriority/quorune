@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned originals for paid haste and limited creature type designations",
+  "cards": [
+    {
+      "oracle_id": "32fe7ac4-86f5-44af-9f73-ee8f6a9ce2ba",
+      "name": "Hall of the Bandit Lord",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Legendary Land",
+      "oracle_text": "Hall of the Bandit Lord enters tapped.\n{T}, Pay 3 life: Add {C}. If that mana is spent on a creature spell, it gains haste.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2004-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "651c967c-8f71-4eb5-b22f-545e55ea050e",
+      "name": "Carnelian Orb of Dragonkind",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {R}. If that mana is spent on a Dragon creature spell, it gains haste until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "68ac061a-e4a3-46df-9169-62f6a8481584",
+      "name": "Generator Servant",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "{T}, Sacrifice this creature: Add {C}{C}. If that mana is spent on a creature spell, it gains haste until end of turn. (That creature can attack and {T} as soon as it comes under your control.)",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2018-12-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5715ed43-395c-4877-99a7-8e28e7bf9dce",
+      "name": "Eclipsed Realms",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "As this land enters, choose Elemental, Elf, Faerie, Giant, Goblin, Kithkin, Merfolk, or Treefolk.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a spell of the chosen type or activate an ability of a source of the chosen type.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3f48f6a7-906d-4287-8440-06bfabc93b89",
+      "name": "Dragon Hatchling",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\n{R}: This creature gets +1/+0 until end of turn.",
+      "power": "0",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "32fe7ac4-86f5-44af-9f73-ee8f6a9ce2ba",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "The effect that grants haste doesn’t wear off at end of turn."
+    },
+    {
+      "oracle_id": "32fe7ac4-86f5-44af-9f73-ee8f6a9ce2ba",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "The creature has haste if the mana is spent to cover any cost of the spell, even an additional cost."
+    },
+    {
+      "oracle_id": "651c967c-8f71-4eb5-b22f-545e55ea050e",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An instant or sorcery spell is not a creature spell, even if that spell creates Dragon creature tokens."
+    },
+    {
+      "oracle_id": "651c967c-8f71-4eb5-b22f-545e55ea050e",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If the mana is spent on a non-Dragon spell that becomes a Dragon later in the turn, that creature won't have haste."
+    },
+    {
+      "oracle_id": "651c967c-8f71-4eb5-b22f-545e55ea050e",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If the mana from Carnelian Orb of Dragonkind is spent to pay any part of the Dragon creature spell's cost, including an alternative or additional cost, the Dragon will gain haste until end of turn."
+    },
+    {
+      "oracle_id": "651c967c-8f71-4eb5-b22f-545e55ea050e",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "The mana created by Carnelian Orb of Dragonkind can be spent on anything, not just Dragon creature spells."
+    },
+    {
+      "oracle_id": "68ac061a-e4a3-46df-9169-62f6a8481584",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "An instant or sorcery spell is not a creature spell, even if that spell creates creature tokens."
+    },
+    {
+      "oracle_id": "68ac061a-e4a3-46df-9169-62f6a8481584",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "If the mana is spent on two different creature spells, each of those spells (and resulting creatures) will gain haste until end of turn."
+    },
+    {
+      "oracle_id": "68ac061a-e4a3-46df-9169-62f6a8481584",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "If the mana is spent on a noncreature spell that becomes a creature later in the turn, that creature won't have haste."
+    },
+    {
+      "oracle_id": "68ac061a-e4a3-46df-9169-62f6a8481584",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "If a creature spell has generic mana only in its alternative or additional cost, the creature will still gain haste."
+    },
+    {
+      "oracle_id": "5715ed43-395c-4877-99a7-8e28e7bf9dce",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Sources of the chosen creature type include any objects with the chosen subtype. For example, if you chose Kithkin, you could spend the mana to activate the ability of a Kithkin permanent you control or a Kithkin card in your hand or graveyard."
+    }
+  ]
+}

@@ -88129,6 +88129,226 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Bind haste to a qualifying cast that spends a represented mana lot, then carry it to the resulting permanent.",
+        "inputs": [
+          "actual consumed mana and typed creature spell facts",
+          "closed haste lifetime"
+        ],
+        "outputs": [
+          "layer-six haste on the cast incarnation",
+          "represented stack-to-battlefield continuity",
+          "canonical turn and departure expiry"
+        ],
+        "exclusions": [
+          "unpaid mana or unsupported spend predicates",
+          "later incarnations and copiable characteristics"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.activated.typed_spend_rules"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.spend.creature_haste",
+      "implementation_components": [
+        "quorune.mana_spend_rules.ManaSpendRule.haste_lifetime",
+        "quorune.mana_restrictions.mana_spend_haste_lifetime",
+        "quorune.continuous_effect_state.commit_paid_mana_haste",
+        "quorune.continuous_effect_state.stack_resolution_effects"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_generator_servant_spends_both_units_and_haste_expires",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "multiplayer_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "negative_tests": [
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast",
+        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
+      ],
+      "official_rules": [
+        "106.6",
+        "400.7a",
+        "601.2h",
+        "605.1a",
+        "611.2a",
+        "702.10",
+        "707.2"
+      ],
+      "positive_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_generator_servant_spends_both_units_and_haste_expires",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "privacy_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup"
+      ],
+      "replay_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_generator_servant_spends_both_units_and_haste_expires",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Use a production-bound creature subtype for the represented spell and ability-source mana spending rule.",
+        "inputs": [
+          "canonical chosen subtype at production",
+          "typed public spell or ability-source subtype facts"
+        ],
+        "outputs": [
+          "shared funding and accepted payment eligibility for the sealed subtype"
+        ],
+        "exclusions": [
+          "different subtypes and unsupported spending contexts"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.activated.typed_spend_rules"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.activated.chosen_subtype_spending",
+      "implementation_components": [
+        "quorune.mana_spend_rules.ManaSpendRule.allows",
+        "quorune.mana_spend_rules.bind_mana_spend_rule",
+        "quorune.fixed_mana_spend_templates.fixed_mana_spend_rule_template"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "multiplayer_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "negative_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell",
+        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
+      ],
+      "official_rules": [
+        "106.6",
+        "205.3m",
+        "601.2h",
+        "605.1a",
+        "605.3b"
+      ],
+      "positive_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "privacy_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "replay_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Resolve an intrinsic entry designation through a closed printed list of creature subtypes.",
+        "inputs": [
+          "source-spanned canonical creature subtype list",
+          "affected entering incarnation and destination controller"
+        ],
+        "outputs": [
+          "actor-bound replacement choices",
+          "retained designation for the entering incarnation"
+        ],
+        "exclusions": [
+          "unlisted values and unsupported linked choices"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.entry.public_designation"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.entry.limited_creature_type_designation",
+      "implementation_components": [
+        "quorune.compiler.entry_designation_templates._listed_creature_type_entry_handler",
+        "quorune.semantic_runtime.entry_designations.LimitedCreatureTypeEntryDesignationHandler"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "multiplayer_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "negative_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell",
+        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
+      ],
+      "official_rules": [
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "616.1"
+      ],
+      "positive_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "privacy_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "replay_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -88137,7 +88357,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 776,
+  "registry_version": 777,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
