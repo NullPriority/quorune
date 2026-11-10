@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping
 
+from ..impulse_access_model import ImpulseAccessDuration
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
@@ -12,10 +13,10 @@ IMPULSE_ACCESS_MECHANIC_ID = "fixed-impulse-access"
 _FIXED_IMPULSE_ACCESS = re.compile(
     rf"^Exile the top (?:(?P<single>card)|(?P<count>{FIXED_COUNT_PATTERN}) cards) "
     rf"of your library\. "
-    rf"(?:(?P<prefix>Until (?:the )?end of (?:(?:this|your next) turn|turn)), "
+    rf"(?:(?P<prefix>Until (?:(?:the )?end of (?:(?:this|your next) turn|turn)|your next end step)), "
     rf"you may play (?P<prefix_ref>that card|those cards|it|them)|"
     rf"You may play (?P<suffix_ref>that card|those cards|it|them) "
-    rf"(?P<suffix>this turn|until (?:the )?end of your next turn))\.?$",
+    rf"(?P<suffix>this turn|until (?:the )?end of your next turn|until your next end step))\.?$",
     re.IGNORECASE,
 )
 
@@ -27,7 +28,8 @@ class FixedImpulseAccessTemplate:
 
     @property
     def template_id(self) -> str:
-        suffix = "next-turn" if self.duration.endswith("next_turn") else "turn"
+        suffix = {ImpulseAccessDuration.END_OF_NEXT_TURN.value: "next-turn",
+                  ImpulseAccessDuration.NEXT_END_STEP.value: "next-end-step"}.get(self.duration, "turn")
         return f"fixed-impulse-access-{suffix}-v1"
 
     def compiled(
@@ -66,12 +68,13 @@ def fixed_impulse_access_effect_template(
     if (count == 1) != (reference in {"that card", "it"}):
         return None
     duration_text = str(match.group("prefix") or match.group("suffix")).casefold()
-    duration = (
-        "until_end_of_next_turn"
-        if "next turn" in duration_text
-        else "until_end_of_turn"
-    )
-    return FixedImpulseAccessTemplate(count=count, duration=duration)
+    if "next end step" in duration_text:
+        duration = ImpulseAccessDuration.NEXT_END_STEP
+    elif "next turn" in duration_text:
+        duration = ImpulseAccessDuration.END_OF_NEXT_TURN
+    else:
+        duration = ImpulseAccessDuration.END_OF_TURN
+    return FixedImpulseAccessTemplate(count=count, duration=duration.value)
 
 
 __all__ = [

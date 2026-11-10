@@ -4321,6 +4321,11 @@ instruction binds the announced X of a resolving spell or the original X
 sealed by a self-entry event. A zero count produces an empty result, and a
 short library supplies its remaining top cards.
 
+Fixed impulse access can end as its controller's next end step begins. The
+turn-step owner expires this window before priority at that boundary. A grant
+created during an end step applies through the already-begun step and waits
+for the controller's next actual end step.
+
 Fixed life loss unless each affected player discards or sacrifices one object
 shares the APNAP choice owner. Players choose in turn order. Earlier payment
 decisions are visible, and selected hand identities stay private until the

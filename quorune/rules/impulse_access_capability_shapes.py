@@ -4,7 +4,10 @@ from collections.abc import Iterable, Mapping, Sequence
 from typing import Protocol
 
 from ..entry_x_amount_model import ENTRY_X_AMOUNT_CAPABILITY, ENTRY_X_AMOUNT_KIND, EntryXAmountSpec
-from ..impulse_access_model import IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, IMPULSE_ACCESS_DECLARED_COUNT_VERSION
+from ..impulse_access_model import (
+    IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, IMPULSE_ACCESS_DECLARED_COUNT_VERSION,
+    IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY, ImpulseAccessDuration, impulse_access_count_is_legal,
+)
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, DECLARED_AMOUNT_CAPABILITY, CastXAmountSpec
 
 from ..compiler.impulse_access_templates import (
@@ -35,6 +38,15 @@ def declared_impulse_access_dependencies(effect):
     raise ValueError("Impulse access count requires the unscaled cast or sealed entry X")
 
 
+def next_end_step_impulse_dependencies(effect):
+    if effect.get("op") != "fixed_impulse_access" or effect.get("duration") != ImpulseAccessDuration.NEXT_END_STEP.value:
+        return ()
+    if (set(effect) != {"op", "player", "count", "duration"} or effect["player"] != "$controller"
+            or not impulse_access_count_is_legal(effect["count"], 1)):
+        raise ValueError("Next-end-step impulse access requires one closed fixed-count result")
+    return (IMPULSE_ACCESS_CAPABILITY_ID, IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY)
+
+
 class FixedImpulseAccessProgram(Protocol):
     effects: tuple[Mapping[str, object], ...]
     target_schema: Mapping[str, object] | None
@@ -59,8 +71,8 @@ def fixed_impulse_access_node_capabilities(
         return ()
     effect = effects[0]
     try:
-        if declared := declared_impulse_access_dependencies(effect):
-            return declared
+        if special := declared_impulse_access_dependencies(effect) or next_end_step_impulse_dependencies(effect):
+            return special
     except (TypeError, ValueError):
         return ()
     if (

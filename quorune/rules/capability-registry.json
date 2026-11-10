@@ -85516,6 +85516,90 @@
     },
     {
       "applicability": {
+        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller’s next actual end step.",
+        "inputs": [
+          "fixed own-library top exile",
+          "current controller",
+          "actual end-step boundary"
+        ],
+        "outputs": [
+          "ordinary play of captured exile cards",
+          "expiry before priority at the matching step"
+        ],
+        "exclusions": [
+          "limited delayed selection",
+          "unbounded duration",
+          "different source owner"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.impulse_access.fixed"
+      ],
+      "dependency_fail_closed_rationale": "Persisted next-end-step instructions independently require the typed duration capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.impulse_access.next_end_step",
+      "implementation_components": [
+        "quorune.compiler.impulse_access_templates.fixed_impulse_access_effect_template",
+        "quorune.rules.impulse_access_capability_shapes.next_end_step_impulse_dependencies",
+        "quorune.impulse_access.temporary_play_permission_is_current",
+        "quorune.impulse_access.expire_next_end_step_play_permissions",
+        "quorune.turn_step_owner.TurnStepOwner.enter_step"
+      ],
+      "implementation_mutation_rationale": "Producer omission restores the material residual. Native offer and replay distinguish expiry before priority from a grant created during an end step.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_wiccan_cast_trigger_keeps_normal_cast_and_end_step_timing",
+        "test_yasmin_grant_during_end_step_reaches_the_extra_turn_end_step",
+        "test_yasmin_impulse_expires_before_priority_in_the_next_end_step"
+      ],
+      "multiplayer_tests": [
+        "test_yasmin_grant_during_end_step_reaches_the_extra_turn_end_step",
+        "test_yasmin_impulse_expires_before_priority_in_the_next_end_step"
+      ],
+      "negative_tests": [
+        "test_next_end_step_impulse_shape_and_independent_binding",
+        "test_yasmin_grant_during_end_step_reaches_the_extra_turn_end_step",
+        "test_yasmin_impulse_expires_before_priority_in_the_next_end_step"
+      ],
+      "official_rules": [
+        "400.7j",
+        "406.3",
+        "500.7",
+        "500.11",
+        "513.1",
+        "514.2",
+        "601.1a",
+        "611.2a"
+      ],
+      "positive_tests": [
+        "test_wiccan_cast_trigger_keeps_normal_cast_and_end_step_timing",
+        "test_yasmin_grant_during_end_step_reaches_the_extra_turn_end_step",
+        "test_yasmin_impulse_expires_before_priority_in_the_next_end_step"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_wiccan_cast_trigger_keeps_normal_cast_and_end_step_timing",
+        "test_yasmin_grant_during_end_step_reaches_the_extra_turn_end_step",
+        "test_yasmin_impulse_expires_before_priority_in_the_next_end_step"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
         "summary": "Resolve own-library impulse access with an announced or sealed entry X and a fixed turn window.",
         "inputs": [
           "unscaled cast or sealed entry X",
@@ -89423,7 +89507,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 791,
+  "registry_version": 792,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

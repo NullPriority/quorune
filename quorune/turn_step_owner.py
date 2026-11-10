@@ -15,7 +15,7 @@ from .continuous_effect_state import (
 )
 from .control_effects import synchronize_control_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
-from .impulse_access import expire_temporary_play_permissions
+from .impulse_access import expire_next_end_step_play_permissions, expire_temporary_play_permissions
 from .turn_skip_model import ScheduledTurnSkip, TurnBoundary, TurnSkipScope, TurnSkipSpec
 from .rules.land_play_permissions import (
     reset_additional_land_play_permissions,
@@ -446,6 +446,8 @@ class TurnStepOwner:
 
         self.state.phase = phase
         self.state.step = step
+        if step == "end_step":
+            expire_next_end_step_play_permissions(self.state, active_player=active)
         from .forecast import synchronize_forecast_reveals
         synchronize_forecast_reveals(self._host)
         self.state.priority_player = None

@@ -56,7 +56,9 @@ class FixedImpulseAccessHandler:
             raise SemanticNodeError(
                 "Fixed impulse access requires a supported duration"
             ) from exc
-        if version == IMPULSE_ACCESS_DECLARED_COUNT_VERSION and duration is ImpulseAccessDuration.UNTIL_USED:
+        if version == IMPULSE_ACCESS_DECLARED_COUNT_VERSION and duration not in {
+            ImpulseAccessDuration.END_OF_TURN, ImpulseAccessDuration.END_OF_NEXT_TURN,
+        }:
             raise SemanticNodeError("Declared impulse access requires its fixed turn duration")
         player = context.query.require_active_seat(
             str(effect.get("player") or context.actor)

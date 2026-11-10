@@ -185,6 +185,10 @@ def _play_permission(
     }
     if request.duration is ImpulseAccessDuration.END_OF_TURN:
         permission["turn_sequence"] = host.state.turn_sequence
+    elif request.duration is ImpulseAccessDuration.NEXT_END_STEP:
+        permission["granted_during_own_end_step"] = (
+            host.state.step == "end_step" and host.state.active_player == request.player
+        )
     else:
         permission["expires_at_turns_begun"] = (
             host.state.players[request.player].turns_begun + 1
@@ -368,6 +372,12 @@ def temporary_play_permission_is_current(
             and not_before >= 0
             and state.turn_sequence >= not_before
         )
+    if duration == ImpulseAccessDuration.NEXT_END_STEP.value:
+        granted = permission.get("granted_turn_sequence")
+        inside_step = permission.get("granted_during_own_end_step")
+        return (type(granted) is int and 0 <= granted <= state.turn_sequence and type(inside_step) is bool
+                and (state.step != "end_step" or state.active_player != seat
+                     or (granted == state.turn_sequence and inside_step)))
     if duration != ImpulseAccessDuration.END_OF_NEXT_TURN.value:
         return False
     expires = permission.get("expires_at_turns_begun")
@@ -376,6 +386,14 @@ def temporary_play_permission_is_current(
         and expires >= 0
         and state.players[seat].turns_begun <= expires
     )
+
+
+def expire_next_end_step_play_permissions(state: GameState, *, active_player: str) -> None:
+    for card in state.cards.values():
+        permission = card.annotations.get("temporary_play_permission")
+        if (isinstance(permission, Mapping) and permission.get("player") == active_player
+                and permission.get("duration") == ImpulseAccessDuration.NEXT_END_STEP.value):
+            card.annotations.pop("temporary_play_permission")
 
 
 def expire_temporary_play_permissions(

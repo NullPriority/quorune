@@ -565,6 +565,7 @@
     "tests/fixtures/empty-fixed-target-batch-cards.json",
     "tests/fixtures/empty-permanent-cards.json",
     "tests/fixtures/enchanted-player-static-cards.json",
+    "tests/fixtures/end-step-impulse-access-cards.json",
     "tests/fixtures/endure-cards.json",
     "tests/fixtures/energy-activation-cards.json",
     "tests/fixtures/enlist-cards.json",

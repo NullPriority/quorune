@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 IMPULSE_ACCESS_DECLARED_COUNT_VERSION = 2
 IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY = "zone.impulse_access.declared_count"
+IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY = "zone.impulse_access.next_end_step"
 
 
 def impulse_access_count_is_legal(count, version) -> bool:
@@ -20,6 +21,7 @@ def impulse_access_count_is_legal(count, version) -> bool:
 class ImpulseAccessDuration(str, Enum):
     END_OF_TURN = "until_end_of_turn"
     END_OF_NEXT_TURN = "until_end_of_next_turn"
+    NEXT_END_STEP = "until_next_end_step"
     UNTIL_USED = "until_used"
 
 

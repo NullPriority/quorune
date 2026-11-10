@@ -1075,7 +1075,7 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([ROOT / "tests/fixtures" / name for name in (
             "bound-effect-program-cards.json", "discover-cards.json", "global-alternative-cost-cards.json",
             "morph-rules-cards.json", "prototype-cards.json", "chosen-impulse-access-cards.json",
-            "declared-impulse-access-cards.json")], path)
+            "declared-impulse-access-cards.json", "end-step-impulse-access-cards.json")], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -1412,6 +1412,106 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         self.priority(session, "A")
         self.assertTrue(session.act("pilot:A", {"action_id": f"play-land:{top.ref}"}).ok)
         self.replay(session, load=True)
+
+    def test_next_end_step_impulse_shape_and_independent_binding(self):
+        from dataclasses import replace
+        import re
+        from unittest.mock import patch
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.impulse_access_model import IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card
+
+        session = self.session(60828035)
+        yasmin = self.add(session.engine, "Yasmin Khan")
+        self.assert_closed(session, yasmin)
+        program, = [row for row in session.engine.semantics.programs_for_oracle(yasmin.oracle_id)
+                    if IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY in row.capability_dependencies]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY, binding["blockers"])
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        self.assertNotEqual("exact", compile_oracle_card(self.db.lookup("Unlucky Witness"), **options).status)
+        record = replace(self.db.lookup("Yasmin Khan"), oracle_id="end-step-impulse-mutation-probe")
+        with patch("quorune.compiler.impulse_access_templates._FIXED_IMPULSE_ACCESS", re.compile(r"^$")):
+            self.assertNotEqual("exact", compile_oracle_card(record, **options).status)
+
+    def activate_yasmin_impulse(self, session, yasmin):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered, = [row for row in actions if row.get("source") == yasmin.ref and row["action"] == "activate"]
+        result = session.act("pilot:A", {"action_id": offered["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+
+    def has_exiled_instant_offer(self, session, card):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return any(row["id"] == f"cast:{card.ref}" for row in actions)
+
+    def test_yasmin_impulse_expires_before_priority_in_the_next_end_step(self):
+        session = self.session(60828036)
+        engine = session.engine
+        yasmin = self.add(engine, "Yasmin Khan")
+        yasmin.acquired_control_turn_count = -1
+        mountain = self.add(engine, "Mountain")
+        bolt = self.add(engine, "Lightning Bolt", zone="library", ref="yasmin-expiring-bolt")
+        self.assert_closed(session, yasmin)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.activate_yasmin_impulse(session, yasmin)
+        self.assertTrue(self.has_exiled_instant_offer(session, bolt))
+        self.until(session, lambda game: game.state.step == "end_step" and game.state.pending_decision is not None)
+        self.assertFalse(engine.state.cards[mountain.object_id].tapped)
+        self.assertNotIn("temporary_play_permission", engine.state.cards[bolt.object_id].annotations)
+        self.assertFalse(self.has_exiled_instant_offer(session, bolt))
+        self.replay(session, load=True)
+
+    def test_yasmin_grant_during_end_step_reaches_the_extra_turn_end_step(self):
+        session = self.session(60828037)
+        engine = session.engine
+        yasmin = self.add(engine, "Yasmin Khan")
+        yasmin.acquired_control_turn_count = -1
+        self.add(engine, "Mountain")
+        warp = self.add(engine, "Time Warp", zone="hand")
+        bolt = self.add(engine, "Lightning Bolt", zone="library", ref="yasmin-extra-turn-bolt")
+        self.prepare(session, mana={"U": 2, "C": 3})
+        self.checkpoint(session)
+        self.cast_for(session, "A", warp, ["A"])
+        self.assertIsNone(self.resolve(session))
+        self.until(session, lambda game: game.state.step == "end_step" and game.state.pending_decision is not None)
+        self.activate_yasmin_impulse(session, yasmin)
+        turn = session.state.turn_sequence
+        self.assertTrue(self.has_exiled_instant_offer(session, bolt))
+        self.until(session, lambda game: game.state.turn_sequence > turn and game.state.phase == "precombat_main"
+                   and game.state.pending_decision is not None)
+        self.assertEqual("A", session.state.active_player)
+        self.assertTrue(self.has_exiled_instant_offer(session, bolt))
+        self.until(session, lambda game: game.state.step == "end_step" and game.state.pending_decision is not None)
+        self.assertEqual("A", session.state.active_player)
+        self.assertFalse(self.has_exiled_instant_offer(session, bolt))
+        self.assertNotIn("temporary_play_permission", engine.state.cards[bolt.object_id].annotations)
+        self.replay(session, load=True)
+
+    def test_wiccan_cast_trigger_keeps_normal_cast_and_end_step_timing(self):
+        session = self.session(60828038)
+        engine = session.engine
+        wiccan = self.add(engine, "Wiccan, Young Avenger")
+        self.add(engine, "Mountain")
+        first = self.add(engine, "Lightning Bolt", zone="hand", ref="wiccan-triggering-bolt")
+        exiled = self.add(engine, "Lightning Bolt", zone="library", ref="wiccan-exiled-bolt")
+        self.assert_closed(session, wiccan)
+        self.prepare(session, mana={"R": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", first, ["D"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", engine.state.cards[exiled.object_id].zone)
+        self.assertTrue(self.has_exiled_instant_offer(session, exiled))
+        self.until(session, lambda game: game.state.step == "end_step" and game.state.pending_decision is not None)
+        self.assertFalse(self.has_exiled_instant_offer(session, exiled))
+        self.replay(session)
 
     def test_fixed_top_exile_requires_its_scope_and_runtime_capability(self):
         from dataclasses import replace
