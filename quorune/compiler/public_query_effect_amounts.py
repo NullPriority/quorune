@@ -11,6 +11,7 @@ from ..query_effect_amount_model import (
     PublicQueryAmountSpec,
 )
 from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
+from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..rules.source_references import SourceReferenceSpec
 from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
 from .live_battlefield_quantities import resolution_quantity
@@ -381,6 +382,8 @@ def public_query_effect_amount_template(
         quantity = resolution_quantity(quantity_text, source_name=source_name)
         if quantity is None:
             return None
+        if isinstance(quantity, CharacteristicQuantitySpec) and quantity.schema_version == 7 and quantity.exclude_source:
+            return None
         try:
             amounts = {
                 field: (
@@ -471,6 +474,8 @@ def public_query_effect_amount_template(
         return None
     effect = deepcopy(dict(effects[0]))
     operation = str(effect.get("op") or "")
+    if amount.uses_source_relative_count and (operation != "create_token" or target_schema is not None):
+        return None
     field = _AMOUNT_FIELDS.get(operation)
     if field is None or type(effect.get(field)) is not int:
         return None
@@ -591,7 +596,10 @@ def _fixed_shape_effects(
                 continue
             try:
                 spec = PublicQueryAmountSpec.from_dict(value)
-                if spec.schema_version != 1:
+                attack_relative = (spec.schema_version == 3
+                    and operation == "apply_source_characteristics_until_end_of_turn"
+                    and effect.get("card") == "$event.permanent_object")
+                if spec.schema_version != 1 and not attack_relative:
                     return None
             except PublicQueryAmountError:
                 return None

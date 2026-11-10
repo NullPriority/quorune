@@ -87693,6 +87693,85 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Count a supported current controlled battlefield collection excluding its captured source or sealed lone attacker.",
+        "inputs": [
+          "one exact named creature count or sealed lone attack characteristic result",
+          "captured logical source or event recipient identity"
+        ],
+        "outputs": [
+          "one resolution-time integer with the designated incarnation excluded",
+          "current characteristics and controller relation for all remaining candidates"
+        ],
+        "exclusions": [
+          "current attachment as a substitute for the sealed attacker",
+          "other quantity recipients and unsupported event contexts"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "dependency_fail_closed_rationale": "The compiler and typed runtime binding independently require the source-relative amount authority. An incomplete descriptor stays unresolved.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.source_relative_effect_count",
+      "implementation_components": [
+        "quorune.query_effect_amount_model.PublicQueryAmountSpec",
+        "quorune.query_effect_amount_model.source_relative_count_capabilities",
+        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+        "quorune.compiler.attack_event_results.qualified_attack_characteristic_result",
+        "quorune.rules.attack_event_results.attack_event_characteristic_capabilities"
+      ],
+      "implementation_mutation_rationale": "Omitting the sealed attacker amount binding restores a material residual on the original Equipment.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal",
+        "test_sealed_attack_count_survives_attachment_movement_and_requires_its_context"
+      ],
+      "multiplayer_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "negative_tests": [
+        "test_source_relative_count_authority_and_compiler_omission_fail_closed",
+        "test_sealed_attack_count_survives_attachment_movement_and_requires_its_context",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "official_rules": [
+        "400.7",
+        "506.5",
+        "508.1",
+        "603.2",
+        "608.2h"
+      ],
+      "positive_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "privacy_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature"
+      ],
+      "replay_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -87701,7 +87780,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 771,
+  "registry_version": 772,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -19,6 +19,10 @@ from quorune.compiler.query_characteristic_templates import query_characteristic
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.dynamic_characteristics import query_characteristic_count
 from quorune.record import authoritative_state_hash
+from quorune.attachments import attach_objects
+from quorune.query_effect_amount_model import (
+    PublicQueryAmountSpec, SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY,
+)
 from scripts.build_test_database import build_fixture_database
 import test_created_token_counters as controls
 from quorune.rules.evidence_storage import read_evidence_document
@@ -251,6 +255,135 @@ class PublicNamedQuantityNativeTests(InheritedNativeFixture, unittest.TestCase):
             if card.zone == "battlefield" and card.controller == "A" and card.is_token)
         self.assertIn("zombie", engine._type_parts(engine._effective_card_data(token)["type_line"])[1])
         self.replay(session, load=True)
+
+
+class SourceRelativeEffectCountTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "source-relative-effect-count.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "attached-exile-activation-cards.json",
+            fixtures / "source-attack-alone-cards.json",
+            fixtures / "source-relative-effect-count-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Source-relative effects", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def test_hare_counts_a_returned_source_as_another_creature(self):
+        for blink in (False, True):
+            with self.subTest(blink=blink):
+                session = self.session(400_700_061 + int(blink))
+                engine = session.engine
+                first = self.add(engine, "Hare Apparent", zone="hand", ref="hare-first-copy")
+                second = self.add(engine, "Hare Apparent", zone="hand", ref="hare-second-copy")
+                self.add(engine, "Hare Apparent", seat="B", ref="opposing-hare")
+                private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="private-relative-effect")
+                shift = self.add(engine, "Cloudshift", zone="hand") if blink else None
+                self.assert_closed(session, first)
+                self.prepare(session, mana={"C": 7, "W": 4})
+                self.checkpoint(session)
+                self.cast(session, "A", first)
+                self.assertIsNone(self.resolve(session))
+                self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+                self.cast(session, "A", second)
+                self.resolve_top(session)
+                self.assertEqual(1, self.trigger_count(session, second))
+                old_identity = session.state.cards[second.object_id].logical_object_id
+                self.assertEqual(old_identity, session.state.stack[-1].context["source_logical_object_id"])
+                if shift is not None:
+                    self.cast(session, "A", shift, [second.ref])
+                    self.resolve_top(session)
+                    new_identity = session.state.cards[second.object_id].logical_object_id
+                    self.assertNotEqual(old_identity, new_identity)
+                    self.assertEqual(2, self.trigger_count(session, second))
+                    self.assertEqual([old_identity, new_identity], [item.context["source_logical_object_id"]
+                        for item in session.state.stack])
+                self.assertIsNone(self.resolve(session))
+                rabbits = [card for card in session.state.cards.values() if card.is_token
+                    and card.zone == "battlefield" and card.controller == "A"]
+                self.assertEqual(3 if blink else 1, len(rabbits))
+                self.assertTrue(all(card.printed_name == "Rabbit Token" for card in rabbits))
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+                self.replay(session, load=True)
+
+    def test_sigil_counts_other_creatures_after_equipment_removal(self):
+        for alone in (False, True):
+            with self.subTest(alone=alone):
+                session = self.session(400_700_063 + int(alone))
+                engine = session.engine
+                sigil = self.add(engine, "Sigil of Valor")
+                attacker = self.add(engine, "Generic Bound Body", ref="sigil-original-attacker")
+                other = self.add(engine, "Generic Bound Body", ref="sigil-other-creature")
+                attacker.acquired_control_turn_count = other.acquired_control_turn_count = -1
+                attach_objects(session.state.cards, sigil, attacker, source_timestamp=sigil.zone_timestamp,
+                    players=session.state.players)
+                removal = self.add(engine, "Disenchant", seat="B", zone="hand")
+                for index in (1, 2):
+                    self.add(engine, "Generic Bound Plains", seat="B", ref=f"sigil-removal-land-{index}")
+                self.assert_closed(session, sigil)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.attack(session, [(attacker, "B")] if alone else [(attacker, "B"), (other, "B")])
+                self.assertEqual(int(alone), self.trigger_count(session, sigil))
+                if alone:
+                    self.cast(session, "B", removal, [sigil.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("graveyard", session.state.cards[sigil.object_id].zone)
+                    self.assertIsNone(self.resolve(session))
+                self.assertEqual((3 if alone else 2, 2), tuple(engine._numeric_stat(card.object_id, "power")
+                    for card in (attacker, other)))
+                self.replay(session, load=True)
+
+    def test_sealed_attack_count_survives_attachment_movement_and_requires_its_context(self):
+        from quorune.semantic_runtime.query_effect_amounts import resolve_public_query_amount
+
+        session = self.session(400_700_065)
+        engine = session.engine
+        sigil = self.add(engine, "Sigil of Valor")
+        attacker = self.add(engine, "Generic Bound Body", ref="sealed-attacker")
+        self.add(engine, "Generic Bound Body", ref="sealed-other-creature")
+        new_attachment = self.add(engine, "Generic Bound Body", seat="B", ref="current-attachment")
+        attach_objects(session.state.cards, sigil, new_attachment, source_timestamp=sigil.zone_timestamp,
+            players=session.state.players)
+        program = next(program for program in engine.semantics.programs_for_oracle(sigil.oracle_id)
+            if program.event == "creature.attacks")
+        amount = program.effects[0]["power"]
+        self.assertEqual(3, PublicQueryAmountSpec.from_dict(amount).schema_version)
+        item = SimpleNamespace(controller="A", ref="sealed-attack-count", source_object_id=sigil.object_id,
+            context={"event": "creature.attacks", "event_counter_recipient": {
+                "reference": attacker.ref, "logical_object_id": attacker.logical_object_id,
+            }})
+        self.assertEqual(1, resolve_public_query_amount(engine, amount, item))
+        item.context["event"] = "permanent.enter"
+        with self.assertRaisesRegex(ValueError, "sealed attack occurrence"):
+            resolve_public_query_amount(engine, amount, item)
+
+    def test_source_relative_count_authority_and_compiler_omission_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+
+        session = self.session(400_700_066)
+        for name in ("Hare Apparent", "Sigil of Valor"):
+            with self.subTest(card=name):
+                card = self.add(session.engine, name)
+                self.assert_closed(session, card)
+                program = next(program for program in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY in program.capability_dependencies)
+                deps = tuple(dep for dep in program.capability_dependencies if dep != SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY)
+                changed = replace(program, capability_dependencies=deps,
+                    capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+                binding = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+                self.assertIn("capability:undeclared_runtime_dependency:" + SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY,
+                    binding["blockers"])
+        with patch("quorune.compiler.attack_event_results._seal_attack_relative_amounts", return_value=False):
+            ir = compile_oracle_card(self.db.lookup("Sigil of Valor"), capability_registry=self.registry,
+                capability_profile="commander_review")
+        self.assertTrue(ir.material_residuals)
 
 
 class PublicZoneQuantityTests(unittest.TestCase):

@@ -2152,6 +2152,25 @@
       ]
     },
     {
+      "id": "source-relative-effect-count-contract",
+      "patterns": [
+        "quorune/query_effect_amount_model.py",
+        "quorune/compiler/attack_event_results.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/rules/attack_event_results.py",
+        "quorune/semantic_runtime/query_effect_amounts.py",
+        "tests/fixtures/source-relative-effect-count-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_combat_defending_player_native",
+        "test_fixed_counter_event_triggers",
+        "test_public_query_effect_amounts",
+        "test_public_zone_quantities",
+        "test_source_attack_alone"
+      ]
+    },
+    {
       "id": "public-named-quantity-contract",
       "patterns": [
         "quorune/carddb_characteristics.py",

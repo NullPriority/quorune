@@ -2056,6 +2056,12 @@ names matches. The reader uses effective copy values, unlocked Room doors,
 and the printed face rules in graveyards. Nameless and phased-out objects
 contribute zero. Earlier quantity descriptors retain their serialized fields.
 
+Source-relative token amounts exclude the original source incarnation from
+the current named creature collection. An attack-relative characteristic
+amount uses its own version and excludes the sealed attacking permanent.
+The buff and the exclusion use the same event object. These amounts retain
+the trigger's controller and count the eligible creatures at resolution.
+
 Counted token wording can use a complete public value after “equal to,” while
 the ordinary fixed-token parser still owns the entire definition and abilities.
 The quantity resolves once before the shared token replacement transaction.

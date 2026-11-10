@@ -813,6 +813,10 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         if value.get('schema_version')==7 and {'scope','query','counter_name','exclude_source'}<=set(value):
             CharacteristicQuantitySpec.from_dict(value)
             own=(*own,PUBLIC_NAMED_COUNT_CAPABILITY)
+        if value.get("kind") == "public_query_effect_amount":
+            from .query_effect_amount_model import source_relative_count_capabilities
+
+            own = (*own, *source_relative_count_capabilities(value))
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
         if (value.get('schema_version')==4 and value.get('scope') in {'controller_life_total','opponent_poison_counters','attached_object'}
                 and {'scope','query','counter_name','exclude_source'}<=set(value)):

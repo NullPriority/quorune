@@ -188294,6 +188294,95 @@
     },
     {
       "common": {
+        "applicability_note": "Count a supported current controlled battlefield collection excluding its captured source or sealed lone attacker.",
+        "capability_id": "quantity_expression.source_relative_effect_count",
+        "official_rule_ids": [
+          "400.7",
+          "506.5",
+          "508.1",
+          "603.2",
+          "608.2h"
+        ],
+        "supported_profiles": [
+          "commander_duel",
+          "commander_review"
+        ]
+      },
+      "references": [
+        [
+          18934,
+          "interaction",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_hare_counts_a_returned_source_as_another_creature"
+        ],
+        [
+          18935,
+          "interaction",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_sealed_attack_count_survives_attachment_movement_and_requires_its_context"
+        ],
+        [
+          18936,
+          "interaction",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_sigil_counts_other_creatures_after_equipment_removal"
+        ],
+        [
+          18937,
+          "multiplayer",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_hare_counts_a_returned_source_as_another_creature"
+        ],
+        [
+          18938,
+          "multiplayer",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_sigil_counts_other_creatures_after_equipment_removal"
+        ],
+        [
+          18939,
+          "mutation",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_source_relative_count_authority_and_compiler_omission_fail_closed"
+        ],
+        [
+          18940,
+          "negative",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_sealed_attack_count_survives_attachment_movement_and_requires_its_context"
+        ],
+        [
+          18941,
+          "negative",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_sigil_counts_other_creatures_after_equipment_removal"
+        ],
+        [
+          18942,
+          "negative",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_source_relative_count_authority_and_compiler_omission_fail_closed"
+        ],
+        [
+          18943,
+          "positive",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_hare_counts_a_returned_source_as_another_creature"
+        ],
+        [
+          18944,
+          "positive",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_sigil_counts_other_creatures_after_equipment_removal"
+        ],
+        [
+          18945,
+          "privacy",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_hare_counts_a_returned_source_as_another_creature"
+        ],
+        [
+          18946,
+          "replay",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_hare_counts_a_returned_source_as_another_creature"
+        ],
+        [
+          18947,
+          "replay",
+          "tests.test_public_zone_quantities.SourceRelativeEffectCountTests.test_sigil_counts_other_creatures_after_equipment_removal"
+        ]
+      ]
+    },
+    {
+      "common": {
         "applicability_note": "Committed spell spending and existing result owners compose through actual colored/colorless payments, tax, Flashback, copied-spell zero, counters, public sets, private fixed discard, rollback and loaded exact replay.",
         "capability_id": "quantity_expression.spent_mana_color_count",
         "official_rule_ids": [

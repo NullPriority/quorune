@@ -21,7 +21,8 @@ def attack_event_characteristic_capabilities(*,effects,target_schema,mechanic_id
             if (not isinstance(spec.quantity,CharacteristicQuantitySpec)
                     or spec.quantity.scope not in {CharacteristicQuantityScope.CONTROLLER_ZONE,
                     CharacteristicQuantityScope.OPPONENT_ZONES,CharacteristicQuantityScope.ALL_ZONES}
-                    or spec.quantity.exclude_source or spec.quantity.exclude_attached_object):return ()
+                    or spec.quantity.exclude_source and spec.schema_version != 3
+                    or spec.quantity.exclude_attached_object):return ()
             projected[field]=spec.coefficient*2;amounts.add(PUBLIC_QUERY_AMOUNT_CAPABILITY)
     base=fixed_source_characteristics_node_capabilities(effects=(projected,),target_schema=None,mechanic_ids=mechanic_ids)
     return tuple(sorted({ATTACK_CHARACTERISTIC_RESULT_CAPABILITY,'resolution.event_object.fixed_result',*base,*amounts})) if base else ()
