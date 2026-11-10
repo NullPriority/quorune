@@ -157,17 +157,46 @@ class DungeonProgressTests(unittest.TestCase):
         original = DungeonVisit(bottom, 1)
         journey = DungeonJourney(original)
         self.assertEqual((journey, None), complete_finished_dungeon(journey, (1, 1)))
-        self.assertEqual((DungeonJourney(completed=1), original), complete_finished_dungeon(journey, ()))
+        once = DungeonJourney(completed=1, completed_by_dungeon=((DungeonId.LOST_MINE, 1),))
+        self.assertEqual((once, original), complete_finished_dungeon(journey, ()))
 
         offer, completed = prepare_venture("C", journey, VentureMode.ORDINARY)
         self.assertEqual(original, completed)
-        self.assertEqual(DungeonJourney(completed=1), offer.journey)
+        self.assertEqual(once, offer.journey)
         reentry = accept_venture("C", offer.journey, offer, DungeonRoomRef(DungeonId.LOST_MINE, 0))
-        self.assertEqual(DungeonJourney(DungeonVisit(DungeonRoomRef(DungeonId.LOST_MINE, 0), 2), 1), reentry)
+        self.assertEqual(replace(once, active=DungeonVisit(DungeonRoomRef(DungeonId.LOST_MINE, 0), 2)), reentry)
         current_last = DungeonVisit(bottom, 2)
-        last_journey = DungeonJourney(current_last, 1)
+        last_journey = replace(once, active=current_last)
         self.assertEqual((last_journey, None), complete_finished_dungeon(last_journey, (1, 2)))
-        self.assertEqual((DungeonJourney(completed=2), current_last), complete_finished_dungeon(last_journey, (1,)))
+        twice = DungeonJourney(completed=2, completed_by_dungeon=((DungeonId.LOST_MINE, 2),))
+        self.assertEqual((twice, current_last), complete_finished_dungeon(last_journey, (1,)))
+
+    def test_named_completion_is_recorded_only_when_its_dungeon_finishes(self):
+        mine = DungeonVisit(DungeonRoomRef(DungeonId.LOST_MINE, 6), 1)
+        journey, _ = complete_finished_dungeon(DungeonJourney(mine), ())
+        self.assertEqual(1, journey.completed)
+        self.assertNotIn(DungeonId.TOMB, dict(journey.completed_by_dungeon))
+        tomb = DungeonVisit(DungeonRoomRef(DungeonId.TOMB, 4), 2)
+        pending = replace(journey, active=tomb)
+        self.assertEqual((pending, None), complete_finished_dungeon(pending, (2,)))
+        offer, retired = prepare_venture("A", pending, VentureMode.ORDINARY)
+        self.assertEqual(tomb, retired)
+        self.assertEqual({DungeonId.LOST_MINE: 1, DungeonId.TOMB: 1}, dict(offer.journey.completed_by_dungeon))
+        self.assertEqual(2, offer.journey.completed)
+        self.assertEqual(offer, VentureOffer.from_dict(json.loads(json.dumps(offer.to_dict()))))
+
+    def test_aggregate_only_journeys_keep_legacy_bytes_and_carry_new_named_evidence(self):
+        legacy = {"active": None, "completed": 2}
+        journey = DungeonJourney.from_dict(legacy)
+        self.assertEqual(legacy, journey.to_dict())
+        self.assertEqual((), journey.completed_by_dungeon)
+        tomb = DungeonVisit(DungeonRoomRef(DungeonId.TOMB, 4), 3)
+        finished, _ = complete_finished_dungeon(replace(journey, active=tomb), ())
+        self.assertEqual(3, finished.completed)
+        self.assertEqual(((DungeonId.TOMB, 1),), finished.completed_by_dungeon)
+        for invalid in ({"tomb": 4}, {"tomb": True}, {"unknown": 1}):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                DungeonJourney.from_dict({**legacy, "completed_by_dungeon": invalid})
 
     def test_choice_round_trip_rejects_stale_owner_position_and_forged_edges(self):
         first = DungeonRoomRef(DungeonId.MAD_MAGE, 1)

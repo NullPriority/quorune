@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from .dungeon_catalog import DUNGEON_CATALOG, DungeonId, VentureMode
@@ -58,10 +58,11 @@ class DungeonVisit:
 
 @dataclass(frozen=True, slots=True)
 class DungeonJourney:
-    """One player's current command-zone dungeon and completed count."""
+    """One player's current dungeon and bounded history by dungeon identity."""
 
     active: DungeonVisit | None = None
     completed: int = 0
+    completed_by_dungeon: tuple[tuple[DungeonId, int], ...] = ()
 
     def __post_init__(self) -> None:
         if type(self.completed) is not int or self.completed < 0:
@@ -70,15 +71,36 @@ class DungeonJourney:
             not isinstance(self.active, DungeonVisit) or self.active.incarnation != self.completed + 1
         ):
             raise ValueError("The active dungeon must be the owner's next incarnation")
+        if not isinstance(self.completed_by_dungeon, tuple):
+            raise ValueError("Dungeon completion history must be immutable")
+        counts: dict[DungeonId, int] = {}
+        for entry in self.completed_by_dungeon:
+            if not isinstance(entry, tuple) or len(entry) != 2:
+                raise ValueError("Each dungeon completion requires its identity and count")
+            dungeon, count = entry
+            if not isinstance(dungeon, DungeonId) or dungeon in counts or type(count) is not int or count < 1:
+                raise ValueError("Dungeon completion counts require distinct dungeons and positive integers")
+            counts[dungeon] = count
+        if sum(counts.values()) > self.completed:
+            raise ValueError("Named dungeon completions exceed the aggregate count")
+        object.__setattr__(self, "completed_by_dungeon", tuple(sorted(counts.items())))
 
     def to_dict(self) -> dict[str, Any]:
-        return {"active": self.active.to_dict() if self.active is not None else None, "completed": self.completed}
+        result = {"active": self.active.to_dict() if self.active is not None else None, "completed": self.completed}
+        if self.completed_by_dungeon:
+            result["completed_by_dungeon"] = {dungeon.value: count for dungeon, count in self.completed_by_dungeon}
+        return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> DungeonJourney:
-        _require_fields(value, {"active", "completed"}, "Dungeon journey")
+        fields = {"active", "completed"}
+        if not isinstance(value, Mapping) or set(value) not in (fields, fields | {"completed_by_dungeon"}):
+            raise ValueError("Dungeon journey has an invalid shape")
+        named = value.get("completed_by_dungeon", {})
+        if not isinstance(named, Mapping) or ("completed_by_dungeon" in value and not named):
+            raise ValueError("Named dungeon completion history has an invalid shape")
         active = DungeonVisit.from_dict(value["active"]) if value["active"] is not None else None
-        return cls(active, value["completed"])
+        return cls(active, value["completed"], tuple((DungeonId(dungeon), count) for dungeon, count in named.items()))
 
 
 @dataclass(frozen=True, slots=True)
@@ -135,7 +157,10 @@ def complete_finished_dungeon(
     active = journey.active
     if active is None or active.room.exits or active.incarnation in outstanding:
         return journey, None
-    return DungeonJourney(completed=journey.completed + 1), active
+    counts = dict(journey.completed_by_dungeon)
+    dungeon = active.room.dungeon
+    counts[dungeon] = counts.get(dungeon, 0) + 1
+    return DungeonJourney(completed=journey.completed + 1, completed_by_dungeon=tuple(counts.items())), active
 
 
 def prepare_venture(owner: str, journey: DungeonJourney, mode: VentureMode) -> tuple[VentureOffer, DungeonVisit | None]:
@@ -151,4 +176,4 @@ def accept_venture(owner: str, journey: DungeonJourney, offer: VentureOffer, sel
         raise ValueError("Venture offer no longer belongs to this owner and dungeon position")
     if not isinstance(selected, DungeonRoomRef) or selected not in offer.destinations:
         raise ValueError("The selected dungeon room was not offered")
-    return DungeonJourney(DungeonVisit(selected, journey.completed + 1), journey.completed)
+    return replace(journey, active=DungeonVisit(selected, journey.completed + 1))

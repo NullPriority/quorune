@@ -651,7 +651,9 @@ legal destinations from the graph and checks the retained choices against it.
 Last-room completion uses the outstanding room abilities of the current
 incarnation. A venture from the last room completes that dungeon before the
 next entry choice. Entry allocates a new incarnation even when the player
-chooses the same dungeon again.
+chooses the same dungeon again. Completion increments both the total and the
+count for that dungeon. A count gap between the total and the named history
+identifies older aggregate entries whose dungeon identities are unavailable.
 
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
