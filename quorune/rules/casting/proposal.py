@@ -11,6 +11,7 @@ from .disturb_costs import cast_view_zone_permission,disturb_back_cast_permissio
 from ..prototype import compiled_prototype_spec
 from .characteristic_methods import characteristic_cast_view,characteristic_program_key,characteristic_offer_fields
 from ..fuse import fuse_source_cast_is_complete
+from ..temporary_cast_timing import temporary_cast_timing_permissions
 from typing import Any, Literal, Protocol
 
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
@@ -422,6 +423,7 @@ def _combined_cast_timing_permissions(
             else compiled_sneak_timing_permissions(host, card)
         ),
         *static_cast_timing_permissions(host, actor, card, face=face),
+        *temporary_cast_timing_permissions(host, actor, card, face=face),
     )
 
 

@@ -49,10 +49,11 @@ def temporary_player_rule_node_capabilities(**shape):
     from .next_cast_counter_protection import next_cast_protection_node_capabilities
     from .temporary_cast_restrictions import temporary_cast_node_capabilities
     from .event_spell_copy import next_cast_copy_node_capabilities
+    from .temporary_cast_timing import temporary_cast_timing_node_capabilities
 
     return (next_spell_payment_node_capabilities(**shape) or cast_cascade_node_capabilities(**shape)
             or next_cast_protection_node_capabilities(**shape) or temporary_cast_node_capabilities(**shape)
-            or next_cast_copy_node_capabilities(**shape))
+            or next_cast_copy_node_capabilities(**shape) or temporary_cast_timing_node_capabilities(**shape))
 
 
 def temporary_cast_grant_covered_mechanics(supplied):
@@ -60,17 +61,21 @@ def temporary_cast_grant_covered_mechanics(supplied):
     from .next_cast_counter_protection import NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC
 
     from ..event_spell_copy_model import NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC
+    from .temporary_cast_timing import TEMPORARY_CAST_TIMING_CAPABILITY, TEMPORARY_CAST_TIMING_MECHANIC
 
     return {mechanic for capability, mechanic in ((NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_MECHANIC),
         (CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC),
         (NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC),
-        (NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC)) if capability in supplied}
+        (NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC),
+        (TEMPORARY_CAST_TIMING_CAPABILITY, TEMPORARY_CAST_TIMING_MECHANIC)) if capability in supplied}
 
 
 def expire_temporary_cast_ability_grants(stats):
     from .cast_cascade_grants import expire_cast_cascade_grants
     from .next_cast_counter_protection import expire_next_cast_protection
+    from .temporary_cast_timing import expire_temporary_cast_timing
 
+    expire_temporary_cast_timing(stats)
     expire_next_spell_payments(stats)
     expire_cast_cascade_grants(stats)
     expire_next_cast_protection(stats)

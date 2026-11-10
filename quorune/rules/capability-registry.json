@@ -68378,6 +68378,99 @@
     },
     {
       "applicability": {
+        "summary": "Apply controller-bound same-turn instant timing to closed spell scopes.",
+        "inputs": [
+          "resolved controller result",
+          "prospective casting face",
+          "committed cast characteristics"
+        ],
+        "outputs": [
+          "shared cast offer and acceptance permission",
+          "eligible Suspend timing",
+          "one-shot consumption and cleanup expiry"
+        ],
+        "exclusions": [
+          "zone access",
+          "priority grants",
+          "intrinsic Flash keyword",
+          "other players and unsupported qualifiers"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The independent runtime binder rejects a persisted timing payload without its verified capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "timing.cast.temporary_controller_permission",
+      "implementation_components": [
+        "quorune.compiler.temporary_player_rule_templates._temporary_cast_timing_template",
+        "quorune.rules.temporary_cast_timing.apply_temporary_cast_timing",
+        "quorune.rules.temporary_cast_timing.temporary_cast_timing_permissions",
+        "quorune.rules.temporary_cast_timing.commit_temporary_cast_timing",
+        "quorune.rules.casting.proposal._combined_cast_timing_permissions",
+        "quorune.suspend._suspend_timing_is_legal"
+      ],
+      "implementation_mutation_rationale": "Removing the timing producer restores the source residual. Native actions test publication, one-shot consumption, expiry and split second.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_borne_upon_a_wind_reuses_flashback_without_granting_zone_access",
+        "test_complete_the_circuit_copies_once_and_keeps_repeat_sorcery_timing",
+        "test_quicken_suspends_without_consumption_and_normal_cast_exhausts_both_grants",
+        "test_split_second_blocks_cast_and_suspend_through_the_grant"
+      ],
+      "multiplayer_tests": [
+        "test_complete_the_circuit_copies_once_and_keeps_repeat_sorcery_timing",
+        "test_emergence_zone_grant_survives_sacrifice_and_expires_at_cleanup"
+      ],
+      "negative_tests": [
+        "test_borne_upon_a_wind_reuses_flashback_without_granting_zone_access",
+        "test_quicken_suspends_without_consumption_and_normal_cast_exhausts_both_grants",
+        "test_scouts_warning_requires_land_play_timing",
+        "test_split_second_blocks_cast_and_suspend_through_the_grant",
+        "test_temporary_timing_shape_and_runtime_dependency_are_closed"
+      ],
+      "official_rules": [
+        "101.2",
+        "117.1a",
+        "514.2",
+        "601.2i",
+        "601.3b",
+        "609.4",
+        "611.2a",
+        "702.8a",
+        "702.62a"
+      ],
+      "positive_tests": [
+        "test_borne_upon_a_wind_reuses_flashback_without_granting_zone_access",
+        "test_emergence_zone_grant_survives_sacrifice_and_expires_at_cleanup",
+        "test_quicken_suspends_without_consumption_and_normal_cast_exhausts_both_grants"
+      ],
+      "privacy_tests": [
+        "test_complete_the_circuit_copies_once_and_keeps_repeat_sorcery_timing"
+      ],
+      "replay_tests": [
+        "test_borne_upon_a_wind_reuses_flashback_without_granting_zone_access",
+        "test_complete_the_circuit_copies_once_and_keeps_repeat_sorcery_timing",
+        "test_emergence_zone_grant_survives_sacrifice_and_expires_at_cleanup",
+        "test_quicken_suspends_without_consumption_and_normal_cast_exhausts_both_grants"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
         "exclusions": [
           "unrepresented token definitions or profile mutations",
           "variable token counts outside an independently closed owner",
@@ -89063,7 +89156,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 787,
+  "registry_version": 788,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

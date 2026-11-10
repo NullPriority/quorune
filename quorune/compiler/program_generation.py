@@ -10,6 +10,8 @@ from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_nod
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 from ..rules.source_keyword_choice_shapes import is_closed_source_keyword_choice_program
 from ..rules.source_protection_choice_shapes import is_closed_source_protection_program
+from ..rules.event_spell_copy import is_closed_next_cast_copy_program
+from ..rules.temporary_cast_timing import is_closed_temporary_cast_timing_program
 
 from collections import Counter
 from dataclasses import asdict
@@ -1251,6 +1253,8 @@ def _closed_effect_recognizers():
         closed_fused_program,
         is_closed_library_search_prohibition_program,
         is_closed_next_cast_protection_program,
+        is_closed_next_cast_copy_program,
+        is_closed_temporary_cast_timing_program,
         is_closed_announced_target_set_program,
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
@@ -1354,9 +1358,8 @@ def _is_closed_effect_program(program: SemanticProgram) -> bool:
     from ..rules.attachment_action_capability_shapes import is_closed_fixed_source_equipment_activation_program
     from ..rules.cast_cascade_grants import is_closed_cast_cascade_program
     from ..rules.next_spell_payment import is_closed_next_spell_payment_program
-    from ..rules.event_spell_copy import is_closed_next_cast_copy_program
     if (is_closed_next_spell_payment_program(program) or is_closed_cast_cascade_program(program)
-            or is_closed_fixed_source_equipment_activation_program(program) or is_closed_next_cast_copy_program(program)):
+            or is_closed_fixed_source_equipment_activation_program(program)):
         return True
     return effect_program_is_closed(program,recognizers=_closed_effect_recognizers(),
         recursive_is_closed=_is_closed_effect_program,composed_is_closed=is_closed_composed_spell_effect_program)

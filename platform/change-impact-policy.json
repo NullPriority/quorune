@@ -2242,6 +2242,21 @@
       ]
     },
     {
+      "id": "temporary-cast-timing-contract",
+      "patterns": [
+        "quorune/rules/temporary_cast_timing.py",
+        "quorune/suspend.py",
+        "tests/fixtures/temporary-cast-timing-cards.json",
+        "tests/test_temporary_cast_timing.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_event_spell_copy",
+        "test_suspend_rules",
+        "test_temporary_cast_timing"
+      ]
+    },
+    {
       "id": "temporary-cast-cascade-grant-contract",
       "patterns": [
         "quorune/card_programs/descriptor_requirements.py",

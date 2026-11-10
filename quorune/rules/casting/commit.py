@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from ..temporary_cast_timing import commit_temporary_cast_timing
 from ...spell_mana_counts import capture_spell_mana_counts
 from .spell_context import (
     capture_paid_creature_stats, capture_paid_sacrifice_mana_value,
@@ -1137,12 +1139,13 @@ def _dispatch_cast_events(
             trigger_batch=trigger_batch,
         )
     effective_spell = host._effective_card_data(card)
-    cast_types, cast_subtypes, cast_supertypes = host._type_parts(
-        cast_event_type_line(
-            getattr(host.state, CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD, None),
-            proposal.type_line,
-            effective_spell,
-        )
+    cast_type_line = cast_event_type_line(
+        getattr(host.state, CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD, None), proposal.type_line, effective_spell,
+    )
+    cast_types, cast_subtypes, cast_supertypes = host._type_parts(cast_type_line)
+    commit_temporary_cast_timing(
+        host.state.players[proposal.seat].stats, host.state.turn_sequence,
+        type_line=cast_type_line,
     )
     cast_colors = tuple(effective_spell.get("colors") or ())
     mana_cost = str(effective_spell.get("mana_cost") or "")

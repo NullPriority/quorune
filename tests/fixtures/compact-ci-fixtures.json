@@ -949,6 +949,7 @@
     "tests/fixtures/temporary-blocker-restriction-cards.json",
     "tests/fixtures/temporary-cast-cascade-grant-cards.json",
     "tests/fixtures/temporary-cast-restriction-cards.json",
+    "tests/fixtures/temporary-cast-timing-cards.json",
     "tests/fixtures/temporary-declaration-restriction-cards.json",
     "tests/fixtures/temporary-keyword-removal-cards.json",
     "tests/fixtures/temporary-source-keyword-cards.json",

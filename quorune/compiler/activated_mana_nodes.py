@@ -377,6 +377,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "restrict_permanent_actions_until_next_turn",
     "grant_keyword_until_end_of_turn",
     "grant_next_spell_payment",
+    "grant_cast_permission",
     "grant_cast_cascade",
     "next_spell_uncounterable",
     "grant_declaration_restriction_until_end_of_turn",

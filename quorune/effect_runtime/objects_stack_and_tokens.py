@@ -1024,7 +1024,10 @@ def _apply_grant_cast_permission(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    from ..rules.temporary_cast_timing import TEMPORARY_CAST_TIMING_FIELD, apply_temporary_cast_timing
+
+    if TEMPORARY_CAST_TIMING_FIELD in effect:
+        return apply_temporary_cast_timing(host, effect, actor=actor, reason=reason)
     card = host._resolve_object(
         actor,
         str(effect["card"]),

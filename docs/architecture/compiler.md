@@ -380,6 +380,16 @@ program identities and their complete original source span. Unrepresented
 source-attribute conditions, compound numeric timing conditions and cyclic
 keyword conditions remain residual.
 
+`compiler/temporary_player_rule_templates.py` also lowers fixed controller-wide
+as-though-Flash effects through the existing cast-permission operation. The
+versioned result uses a separate timing field and the normal cast proposal
+checks the selected characteristics. One-shot windows end on the first
+matching committed cast, including a cast at ordinary timing. The Suspend
+special action can use this timing permission without consuming it. Cleanup
+ends unused windows. The permission changes timing without granting Flash or
+access to a new zone, and ordinary casting prohibitions still apply. Printed
+permissions to play creature cards also require the land-play timing owner.
+
 `compiler/classic_flash.py` lowers the closed intrinsic as-though-Flash clause
 with its next-cleanup sacrifice. `rules/classic_flash.py` keeps the selected
 timing permission separate from mana and target choices. The optional casting
