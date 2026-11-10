@@ -861,6 +861,12 @@ reference, caster and value. The reader requires existing complete cast-event
 facts and adds no checkpoint or event fields. Scalar schemas one through seven
 retain their exact payloads.
 
+The `paid_sacrifice_mana_value` stack context holds the version-one
+incarnation and effective mana value recorded for a fixed sacrifice at cast
+commit. The original spell verifies the incarnation against its paid-cost
+objects. A spell copy carries the sealed context without a second payment.
+Earlier scalar and paid-cost encodings keep their existing fields.
+
 Activation-condition schema two contains a closed `fixed_public_state` kind
 and its existing typed condition payload. Source names participate only in
 compilation; replay uses the pinned predicate rather than reparsing Oracle.

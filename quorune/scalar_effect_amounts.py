@@ -8,7 +8,8 @@ from typing import Any, Protocol
 from .object_query import exact_numeric_characteristic
 from .query_effect_amount_model import PublicQueryAmountError
 from .scalar_effect_amount_model import (
-    PAID_SACRIFICE_STAT_CONTEXT, PaidCreatureStatSnapshot,
+    PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT,
+    PaidCreatureStatSnapshot, PaidSacrificeManaValueSnapshot,
     SCALAR_REFERENCE_CONTEXT, ScalarAmountOrigin, ScalarEffectAmountSpec, scalar_amount_specs,
 )
 from .turn_history import current_turn_history_events
@@ -203,18 +204,28 @@ def _current_target_hand_count(host,seat):
     return len(player.zones['hand'])
 
 
-def _paid_creature_stat_amount(item, characteristic):
-    snapshot = PaidCreatureStatSnapshot.from_dict(item.context.get(PAID_SACRIFICE_STAT_CONTEXT))
+def _validate_paid_incarnation(item, logical_object_id, label):
     if item.kind not in {'spell', 'spell_copy'}:
-        raise PublicQueryAmountError('Paid creature stats require their resolving spell or copy')
+        raise PublicQueryAmountError(f'{label} require their resolving spell or copy')
     if item.kind == 'spell':
         objects = item.context.get('fixed_cast_lifecycle_cost_objects')
         if not isinstance(objects, (list, tuple)) or sum(
-            isinstance(row, Mapping) and row.get('logical_object_id') == snapshot.logical_object_id
+            isinstance(row, Mapping) and row.get('logical_object_id') == logical_object_id
             for row in objects
         ) != 1:
-            raise PublicQueryAmountError('Paid creature stats changed their cost incarnation')
+            raise PublicQueryAmountError(f'{label} changed their cost incarnation')
+
+
+def _paid_creature_stat_amount(item, characteristic):
+    snapshot = PaidCreatureStatSnapshot.from_dict(item.context.get(PAID_SACRIFICE_STAT_CONTEXT))
+    _validate_paid_incarnation(item, snapshot.logical_object_id, 'Paid creature stats')
     return getattr(snapshot, characteristic)
+
+
+def _paid_sacrifice_mana_value(item):
+    snapshot = PaidSacrificeManaValueSnapshot.from_dict(item.context.get(PAID_SACRIFICE_MANA_VALUE_CONTEXT))
+    _validate_paid_incarnation(item, snapshot.logical_object_id, 'Paid sacrifice mana-value facts')
+    return snapshot.mana_value
 
 
 def _reflexive_paid_creature_power(item, spec: ScalarEffectAmountSpec) -> int:
@@ -246,6 +257,8 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             return spec.coefficient * previous["value"]
     if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE:
         amount = _paid_creature_stat_amount(item, spec.characteristic)
+    elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
+        amount = _paid_sacrifice_mana_value(item)
     elif spec.origin is ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE:
         amount = _reflexive_paid_creature_power(item, spec)
     elif spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:

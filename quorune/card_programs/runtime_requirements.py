@@ -257,6 +257,30 @@ def _intrinsic_spell_face_dependencies(coverage):
     ) if marker in coverage}
 
 
+def _validate_paid_sacrifice_mana_value_scope(program, values, amounts):
+    from ..compiler.public_query_effect_amounts import public_query_amount_program_is_closed
+    from ..scalar_effect_amount_model import (
+        PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
+        SCALAR_AMOUNT_CAPABILITY, ScalarAmountOrigin, scalar_amount_specs,
+    )
+
+    paid_value = PAID_SACRIFICE_MANA_VALUE_CAPABILITY in amounts
+    if paid_value != (PAID_SACRIFICE_MANA_VALUE_MECHANIC in program.coverage):
+        raise ValueError('Paid sacrifice mana value requires its typed scalar and mechanic')
+    if not paid_value:
+        return
+    specs = scalar_amount_specs(values)
+    if (
+        program.event != 'resolve' or not program.ability_id.startswith('spell:')
+        or len(specs) != 1 or specs[0].origin is not ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE
+        or scalar_amount_specs(program.effects) != specs
+        or not public_query_amount_program_is_closed(
+            program, required_dependencies=(SCALAR_AMOUNT_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_CAPABILITY),
+        )
+    ):
+        raise ValueError('Paid sacrifice mana value requires one closed spell result and its fixed sacrifice')
+
+
 def _value_runtime_requirements(program):
     """Infer the existing minima for typed values and their public predicates."""
     from ..characteristic_fragments import characteristic_quantity_capabilities
@@ -289,6 +313,7 @@ def _value_runtime_requirements(program):
         blockers.add(f"runtime_self_public_condition:invalid:{exc}")
     try:
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
+        _validate_paid_sacrifice_mana_value_scope(program, values, amounts)
         from ..rules.reflexive_payment_shapes import validate_reflexive_paid_power_scope
         validate_reflexive_paid_power_scope(program.effects, values, amounts)
         from ..announced_damage import VARIABLE_DAMAGE_ALLOCATION_CAPABILITY, variable_damage_allocation

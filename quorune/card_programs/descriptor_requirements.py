@@ -137,13 +137,15 @@ def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, 
     from ..query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
     from ..reflexive_trigger_model import SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY
     from ..scalar_effect_amount_model import (
-        PAID_SACRIFICE_STAT_CAPABILITY, SCALAR_AMOUNT_CAPABILITY, ScalarAmountOrigin, ScalarEffectAmountSpec,
+        PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_STAT_CAPABILITY,
+        SCALAR_AMOUNT_CAPABILITY, ScalarAmountOrigin, ScalarEffectAmountSpec,
     )
 
     spec = ScalarEffectAmountSpec.from_dict(value)
     origin_capabilities = {
         ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE: SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
         ScalarAmountOrigin.PAID_SACRIFICE_CREATURE: PAID_SACRIFICE_STAT_CAPABILITY,
+        ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE: PAID_SACRIFICE_MANA_VALUE_CAPABILITY,
         ScalarAmountOrigin.CAST_SPELL_MANA_VALUE: CAST_MANA_VALUE_CAPABILITY,
     }
     required = {SCALAR_AMOUNT_CAPABILITY, *spec.history_count_capabilities}

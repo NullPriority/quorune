@@ -11,7 +11,11 @@ from ...kicker import KICKER_MECHANIC_ID
 from ...morph import MORPH_CAST_METHOD
 from ...mutate_model import MUTATE_PAYMENT_FIELD
 from ...object_query import exact_numeric_characteristic
-from ...scalar_effect_amount_model import PAID_SACRIFICE_STAT_CONTEXT, PaidCreatureStatSnapshot
+from ...public_quantity_reductions import public_mana_value
+from ...scalar_effect_amount_model import (
+    PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT, PaidCreatureStatSnapshot,
+    PaidSacrificeManaValueSnapshot,
+)
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from .multikicker_costs import multikicker_cast_context
 from .replicate_costs import replicate_cast_context
@@ -19,7 +23,18 @@ from .conspire_costs import conspire_cast_context
 from .casualty_costs import casualty_cast_context
 from .bargain_costs import declared_bargain_context
 from .characteristic_methods import characteristic_stack_context
+from .model import CastProposalError
 from .spell_text import CAST_TEXT_FRAMES
+
+
+def fixed_cast_cost_object_context(host, paid) -> dict[str, Any]:
+    combat = host.state.combat
+    attack_context = copy.deepcopy(combat.attack_target_context.get(paid.object_id)) if combat is not None else None
+    return {
+        'card_ref': paid.ref,
+        'logical_object_id': paid.logical_object_id,
+        **({'attack_target_context': attack_context} if attack_context is not None else {}),
+    }
 
 
 def _fixed_cast_lifecycle_cost_context(
@@ -45,6 +60,15 @@ def capture_paid_creature_stats(host, creature, previous):
         exact_numeric_characteristic(creature, effective, 'power'),
         exact_numeric_characteristic(creature, effective, 'toughness'),
     )
+
+
+def capture_paid_sacrifice_mana_value(logical_id, effective, previous):
+    try:
+        if previous is not None:
+            raise ValueError('The paid mana value requires one sacrificed permanent')
+        return PaidSacrificeManaValueSnapshot(logical_id, public_mana_value(effective))
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason='paid_sacrifice_mana_value_invalid') from exc
 
 
 def declared_spell_context(proposal,details,selected_option,costs,*,provenance,lifecycle_context,
@@ -88,6 +112,8 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         **lifecycle_context,
         **_fixed_cast_lifecycle_cost_context(costs),
         **({PAID_SACRIFICE_STAT_CONTEXT: costs.paid_creature_stats.to_dict()} if costs.paid_creature_stats is not None else {}),
+        **({PAID_SACRIFICE_MANA_VALUE_CONTEXT: costs.paid_sacrifice_mana_value.to_dict()}
+           if costs.paid_sacrifice_mana_value is not None else {}),
         **(
             {
                 EVOKE_PAYMENT_FIELD: copy.deepcopy(

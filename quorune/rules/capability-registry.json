@@ -58325,6 +58325,99 @@
     {
       "applicability": {
         "exclusions": [
+          "multiple or optional sacrifices",
+          "variable search bounds",
+          "mana color choice and restricted spending"
+        ],
+        "inputs": [
+          "one fixed mandatory sacrifice price",
+          "the paid battlefield incarnation before movement"
+        ],
+        "outputs": [
+          "sealed mana value on the spell or copy",
+          "existing draw, life, counter placement or single-color mana result"
+        ],
+        "summary": "Read the paid permanent's effective mana value in an existing closed spell result."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.scalar_effect_amount",
+        "casting.additional_cost.fixed_sacrifice"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing scalar authority leaves a material residual. Runtime admission independently requires the fixed price and result owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.paid_sacrifice_mana_value",
+      "implementation_components": [
+        "quorune.scalar_effect_amount_model.PaidSacrificeManaValueSnapshot",
+        "quorune.compiler.paid_sacrifice_amount_templates.paid_sacrifice_amount_template",
+        "quorune.rules.casting.commit._commit_card_cost_changes",
+        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount"
+      ],
+      "implementation_mutation_rationale": "A four-mana receipt distinguishes the current value from an implementation that always returns zero.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_morbid_curiosity_and_copy_draw_from_the_paid_artifact",
+        "test_original_reckoners_bargain_reads_the_paid_value_after_destination_replacement",
+        "test_original_forge_armor_keeps_payment_when_its_target_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_original_morbid_curiosity_and_copy_draw_from_the_paid_artifact",
+        "test_original_reckoners_bargain_reads_the_paid_value_after_destination_replacement",
+        "test_original_forge_armor_keeps_payment_when_its_target_leaves"
+      ],
+      "negative_tests": [
+        "test_paid_mana_value_requires_the_matching_price_and_trusted_authority",
+        "test_paid_mana_value_receipt_rejects_wrong_incarnation_and_kills_zero_mutant",
+        "test_original_morbid_curiosity_and_copy_draw_from_the_paid_artifact",
+        "test_original_forge_armor_keeps_payment_when_its_target_leaves",
+        "test_original_sacrifice_adds_black_mana_only_for_the_paid_creature_value",
+        "test_paid_mana_value_runtime_binding_checks_the_cost_and_result_owner"
+      ],
+      "official_rules": [
+        "202.3",
+        "202.3b",
+        "202.3e",
+        "400.7",
+        "601.2h",
+        "608.2h",
+        "701.21a",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_paid_mana_value_requires_the_matching_price_and_trusted_authority",
+        "test_original_morbid_curiosity_and_copy_draw_from_the_paid_artifact",
+        "test_original_reckoners_bargain_reads_the_paid_value_after_destination_replacement",
+        "test_original_forge_armor_keeps_payment_when_its_target_leaves",
+        "test_original_sacrifice_adds_black_mana_only_for_the_paid_creature_value"
+      ],
+      "privacy_tests": [
+        "test_original_morbid_curiosity_and_copy_draw_from_the_paid_artifact"
+      ],
+      "replay_tests": [
+        "test_original_morbid_curiosity_and_copy_draw_from_the_paid_artifact",
+        "test_original_reckoners_bargain_reads_the_paid_value_after_destination_replacement",
+        "test_original_forge_armor_keeps_payment_when_its_target_leaves",
+        "test_original_sacrifice_adds_black_mana_only_for_the_paid_creature_value"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "static characteristic cycles",
           "hidden/graveyard/event-linked collections",
           "unavailable creature stats",
@@ -88791,7 +88884,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 783,
+  "registry_version": 784,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

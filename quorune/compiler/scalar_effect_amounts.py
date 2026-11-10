@@ -287,18 +287,29 @@ def source_scalar_effect_amount_template(text,*,source_name,event,compile_fixed)
 
 def scalar_amount_shape_context(effects, mechanics):
     """Project only validated result slots, retaining the original fixed owner."""
+    from ..scalar_effect_amount_model import PAID_SACRIFICE_MANA_VALUE_MECHANIC
+
     count = 0
     def project(value, operation, path):
         nonlocal count
+        if isinstance(value, Mapping) and value.get('op') == 'mana' and isinstance(value.get('amount'), Mapping):
+            if set(value) != {'op', 'player', 'color', 'amount', 'source'}:
+                raise PublicQueryAmountError('A scalar mana result requires an unrestricted single color')
         if isinstance(value,Mapping) and value.get('op')=='offer_optional_effect':
             children=value.get('effects')
             if set(value)!={'op','player','effects'} or value.get('player')!='$controller' or not isinstance(children,(list,tuple)) or len(children)!=1 or not isinstance(children[0],Mapping):
                 raise PublicQueryAmountError('Scalar optional results require one closed controller child')
             return {**value,'effects':type(children)(project(child,str(child.get('op') or ''),()) for child in children)}
         if isinstance(value, Mapping) and value.get("kind") == SCALAR_AMOUNT_KIND:
-            if not _result_slot(operation, path):
-                raise PublicQueryAmountError("Scalar amount is outside a result slot")
             spec = ScalarEffectAmountSpec.from_dict(value)
+            if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
+                if PAID_SACRIFICE_MANA_VALUE_MECHANIC not in mechanics or (operation, path) not in {
+                    ('draw', ('count',)), ('life', ('delta',)),
+                    ('place_counters', ('amount',)), ('mana', ('amount',)),
+                }:
+                    raise PublicQueryAmountError('Paid sacrifice mana value is outside its closed result slots')
+            elif not _result_slot(operation, path):
+                raise PublicQueryAmountError("Scalar amount is outside a result slot")
             count += 1
             fixed = 2 * spec.coefficient
             return str(fixed) if path in {("characteristics", "power"), ("characteristics", "toughness")} else fixed
@@ -317,4 +328,8 @@ def scalar_amount_shape_context(effects, mechanics):
     from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC
     from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC
     from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
-    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount",TARGET_HAND_COUNT_MECHANIC,MULTIKICKER_AMOUNT_MECHANIC,MANA_COLOR_AMOUNT_MECHANIC,CAST_MANA_VALUE_MECHANIC,PAID_SACRIFICE_STAT_MECHANIC}
+    return fixed, set(mechanics) - {
+        SCALAR_AMOUNT_MECHANIC, "declared-effect-amount", TARGET_HAND_COUNT_MECHANIC,
+        MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, CAST_MANA_VALUE_MECHANIC,
+        PAID_SACRIFICE_STAT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
+    }

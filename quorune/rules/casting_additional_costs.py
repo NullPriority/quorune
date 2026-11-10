@@ -627,13 +627,19 @@ def fixed_zone_change_additional_cost(
     return FixedZoneChangeAdditionalCost.from_legacy_sacrifice(legacy)
 
 
-def fixed_creature_sacrifice_price(cost_schema: Mapping[str, Any] | None) -> bool:
+def fixed_single_sacrifice_price(
+    cost_schema: Mapping[str, Any] | None,
+) -> FixedSacrificeAdditionalCost | None:
     if not isinstance(cost_schema, Mapping) or set(cost_schema) != {'additional_costs'}:
-        return False
+        return None
     costs = cost_schema['additional_costs']
     if not isinstance(costs, (list, tuple)) or len(costs) != 1:
-        return False
-    cost = fixed_sacrifice_additional_cost(costs[0])
+        return None
+    return fixed_sacrifice_additional_cost(costs[0])
+
+
+def fixed_creature_sacrifice_price(cost_schema: Mapping[str, Any] | None) -> bool:
+    cost = fixed_single_sacrifice_price(cost_schema)
     return cost is not None and cost.predicate.types_any == ('creature',)
 
 

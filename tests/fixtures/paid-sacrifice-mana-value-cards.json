@@ -1,0 +1,510 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Dauthi Voidwalker",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.\n{T}, Sacrifice this creature: Choose an exiled card an opponent owns with a void counter on it. You may play it this turn without paying its mana cost.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature — Dauthi Rogue"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}",
+      "name": "Forge Armor",
+      "oracle_id": "7d4d9bfa-7e85-461b-bd62-1de97690a110",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact.\nPut X +1/+1 counters on target creature, where X is the sacrificed artifact's mana value.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2003-10-02",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Morbid Curiosity",
+      "oracle_id": "59c620fb-a58d-4038-a7e2-0185324b5123",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDraw cards equal to the mana value of the sacrificed permanent.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-06-08",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Raise the Alarm",
+      "oracle_id": "5b2364d7-a811-4595-a1b4-224c70555ffa",
+      "oracle_text": "Create two 1/1 white Soldier creature tokens.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Reckoner's Bargain",
+      "oracle_id": "044ea111-ce87-49ab-98f7-ae8447f48ac5",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nYou gain life equal to the sacrificed permanent's mana value. Draw two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Sacrifice",
+      "oracle_id": "068b3692-411b-44d4-a7e9-005262760cfc",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nAdd an amount of {B} equal to the sacrificed creature's mana value.",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "1994-06-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Thran Dynamo",
+      "oracle_id": "a699c663-8131-4045-9265-a83e86609374",
+      "oracle_text": "{T}: Add {C}{C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Sacrificing an animated land gives no mana since the converted mana cost was zero.",
+      "oracle_id": "068b3692-411b-44d4-a7e9-005262760cfc",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can only respond once this spell has been cast and all its costs have been paid. No one can try to destroy the creature you sacrificed to prevent you from casting this spell.",
+      "oracle_id": "068b3692-411b-44d4-a7e9-005262760cfc",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you cannot cast it without sacrificing a creature, and you cannot sacrifice additional creatures.",
+      "oracle_id": "068b3692-411b-44d4-a7e9-005262760cfc",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "59c620fb-a58d-4038-a7e2-0185324b5123",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect copies Morbid Curiosity, the controller of the copy will draw the same number of cards as determined by the original. Its controller can't and doesn't have to sacrifice a permanent.",
+      "oracle_id": "59c620fb-a58d-4038-a7e2-0185324b5123",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine how many cards to draw, use the mana value of the permanent immediately before you sacrificed it.",
+      "oracle_id": "59c620fb-a58d-4038-a7e2-0185324b5123",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card this way, you may not cast it for any other alternative costs it has, but you may pay for additional costs, such as kicker costs. If the spell requires an additional cost, you must pay that cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your opponent discards a card while you control Dauthi Voidwalker, abilities that function when that card is discarded still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Playing a card with Dauthi Voidwalker's last ability is still subject to normal timing restrictions.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens still die while Dauthi Voidwalker is on the battlefield.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Dauthi Voidwalker is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

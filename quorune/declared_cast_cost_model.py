@@ -82,11 +82,17 @@ def declared_cost_event_dependencies(condition):
 
 
 def declared_cost_copy_fields(context):
-    from .scalar_effect_amount_model import PAID_SACRIFICE_STAT_CONTEXT, PaidCreatureStatSnapshot
+    from .scalar_effect_amount_model import (
+        PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT,
+        PaidCreatureStatSnapshot, PaidSacrificeManaValueSnapshot,
+    )
 
     fields = {}
     if DECLARED_CAST_COSTS_FIELD in context:
         fields[DECLARED_CAST_COSTS_FIELD] = DeclaredCastCostFacts.from_dict(context[DECLARED_CAST_COSTS_FIELD]).to_dict()
     if PAID_SACRIFICE_STAT_CONTEXT in context:
         fields[PAID_SACRIFICE_STAT_CONTEXT] = PaidCreatureStatSnapshot.from_dict(context[PAID_SACRIFICE_STAT_CONTEXT]).to_dict()
+    if PAID_SACRIFICE_MANA_VALUE_CONTEXT in context:
+        snapshot = PaidSacrificeManaValueSnapshot.from_dict(context[PAID_SACRIFICE_MANA_VALUE_CONTEXT])
+        fields[PAID_SACRIFICE_MANA_VALUE_CONTEXT] = snapshot.to_dict()
     return fields

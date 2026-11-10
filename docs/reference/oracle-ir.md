@@ -72,6 +72,13 @@ A returning incarnation never substitutes. Missing snapshots fail closed,
 while a known empty counter map yields zero. Version-one scalar descriptors
 retain their original field set and serialization.
 
+Fixed sacrifice prices can supply the mana value of the paid permanent to a
+closed draw, life, counter placement, or single-color mana instruction. Scalar
+schema version twelve reads the sealed battlefield incarnation and its
+effective mana value from the committed cast. A spell copy carries the same
+fact. Each instruction keeps its existing result owner, including target
+revalidation and private draws.
+
 A destruction instruction with a committed-result quantity retains its fixed
 battlefield set and following instruction in one source-spanned node. The
 result uses the type, token status, and controller recorded before movement.

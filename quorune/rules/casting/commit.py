@@ -1,7 +1,15 @@
 from __future__ import annotations
 from ...spell_mana_counts import capture_spell_mana_counts
-from .spell_context import capture_paid_creature_stats, declared_spell_context
-from ...scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, PaidCreatureStatSnapshot
+from .spell_context import (
+    capture_paid_creature_stats, capture_paid_sacrifice_mana_value,
+    declared_spell_context, fixed_cast_cost_object_context,
+)
+from ...scalar_effect_amount_model import (
+    PAID_SACRIFICE_MANA_VALUE_CAPABILITY,
+    PAID_SACRIFICE_STAT_CAPABILITY,
+    PaidCreatureStatSnapshot,
+    PaidSacrificeManaValueSnapshot,
+)
 from ...adventure import adventure_stack_context
 from ...omen import omen_stack_context
 from ..optional_life_cost_model import optional_life_cost_amount
@@ -183,6 +191,7 @@ class _AdditionalCostCommit:
     paid_refs: list[str]
     paid_contexts: list[dict[str, Any]]
     paid_creature_stats: PaidCreatureStatSnapshot | None = None
+    paid_sacrifice_mana_value: PaidSacrificeManaValueSnapshot | None = None
 
 
 def _commit_tap_costs(
@@ -629,29 +638,9 @@ def _ordinary_card_cost_commit_entries(
     return entries
 
 
-def _fixed_cast_cost_object_context(
-    host: CastCommitHost,
-    paid: Any,
-) -> dict[str, Any]:
-    attack_context = (
-        copy.deepcopy(
-            host.state.combat.attack_target_context.get(paid.object_id)
-        )
-        if host.state.combat is not None
-        else None
-    )
-    return {
-        "card_ref": paid.ref,
-        "logical_object_id": paid.logical_object_id,
-        **(
-            {"attack_target_context": attack_context}
-            if attack_context is not None
-            else {}
-        ),
-    }
-
-
-def _commit_card_cost_changes(host, proposal, card, result, changes, *, needs_stats: bool) -> None:
+def _commit_card_cost_changes(
+    host, proposal, card, result, changes, *, needs_stats: bool, needs_mana_value: bool,
+) -> None:
     """Apply selected cost moves and record their predeparture facts."""
     for (
         paid,
@@ -669,8 +658,12 @@ def _commit_card_cost_changes(host, proposal, card, result, changes, *, needs_st
                 result.paid_creature_stats = capture_paid_creature_stats(host, paid, result.paid_creature_stats)
             except ValueError as exc:
                 raise CastProposalError(str(exc), reason='paid_sacrifice_stats_invalid') from exc
+        if needs_mana_value and kind == 'sacrifice':
+            result.paid_sacrifice_mana_value = capture_paid_sacrifice_mana_value(
+                logical_id, data, result.paid_sacrifice_mana_value,
+            )
         result.paid_contexts.append(
-            _fixed_cast_cost_object_context(host, paid)
+            fixed_cast_cost_object_context(host, paid)
         )
         transition_kind = (
             ZoneTransitionKind.DISCARD
@@ -711,6 +704,8 @@ def _commit_card_cost_changes(host, proposal, card, result, changes, *, needs_st
         )
     if needs_stats and result.paid_creature_stats is None:
         raise CastProposalError('The paid creature stats are missing', reason='paid_sacrifice_missing')
+    if needs_mana_value and result.paid_sacrifice_mana_value is None:
+        raise CastProposalError('The paid mana value is missing', reason='paid_sacrifice_missing')
 
 
 def _commit_additional_costs(
@@ -722,7 +717,9 @@ def _commit_additional_costs(
     *, program: Any, blight_payment: BlightCastPayment | None,
 ) -> _AdditionalCostCommit:
     result = _AdditionalCostCommit([], [], {}, {}, [], [])
-    needs_stats = program is not None and PAID_SACRIFICE_STAT_CAPABILITY in program.capability_dependencies
+    capabilities = program.capability_dependencies if program is not None else ()
+    needs_stats = PAID_SACRIFICE_STAT_CAPABILITY in capabilities
+    needs_mana_value = PAID_SACRIFICE_MANA_VALUE_CAPABILITY in capabilities
     selected_exile = selected_option.get("selected_exile_card")
     if selected_exile:
         exiled = host._resolve_object(
@@ -766,8 +763,9 @@ def _commit_additional_costs(
             )
     selections = list(selected_option.get("selected_additional_costs", []))
     if not selections:
-        if needs_stats:
-            raise CastProposalError('The paid creature selection is missing', reason='paid_sacrifice_missing')
+        if needs_stats or needs_mana_value:
+            message = 'The paid creature selection is missing' if needs_stats else 'The paid sacrifice is missing'
+            raise CastProposalError(message, reason='paid_sacrifice_missing')
         return result
     result.source_snapshots = [
         copy.deepcopy(source)
@@ -813,7 +811,10 @@ def _commit_additional_costs(
         changes.extend(
             _ordinary_card_cost_commit_entries(host, proposal, selected)
         )
-    _commit_card_cost_changes(host, proposal, card, result, changes, needs_stats=needs_stats)
+    _commit_card_cost_changes(
+        host, proposal, card, result, changes,
+        needs_stats=needs_stats, needs_mana_value=needs_mana_value,
+    )
     return result
 
 
