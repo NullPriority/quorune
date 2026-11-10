@@ -237,3 +237,159 @@ class RestrictedManaGrantNativeTests(unittest.TestCase):
         def mutant(data):return tuple(replace(ability,mana_spend_restriction=None) for ability in original(data))
         with patch.object(owner,'_typed_granted_abilities',side_effect=mutant),self.assertRaises(AssertionError):
             self.test_actual_galazeth_retains_restricted_units_after_source_departure()
+
+
+class ExactManaPoolPaymentNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = RestrictedManaGrantNativeTests.session
+    add = RestrictedManaGrantNativeTests.add
+    prepare = RestrictedManaGrantNativeTests.prepare
+    checkpoint = RestrictedManaGrantNativeTests.checkpoint
+    assert_closed = RestrictedManaGrantNativeTests.assert_closed
+    priority = RestrictedManaGrantNativeTests.priority
+    cast = RestrictedManaGrantNativeTests.cast
+    replay = RestrictedManaGrantNativeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "exact-mana-pool-payment.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "bound-effect-program-cards.json", "restricted-mana-grant-cards.json", "scryfall-exact-lists.json",
+            "ability-source-counter-cards.json", "defender-declaration-numeric-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Exact mana pool payment witness",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def activate_mana(self, session, source, color, *, restriction=None):
+        self.priority(session, "A")
+        ability = next(ability for ability in session.engine._activated_abilities(source)
+                       if ability.mana_ability and ability.mana_spend_restriction == restriction)
+        action_id = f"activate:{source.ref}:{ability.ability_id}"
+        offered = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        self.assertIn(action_id, {row["id"] for row in offered})
+        result = session.act("pilot:A", {"action_id": action_id, "mana_output": {color: 1}})
+        self.assertTrue(result.ok, result.summary)
+
+    def resolve_top(self, session):
+        ref = session.state.stack[-1].ref
+        for _ in range(20):
+            if not any(item.ref == ref for item in session.state.stack):
+                return
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("The original stack item did not resolve")
+
+    def test_same_color_pool_choice_controls_whether_the_spell_can_be_countered(self):
+        from jsonschema import Draft202012Validator
+        from quorune import CommandEnvelope, GameService, PROTOCOL_VERSION
+        from quorune.rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD, PoolManaUnit
+        from quorune.mana_provenance import mana_provenance_lots
+
+        schema = json.loads((ROOT / "schemas/decision-packet.schema.json").read_text(encoding="utf-8"))
+        rider = "legendary_spell_uncounterable"
+        for use_rider in (False, True):
+            with self.subTest(use_rider=use_rider):
+                session = self.session(10660100 + int(use_rider))
+                engine = session.engine
+                ordinary = self.add(engine, "Generic Bound Plains")
+                halfling = self.add(engine, "Delighted Halfling")
+                halfling.acquired_control_turn_count = -1
+                spell = self.add(engine, "Isamaru, Hound of Konda", zone="hand")
+                counter = self.add(engine, "Counterspell", seat="B", zone="hand")
+                for card in (halfling, spell, counter):
+                    self.assert_closed(session, card)
+                self.prepare(session)
+                session.state.players["B"].mana_pool["U"] = 2
+                self.checkpoint(session)
+                self.activate_mana(session, ordinary, "W")
+                self.activate_mana(session, halfling, "W", restriction=rider)
+                service = GameService(session)
+                packet = service.observe("pilot:A", full=True)
+                Draft202012Validator(schema).validate(packet)
+                decision = packet["decision"]
+                action = next(row for row in decision["legal_actions"] if row["id"] == f"cast:{spell.ref}")
+                field = next(field for field in action["form"]["fields"] if field["name"] == MANA_POOL_PAYMENT_FIELD)
+                ordinary_key = PoolManaUnit("W").key
+                rider_key = PoolManaUnit("W", restriction=rider).key
+                self.assertEqual({ordinary_key: 1, rider_key: 1},
+                    {row["id"]: row["maximum"] for row in field["rows"]})
+                self.assertNotIn("mana_pool_rows", session.state.pending_decision.payload_by_actor["A"])
+                for other in ("pilot:B", "pilot:D"):
+                    self.assertNotIn(rider_key, json.dumps(service.observe(other, full=True)))
+                selected = rider_key if use_rider else ordinary_key
+                def command(identifier, values):
+                    return CommandEnvelope(
+                        protocol_version=PROTOCOL_VERSION, game_id=session.state.game_id,
+                        command_id=identifier, decision_id=decision["id"], action_id=action["id"],
+                        capability=decision["cap"], expected_view_revision=packet["view_revision"],
+                        choices={MANA_POOL_PAYMENT_FIELD: values},
+                    )
+                before = authoritative_state_hash(session.state)
+                if not use_rider:
+                    for index, invalid in enumerate(({ordinary_key: 2}, {ordinary_key: True}, {"pool-forged": 1})):
+                        receipt = service.command(command(f"invalid-{index}", invalid), principal="pilot:A")
+                        self.assertFalse(receipt.ok)
+                        self.assertEqual(before, authoritative_state_hash(session.state))
+                    receipt = service.command(command("foreign", {selected: 1}), principal="pilot:B")
+                    self.assertFalse(receipt.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    contradictory = session.act("pilot:A", {"action_id": action["id"],
+                        MANA_POOL_PAYMENT_FIELD: {selected: 1}, "payment": {"W": 1}})
+                    self.assertFalse(contradictory.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                receipt = service.command(command("pay-selected", {selected: 1}), principal="pilot:A")
+                self.assertTrue(receipt.ok, receipt.summary)
+                item = session.state.stack[-1]
+                self.assertEqual(use_rider, bool(item.context.get("cant_be_countered")))
+                player = session.state.players["A"]
+                self.assertEqual(1, player.mana_pool["W"])
+                self.assertEqual(int(not use_rider), sum(dict(lot.bundle).get("W", 0)
+                    for lot in mana_provenance_lots(player) if lot.restriction == rider))
+                self.assertEqual({selected: 1}, session.commands[-1]["payload"][MANA_POOL_PAYMENT_FIELD])
+                self.cast(session, "B", counter, [item.ref])
+                self.resolve_top(session)
+                self.assertEqual("stack" if use_rider else "graveyard", session.state.cards[spell.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_exact_pool_payment_sees_mana_activated_inside_the_cast(self):
+        from quorune.rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD, PoolManaUnit
+
+        session = self.session(10660103)
+        engine = session.engine
+        forest = self.add(engine, "Forest")
+        halfling = self.add(engine, "Delighted Halfling")
+        halfling.acquired_control_turn_count = -1
+        spell = self.add(engine, "Giant Growth", zone="hand")
+        target = self.add(engine, "Generic Bound Body")
+        self.assert_closed(session, spell)
+        self.prepare(session)
+        self.checkpoint(session)
+        rider = "legendary_spell_uncounterable"
+        self.activate_mana(session, halfling, "G", restriction=rider)
+        action = {"action_id": f"cast:{spell.ref}", "targets": [target.ref],
+                  "mana": [{"source": forest.ref, "bundle": {"G": 1}}]}
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:A", {**action,
+            MANA_POOL_PAYMENT_FIELD: {PoolManaUnit("G", restriction=rider).key: 1}})
+        self.assertFalse(denied.ok)
+        self.assertIn("cannot be spent on this cost", denied.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertFalse(session.state.cards[forest.object_id].tapped)
+        result = session.act("pilot:A", {**action, MANA_POOL_PAYMENT_FIELD: {PoolManaUnit("G").key: 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[forest.object_id].tapped)
+        self.assertEqual(1, session.state.players["A"].mana_pool["G"])
+        self.resolve_top(session)
+        self.assertEqual(5, session.engine._numeric_stat(target.object_id, "power"))
+        self.replay(session, load=True)

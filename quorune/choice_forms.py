@@ -596,6 +596,21 @@ def build_action_form(
         fields.append(target)
     if not fields and variants is None:
         fields = _special_fields(action, decision_kind, context)
+    pool_rows = context.get("mana_pool_rows")
+    activation_price = action.get("cost_summary")
+    if decision_kind == "priority" and pool_rows and (
+        action.get("action") == "cast"
+        or action.get("action") == "activate" and (
+            action.get("cost_options")
+            or isinstance(activation_price, Mapping) and (
+                activation_price.get("m") or activation_price.get("announced_x_symbols")
+            )
+        )
+    ):
+        from .rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD
+
+        fields.append({"name": MANA_POOL_PAYMENT_FIELD, "label": "Choose mana from your pool",
+            "control": "mana_pool_payment", "required": False, "rows": copy.deepcopy(pool_rows)})
     if not fields and variants is None:
         return None
     result: dict[str, Any] = {

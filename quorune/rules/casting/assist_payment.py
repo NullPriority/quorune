@@ -55,6 +55,7 @@ class _AssistView:
 
 def prepare_assist_cast(host, proposal, selected_option, response):
     from ...mana_payment_continuations import priority_payment_frame
+    from ..mana_pool_payment import MANA_POOL_PAYMENT_FIELD
 
     helper = selected_option.get(ASSIST_HELPER_FIELD)
     raw = response.get(ASSIST_FRAME_FIELD)
@@ -64,7 +65,7 @@ def prepare_assist_cast(host, proposal, selected_option, response):
         return None
     if raw is None:
         sealed = {key: value for key, value in response.items() if key not in {"proposal_fingerprint", "expiry_revision"}}
-        if any(key in sealed for key in ("mana", "payment", "snow_payment", "reserve")):
+        if any(key in sealed for key in ("mana", "payment", "snow_payment", "reserve", MANA_POOL_PAYMENT_FIELD)):
             raise GameRuleError("Assist announces the helper before either mana window")
         if thaw_json(proposal.details).get("during_resolution"):
             raise GameRuleError("Assist requires the ordinary casting decision owner")

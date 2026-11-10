@@ -18162,6 +18162,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/mana_pool_payment.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/manifest_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -26331,5 +26345,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "50836f70d3928ac86fba0a6ef16c87ab9bbf442ed69cab59f90c8fcfcf3fd70b"
+  "fingerprint": "b732f948c9e12ed406f026087099a1dd3f270ec421e6c4592b19c20e07194ce3"
 }

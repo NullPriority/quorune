@@ -480,6 +480,9 @@ class StateProjector:
             return None
         actor_key = capability.actor or principal
         context = copy.deepcopy(decision.payload_by_actor.get(actor_key, {}))
+        from .rules.mana_pool_payment import mana_pool_choice_context
+
+        context = mana_pool_choice_context(self.state, capability.actor, decision.kind, context)
         raw_actions = list(
             (context.get("legal") or {}).get("actions")
             or context.get("legal_actions")

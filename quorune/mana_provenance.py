@@ -2,10 +2,11 @@ from __future__ import annotations
 
 """Canonical provenance for mana whose source or spend restriction matters."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Callable, Mapping, MutableMapping, Sequence
 
 from .util import normalize_mana_bundle
+from .rules.mana_pool_payment import ManaPoolAllocation, unit_for_lot
 
 
 MANA_PROVENANCE_KEY = "mana_provenance_v1"
@@ -350,6 +351,37 @@ def snow_mana_pool(
     return result
 
 
+def _spend_allocated_pool_mana(
+    player: Any,
+    allocation: ManaPoolAllocation,
+    total_spent: Mapping[str, int],
+    snow_spent: Mapping[str, int],
+    restriction_allows: Callable[[str, str | None], bool],
+    spend_context: str | None,
+) -> None:
+    allocation.require_available(player, restriction_allows, spend_context)
+    total, snow = allocation.bundles()
+    if total != total_spent or any(snow_spent[color] > snow[color] for color in _COLORS):
+        raise ManaProvenanceError("The selected mana does not match the validated payment")
+    pending = dict(allocation.units)
+    remaining_lots = []
+    for lot in mana_provenance_lots(player):
+        bundle = []
+        for color, amount in lot.bundle:
+            unit = unit_for_lot(color, lot)
+            requested = pending.get(unit, 0)
+            used = min(requested, amount)
+            if used:
+                pending[unit] = requested - used
+            if amount > used:
+                bundle.append((color, amount - used))
+        if bundle:
+            remaining_lots.append(replace(lot, bundle=tuple(bundle)))
+    pool = normalize_mana_bundle(player.mana_pool)
+    player.mana_pool = {color: pool[color] - total[color] for color in _COLORS}
+    _store_lots(player, remaining_lots)
+
+
 def spend_mana(
     player: Any,
     spent: Mapping[str, int],
@@ -357,6 +389,7 @@ def spend_mana(
     snow_payment: Mapping[str, int] | None,
     restriction_allows: Callable[[str, str | None], bool],
     spend_context: str | None,
+    pool_allocation: ManaPoolAllocation | None = None,
 ) -> None:
     total_spent = normalize_mana_bundle(spent)
     snow_spent = normalize_mana_bundle(snow_payment)
@@ -367,6 +400,11 @@ def spend_mana(
         raise ManaProvenanceError(
             "snow payment exceeds the selected mana payment"
         )
+    if pool_allocation is not None:
+        _spend_allocated_pool_mana(
+            player, pool_allocation, total_spent, snow_spent, restriction_allows, spend_context,
+        )
+        return
     lots = [
         {
             "bundle": normalize_mana_bundle(dict(lot.bundle)),
@@ -636,6 +674,7 @@ class ManaProvenanceHostMixin:
         spend_context: str | None,
         *,
         snow_payment: Mapping[str, int] | None = None,
+        pool_allocation: ManaPoolAllocation | None = None,
     ) -> None:
         before = self._restricted_mana(seat)
         spend_mana(
@@ -644,6 +683,7 @@ class ManaProvenanceHostMixin:
             snow_payment=snow_payment,
             restriction_allows=self._mana_restriction_allows,
             spend_context=spend_context,
+            pool_allocation=pool_allocation,
         )
         after = self._restricted_mana(seat)
         if sum(

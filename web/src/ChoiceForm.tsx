@@ -6,6 +6,7 @@ import {
   copyTargetGroups,
   copyTargetSlots,
   DAMAGE_ALLOCATION_FIELD,
+  MANA_POOL_PAYMENT_FIELD,
   list,
   orderedPartitionNames,
   record,
@@ -244,6 +245,37 @@ function OrderedPartition({
         ))}
       </div>
     </fieldset>
+  );
+}
+
+function ManaPoolPayment({ field, value, onValue }: {
+  field: ChoiceField;
+  value: JsonValue | undefined;
+  onValue: (value: JsonValue) => void;
+}) {
+  const allocation = record(value);
+  return (
+    <details className="choice-field">
+      <summary><FieldLabel field={field} /></summary>
+      <p>Choose the exact mana to spend. Leave all amounts at zero for automatic payment.</p>
+      {list(field.rows).map(record).map((row) => {
+        const id = text(row.id);
+        return (
+          <label key={id} className="choice-option">
+            <input type="number" min={0} max={Number(row.maximum)} step={1}
+              value={Number(allocation[id] ?? 0)} aria-label={text(row.label)}
+              onChange={(event) => {
+                const next = { ...allocation };
+                const amount = Number(event.target.value);
+                if (amount === 0) delete next[id];
+                else next[id] = amount;
+                onValue(next);
+              }} />
+            <span>{text(row.label)}</span>
+          </label>
+        );
+      })}
+    </details>
   );
 }
 
@@ -734,6 +766,7 @@ function ChoiceControl({
     if (name === "x" && value !== next) delete updated[DAMAGE_ALLOCATION_FIELD];
     onChange(updated);
   };
+  if (control === MANA_POOL_PAYMENT_FIELD) return <ManaPoolPayment field={field} value={value} onValue={set} />;
   if (control === "mana_modes") return <ManaModes field={field} value={value} onValue={set} />;
   if (control === "refs") return <RefOptions field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "ordered_partition") return <OrderedPartition field={field} value={value} onValue={set} labelFor={labelFor} />;

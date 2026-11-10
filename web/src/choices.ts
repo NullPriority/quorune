@@ -3,6 +3,7 @@ import type { ChoiceForm, JsonValue } from "./generated/protocol";
 export type ChoiceValues = Record<string, JsonValue>;
 export type ChoiceField = Record<string, JsonValue>;
 export const DAMAGE_ALLOCATION_FIELD = "damage_allocation";
+export const MANA_POOL_PAYMENT_FIELD = "mana_pool_payment";
 
 export function record(value: JsonValue | undefined): Record<string, JsonValue> {
   return value && !Array.isArray(value) && typeof value === "object" ? value : {};
@@ -401,6 +402,15 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
     } else if (typeof value !== "boolean" || (legal.length && !legal.includes(value))) {
       errors.push(`${label} requires explicit confirmation.`);
     }
+  } else if (control === MANA_POOL_PAYMENT_FIELD) {
+    if (value !== undefined) {
+      const limits = new Map(list(field.rows).map(record).map((row) => [String(row.id), Number(row.maximum)]));
+      if (!value || Array.isArray(value) || typeof value !== "object"
+        || Object.entries(value).some(([id, amount]) => typeof amount !== "number"
+          || !Number.isInteger(amount) || amount <= 0 || amount > (limits.get(id) ?? 0))) {
+        errors.push(`${label} requires positive quantities from your current pool.`);
+      }
+    }
   } else if (control === "mana_modes") {
     if (field.allowed_colors !== undefined) {
       const colors = list(field.allowed_colors);
@@ -634,6 +644,7 @@ export function executableChoices(form: ChoiceForm, values: ChoiceValues): Choic
   for (const [name, value] of Object.entries(values)) {
     if (!permitted.has(name) || value === undefined || value === null) continue;
     if (name === "yield" && value === "none") continue;
+    if (name === MANA_POOL_PAYMENT_FIELD && Object.keys(record(value)).length === 0) continue;
     result[name] = structuredClone(value);
   }
   return result;

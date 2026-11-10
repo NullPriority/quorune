@@ -194,6 +194,16 @@ with allowed color keys, nonnegative integral values, that exact total, and at
 most one positive color when required. A zero total permits an empty object or
 allowed zero entries. The server validates the same allocation contract after
 costs; enumerated mana choices retain their existing option-membership check.
+
+Cast and priced activation forms can expose an optional
+`mana_pool_payment` control to the payer. Each row identifies a color and
+provenance class with its current available quantity. Submit
+`choices.mana_pool_payment` as a map from issued row IDs to positive integer
+quantities. The selected units must pay the entire current mana price,
+including any snow requirement. The server checks each class's spending
+restriction and debits the actual selected units. Omit the choice to use the
+ordinary payment path.
+
 For a source-counter quantity with a counter-removal price, the advertised
 total uses a read-only preview of the canonical exact payment plan. It commits
 no counters or events; resolution still samples the amount after actual payment.

@@ -10,6 +10,7 @@ from typing import Any, Mapping, Protocol
 
 from .choice_forms import delegated_choice_fields
 from .protocol import PROTOCOL_VERSION
+from .rules.mana_pool_payment import mana_pool_choice_context
 from .session import CommanderSession
 
 
@@ -484,9 +485,9 @@ class GameService:
         allowed_choices = self._choice_fields(
             selected,
             decision_kind=decision_kind,
-            context=decision.payload_by_actor.get(
-                capability.actor or principal,
-                {},
+            context=mana_pool_choice_context(
+                self.session.state, capability.actor, decision_kind,
+                decision.payload_by_actor.get(capability.actor or principal, {}),
             ),
         )
         unknown_choices = sorted(

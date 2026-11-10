@@ -16,6 +16,21 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Exact pool payment submits only bounded quantities from offered mana classes", () => {
+  const payment = form([{
+    name: "mana_pool_payment", control: "mana_pool_payment", required: false,
+    rows: [{ id: "pool-ordinary", maximum: 1 }, { id: "pool-protected", maximum: 2 }],
+  }]);
+  assert.deepEqual(validateChoices(payment, {}), []);
+  assert.deepEqual(executableChoices(payment, { mana_pool_payment: {} }), {});
+  const selected = { mana_pool_payment: { "pool-protected": 2 } };
+  assert.deepEqual(validateChoices(payment, selected), []);
+  assert.deepEqual(executableChoices(payment, selected), selected);
+  for (const invalid of [{ "pool-other": 1 }, { "pool-ordinary": 2 }, { "pool-protected": 1.5 }]) {
+    assert.equal(validateChoices(payment, { mana_pool_payment: invalid }).length, 1);
+  }
+});
+
 test("Announced damage is editable and only submitted for its active target form", () => {
   const choices = form([{ name: "targets", control: "targets", schema: {
     groups: [{ id: "target", min: 0, max: 3, legal_refs: ["B", "D"] }],
