@@ -9,6 +9,7 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.card_programs import compile_card_program
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.characteristic_fragments import (
@@ -25,7 +26,7 @@ from quorune.damage_prevention import (
 from quorune.continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.model import CardInstance, StackItem
 from quorune.object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from quorune.oracle_ir import generated_programs, register_generated_programs
@@ -692,6 +693,44 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_compiled()
+
+    def test_optional_public_count_requires_one_closed_controller_result(self):
+        from quorune.compiler.public_query_effect_amounts import public_query_amount_shape_context
+        from quorune.oracle_ir import compile_oracle_card
+
+        record = query_amount_record(
+            "When this creature enters, you may have it deal damage to target "
+            "creature equal to the number of Goblins you control.",
+            suffix=172_003_000,
+            type_line="Creature — Goblin",
+        )
+        ir = compile_oracle_card(record, capability_registry=self.capabilities, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(PUBLIC_QUERY_AMOUNT_CAPABILITY, node.capability_dependencies)
+        self.assertIn("effect.choice.optional_fixed", node.capability_dependencies)
+        wrapper, = node.effects
+        child, = wrapper["effects"]
+        self.assertEqual(PUBLIC_QUERY_AMOUNT_KIND, child["amount"]["kind"])
+        mechanics = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, "fixed-optional-effect-choice"}
+        projected, projected_mechanics = public_query_amount_shape_context(
+            node.effects, mechanics, target_schema=node.target_schema,
+        )
+        self.assertEqual(1, projected[0]["effects"][0]["amount"])
+        self.assertEqual({"fixed-optional-effect-choice"}, projected_mechanics)
+        self.assertEqual(PUBLIC_QUERY_AMOUNT_KIND, child["amount"]["kind"])
+        for malformed in (
+            {**wrapper, "player": "$target.0"},
+            {**wrapper, "effects": []},
+            {**wrapper, "effects": [child, child]},
+            {**wrapper, "effects": [wrapper]},
+            {**wrapper, "effects": [{**child, "amount": {**child["amount"], "coefficient": 0}}]},
+            {**wrapper, "extra": True},
+        ):
+            with self.subTest(malformed=malformed):
+                self.assertIsNone(public_query_amount_shape_context(
+                    (malformed,), mechanics, target_schema=node.target_schema,
+                ))
 
 
 class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
@@ -1700,6 +1739,100 @@ class PublicCollectionQuantityActionTests(unittest.TestCase):
         self.assertEqual(before_life + 3, session.state.players["A"].life,
                          "Three red hybrid symbols, not colors or mana value")
         self.replay(session)
+
+
+class OptionalPublicCountTriggerNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "optional-public-count.sqlite3"
+        build_fixture_database(
+            [ROOT / "tests/fixtures" / name for name in (
+                "bound-effect-program-cards.json",
+                "life-gain-prohibition-cards.json",
+                "public-query-action-cards.json",
+                "shared-creature-type-cards.json",
+            )],
+            path,
+        )
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Optional public counts",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 14)],
+            ["Generic Bound Commander"],
+        )
+
+    def choose_optional_result(self, session, choice):
+        decision = self.resolve(session)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assertEqual(["A"], decision.actors)
+        command = {"action_id": "choose", "choice": choice}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_original_optional_damage_reads_live_count_and_keeps_departed_source(self):
+        session = self.session(172_003_010)
+        engine = session.engine
+        source = self.add(engine, "Munitions Expert", zone="hand")
+        self.add(engine, "Goblin Piker")
+        target = self.add(engine, "Grizzly Bears", seat="B")
+        shock = self.add(engine, "Shock", seat="B", zone="hand")
+        private = self.add(engine, "Walking Corpse", seat="D", zone="hand")
+        self.assert_closed(session, source)
+        self.assert_closed(session, shock)
+        self.prepare(session, mana={"B": 1, "R": 1})
+        session.state.players["B"].mana_pool["R"] = 1
+        self.checkpoint(session)
+
+        self.cast(session, "A", source)
+        self.target(session, "A", [target.ref])
+        self.assertEqual([target.ref], session.state.stack[-1].targets)
+        original = session.state.cards[source.object_id].logical_object_id
+        self.cast(session, "B", shock, [source.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(0, session.state.cards[target.object_id].marked_damage)
+        with mock.patch.object(engine, "_dispatch_semantic_event", wraps=engine._dispatch_semantic_event) as dispatch:
+            self.choose_optional_result(session, "apply")
+            self.assertIsNone(self.resolve(session))
+            events = [call.args[1] for call in dispatch.call_args_list
+                      if len(call.args) >= 2 and call.args[0] == "damage.dealt"]
+        self.assertEqual(1, len(events))
+        self.assertEqual(original, events[0]["source_logical_object_id"])
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertEqual(1, session.state.cards[target.object_id].marked_damage)
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        self.replay(session)
+
+    def test_original_cycling_optional_count_accepts_zero_and_decline_before_draw(self):
+        for apply_zero in (False, True):
+            with self.subTest(apply_zero=apply_zero):
+                session = self.session(172_003_020 + int(apply_zero))
+                source = self.add(session.engine, "Gempalm Polluter", zone="hand")
+                if not apply_zero:
+                    self.add(session.engine, "Walking Corpse", seat="C")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"B": 2})
+                self.checkpoint(session)
+                starting_life = session.state.players["B"].life
+                before_draws = len(session.state.players["A"].draw_history)
+                offers = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offered = next(row for row in offers if row["id"].startswith("activate:" + source.ref + ":"))
+                cycled = session.act("pilot:A", {"action_id": offered["id"], "pay": "auto"})
+                self.assertTrue(cycled.ok, cycled.summary)
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                self.target(session, "A", ["B"])
+                self.assertEqual(2, len(session.state.stack))
+                self.choose_optional_result(session, "apply" if apply_zero else "decline")
+                self.assertEqual(before_draws, len(session.state.players["A"].draw_history))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(before_draws + 1, len(session.state.players["A"].draw_history))
+                self.assertEqual(starting_life, session.state.players["B"].life)
+                self.replay(session)
 
 
 if __name__ == "__main__":

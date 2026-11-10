@@ -2114,6 +2114,9 @@ ability-qualified unions remain residual.
 
 Public query amounts retain the query dependencies of the original typed
 descriptor during fixed consumer-shape validation.
+An optional count trigger keeps its printed target and the existing optional
+choice owner. Resolution revalidates the target and reads the current count
+before the controller chooses whether to apply the effect.
 
 Controlled Mounts and Vehicles share a compact subtype predicate for fixed
 characteristic effects. Qualified attack triggers use the subtype facts

@@ -23,6 +23,7 @@ from .declared_effect_amounts import (
 )
 from .scalar_effect_amounts import scalar_amount_shape_context
 from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN
+from .optional_effect_templates import OPTIONAL_EFFECT_OPERATION
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY
 from ..scalar_effect_amount_model import (
     PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
@@ -542,6 +543,20 @@ def _fixed_shape_effects(
 ) -> tuple[Mapping[str, Any], ...] | None:
     """Project query-derived scalars to positive fixed values for shape checks."""
 
+    wrapper = None
+    if len(effects) == 1 and effects[0].get("op") == OPTIONAL_EFFECT_OPERATION:
+        wrapper = effects[0]
+        children = wrapper.get("effects")
+        if (
+            set(wrapper) != {"op", "player", "effects"}
+            or wrapper.get("player") != "$controller"
+            or not isinstance(children, (list, tuple))
+            or len(children) != 1
+            or not isinstance(children[0], Mapping)
+        ):
+            return None
+        effects = children
+
     projected = [deepcopy(dict(effect)) for effect in effects]
     if any(effect.get("op") == "modify_all_matching_permanents_until_end_of_turn"
            for effect in projected) and len(projected) != 1:
@@ -621,7 +636,7 @@ def _fixed_shape_effects(
         contains_public_query_effect_amount(effect) for effect in projected
     ):
         return None
-    return tuple(projected)
+    return ({**wrapper, "effects": projected},) if wrapper is not None else tuple(projected)
 
 
 def _composed_query_shape_context(effects, mechanics):
