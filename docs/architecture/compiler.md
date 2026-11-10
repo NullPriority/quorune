@@ -838,6 +838,10 @@ stat deltas in layer seven with the same timestamp. The printed duration
 binds the change either through cleanup or to the selected battlefield
 incarnation. The added type is visible to subsequent casting costs and
 their paid-characteristic conditions.
+Fresh activations can use the generated type-addition result when the reviewed
+view has the same source, complete cost, nonland target predicate, and
+end-of-turn layer operation. Existing records keep their saved reviewed
+program and exact replay authority.
 
 General query parsing preserves the earlier direct tap-field encoding for a
 pure tapped or untapped quantity predicate. Compound state predicates retain

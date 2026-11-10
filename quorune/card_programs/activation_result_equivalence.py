@@ -13,6 +13,11 @@ from ..rules.public_zone_move_capability_shapes import (
 )
 from ..rules.reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
 from ..rules.node_capability_shapes import fixed_counter_placement_target_set_node_capabilities
+from ..continuous_effect_model import ContinuousEffectDuration
+from ..resolution_characteristic_model import (
+    TARGET_CARD_TYPE_ADDITION_VERSION, fixed_resolution_characteristic_instruction,
+)
+from ..rules.resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
 from .activation_target_equivalence import _fixed_graveyard_artifact_target, _optional_tapped_creature_target
 
 
@@ -75,7 +80,27 @@ def _fixed_target_counter(current, old):
 def fixed_activation_results_equal(current, old):
     return (_artifact_from_hand(current, old) or _graveyard_return(current, old)
         or _opponent_graveyards(current, old) or _fixed_target_counter(current, old)
-        or _next_spell_improvise(current, old) or _next_cast_counter_protection(current, old))
+        or _next_spell_improvise(current, old) or _next_cast_counter_protection(current, old)
+        or _fixed_target_type_addition(current, old))
+
+
+def _fixed_target_type_addition(current, old):
+    if len(current.effects) != 1 or len(old.effects) != 1:
+        return False
+    effect = current.effects[0]
+    if effect.get("schema_version") != TARGET_CARD_TYPE_ADDITION_VERSION:
+        return False
+    try:
+        spec, card = fixed_resolution_characteristic_instruction(effect)
+    except (TypeError, ValueError, KeyError):
+        return False
+    if (spec.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN or spec.power or spec.toughness
+            or not _owned(current, fixed_resolution_characteristic_capabilities)):
+        return False
+    previous = dict(old.effects[0])
+    if "reason" in previous and type(previous.pop("reason")) is not str:
+        return False
+    return previous == {"op": "add_type_until_end_of_turn", "card": card, "type": spec.card_type}
 
 
 def _next_spell_improvise(current, old):

@@ -139,6 +139,75 @@ class ActivationResultViewTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 getattr(type(self)(method), method)()
 
+    def test_nonland_type_view_requires_equivalent_target_price_and_duration(self):
+        from quorune.card_programs.activation_view_equivalence import shadowed_reviewed_activation_view_keys as shadow
+
+        _s, _source, record, current, old = self.views("Liquimetal Torque", 859211)
+        reviewed = next(program for program in old if program.ability_id == "ability:ab2")
+        generated = next(program for program in current if program.key == reviewed.key)
+        self.assertIs(reviewed.target_schema["land"], False)
+        self.assertEqual(["land"], generated.target_schema["types_none"])
+        before = json.dumps([generated.to_dict(), reviewed.to_dict()], sort_keys=True)
+
+        def compare(new=generated, legacy=reviewed):
+            return shadow(record, (new,), (legacy,), capability_registry=self.registry,
+                          capability_profile="commander_review")
+
+        self.assertEqual({reviewed.key}, compare())
+        for field, value in (("land", True), ("land", 0), ("count", True), ("future", True)):
+            changed = {**reviewed.target_schema, field: value}
+            handlers = deepcopy(reviewed.handlers)
+            handlers[0]["ability"]["target_schema"] = changed
+            self.assertFalse(compare(legacy=replace(reviewed, target_schema=changed, handlers=handlers)))
+        effect = generated.effects[0]
+        for field, value in (("duration", "zone_object"), ("power", 1), ("card_type", "Enchantment")):
+            changed = {**effect, "characteristics": {**effect["characteristics"], field: value}}
+            self.assertFalse(compare(new=replace(generated, effects=[changed])))
+        self.assertFalse(compare(legacy=replace(reviewed, cost_schema={"tap_source": False})))
+        self.assertEqual(before, json.dumps([generated.to_dict(), reviewed.to_dict()], sort_keys=True))
+
+    def test_original_torque_binds_native_nonland_targets_and_revalidates_departure(self):
+        from quorune.resolution_characteristic_model import TARGET_CARD_TYPE_ADDITION_VERSION
+
+        for departed in (False, True):
+            with self.subTest(departed=departed):
+                s = self.session(859220 + departed)
+                source = self.add(s.engine, "Liquimetal Torque", ref="torque")
+                target = self.add(s.engine, "Grizzly Bears", seat="B", ref="torque-nonland")
+                land_creature = self.add(s.engine, "Grizzly Bears", seat="C", ref="torque-effective-land")
+                self.add(s.engine, "Ashaya, Soul of the Wild", seat="C", ref="torque-land-source")
+                self.assertTrue(self.binding(s, source)["strict_capability_ready"])
+                if departed:
+                    bounce = self.add(s.engine, "Unsummon", seat="B", zone="hand", ref="torque-bounce")
+                    s.state.players["B"].mana_pool["U"] = 1
+                self.prepare(s)
+                self.checkpoint(s)
+                row = next(row for row in self.actions(s, "A") if row["id"] == f"activate:{source.ref}:ab2")
+                command = {"action_id": row["id"], "targets": [target.ref]}
+                self.assertIn(target.ref, row["target_schema"]["legal_refs"])
+                self.assertNotIn(land_creature.ref, row["target_schema"]["legal_refs"])
+                self.reject(s, {**command, "targets": [land_creature.ref]}, seat="A")
+                self.reject(s, command, seat="D")
+                result = s.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertTrue(s.state.cards[source.object_id].tapped)
+                program = s.engine.semantics.get(s.state.stack[-1].semantic_key)
+                self.assertEqual(TARGET_CARD_TYPE_ADDITION_VERSION, program.effects[0]["schema_version"])
+                self.assertTrue(program.provenance["authored_by"].startswith("oracle-ir-v"))
+                if departed:
+                    self.priority(s, "B")
+                    reply = next(row for row in self.actions(s, "B") if row["id"] == f"cast:{bounce.ref}")
+                    result = s.act("pilot:B", {"action_id": reply["id"], "targets": [target.ref], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                s = self.resume(s)
+                self.assertIsNone(self.resolve(s))
+                card = s.state.cards[target.object_id]
+                types, subtypes, _ = s.engine._type_parts(s.engine._effective_card_data(card)["type_line"])
+                self.assertEqual("hand" if departed else "battlefield", card.zone)
+                self.assertEqual({"creature"} if departed else {"artifact", "creature"}, types)
+                self.assertEqual({"bear"}, subtypes)
+                self.replay(s, load=True)
+
     def test_real_paid_transmuter_can_return_and_put_back_its_own_new_incarnation(self):
         s = self.session(859100)
         source = self.add(s.engine, 'Master Transmuter', zone='hand')
