@@ -103,6 +103,60 @@ class ReflexivePaymentCompilerTests(unittest.TestCase):
             capability_profile='commander_review')
         self.assertNotEqual('exact', ir.status)
 
+    def test_reflexive_sacrifice_roles_and_withdrawn_cost_owners(self):
+        from copy import deepcopy
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.reflexive_payment_shapes import reflexive_payment_runtime_dependencies
+
+        registry = load_default_capability_registry()
+        source_text = ("Whenever this creature deals combat damage to a player, you may sacrifice it. "
+                       "When you do, destroy target artifact or enchantment.")
+        selected_text = ("When this creature enters, you may sacrifice a creature or Vehicle. "
+                         "When you do, destroy target artifact an opponent controls.")
+        cases = (
+            (source_text, "cost.sacrifice.fixed_source_resolution"),
+            (selected_text, "state_query.permanent.receiver_union"),
+        )
+        for text, capability in cases:
+            with self.subTest(capability=capability):
+                card = record(text, "Creature — Human")
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertIsNone(node.target_schema)
+                self.assertIsNotNone(node.effects[0]["reflexive_program"]["target_schema"])
+                program = SimpleNamespace(effects=node.effects, target_schema=None, coverage=node.mechanics,
+                                          active_zone=node.active_zone, ability_id="trigger:fixture")
+                self.assertIn(capability, reflexive_payment_runtime_dependencies(program))
+                altered = deepcopy(node.effects[0])
+                if capability == "cost.sacrifice.fixed_source_resolution":
+                    self.assertEqual("$source.zone_object", altered["payment"]["source_ref"])
+                    altered["payment"]["source_ref"] = "$target.0"
+                    program.active_zone = "graveyard"
+                    with self.assertRaises(ValueError):
+                        reflexive_payment_runtime_dependencies(program)
+                    program.active_zone = "battlefield"
+                else:
+                    branches = altered["payment"]["predicate"]["any_of"]
+                    self.assertEqual(["creature"], branches[0]["types_all"])
+                    self.assertEqual(["vehicle"], branches[1]["subtypes_all"])
+                    branches[1]["subtypes_all"] = ["equipment"]
+                program.effects = (altered,)
+                with self.assertRaises(ValueError):
+                    reflexive_payment_runtime_dependencies(program)
+                value = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+                blocked = next(row for row in value["capabilities"] if row["id"] == capability)
+                blocked.update(status="blocked", blockers=["withdrawn sacrifice authority"])
+                custom = CapabilityRegistry(value)
+                custom.mark_evidence_verified("0" * 64)
+                self.assertNotEqual("exact", compile_oracle_card(
+                    card, capability_registry=custom, capability_profile="commander_review",
+                ).status)
+        ambiguous = source_text.replace("this creature deals", "a creature an opponent controls deals")
+        self.assertNotEqual("exact", compile_oracle_card(
+            record(ambiguous, "Creature — Human"), capability_registry=registry, capability_profile="commander_review",
+        ).status)
+
     def test_repeat_negative_and_ambiguous_paid_object_forms_stay_residual(self):
         registry = load_default_capability_registry()
         for body in ('you may pay {1} any number of times. When you pay this cost one or more times, draw a card.',
@@ -240,6 +294,112 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
         self.assertEqual(parent.ref, child.context["reflexive_parent"])
         self.assertNotIn(parent.ref, [item.ref for item in session.state.stack])
         return child
+
+    def test_original_reflexive_sacrifices_validate_selected_permanent_before_target(self):
+        for name in ("Gastal Blockbuster", "General Traag, Heart of Stone"):
+            with self.subTest(card=name):
+                is_gastal = name == "Gastal Blockbuster"
+                session = self.session(603_125_100 + is_gastal)
+                engine = session.engine
+                source = self.add(engine, name, zone="hand")
+                vehicle = self.add(engine, "Sky Skiff")
+                opposing_vehicle = self.add(engine, "Sky Skiff", seat="B", ref="opposing-skiff")
+                plain_artifact = self.add(engine, "Sol Ring")
+                opposing_body = self.add(engine, "Generic Bound Body", seat="B")
+                for card in (source, vehicle, opposing_vehicle, plain_artifact, opposing_body):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 6, "R": 3})
+                self.checkpoint(session)
+                self.cast(session, "A", source)
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                parent = session.state.stack[-1]
+                self.assertFalse(parent.targets)
+                before = authoritative_state_hash(session.state)
+                for ineligible in (opposing_vehicle, plain_artifact if is_gastal else source):
+                    self.assertFalse(session.act("pilot:A", {"action_id": "choose", "cards": [ineligible.ref]}).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                self.choose(session, cards=[vehicle.ref])
+                self.assertEqual("graveyard", session.state.cards[vehicle.object_id].zone)
+                self.assertEqual("semantic.target", session.state.pending_decision.kind)
+                self.assertEqual(parent.ref, session.state.stack[-1].context["reflexive_parent"])
+                target = opposing_vehicle if is_gastal else opposing_body
+                self.choose(session, targets=[target.ref])
+                self.assertIsNone(self.resolve(session))
+                if is_gastal:
+                    self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+                else:
+                    self.assertEqual(4, session.state.cards[target.object_id].marked_damage)
+                self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_original_falcon_sacrifice_uses_original_incarnation(self):
+        for returned in (False, True):
+            with self.subTest(returned=returned):
+                session = self.session(603_125_110 + returned)
+                engine = session.engine
+                source = self.add(engine, "The Falcon, Airship Restored", seat="B")
+                engine.change_control(source.object_id, "A")
+                source.acquired_control_turn_count = -1
+                crew = self.add(engine, "Generic Bound Body")
+                grave = self.add(engine, "Generic Bound Body", zone="graveyard", ref="falcon-graveyard-target")
+                self.add(engine, "Wind Drake", seat="B")
+                self.add(engine, "Generic Bound Plains")
+                blink = self.add(engine, "Cloudshift", zone="hand") if returned else None
+                self.assert_closed(session, source)
+                if blink is not None:
+                    self.assert_closed(session, blink)
+                self.prepare(session)
+                self.checkpoint(session)
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offer, = (row for row in actions if row["id"].startswith(f"activate:{source.ref}:")
+                          and any(cost["k"] == "crew" for cost in row.get("cost_summary", {}).get("choose_cost", [])))
+                crewed = session.act("pilot:A", {"action_id": offer["id"], "cost_cards": [crew.ref]})
+                self.assertTrue(crewed.ok, crewed.summary)
+                self.assertIsNone(self.resolve(session))
+                self.advance_to(session, "combat.attackers")
+                attacked = session.act("pilot:A", {"action_id": "attack", "attackers": {source.ref: "B"}})
+                self.assertTrue(attacked.ok, attacked.summary)
+                self.advance_to(session, "combat.blockers")
+                blocks = session.act("pilot:B", {"action_id": "block", "blocks": {}})
+                self.assertTrue(blocks.ok, blocks.summary)
+                for _ in range(24):
+                    if session.state.stack and session.state.stack[-1].source_object_id == source.object_id:
+                        break
+                    self.assertEqual("priority", session.state.pending_decision.kind)
+                    self.assertTrue(session.act(session.pending_principals()[0], {"action_id": "pass"}).ok)
+                else:
+                    self.fail("Combat damage did not put the Falcon's trigger on the stack")
+                parent = session.state.stack[-1]
+                self.assertFalse(parent.targets)
+                original_incarnation = session.state.cards[source.object_id].logical_object_id
+                if blink is not None:
+                    self.cast(session, "A", blink, [source.ref])
+                    self.resolve_top(session)
+                    current = session.state.cards[source.object_id]
+                    self.assertNotEqual(original_incarnation, current.logical_object_id)
+                    self.assertEqual(("A", "battlefield"), (current.controller, current.zone))
+                decision = self.resolve(session)
+                if returned:
+                    if decision is not None:
+                        self.assertEqual("semantic.choice", decision.kind)
+                        before = authoritative_state_hash(session.state)
+                        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "cards": [source.ref]}).ok)
+                        self.assertEqual(before, authoritative_state_hash(session.state))
+                        self.choose(session, cards=[])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                    self.assertEqual("graveyard", session.state.cards[grave.object_id].zone)
+                else:
+                    self.assertEqual("semantic.choice", decision.kind)
+                    self.choose(session, cards=[source.ref])
+                    self.assertIn(source.object_id, session.state.players["B"].zones["graveyard"])
+                    self.assertEqual("semantic.target", session.state.pending_decision.kind)
+                    self.assertEqual(parent.ref, session.state.stack[-1].context["reflexive_parent"])
+                    self.choose(session, targets=[grave.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual("battlefield", session.state.cards[grave.object_id].zone)
+                self.replay(session, load=True)
 
     def test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered(self):
         for counter in (False, True):

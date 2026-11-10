@@ -10,7 +10,7 @@ from typing import Any, Callable, Mapping
 
 from ..fixed_effect_payment import (
     FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_DISCARD_PAYMENT_VERSION,
-    RETURN_PAYMENT_KIND, RETURN_PAYMENT_VERSION, FixedEffectPaymentSpec,
+    RETURN_PAYMENT_KIND, RETURN_PAYMENT_VERSION, FixedEffectPaymentSpec, creature_or_vehicle_sacrifice_predicate,
 )
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
@@ -81,9 +81,14 @@ def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False
         parsed=fixed_zone_change_additional_cost_template(clause)
         if parsed is None or parsed.operation!='discard_one':return None
         return FixedEffectPaymentSpec('discard',predicate=replace(parsed.predicate,owner='$controller'))
+    if value.casefold() == "sacrifice a creature or vehicle":
+        return FixedEffectPaymentSpec("sacrifice", predicate=creature_or_vehicle_sacrifice_predicate("$controller"))
     if value.casefold().startswith('sacrifice '):
-        another=bool(re.match(r'sacrifice another ',value,re.I))
-        if another:clause='As an additional cost to cast this spell, '+re.sub(r'^sacrifice another ', 'sacrifice a ',value,flags=re.I)+'.'
+        another = re.fullmatch(r'sacrifice another (?P<subject>.+)', value, re.I)
+        if another:
+            subject = another['subject']
+            article = 'an' if subject[0].casefold() in 'aeiou' else 'a'
+            clause = f'As an additional cost to cast this spell, sacrifice {article} {subject}.'
         parsed=fixed_sacrifice_additional_cost_template(clause)
         from ..object_predicate import ObjectQuerySpec
         if parsed is not None:predicate=ObjectQuerySpec.from_dict(parsed.descriptor['predicate'])

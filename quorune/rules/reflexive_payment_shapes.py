@@ -26,8 +26,10 @@ def reflexive_payment_parts(effect):
             or payment.kind == 'mana' and dict(effect['cost']) != dict(payment.requirements)):
         raise ValueError('Reflexive payment mana identity changed')
     program = ReflexiveTriggerProgram.from_dict(effect['reflexive_program'])
-    if program.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION and payment.kind not in {'mana', 'energy'}:
-        raise ValueError('Bound reflexive triggers require one fixed mana or energy payment')
+    if program.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION and payment.kind not in {'mana', 'energy', 'source_sacrifice'}:
+        raise ValueError('Bound reflexive triggers require a fixed resource payment or original source sacrifice')
+    if payment.kind == 'source_sacrifice' and program.schema_version != BOUND_REFLEXIVE_PROGRAM_VERSION:
+        raise ValueError('Reflexive source sacrifice requires its bound parent')
     if program.schema_version == SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION:
         _validate_selected_sacrifice(effect['player'], payment, program)
     return payment, program
@@ -133,11 +135,10 @@ def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids)
     try:
         effect = effects[0]
         payment, program = reflexive_payment_parts(effect)
-        if payment.kind=='source_sacrifice':return ()
         if (effect['player'] != '$controller'
                 or payment.kind in {'discard','exile','mana_discard'} and payment.predicate.owner != '$controller'
                 or payment.kind in {'sacrifice','tap','blight'} and payment.predicate.controller != '$controller'
-                or payment.kind=='remove_source_counter' and payment.source_ref!='$source.zone_object'):
+                or payment.kind in {'remove_source_counter', 'source_sacrifice'} and payment.source_ref!='$source.zone_object'):
             return ()
         if payment.kind=='sacrifice' and payment.schema_version==6 and payment.predicate.exclude_ref!='$source.zone_object':
             return ()
@@ -180,7 +181,9 @@ def reflexive_payment_runtime_dependencies(program):
     )
     if not owned:
         raise ValueError('Reflexive payment requires a closed cost and an independently owned child')
-    _, child = reflexive_payment_parts(effects[0])
+    payment, child = reflexive_payment_parts(effects[0])
     if child.schema_version in BOUND_REFLEXIVE_PROGRAM_VERSIONS and not program.ability_id.startswith('trigger:'):
         raise ValueError('Bound reflexive payments require an admitted creating trigger')
+    if payment.kind == 'source_sacrifice' and program.active_zone != 'battlefield':
+        raise ValueError('Reflexive source sacrifice requires its original battlefield program')
     return owned

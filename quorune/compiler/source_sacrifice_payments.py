@@ -34,7 +34,7 @@ def _source_subject(binding):
 
 
 def normalized_source_sacrifice_payment_text(binding, text, *, card_name):
-    match=re.fullmatch(r'(?P<head>You may sacrifice) (?P<object>[^.]+)\. If you do, (?P<body>.+)',text,re.I)
+    match=re.fullmatch(r'(?P<head>You may sacrifice) (?P<object>[^.]+)\. (?P<timing>If|When) you do, (?P<body>.+)',text,re.I)
     if match is None:
         return text
     subject=match['object'].casefold()
@@ -43,4 +43,4 @@ def normalized_source_sacrifice_payment_text(binding, text, *, card_name):
             return text
     elif not card_name or not SourceReferenceSpec(card_name).matches(match['object']):
         return text
-    return match['head']+' this permanent. If you do, '+match['body']
+    return f"{match['head']} this permanent. {match['timing']} you do, {match['body']}"

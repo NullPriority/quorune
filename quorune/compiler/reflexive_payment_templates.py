@@ -56,8 +56,8 @@ def reflexive_payment_template(text, *, compile_effect, bound_trigger=False):
     match = re.fullmatch(r'You may (?P<cost>.+?)\. When you do, (?P<body>.+)', text.strip(), re.I)
     if match is None:
         return None
-    payment = fixed_effect_payment_spec(match['cost'])
-    if (payment is None or bound_trigger and payment.kind not in {'mana', 'energy', 'sacrifice'}
+    payment = fixed_effect_payment_spec(match['cost'], allow_source_sacrifice=bound_trigger)
+    if (payment is None or bound_trigger and payment.kind not in {'mana', 'energy', 'sacrifice', 'source_sacrifice'}
             or re.search(r'\b(?:when you|if you do|this way)\b', match['body'], re.I)):
         return None
     selected_sacrifice = bound_trigger and payment.kind == 'sacrifice'

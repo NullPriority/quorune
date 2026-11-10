@@ -7168,7 +7168,7 @@
           "hidden origin zones",
           "unrepresented card predicates",
           "unrepresented chained mechanics",
-          "returns to the resolving controller\u2019s hand"
+          "returns to the resolving controller’s hand"
         ],
         "inputs": [
           "one source-spanned mandatory target clause",
@@ -7181,7 +7181,7 @@
           "one owner-hand zone request and replacement-aware destination",
           "new logical object identity and principal-scoped hand projection"
         ],
-        "summary": "Return one legal physical card from any public graveyard to its owner\u2019s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
+        "summary": "Return one legal physical card from any public graveyard to its owner’s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
       },
       "blockers": [],
       "dependencies": [
@@ -19977,7 +19977,12 @@
     },
     {
       "applicability": {
-        "summary": "Select the greatest feasible set of differently typed, distinct controlled permanents and sacrifice the set together.",
+        "exclusions": [
+          "arbitrary role expressions",
+          "repeat sacrifice of one object",
+          "infeasible or uncontrolled objects",
+          "optional costs"
+        ],
         "inputs": [
           "ordered creature, artifact, and land roles",
           "current controlled permanents",
@@ -19987,12 +19992,7 @@
           "feasible actor-scoped choices",
           "one simultaneous sacrifice transition for the distinct selected set"
         ],
-        "exclusions": [
-          "arbitrary role expressions",
-          "repeat sacrifice of one object",
-          "infeasible or uncontrolled objects",
-          "optional costs"
-        ]
+        "summary": "Select the greatest feasible set of differently typed, distinct controlled permanents and sacrifice the set together."
       },
       "blockers": [],
       "dependencies": [
@@ -32517,7 +32517,7 @@
           "shared combat and activation legality",
           "expiry at the controller-relative turn boundary"
         ],
-        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller\u2019s next turn."
+        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller’s next turn."
       },
       "blockers": [],
       "dependencies": [
@@ -33978,7 +33978,7 @@
         ],
         "outputs": [
           "one locked attack, block, and all-activation prohibition",
-          "expiry at the resolving controller\u2019s next turn"
+          "expiry at the resolving controller’s next turn"
         ],
         "summary": "Bind the printed next-turn attack, block, and activation prohibition to one revalidated creature incarnation."
       },
@@ -35308,16 +35308,19 @@
       "implementation_mutation_rationale": "Removing the source exclusion from the actual query owner fails the legal-cost-set witness.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays"
+        "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "multiplayer_tests": [
-        "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays"
+        "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "negative_tests": [
         "test_another_sacrifice_has_closed_versioned_source_exclusion",
         "test_cost_owner_excludes_source_and_foreign_control_but_allows_borrowed_permanent",
         "test_verified_another_sacrifice_withdrawal_keeps_legacy_sacrifice",
-        "test_current_source_incarnation_and_distinct_if_when_target_timing"
+        "test_current_source_incarnation_and_distinct_if_when_target_timing",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "official_rules": [
         "118.12",
@@ -35329,13 +35332,15 @@
         "test_another_sacrifice_has_closed_versioned_source_exclusion",
         "test_cost_owner_excludes_source_and_foreign_control_but_allows_borrowed_permanent",
         "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays",
-        "test_current_source_incarnation_and_distinct_if_when_target_timing"
+        "test_current_source_incarnation_and_distinct_if_when_target_timing",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "privacy_tests": [
         "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays"
       ],
       "replay_tests": [
-        "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays"
+        "test_actual_ogre_excludes_itself_and_foreign_control_then_pays_to_owner_graveyard_and_replays",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "required_evidence": [
         "positive",
@@ -35395,11 +35400,13 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage",
+        "test_original_falcon_sacrifice_uses_original_incarnation"
       ],
       "multiplayer_tests": [
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage",
+        "test_original_falcon_sacrifice_uses_original_incarnation"
       ],
       "negative_tests": [
         "test_returned_source_never_replaces_the_old_source_cost",
@@ -35408,7 +35415,9 @@
         "test_verified_source_cost_withdrawal_keeps_ordinary_sacrifice",
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
         "test_paid_event_player_result_retains_independent_occurrence_scope",
-        "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player"
+        "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player",
+        "test_original_falcon_sacrifice_uses_original_incarnation",
+        "test_reflexive_sacrifice_roles_and_withdrawn_cost_owners"
       ],
       "official_rules": [
         "118.3",
@@ -35429,14 +35438,16 @@
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
         "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage",
         "test_paid_event_player_result_retains_independent_occurrence_scope",
-        "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player"
+        "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player",
+        "test_original_falcon_sacrifice_uses_original_incarnation"
       ],
       "privacy_tests": [
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations"
       ],
       "replay_tests": [
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage",
+        "test_original_falcon_sacrifice_uses_original_incarnation"
       ],
       "required_evidence": [
         "positive",
@@ -39492,7 +39503,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Modular\u00e2\u20ac\u201dSunburst",
+          "Modularâ€”Sunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -40743,7 +40754,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
+          "Modularâ€”Sunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ],
         "inputs": [
@@ -49619,7 +49630,7 @@
           "one optional cast during current resolution",
           "unused cards stay in exile"
         ],
-        "summary": "Exile from the resolving controller\u2019s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
+        "summary": "Exile from the resolving controller’s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
       },
       "blockers": [],
       "dependencies": [
@@ -65157,13 +65168,62 @@
       "version": 1
     },
     {
+      "applicability": {
+        "exclusions": [
+          "owner-relative results or conditional results keyed to counter success",
+          "optional or multiple stack targets",
+          "dynamic or copied token recipes and unsupported linked results"
+        ],
+        "inputs": [
+          "one declared spell or ability target",
+          "one closed controller-bound mill, draw, life loss, discard, token creation, or temporary casting prohibition",
+          "optional closed result for the resolving controller"
+        ],
+        "outputs": [
+          "ordinary replacement-aware counter attempt",
+          "resolved controller for the ordered result",
+          "private draw or discard under the existing choice owner",
+          "fixed token ownership or an end-of-turn casting restriction through its ordinary owner"
+        ],
+        "summary": "Read the current controller of one legal stack target, then run the ordinary counter instruction and the closed ordered followup through their existing owners."
+      },
+      "blockers": [],
+      "dependencies": [
+        "stack.counter.effect"
+      ],
+      "dependency_fail_closed_rationale": "",
+      "dependency_fail_closed_status": "passed",
       "id": "stack.counter.controller_followup",
-      "version": 2,
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
+      "implementation_components": [
+        "quorune.compiler.stack_counter_followup.stack_counter_followup_template",
+        "quorune.rules.stack_counter_followup.stack_counter_followup_node_capabilities",
+        "quorune.rules.stack_counter_followup.materialize_stack_counter_followup",
+        "quorune.semantic_choices.stack_counter_followup.StackCounterFollowupHandler",
+        "quorune.stack_counter.counter_stack_item",
+        "quorune.rules.token_creation_capability_shapes._fixed_token_effect_closure",
+        "quorune.rules.temporary_cast_restrictions.temporary_cast_node_capabilities"
+      ],
+      "implementation_mutation_rationale": "The complete printed Psychic Strike witness detects removal of the bounded compiler lowering.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
+        "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
+        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver",
+        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
+      ],
+      "multiplayer_tests": [
+        "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
+        "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller",
+        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
+      ],
+      "negative_tests": [
+        "test_countermand_skips_followup_when_its_original_stack_target_disappears",
+        "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands",
+        "test_counter_followup_withdrawal_and_omitted_compiler_rule_are_detected",
+        "test_three_spell_type_unions_do_not_merge_with_other_stack_domains",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
       ],
       "official_rules": [
         "115.1a",
@@ -65178,74 +65238,10 @@
         "601.3",
         "611.2a"
       ],
-      "blockers": [],
-      "dependencies": [
-        "stack.counter.effect"
-      ],
-      "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "",
-      "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The complete printed Psychic Strike witness detects removal of the bounded compiler lowering.",
-      "implementation_components": [
-        "quorune.compiler.stack_counter_followup.stack_counter_followup_template",
-        "quorune.rules.stack_counter_followup.stack_counter_followup_node_capabilities",
-        "quorune.rules.stack_counter_followup.materialize_stack_counter_followup",
-        "quorune.semantic_choices.stack_counter_followup.StackCounterFollowupHandler",
-        "quorune.stack_counter.counter_stack_item",
-        "quorune.rules.token_creation_capability_shapes._fixed_token_effect_closure",
-        "quorune.rules.temporary_cast_restrictions.temporary_cast_node_capabilities"
-      ],
-      "applicability": {
-        "summary": "Read the current controller of one legal stack target, then run the ordinary counter instruction and the closed ordered followup through their existing owners.",
-        "inputs": [
-          "one declared spell or ability target",
-          "one closed controller-bound mill, draw, life loss, discard, token creation, or temporary casting prohibition",
-          "optional closed result for the resolving controller"
-        ],
-        "outputs": [
-          "ordinary replacement-aware counter attempt",
-          "resolved controller for the ordered result",
-          "private draw or discard under the existing choice owner",
-          "fixed token ownership or an end-of-turn casting restriction through its ordinary owner"
-        ],
-        "exclusions": [
-          "owner-relative results or conditional results keyed to counter success",
-          "optional or multiple stack targets",
-          "dynamic or copied token recipes and unsupported linked results"
-        ]
-      },
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
       "positive_tests": [
         "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
         "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
         "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands",
-        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
-        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
-      ],
-      "negative_tests": [
-        "test_countermand_skips_followup_when_its_original_stack_target_disappears",
-        "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands",
-        "test_counter_followup_withdrawal_and_omitted_compiler_rule_are_detected",
-        "test_three_spell_type_unions_do_not_merge_with_other_stack_domains",
-        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
-      ],
-      "interaction_tests": [
-        "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
-        "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
-        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver",
-        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
-        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
-      ],
-      "multiplayer_tests": [
-        "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
-        "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller",
         "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
         "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
       ],
@@ -65260,7 +65256,22 @@
         "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver",
         "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
         "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
-      ]
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 2
     },
     {
       "applicability": {
@@ -66905,7 +66916,8 @@
           "shared source-controller relation and current source reference",
           "existing continuous characteristic evaluation layers",
           "closed receiver union independently gated by the existing supported live public-state condition",
-          "flat unqualified homogeneous creature-subtype alternatives for the existing resolution-locked set"
+          "flat unqualified homogeneous creature-subtype alternatives for the existing resolution-locked set",
+          "one controlled creature or Vehicle for a fixed optional sacrifice"
         ],
         "outputs": [
           "one receiver match for overlapping branches",
@@ -66950,7 +66962,8 @@
         "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
         "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "multiplayer_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -66964,7 +66977,8 @@
         "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
         "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "negative_tests": [
         "test_unions_reject_recursive_hidden_late_or_unbounded_queries",
@@ -66978,7 +66992,9 @@
         "test_conditional_receiver_union_authorities_fail_closed_with_verified_indices",
         "test_conditional_union_requires_its_implicit_runtime_query_authority",
         "test_resolution_union_adoption_keeps_mixed_and_branch_qualified_sets_closed",
-        "test_temporary_union_dependencies_are_specific_and_implicitly_required"
+        "test_temporary_union_dependencies_are_specific_and_implicitly_required",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target",
+        "test_reflexive_sacrifice_roles_and_withdrawn_cost_owners"
       ],
       "official_rules": [
         "109.2",
@@ -67009,7 +67025,8 @@
         "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_temporary_homogeneous_tribe_union_preserves_its_existing_bodies",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "privacy_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -67039,7 +67056,8 @@
         "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
         "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "required_evidence": [
         "positive",
@@ -69423,7 +69441,12 @@
     },
     {
       "applicability": {
-        "summary": "Apply controller-bound same-turn instant timing to closed spell scopes.",
+        "exclusions": [
+          "zone access",
+          "priority grants",
+          "intrinsic Flash keyword",
+          "other players and unsupported qualifiers"
+        ],
         "inputs": [
           "resolved controller result",
           "prospective casting face",
@@ -69434,12 +69457,7 @@
           "eligible Suspend timing",
           "one-shot consumption and cleanup expiry"
         ],
-        "exclusions": [
-          "zone access",
-          "priority grants",
-          "intrinsic Flash keyword",
-          "other players and unsupported qualifiers"
-        ]
+        "summary": "Apply controller-bound same-turn instant timing to closed spell scopes."
       },
       "blockers": [],
       "dependencies": [],
@@ -69516,7 +69534,11 @@
     },
     {
       "applicability": {
-        "summary": "Apply the resolving controller’s instant-timing permission to their next physical creature-card play this turn.",
+        "exclusions": [
+          "another player’s turn for lands",
+          "extra land plays or new source zones",
+          "copies and noncreature lands"
+        ],
         "inputs": [
           "resolved controller effect",
           "current selected face",
@@ -69526,11 +69548,7 @@
           "shared instant casting and legal land-play timing",
           "single consumption on the next matching play"
         ],
-        "exclusions": [
-          "another player’s turn for lands",
-          "extra land plays or new source zones",
-          "copies and noncreature lands"
-        ]
+        "summary": "Apply the resolving controller’s instant-timing permission to their next physical creature-card play this turn."
       },
       "blockers": [],
       "dependencies": [
@@ -71733,7 +71751,7 @@
       "applicability": {
         "exclusions": [
           "creatures put onto the battlefield attacking",
-          "other objects\u2019 saddled facts",
+          "other objects’ saddled facts",
           "resolution-time if-saddled clauses"
         ],
         "inputs": [
@@ -80582,17 +80600,23 @@
         "test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
         "test_no_legal_child_target_does_not_suppress_or_refund_payment_and_decline_creates_no_child",
         "test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
-        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target"
+        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+        "test_original_falcon_sacrifice_uses_original_incarnation",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "multiplayer_tests": [
         "test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered",
         "test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
         "test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
-        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target"
+        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+        "test_original_falcon_sacrifice_uses_original_incarnation",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "negative_tests": [
         "test_repeat_negative_and_ambiguous_paid_object_forms_stay_residual",
-        "test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads"
+        "test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads",
+        "test_original_falcon_sacrifice_uses_original_incarnation",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "official_rules": [
         "113.8",
@@ -80611,7 +80635,9 @@
         "test_reflexive_payment_defers_the_complete_typed_body_and_its_targets",
         "test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads",
         "test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
-        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target"
+        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+        "test_original_falcon_sacrifice_uses_original_incarnation",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "privacy_tests": [
         "test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered",
@@ -80624,7 +80650,9 @@
         "test_source_sacrifice_retains_locked_controller_incarnation_and_private_draw_target",
         "test_no_legal_child_target_does_not_suppress_or_refund_payment_and_decline_creates_no_child",
         "test_spell_source_finishes_before_reflexive_target_selection_and_keeps_its_identity",
-        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target"
+        "test_actual_final_saga_chapter_discards_before_selecting_that_card_as_a_new_target",
+        "test_original_falcon_sacrifice_uses_original_incarnation",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "required_evidence": [
         "positive",
@@ -80685,16 +80713,19 @@
       "interaction_tests": [
         "test_original_shirriff_pays_before_its_linked_target",
         "test_original_surtland_flinger_reads_effective_paid_power_and_subtype",
-        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+        "test_original_ziatora_loses_all_results_when_its_target_leaves",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "multiplayer_tests": [
         "test_original_shirriff_pays_before_its_linked_target",
-        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+        "test_original_ziatora_loses_all_results_when_its_target_leaves",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "negative_tests": [
         "test_selected_reflexive_sacrifice_rejects_a_forged_paid_power_binding",
         "test_original_shirriff_pays_before_its_linked_target",
-        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+        "test_original_ziatora_loses_all_results_when_its_target_leaves",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "official_rules": [
         "107.1b",
@@ -80710,7 +80741,8 @@
         "test_original_shirriff_pays_before_its_linked_target",
         "test_original_surtland_flinger_reads_effective_paid_power_and_subtype",
         "test_original_ziatora_loses_all_results_when_its_target_leaves",
-        "test_original_manticore_uses_paid_creature_power_after_source_leaves"
+        "test_original_manticore_uses_paid_creature_power_after_source_leaves",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "privacy_tests": [
         "test_original_shirriff_pays_before_its_linked_target"
@@ -80718,7 +80750,8 @@
       "replay_tests": [
         "test_original_shirriff_pays_before_its_linked_target",
         "test_original_surtland_flinger_reads_effective_paid_power_and_subtype",
-        "test_original_ziatora_loses_all_results_when_its_target_leaves"
+        "test_original_ziatora_loses_all_results_when_its_target_leaves",
+        "test_original_reflexive_sacrifices_validate_selected_permanent_before_target"
       ],
       "required_evidence": [
         "positive",
@@ -86818,7 +86851,12 @@
     },
     {
       "applicability": {
-        "summary": "Play any captured fixed own-library exile result during one resolution, with normal spell costs and current land allowances.",
+        "exclusions": [
+          "future play permissions",
+          "additional land plays",
+          "land play on another turn",
+          "unrepresented variable exile counts"
+        ],
         "inputs": [
           "fixed own-library top exile",
           "resolving controller and exact public incarnations",
@@ -86829,12 +86867,7 @@
           "legal land plays using their current quota and entry choices",
           "continued resolution after each play"
         ],
-        "exclusions": [
-          "future play permissions",
-          "additional land plays",
-          "land play on another turn",
-          "unrepresented variable exile counts"
-        ]
+        "summary": "Play any captured fixed own-library exile result during one resolution, with normal spell costs and current land allowances."
       },
       "blockers": [],
       "dependencies": [
@@ -87369,7 +87402,11 @@
     },
     {
       "applicability": {
-        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller’s next actual end step.",
+        "exclusions": [
+          "limited delayed selection",
+          "unbounded duration",
+          "different source owner"
+        ],
         "inputs": [
           "fixed own-library top exile",
           "current controller",
@@ -87379,11 +87416,7 @@
           "ordinary play of captured exile cards",
           "expiry before priority at the matching step"
         ],
-        "exclusions": [
-          "limited delayed selection",
-          "unbounded duration",
-          "different source owner"
-        ]
+        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller’s next actual end step."
       },
       "blockers": [],
       "dependencies": [
@@ -87453,7 +87486,12 @@
     },
     {
       "applicability": {
-        "summary": "Resolve own-library impulse access with an announced or sealed entry X and a fixed turn window.",
+        "exclusions": [
+          "unbound X",
+          "scaled or dynamic public formulas",
+          "limited or immediate play",
+          "other library owner"
+        ],
         "inputs": [
           "unscaled cast or sealed entry X",
           "current own-library top set",
@@ -87463,12 +87501,7 @@
           "simultaneous public exile of the available group",
           "ordinary play permissions over actual exiled results"
         ],
-        "exclusions": [
-          "unbound X",
-          "scaled or dynamic public formulas",
-          "limited or immediate play",
-          "other library owner"
-        ]
+        "summary": "Resolve own-library impulse access with an announced or sealed entry X and a fixed turn window."
       },
       "blockers": [],
       "dependencies": [
@@ -87540,7 +87573,12 @@
     },
     {
       "applicability": {
-        "summary": "Choose one current card from the simultaneous own-library top exile result and grant ordinary play for a fixed window.",
+        "exclusions": [
+          "deferred one-of-many permission",
+          "free or immediate play",
+          "other library owner",
+          "arbitrary duration"
+        ],
         "inputs": [
           "current own-library top set",
           "resolved controller",
@@ -87550,12 +87588,7 @@
           "one principal-bound public choice",
           "ordinary play permission for the selected incarnation"
         ],
-        "exclusions": [
-          "deferred one-of-many permission",
-          "free or immediate play",
-          "other library owner",
-          "arbitrary duration"
-        ]
+        "summary": "Choose one current card from the simultaneous own-library top exile result and grant ordinary play for a fixed window."
       },
       "blockers": [],
       "dependencies": [
@@ -90293,7 +90326,11 @@
     },
     {
       "applicability": {
-        "summary": "Read an attached creature's current goad causes from its Aura and Equipment abilities and combine them with committed timed designations.",
+        "exclusions": [
+          "global or linked live goad subjects",
+          "condition- or duration-qualified clauses",
+          "open prefix or independent body siblings"
+        ],
         "inputs": [
           "reciprocal current attachment and current creature type",
           "current source subtype, ability, and controller",
@@ -90305,11 +90342,7 @@
           "attached cause ends with source applicability",
           "same-player Goad instruction remains redundant"
         ],
-        "exclusions": [
-          "global or linked live goad subjects",
-          "condition- or duration-qualified clauses",
-          "open prefix or independent body siblings"
-        ]
+        "summary": "Read an attached creature's current goad causes from its Aura and Equipment abilities and combine them with committed timed designations."
       },
       "blockers": [],
       "dependencies": [
@@ -90388,7 +90421,11 @@
     },
     {
       "applicability": {
-        "summary": "Count objects with one literal English rules name through the existing public quantity evaluator.",
+        "exclusions": [
+          "hidden-zone predicates",
+          "chosen-name and different-name quantities",
+          "unrepresented conjunctions and open object qualifiers"
+        ],
         "inputs": [
           "version-seven named count and one closed public zone predicate",
           "current public type and controller or graveyard owner",
@@ -90399,11 +90436,7 @@
           "ordinary source exclusion, active roster, and type filtering",
           "existing consumers for spell amounts, mana, and characteristic definitions or modifiers"
         ],
-        "exclusions": [
-          "hidden-zone predicates",
-          "chosen-name and different-name quantities",
-          "unrepresented conjunctions and open object qualifiers"
-        ]
+        "summary": "Count objects with one literal English rules name through the existing public quantity evaluator."
       },
       "blockers": [],
       "dependencies": [
@@ -90492,7 +90525,11 @@
     },
     {
       "applicability": {
-        "summary": "One exact source-spanned Commander deck-copy declaration supplies the current canonical name's finite or unrestricted pregame limit.",
+        "exclusions": [
+          "foreign names and conflicting declarations",
+          "unrepresented deck conditions or quantities",
+          "changes to snapshot legality or ordinary commander eligibility"
+        ],
         "inputs": [
           "printed English card name and one closed copy-limit line",
           "exact compiler and pregame component binding",
@@ -90503,11 +90540,7 @@
           "ordinary size, color identity, and snapshot legality checks",
           "deck-only declaration outside gameplay discovery"
         ],
-        "exclusions": [
-          "foreign names and conflicting declarations",
-          "unrepresented deck conditions or quantities",
-          "changes to snapshot legality or ordinary commander eligibility"
-        ]
+        "summary": "One exact source-spanned Commander deck-copy declaration supplies the current canonical name's finite or unrestricted pregame limit."
       },
       "blockers": [],
       "dependencies": [],
@@ -90565,7 +90598,10 @@
     },
     {
       "applicability": {
-        "summary": "Count a supported current controlled battlefield collection excluding its captured source or sealed lone attacker.",
+        "exclusions": [
+          "current attachment as a substitute for the sealed attacker",
+          "other quantity recipients and unsupported event contexts"
+        ],
         "inputs": [
           "one exact named creature count or sealed lone attack characteristic result",
           "captured logical source or event recipient identity"
@@ -90574,10 +90610,7 @@
           "one resolution-time integer with the designated incarnation excluded",
           "current characteristics and controller relation for all remaining candidates"
         ],
-        "exclusions": [
-          "current attachment as a substitute for the sealed attacker",
-          "other quantity recipients and unsupported event contexts"
-        ]
+        "summary": "Count a supported current controlled battlefield collection excluding its captured source or sealed lone attacker."
       },
       "blockers": [],
       "dependencies": [
@@ -90644,7 +90677,10 @@
     },
     {
       "applicability": {
-        "summary": "A live battlefield ability grants a bounded number of separate Cascade instances to qualifying spells its controller casts.",
+        "exclusions": [
+          "copied spells, unsupported source timing and unrepresented grant conditions",
+          "retroactive trigger creation after the cast"
+        ],
         "inputs": [
           "current complete source ability and caster",
           "committed spell face, origin, mana value and typed characteristics"
@@ -90653,10 +90689,7 @@
           "current layer-six keyword and distinct ability instances",
           "one ordinary cast-trigger occurrence per instance"
         ],
-        "exclusions": [
-          "copied spells, unsupported source timing and unrepresented grant conditions",
-          "retroactive trigger creation after the cast"
-        ]
+        "summary": "A live battlefield ability grants a bounded number of separate Cascade instances to qualifying spells its controller casts."
       },
       "blockers": [],
       "dependencies": [
@@ -90729,7 +90762,12 @@
     },
     {
       "applicability": {
-        "summary": "Attach resolved turn-bound Cascade grants to eligible spells at announcement and consume one-shot uses only when the cast completes.",
+        "exclusions": [
+          "future turns",
+          "unrepresented scope combinations",
+          "failed and reversed casts",
+          "library identity reads"
+        ],
         "inputs": [
           "resolved controller-scoped grant",
           "announced cast origin and spell types",
@@ -90740,12 +90778,7 @@
           "remaining independent uses",
           "ordinary distinct Cascade triggers"
         ],
-        "exclusions": [
-          "future turns",
-          "unrepresented scope combinations",
-          "failed and reversed casts",
-          "library identity reads"
-        ]
+        "summary": "Attach resolved turn-bound Cascade grants to eligible spells at announcement and consume one-shot uses only when the cast completes."
       },
       "blockers": [],
       "dependencies": [
@@ -90822,7 +90855,11 @@
     },
     {
       "applicability": {
-        "summary": "Resolve a closed next-cast counter protection and bind its eligible scope through the authoritative cast transaction.",
+        "exclusions": [
+          "other players and future turns",
+          "spells already cast and copies that were not cast",
+          "unsupported type or result qualifiers"
+        ],
         "inputs": [
           "one resolved controller-scoped result",
           "selected spell type at announcement",
@@ -90833,11 +90870,7 @@
           "remaining scopes after consumption",
           "ordinary counter targeting and resolution"
         ],
-        "exclusions": [
-          "other players and future turns",
-          "spells already cast and copies that were not cast",
-          "unsupported type or result qualifiers"
-        ]
+        "summary": "Resolve a closed next-cast counter protection and bind its eligible scope through the authoritative cast transaction."
       },
       "blockers": [],
       "dependencies": [],
@@ -90909,7 +90942,11 @@
     },
     {
       "applicability": {
-        "summary": "Produce a typed mana lot with a chosen creature spending rule or an eligible paid spell counter-protection rider.",
+        "exclusions": [
+          "unsupported paid-result riders",
+          "untethered chosen-type substitutions",
+          "copies of protected spells"
+        ],
         "inputs": [
           "closed fixed-output mana ability",
           "canonical source designation at production",
@@ -90920,11 +90957,7 @@
           "shared funding and payment eligibility",
           "counter protection on the spell that spends its eligible lot"
         ],
-        "exclusions": [
-          "unsupported paid-result riders",
-          "untethered chosen-type substitutions",
-          "copies of protected spells"
-        ]
+        "summary": "Produce a typed mana lot with a chosen creature spending rule or an eligible paid spell counter-protection rider."
       },
       "blockers": [],
       "dependencies": [
@@ -91001,7 +91034,10 @@
     },
     {
       "applicability": {
-        "summary": "Bind haste to a qualifying cast that spends a represented mana lot, then carry it to the resulting permanent.",
+        "exclusions": [
+          "unpaid mana or unsupported spend predicates",
+          "later incarnations and copiable characteristics"
+        ],
         "inputs": [
           "actual consumed mana and typed creature spell facts",
           "closed haste lifetime"
@@ -91011,10 +91047,7 @@
           "represented stack-to-battlefield continuity",
           "canonical turn and departure expiry"
         ],
-        "exclusions": [
-          "unpaid mana or unsupported spend predicates",
-          "later incarnations and copiable characteristics"
-        ]
+        "summary": "Bind haste to a qualifying cast that spends a represented mana lot, then carry it to the resulting permanent."
       },
       "blockers": [],
       "dependencies": [
@@ -91083,7 +91116,9 @@
     },
     {
       "applicability": {
-        "summary": "Use a production-bound creature subtype for the represented spell and ability-source mana spending rule.",
+        "exclusions": [
+          "different subtypes and unsupported spending contexts"
+        ],
         "inputs": [
           "canonical chosen subtype at production",
           "typed public spell or ability-source subtype facts"
@@ -91091,9 +91126,7 @@
         "outputs": [
           "shared funding and accepted payment eligibility for the sealed subtype"
         ],
-        "exclusions": [
-          "different subtypes and unsupported spending contexts"
-        ]
+        "summary": "Use a production-bound creature subtype for the represented spell and ability-source mana spending rule."
       },
       "blockers": [],
       "dependencies": [
@@ -91152,7 +91185,9 @@
     },
     {
       "applicability": {
-        "summary": "Resolve an intrinsic entry designation through a closed printed list of creature subtypes.",
+        "exclusions": [
+          "unlisted values and unsupported linked choices"
+        ],
         "inputs": [
           "source-spanned canonical creature subtype list",
           "affected entering incarnation and destination controller"
@@ -91161,9 +91196,7 @@
           "actor-bound replacement choices",
           "retained designation for the entering incarnation"
         ],
-        "exclusions": [
-          "unlisted values and unsupported linked choices"
-        ]
+        "summary": "Resolve an intrinsic entry designation through a closed printed list of creature subtypes."
       },
       "blockers": [],
       "dependencies": [
@@ -91221,6 +91254,10 @@
     },
     {
       "applicability": {
+        "exclusions": [
+          "Live combat roster or power after declaration",
+          "Creatures put onto the battlefield attacking"
+        ],
         "inputs": [
           "One normalized source attack with full effective power sealed on each declared participant",
           "A fixed positive total-power threshold"
@@ -91228,10 +91265,6 @@
         "outputs": [
           "A typed signed power comparison at occurrence and resolution",
           "Existing source-bound results and original attacking recipients"
-        ],
-        "exclusions": [
-          "Live combat roster or power after declaration",
-          "Creatures put onto the battlefield attacking"
         ],
         "summary": "One source attack reads the signed power sum of the declared attackers from the same original occurrence at trigger discovery and resolution."
       },
@@ -91318,6 +91351,9 @@
     },
     {
       "applicability": {
+        "exclusions": [
+          "Variable repetition and unrepresented recipient bindings"
+        ],
         "inputs": [
           "Closed source, creature target, controlled creature set, attack occurrence, or equipped creature",
           "Effective signed characteristics at resolution"
@@ -91326,9 +91362,6 @@
           "Locked additive layer 7c effects through cleanup",
           "Independently sampled amounts per current affected incarnation",
           "Shared effect timestamp for the optional fixed first strike grant"
-        ],
-        "exclusions": [
-          "Variable repetition and unrepresented recipient bindings"
         ],
         "summary": "A fixed power or toughness multiplier samples each current recipient at resolution and locks its signed additive result."
       },
@@ -91451,7 +91484,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 821,
+  "registry_version": 822,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

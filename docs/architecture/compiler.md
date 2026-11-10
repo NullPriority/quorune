@@ -5702,9 +5702,12 @@ graveyard-origin entry checks the origin and the graveyard owner separately
 from the entering permanent's controller. The existing resolution payment
 wrapper keeps the target announcement before an explicit `If you do` result.
 A fixed reflexive payment binds the same occurrence to its later child
-trigger. The child also accepts a controlled subtype as a power-damage source
-target, including a Kindred permanent. Effects with a different target chooser
-require their own binding.
+trigger. A source sacrifice uses the original controlled battlefield
+incarnation. A selected sacrifice can use the public creature-or-Vehicle union
+or exclude the source for an `another artifact` cost. The later child chooses
+its targets after payment. The child also accepts a controlled subtype as a
+power-damage source target, including a Kindred permanent. Effects with a
+different target chooser require their own binding.
 
 An entry and scheduled-step pair can share a targeted linked return. The
 linked instruction supplies the returned card reference. A reflexive payment
