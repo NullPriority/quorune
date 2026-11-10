@@ -283,6 +283,9 @@ from .rules.action_catalog import build_priority_action_catalog
 from .rules.event_subscriptions import LAND_PLAY_EVENT
 from .rules.land_play_permissions import (
     consume_land_play_permission,
+    land_play_face_type_line,
+    land_play_timing_matches,
+    land_play_timing_window,
     selected_land_play_permission,
 )
 from .rules.zone_action_permissions import (
@@ -2416,7 +2419,9 @@ class CommanderEngine(
 
     def _play_land(self, seat: str, response: Mapping[str, Any]) -> None:
         self._check_priority(seat)
-        self._sorcery_timing(seat)
+        timing = land_play_timing_window(self.state, seat)
+        if timing is None:
+            self._sorcery_timing(seat)
         player = self.state.players[seat]
         selected_permission = selected_land_play_permission(
             self, seat, response
@@ -2453,6 +2458,8 @@ class CommanderEngine(
             face = legal_faces[0]
         if not legal_faces:
             raise GameRuleError(f"{card.printed_name} is not a land")
+        if not land_play_timing_matches(timing, card, record, face):
+            self._sorcery_timing(seat)
         if not self._compiled_land_play_permission(seat, card):
             raise GameRuleError(
                 f"Playing {card.printed_name} from {card.zone} is not "
@@ -2488,7 +2495,8 @@ class CommanderEngine(
         )
         tapped = card.tapped
         life_paid = life_before - player.life
-        consume_land_play_permission(self, seat, selected_permission)
+        consume_land_play_permission(self, seat, selected_permission, played_card=card,
+                                     type_line=land_play_face_type_line(record, face))
         self._log(
             seat,
             "land.play",

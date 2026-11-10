@@ -387,8 +387,11 @@ checks the selected characteristics. One-shot windows end on the first
 matching committed cast, including a cast at ordinary timing. The Suspend
 special action can use this timing permission without consuming it. Cleanup
 ends unused windows. The permission changes timing without granting Flash or
-access to a new zone, and ordinary casting prohibitions still apply. Printed
-permissions to play creature cards also require the land-play timing owner.
+access to a new zone, and ordinary casting prohibitions still apply. A next
+creature-card play can use the permission to play a creature-land during the
+controller's turn. The land-play owner checks the selected face, independent
+zone access and the remaining land allowance. The first qualifying cast or
+land play consumes the window, including when ordinary timing permits it.
 
 `compiler/classic_flash.py` lowers the closed intrinsic as-though-Flash clause
 with its next-cleanup sacrifice. `rules/classic_flash.py` keeps the selected

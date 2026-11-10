@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Controller-bound instant timing for a closed set of same-turn cast windows."""
+"""Controller-bound instant timing for same-turn spell and creature-card play."""
 
 from collections.abc import Mapping
 from enum import StrEnum
@@ -12,6 +12,7 @@ from ..errors import GameRuleError
 TEMPORARY_CAST_TIMING_OPERATION = "grant_cast_permission"
 TEMPORARY_CAST_TIMING_FIELD = "temporary_cast_timing"
 TEMPORARY_CAST_TIMING_CAPABILITY = "timing.cast.temporary_controller_permission"
+NEXT_CREATURE_CARD_TIMING_CAPABILITY = "timing.play.next_creature_card"
 TEMPORARY_CAST_TIMING_MECHANIC = "temporary-controller-cast-timing"
 
 
@@ -20,8 +21,11 @@ class TemporaryCastTimingScope(StrEnum):
     CREATURE_SPELLS = "creature_spells"
     SORCERY_SPELLS = "sorcery_spells"
     NEXT_SORCERY = "next_sorcery"
+    NEXT_CREATURE_CARD = "next_creature_card"
 
-    def matches(self, type_line: str) -> bool:
+    def matches(self, type_line: str, *, physical_card: bool = True) -> bool:
+        if self is self.NEXT_CREATURE_CARD:
+            return physical_card and type_line_has_card_type(type_line, "creature")
         if type_line_has_card_type(type_line, "land"):
             return False
         if self is self.SPELLS:
@@ -41,7 +45,9 @@ def temporary_cast_timing_effect_scope(effect, *, actor="$controller") -> Tempor
 
 
 def temporary_cast_timing_payload_dependencies(effect):
-    temporary_cast_timing_effect_scope(effect)
+    scope = temporary_cast_timing_effect_scope(effect)
+    if scope is TemporaryCastTimingScope.NEXT_CREATURE_CARD:
+        return (TEMPORARY_CAST_TIMING_CAPABILITY, NEXT_CREATURE_CARD_TIMING_CAPABILITY)
     return (TEMPORARY_CAST_TIMING_CAPABILITY,)
 
 
@@ -87,6 +93,10 @@ def _store_scopes(stats, turn_sequence, scopes):
         expire_temporary_cast_timing(stats)
 
 
+def has_next_creature_card_timing(stats, turn_sequence) -> bool:
+    return TemporaryCastTimingScope.NEXT_CREATURE_CARD in _active_scopes(stats, turn_sequence)
+
+
 def expire_temporary_cast_timing(stats):
     stats.pop(TEMPORARY_CAST_TIMING_FIELD, None)
 
@@ -114,13 +124,16 @@ def temporary_cast_timing_permissions(host, actor, card, *, face=None) -> tuple[
         return ()
     data = face if face is not None else host._effective_card_data(card)
     type_line = str(data.get("type_line") or "")
-    if any(scope.matches(type_line) for scope in scopes):
+    if any(scope.matches(type_line, physical_card=card.object_kind == "card") for scope in scopes):
         return (CastTimingPermission(),)
     return ()
 
 
-def commit_temporary_cast_timing(stats, turn_sequence, *, type_line):
+def consume_temporary_play_timing(stats, turn_sequence, *, type_line, object_kind):
     scopes = _active_scopes(stats, turn_sequence)
-    once = TemporaryCastTimingScope.NEXT_SORCERY
-    if once in scopes and once.matches(type_line):
-        _store_scopes(stats, turn_sequence, tuple(scope for scope in scopes if scope is not once))
+    one_shot = {TemporaryCastTimingScope.NEXT_SORCERY, TemporaryCastTimingScope.NEXT_CREATURE_CARD}
+    remaining = tuple(scope for scope in scopes if not (
+        scope in one_shot and scope.matches(type_line, physical_card=object_kind == "card")
+    ))
+    if remaining != scopes:
+        _store_scopes(stats, turn_sequence, remaining)

@@ -213,10 +213,115 @@ class TemporaryCastTimingTests(unittest.TestCase):
         self.replay(session)
 
     def test_scouts_warning_requires_land_play_timing(self):
-        record = self.db.lookup("Scout's Warning")
-        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
-        self.assertNotEqual("exact", ir.status)
-        self.assertEqual([record.oracle_text.splitlines()[0]], [row.text for row in ir.material_residuals])
+        from quorune.rules.temporary_cast_timing import NEXT_CREATURE_CARD_TIMING_CAPABILITY
+
+        session = self.session(70208006)
+        source = self.add(session.engine, "Scout's Warning", zone="hand")
+        self.assert_closed(session, source)
+        scope = TemporaryCastTimingScope.NEXT_CREATURE_CARD
+        self.assertTrue(scope.matches("Land Creature — Forest Dryad"))
+        self.assertFalse(scope.matches("Land — Mountain"))
+        self.assertFalse(scope.matches("Creature — Bear", physical_card=False))
+        program, = [row for row in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if NEXT_CREATURE_CARD_TIMING_CAPABILITY in row.capability_dependencies]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != NEXT_CREATURE_CARD_TIMING_CAPABILITY)
+        altered = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + NEXT_CREATURE_CARD_TIMING_CAPABILITY, binding["blockers"])
+        from quorune.compiler.temporary_player_rule_templates import _temporary_cast_timing_template
+        self.assertIsNone(_temporary_cast_timing_template(
+            "The next artifact card you play this turn can be played as though it had flash."
+        ))
+        record = replace(self.db.lookup("Scout's Warning"), oracle_id="scouts-warning-timing-mutation-probe")
+        with patch("quorune.compiler.temporary_player_rule_templates._temporary_cast_timing_template", return_value=None):
+            ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)
+
+    def test_scouts_warning_plays_dryad_through_split_second_and_uses_both_grants(self):
+        session = self.session(70208008)
+        engine = session.engine
+        first = self.add(engine, "Scout's Warning", zone="hand", ref="dryad-warning-first")
+        second = self.add(engine, "Scout's Warning", zone="hand", ref="dryad-warning-second")
+        dryad = self.add(engine, "Dryad Arbor", zone="hand")
+        ordinary = self.add(engine, "Mountain", zone="hand")
+        creature = self.add(engine, "Grizzly Bears", zone="hand")
+        shock = self.add(engine, "Sudden Shock", seat="B", zone="hand")
+        self.assert_closed(session, first)
+        self.assert_closed(session, dryad)
+        session.state.players["B"].mana_pool.update({"R": 1, "C": 2})
+        self.prepare(session, mana={"W": 2, "G": 1, "C": 4})
+        self.checkpoint(session)
+        self.cast_for(session, "A", first, reserve={"W": 1, "G": 1})
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "A", second, reserve={"G": 1})
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "B", shock, ["D"])
+        self.assertIsNone(self.offer(session, "A", ordinary, "play_land"))
+        self.assertIsNone(self.offer(session, "A", creature, "cast"))
+        offered = self.offer(session, "A", dryad, "play_land")
+        self.assertIsNotNone(offered)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": f"play-land:{ordinary.ref}"}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": offered["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", engine.state.cards[dryad.object_id].zone)
+        self.assertEqual([shock.object_id], [item.card_object_id for item in session.state.stack])
+        self.assertEqual(0, session.state.players["A"].land_plays_remaining)
+        self.assertNotIn(TEMPORARY_CAST_TIMING_FIELD, session.state.players["A"].stats)
+        self.assertIsNone(self.resolve(session))
+        self.replay(session, load=True)
+
+    def test_scouts_warning_allows_creature_suspend_and_cast_but_no_land_on_opponent_turn(self):
+        session = self.session(70208009)
+        engine = session.engine
+        warning = self.add(engine, "Scout's Warning", zone="hand")
+        dryad = self.add(engine, "Dryad Arbor", zone="hand")
+        baloth = self.add(engine, "Durkwood Baloth", zone="hand")
+        first = self.add(engine, "Grizzly Bears", zone="hand", ref="warning-first-creature")
+        later = self.add(engine, "Grizzly Bears", zone="hand", ref="warning-later-creature")
+        self.assert_closed(session, baloth)
+        self.prepare(session, active="B", mana={"W": 1, "G": 3, "C": 6})
+        self.checkpoint(session)
+        self.cast_for(session, "A", warning, reserve={"G": 3})
+        self.assertIsNone(self.resolve(session))
+        self.assertIsNone(self.offer(session, "A", dryad, "play_land"))
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": f"play-land:{dryad.ref}"}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        offered = self.offer(session, "A", baloth, "suspend")
+        self.assertIsNotNone(offered)
+        result = session.act("pilot:A", {"action_id": offered["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("exile", engine.state.cards[baloth.object_id].zone)
+        self.assertIn(TEMPORARY_CAST_TIMING_FIELD, session.state.players["A"].stats)
+        self.cast_for(session, "A", first, reserve={"G": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertIsNone(self.offer(session, "A", later, "cast"))
+        self.assertNotIn(TEMPORARY_CAST_TIMING_FIELD, session.state.players["A"].stats)
+        self.replay(session, load=True)
+
+    def test_scouts_warning_respects_a_used_land_play(self):
+        session = self.session(70208010)
+        engine = session.engine
+        warning = self.add(engine, "Scout's Warning", zone="hand")
+        dryad = self.add(engine, "Dryad Arbor", zone="hand")
+        mountain = self.add(engine, "Mountain", zone="hand")
+        bolt = self.add(engine, "Lightning Bolt", seat="B", zone="hand")
+        session.state.players["B"].mana_pool["R"] = 1
+        self.prepare(session, mana={"W": 1})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": f"play-land:{mountain.ref}"})
+        self.assertTrue(result.ok, result.summary)
+        self.cast_for(session, "A", warning)
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "B", bolt, ["D"])
+        self.assertIn(TEMPORARY_CAST_TIMING_FIELD, session.state.players["A"].stats)
+        self.assertIsNone(self.offer(session, "A", dryad, "play_land"))
+        self.assertIsNone(self.resolve(session))
+        self.replay(session)
 
     def test_borne_upon_a_wind_reuses_flashback_without_granting_zone_access(self):
         session = self.session(70208007)

@@ -61,6 +61,7 @@ _CAST_TIMING_SCOPES = {
     "you may cast creature spells this turn as though they had flash": TemporaryCastTimingScope.CREATURE_SPELLS,
     "you may cast sorcery spells this turn as though they had flash": TemporaryCastTimingScope.SORCERY_SPELLS,
     "the next sorcery spell you cast this turn can be cast as though it had flash": TemporaryCastTimingScope.NEXT_SORCERY,
+    "the next creature card you play this turn can be played as though it had flash": TemporaryCastTimingScope.NEXT_CREATURE_CARD,
 }
 
 

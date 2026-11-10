@@ -68405,7 +68405,7 @@
         "quorune.compiler.temporary_player_rule_templates._temporary_cast_timing_template",
         "quorune.rules.temporary_cast_timing.apply_temporary_cast_timing",
         "quorune.rules.temporary_cast_timing.temporary_cast_timing_permissions",
-        "quorune.rules.temporary_cast_timing.commit_temporary_cast_timing",
+        "quorune.rules.temporary_cast_timing.consume_temporary_play_timing",
         "quorune.rules.casting.proposal._combined_cast_timing_permissions",
         "quorune.suspend._suspend_timing_is_legal"
       ],
@@ -68459,6 +68459,98 @@
         "interaction",
         "multiplayer",
         "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Apply the resolving controller’s instant-timing permission to their next physical creature-card play this turn.",
+        "inputs": [
+          "resolved controller effect",
+          "current selected face",
+          "committed physical play"
+        ],
+        "outputs": [
+          "shared instant casting and legal land-play timing",
+          "single consumption on the next matching play"
+        ],
+        "exclusions": [
+          "another player’s turn for lands",
+          "extra land plays or new source zones",
+          "copies and noncreature lands"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "timing.cast.temporary_controller_permission"
+      ],
+      "dependency_fail_closed_rationale": "The selected physical-card scope independently requires its land-play timing capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "timing.play.next_creature_card",
+      "implementation_components": [
+        "quorune.rules.temporary_cast_timing.temporary_cast_timing_payload_dependencies",
+        "quorune.rules.temporary_cast_timing.consume_temporary_play_timing",
+        "quorune.rules.land_play_permissions.land_play_timing_window",
+        "quorune.rules.land_play_permissions.land_play_timing_matches",
+        "quorune.rules.action_catalog._land_candidates",
+        "quorune.engine.CommanderEngine._play_land"
+      ],
+      "implementation_mutation_rationale": "Removing the producer restores the exact source residual. Native legal play and rejection verify the state and timing boundaries.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_scouts_warning_allows_creature_suspend_and_cast_but_no_land_on_opponent_turn",
+        "test_scouts_warning_plays_dryad_through_split_second_and_uses_both_grants",
+        "test_scouts_warning_respects_a_used_land_play"
+      ],
+      "multiplayer_tests": [
+        "test_scouts_warning_allows_creature_suspend_and_cast_but_no_land_on_opponent_turn",
+        "test_scouts_warning_plays_dryad_through_split_second_and_uses_both_grants"
+      ],
+      "negative_tests": [
+        "test_scouts_warning_allows_creature_suspend_and_cast_but_no_land_on_opponent_turn",
+        "test_scouts_warning_requires_land_play_timing",
+        "test_scouts_warning_respects_a_used_land_play"
+      ],
+      "official_rules": [
+        "108.2",
+        "116.2a",
+        "117.1a",
+        "305.1",
+        "305.2a",
+        "305.2b",
+        "305.3",
+        "305.9",
+        "514.2",
+        "601.1a",
+        "601.2i",
+        "609.4",
+        "702.8a",
+        "702.61b",
+        "702.62a",
+        "707.12"
+      ],
+      "positive_tests": [
+        "test_scouts_warning_allows_creature_suspend_and_cast_but_no_land_on_opponent_turn",
+        "test_scouts_warning_plays_dryad_through_split_second_and_uses_both_grants"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_scouts_warning_allows_creature_suspend_and_cast_but_no_land_on_opponent_turn",
+        "test_scouts_warning_plays_dryad_through_split_second_and_uses_both_grants",
+        "test_scouts_warning_respects_a_used_land_play"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
         "replay"
       ],
       "status": "trusted",
@@ -89244,7 +89336,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 789,
+  "registry_version": 790,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

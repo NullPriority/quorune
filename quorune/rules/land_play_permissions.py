@@ -3,9 +3,13 @@ from __future__ import annotations
 """Authoritative selection and mutation for ordinary land-play quotas."""
 
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Literal
 
+from ..cast_timing import type_line_has_card_type
 from ..errors import GameRuleError
+from .temporary_cast_timing import (
+    TemporaryCastTimingScope, consume_temporary_play_timing, has_next_creature_card_timing,
+)
 from ..semantic_runtime.action_permissions import (
     LAND_PLAY_ACCOUNTING_STAT,
     LAND_PLAY_ACCOUNTING_VERSION,
@@ -14,6 +18,28 @@ from ..semantic_runtime.action_permissions import (
     land_play_accounting,
     land_play_permission_options,
 )
+
+
+def land_play_timing_window(state, player) -> Literal["ordinary", "next_creature_card"] | None:
+    if player != state.active_player:
+        return None
+    if not state.stack and (state.phase, state.step) in {("precombat_main", "main"), ("postcombat_main", "main")}:
+        return "ordinary"
+    if has_next_creature_card_timing(state.players[player].stats, state.turn_sequence):
+        return "next_creature_card"
+    return None
+
+
+def land_play_face_type_line(record, face) -> str:
+    return str(face.get("type_line") or "") if face is not None else record.type_line
+
+
+def land_play_timing_matches(window, card, record, face) -> bool:
+    if window == "ordinary":
+        return True
+    type_line = land_play_face_type_line(record, face)
+    return (window == "next_creature_card" and type_line_has_card_type(type_line, "land")
+            and TemporaryCastTimingScope.NEXT_CREATURE_CARD.matches(type_line, physical_card=card.object_kind == "card"))
 
 
 def selected_land_play_permission(
@@ -52,6 +78,9 @@ def consume_land_play_permission(
     host: Any,
     player: str,
     selected: Any,
+    *,
+    played_card: Any = None,
+    type_line: str | None = None,
 ) -> None:
     from .source_land_plays import SourceLandPlayChoice,commit_source_land_choice
     source_choice=selected if isinstance(selected,SourceLandPlayChoice) else None
@@ -72,6 +101,9 @@ def consume_land_play_permission(
     state.stats.pop(USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT, None)
     state.land_plays_remaining = max(0, base_allowance - completed)
     if source_choice is not None:commit_source_land_choice(host,player,source_choice)
+    if played_card is not None and type_line is not None:
+        consume_temporary_play_timing(state.stats, host.state.turn_sequence, type_line=type_line,
+                                      object_kind=played_card.object_kind)
 
 
 def reset_additional_land_play_permissions(host: Any, player: str) -> None:
