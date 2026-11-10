@@ -204,6 +204,10 @@ The quantified anthem production validates its creature subject through the
 existing fixed-query anthem owner. An “other” quantity proves that every
 affected recipient belongs to the counted set before excluding one member.
 It continues to count correctly when the ability source is outside that set.
+Explicit source references can supply a live count of the Auras or Equipment
+attached to that source. The receiver and attachment queries keep their own
+scope. Recipient-local counter anthems read each creature's named counters
+and can apply to creatures controlled by other players.
 Fixed keyword grants remain separate components, so a zero numeric quantity
 does not remove an unconditional keyword. Ambiguous attachment pronouns,
 private identity predicates and later-layer characteristic reads remain

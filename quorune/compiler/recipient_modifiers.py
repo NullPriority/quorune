@@ -3,6 +3,7 @@ from __future__ import annotations
 """Whole-sentence grammar for one public recipient-local static scalar."""
 
 import re
+from ..counter_names import normalized_counter_name
 from ..recipient_modifier_model import RecipientQuantitySpec,RecipientQuantityKind,RECIPIENT_MODIFIER_CAPABILITY
 from ..semantic_runtime.recipient_anthems import RecipientAnthemHandler,RECIPIENT_ANTHEM_HANDLER
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
@@ -21,12 +22,16 @@ def recipient_modifier_handler(text):
     subject_text=match['subject']
     each=re.fullmatch(r"Each (?P<qualifiers>(?:[A-Za-z][A-Za-z'-]* )*)creature(?P<tail> .+)?",subject_text,re.I)
     if each is not None:subject_text=each['qualifiers']+'creatures'+(each['tail'] or '')
+    subject_text = re.sub(r" you (?:don['’]t|do not) control$", " your opponents control", subject_text, flags=re.I)
     subject=fixed_characteristic_battlefield_query_subject(subject_text)
     if subject is None or 'creature' not in subject[1].types_all:return None
     phrase=match['quantity'].casefold()
     if phrase=='of its colors':spec=RecipientQuantitySpec(RecipientQuantityKind.COLORS)
     elif phrase=='of its creature types':spec=RecipientQuantitySpec(RecipientQuantityKind.CREATURE_TYPES)
-    elif phrase=='+1/+1 counter on it':spec=RecipientQuantitySpec(RecipientQuantityKind.COUNTERS,counter='+1/+1')
+    elif (counter := re.fullmatch(r"(?P<name>[a-z0-9+/-]+) counters? on (?P<reference>it|them)", phrase)) is not None:
+        if counter["reference"] == "it" and each is None and phrase != "+1/+1 counter on it":
+            return None
+        spec = RecipientQuantitySpec(RecipientQuantityKind.COUNTERS, counter=normalized_counter_name(counter["name"]))
     else:
         mana=re.fullmatch(r'(?P<color>white|blue|black|red|green) mana symbol in its mana cost',phrase)
         if mana is None:return None

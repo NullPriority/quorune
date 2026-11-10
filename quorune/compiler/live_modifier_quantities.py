@@ -3,9 +3,12 @@ from __future__ import annotations
 """Closed live player and attached-recipient quantities for static modifiers."""
 
 import re
+from dataclasses import replace
 from ..characteristic_fragments import (CharacteristicQuantitySpec,CharacteristicQuantityScope as Scope,
     CharacteristicQuantityReduction as Reduction)
 from ..object_predicate import ObjectQuerySpec
+from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+from .collection_quantity_templates import recipient_attachment_quantity
 
 
 def source_modifier_quantity(text):
@@ -27,7 +30,18 @@ def attached_object_quantity(text):
     return CharacteristicQuantitySpec(Scope.ATTACHED_OBJECT,schema_version=4,reduction=reduction) if reduction is not None else None
 
 
-def quantified_public_modifier_handler(text):
+def _explicit_source_attachment_quantity(text: str, *, source_name: str | None) -> CharacteristicQuantitySpec | None:
+    match = re.fullmatch(r"(?P<objects>.+?) attached to (?P<reference>.+)", text, re.I)
+    if match is None:
+        return None
+    reference = match["reference"]
+    if not source_self_permanent_type(reference) and not (source_name and SourceReferenceSpec(source_name).matches(reference)):
+        return None
+    quantity = recipient_attachment_quantity(f"{match['objects']} attached to it")
+    return replace(quantity, scope=Scope.ATTACHED_TO_SOURCE) if quantity is not None else None
+
+
+def quantified_public_modifier_handler(text, *, source_name: str | None = None):
     from .public_state_queries import fixed_characteristic_battlefield_query_subject
     from .query_characteristic_templates import query_characteristic_quantity,query_characteristic_value
     from .continuous_templates import fixed_query_keyword_grant_handler
@@ -56,7 +70,9 @@ def quantified_public_modifier_handler(text):
     elif variable is not None:
         quantity=query_characteristic_value(phrase,source_name='source')
     else:
-        quantity=query_characteristic_quantity(phrase,source_name='source',definition_extensions=True)
+        quantity = _explicit_source_attachment_quantity(phrase, source_name=source_name)
+        if quantity is None:
+            quantity = query_characteristic_quantity(phrase, source_name='source', definition_extensions=True)
     if quantity is None:return None
     coefficient=lambda value:0 if value.endswith('0') else -1 if value.startswith('-') else 1
     power=coefficient(match['power']) if variable is not None else int(match['power'])

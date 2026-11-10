@@ -8999,6 +8999,7 @@
         "quorune/semantic_runtime/continuous_components.py",
         "quorune/semantic_runtime/quantified_anthems.py",
         "quorune/semantic_runtime/recipient_anthems.py",
+        "tests/fixtures/counter-qualified-zone-cards.json",
         "tests/fixtures/live-modifier-quantity-cards.json",
         "tests/fixtures/recipient-modifier-cards.json",
         "tests/test_live_modifier_quantities.py",

@@ -4,6 +4,174 @@
   "source": "Pinned complete live quantity modifier originals, canonical rulings and public registered controls.",
   "cards": [
     {
+      "oracle_id": "f1dca9ac-8886-4688-9245-763ef486701c",
+      "name": "Armament Master",
+      "mana_cost": "{W}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Kor Soldier",
+      "oracle_text": "Other Kor creatures you control get +2/+2 for each Equipment attached to this creature.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "name": "Kellan, the Fae-Blooded // Birthright Boon",
+      "mana_cost": "{2}{R} // {1}{W}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Faerie // Sorcery — Adventure",
+      "oracle_text": "Kellan, the Fae-Blooded: Double strike\nOther creatures you control get +1/+0 for each Aura and Equipment attached to Kellan.\n//\nBirthright Boon: Search your library for an Aura or Equipment card, reveal it, put it into your hand, then shuffle.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Double strike"
+      ],
+      "produced_mana": [],
+      "layout": "adventure",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}",
+          "name": "Kellan, the Fae-Blooded",
+          "oracle_text": "Double strike\nOther creatures you control get +1/+0 for each Aura and Equipment attached to Kellan.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Legendary Creature — Human Faerie"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Birthright Boon",
+          "oracle_text": "Search your library for an Aura or Equipment card, reveal it, put it into your hand, then shuffle.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery — Adventure"
+        }
+      ]
+    },
+    {
+      "oracle_id": "758dd2fd-d3ec-4782-9a60-12b0d79719da",
+      "name": "Kor Duelist",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Creature — Kor Soldier",
+      "oracle_text": "As long as this creature is equipped, it has double strike. (It deals both first-strike and regular combat damage.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-05-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "oracle_id": "e08722b3-0f79-4c82-b298-603e04a37857",
       "name": "Death's Shadow",
       "mana_cost": "{B}",
@@ -1304,6 +1472,78 @@
     }
   ],
   "rulings": [
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it's not possible to cast the copy as a permanent."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If an effect refers to a card, spell, or permanent that has an Adventure, it won't find an instant or sorcery spell on the stack that's been cast as an Adventure."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it's legal to cast that spell. For example, if you control Johann, Apprentice Sorcerer (\"Once each turn, you may cast an instant or sorcery spell from the top of your library.\") and Questing Druid is on top of your library, you can cast Seek the Beast, but not Questing Druid."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won't give you permission to cast it as a permanent spell."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions for the permanent spell you cast from exile. Normally, you'll be able to cast it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner's graveyard as it resolves. For as long as it remains exiled, that player may cast it as a permanent spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won't be exiled and the spell's controller won't be able to cast it as a permanent later."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card's normal characteristics. The spell's color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Casting a card as an Adventure isn't casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it's a token) or cease to be a copy (if it's a nontoken permanent), and so you won't be able to cast it as an Adventure."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "An effect may refer to a card, spell, or permanent that \"has an Adventure.\" This refers to a card, spell, or permanent that has an adventurer card's set of alternative characteristics, even if they're not being used and even if that card was never cast as an Adventure."
+    },
+    {
+      "oracle_id": "10c48d19-d91f-4674-b186-477acaf08e5a",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "An adventurer card is a permanent card in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Questing Druid is a green creature card whose mana value is 2. It can't be the target of Tenacious Tomeseeker's triggered ability (\"return target instant or sorcery card from your graveyard to your hand\")."
+    },
     {
       "oracle_id": "e08722b3-0f79-4c82-b298-603e04a37857",
       "published_at": "2020-08-07",

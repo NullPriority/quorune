@@ -117,7 +117,7 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
     recipient=recipient_modifier_handler(text)
     if recipient is not None:return recipient
     from .live_modifier_quantities import quantified_public_modifier_handler
-    quantified=quantified_public_modifier_handler(text)
+    quantified=quantified_public_modifier_handler(text, source_name=source_name)
     if quantified is not None:return quantified
     from .static_land_animation import static_land_animation_handler
     animation=static_land_animation_handler(text)

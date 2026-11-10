@@ -157,6 +157,10 @@ class LiveModifierQuantityModelTests(unittest.TestCase):
             with self.assertRaises(ValueError):QuantifiedAnthemHandler().validate(changed)
         self.assertEqual((),characteristic_quantity_capabilities({'scope':'attached_object','schema_version':1}))
         self.assertIsNone(quantified_public_modifier_handler('Equipped creature gets +1/+1 for each land you control.'))
+        for suffix in ('Equipment attached to it', 'Equipment attached to another creature',
+                       'Fortifications attached to this creature'):
+            self.assertIsNone(quantified_public_modifier_handler(
+                f'Other creatures you control get +1/+0 for each {suffix}.'))
         with self.assertRaises(ValueError):
             QueryPowerToughnessDefinitionSpec(CharacteristicQuantitySpec(Scope.CONTROLLER_LIFE_TOTAL,schema_version=4),True,True)
 
@@ -202,6 +206,7 @@ class LiveModifierQuantityRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'live-modifiers.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/counter-qualified-zone-cards.json',
             ROOT/'tests/fixtures/live-modifier-quantity-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Live modifier quantities',[DeckEntry('Generic Bound Commander',1,'commander'),
@@ -388,6 +393,84 @@ class LiveModifierQuantityRuntimeTests(unittest.TestCase):
         current=s.state.cards[champion.object_id]
         self.assertEqual((1,2),self.stats(s,current));self.assertNotIn('trample',s.engine._combat_keywords(current))
         self.replay(s)
+
+    def test_actual_source_attachment_anthems_follow_reattachment_and_exclude_their_sources(self):
+        s = self.session(763120)
+        kellan = self.add(s.engine, 'Kellan, the Fae-Blooded // Birthright Boon', zone='hand')
+        master = self.add(s.engine, 'Armament Master', zone='hand')
+        kor = self.add(s.engine, 'Kor Duelist', ref='quantity-own-kor')
+        foreign_kor = self.add(s.engine, 'Kor Duelist', seat='B', ref='quantity-foreign-kor')
+        other = self.add(s.engine, 'Sliver Construct')
+        aura = self.add(s.engine, 'Blessing of the Nephilim', zone='hand')
+        equipment = self.add(s.engine, 'Civic Saber', zone='hand')
+        self.prepare(s, mana={'C': 6, 'R': 1, 'W': 3})
+        self.checkpoint(s)
+        for card in (kellan, master):
+            binding = self.binding(s, card)
+            self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+
+        self.cast(s, kellan, {'C': 2, 'R': 1}, face='Kellan, the Fae-Blooded')
+        self.assertIsNone(self.resolve(s))
+        self.cast(s, master, {'W': 2})
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual((1, 1), self.stats(s, kor))
+        self.assertEqual((2, 2), self.stats(s, other))
+
+        self.cast(s, aura, {'W': 1}, [kellan.ref])
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual((3, 3), self.stats(s, kellan))
+        self.assertEqual((2, 1), self.stats(s, kor))
+        self.cast(s, equipment, {'C': 1})
+        self.assertIsNone(self.resolve(s))
+        self.equip(s, equipment, kellan, 1)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual((4, 3), self.stats(s, kellan))
+        self.assertEqual((3, 1), self.stats(s, kor))
+        self.assertEqual((4, 2), self.stats(s, other))
+
+        self.equip(s, equipment, master, 1)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual((3, 3), self.stats(s, kellan))
+        self.assertEqual((4, 2), self.stats(s, master))
+        self.assertEqual((4, 3), self.stats(s, kor))
+        self.assertEqual((1, 1), self.stats(s, foreign_kor))
+        self.assertEqual((3, 2), self.stats(s, other))
+        self.equip(s, equipment, other, 1)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual((2, 1), self.stats(s, kor))
+        self.replay(s, load=True)
+
+    def test_actual_toxrill_counts_each_opposing_creatures_slime_and_sees_state_based_death(self):
+        s = self.session(763121)
+        source = self.add(s.engine, 'Toxrill, the Corrosive', zone='hand')
+        own = self.add(s.engine, 'Sliver Construct', ref='slime-own')
+        marked = self.add(s.engine, 'Sliver Construct', seat='B', ref='slime-marked')
+        unmarked = self.add(s.engine, 'Sliver Construct', seat='C', ref='slime-unmarked')
+        own.counters['slime'] = marked.counters['slime'] = 1
+        unmarked.counters['charge'] = 3
+        self.prepare(s, mana={'C': 5, 'B': 2})
+        self.checkpoint(s)
+        binding = self.binding(s, source)
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        self.cast(s, source, {'C': 5, 'B': 2})
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual((2, 2), self.stats(s, own))
+        self.assertEqual((1, 1), self.stats(s, marked))
+        self.assertEqual((2, 2), self.stats(s, unmarked))
+
+        self.advance(s, lambda game: game.state.step == 'end_step' and bool(game.state.stack))
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual('graveyard', s.state.cards[marked.object_id].zone)
+        self.assertEqual({'charge': 3, 'slime': 1}, s.state.cards[unmarked.object_id].counters)
+        self.assertEqual((1, 1), self.stats(s, unmarked))
+        self.assertEqual({'slime': 1}, s.state.cards[own.object_id].counters)
+        tokens = [card for card in s.state.cards.values() if card.is_token]
+        self.assertEqual(1, len(tokens))
+        slug = tokens[0]
+        self.assertEqual(('A', 'battlefield'), (slug.controller, slug.zone))
+        self.assertEqual({'slug'}, s.engine._type_parts(s.engine._effective_card_data(slug)['type_line'])[1])
+        self.assertEqual((1, 1), self.stats(s, slug))
+        self.replay(s, load=True)
 
     def test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player(self):
         s=self.session(763113);source=self.add(s.engine,'Mycosynth Fiend',zone='hand')

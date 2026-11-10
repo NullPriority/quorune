@@ -31885,7 +31885,8 @@
         "outputs": [
           "nonnegative live life/poison or attached color/mana quantities",
           "source-relative global modifier and fixed independent keyword effects",
-          "exact replay without mutable query caching"
+          "exact replay without mutable query caching",
+          "live source-bound Aura and Equipment counts for independently closed creature subjects"
         ],
         "summary": "Typed live values preserve the current player, attached recipient or validated creature set under layer7c modifiers without exposing hidden identities."
       },
@@ -31908,13 +31909,15 @@
         "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
         "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
         "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
-        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+        "test_actual_source_attachment_anthems_follow_reattachment_and_exclude_their_sources"
       ],
       "multiplayer_tests": [
         "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
         "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
         "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
-        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+        "test_actual_source_attachment_anthems_follow_reattachment_and_exclude_their_sources"
       ],
       "negative_tests": [
         "test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
@@ -31930,7 +31933,8 @@
         "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
         "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
         "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
-        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+        "test_actual_source_attachment_anthems_follow_reattachment_and_exclude_their_sources"
       ],
       "official_rules": [
         "105.2",
@@ -31961,7 +31965,8 @@
         "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
         "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
         "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
-        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+        "test_actual_source_attachment_anthems_follow_reattachment_and_exclude_their_sources"
       ],
       "privacy_tests": [
         "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
@@ -31971,7 +31976,8 @@
         "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
         "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
         "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
-        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+        "test_actual_source_attachment_anthems_follow_reattachment_and_exclude_their_sources"
       ],
       "required_evidence": [
         "positive",
@@ -32027,14 +32033,16 @@
         "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
         "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
         "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
-        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation",
+        "test_actual_toxrill_counts_each_opposing_creatures_slime_and_sees_state_based_death"
       ],
       "multiplayer_tests": [
         "test_knight_actual_cast_colors_source_exclusion_and_cleanup_are_live",
         "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
         "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
         "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
-        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation",
+        "test_actual_toxrill_counts_each_opposing_creatures_slime_and_sees_state_based_death"
       ],
       "negative_tests": [
         "test_closed_quantity_and_operation_codecs_reject_unknown_bool_and_wrong_fields",
@@ -32043,7 +32051,8 @@
         "test_four_originals_have_complete_normal_registration_and_independent_runtime_minima",
         "test_unsupported_quantity_feedback_unknown_labels_and_old_operation_wire_remain_bounded",
         "test_verified_capability_withdrawal_refuses_the_normal_original",
-        "test_fresh_compiler_and_recipient_quantity_omissions_are_killed"
+        "test_fresh_compiler_and_recipient_quantity_omissions_are_killed",
+        "test_actual_toxrill_counts_each_opposing_creatures_slime_and_sees_state_based_death"
       ],
       "official_rules": [
         "105.2",
@@ -32064,7 +32073,8 @@
         "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
         "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
         "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
-        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation",
+        "test_actual_toxrill_counts_each_opposing_creatures_slime_and_sees_state_based_death"
       ],
       "privacy_tests": [
         "test_knight_actual_cast_colors_source_exclusion_and_cleanup_are_live",
@@ -32078,7 +32088,8 @@
         "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
         "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
         "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
-        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation",
+        "test_actual_toxrill_counts_each_opposing_creatures_slime_and_sees_state_based_death"
       ],
       "required_evidence": [
         "positive",
@@ -91161,7 +91172,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 816,
+  "registry_version": 817,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

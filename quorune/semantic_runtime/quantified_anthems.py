@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from collections.abc import Mapping
-from ..characteristic_fragments import CharacteristicQuantitySpec,CharacteristicQuantityScope as Scope
+from ..characteristic_fragments import (
+    CharacteristicQuantityReduction, CharacteristicQuantityScope as Scope, CharacteristicQuantitySpec,
+)
 from ..object_predicate import ObjectQuerySpec
 from ..continuous_effect_model import ContinuousEffect,ContinuousOperation,ContinuousEffectOrigin,Layer
 from .context import SemanticNodeError
@@ -54,7 +56,10 @@ class QuantifiedAnthemHandler:
         try:quantity=CharacteristicQuantitySpec.from_dict(modifier['quantity'])
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
         query=quantity.query
-        if (quantity.scope not in {Scope.CONTROLLER_ZONE,Scope.OPPONENT_ZONES,Scope.ALL_ZONES}
+        source_attachments = (quantity.scope is Scope.ATTACHED_TO_SOURCE and quantity.schema_version == 2
+            and quantity.reduction is CharacteristicQuantityReduction.OBJECT_COUNT)
+        if ((quantity.scope not in {Scope.CONTROLLER_ZONE,Scope.OPPONENT_ZONES,Scope.ALL_ZONES}
+                and not source_attachments)
                 or query is None or quantity.exclude_source or quantity.exclude_attached_object
                 or query.keywords_all or query.numeric_characteristic is not None):
             raise SemanticNodeError('Global modifiers require unambiguous layer-safe collection quantities')
