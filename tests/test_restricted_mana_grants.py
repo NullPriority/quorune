@@ -393,3 +393,287 @@ class ExactManaPoolPaymentNativeTests(unittest.TestCase):
         self.resolve_top(session)
         self.assertEqual(5, session.engine._numeric_stat(target.object_id, "power"))
         self.replay(session, load=True)
+
+
+class TypedManaSpendRuleTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = RestrictedManaGrantNativeTests.session
+    add = RestrictedManaGrantNativeTests.add
+    prepare = RestrictedManaGrantNativeTests.prepare
+    checkpoint = RestrictedManaGrantNativeTests.checkpoint
+    cast = RestrictedManaGrantNativeTests.cast
+    action = RestrictedManaGrantNativeTests.action
+    priority = RestrictedManaGrantNativeTests.priority
+    resolve = RestrictedManaGrantNativeTests.resolve
+    replay = RestrictedManaGrantNativeTests.replay
+    assert_closed = RestrictedManaGrantNativeTests.assert_closed
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "typed-mana-spend-rules.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "typed-mana-spend-rule-cards.json",
+            fixtures / "ability-source-counter-cards.json",
+            fixtures / "all-blocker-requirement-cards.json",
+            fixtures / "chosen-type-event-cards.json",
+            fixtures / "additional-conditional-modifier-cards.json",
+            fixtures / "enchanted-player-static-cards.json",
+            fixtures / "noncreature-subtype-quantity-cards.json",
+            fixtures / "scryfall-exact-lists.json",
+            fixtures / "self-public-zone-cards.json",
+            fixtures / "fixed-stack-spell-copy-cards.json",
+            fixtures / "fixed-resolution-mana-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Typed mana spending", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def resolve_top(self, session):
+        ref = session.state.stack[-1].ref
+        for _ in range(20):
+            if not any(item.ref == ref for item in session.state.stack):
+                return
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("The typed-mana witness did not resolve")
+
+    def actions(self, session, seat="A"):
+        return session.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+
+    def choose_type(self, session, subtype):
+        self.assertEqual("replacement.order", self.resolve(session).kind)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        option = next(row["id"] for row in options if row["id"].endswith(":" + subtype))
+        command = {"action_id": "choose", "choices": {"replacement": option}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def play_land(self, session, source, *, subtype=None):
+        self.priority(session, "A")
+        action_id = f"play-land:{source.ref}"
+        self.assertIn(action_id, {row["id"] for row in self.actions(session)})
+        result = session.act("pilot:A", {"action_id": action_id})
+        self.assertTrue(result.ok, result.summary)
+        if subtype is not None:
+            self.choose_type(session, subtype)
+            self.assertEqual(subtype, session.state.cards[source.object_id].annotations["chosen_creature_type"])
+
+    def produce(self, session, source, color, *, typed=True):
+        from quorune.mana_spend_rules import is_typed_mana_spend_rule
+
+        self.priority(session, "A")
+        ability = next(ability for ability in session.engine._activated_abilities(session.state.cards[source.object_id])
+            if ability.mana_ability and is_typed_mana_spend_rule(ability.mana_spend_restriction) == typed)
+        action_id = f"activate:{source.ref}:{ability.ability_id}"
+        self.assertIn(action_id, {row["id"] for row in self.actions(session)})
+        result = session.act("pilot:A", {"action_id": action_id, "mana_output": {color: 1}, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+
+    @staticmethod
+    def spell_item(session, card):
+        return next(item for item in session.state.stack if item.card_object_id == card.object_id)
+
+    def test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_spend_rules import decode_mana_spend_rule
+        from quorune.stack_counter import stack_item_can_be_countered
+
+        for restricted in (False, True):
+            with self.subTest(restricted=restricted):
+                session = self.session(10660101 + int(restricted))
+                engine = session.engine
+                cavern = self.add(engine, "Cavern of Souls", zone="hand")
+                goblin = self.add(engine, "Goblin Piker", zone="hand")
+                kindred = self.add(engine, "Tarfire", zone="hand")
+                counter = self.add(engine, "Counterspell", seat="B", zone="hand")
+                bounce = self.add(engine, "Boomerang", seat="B", zone="hand")
+                self.assert_closed(session, cavern)
+                self.prepare(session, mana={"C": 1} if restricted else {"R": 1})
+                session.state.players["B"].mana_pool["U"] = 4
+                self.checkpoint(session)
+                self.play_land(session, cavern, subtype="goblin")
+                self.produce(session, cavern, "R" if restricted else "C", typed=restricted)
+                if restricted:
+                    self.cast(session, "B", bounce, [cavern.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("hand", session.state.cards[cavern.object_id].zone)
+                    self.assertNotIn("chosen_creature_type", session.state.cards[cavern.object_id].annotations)
+                    lot, = mana_provenance_lots(session.state.players["A"])
+                    self.assertEqual("goblin", decode_mana_spend_rule(lot.restriction).chosen_type)
+                    self.priority(session, "A")
+                    self.assertNotIn(f"cast:{kindred.ref}", {row["id"] for row in self.actions(session)})
+                    before = authoritative_state_hash(session.state)
+                    rejected = session.act("pilot:A", {"action_id": f"cast:{kindred.ref}", "targets": ["D"], "pay": "auto"})
+                    self.assertFalse(rejected.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                self.cast(session, "A", goblin)
+                item = self.spell_item(session, goblin)
+                self.assertEqual(not restricted, stack_item_can_be_countered(engine, item))
+                self.assertFalse(mana_provenance_lots(session.state.players["A"]))
+                self.cast(session, "B", counter, [item.ref])
+                self.resolve_top(session)
+                self.assertEqual("stack" if restricted else "graveyard", session.state.cards[goblin.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_selected_creature_mana_is_offered_for_changeling_casts(self):
+        for index, name in enumerate(("Pillar of Origins", "Unclaimed Territory")):
+            with self.subTest(source=name):
+                session = self.session(10660104 + index)
+                source = self.add(session.engine, name, zone="hand")
+                changeling = self.add(session.engine, "Changeling Outcast", zone="hand")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 2} if index == 0 else None)
+                self.checkpoint(session)
+                if index == 0:
+                    self.cast(session, "A", source)
+                    self.choose_type(session, "goblin")
+                else:
+                    self.play_land(session, source, subtype="goblin")
+                self.cast(session, "A", changeling)
+                self.assertTrue(session.state.cards[source.object_id].tapped)
+                self.assertEqual("stack", session.state.cards[changeling.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_secluded_courtyard_pays_for_the_chosen_creature_source_ability(self):
+        from quorune.mana_provenance import mana_provenance_lots
+
+        session = self.session(10660106)
+        courtyard = self.add(session.engine, "Secluded Courtyard", zone="hand")
+        creature = self.add(session.engine, "Walking Ballista")
+        creature.counters["+1/+1"] = 1
+        self.assert_closed(session, courtyard)
+        self.prepare(session, mana={"C": 3})
+        self.checkpoint(session)
+        self.play_land(session, courtyard, subtype="construct")
+        self.produce(session, courtyard, "U")
+        self.priority(session, "A")
+        action = next(row for row in self.actions(session) if row["id"].startswith(f"activate:{creature.ref}:"))
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        self.assertEqual(2, session.state.cards[creature.object_id].counters["+1/+1"])
+        self.assertFalse(mana_provenance_lots(session.state.players["A"]))
+        self.replay(session, load=True)
+
+    def test_ringhart_crest_preserves_its_independent_legendary_creature_branch(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_restrictions import mana_restriction_allows, spell_mana_spend_context
+
+        session = self.session(10660107)
+        source = self.add(session.engine, "Kolvori, God of Kinship // The Ringhart Crest", zone="hand")
+        other_subtype = self.add(session.engine, "Squee, the Immortal", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "G": 1, "R": 2})
+        self.checkpoint(session)
+        face = "The Ringhart Crest"
+        action_id = f"cast:{source.ref}:face:{face}"
+        self.assertIn(action_id, {row["id"] for row in self.actions(session)})
+        result = session.act("pilot:A", {"action_id": action_id, "face": face, "pay": "manual",
+            "payment": {"C": 1, "G": 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.choose_type(session, "elf")
+        self.assertEqual("The Ringhart Crest", session.state.cards[source.object_id].active_face)
+        self.produce(session, source, "G")
+        lot, = mana_provenance_lots(session.state.players["A"])
+        self.assertFalse(mana_restriction_allows(lot.restriction, spell_mana_spend_context("Legendary Artifact")))
+        self.assertFalse(mana_restriction_allows(lot.restriction, spell_mana_spend_context("Creature — Goblin")))
+        self.cast(session, "A", other_subtype)
+        self.assertEqual("stack", session.state.cards[other_subtype.object_id].zone)
+        self.assertFalse(mana_provenance_lots(session.state.players["A"]))
+        self.replay(session, load=True)
+
+    def test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.stack_counter import stack_item_can_be_countered
+
+        for index, target in enumerate(("Divination", "Universal Automaton", "Walking Ballista")):
+            with self.subTest(target=target):
+                session = self.session(10660108 + index)
+                engine = session.engine
+                source = self.add(engine, "Boseiju, Who Shelters All")
+                use = self.add(engine, target, zone="battlefield" if index == 2 else "hand")
+                counter = self.add(engine, "Counterspell", seat="C", zone="hand")
+                twincast = self.add(engine, "Twincast", seat="B", zone="hand")
+                copy_counter = self.add(engine, "Counterspell", seat="B", zone="hand", ref="boseiju-copy-counter")
+                next_spell = self.add(engine, "Dark Ritual", zone="hand")
+                if index == 2:
+                    use.counters["+1/+1"] = 1
+                self.assert_closed(session, source)
+                available = {"C": 1, "U": 1} if index == 0 else {"C": 3, "B": 1} if index == 2 else None
+                self.prepare(session, mana=available)
+                session.state.players["B"].mana_pool["U"] = 4
+                session.state.players["C"].mana_pool["U"] = 2
+                self.checkpoint(session)
+                self.produce(session, source, "C")
+                self.assertEqual(38, session.state.players["A"].life)
+                if index == 2:
+                    self.priority(session, "A")
+                    action = next(row for row in self.actions(session) if row["id"].startswith(f"activate:{use.ref}:"))
+                    result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                    self.resolve_top(session)
+                    self.assertFalse(mana_provenance_lots(session.state.players["A"]))
+                    self.cast(session, "A", next_spell)
+                    self.assertTrue(stack_item_can_be_countered(engine, self.spell_item(session, next_spell)))
+                else:
+                    self.cast(session, "A", use)
+                    original = self.spell_item(session, use)
+                    self.assertEqual(index != 0, stack_item_can_be_countered(engine, original))
+                    self.cast(session, "C", counter, [original.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("stack" if index == 0 else "graveyard", session.state.cards[use.object_id].zone)
+                    if index == 0:
+                        self.cast(session, "B", twincast, [original.ref])
+                        self.resolve_top(session)
+                        copied = next(item for item in session.state.stack if item.kind == "spell_copy")
+                        self.assertTrue(stack_item_can_be_countered(engine, copied))
+                        self.cast(session, "B", copy_counter, [copied.ref])
+                        self.resolve_top(session)
+                        self.assertFalse(any(item.ref == copied.ref for item in session.state.stack))
+                    self.assertFalse(mana_provenance_lots(session.state.players["A"]))
+                self.replay(session, load=True)
+
+    def test_typed_spend_rule_and_runtime_authority_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.fixed_mana_abilities import FIXED_MANA_HANDLER_ID, FIXED_MANA_SPEND_RULE_HANDLER_ID
+        from quorune.mana_provenance import ManaProvenanceLot
+        from quorune.mana_spend_rules import MANA_SPEND_RULE_CAPABILITY
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.semantic_runtime.mana_abilities import default_fixed_mana_ability_registry
+
+        session = self.session(10660111)
+        source = self.add(session.engine, "Cavern of Souls")
+        self.assert_closed(session, source)
+        program = next(program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+            if any(desc["handler_id"] == FIXED_MANA_SPEND_RULE_HANDLER_ID for desc in program.handlers))
+        descriptor = next(desc for desc in program.handlers if desc["handler_id"] == FIXED_MANA_SPEND_RULE_HANDLER_ID)
+        legacy = {**descriptor, "handler_id": FIXED_MANA_HANDLER_ID, "schema_version": 1}
+        with self.assertRaisesRegex(SemanticNodeError, "schema version four"):
+            default_fixed_mana_ability_registry().validate(legacy)
+        with self.assertRaisesRegex(ValueError, "production-bound"):
+            ManaProvenanceLot.create({"R": 1}, restriction=descriptor["ability"]["spend_restriction"])
+        orphaned = replace(program, handlers=[item for item in program.handlers if item is not descriptor])
+        binding = bind_semantic_program_runtime(orphaned, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(any("Typed mana catalog requires" in blocker for blocker in binding["blockers"]))
+        dependencies = tuple(dep for dep in program.capability_dependencies if dep != MANA_SPEND_RULE_CAPABILITY)
+        unbound = replace(program, capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(unbound, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + MANA_SPEND_RULE_CAPABILITY, binding["blockers"])
+        with patch("quorune.fixed_mana_abilities.fixed_mana_spend_rule_template", return_value=None):
+            ir = compile_oracle_card(self.db.lookup("Cavern of Souls"), capability_registry=self.registry,
+                capability_profile="commander_review")
+        self.assertTrue(ir.material_residuals)

@@ -23,6 +23,7 @@ from ..fixed_mana_abilities import (
     compile_fixed_activated_mana_ability,
     fixed_mana_handler_descriptor,
 )
+from ..mana_spend_rules import MANA_SPEND_RULE_CAPABILITY, decode_mana_spend_rule
 from ..effect_contracts import REANIMATE_OPERATION
 from ..fixed_top_exile import FIXED_TOP_EXILE_OPERATION
 from ..preparation_model import PREPARATION_RESULT_OPERATION
@@ -101,6 +102,8 @@ def fixed_activated_mana_node(
             capability_profile, residuals, source_name=source_name,
         )
     capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
+    if decode_mana_spend_rule(spec.spend_restriction) is not None:
+        capabilities.append(MANA_SPEND_RULE_CAPABILITY)
     if spec.choices:capabilities.extend(('activation.selected_zone_change.fixed','activation.selected_tap.fixed'))
     if spec.result is not None:
         from ..fixed_mana_results import FIXED_MANA_RESULT_CAPABILITY

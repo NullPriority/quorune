@@ -88037,6 +88037,98 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Produce a typed mana lot with a chosen creature spending rule or an eligible paid spell counter-protection rider.",
+        "inputs": [
+          "closed fixed-output mana ability",
+          "canonical source designation at production",
+          "actual consumed mana and typed spend context"
+        ],
+        "outputs": [
+          "production-bound restriction",
+          "shared funding and payment eligibility",
+          "counter protection on the spell that spends its eligible lot"
+        ],
+        "exclusions": [
+          "unsupported paid-result riders",
+          "untethered chosen-type substitutions",
+          "copies of protected spells"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.activated.restricted_fixed_output"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and the versioned fixed-output handler both require typed spending authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.activated.typed_spend_rules",
+      "implementation_components": [
+        "quorune.fixed_mana_spend_templates.fixed_mana_spend_rule_template",
+        "quorune.semantic_runtime.mana_abilities.FixedManaSpendRuleAbilityHandler",
+        "quorune.mana_spend_rules.bind_mana_spend_rule",
+        "quorune.mana_restrictions.mana_restriction_allows",
+        "quorune.mana_provenance.ManaProvenanceHostMixin._apply_mana_spend"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed parser restores the original clause residual. Live witnesses distinguish the chosen subtype, card type, ability-source eligibility and consumption rider.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_selected_creature_mana_is_offered_for_changeling_casts",
+        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "multiplayer_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "negative_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana",
+        "test_typed_spend_rule_and_runtime_authority_fail_closed"
+      ],
+      "official_rules": [
+        "106.6",
+        "601.2h",
+        "605.1a",
+        "605.3b",
+        "701.6a",
+        "707.2"
+      ],
+      "positive_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_selected_creature_mana_is_offered_for_changeling_casts",
+        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "privacy_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending"
+      ],
+      "replay_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_selected_creature_mana_is_offered_for_changeling_casts",
+        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -88045,7 +88137,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 775,
+  "registry_version": 776,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

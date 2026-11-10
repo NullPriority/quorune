@@ -964,6 +964,7 @@
     "tests/fixtures/typecycling-cards.json",
     "tests/fixtures/typed-grant-carrier-cards.json",
     "tests/fixtures/typed-land-entry-cards.json",
+    "tests/fixtures/typed-mana-spend-rule-cards.json",
     "tests/fixtures/typed-token-ability-program-cards.json",
     "tests/fixtures/typed-trigger-participation-cards.json",
     "tests/fixtures/typed-trigger-participation-controls.json",

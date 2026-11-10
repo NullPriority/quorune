@@ -13,6 +13,7 @@ from .color_set_mana_abilities import (
 )
 from .errors import GameRuleError
 from .mana import ManaMode, ManaModePrice
+from .mana_spend_rules import bind_mana_spend_rule
 from .object_query import object_query_result, query_objects
 from .util import normalize_mana_bundle
 from .chosen_color_mana_runtime import chosen_color_mana_output, chosen_color_mana_modes
@@ -147,16 +148,14 @@ def mana_modes_for_ability(
             {"op": "pay_life", "amount": ability.life_payment}
         )
     side_effects.extend(_mana_result_effects(ability))
+    restriction = bind_mana_spend_rule(ability.mana_spend_restriction, source)
 
     def decorated(modes: tuple[ManaMode, ...]) -> tuple[ManaMode, ...]:
         return tuple(
             ManaMode(
                 mode.bundle,
                 conditional=mode.conditional,
-                restriction=(
-                    ability.mana_spend_restriction
-                    or mode.restriction
-                ),
+                restriction=restriction or mode.restriction,
                 side_effects=tuple(side_effects) or mode.side_effects,
                 requires_choice=bool(ability.choices) or mode.requires_choice,
                 tap_source=ability.tap_source,

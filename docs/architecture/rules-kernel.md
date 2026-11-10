@@ -679,6 +679,14 @@ input, then taps the source and produces mana. A manual plan provides the
 same ordered steps. Other separately priced forms use explicit activation.
 See [ADR 0163](../adr/0163-ordered-hybrid-mana-payments.md).
 
+A chosen-type mana ability binds the source's creature subtype when it
+produces the mana. The resulting lot carries its own spell or creature-source
+ability restriction. Spending checks both the relevant card type and the
+bound subtype. A separate legendary creature option checks the spell's type
+and supertype. A counter-protection rider applies to the eligible spell that
+actually spends its lot. An unrestricted lot can also pay ordinary costs.
+The production, funding, and commit paths share these typed rules.
+
 Fixed triggered mana observes a completed activation that paid its own tap
 symbol and produced mana. Current layer-six abilities select attached lands,
 qualifying permanents tapped by their controller, or lands of a specified type.

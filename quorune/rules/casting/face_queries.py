@@ -22,6 +22,24 @@ def prospective_cast_card(host,card,face_name=None):
     return replace(card,active_face=str(face['name']),annotations={**card.annotations,'prospective_cast_face':True})
 
 
+TYPED_MANA_SPEND_TYPE_LINE_FIELD = "typed_mana_spend_type_line"
+
+
+def typed_mana_spend_details(host, cast_view, type_line, *, use_selected_type):
+    """Carry the funding query's effective spell type to typed payment commit."""
+    if use_selected_type:
+        return {}
+    effective = str(host._effective_card_data(cast_view).get("type_line") or "")
+    if not effective or effective == type_line:
+        return {}
+    from ...mana_spend_rules import MANA_SPEND_RULE_CAPABILITY
+
+    if any(MANA_SPEND_RULE_CAPABILITY in program.capability_dependencies
+           for program in host.semantics.programs_for_event("activate")):
+        return {TYPED_MANA_SPEND_TYPE_LINE_FIELD: effective}
+    return {}
+
+
 def prospective_cast_record(record,face):
     return replace(record,type_line=str(face.get('type_line') or ''),mana_cost=str(face.get('mana_cost') or '')) if face else record
 

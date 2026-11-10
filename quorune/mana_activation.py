@@ -17,6 +17,7 @@ from .mana_undo import (
     ReversibleManaActivation,
 )
 from .mana_mode_effects import apply_mana_mode_effects
+from .mana_spend_rules import bind_mana_spend_rule
 from .util import normalize_mana_bundle, pay_mana_from_pool
 from .tap_state import set_permanent_tapped
 from .mana_source_discovery import mana_plan_abilities
@@ -101,7 +102,7 @@ def complete_mana_activation(
 
     bundle = mana_output_for_ability(host, seat, source, ability, triggered_mana_base_response(response),
         source_information=source_information)
-    restriction = ability.mana_spend_restriction
+    restriction = bind_mana_spend_rule(ability.mana_spend_restriction, source)
     host._add_mana_to_pool(
         seat,
         bundle,

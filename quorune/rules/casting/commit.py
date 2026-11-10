@@ -77,6 +77,7 @@ from ...trigger_processing import enqueue_trigger_batch
 from ..target_announcements import (
     collect_legacy_paid_ward_occurrences, dispatch_legacy_paid_target_announcements,
 )
+from ...mana_spend_rules import consume_paid_mana_protection
 from .source_placement import AnnouncedCastGrants, observe_cast_source_placement
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
@@ -1005,10 +1006,11 @@ def _create_spell_item(
             if type(spent.get(color, 0)) is int and spent.get(color, 0) > 0
         ),
         mana_spent_counts=capture_spell_mana_counts(host.state.spell_mana_counts_version,card,spent),
-        context=declared_spell_context(proposal,details,selected_option,costs,
+        context={**declared_spell_context(proposal,details,selected_option,costs,
             provenance=_cast_provenance_context(proposal,spent,state=host.state,record=record,card=card),
             lifecycle_context=lifecycle_context,method_spec=method_spec,used_uncounterable=used_uncounterable,
             intrinsic_uncounterable=intrinsic_uncounterable,used_improvise=used_improvise,next_payments=next_payments),
+            **({} if preparing else consume_paid_mana_protection(host.state.players[proposal.seat].stats))},
     )
 
 
@@ -1481,7 +1483,8 @@ def _commit_cast_costs_and_stack(
     spliced_cards = announce_splice_sources(host, proposal, card, selected_option)
     from .spell_mana_payments import capture_spell_mana_payment
     excluded = {payment_card.object_id for payment_card in tap_cards}
-    spend_context = host._spell_mana_spend_context(proposal.type_line)
+    from .face_queries import TYPED_MANA_SPEND_TYPE_LINE_FIELD
+    spend_context = host._spell_mana_spend_context(details.get(TYPED_MANA_SPEND_TYPE_LINE_FIELD, proposal.type_line))
     blight_payment = prepare_blight_cast_payment(host, proposal, selected_option, response)
     if assist is not None:
         apply_assist_cast_mana(host, assist, proposal, card, response, spend_context=spend_context,

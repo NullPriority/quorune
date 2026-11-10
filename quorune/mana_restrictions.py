@@ -6,6 +6,7 @@ from __future__ import annotations
 from .mana_restriction_model import (
     _token, _typed_restriction, canonical_mana_spend_restriction, valid_mana_spend_restriction,
 )
+from .mana_spend_rules import decode_mana_spend_rule
 
 _CONTEXT_PREFIX = "mana-spend-v1"
 _LEGACY_RESTRICTION_TAILS = {
@@ -132,6 +133,9 @@ def mana_restriction_allows(
     """Return whether one typed restricted unit may pay in this context."""
 
     kind, types, subtypes, supertypes = _context_facts(spend_context)
+    rule = decode_mana_spend_rule(restriction)
+    if rule is not None:
+        return rule.allows(kind, types, subtypes, supertypes)
     is_spell = kind == "spell"
     is_artifact = "artifact" in types
     is_creature = "creature" in types
@@ -169,6 +173,11 @@ def mana_restriction_allows(
         elif observed.intersection(values):
             return True
     return False
+
+
+def mana_spend_protects_spell(restriction: str, spend_context: str | None) -> bool:
+    rule = decode_mana_spend_rule(restriction)
+    return rule is not None and rule.protects(*_context_facts(spend_context))
 
 
 __all__ = [

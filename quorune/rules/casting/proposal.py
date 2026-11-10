@@ -775,6 +775,7 @@ def build_cast_proposal(
             else getattr(program, "target_schema", None)
         ),
     )
+    cast_view = prospective_cast_card(host, card, str(face.get("name")) if face else None)
     (
         selected_dict,
         targets,
@@ -786,12 +787,13 @@ def build_cast_proposal(
     ) = _cast_targets_and_tap_costs(
         host,
         request,
-        prospective_cast_card(host,card,str(face.get('name')) if face else None),
+        cast_view,
         program,
         selected,
         aura_target_schema,
     )
     from ...announced_damage import cast_allocation_details
+    from .face_queries import typed_mana_spend_details
     allocation = cast_allocation_details(
         target_schema if target_schema is not None else getattr(program, "target_schema", None), targets, response,
     )
@@ -815,6 +817,8 @@ def build_cast_proposal(
         details=freeze_json(
             {
                 **_classic_flash_proposal_details(host,request,card,face),
+                **typed_mana_spend_details(host, cast_view, type_line,
+                    use_selected_type=bool(selected_dict.get("cast_type_line")) or request.cast_method in FACE_DOWN_CAST_METHODS),
                 **allocation,
                 "selected_cost_option": selected_dict,
                 "selected_modes": selected_modes,

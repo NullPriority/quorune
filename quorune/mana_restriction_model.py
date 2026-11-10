@@ -72,7 +72,25 @@ def _typed_restriction(
 
 
 def valid_mana_spend_restriction(value: object) -> bool:
-    return bool(
-        isinstance(value, str)
-        and (value in _LEGACY_RESTRICTIONS or _typed_restriction(value) is not None)
-    )
+    return bool(isinstance(value, str)
+        and (value in _LEGACY_RESTRICTIONS or _typed_restriction(value) is not None))
+
+
+def valid_produced_mana_spend_restriction(value: object) -> bool:
+    from .mana_spend_rules import decode_mana_spend_rule
+
+    try:
+        rule = decode_mana_spend_rule(value)
+    except ValueError:
+        return False
+    return not rule.is_template if rule is not None else valid_mana_spend_restriction(value)
+
+
+def valid_mana_ability_spend_restriction(value: object) -> bool:
+    from .mana_spend_rules import decode_mana_spend_rule
+
+    try:
+        rule = decode_mana_spend_rule(value)
+    except ValueError:
+        return False
+    return (not rule.bound if rule is not None else valid_mana_spend_restriction(value))

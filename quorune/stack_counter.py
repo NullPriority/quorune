@@ -4,6 +4,7 @@ from collections.abc import Callable, Mapping, Sequence
 from typing import Any, Protocol
 
 from .errors import GameRuleError
+from .mana_spend_rules import paid_mana_protects_cast
 from .model import StackItem
 from .rules.next_cast_counter_protection import announced_cast_is_protected
 from .semantic_runtime.static_cast_rules import static_stack_item_uncounterable
@@ -65,7 +66,7 @@ def stack_item_can_be_countered(
     host: StackCounterHost,
     item: StackItem,
 ) -> bool:
-    if item.context.get("cant_be_countered") or announced_cast_is_protected(item):
+    if item.context.get("cant_be_countered") or announced_cast_is_protected(item) or paid_mana_protects_cast(item):
         return False
     if static_stack_item_uncounterable(host, item):
         return False
