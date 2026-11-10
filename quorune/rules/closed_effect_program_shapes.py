@@ -111,11 +111,17 @@ def closed_effect_program_runtime_dependencies(program):
         if CLOSED_EFFECT_PROGRAM_CAPABILITY not in required:raise ValueError('Modal ordered-program annotation has no owning branch')
         return tuple(sorted({*required,*modal_owned}))
     if any(has_target_controller_recipient(effect) for effect in program.effects):
+        from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
+
+        projected = public_query_amount_shape_context(program.effects, set(program.coverage), target_schema=schema)
+        if projected is None:
+            raise ValueError("A target controller result requires its closed amount shape")
+        effects, mechanics = projected
         owned = closed_effect_program_node_capabilities(
-            effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
+            effects=effects, target_schema=schema, mechanic_ids=mechanics,
         )
         if not owned:
-            raise ValueError("Target controller damage requires its preceding closed target instruction")
+            raise ValueError("A target controller result requires its preceding closed target instruction")
         return owned
     if any(has_target_controller_search_role(effect) for effect in program.effects):
         owned = closed_effect_program_node_capabilities(

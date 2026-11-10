@@ -3616,6 +3616,8 @@
         "quorune/rules/closed_effect_program_shapes.py",
         "quorune/rules/fixed_effect_clause_shapes.py",
         "quorune/rules/modal_node_capabilities.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/target_controller_information.py",
         "tests/fixtures/bound-effect-program-cards.json",
         "tests/fixtures/target-controller-damage-cards.json",
         "tests/test_bound_effect_programs.py"

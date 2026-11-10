@@ -2555,6 +2555,13 @@ unsupported leaves, and unrepresented conditional or optional linkage remain
 residual. Whole-program integration may admit these bounded combinations while
 the original unbound leaf composition correctly continues to reject them.
 
+An ordered zone change can also bind a draw or life instruction to the target's
+controller. When the target leaves, the result uses its departure controller.
+A power or toughness amount reads the same departing incarnation. A count of
+deaths this turn includes deaths that occurred while paying the cost and during
+the preceding destruction instruction. A legal indestructible target still
+supplies its controller.
+
 A fixed optional library search can follow destruction or exile of one
 mandatory, nonmodal battlefield target. The same controller reference binds
 both the optional decision and the private search of that player's library.
