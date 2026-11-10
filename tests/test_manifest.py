@@ -16,6 +16,36 @@ def manifest_record(text: str) -> CardRecord:
 
 
 class ManifestCompilerTests(unittest.TestCase):
+    def test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.fixed_public_event_trigger_bindings import _face_transition_spec
+        from quorune.face_up_effect_model import FACE_DOWN_ENTRY_CAPABILITY, TURN_FACE_UP_ACTOR_CAPABILITY
+        from quorune.semantics import SemanticProgram
+
+        registry = load_default_capability_registry()
+        deps = ("trigger.effect.fixed_event",)
+        for line, capability in (
+            ("Whenever a face-down creature you control enters, draw a card.", FACE_DOWN_ENTRY_CAPABILITY),
+            ("Whenever you turn a permanent face up, draw a card.", TURN_FACE_UP_ACTOR_CAPABILITY),
+        ):
+            spec = _face_transition_spec(line)
+            self.assertIn(capability, spec.capabilities)
+            program = SemanticProgram("fixture:face-transition", "Face transition", event=spec.event,
+                event_condition=spec.condition, active_zone="battlefield", capability_dependencies=deps,
+                capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(program, capability_registry=registry, profile="commander_review")
+            self.assertIn("capability:undeclared_runtime_dependency:" + capability, binding["blockers"])
+            forged = replace(program, event="permanent.leave")
+            binding = bind_semantic_program_runtime(forged, capability_registry=registry, profile="commander_review")
+            self.assertTrue(any("closed battlefield subscription" in blocker for blocker in binding["blockers"]))
+        self.assertIsNone(_face_transition_spec("Whenever a face-down creature an opponent controls enters, draw a card."))
+        with patch("quorune.compiler.fixed_public_event_trigger_bindings.re.fullmatch", return_value=None):
+            with self.assertRaises(AssertionError):
+                self.assertIsNotNone(_face_transition_spec("Whenever you turn a permanent face up, draw a card."))
+
     def test_manifest_equipment_entry_requires_its_own_capability_and_closed_trigger(self):
         from dataclasses import replace
         from unittest.mock import patch
@@ -266,6 +296,98 @@ class ManifestEntryOwnerTests(unittest.TestCase):
     cast_for = _Native.cast_for
     resolve_top = _Native.resolve_top
     assert_closed = _Native.assert_closed
+
+    def test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition(self):
+        for suppressed in (False, True):
+            with self.subTest(suppressed=suppressed):
+                session = self.session(708301 + suppressed)
+                pipes = self.add(session.engine, "They Came from the Pipes")
+                threats = self.add(session.engine, "Threats Around Every Corner")
+                spell = self.add(session.engine, "Soul Summons", zone="hand")
+                face_up = self.add(session.engine, "Viashino Firstblade", zone="hand")
+                hidden = self.add(session.engine, "Lightning Bolt", zone="library", ref="face-down-entrant")
+                if suppressed:
+                    self.add(session.engine, "Hushbringer", seat="B")
+                library = session.state.players["A"].zones["library"]
+                library.remove(hidden.object_id)
+                library.append(hidden.object_id)
+                for source in (pipes, threats, spell):
+                    self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 5, "R": 1, "W": 2})
+                self.checkpoint(session)
+                hand = len(session.state.players["A"].zones["hand"])
+                self.cast_for(session, "A", spell)
+                if not suppressed:
+                    self.assertEqual("trigger.order", self.resolve(session).kind)
+                    packet = session.packet("pilot:A", full=True)["decision"]
+                    refs = [trigger["id"] for trigger in packet["ctx"]["triggers"]]
+                    self.assertEqual(2, len(refs))
+                    result = session.act("pilot:A", {"action_id": "order", "triggers": refs})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual({pipes.object_id, threats.object_id},
+                                     {item.source_object_id for item in session.state.stack})
+                    self.assertEqual("semantic.search", self.resolve(session).kind)
+                    session = self.replay(session, load=True)
+                    result = session.act("pilot:A", {"action_id": "choose", "cards": []})
+                    self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertTrue(session.state.cards[hidden.object_id].face_down)
+                expected_hand = hand - 1 + int(not suppressed)
+                self.assertEqual(expected_hand, len(session.state.players["A"].zones["hand"]))
+                self.assertNotIn("Lightning Bolt", str(session.packet("pilot:B", full=True)))
+                self.cast_for(session, "A", face_up)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(expected_hand - 1, len(session.state.players["A"].zones["hand"]))
+                self.replay(session)
+
+    def test_original_turn_up_observers_distinguish_actor_controller_and_once_per_turn(self):
+        session = self.session(708801)
+        ours = self.add(session.engine, "Growing Dread", ref="turn-up-ours")
+        theirs = self.add(session.engine, "Growing Dread", seat="B", ref="turn-up-theirs")
+        identity = self.add(session.engine, "True Identity")
+        ambush = self.add(session.engine, "Ethereal Ambush", zone="hand")
+        other_effect = self.add(session.engine, "Break Open", seat="B", zone="hand")
+        self.add(session.engine, "Mountain", seat="B", ref="turn-up-red")
+        self.add(session.engine, "Generic Bound Plains", seat="B", ref="turn-up-generic")
+        first = self.add(session.engine, "Viashino Firstblade", zone="library", ref="turn-up-own-choice")
+        second = self.add(session.engine, "Grizzly Bears", zone="library", ref="turn-up-foreign-effect")
+        library = session.state.players["A"].zones["library"]
+        for card in (first, second):
+            library.remove(card.object_id)
+        library.extend((second.object_id, first.object_id))
+        for source in (ours, theirs, identity, ambush, other_effect):
+            self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 5, "G": 1, "U": 1, "W": 1, "R": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", ambush)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(all(session.state.cards[card.object_id].face_down for card in (first, second)))
+        hand = len(session.state.players["A"].zones["hand"])
+        self.cast_for(session, "B", other_effect, [second.ref])
+        self.resolve_top(session)
+        self.assertEqual({(theirs.object_id, "B"), (identity.object_id, "A")},
+                         {(item.source_object_id, item.controller) for item in session.state.stack})
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        packet = session.packet("pilot:A", full=True)["decision"]
+        visible = packet["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        result = session.act("pilot:A", {"action_id": "choose", "cards": {"top": visible, "bottom": []}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 1}, session.state.cards[second.object_id].counters)
+        self.assertEqual(hand + 1, len(session.state.players["A"].zones["hand"]))
+        session = self.replay(session, load=True)
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"] == f"turn-face-up:{first.ref}:manifest")
+        result = session.act("pilot:A", {"action_id": offer["id"]})
+        self.assertTrue(result.ok, result.summary)
+        trigger, = session.state.stack
+        self.assertEqual((ours.object_id, "A"), (trigger.source_object_id, trigger.controller))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 1}, session.state.cards[first.object_id].counters)
+        self.assertEqual(hand + 1, len(session.state.players["A"].zones["hand"]))
+        self.replay(session)
 
     def test_original_wildcall_applies_announced_counters_after_entry_and_replays_replacement(self):
         session = self.session(311113)

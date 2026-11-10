@@ -73739,6 +73739,79 @@
     {
       "applicability": {
         "exclusions": [
+          "Unrepresented face transitions or zones",
+          "Printed hidden identities"
+        ],
+        "inputs": [
+          "Sealed public face-transition facts"
+        ],
+        "outputs": [
+          "Existing trigger discovery and APNAP placement"
+        ],
+        "summary": "A current battlefield observer may read the committed entrant's public face-down state and effective types."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "The typed event condition independently infers its capability and checks the original event and active zone.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.face_down_entry",
+      "implementation_components": [
+        "quorune.compiler.fixed_public_event_trigger_bindings._face_transition_spec",
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.rules.event_subscriptions.face_transition_event_dependencies"
+      ],
+      "implementation_mutation_rationale": "Omitting the exact face-transition head fails the compiler witness. A face-down instant triggers the creature observer, ordinary face-up entry does not, and an entering-creature prohibition suppresses both observers.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+      ],
+      "multiplayer_tests": [
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+      ],
+      "negative_tests": [
+        "test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority",
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+      ],
+      "official_rules": [
+        "603.2",
+        "603.3b",
+        "603.6a",
+        "708.2",
+        "708.3",
+        "708.5"
+      ],
+      "positive_tests": [
+        "test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority",
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+      ],
+      "privacy_tests": [
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+      ],
+      "replay_tests": [
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "privacy"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "later life-gain ordinals, occurrence amounts or source-linked results",
           "unrepresented source zones and legacy checkpoints without the mode"
         ],
@@ -77338,6 +77411,81 @@
         "multiplayer",
         "privacy",
         "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "Unrepresented face transitions or zones",
+          "Printed hidden identities"
+        ],
+        "inputs": [
+          "Sealed public face-transition facts"
+        ],
+        "outputs": [
+          "Existing trigger discovery and APNAP placement"
+        ],
+        "summary": "Read the actual acting player for a face-up action or effect, independently of the turned permanent's controller."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_public_action",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "The typed event condition independently infers its capability and checks the original event and active zone.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.turn_face_up_actor",
+      "implementation_components": [
+        "quorune.compiler.fixed_public_event_trigger_bindings._face_transition_spec",
+        "quorune.rules.morph_actions.dispatch_permanent_turn_face_up",
+        "quorune.effect_runtime.face_up.apply_targeted_face_up",
+        "quorune.event_counter_reference.event_counter_recipient_context",
+        "quorune.rules.event_subscriptions.face_transition_event_dependencies"
+      ],
+      "implementation_mutation_rationale": "Omitting the exact face-transition head fails the compiler witness. The opponent's actual Break Open and the controller's Manifest turn-up trigger distinct actors. The passive observer follows the permanent's controller.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_turn_up_observers_distinguish_actor_controller_and_once_per_turn"
+      ],
+      "multiplayer_tests": [
+        "test_original_turn_up_observers_distinguish_actor_controller_and_once_per_turn"
+      ],
+      "negative_tests": [
+        "test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority",
+        "test_original_turn_up_observers_distinguish_actor_controller_and_once_per_turn"
+      ],
+      "official_rules": [
+        "400.7",
+        "603.2",
+        "603.3b",
+        "608.2h",
+        "708.7",
+        "708.8"
+      ],
+      "positive_tests": [
+        "test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority",
+        "test_original_turn_up_observers_distinguish_actor_controller_and_once_per_turn"
+      ],
+      "privacy_tests": [
+        "test_original_turn_up_observers_distinguish_actor_controller_and_once_per_turn"
+      ],
+      "replay_tests": [
+        "test_original_turn_up_observers_distinguish_actor_controller_and_once_per_turn"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "privacy"
       ],
       "status": "trusted",
       "supported_profiles": [
@@ -90577,7 +90725,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 805,
+  "registry_version": 806,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

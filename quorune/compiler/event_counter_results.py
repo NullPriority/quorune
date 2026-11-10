@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
+from ..face_up_effect_model import TURN_FACE_UP_EVENT
 from ..transform_timestamp_model import TRANSFORM_EVENT
 from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
@@ -83,7 +84,10 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     )
     tap=binding.event.value in {'permanent.tap','permanent.untap'} and binding.variant in {'public_tap_state_transition','source_public_tap_state_transition'}
     transform = binding.event.value == TRANSFORM_EVENT and binding.variant == "controlled_permanent_transforms_into"
-    if not (entry or action or tap or transform):return None
+    turn_up = binding.event.value == TURN_FACE_UP_EVENT and binding.variant in {
+        "controller_turns_up_permanent", "controlled_permanent_turned_face_up",
+    }
+    if not (entry or action or tap or transform or turn_up):return None
     if binding.variant.startswith('one_or_more') or binding.variant in {'aggregated_zone_event','independent_dual_event'}:return None
     operation = r'Put .+? counters? on'
     if binding.variant in ATTACHED_CREATURE_ATTACK_VARIANTS:

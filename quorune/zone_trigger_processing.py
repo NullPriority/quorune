@@ -149,6 +149,12 @@ def dispatch_zone_change_occurrence(
         record_zone_change_history(host, occurrence, events=events)
     for event in events:
         context = event.context
+        if event.kind == "permanent.enter" and getattr(card, "face_down", False):
+            from .face_up_effect_model import FACE_DOWN_ENTRY_CAPABILITY, FACE_DOWN_ENTRY_FIELD
+            from .rules.event_subscriptions import event_has_capability_subscriber
+
+            if event_has_capability_subscriber(host, event.kind, FACE_DOWN_ENTRY_CAPABILITY):
+                context = {**dict(context), FACE_DOWN_ENTRY_FIELD: True}
         if event.source_timing == "before":
             characteristics = departure_source_characteristics
             if event.kind == "creature.dies":

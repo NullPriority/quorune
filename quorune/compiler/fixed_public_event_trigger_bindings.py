@@ -11,6 +11,10 @@ from ..dungeon_progress import (
     DUNGEON_COMPLETED_EVENT, DUNGEON_COMPLETION_TRIGGER_VARIANT, DUNGEON_VENTURE_CAPABILITY,
 )
 from ..life_change import FIRST_LIFE_GAIN_CAPABILITY, FIRST_LIFE_GAIN_EVENT
+from ..face_up_effect_model import (
+    FACE_DOWN_ENTRY_CAPABILITY, FACE_DOWN_ENTRY_FIELD,
+    TURN_FACE_UP_ACTOR_CAPABILITY, TURN_FACE_UP_ACTOR_FIELD, TURN_FACE_UP_EVENT,
+)
 from ..class_levels import CLASS_MECHANIC_ID
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_entry_return_requirements import (
@@ -99,7 +103,7 @@ _PUBLIC_CYCLE_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _PUBLIC_FACE_UP_TRIGGER = re.compile(
-    r"^Whenever a permanent is turned face up, (?P<body>.+)$",
+    r"^Whenever (?:a permanent|this creature or another permanent) is turned face up, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_FACE_UP_TRIGGER = re.compile(
@@ -1085,7 +1089,42 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
     )
 
 
+def _face_transition_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    entry = re.fullmatch(r"Whenever a face-down (?P<kind>creature|permanent) you control enters, (?P<body>.+)",
+                         material_line, re.IGNORECASE)
+    if entry is not None:
+        conditions = [
+            {"field": FACE_DOWN_ENTRY_FIELD, "op": "eq", "value": True},
+            {"field": "controller", "op": "eq", "value": "$source.controller"},
+        ]
+        if entry["kind"].casefold() == "creature":
+            conditions.append({"field": "types", "op": "contains_any", "value": ["creature"]})
+        return _spec(
+            "permanent.enter", "controlled_face_down_permanent_enters", entry["body"],
+            "fixed-counter-face-down-entry-v1", "trigger-event-normalized-zone-change",
+            condition={"all": conditions}, capabilities=(FACE_DOWN_ENTRY_CAPABILITY,),
+        )
+    turned = re.fullmatch(
+        r"Whenever (?:(?P<active>you turn a permanent face up)|"
+        r"(?:a permanent you control|this enchantment or another permanent you control) is turned face up), "
+        r"(?P<body>.+)", material_line, re.IGNORECASE,
+    )
+    if turned is None:
+        return None
+    active = turned["active"] is not None
+    return _spec(
+        TURN_FACE_UP_EVENT, "controller_turns_up_permanent" if active else "controlled_permanent_turned_face_up",
+        turned["body"], "fixed-counter-public-face-up-trigger-v1", "trigger-event-normalized-public-action",
+        condition={"field": TURN_FACE_UP_ACTOR_FIELD if active else "controller",
+                   "op": "eq", "value": "$source.controller"},
+        capabilities=(TURN_FACE_UP_ACTOR_CAPABILITY,) if active else (),
+    )
+
+
 def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    transition = _face_transition_spec(material_line)
+    if transition is not None:
+        return transition
     dungeon = re.fullmatch(r"Whenever you complete a dungeon, (?P<body>.+)", material_line, re.IGNORECASE)
     if dungeon is not None:
         return _spec(

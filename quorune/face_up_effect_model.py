@@ -1,10 +1,15 @@
-"""Closed one-permanent face-up instruction and public target relation."""
+"""Closed face-up instructions and public face-transition facts."""
 from collections.abc import Mapping
 
 FACE_UP_EFFECT_OPERATION='turn_face_up'
 FACE_UP_EFFECT_CAPABILITY='permanent.face_up.effect'
 FACE_UP_EFFECT_MECHANIC='fixed-target-face-up'
 FACE_UP_EFFECT_RULES=('101.2','613.7f','701.20a','701.40g','708.8','730.2f','730.2g')
+TURN_FACE_UP_EVENT = "permanent.turned_face_up"
+TURN_FACE_UP_ACTOR_FIELD = "turn_face_up_actor"
+TURN_FACE_UP_ACTOR_CAPABILITY = "trigger.event.turn_face_up_actor"
+FACE_DOWN_ENTRY_FIELD = "entering_face_down"
+FACE_DOWN_ENTRY_CAPABILITY = "trigger.event.face_down_entry"
 
 
 def face_up_instruction(card='$target.0'):

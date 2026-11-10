@@ -13,6 +13,10 @@ from ..continuous_conditions import (
 )
 from ..dungeon_progress import DUNGEON_COMPLETED_EVENT, DUNGEON_VENTURE_CAPABILITY
 from ..errors import GameRuleError
+from ..face_up_effect_model import (
+    FACE_DOWN_ENTRY_CAPABILITY, FACE_DOWN_ENTRY_FIELD,
+    TURN_FACE_UP_ACTOR_CAPABILITY, TURN_FACE_UP_ACTOR_FIELD, TURN_FACE_UP_EVENT,
+)
 from ..replacement.immutable import FrozenMap, freeze_value, thaw_value
 from ..scheduled_player import (
     UPKEEP_HAND_COUNT_CAPABILITY, UpkeepParticipantHandCondition,
@@ -206,6 +210,44 @@ def dungeon_completion_dependencies(program, subscriptions: FixedEventSubscripti
     if player is None or program.event_condition != {"field": "player", "op": "eq", "value": player}:
         raise EventSubscriptionError("Dungeon completion requires a source-relative completion subscription")
     return (DUNGEON_VENTURE_CAPABILITY,)
+
+
+def event_has_capability_subscriber(host, event, capability):
+    semantics = getattr(host, "semantics", None)
+    return semantics is not None and any(
+        capability in program.capability_dependencies for program in semantics.programs_for_event(event)
+    )
+
+
+def face_transition_event_dependencies(program, subscriptions):
+    required = set()
+    scopes = {
+        FACE_DOWN_ENTRY_FIELD: ("permanent.enter", FACE_DOWN_ENTRY_CAPABILITY, True),
+        TURN_FACE_UP_ACTOR_FIELD: (TURN_FACE_UP_EVENT, TURN_FACE_UP_ACTOR_CAPABILITY, "$source.controller"),
+    }
+
+    def visit(event, value):
+        if isinstance(value, Mapping):
+            field = value.get("field")
+            if isinstance(field, str) and field in scopes:
+                expected_event, capability, expected_value = scopes[field]
+                if (event != expected_event or program.active_zone != "battlefield"
+                        or value != {"field": field, "op": "eq", "value": expected_value}
+                        or type(value["value"]) is not type(expected_value)):
+                    raise EventSubscriptionError("Face-transition facts require their closed battlefield subscription")
+                required.add(capability)
+            for child in value.values():
+                visit(event, child)
+        elif isinstance(value, (tuple, list)):
+            for child in value:
+                visit(event, child)
+
+    if subscriptions is None:
+        visit(program.event, program.event_condition)
+    else:
+        for child in subscriptions.subscriptions:
+            visit(child.event, child.condition)
+    return tuple(sorted(required))
 
 
 def _upkeep_hand_condition_leaf(condition: Mapping[str, Any] | None) -> Mapping[str, Any] | None:

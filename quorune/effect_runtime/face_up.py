@@ -4,6 +4,7 @@ from ..face_up_effect_model import validate_face_up_instruction
 
 
 def apply_targeted_face_up(host,effect,*,actor,operation,reason):
+    from ..rules.morph_actions import dispatch_permanent_turn_face_up
     from ..zone_transitions import ZoneTransitionOwner
     try:validate_face_up_instruction(effect,allow_runtime_source=True)
     except ValueError as exc:raise GameRuleError(str(exc)) from exc
@@ -14,8 +15,5 @@ def apply_targeted_face_up(host,effect,*,actor,operation,reason):
     host._log(actor,'permanent.turn_face_up','A permanent was turned face up.',
         {'object':card.ref,'actor':actor,'controller':card.controller,'reason':reason},
         changed_objects=[card.object_id],changed_players=[card.controller],importance=1)
-    host._dispatch_semantic_event('permanent.turned_face_up',
-        {'card':card.ref,'object_ref':card.ref,'object_id':card.object_id,
-         'logical_object_id':card.logical_object_id,'controller':card.controller},
-        sources=host._semantic_event_sources(zones={'battlefield'}))
+    dispatch_permanent_turn_face_up(host, card, actor)
     return card.ref

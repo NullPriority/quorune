@@ -2342,6 +2342,10 @@ The two-card form seals the original top two and manifests them in order.
 Counter follow-ups bind the manifested battlefield incarnation and use ordinary
 counter placement and replacement rules after the library moves. The variable
 counter form uses the spell's announced X.
+Face-down entry subscriptions use the entering permanent's effective public
+characteristics. The turn-up occurrence preserves the permanent's controller
+and the acting player for their respective subscriptions. Results referring to
+the turned permanent use its original battlefield incarnation.
 Manifested normal-layout creatures with current whole-card
 closure may turn face up for an ordinary printed mana cost; represented Morph,
 Megamorph and Disguise alternatives retain separate offers. Complex mana and

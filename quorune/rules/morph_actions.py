@@ -14,6 +14,7 @@ from ..counter_placement import (
     prepare_counter_placements,
 )
 from ..errors import GameRuleError
+from ..face_up_effect_model import TURN_FACE_UP_ACTOR_CAPABILITY, TURN_FACE_UP_ACTOR_FIELD, TURN_FACE_UP_EVENT
 from ..mana_undo import clear_mana_undo_stack
 from ..morph import (
     current_face_up_has_face_down_method,
@@ -25,6 +26,17 @@ from ..morph import (
 from ..zone_object_state import ZoneObjectStateError
 from ..zone_transitions import ZoneTransitionOwner
 from .action_proposals import ActionOffer, freeze_json
+from .event_subscriptions import event_has_capability_subscriber
+
+
+def dispatch_permanent_turn_face_up(host, card, actor):
+    facts = {"card": card.ref, "object_ref": card.ref, "object_id": card.object_id,
+             "logical_object_id": card.logical_object_id, "controller": card.controller}
+    if event_has_capability_subscriber(host, TURN_FACE_UP_EVENT, TURN_FACE_UP_ACTOR_CAPABILITY):
+        facts[TURN_FACE_UP_ACTOR_FIELD] = actor
+    host._dispatch_semantic_event(
+        TURN_FACE_UP_EVENT, facts, sources=host._semantic_event_sources(zones={"battlefield"}),
+    )
 
 
 class MorphActionHost(Protocol):
@@ -356,17 +368,7 @@ def commit_turn_face_up(
         changed_objects=[card.object_id],
         changed_players=[seat],
     )
-    host._dispatch_semantic_event(
-        "permanent.turned_face_up",
-        {
-            "card": card.ref,
-            "object_ref": card.ref,
-            "object_id": card.object_id,
-            "logical_object_id": card.logical_object_id,
-            "controller": card.controller,
-        },
-        sources=host._semantic_event_sources(zones={"battlefield"}),
-    )
+    dispatch_permanent_turn_face_up(host, card, seat)
     host.turn_priority.complete_special_action(seat)
 
 

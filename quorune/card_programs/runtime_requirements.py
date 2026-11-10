@@ -48,7 +48,10 @@ from ..rules.spell_self_exile import (
 from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dependencies
 from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
 from ..rules.keyword_runtime_requirements import keyword_runtime_dependencies
-from ..rules.event_subscriptions import dungeon_completion_dependencies
+from ..rules.event_subscriptions import (
+    FixedEventSubscriptionSet, LAND_PLAY_EVENT, dungeon_completion_dependencies,
+    face_transition_event_dependencies, upkeep_hand_runtime_dependencies,
+)
 from ..rules.fixed_blocker_restriction_shapes import fixed_blocker_runtime_dependencies
 from ..rules.source_block_pairs import source_block_pair_runtime_dependencies
 from ..rules.nonmana_buyback_costs import nonmana_buyback_runtime_dependencies
@@ -174,7 +177,6 @@ def _event_query_runtime_requirements(program):
     from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
     from ..counter_placement_event_model import counter_placement_event_dependencies
     from ..player_result_events import player_result_runtime_dependencies
-    from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT, upkeep_hand_runtime_dependencies
     from ..rules.spell_cast_events import spell_cast_event_runtime_dependencies
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
@@ -205,6 +207,7 @@ def _event_query_runtime_requirements(program):
             if any(child.event.removesuffix('.self')==MUTATE_EVENT for child in subscriptions.subscriptions):
                 required.add(MUTATE_CAPABILITY)
         required.update(upkeep_hand_runtime_dependencies(program), dungeon_completion_dependencies(program, subscriptions))
+        required.update(face_transition_event_dependencies(program, subscriptions))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_event_subscriptions:invalid:{exc}')
     for resolver,value,label in (
