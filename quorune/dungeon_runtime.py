@@ -18,6 +18,7 @@ from .initiative_model import (
 )
 from .model import CardInstance, StackItem
 from .target_source import BOUND_TARGETING_SOURCE_VERSION, TARGETING_SOURCE_CONTEXT, capture_targeting_source
+from .trigger_discovery import trigger_multiplier_copies
 from .trigger_processing import enqueue_trigger_batch
 from .zone_transitions import ZoneTransitionOwner
 
@@ -140,7 +141,12 @@ def _trigger_room(host, owner: str, source: CardInstance, program) -> None:
                  "source_zone": "command", "event": DUNGEON_ROOM_EVENT, _ORIGINAL_ROOM_TRIGGER: ref,
                  **({"trigger_target_selection_pending": True} if program.target_schema else {})},
     )
-    enqueue_trigger_batch(host, (item,))
+    additional = trigger_multiplier_copies(
+        host, item=item, source=source, event=DUNGEON_ROOM_EVENT, context={}, active_zone="command",
+    )
+    for trigger in additional:
+        trigger.context[_ORIGINAL_ROOM_TRIGGER] = trigger.ref
+    enqueue_trigger_batch(host, (item, *additional))
 
 
 def commit_venture_progress(host, intent: VentureProgressIntent) -> str:

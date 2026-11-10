@@ -22,6 +22,42 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_owned_room_multiplier_rejects_unrepresented_scope_and_missing_capability(self):
+        from unittest.mock import patch
+
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.trigger_participation_templates import static_trigger_multiplier_handler
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticProgram
+        from quorune.trigger_participation_query_model import DUNGEON_ROOM_MULTIPLIER_CAPABILITY
+
+        wording = "Room abilities of dungeons you own trigger an additional time."
+        _, descriptor, capability = static_trigger_multiplier_handler(wording)
+        self.assertEqual(DUNGEON_ROOM_MULTIPLIER_CAPABILITY, capability)
+        for invalid in (
+            wording.replace("own", "control"),
+            wording.replace("an additional time", "two additional times"),
+            wording.replace("Room abilities", "Delayed abilities"),
+        ):
+            self.assertIsNone(static_trigger_multiplier_handler(invalid))
+        registry = load_default_capability_registry()
+        deps = ("variant.dungeon.venture",)
+        forged = SemanticProgram("fixture:room-multiplier", "Room multiplier", event="continuous",
+                                 active_zone="battlefield", handlers=[descriptor],
+                                 capability_dependencies=deps,
+                                 capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + capability, binding["blockers"])
+
+        def witness():
+            self.assertIsNotNone(static_trigger_multiplier_handler(wording))
+
+        witness()
+        with patch("quorune.compiler.trigger_participation_templates._typed_participation", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+
     def test_dungeon_status_reads_the_current_controller_and_exact_named_history(self):
         from types import SimpleNamespace
         from quorune.compiler.player_status_conditions import fixed_player_status_condition
@@ -348,7 +384,8 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         path = Path(cls.temporary.name) / "venture.sqlite3"
         names = ("bound-effect-program-cards.json", "dungeon-cards.json", "venture-dungeon-cards.json",
                  "paid-sacrifice-creature-stat-cards.json", "initiative-dungeon-cards.json",
-                 "fixed-extra-turn-cards.json", "dungeon-status-cards.json", "venture-followup-cards.json")
+                 "fixed-extra-turn-cards.json", "dungeon-status-cards.json", "venture-followup-cards.json",
+                 "dungeon-observer-cards.json")
         build_fixture_database([ROOT / "tests/fixtures" / name for name in names], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -362,6 +399,19 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
     def _room_options(self, session):
         self.assertEqual("semantic.choice", session.state.pending_decision.kind)
         return tuple(option["id"] for option in session.packet("pilot:A", full=True)["decision"]["ctx"]["options"])
+
+    def _order_two_room_triggers(self, session):
+        self.assertEqual("trigger.order", session.state.pending_decision.kind)
+        packet = session.packet("pilot:A", full=True)["decision"]
+        refs = [row["id"] for row in packet["ctx"]["triggers"]]
+        self.assertEqual(2, len(refs))
+        self.assertEqual(2, len(set(refs)))
+        command = {"action_id": "order", "triggers": refs}
+        before = session.state.to_dict()
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, session.state.to_dict())
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
 
     def _activate_map(self, session, card):
         self.priority(session, "A")
@@ -414,7 +464,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(DungeonRoomRef(DungeonId.MAD_MAGE, 0), session.state.players["A"].dungeon_journey.active.room)
         self.replay(session, load=True)
 
-    def _reach_last_room(self, seed, *, reenter=False, status_watch=False):
+    def _reach_last_room(self, seed, *, reenter=False, status_watch=False, room_multiplier=False):
         from quorune.card_programs import bind_semantic_program_runtime
         from quorune.dungeon_progress import DUNGEON_VENTURE_CAPABILITY
         from quorune.record import authoritative_state_hash
@@ -422,6 +472,11 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         session = self.session(seed)
         veteran = self.add(session.engine, "Veteran Dungeoneer", zone="hand")
         maps = tuple(self.add(session.engine, "Dungeon Map", ref=f"venture-map-{index}") for index in range(3))
+        if room_multiplier:
+            hama = self.add(session.engine, "Hama Pashar, Ruin Seeker", zone="hand", ref="venture-hama")
+            other_hama = self.add(session.engine, "Hama Pashar, Ruin Seeker", seat="B", ref="venture-other-hama")
+            self.assert_closed(session, hama)
+            self.assert_closed(session, other_hama)
         if reenter:
             self.add(session.engine, "Clattering Skeletons", ref="venture-skeletons")
             self.add(session.engine, "Fling", zone="hand", ref="venture-fling")
@@ -440,7 +495,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         binding = bind_semantic_program_runtime(forged, capability_registry=self.registry, profile="commander_review")
         self.assertFalse(binding["strict"])
         self.assertIn("capability:undeclared_runtime_dependency:" + DUNGEON_VENTURE_CAPABILITY, binding["blockers"])
-        self.prepare(session, mana={"C": 13, "W": 1, "R": 1})
+        self.prepare(session, mana=({"C": 14, "W": 2, "U": 1} if room_multiplier else {"C": 13, "W": 1, "R": 1}))
         self.checkpoint(session)
         self.cast_for(session, "A", veteran)
         self.assertEqual("semantic.choice", self.resolve(session).kind)
@@ -466,10 +521,15 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertTrue(any(card.printed_name == "Goblin Token" and card.controller == "A"
                             for card in session.state.cards.values()))
 
+        if room_multiplier:
+            self.cast_for(session, "A", hama)
+            self.assertIsNone(self.resolve(session))
         self._activate_map(session, maps[1])
         self.assertEqual("semantic.choice", self.resolve(session).kind)
         self.assertEqual(("lost_mine:3", "lost_mine:4"), self._room_options(session))
         self._choose(session, choice="lost_mine:3")
+        if room_multiplier:
+            self._order_two_room_triggers(session)
         self.assertEqual("semantic.target", session.state.pending_decision.kind)
         room_item = session.state.stack[-1]
         self.assertEqual(("dungeon-room:lost_mine:3", source.object_id), (room_item.semantic_key, room_item.source_object_id))
@@ -478,17 +538,40 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertFalse(session.act("pilot:B", {"action_id": "choose", "targets": [veteran.ref]}).ok)
         self.assertEqual(before, authoritative_state_hash(session.state))
         self._choose(session, targets=[veteran.ref])
+        if room_multiplier:
+            self.assertEqual("semantic.target", session.state.pending_decision.kind)
+            self._choose(session, targets=[hama.ref])
         self.assertIsNone(self.resolve(session))
         self.assertEqual({"+1/+1": 1}, session.state.cards[veteran.object_id].counters)
+        if room_multiplier:
+            self.assertEqual({"+1/+1": 1}, session.state.cards[hama.object_id].counters)
 
         self._activate_map(session, maps[2])
         self.resolve_top(session)
+        if room_multiplier:
+            self._order_two_room_triggers(session)
         final = session.state.stack[-1]
         journey = session.state.players["A"].dungeon_journey
         self.assertEqual(DungeonRoomRef(DungeonId.LOST_MINE, 6), journey.active.room)
         self.assertEqual(0, journey.completed)
         self.assertEqual("dungeon-room:lost_mine:6", final.semantic_key)
         return session, source, final
+
+    def test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion(self):
+        session, source, final = self._reach_last_room(309004, room_multiplier=True)
+        originals = [item for item in session.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual([final.semantic_key, final.semantic_key], [item.semantic_key for item in originals])
+        self.assertEqual(4, sum(event.code == "dungeon.venture" for event in session.state.events))
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        journey = session.state.players["A"].dungeon_journey
+        self.assertEqual((DungeonRoomRef(DungeonId.LOST_MINE, 6), 0), (journey.active.room, journey.completed))
+        self.assertIn(source.object_id, session.state.cards)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.players["A"].dungeon_journey.completed)
+        self.assertEqual(1, sum(event.code == "dungeon.completed" for event in session.state.events))
+        self.assertNotIn(source.object_id, session.state.cards)
+        self.replay(session)
 
     def test_original_venture_announces_targets_and_completes_after_the_last_trigger(self):
         session, source, final = self._reach_last_room(309001)

@@ -561,6 +561,7 @@
     "tests/fixtures/double-faced-spell-copy-cards.json",
     "tests/fixtures/draw-rules-cards.json",
     "tests/fixtures/dungeon-cards.json",
+    "tests/fixtures/dungeon-observer-cards.json",
     "tests/fixtures/dungeon-status-cards.json",
     "tests/fixtures/each-player-life-cards.json",
     "tests/fixtures/each-player-mill-cards.json",

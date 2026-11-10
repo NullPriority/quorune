@@ -31,6 +31,10 @@ def participation_rule_matches(spec,modifier,modifier_characteristics,ability_so
     rule=trigger_participation_rule(spec.rule,spec.subtype)
     if active_zone not in rule.source_zones:return False
     if rule.events and event.removesuffix('.self') not in rule.events:return False
+    if rule.source_kind is not None and ability_source.object_kind != rule.source_kind:
+        return False
+    if rule.source_relation == "owned" and ability_source.owner != modifier.controller:
+        return False
     if rule.source_relation=='you' and ability_source.controller!=modifier.controller:return False
     if rule.source_relation=='opponent' and ability_source.controller==modifier.controller:return False
     source=_facts(ability_source,source_characteristics)

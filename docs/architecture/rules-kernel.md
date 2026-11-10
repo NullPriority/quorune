@@ -658,8 +658,11 @@ identifies older aggregate entries whose dungeon identities are unavailable.
 Venture choices use the existing resolving controller's semantic choice.
 `dungeon_runtime.py` commits the visit and creates or reuses its nontraditional
 command-zone source. The room's source-bound program enters the regular APNAP
-trigger batch. Target announcement uses the actual dungeon source and keeps
-its captured characteristics available after departure. The state-based
+trigger batch. Applicable static abilities add separate occurrences for a room
+of a dungeon their controller owns. Each occurrence announces its own targets
+and counts toward keeping the last room outstanding. Target announcement uses
+the actual dungeon source and keeps its captured characteristics available
+after departure. The state-based
 execution owner retires completed visits with the other prepared state changes
 and publishes the resulting completion events after the moves. The player
 projection includes the public journey after the first venture.

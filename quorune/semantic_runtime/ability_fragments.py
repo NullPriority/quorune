@@ -51,6 +51,7 @@ from ..enchanted_player_model import EnchantedPlayerAttackRequirementSpec,ENCHAN
 from ..bound_declaration_model import BoundStaticDeclarationRulesSpec,BOUND_DECLARATION_CAPABILITY,BOUND_DECLARATION_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
+from ..trigger_participation_query_model import DUNGEON_ROOM_MULTIPLIER_COMPONENT
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .player_target_protection import PlayerTargetProtectionHandler
@@ -1595,6 +1596,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             TypedTriggerParticipationAbilityFragmentHandler(),
             TypedTriggerParticipationAbilityFragmentHandler(handler_id='ability.static.trigger-prohibition.v2',
                 family='ability.static.trigger_prohibition',capability_dependencies=('trigger.participation.prohibition',)),
+            TypedTriggerParticipationAbilityFragmentHandler(**DUNGEON_ROOM_MULTIPLIER_COMPONENT),
             ToxicAbilityFragmentHandler(),
             WardAbilityFragmentHandler(),
             WardNonmanaAbilityFragmentHandler(),

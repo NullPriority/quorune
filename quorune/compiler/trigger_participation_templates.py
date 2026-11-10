@@ -8,6 +8,9 @@ from ..trigger_participation import (
     TriggerMultiplierPredicate,
     TriggerMultiplierSpec,
 )
+from ..trigger_participation_query_model import (
+    DUNGEON_ROOM_MULTIPLIER_CAPABILITY, DUNGEON_ROOM_MULTIPLIER_HANDLER, OWNED_DUNGEON_ROOM,
+)
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
 from .oracle_source_text import without_ability_word_label
@@ -52,11 +55,16 @@ def static_trigger_multiplier_handler(
         rule,subtype=selected
         spec=TriggerMultiplierSpec(TriggerMultiplierPredicate.TYPED_SOURCE_EVENT,schema_version=2,rule=rule,subtype=subtype)
         template_id='static-trigger-participation-typed-source-event-v2'
+    handler_id = "ability.static.trigger-multiplier.v1"
+    if spec.schema_version == 2:
+        handler_id = {
+            "trigger.participation.prohibition": "ability.static.trigger-prohibition.v2",
+            DUNGEON_ROOM_MULTIPLIER_CAPABILITY: DUNGEON_ROOM_MULTIPLIER_HANDLER,
+        }.get(spec.capability_id, "ability.static.trigger-participation.v2")
     return (
         template_id,
         {
-            "handler_id": (('ability.static.trigger-prohibition.v2' if spec.capability_id=='trigger.participation.prohibition'
-                else 'ability.static.trigger-participation.v2') if spec.schema_version==2 else 'ability.static.trigger-multiplier.v1'),
+            "handler_id": handler_id,
             "schema_version": 1,
             "event": "continuous",
             "fragment": ability_fragment_to_dict(spec),
@@ -70,6 +78,7 @@ def _typed_participation(text,source_name):
     if text is None:return None
     text=text.rstrip('.')
     fixed={
+        "Room abilities of dungeons you own trigger an additional time": OWNED_DUNGEON_ROOM,
         "If a permanent entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'permanent_enters',
         "If a permanent entering the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'permanent_enters',
         "If a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'land_enters',

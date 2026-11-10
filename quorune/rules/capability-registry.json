@@ -79029,6 +79029,81 @@
     {
       "applicability": {
         "exclusions": [
+          "Dungeons other players own",
+          "Delayed or reflexive triggers",
+          "Copies made on the stack"
+        ],
+        "inputs": [
+          "One entered room event",
+          "Effective battlefield static trigger-participation fragments",
+          "Current dungeon command-zone source and owner"
+        ],
+        "outputs": [
+          "One additional independently targetable occurrence for each applicable modifier",
+          "Completion waits for each original occurrence"
+        ],
+        "summary": "A current effective static ability adds one independently placed room ability occurrence per modifier for a dungeon in the command zone its controller owns. Each additional occurrence counts for last-room completion."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.participation.typed_source_event",
+        "variant.dungeon.venture"
+      ],
+      "dependency_fail_closed_rationale": "The room fragment infers its distinct runtime capability even if declaration and closure omit it. Its dependency requires represented Venture room programs.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.participation.dungeon_room",
+      "implementation_components": [
+        "quorune.trigger_participation.TriggerMultiplierSpec",
+        "quorune.compiler.trigger_participation_templates.static_trigger_multiplier_handler",
+        "quorune.rules.trigger_participation_queries.participation_rule_matches",
+        "quorune.trigger_discovery.trigger_multiplier_copies",
+        "quorune.dungeon_runtime.prepare_dungeon_completions"
+      ],
+      "implementation_mutation_rationale": "Omitting the additional room occurrence breaks independent target placement. Losing its occurrence identity completes the dungeon while the second trigger is still outstanding.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion"
+      ],
+      "multiplayer_tests": [
+        "test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion"
+      ],
+      "negative_tests": [
+        "test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion",
+        "test_owned_room_multiplier_rejects_unrepresented_scope_and_missing_capability"
+      ],
+      "official_rules": [
+        "309.4c",
+        "309.6",
+        "603.2d",
+        "603.3b",
+        "603.3d"
+      ],
+      "positive_tests": [
+        "test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion",
+        "test_owned_room_multiplier_rejects_unrepresented_scope_and_missing_capability"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "free-form predicate or Oracle runtime interpretation",
           "unrepresented dungeon-room behavior and companion abilities",
           "unsupported counts, arbitrary conjunctions, unknown subtype or event fields"
@@ -90081,7 +90156,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 799,
+  "registry_version": 800,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
