@@ -50102,19 +50102,23 @@
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_multi_land_search_commits_one_tapped_simultaneous_batch"
+        "test_multi_land_search_commits_one_tapped_simultaneous_batch",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "multiplayer_tests": [
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
-        "test_generated_search_uses_effective_hidden_characteristics_and_replays"
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "negative_tests": [
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_fixed_search_shape_and_dependencies_fail_closed",
-        "test_named_linked_attachment_compound_and_open_searches_remain_residual"
+        "test_named_linked_attachment_compound_and_open_searches_remain_residual",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype"
       ],
       "official_rules": [
         "109.2a",
@@ -50132,19 +50136,23 @@
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_fixed_search_compiles_across_spell_trigger_activation_and_modal_contexts",
-        "test_multi_tapped_land_search_compiles_as_one_closed_batch"
+        "test_multi_tapped_land_search_compiles_as_one_closed_batch",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype"
       ],
       "privacy_tests": [
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
-        "test_generated_search_uses_effective_hidden_characteristics_and_replays"
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "replay_tests": [
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
         "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
         "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
-        "test_generated_search_uses_effective_hidden_characteristics_and_replays"
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "required_evidence": [
         "positive",
@@ -50160,7 +50168,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -50215,15 +50223,19 @@
       "interaction_tests": [
         "test_typecycling_search_is_private_revealed_and_replays_exactly",
         "test_typecycling_discard_replacement_resumes_before_private_search",
-        "test_typecycling_search_destination_replacement_resumes_atomically"
+        "test_typecycling_search_destination_replacement_resumes_atomically",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "multiplayer_tests": [
-        "test_typecycling_search_is_private_revealed_and_replays_exactly"
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "negative_tests": [
         "test_fixed_hand_search_shape_and_dependencies_fail_closed",
         "test_named_linked_attachment_compound_and_open_searches_remain_residual",
-        "test_typecycling_variants_and_dependencies_fail_closed"
+        "test_typecycling_variants_and_dependencies_fail_closed",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype"
       ],
       "official_rules": [
         "109.2a",
@@ -50242,17 +50254,21 @@
         "test_fixed_restrictive_search_to_hand_compiles_across_contexts",
         "test_fixed_typecycling_categories_compile_source_spanned_searches",
         "test_generated_hand_search_preserves_reveal_privacy_and_replays",
-        "test_typecycling_search_is_private_revealed_and_replays_exactly"
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private",
+        "test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype"
       ],
       "privacy_tests": [
         "test_generated_hand_search_preserves_reveal_privacy_and_replays",
-        "test_typecycling_search_is_private_revealed_and_replays_exactly"
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "replay_tests": [
         "test_generated_hand_search_preserves_reveal_privacy_and_replays",
         "test_typecycling_search_is_private_revealed_and_replays_exactly",
         "test_typecycling_discard_replacement_resumes_before_private_search",
-        "test_typecycling_search_destination_replacement_resumes_atomically"
+        "test_typecycling_search_destination_replacement_resumes_atomically",
+        "test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private"
       ],
       "required_evidence": [
         "positive",
@@ -50268,7 +50284,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -90824,7 +90840,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 808,
+  "registry_version": 809,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

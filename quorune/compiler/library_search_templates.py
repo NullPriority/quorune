@@ -46,11 +46,17 @@ _COLORS = {
 _FIXED_SEARCH = re.compile(
     rf"^Search your library for (?P<up_to>up to )?"
     rf"(?P<count>an|{FIXED_COUNT_PATTERN}) "
-    rf"(?P<quality>.+?) card(?P<plural>s)?, "
+    rf"(?P<quality>.+?) card(?P<plural>s)?"
+    rf"(?P<basic_land_type> with a basic land type| that each have a basic land type)?, "
     rf"(?:(?P<reveal>reveal (?P<reveal_pronoun>it|them|that card|those cards), ))?"
     rf"put (?P<pronoun>it|them|that card|those cards) "
     rf"(?:(?P<hand>into your hand)|onto the battlefield(?P<tapped> tapped)?), "
     rf"then shuffle\.$",
+    re.IGNORECASE,
+)
+_FIXED_SEARCH_AND_PUT = re.compile(
+    r"(?P<search>Search your library for .+? card) and "
+    r"(?P<put>put (?:it|that card) onto the battlefield(?: tapped)?)\. Then shuffle\.",
     re.IGNORECASE,
 )
 _COUNTED_START = (
@@ -384,7 +390,12 @@ def fixed_library_search_effect_template(
 ) -> FixedLibrarySearchTemplate | FixedCountedLibrarySearchTemplate | None:
     """Lower one fixed restrictive library search directly to the battlefield."""
 
-    match = _FIXED_SEARCH.fullmatch(" ".join(text.strip().split()))
+    normalized = " ".join(text.strip().split())
+    match = _FIXED_SEARCH.fullmatch(normalized)
+    if match is None:
+        coordinated = _FIXED_SEARCH_AND_PUT.fullmatch(normalized)
+        if coordinated is not None:
+            match = _FIXED_SEARCH.fullmatch(f"{coordinated['search']}, {coordinated['put']}, then shuffle.")
     if match is None:
         return fixed_counted_library_search_effect_template(text)
     count = fixed_number(match.group("count"))
@@ -404,10 +415,13 @@ def fixed_library_search_effect_template(
     destination = "hand" if match.group("hand") else "battlefield"
     if destination == "hand" and count != 1:
         return fixed_counted_library_search_effect_template(text)
-    query = _search_query(
-        match.group("quality"),
-        destination=destination,
-    )
+    quality = match.group("quality")
+    basic_land_type = match.group("basic_land_type")
+    if basic_land_type is not None:
+        if quality.casefold() != "land" or singular and basic_land_type.casefold().startswith(" that each"):
+            return None
+        quality = "land with a basic land type"
+    query = _search_query(quality, destination=destination)
     if query is None:
         # A reveal pronoun can make the broad quality capture span a counted
         # predicate. Let its complete, separately validated production decide.

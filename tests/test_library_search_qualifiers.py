@@ -34,6 +34,25 @@ PERMANENT_TYPES = ['artifact', 'battle', 'creature', 'enchantment', 'land', 'pla
 
 
 class LibrarySearchQualifierCompilerTests(unittest.TestCase):
+    def test_basic_land_type_search_uses_the_five_subtypes_without_basic_supertype(self):
+        typed = "Search your library for a land card with a basic land type, reveal it, put it into your hand, then shuffle."
+        listed = ("Search your library for a Plains, Island, Swamp, Mountain, or Forest card "
+                  "and put that card onto the battlefield. Then shuffle.")
+        counted = ("Search your library for up to two land cards that each have a basic land type, "
+                   "put them onto the battlefield tapped, then shuffle.")
+        for text in (typed, listed, counted):
+            with self.subTest(text=text):
+                template = fixed_library_search_effect_template(text)
+                self.assertIsNotNone(template)
+                effect, = template.compiled()[1]
+                self.assertEqual(["land"], effect["selector"]["types"])
+                self.assertEqual({"plains", "island", "swamp", "mountain", "forest"},
+                                 set(effect["selector"]["subtypes_any"]))
+                self.assertNotIn("supertypes", effect["selector"])
+        self.assertIsNone(fixed_library_search_effect_template(typed.replace("a land card", "a creature card")))
+        self.assertIsNone(fixed_library_search_effect_template(typed.replace("with a basic", "that each have a basic")))
+        self.assertIsNone(fixed_library_search_effect_template(listed.replace("Then shuffle.", "Then draw a card.")))
+
     def test_color_permanent_predicates_preserve_meaning_at_every_destination(self):
         for color, symbol in (('white', 'W'), ('blue', 'U'), ('black', 'B'), ('red', 'R'), ('green', 'G')):
             for destination in ('into your hand', 'into your graveyard', 'onto the battlefield'):

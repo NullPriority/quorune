@@ -3388,6 +3388,9 @@ entry. Bounded multi-card battlefield support remains limited to land cards
 that all enter tapped, so the canonical zone owner can commit one simultaneous
 entry batch before the deterministic shuffle. Canonical `it`, `them`, `that
 card`, and `those cards` references preserve the same typed result identity.
+Basic land type searches filter on Plains, Island, Swamp, Mountain, or Forest.
+The subtype predicate admits nonbasic lands with one of those types and
+excludes lands without them.
 The separate counted-search production owns unqualified quantities, one
 literal card name and fixed mana-value predicates. Its version-two instruction
 supports one through ten hand results or one battlefield, graveyard or library
