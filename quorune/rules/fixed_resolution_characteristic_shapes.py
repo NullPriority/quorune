@@ -15,12 +15,32 @@ from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
+from ..replacement.immutable import thaw_value
 from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, split_next_turn_effect
 
 
 FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
     "continuous.resolution.fixed_characteristics_until_end_of_turn"
 )
+
+
+def is_attached_characteristic_effect(effect) -> bool:
+    reference = effect.get("card")
+    if not isinstance(reference, Mapping) or reference.get("kind") != "source_attachment":
+        return False
+    op = effect.get("op")
+    # Versioned characteristic results have their own independent shape owners.
+    return op == "modify_stats_until_end_of_turn" or (
+        op == "apply_source_characteristics_until_end_of_turn" and "schema_version" not in effect
+    )
+
+
+def _closed_enchanted_permanent(value) -> bool:
+    try:
+        reference = AttachmentReferenceSpec.from_dict(value)
+    except AttachmentReferenceError:
+        return False
+    return reference == AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
 
 
 def fixed_attached_stat_node_capabilities(*, effects, target_schema, mechanic_ids) -> tuple[str, ...]:
@@ -32,13 +52,33 @@ def fixed_attached_stat_node_capabilities(*, effects, target_schema, mechanic_id
             or type(effect.get("power")) is not int or type(effect.get("toughness")) is not int
             or not (effect["power"] or effect["toughness"])):
         return ()
-    try:
-        reference = AttachmentReferenceSpec.from_dict(effect["card"])
-    except AttachmentReferenceError:
-        return ()
-    if reference != AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2):
+    if not _closed_enchanted_permanent(effect["card"]):
         return ()
     return (FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, ATTACHMENT_INFORMATION_CAPABILITY)
+
+
+def fixed_attached_characteristic_node_capabilities(*, effects, target_schema, mechanic_ids) -> tuple[str, ...]:
+    if target_schema is not None or len(effects) != 1 or "cr-611-continuous-effects" not in mechanic_ids:
+        return ()
+    effect = effects[0]
+    if not is_attached_characteristic_effect(effect):
+        return ()
+    if effect["op"] == "modify_stats_until_end_of_turn":
+        return fixed_attached_stat_node_capabilities(effects=effects, target_schema=None, mechanic_ids=mechanic_ids)
+    keywords = effect.get("keywords")
+    if (not isinstance(keywords, (list, tuple)) or not 1 <= len(keywords) <= 2
+            or any(type(keyword) is not str or keyword not in FIXED_CHARACTERISTIC_KEYWORDS for keyword in keywords)
+            or len(set(keywords)) != len(keywords) or not _closed_enchanted_permanent(effect["card"])):
+        return ()
+    from ..compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+
+    template = FixedSourceCharacteristicsTemplate(source_kind="enchantment", keywords=tuple(keywords))
+    if thaw_value(effect) != {**template.effects[0], "card": thaw_value(effect["card"])}:
+        return ()
+    if type(effect["power"]) is not int or type(effect["toughness"]) is not int:
+        return ()
+    return tuple(sorted({FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, ATTACHMENT_INFORMATION_CAPABILITY,
+                         *(cap for keyword in keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
 
 
 def fixed_resolution_characteristic_set_node_capabilities(
@@ -165,14 +205,12 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
     """Bind canonical public-set and attachment descriptors independently of declared owners."""
     required = set()
     for effect in program.effects:
-        reference = effect.get("card")
-        if (effect.get("op") == "modify_stats_until_end_of_turn"
-                and isinstance(reference, Mapping) and reference.get("kind") == "source_attachment"):
-            owners = fixed_attached_stat_node_capabilities(
+        if is_attached_characteristic_effect(effect):
+            owners = fixed_attached_characteristic_node_capabilities(
                 effects=(effect,), target_schema=program.target_schema, mechanic_ids=("cr-611-continuous-effects",),
             )
             if not owners:
-                raise ValueError("Attached stat modifier requires a closed untargeted attachment reference")
+                raise ValueError("Attached characteristics require a closed untargeted attachment reference")
             required.update(owners)
             continue
         if effect.get('op') != 'modify_all_matching_permanents_until_end_of_turn' or 'predicate' not in effect:

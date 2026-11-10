@@ -23,6 +23,31 @@ import test_life_gain_prohibitions as native
 
 
 class AttachedExileActivationCompilerTests(unittest.TestCase):
+    def test_attached_keyword_grant_preserves_the_permanent_and_exact_keyword_owners(self):
+        from quorune.compiler.fixed_resolution_characteristics import fixed_attached_keyword_effect_template
+        from quorune.rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
+        from quorune.rules.node_capability_shapes import fixed_source_characteristics_node_capabilities
+
+        text = 'Enchanted creature gains trample and indestructible until end of turn.'
+        _, effects, schema, mechanics = fixed_attached_keyword_effect_template(text, source_attachment_relation=K.ENCHANTED)
+        effect, = effects
+        self.assertIsNone(schema)
+        self.assertEqual(AttachmentReferenceSpec(K.ENCHANTED, 'permanent', schema_version=2).to_dict(), effect['card'])
+        self.assertEqual(['Trample', 'Indestructible'], effect['keywords'])
+        dependencies = fixed_source_characteristics_node_capabilities(effects=effects, target_schema=schema, mechanic_ids=mechanics)
+        self.assertTrue({'object.reference.source_attachment_information', 'combat.damage.assignment.trample',
+                         'permanent.indestructible.ordinary'} <= set(dependencies))
+        self.assertEqual(dependencies, fixed_resolution_characteristics_runtime_dependencies(
+            SimpleNamespace(effects=effects, target_schema=None, coverage=()),
+        ))
+        for forged in ({**effect, 'card': {**effect['card'], 'schema_version': 1}},
+                       {**effect, 'keywords': ['Trample', 'Trample']}, {**effect, 'power': False}):
+            self.assertEqual((), fixed_source_characteristics_node_capabilities(
+                effects=(forged,), target_schema=None, mechanic_ids=mechanics,
+            ))
+        self.assertIsNone(fixed_attached_keyword_effect_template(text, source_attachment_relation=None))
+        self.assertIsNone(fixed_attached_keyword_effect_template(text + ' Draw a card.', source_attachment_relation=K.ENCHANTED))
+
     def test_fixed_attached_stats_require_the_closed_result_and_versioned_reference(self):
         from quorune.compiler.fixed_resolution_characteristics import fixed_attached_stat_effect_template
         from quorune.rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
@@ -204,6 +229,70 @@ class AttachedExileActivationRuntimeTests(unittest.TestCase):
 
     def stats(self, session, card):
         return tuple(session.engine._numeric_stat(card.object_id, stat) for stat in ('power', 'toughness'))
+
+    def test_fae_flight_grants_hexproof_to_the_last_same_incarnation(self):
+        from quorune.attachment_references import ATTACHMENT_INFORMATION_VERSION
+
+        cases = (
+            ('source departs', 'Disenchant', 'A', {'C': 1, 'W': 1}),
+            ('creature returns', 'Cloudshift', 'B', {'W': 1}),
+            ('creature changes type', 'Song of the Dryads', 'A', {'C': 2, 'G': 1}),
+        )
+        for index, (case, response_name, responder, payment) in enumerate(cases):
+            with self.subTest(case=case):
+                session, aura, body, other, private = self.fixture(113700180 + index, name='Fae Flight')
+                response = self.add(session.engine, response_name, seat=responder, zone='hand')
+                probe = self.add(session.engine, 'Humble', zone='hand', ref='attachment-target-probe')
+                if case == 'creature changes type':
+                    self.add(session.engine, 'Vedalken Orrery')
+                self.assertTrue(self.binding(session, aura)['strict_capability_ready'])
+                self.prepare(session, mana={'C': 3, 'G': 2, 'U': 1, 'W': 2})
+                session.state.players['B'].mana_pool['W'] = 1
+                self.checkpoint(session)
+                original = body.logical_object_id
+                self.cast(session, aura, [body.ref], payment={'C': 1, 'U': 1})
+                self.resolve_top(session)
+                trigger, = session.state.stack
+                self.assertFalse(trigger.targets)
+                self.assertEqual(1, trigger.context[ATTACHMENT_INFORMATION_VERSION])
+                target = aura if case == 'source departs' else body
+                self.cast(session, response, [target.ref], seat=responder, payment=payment)
+                self.resolve_top(session)
+                self.assertEqual('graveyard', session.state.cards[aura.object_id].zone)
+                self.assertIsNone(self.settle(session))
+                current = session.state.cards[body.object_id]
+                retained = case != 'creature returns'
+                self.assertEqual(retained, current.logical_object_id == original)
+                self.assertEqual(retained, 'hexproof' in session.engine._combat_keywords(current))
+                if case == 'creature changes type':
+                    effective = session.engine._effective_card_data(current)
+                    self.assertNotIn('creature', session.engine._type_parts(effective['type_line'])[0])
+                else:
+                    self.priority(session, 'A')
+                    offered = next(r for r in self.actions(session) if r['id'] == 'cast:' + probe.ref)
+                    legal = offered['target_schema']['legal_refs']
+                    self.assertIn(other.ref, legal)
+                    self.assertEqual(not retained, current.ref in legal)
+                    if retained:
+                        self.reject(session, {'action_id': offered['id'], 'targets': [current.ref], 'pay': 'auto'})
+                self.private_replay(session, private)
+
+    def test_keldon_mantle_paid_activation_grants_trample_to_its_attachment(self):
+        session, aura, body, other, private = self.fixture(113700183, name='Keldon Mantle')
+        self.assertTrue(self.binding(session, aura)['strict_capability_ready'])
+        self.prepare(session, mana={'C': 1, 'R': 1, 'G': 1})
+        self.checkpoint(session)
+        self.cast(session, aura, [body.ref], payment={'C': 1, 'R': 1})
+        self.assertIsNone(self.settle(session))
+        self.activate(session, aura)
+        item, = session.state.stack
+        self.assertFalse(item.targets)
+        self.assertEqual(body.ref, item.context['source_attachment_snapshot']['attached_object']['reference'])
+        self.assertEqual(0, session.state.players['A'].mana_pool.get('G', 0))
+        self.assertIsNone(self.settle(session))
+        self.assertIn('trample', session.engine._combat_keywords(session.state.cards[body.object_id]))
+        self.assertNotIn('trample', session.engine._combat_keywords(session.state.cards[other.object_id]))
+        self.private_replay(session, private)
 
     def test_ghitu_stats_follow_current_or_last_attachment_without_following_a_blinked_creature(self):
         from quorune.attachments import attach_objects

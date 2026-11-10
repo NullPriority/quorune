@@ -113,10 +113,15 @@ def _attachment_or_zone_result(
 ) -> CompiledEffectTemplate | None:
     from .attached_destruction import attached_destruction_template
     from .exile_templates import attached_exile_effect_template
-    from .fixed_resolution_characteristics import fixed_attached_stat_effect_template
-    attached_stats = fixed_attached_stat_effect_template(text, source_attachment_relation=source_attachment_relation)
-    if attached_stats is not None:
-        return attached_stats
+    from .fixed_resolution_characteristics import (
+        fixed_attached_keyword_effect_template, fixed_attached_stat_effect_template,
+    )
+    attached_characteristic = (
+        fixed_attached_stat_effect_template(text, source_attachment_relation=source_attachment_relation)
+        or fixed_attached_keyword_effect_template(text, source_attachment_relation=source_attachment_relation)
+    )
+    if attached_characteristic is not None:
+        return attached_characteristic
     created_attachment = created_token_attachment_effect_template(
         text, source_attachment_relation=source_attachment_relation,
     )

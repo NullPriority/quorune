@@ -20,7 +20,9 @@ from ..resolution_characteristic_model import (
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
 from .fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
-from .fixed_target_effect_sequences import _animation_description, _COLOR_NAMES, _keyword_list
+from .fixed_target_effect_sequences import (
+    FixedSourceCharacteristicsTemplate, _animation_description, _COLOR_NAMES, _keyword_list,
+)
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 
 
@@ -93,6 +95,19 @@ def fixed_attached_stat_effect_template(text: str, *, source_attachment_relation
     reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
     effect = {"op": "modify_stats_until_end_of_turn", "card": reference.to_dict(), "power": power, "toughness": toughness}
     return "fixed-attached-stats-until-end-of-turn-v1", (effect,), None, ("cr-611-continuous-effects",)
+
+
+def fixed_attached_keyword_effect_template(text: str, *, source_attachment_relation: AttachmentReferenceKind | None):
+    if source_attachment_relation is not AttachmentReferenceKind.ENCHANTED:
+        return None
+    match = re.fullmatch(r"Enchanted creature gains (.+?) until end of turn\.", text.strip(), re.I)
+    if match is None or (keywords := _keyword_list(match[1])) is None:
+        return None
+    template = FixedSourceCharacteristicsTemplate(source_kind="enchantment", keywords=keywords)
+    reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+    effect = {**template.effects[0], "card": reference.to_dict()}
+    mechanics = ("cr-611-continuous-effects", *(keyword.casefold() for keyword in keywords))
+    return "fixed-attached-keywords-until-end-of-turn-v1", (effect,), None, mechanics
 
 
 def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,
