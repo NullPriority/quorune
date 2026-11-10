@@ -77,6 +77,9 @@ from ...trigger_processing import enqueue_trigger_batch
 from ..target_announcements import (
     collect_legacy_paid_ward_occurrences, dispatch_legacy_paid_target_announcements,
 )
+from ..cast_cascade_grants import (
+    announced_cascade_context, commit_cast_cascade_grants, reserve_cast_cascade_grants,
+)
 from .source_placement import observe_cast_source_placement
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
@@ -1413,6 +1416,29 @@ def commit_cast(
     commit_cast_with_conditional_returns(host,proposal,response)
 
 
+def _prepare_cast_announcement(host, proposal, card, record, program, selected_option, details, response):
+    """Place the initial spell and attach pre-payment characteristics before observers run."""
+    from ...cast_source_placement_model import cast_source_placement_version
+    prepared_item=None
+    if cast_source_placement_version(getattr(host.state,'cast_source_placement_version',None))==1:
+        prepared_item=_create_spell_item(host,proposal,card,record,program,selected_option,details,{},
+            _AdditionalCostCommit([],[],{},{},[],[]),preparing=True)
+        prepared_item.x_value=selected_option.get('announced_target_x',selected_option.get('announced_additional_x',response.get('x')))
+        from ...semantic_runtime.battlefield_cascade_grants import CASCADE_GRANT_EVENT, CAST_ANNOUNCEMENT_MARKER
+        if host.semantics.programs_for_event(CASCADE_GRANT_EVENT):
+            prepared_item.context[CAST_ANNOUNCEMENT_MARKER] = True
+    try:
+        reserved_cascade = reserve_cast_cascade_grants(host, proposal)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason="stale_cast_cascade_grant") from exc
+    cascade_context = announced_cascade_context(reserved_cascade)
+    if prepared_item is not None:
+        prepared_item.context.update(cascade_context)
+        host.state.stack.append(prepared_item)
+        observe_cast_source_placement(host, prepared_item)
+    return prepared_item, reserved_cascade, cascade_context
+
+
 def _commit_cast_costs_and_stack(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -1452,17 +1478,9 @@ def _commit_cast_costs_and_stack(
     if 'waterbend_payment' in selected_option:
         from ..waterbend_payments import bind_waterbend_response
         bind_waterbend_response(response,selected_option['waterbend_payment'])
-    from ...cast_source_placement_model import cast_source_placement_version
-    prepared_item=None
-    if cast_source_placement_version(getattr(host.state,'cast_source_placement_version',None))==1:
-        prepared_item=_create_spell_item(host,proposal,card,record,program,selected_option,details,{},
-            _AdditionalCostCommit([],[],{},{},[],[]),preparing=True)
-        prepared_item.x_value=selected_option.get('announced_target_x',selected_option.get('announced_additional_x',response.get('x')))
-        from ...semantic_runtime.battlefield_cascade_grants import CASCADE_GRANT_EVENT, CAST_ANNOUNCEMENT_MARKER
-        if host.semantics.programs_for_event(CASCADE_GRANT_EVENT):
-            prepared_item.context[CAST_ANNOUNCEMENT_MARKER] = True
-        host.state.stack.append(prepared_item)
-        observe_cast_source_placement(host, prepared_item)
+    prepared_item, reserved_cascade, cascade_context = _prepare_cast_announcement(
+        host, proposal, card, record, program, selected_option, details, response,
+    )
     from .splice_costs import announce_splice_sources
     spliced_cards = announce_splice_sources(host, proposal, card, selected_option)
     from .spell_mana_payments import capture_spell_mana_payment
@@ -1506,6 +1524,7 @@ def _commit_cast_costs_and_stack(
         costs,
         existing_item=prepared_item,
     )
+    item.context.update(cascade_context)
     if prepared_item is not None:
         prepared_item.mana_colors_spent=item.mana_colors_spent
         prepared_item.mana_spent_counts=item.mana_spent_counts
@@ -1514,6 +1533,10 @@ def _commit_cast_costs_and_stack(
     item.x_value = selected_option.get("announced_target_x",
         selected_option.get("announced_additional_x", response.get("x")))
     commit_reveal_additional_costs(host,proposal,card,item,selected_option)
+    try:
+        commit_cast_cascade_grants(host.state.players[proposal.seat].stats, host.state.turn_sequence, reserved_cascade)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason="stale_cast_cascade_grant") from exc
     item.notes = str(response.get("note") or "")
     prior_spell_count = prior_storm_spell_count(host)
     prior_controller_spell_count = _prior_controller_spell_count(

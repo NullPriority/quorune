@@ -2152,6 +2152,34 @@
       ]
     },
     {
+      "id": "temporary-cast-cascade-grant-contract",
+      "patterns": [
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/cascade.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/compiler/temporary_player_rule_templates.py",
+        "quorune/effect_runtime/state_and_permissions.py",
+        "quorune/rules/capabilities.py",
+        "quorune/rules/cast_cascade_grants.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/semantic_runtime/battlefield_cascade_grants.py",
+        "quorune/turn_step_owner.py",
+        "tests/fixtures/temporary-cast-cascade-grant-cards.json",
+        "tests/test_cascade_rules.py"
+      ],
+      "test_modules": [
+        "test_bestow_rules",
+        "test_card_program_trust",
+        "test_cascade_rules",
+        "test_cast_source_placement",
+        "test_casting_payment_keywords",
+        "test_ordinary_crew",
+        "test_storm_rules"
+      ]
+    },
+    {
       "id": "battlefield-cascade-grant-contract",
       "patterns": [
         "quorune/cascade.py",

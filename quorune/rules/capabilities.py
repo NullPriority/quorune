@@ -1373,7 +1373,6 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'resolution.target_controller_information': 'fixed-target-controller-information',
         'trigger.keyword.provoke.fixed': 'provoke',
         'choice.controller.bounded_return_owner_hand': 'bounded-controlled-return',
-        'casting.payment.next_spell_grant': 'fixed-next-spell-payment-grant',
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
@@ -1473,7 +1472,8 @@ def capability_covered_mechanics(
     covered.update(fixed_owner_zone_move_covered_mechanics(supplied)); covered.update(fixed_target_reanimation_covered_mechanics(supplied))
     covered.update(_return_to_hand_covered_mechanics(supplied))
     covered.update(stack_counter_covered_mechanics(supplied))
-    covered.update(_shape_gated_covered_mechanics(supplied))
+    from .next_spell_payment import temporary_cast_grant_covered_mechanics
+    covered.update(_shape_gated_covered_mechanics(supplied) | temporary_cast_grant_covered_mechanics(supplied))
     if supplied.intersection(
         {
             "zone.draw.result_generated_ordering",

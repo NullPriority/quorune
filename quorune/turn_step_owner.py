@@ -20,7 +20,7 @@ from .turn_skip_model import ScheduledTurnSkip, TurnBoundary, TurnSkipScope, Tur
 from .rules.land_play_permissions import (
     reset_additional_land_play_permissions,
 )
-from .rules.next_spell_payment import expire_next_spell_payments
+from .rules.next_spell_payment import expire_temporary_cast_ability_grants
 from .model import (
     CombatState,
     GameState,
@@ -650,7 +650,7 @@ class TurnStepOwner:
                 )
             card.annotations.pop("until_end_of_turn", None)
         for player in self.state.players.values():
-            expire_next_spell_payments(player.stats)
+            expire_temporary_cast_ability_grants(player.stats)
             player.stats.pop("next_spell_uncounterable", None)
             player.stats.pop(
                 "spells_cant_be_countered_until_end",

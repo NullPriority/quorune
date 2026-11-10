@@ -3043,7 +3043,12 @@ Cascade. A later loss of the grant removes the current ability from the spell
 and leaves the collected triggers intact. CR 702.85b action windows,
 replacement-choice suspension during the exile loop, unrepresented temporary
 or history-dependent grants, copied triggers, text changes, and intrinsic
-conditional or face-down Cascade remain fail-closed.
+conditional or face-down Cascade remain fail-closed. Resolved temporary grants
+support the next creature or noncreature spell, independent next instant and
+sorcery spells, or every hand cast this turn. Announcement attaches the matching
+instances to the spell. Accepted payment consumes only the reserved one-shot
+instances, and cleanup expires unused grants. The same Cascade trigger owner
+collects each instance after cast completion.
 
 `compiler/storm_nodes.py` owns ordinary printed Storm as one independently
 source-spanned stack-zone trigger per instance. The casting transaction reads

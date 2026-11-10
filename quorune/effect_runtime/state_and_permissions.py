@@ -196,6 +196,23 @@ def _apply_next_spell_payment(host, effect, *, actor, operation, reason):
 
 
 
+def _apply_cast_cascade_grant(host, effect, *, actor, operation, reason):
+    from ..rules.cast_cascade_grants import cast_cascade_effect_scopes, grant_cast_cascade
+
+    if actor not in host.active_seats:
+        raise GameRuleError("Temporary Cascade requires the active ability controller")
+    try:
+        scopes = cast_cascade_effect_scopes({key: value for key, value in effect.items()
+                                            if key not in {"reason", "_runtime_source"}}, actor=actor)
+        grant_cast_cascade(host.state.players[actor].stats, host.state.turn_sequence, scopes)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(actor, "effect.cast_cascade_grant", f"{actor} gains a temporary Cascade grant.",
+              {"player": actor, "scopes": [scope.value for scope in scopes], "reason": reason},
+              importance=1, changed_players=[actor])
+    return True
+
+
 def _apply_veil_of_summer(
     host: Any,
     effect: Mapping[str, Any],
@@ -470,6 +487,7 @@ HANDLERS = {
     'grant_uncounterable_hexproof_from_colors_until_end': _apply_grant_uncounterable_hexproof_from_colors_until_end,
     'mana': _apply_mana,
     'grant_next_spell_payment': _apply_next_spell_payment,
+    'grant_cast_cascade': _apply_cast_cascade_grant,
     'next_spell_improvise': _apply_next_spell_improvise_or_next_spell_uncounterable,
     'next_spell_uncounterable': _apply_next_spell_improvise_or_next_spell_uncounterable,
     'veil_of_summer': _apply_veil_of_summer,

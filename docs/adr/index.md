@@ -179,3 +179,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0162 — mandatory linked loop draws](0162-mandatory-linked-loop-draws.md)
 - [ADR 0163 — ordered hybrid mana payments](0163-ordered-hybrid-mana-payments.md)
 - [ADR 0164 — next spell payment grants](0164-next-spell-payment-grants.md)
+- [ADR 0165 — temporary cast Cascade grants](0165-temporary-cast-cascade-grants.md)

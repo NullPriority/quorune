@@ -17,6 +17,7 @@ from ..rules.detain import (
     validate_direct_action_prohibition,
 )
 from ..saddle import SADDLE_CAPABILITY, SADDLE_OPERATION
+from ..rules.cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_OPERATION, CAST_CASCADE_RULES
 from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_OPERATION
 
 
@@ -46,6 +47,8 @@ class DomainEffectHandler:
             return FACE_UP_EFFECT_RULES
         if self.operation == SADDLE_OPERATION:
             return ("400.7", "514.2", "702.171b")
+        if self.operation == CAST_CASCADE_OPERATION:
+            return CAST_CASCADE_RULES
         if self.operation == NEXT_SPELL_PAYMENT_OPERATION:
             return ("514.2", "601.2i", "611.2a", "702.51a", "702.126a")
         return self.contract.rule_references
@@ -158,6 +161,8 @@ def _domain_capabilities(operation):
     if operation==BLOCKING_REQUIREMENT_OPERATION:return (BLOCKING_REQUIREMENT_CAPABILITY,)
     if operation == SADDLE_OPERATION: return (SADDLE_CAPABILITY,)
     if operation == NEXT_SPELL_PAYMENT_OPERATION: return (NEXT_SPELL_PAYMENT_CAPABILITY,)
+    if operation == CAST_CASCADE_OPERATION:
+        return (CAST_CASCADE_CAPABILITY, "trigger.keyword.cascade")
     if operation in {LINKED_EXILE_RETURN_OPERATION,LINKED_RETURN_OPERATION}:return (LINKED_EXILE_RETURN_CAPABILITY,)
     return ()
 

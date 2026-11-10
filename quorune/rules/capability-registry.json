@@ -87857,6 +87857,99 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "Attach resolved turn-bound Cascade grants to eligible spells at announcement and consume one-shot uses only when the cast completes.",
+        "inputs": [
+          "resolved controller-scoped grant",
+          "announced cast origin and spell types",
+          "completed authoritative payment"
+        ],
+        "outputs": [
+          "one live stack keyword instance per grant",
+          "remaining independent uses",
+          "ordinary distinct Cascade triggers"
+        ],
+        "exclusions": [
+          "future turns",
+          "unrepresented scope combinations",
+          "failed and reversed casts",
+          "library identity reads"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.keyword.cascade"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and materialized operation independently require temporary cast grants and the ordinary Cascade owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.ability.temporary_cascade_grant",
+      "implementation_components": [
+        "quorune.compiler.temporary_player_rule_templates._temporary_cascade_template",
+        "quorune.rules.cast_cascade_grants.cast_cascade_effect_scopes",
+        "quorune.rules.cast_cascade_grants.reserve_cast_cascade_grants",
+        "quorune.rules.cast_cascade_grants.commit_cast_cascade_grants",
+        "quorune.effect_runtime.state_and_permissions._apply_cast_cascade_grant",
+        "quorune.semantic_runtime.battlefield_cascade_grants.stack_cascade_grant_effects"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed result producer restores a material original-card residual. Native tests distinguish early triggers, late grants, failed payment and lost multiplicity.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "multiplayer_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "negative_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast",
+        "test_temporary_cascade_capability_and_scope_omission_fail_closed"
+      ],
+      "official_rules": [
+        "514.2",
+        "601.2a",
+        "601.2i",
+        "611.2a",
+        "611.2f",
+        "702.85a",
+        "702.85c",
+        "733"
+      ],
+      "positive_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "privacy_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell"
+      ],
+      "replay_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -87865,7 +87958,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 773,
+  "registry_version": 774,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

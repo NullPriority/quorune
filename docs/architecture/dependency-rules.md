@@ -130,6 +130,11 @@ ordinary attacking-token choice over the shared public destination planner.
 recipient selector reads the combat set and uses the existing continuous-effect
 owner. The review adds one operation and no size or direct-write allowance.
 
+[ADR 0165](../adr/0165-temporary-cast-cascade-grants.md) reviews the closed
+controller result for temporary Cascade. The cast owner binds the spell and
+consumes its reserved uses. The existing stack layers and Cascade resolver
+supply the characteristic and trigger behavior. The review adds one operation.
+
 The separate raw Oracle-ID-literal ratchet remains active. It protects literal
 identity leakage and reviewed historical debt independently of whether a literal
 currently reaches a behavior-selection sink; it does not replace or weaken the

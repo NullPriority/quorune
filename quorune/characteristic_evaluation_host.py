@@ -751,10 +751,10 @@ class CharacteristicEvaluationHostMixin:
             runtime_effects = fixed_target_color_effects(self.state, card)
             if maximum_layer is None or maximum_layer >= Layer.ABILITY:
                 from .compiled_cast_timing import compiled_conditional_flash_stack_effects
-                from .semantic_runtime.battlefield_cascade_grants import battlefield_cascade_stack_effects
+                from .semantic_runtime.battlefield_cascade_grants import stack_cascade_grant_effects
 
                 runtime_effects = (*runtime_effects, *compiled_conditional_flash_stack_effects(self, card),
-                    *battlefield_cascade_stack_effects(self, card))
+                    *stack_cascade_grant_effects(self, card))
         enchanted, equipped, modified = (
             self._attachment_public_state(
                 card,

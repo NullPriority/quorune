@@ -33,6 +33,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "increase_speed",
                 "mana",
                 "grant_next_spell_payment",
+                "grant_cast_cascade",
                 "next_spell_improvise",
                 "next_spell_uncounterable",
                 "grant_uncounterable_hexproof_from_colors_until_end",

@@ -1571,9 +1571,9 @@
     "physical_lines": 7062
   },
   "exception_binding": {
-    "adr": "docs/adr/0164-next-spell-payment-grants.md",
-    "allowance_fingerprint": "7d49252975df8e1d9374accd2f203df1d9923ece541896e5888d34c77eedf0e6",
-    "exception_id": "ARCH-EXC-0064"
+    "adr": "docs/adr/0165-temporary-cast-cascade-grants.md",
+    "allowance_fingerprint": "d478d642b2277f53e8bd9e602db8dee6cbaace0b0514b8ff3a323dc94ed59780",
+    "exception_id": "ARCH-EXC-0065"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1884,6 +1884,7 @@
     "goad",
     "grant_ability_fragment",
     "grant_ability_marker",
+    "grant_cast_cascade",
     "grant_cast_permission",
     "grant_declaration_restriction_until_end_of_turn",
     "grant_keyword_until_end_of_turn",

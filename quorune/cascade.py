@@ -17,6 +17,7 @@ from .selection.exile_cast import (
     EXILE_CAST_PRODUCER_CASCADE,
     mana_value_of_cost,
 )
+from .rules.cast_cascade_grants import announced_cascade_instances
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
 from .semantic_runtime.battlefield_cascade_grants import CASCADE_GRANT_EVENT
 
@@ -94,7 +95,8 @@ def cascade_trigger_items(
     """Materialize one ordinary trigger occurrence per typed Cascade instance."""
 
     specs = compiled_cascade_specs(host, card)
-    has_grants = bool(host.semantics.programs_for_event(CASCADE_GRANT_EVENT))
+    has_grants = bool(announced_cascade_instances(spell.context)
+                      or host.semantics.programs_for_event(CASCADE_GRANT_EVENT))
     if not specs and not has_grants:
         return ()
     effective = host._effective_card_data(card)

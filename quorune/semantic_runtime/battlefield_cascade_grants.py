@@ -14,9 +14,11 @@ from ..ability_fragments import (
 from ..card_program_faces import program_matches_face
 from ..card_programs.admission import program_has_complete_card_program_admission
 from ..continuous_effect_model import (
-    ContinuousEffect, ContinuousEffectOrigin, ContinuousOperation, Layer,
+    ContinuousEffect, ContinuousEffectDuration, ContinuousEffectOrigin, ContinuousObjectIdentity,
+    ContinuousOperation, Layer,
 )
 from ..object_predicate import ObjectQuerySpec
+from ..rules.cast_cascade_grants import announced_cascade_instances
 from .component_registry import exact_fields
 from .context import SemanticNodeError
 
@@ -115,13 +117,32 @@ def _current_grants(host, seat):
                     yield source, f"{program.key}:{index}", handler.validate(descriptor)
 
 
-def battlefield_cascade_stack_effects(host, card):
-    """Use committed cast provenance and current sources for the live stack ability."""
-    if not host.semantics.programs_for_event(CASCADE_GRANT_EVENT):
-        return ()
+def _cascade_operations(instances):
+    fragment = ability_fragment_to_dict(SpellCastKeywordTriggerSpec(SpellCastKeywordTriggerKind.CASCADE))
+    return (ContinuousOperation("add_ability", "Cascade"),
+            *(ContinuousOperation("add_ability_fragment", fragment) for _ in range(instances)))
+
+
+def stack_cascade_grant_effects(host, card):
     spell = next((item for item in host.state.stack if item.kind == "spell"
                   and item.card_object_id == card.object_id), None)
-    if spell is None or spell.context.get(CAST_ANNOUNCEMENT_MARKER) is True:
+    if spell is None:
+        return ()
+    instances = announced_cascade_instances(spell.context)
+    temporary = (ContinuousEffect(
+        effect_id=f"{spell.ref}:announced-cascade:6", source_id=card.object_id,
+        layer=Layer.ABILITY, sublayer="6", timestamp=card.zone_timestamp,
+        operations=_cascade_operations(instances), origin=ContinuousEffectOrigin.RESOLUTION,
+        duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+        locked_objects=(ContinuousObjectIdentity(card.object_id, card.logical_object_id),),
+    ),) if instances else ()
+    return (*temporary, *battlefield_cascade_stack_effects(host, card, spell))
+
+
+def battlefield_cascade_stack_effects(host, card, spell):
+    """Use committed cast provenance and current sources for the live stack ability."""
+    if (not host.semantics.programs_for_event(CASCADE_GRANT_EVENT)
+            or spell.context.get(CAST_ANNOUNCEMENT_MARKER) is True):
         return ()
     origin = spell.context.get("cast_origin")
     if not isinstance(origin, str) or not origin:
@@ -133,13 +154,11 @@ def battlefield_cascade_stack_effects(host, card):
 
     effective = host._effective_card_data(card, maximum_layer=Layer.COLOR)
     mana_value = mana_value_of_cost(str(effective.get("mana_cost") or ""), x_value=int(spell.x_value or 0))
-    fragment = ability_fragment_to_dict(SpellCastKeywordTriggerSpec(SpellCastKeywordTriggerKind.CASCADE))
     return tuple(
         ContinuousEffect(
             effect_id=f"{source.object_id}:{component}:6", source_id=source.object_id,
             layer=Layer.ABILITY, sublayer="6", timestamp=source.zone_timestamp,
-            operations=(ContinuousOperation("add_ability", "Cascade"),
-                        *(ContinuousOperation("add_ability_fragment", fragment) for _ in range(spec.instances))),
+            operations=_cascade_operations(spec.instances),
             origin=ContinuousEffectOrigin.STATIC_ABILITY,
             applies=replace(spec.predicate, zones=("stack",), controller=source.controller),
         )

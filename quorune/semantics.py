@@ -145,6 +145,7 @@ VALID_EFFECT_OPERATIONS = {
     "mill",
     "ninjutsu_entry",
     "grant_next_spell_payment",
+    "grant_cast_cascade",
     "next_spell_improvise",
     "next_spell_uncounterable",
     "note",

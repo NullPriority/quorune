@@ -45,9 +45,25 @@ def is_closed_next_spell_payment_program(program):
 
 
 def temporary_player_rule_node_capabilities(**shape):
+    from .cast_cascade_grants import cast_cascade_node_capabilities
     from .temporary_cast_restrictions import temporary_cast_node_capabilities
 
-    return next_spell_payment_node_capabilities(**shape) or temporary_cast_node_capabilities(**shape)
+    return (next_spell_payment_node_capabilities(**shape) or cast_cascade_node_capabilities(**shape)
+            or temporary_cast_node_capabilities(**shape))
+
+
+def temporary_cast_grant_covered_mechanics(supplied):
+    from .cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC
+
+    return {mechanic for capability, mechanic in ((NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_MECHANIC),
+        (CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC)) if capability in supplied}
+
+
+def expire_temporary_cast_ability_grants(stats):
+    from .cast_cascade_grants import expire_cast_cascade_grants
+
+    expire_next_spell_payments(stats)
+    expire_cast_cascade_grants(stats)
 
 
 @dataclass(frozen=True, slots=True)
