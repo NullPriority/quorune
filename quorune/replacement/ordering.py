@@ -21,7 +21,12 @@ from .model import (
     ReplacementTreeChoice,
 )
 from .immutable import thaw_value
-from .operations import PreventUsingShield,DevourEntryOperation
+from .operations import (
+    AmplifyEntryOperation,
+    DevourEntryOperation,
+    ENTRY_OBJECT_SELECTION_OPERATIONS,
+    PreventUsingShield,
+)
 from .entry_reservations import share_entry_reservations
 
 
@@ -551,7 +556,7 @@ def apply_batch_replacement(
         pending.choice, selected_value
     )
     effect=next((e for e in all_effects if e.effect_id==canonical_selection),None)
-    object_choice=effect is not None and any(isinstance(op,DevourEntryOperation) for op in effect.operations)
+    object_choice=effect is not None and any(isinstance(op,ENTRY_OBJECT_SELECTION_OPERATIONS) for op in effect.operations)
     if supplied_objects and not object_choice:raise ReplacementEffectError('This replacement does not accept selected objects')
     journal_objects=(supplied_objects or ()) if object_choice else None
     allocation_choice = next(
@@ -740,6 +745,35 @@ def counter_cost_replacement_progress_matches(batch, effects, selections, reques
     return progress.pending is not None and progress.batch == batch
 
 
+def _entry_object_choice_payload(choices, effects_by_id):
+    object_choices = {}
+    labels = set()
+    for choice in choices:
+        for effect_id in choice.options:
+            operations = tuple(op for op in effects_by_id[effect_id].operations
+                if isinstance(op, ENTRY_OBJECT_SELECTION_OPERATIONS))
+            if not operations:
+                continue
+            if len(operations) != 1:
+                raise ReplacementEffectError("One replacement choice requires one object selector")
+            operation = operations[0]
+            if isinstance(operation, AmplifyEntryOperation):
+                refs = [card.ref for card in operation.eligible_cards(choice.event)]
+                labels.add("Cards to reveal for Amplify")
+            else:
+                scope = choice.event.entry_scope
+                eligible = set(scope.eligible_zone_choices(card.object_id for card in operation.candidates)) if scope else set()
+                refs = [card.ref for card in operation.candidates if card.object_id in eligible]
+                labels.add("Permanents to sacrifice with Devour")
+            object_choices[effect_id] = {"legal_refs": refs, "minimum": 0, "maximum": len(refs)}
+    if not object_choices:
+        return {}, {}
+    refs = list(dict.fromkeys(ref for spec in object_choices.values() for ref in spec["legal_refs"]))
+    return object_choices, {"type": "object_ref_array", "legal_refs": refs, "minimum": 0,
+        "maximum": len(refs), "distinct": True, "required": False,
+        "label": next(iter(labels)) if len(labels) == 1 else "Objects for the selected replacement"}
+
+
 def replacement_choice_payload(
     pending: ReplacementBatchChoice,
     effects: Iterable[ReplacementEffect],
@@ -810,20 +844,9 @@ def replacement_choice_payload(
             "required": False,
             "label": "Divide prevention (only when required)",
         }
-    object_choices={}
-    scope=pending.choice.event.entry_scope
-    for effect_id in dict.fromkeys(effect_id for choice in choices for effect_id in choice.options):
-        operations=[op for op in by_id[effect_id].operations if isinstance(op,DevourEntryOperation)]
-        if not operations:continue
-        if len(operations)!=1:raise ReplacementEffectError('One replacement choice requires one Devour object selector')
-        operation=operations[0]
-        eligible=set(scope.eligible_zone_choices(c.object_id for c in operation.candidates)) if scope is not None else set()
-        refs=[c.ref for c in operation.candidates if c.object_id in eligible]
-        object_choices[effect_id]={'legal_refs':refs,'minimum':0,'maximum':len(refs)}
+    object_choices, object_schema = _entry_object_choice_payload(choices, by_id)
     if object_choices:
-        refs=list(dict.fromkeys(ref for spec in object_choices.values() for ref in spec['legal_refs']))
-        choice_schema['replacement_objects']={'type':'object_ref_array','legal_refs':refs,'minimum':0,'maximum':len(refs),
-            'distinct':True,'required':False,'label':'Permanents to sacrifice with Devour'}
+        choice_schema["replacement_objects"] = object_schema
     return {
         "chooser": pending.choice.chooser,
         "prompt": "Choose the next replacement or prevention effect.",

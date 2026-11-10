@@ -2,21 +2,45 @@ from __future__ import annotations
 
 """Read-only current-source applicability for static activation-cost modifiers."""
 
+from dataclasses import replace
+
 from ...ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ...activation_cost_modifiers import (ACTIVATION_GENERIC_COST_EVENT, ACTIVATION_GENERIC_COST_HANDLER,
-    TARGETED_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, ActivationCostModifierSource)
+    TARGETED_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, ActivationCostModifierSource,
+    ConditionalActivationReduction, FixedActivationCostModifierSpec)
 from ...card_program_faces import program_matches_face
 from ...object_query import object_matches_query
+from ...public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from ...semantic_runtime.current_ability_components import program_has_current_ability_fragments
 from ..target_cost_subjects import target_cost_subject_refs
 from .ability_kinds import activation_matches_cost_scope
+
+
+def _ability_local_mana_modifiers(host, seat, source, ability):
+    reduction = getattr(ability, 'ability_local_mana_reduction', None)
+    if reduction is None:
+        return []
+    provider = source if source.controller == seat else replace(source, controller=seat)
+    if isinstance(reduction, ConditionalActivationReduction):
+        from .public_state_conditions import current_activation_public_state_matches
+
+        count = reduction.generic if current_activation_public_state_matches(host, provider, reduction.condition) else 0
+    elif isinstance(reduction, PublicCharacteristicAggregateSpec):
+        from ...public_characteristic_aggregates import current_public_characteristic_aggregate
+
+        count = max(0, current_public_characteristic_aggregate(host, seat, reduction))
+    else:
+        from ...dynamic_characteristics import query_characteristic_count
+
+        count = query_characteristic_count(host, provider, reduction)
+    return [FixedActivationCostModifierSpec(-count, subject_relation='any')] if count else []
 
 
 def current_activation_cost_modifiers(host, seat, source, ability):
     from ...semantic_runtime.cast_costs import default_cast_cost_component_registry
 
     registry = default_cast_cost_component_registry()
-    result = []
+    result = _ability_local_mana_modifiers(host, seat, source, ability)
     candidate = None
     public_objects = None
     for permanent in host._semantic_event_sources(zones={'battlefield'}):
@@ -58,7 +82,6 @@ def current_activation_cost_modifiers(host, seat, source, ability):
                     if not object_matches_query(candidate, spec.predicate):
                         continue
                 if spec.schema_version == 3:
-                    from dataclasses import replace
                     from ...self_cast_reductions import CastReductionMetric, cast_reduction_multiplier
                     multiplier = cast_reduction_multiplier(host, permanent.controller,
                         CastReductionMetric.from_dict(spec.to_dict()['multiplier']), source=permanent)

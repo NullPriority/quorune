@@ -31,6 +31,25 @@ class StateQualifiedZoneCompilerTests(unittest.TestCase):
                 'Whenever an equipped creature with the remembered quality dies, draw a card.'):
             self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=self.registry).status)
 
+    def test_triggered_source_exile_requires_matching_zone_and_untargeted_death(self):
+        from types import SimpleNamespace
+        from quorune.rules.public_zone_move_capability_shapes import triggered_source_exile_runtime_dependencies
+
+        effect = {"op": "exile_public_graveyard_card", "card": "$source.graveyard_object"}
+        bound = {"coverage": (), "active_zone": "graveyard", "event": "creature.dies",
+                 "target_schema": None, "effects": (effect,)}
+        self.assertEqual(("card.exile.public_graveyard",),
+                         triggered_source_exile_runtime_dependencies(SimpleNamespace(**bound)))
+        for changed in (
+            {"active_zone": "battlefield"},
+            {"event": "permanent.enter"},
+            {"target_schema": {"zones": ["graveyard"], "count": 1}},
+            {"effects": ({**effect, "card": "$source.zone_object"},)},
+            {"effects": ({**effect, "card": "$target.0"},), "coverage": ("triggered-source-exile",)},
+        ):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                triggered_source_exile_runtime_dependencies(SimpleNamespace(**{**bound, **changed}))
+
     def test_verified_state_and_zone_owner_withdrawals_keep_plain_entry_draw(self):
         import json
         from common import ROOT
@@ -385,6 +404,172 @@ class StateQualifiedZoneNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertEqual(hand+1,len(s.state.players['A'].zones['hand']))
         for viewer in 'ABD':self.assertNotIn(private.ref,json.dumps(s.packet('pilot:'+viewer,full=True)))
         self.replay(s,load=True)
+
+    def test_creature_death_destination_uses_owner_and_last_known_toughness(self):
+        session = self.session(851001)
+        engine = session.engine
+        skirge = self.add(engine, "Lurking Skirge")
+        feast = self.add(engine, "Grim Feast")
+        magus = self.add(engine, "Magus of the Bridge")
+        own = self.add(engine, "Grizzly Bears", ref="death-own")
+        stolen = self.add(engine, "Grizzly Bears", seat="B", ref="death-stolen")
+        kills = [self.add(engine, "Murder", zone="hand", ref=f"death-kill-{index}") for index in range(2)]
+        engine.change_control(stolen.object_id, "A", reason="set up shared previous controller")
+        stolen.counters["+1/+1"] = 1
+        self.assertEqual(3, engine._numeric_stat(stolen.object_id, "toughness"))
+        for card in (skirge, feast, magus, *kills):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"B": 4, "C": 2})
+        self.checkpoint(session)
+
+        self.cast(session, "A", kills[0], [own.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertIn(own.object_id, session.state.players["A"].zones["graveyard"])
+        self.assertEqual(40, session.state.players["A"].life)
+        self.assertEqual({"enchantment"}, engine._effective_type_parts(skirge)[0])
+        self.assertEqual("battlefield", magus.zone)
+        zombie, = (card for card in session.state.cards.values() if card.is_token)
+        self.assertEqual(("A", "battlefield", "Zombie Token"), (zombie.controller, zombie.zone, zombie.printed_name))
+
+        self.cast(session, "A", kills[1], [stolen.ref])
+        self.assertEqual("trigger.order", self.resolve(session).kind)
+        batch, = session.state.pending_trigger_batches
+        self.assertEqual({card.object_id for card in (skirge, feast, magus)},
+                         {item.source_object_id for item in batch.groups[0].items})
+        offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]
+        command = {"action_id": "order", "triggers": [row["id"] for row in offered]}
+        self.reject(session, "B", command)
+        ordered = session.act("pilot:A", command)
+        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertIn(stolen.object_id, session.state.players["B"].zones["graveyard"])
+        self.assertEqual(2, engine._numeric_stat(stolen.object_id, "toughness"))
+        self.assertEqual(43, session.state.players["A"].life)
+        self.assertEqual(({"creature"}, {"phyrexian", "imp"}), engine._effective_type_parts(skirge)[:2])
+        self.assertEqual((3, 2), tuple(engine._numeric_stat(skirge.object_id, name) for name in ("power", "toughness")))
+        self.assertIn("flying", engine._combat_keywords(skirge))
+        self.assertEqual("exile", magus.zone)
+        self.assertEqual([zombie.object_id], [card.object_id for card in session.state.cards.values() if card.is_token])
+        self.replay(session, load=True)
+
+    def test_creature_death_destination_ignores_graveyard_move_replaced_by_exile(self):
+        session = self.session(851004)
+        engine = session.engine
+        feast = self.add(engine, "Grim Feast")
+        skirge = self.add(engine, "Lurking Skirge")
+        magus = self.add(engine, "Magus of the Bridge")
+        bridge = self.add(engine, "Bridge from Below", zone="graveyard")
+        self.add(engine, "Dauthi Voidwalker")
+        opponent = self.add(engine, "Grizzly Bears", seat="B")
+        kill = self.add(engine, "Murder", zone="hand")
+        for card in (feast, skirge, magus, bridge, kill):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"B": 2, "C": 1})
+        self.checkpoint(session)
+
+        self.cast(session, "A", kill, [opponent.ref])
+        self.resolve_top(session)
+        self.assertEqual("exile", opponent.zone)
+        self.assertEqual(1, opponent.counters.get("void"))
+        self.assertFalse(session.state.stack)
+        self.assertFalse(session.state.pending_trigger_batches)
+        self.assertEqual(40, session.state.players["A"].life)
+        self.assertEqual({"enchantment"}, engine._effective_type_parts(skirge)[0])
+        self.assertEqual(("battlefield", "graveyard"), (magus.zone, bridge.zone))
+        self.replay(session, load=True)
+
+    def test_bridge_from_below_orders_both_results_and_rechecks_original_graveyard_source(self):
+        for mode in ("token-first", "exile-first", "reentered", "absent"):
+            with self.subTest(mode=mode):
+                session = self.session(851002)
+                engine = session.engine
+                bridge = self.add(engine, "Bridge from Below", zone="hand" if mode == "absent" else "graveyard")
+                own = self.add(engine, "Grizzly Bears", ref="bridge-own")
+                opponent = self.add(engine, "Grizzly Bears", seat="B", ref="bridge-opponent")
+                wipe = self.add(engine, "Wrath of God", zone="hand")
+                if mode == "reentered":
+                    reclaim = self.add(engine, "Reclaim", zone="hand")
+                    mill = self.add(engine, "Thought Scour", zone="hand")
+                self.assert_closed(session, bridge)
+                self.assert_closed(session, wipe)
+                self.prepare(session, mana={"W": 2, "C": 2, "G": 1, "U": 1})
+                self.checkpoint(session)
+
+                self.cast_for(session, "A", wipe, reserve={"G": 1, "U": 1})
+                self.resolve_top(session)
+                self.assertEqual(["graveyard", "graveyard"], [own.zone, opponent.zone])
+                if mode == "absent":
+                    self.assertFalse(session.state.stack)
+                    self.assertFalse(session.state.pending_trigger_batches)
+                    self.replay(session, load=True)
+                    continue
+
+                self.assertEqual("trigger.order", session.state.pending_decision.kind)
+                batch, = session.state.pending_trigger_batches
+                items = batch.groups[0].items
+                self.assertEqual([bridge.object_id, bridge.object_id], [item.source_object_id for item in items])
+                refs = {engine.semantics.get(item.source_ability_id).effects[0]["op"]: item.ref for item in items}
+                token, exile = refs["create_token"], refs["exile_public_graveyard_card"]
+                order = [exile, token] if mode == "token-first" else [token, exile]
+                self.assertEqual(set(order), {row["id"] for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]})
+                command = {"action_id": "order", "triggers": order}
+                self.reject(session, "B", command)
+                ordered = session.act("pilot:A", command)
+                self.assertTrue(ordered.ok, ordered.summary)
+
+                if mode == "reentered":
+                    original = bridge.logical_object_id
+                    self.cast(session, "A", reclaim, [bridge.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("library", bridge.zone)
+                    self.cast(session, "A", mill, ["A"])
+                    self.resolve_top(session)
+                    self.assertEqual("graveyard", bridge.zone)
+                    self.assertNotEqual(original, bridge.logical_object_id)
+
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                expected_zone = "graveyard" if mode == "reentered" else "exile"
+                self.assertEqual(expected_zone, session.state.cards[bridge.object_id].zone)
+                self.assertEqual(int(mode == "token-first"), sum(card.is_token for card in session.state.cards.values()))
+                self.replay(session, load=True)
+
+    def test_magus_exiles_original_token_copy_and_spares_returned_permanent(self):
+        session = self.session(851003)
+        engine = session.engine
+        magus = self.add(engine, "Magus of the Bridge")
+        opponent = self.add(engine, "Grizzly Bears", seat="B")
+        copy = self.add(engine, "Cackling Counterpart", zone="hand")
+        kill = self.add(engine, "Murder", zone="hand")
+        blink = self.add(engine, "Cloudshift", zone="hand")
+        for card in (magus, copy, kill, blink):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"U": 2, "B": 2, "W": 1, "C": 2})
+        self.checkpoint(session)
+        self.cast_for(session, "A", copy, [magus.ref], reserve={"W": 1, "B": 2})
+        self.assertIsNone(self.resolve(session))
+        token, = (card for card in session.state.cards.values() if card.is_token)
+
+        self.cast_for(session, "A", kill, [opponent.ref], reserve={"W": 1})
+        self.assertEqual("trigger.order", self.resolve(session).kind)
+        batch, = session.state.pending_trigger_batches
+        self.assertEqual({magus.object_id, token.object_id}, {item.source_object_id for item in batch.groups[0].items})
+        offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]
+        ordered = session.act("pilot:A", {"action_id": "order", "triggers": [row["id"] for row in offered]})
+        self.assertTrue(ordered.ok, ordered.summary)
+        original = magus.logical_object_id
+        self.cast(session, "A", blink, [magus.ref])
+        self.resolve_top(session)
+        self.assertEqual("battlefield", magus.zone)
+        self.assertNotEqual(original, magus.logical_object_id)
+
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", magus.zone)
+        self.assertEqual("outside", session.state.cards[token.object_id].zone)
+        exile, = (event for event in session.state.events if event.code == "permanent.exile"
+                  and event.details.get("object") == token.ref)
+        self.assertEqual("exile", exile.details["destination"])
+        self.replay(session, load=True)
 
     def test_actual_guardian_distinguishes_opponent_aura_current_controller_and_any_counter(self):
         s=self.session(603108102)

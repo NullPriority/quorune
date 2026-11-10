@@ -62,6 +62,51 @@ class FixedTopOrderModelTests(unittest.TestCase):
         with patch.object(type(handler),'complete',LibraryOrderingHandler.complete),self.assertRaises(AssertionError):witness()
 
 
+    def test_hand_top_pins_the_private_subset_and_current_incarnations(self):
+        from quorune.library_order_model import FixedHandTopOrderSpec
+        from quorune.semantic_choices.fixed_top_order import FixedHandTopOrderingHandler
+
+        rows = [SimpleNamespace(ref=ref, printed_name=ref, logical_object_id=ref + "@0", known_to_actor=True)
+                for ref in ("first", "second", "third")]
+        query = SimpleNamespace(active_seats=("A", "B"), objects=lambda **_filters: tuple(rows))
+        context = SimpleNamespace(actor="A", stack_controller="A", stack_ref="S1", stack_label="Order hand", query=query)
+        handler = FixedHandTopOrderingHandler()
+        effect = FixedHandTopOrderSpec(2).effect("A")
+        prepared = handler.prepare(effect, context)
+        self.assertEqual("actor_private", prepared.request.choice.visibility)
+        self.assertEqual("top_to_bottom", prepared.request.choice.choice_schema()["order"])
+        continuation = SimpleNamespace(effect=prepared.continuation_effect)
+        for invalid in ([], ["first"], ["first", "first"], ["first", "B-hand"], ["first", "second", "third"]):
+            with self.assertRaises(SemanticChoiceError):
+                handler.complete(continuation, {"cards": invalid}, query)
+        result = handler.complete(continuation, {"cards": ["third", "first"]}, query)
+        intent, = result.intents
+        self.assertEqual(("first", "third"), intent.object_refs)
+        self.assertEqual(("hand",), intent.expected_zones)
+        self.assertEqual("library", intent.destination)
+        self.assertTrue(intent.owned_only)
+        rows[0].logical_object_id = "first@1"
+        with self.assertRaisesRegex(SemanticChoiceError, "pinned hand"):
+            handler.complete(continuation, {"cards": ["third", "first"]}, query)
+        with self.assertRaises(SemanticChoiceError):
+            handler.prepare(FixedHandTopOrderSpec(2).effect("B"), context)
+        rows.clear()
+        empty = handler.prepare(effect, context)
+        self.assertIsNone(empty.request)
+        self.assertIsNotNone(empty.auto_continue)
+
+    def test_hand_top_batch_order_mutant_is_killed(self):
+        from quorune.semantic_choices.fixed_top_order import MoveObjectsSimultaneouslyIntent
+
+        def in_submission_order(**kwargs):
+            return MoveObjectsSimultaneouslyIntent(**{**kwargs, "object_refs": tuple(reversed(kwargs["object_refs"]))})
+
+        self.test_hand_top_pins_the_private_subset_and_current_incarnations()
+        with patch("quorune.semantic_choices.fixed_top_order.MoveObjectsSimultaneouslyIntent", side_effect=in_submission_order):
+            with self.assertRaises(AssertionError):
+                self.test_hand_top_pins_the_private_subset_and_current_incarnations()
+
+
 class FixedTopOrderCompilerTests(unittest.TestCase):
     def test_standalone_spell_and_activated_order_have_complete_executable_admission(self):
         from quorune.card_programs import compile_card_program,bind_card_program_runtime
@@ -104,3 +149,44 @@ class FixedTopOrderCompilerTests(unittest.TestCase):
             def witness():self.assertEqual('exact',compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=load_default_capability_registry()).status)
             witness()
             with patch('quorune.compiler.fixed_top_order_templates.fixed_top_order_template',return_value=None),self.assertRaises(AssertionError):witness()
+
+
+    def test_fixed_draw_and_hand_top_order_lower_and_bind_independently(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.compiler.program_generation import register_generated_programs
+        from quorune.library_order_model import HAND_TOP_ORDER_CAPABILITY, HAND_TOP_ORDER_OPERATION
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        database = SimpleNamespace(rulings=lambda _record: ())
+        text = "Draw three cards, then put two cards from your hand on top of your library in any order."
+        record = replace(query_record(text), type_line="Instant")
+        ir = compile_oracle_card(record, capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(["draw", HAND_TOP_ORDER_OPERATION], [effect["op"] for effect in node.effects])
+        self.assertIn(HAND_TOP_ORDER_CAPABILITY, node.capability_dependencies)
+        self.assertEqual(2, node.effects[1]["count"])
+        for invalid in (
+            text.replace("two cards", "X cards"), text.replace("two cards", "two card"),
+            text.replace("on top of your library", "into target opponent's library"),
+            text.replace("your hand", "an opponent's hand"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(record, oracle_text=invalid),
+                capability_registry=registry).status)
+
+        semantics = SemanticRegistry()
+        options = dict(capability_registry=registry, capability_profile="commander_review")
+        register_generated_programs(database, semantics, [record], **options, promote_exact_effect_programs=True)
+        card_program = compile_best_available_card_program(database, record, semantic_registry=semantics, **options)
+        self.assertTrue(bind_card_program_runtime(card_program, capability_registry=registry,
+                                                 profile="commander_review")["strict_capability_ready"])
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        dependencies = tuple(value for value in program.capability_dependencies if value != HAND_TOP_ORDER_CAPABILITY)
+        withdrawn = replace(program, coverage=[], capability_dependencies=dependencies,
+            capability_closure=registry.closure(dependencies, profile="commander_review").to_dict())
+        bound = bind_semantic_program_runtime(withdrawn, capability_registry=registry, profile="commander_review")
+        self.assertFalse(bound["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{HAND_TOP_ORDER_CAPABILITY}", bound["blockers"])

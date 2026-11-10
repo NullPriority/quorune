@@ -143,6 +143,26 @@ def _resolve_typed_semantic_value(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 3:
+        from ..rules.stack_controller_payment_cost import bind_stack_controller_quantity_payment
+
+        try:
+            return bind_stack_controller_quantity_payment(
+                host, value, resolve=lambda operand: resolve_semantic_value(host, operand, item),
+            )
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 5:
+        if resolve_semantic_value(host, value['stack'], item) is None:
+            return {**value, 'stack': None}
+    if value.get('op') == 'resolve_fixed_object_action' and value.get('schema_version') == 3:
+        from ..rules.reanimation_followup import current_linked_subject, validate_linked_departure
+
+        try:
+            subject = validate_linked_departure(value)
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return {**value, 'object': None} if current_linked_subject(host, subject, zone='battlefield') is None else dict(value)
     if value.get('op')=='schedule_fixed_object_action':
         from ..delayed_object_actions import bind_delayed_object_instruction
         try:return bind_delayed_object_instruction(host,value,item)
@@ -167,7 +187,8 @@ def _resolve_effect_mapping(host, value, item):
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
         if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
-            value = {**value, ANNOUNCED_DAMAGE_EFFECT_FIELD: bind_announced_damage_recipients(host, value, item)}
+            total, recipients = bind_announced_damage_recipients(host, value, item)
+            value = {**value, "amount": total, ANNOUNCED_DAMAGE_EFFECT_FIELD: recipients}
         missing = bound_mutation_target_overrides(host, value, item,
             lambda reference: resolve_semantic_value(host, reference, item))
         if missing:
@@ -227,7 +248,8 @@ def resolve_semantic_value(
             return retained_transmute_mana_value(item)
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
-    if value == "$source.zone_object":
+    if value in ("$source.zone_object", "$source.graveyard_object"):
+        zone = "battlefield" if value == "$source.zone_object" else "graveyard"
         object_id = str(getattr(item, "source_object_id", None) or "")
         logical_object_id = str(
             getattr(item, "context", {}).get("source_logical_object_id")
@@ -236,7 +258,7 @@ def resolve_semantic_value(
         source = host.state.cards.get(object_id)
         if (
             source is None
-            or source.zone != "battlefield"
+            or source.zone != zone
             or source.phased_out
             or not logical_object_id
             or source.logical_object_id != logical_object_id

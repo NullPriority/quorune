@@ -75,6 +75,8 @@ def compiled_static_ability_fragments(
     if record is None:
         return _custom_fragments(card)
     expected_face = _face_id(record, card, face_name)
+    from .card_program_faces import current_shared_type_doors, room_program_face_is_active
+    doors = current_shared_type_doors(card)
     fragments: list[StaticAbilityFragment] = []
     programs_by_key = {
         program.key: program
@@ -128,13 +130,10 @@ def compiled_static_ability_fragments(
         if not host.semantic_program_is_current_trusted(program):
             continue
         program_face = str(program.provenance.get("face_id") or "")
-        if (
-            program_face
-            and program_face != expected_face
-        ) or (
-            not program_face
-            and expected_face != "front"
-        ):
+        if doors is not None:
+            if not room_program_face_is_active(card, program):
+                continue
+        elif (program_face or "front") != expected_face:
             continue
         if (
             program.active_zone == "battlefield"

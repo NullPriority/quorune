@@ -768,6 +768,154 @@
         "vintage": "legal"
       },
       "cmc": 3.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Ghitu Firebreathing",
+      "oracle_id": "893cdd4f-0b22-4ddc-98a3-5d202564ffa5",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nEnchant creature\n{R}: Enchanted creature gets +1/+0 until end of turn.\n{R}: Return this Aura to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-10-06",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Briar Shield",
+      "oracle_id": "9d437391-d476-4976-8714-6a1d3185ab52",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nSacrifice this Aura: Enchanted creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1997-06-09",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Flowstone Embrace",
+      "oracle_id": "18a45b81-1946-4be6-8f2c-8c21d11c86f8",
+      "oracle_text": "Enchant creature\n{T}: Enchanted creature gets +2/-2 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-05-04",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
     }
   ],
   "rulings": [
@@ -902,6 +1050,24 @@
       "published_at": "2014-11-07",
       "source": "wotc",
       "comment": "The enchanted permanent loses any card types, subtypes, and colors it previously had. It keeps any supertypes it had and its name remains unchanged. It gains “{T}: Add {G}” and loses all other abilities from its rules text. It will still have any abilities it gained from other effects."
+    },
+    {
+      "comment": "If you return Ghitu Firebreathing to its owner's hand while the +1/+0 ability is on the stack, that ability will still give the creature that was last enchanted by Ghitu Firebreathing +1/+0.",
+      "oracle_id": "893cdd4f-0b22-4ddc-98a3-5d202564ffa5",
+      "published_at": "2006-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "When you cast Briar Shield's activated ability, Briar Shield is put into the graveyard as a cost. The +1/+1 effect immediately ends, but the +3/+3 effect won't begin until the ability resolves. The enchanted creature gets no bonus while Briar Shield's ability is on the stack. If its toughness is 0 during this time, it'll be put into the graveyard.",
+      "oracle_id": "9d437391-d476-4976-8714-6a1d3185ab52",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This ability is an ability of the Aura, not an ability granted to the creature. Only the Aura’s controller can activate it.",
+      "oracle_id": "18a45b81-1946-4be6-8f2c-8c21d11c86f8",
+      "published_at": "2007-05-01",
+      "source": "wotc"
     }
   ]
 }

@@ -7,6 +7,7 @@ import tempfile
 import unittest
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
@@ -23,7 +24,7 @@ from quorune.resolution_characteristic_model import (
 from quorune.continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.errors import GameRuleError
 from quorune.model import CardInstance, CombatState
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
@@ -285,6 +286,26 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                     layers.append(ContinuousEffect(effect_id='delta',source_id='counter',layer=Layer.POWER_TOUGHNESS,sublayer='7c',timestamp=2,operations=(ContinuousOperation('modify_power_toughness',(counter_delta,counter_delta)),)))
                     actual=evaluate_continuous_effects(state,layers).characteristics
                     self.assertEqual(base_power+counter_delta,actual['power'])
+
+    def test_chosen_creature_type_replaces_only_its_subtype_family(self):
+        operation = ContinuousOperation("set_creature_subtype", "wizard")
+        effect = ContinuousEffect(
+            effect_id="chosen-type", source_id="source", layer=Layer.TYPE, sublayer="4",
+            timestamp=1, operations=(operation,),
+        )
+        self.assertEqual(effect, ContinuousEffect.from_dict(effect.to_dict()))
+        for extra_type, expected in (
+            ("Creature", {"Food", "Wizard"}), ("Kindred", {"Food", "Wizard"}), (None, {"Food"}),
+        ):
+            with self.subTest(extra_type=extra_type):
+                types = {"Artifact", extra_type} if extra_type else {"Artifact"}
+                subtypes = {"Food", "Golem"} if extra_type else {"Food"}
+                state = CharacteristicState("Subject", card_types=types, subtypes=subtypes)
+                result = evaluate_continuous_effects(state, [effect]).characteristics
+                self.assertEqual(types, set(result["card_types"]))
+                self.assertEqual(expected, set(result["subtypes"]))
+        with self.assertRaises(ContinuousEffectError):
+            ContinuousOperation("set_creature_subtype", "forest")
 
     def test_fixed_animation_type_retention_mutant_is_killed(self):
         from unittest.mock import patch
@@ -1595,5 +1616,572 @@ class TemporarySourceKeywordRuntimeTests(unittest.TestCase):
                 self.replay(session, load=True)
 
 
+class ChosenCreatureTypeNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "temporary-creature-types.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "temporary-source-keyword-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Temporary creature type",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 24)],
+            ["Generic Bound Commander"],
+        )
+
+    def activate_type(self, session, source, targets=()):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(action for action in actions if action["id"].startswith(f"activate:{source.ref}:"))
+        result = session.act("pilot:A", {"action_id": offer["id"], "targets": list(targets), "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("priority", session.state.pending_decision.kind)
+        self.assertEqual(list(targets), session.state.stack[-1].targets)
+
+    def type_options(self, session):
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+        actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        return next(action for action in actions if action["id"] == "choose")["choice_schema"]["legal_values"]
+
+    def choose_type(self, session, value):
+        result = session.act("pilot:A", {"action_id": "choose", "creature_type": value})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+
+    @staticmethod
+    def subtypes(session, card):
+        return session.engine._effective_type_parts(session.state.cards[card.object_id])[1]
+
+    def test_mistform_wall_choice_expires_and_cannot_follow_source_reentry(self):
+        session = self.session(611821001)
+        source = self.add(session.engine, "Mistform Wall")
+        hand = session.state.players["A"].zones["hand"]
+        session.engine.move_card(hand[0], "library")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        printed = self.subtypes(session, source)
+        self.assertIn("defender", session.engine._combat_keywords(source))
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "W": 1})
+        self.checkpoint(session)
+        self.activate_type(session, source)
+        reentry = self.replay(session, load=True)
+
+        options = self.type_options(session)
+        self.assertIn("Wall", options)
+        self.assertIn("Time Lord", options)
+        before = authoritative_state_hash(session.state)
+        for actor, value in (("B", "Wizard"), ("A", "Forest")):
+            self.assertFalse(session.act(f"pilot:{actor}", {"action_id": "choose", "creature_type": value}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        self.choose_type(session, "Wizard")
+        current = session.state.cards[source.object_id]
+        self.assertEqual({"wizard"}, self.subtypes(session, source))
+        self.assertNotIn("defender", session.engine._combat_keywords(current))
+        self.assertNotIn("chosen_creature_type", current.annotations)
+        turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence != turn)
+        self.assertEqual(printed, self.subtypes(session, source))
+        self.assertIn("defender", session.engine._combat_keywords(session.state.cards[source.object_id]))
+        self.replay(session, load=True)
+
+        original = reentry.state.cards[source.object_id].logical_object_id
+        self.cast(reentry, "A", blink, [source.ref])
+        self.resolve_top(reentry)
+        self.assertNotEqual(original, reentry.state.cards[source.object_id].logical_object_id)
+        self.assertIsNone(self.resolve(reentry))
+        self.assertEqual(printed, self.subtypes(reentry, source))
+        self.replay(reentry, load=True)
+
+    def test_unnatural_selection_keeps_declared_target_and_excludes_wall(self):
+        session = self.session(611821002)
+        source = self.add(session.engine, "Unnatural Selection")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        blink = self.add(session.engine, "Cloudshift", seat="B", zone="hand")
+        self.add(session.engine, "Generic Bound Plains", seat="B", ref="blink-payment")
+        printed = self.subtypes(session, target)
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        self.activate_type(session, source, [target.ref])
+        reentry = self.replay(session, load=True)
+
+        options = self.type_options(session)
+        self.assertNotIn("Wall", options)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "creature_type": "wall"}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.choose_type(session, "Wizard")
+        self.assertEqual({"wizard"}, self.subtypes(session, target))
+        self.replay(session, load=True)
+
+        self.cast(reentry, "B", blink, [target.ref])
+        self.resolve_top(reentry)
+        self.assertIsNone(self.resolve(reentry))
+        self.assertEqual(printed, self.subtypes(reentry, target))
+        self.replay(reentry, load=True)
+
+    def test_mistform_mask_uses_attachment_last_known_information_after_departure(self):
+        session = self.session(611821003)
+        aura = self.add(session.engine, "Mistform Mask", zone="hand")
+        target = self.add(session.engine, "Universal Automaton", seat="B")
+        destroy = self.add(session.engine, "Disenchant", zone="hand")
+        self.assert_closed(session, aura)
+        self.prepare(session, mana={"C": 4, "W": 1, "U": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", aura, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertGreater(len(self.subtypes(session, target)), 300)
+        self.activate_type(session, session.state.cards[aura.object_id])
+        self.cast(session, "A", destroy, [session.state.cards[aura.object_id].ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[aura.object_id].zone)
+        self.assertIn("Time Lord", self.type_options(session))
+        self.choose_type(session, "Time Lord")
+        current = session.state.cards[target.object_id]
+        types, subtypes, _ = session.engine._effective_type_parts(current)
+        self.assertEqual({"artifact", "creature"}, types)
+        self.assertEqual({"time lord"}, subtypes)
+        self.replay(session, load=True)
+
+    def test_standardize_and_wakecaster_lock_current_group(self):
+        for activated in (False, True):
+            with self.subTest(activated=activated):
+                session = self.session(611821004 + activated)
+                source = self.add(session.engine, "Mistform Wakecaster" if activated else "Standardize",
+                                  zone="battlefield" if activated else "hand")
+                source.acquired_control_turn_count = -1
+                own = self.add(session.engine, "Generic Bound Body", ref="own-creature")
+                foreign = self.add(session.engine, "Generic Bound Body", seat="B", ref="foreign-creature")
+                later = self.add(session.engine, "Phyrexian Walker", zone="hand")
+                foreign_printed = self.subtypes(session, foreign)
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 2, "U": 2})
+                self.checkpoint(session)
+                if activated:
+                    ability, = (ability for ability in session.engine._activated_abilities(source) if ability.tap_source)
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    offer = next(action for action in actions
+                                 if action["id"] == f"activate:{source.ref}:{ability.ability_id}")
+                    accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertTrue(session.state.cards[source.object_id].tapped)
+                else:
+                    self.cast(session, "A", source)
+                self.assertEqual([], session.state.stack[-1].targets)
+                self.assertEqual(activated, "Wall" in self.type_options(session))
+                self.choose_type(session, "Dragon")
+                self.assertEqual({"dragon"}, self.subtypes(session, own))
+                self.assertEqual(foreign_printed if activated else {"dragon"}, self.subtypes(session, foreign))
+                self.cast(session, "A", later)
+                self.assertIsNone(self.resolve(session))
+                self.assertNotIn("dragon", self.subtypes(session, later))
+                self.assertEqual({"dragon"}, self.subtypes(session, own))
+                self.replay(session, load=True)
+
+    def test_trickery_charm_modal_target_and_resolution_type_are_separate(self):
+        session = self.session(611821006)
+        spell = self.add(session.engine, "Trickery Charm", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered = next(action for action in actions if action["id"] == f"cast:{spell.ref}")
+        cast = session.act("pilot:A", {
+            "action_id": offered["id"], "modes": ["mode_2"], "targets": [target.ref], "pay": "auto",
+        })
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("priority", session.state.pending_decision.kind)
+        self.assertIn("Wall", self.type_options(session))
+        self.choose_type(session, "Wizard")
+        self.assertEqual({"wizard"}, self.subtypes(session, target))
+        self.replay(session, load=True)
+
+
 if __name__ == "__main__":
     unittest.main()
+
+
+
+class IndefiniteAnimationNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "indefinite-source-animation.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json", FIXTURE], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Indefinite animation",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 24)],
+            ["Generic Bound Commander"],
+        )
+
+    def test_indefinite_source_animation_requires_duration_and_protection_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.resolution_characteristic_model import (
+            INDEFINITE_SOURCE_ANIMATION_CAPABILITY, INDEFINITE_SOURCE_ANIMATION_VERSION,
+        )
+
+        session = self.session(849001)
+        source = self.add(session.engine, "Opal Guardian")
+        self.assert_closed(session, source)
+        program, = (p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if p.event == "spell.cast")
+        self.assertTrue(bind_semantic_program_runtime(program, capability_registry=self.registry,
+            profile="commander_review")["strict"])
+        effect, = program.effects
+        self.assertEqual(("$source.zone_object", INDEFINITE_SOURCE_ANIMATION_VERSION),
+            (effect["card"], effect["schema_version"]))
+        self.assertEqual("R", effect["characteristics"]["protection_color"])
+        for capability in (INDEFINITE_SOURCE_ANIMATION_CAPABILITY, "protection.typed.debt"):
+            dependencies = tuple(value for value in program.capability_dependencies if value != capability)
+            self.assertIn(capability, program.capability_dependencies)
+            withdrawn = replace(program, capability_dependencies=dependencies,
+                capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+            result = bind_semantic_program_runtime(withdrawn, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(result["strict"], result)
+            self.assertIn("capability:undeclared_runtime_dependency:" + capability, result["blockers"])
+        for changed in ({"card": "$target.0"}, {"schema_version": 17.0}, {"duration": "until_end_of_turn"},
+                        {"characteristics": {**effect["characteristics"], "protection_color": "event_colors"}}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                fixed_resolution_characteristic_instruction({**effect, **changed})
+        dynamic = record(
+            "When an opponent casts a creature spell, if this permanent is an enchantment, "
+            "it becomes a 4/4 Giant creature with protection from each of that spell's colors.",
+            type_line="Enchantment",
+        )
+        self.assertNotEqual("exact", compile_oracle_card(dynamic, capability_registry=self.registry).status)
+
+    def test_opal_guardian_animates_after_countered_opponent_spell_and_protects(self):
+        session = self.session(849002)
+        engine = session.engine
+        source = self.add(engine, "Opal Guardian")
+        own = self.add(engine, "Ornithopter", zone="hand")
+        first_bolt = self.add(engine, "Lightning Bolt", seat="B", zone="hand", ref="animation-wrong-type")
+        protected_bolt = self.add(engine, "Lightning Bolt", seat="C", zone="hand", ref="animation-protection")
+        creature = self.add(engine, "Ambush Viper", seat="B", zone="hand")
+        counter = self.add(engine, "Counterspell", zone="hand")
+        private = self.add(engine, "Faerie Invaders", seat="D", zone="hand", ref="animation-private")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"U": 2})
+        session.state.players["B"].mana_pool.update({"G": 2, "R": 1})
+        session.state.players["C"].mana_pool["R"] = 1
+        self.checkpoint(session)
+        self.cast(session, "A", own)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "B", first_bolt, ["A"])
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "B", creature)
+        self.assertEqual(1, self.trigger_count(session, source))
+        creature_spell = next(item for item in session.state.stack if item.kind == "spell")
+        self.cast(session, "A", counter, [creature_spell.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+        self.assertEqual(({"creature"}, {"gargoyle"}),
+            engine._effective_type_parts(session.state.cards[source.object_id])[:2])
+        self.assertEqual((3, 4), (engine._numeric_stat(source.object_id, "power"),
+                                  engine._numeric_stat(source.object_id, "toughness")))
+        self.priority(session, "C")
+        actions = session.packet("pilot:C", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"] == "cast:" + protected_bolt.ref)
+        self.assertNotIn(source.ref, offer["target_schema"]["legal_refs"])
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:C", {"action_id": offer["id"], "targets": [source.ref], "pay": "auto"})
+        self.assertFalse(rejected.ok, rejected.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        self.replay(session, load=True)
+
+    def test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry(self):
+        from quorune.continuous_effects import ContinuousEffectDuration
+
+        session = self.session(849003)
+        engine = session.engine
+        source = self.add(engine, "Opal Champion")
+        viper = self.add(engine, "Ambush Viper", seat="B", zone="hand")
+        faerie = self.add(engine, "Faerie Invaders", seat="B", zone="hand")
+        blink = self.add(engine, "Cloudshift", zone="hand")
+        self.add(engine, "Generic Bound Plains")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        session.state.players["B"].mana_pool.update({"C": 5, "G": 1, "U": 1})
+        filler = session.state.players["A"].zones["hand"][0]
+        engine.move_card(filler, "library", log=False)
+        self.checkpoint(session)
+        self.cast(session, "B", viper)
+        self.cast(session, "B", faerie)
+        self.assertEqual(2, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        old_id = source.logical_object_id
+        layers = [effect for effect in session.state.continuous_effects if effect.source_id == source.object_id]
+        self.assertEqual(3, len(layers))
+        self.assertEqual(1, len({effect.timestamp for effect in layers}))
+        self.assertEqual({ContinuousEffectDuration.ZONE_OBJECT}, {effect.duration for effect in layers},
+            "Animation must belong to the battlefield incarnation")
+        initial_turn = session.state.turn_sequence
+        self.until(session, lambda s: s.state.turn_sequence > initial_turn
+            and s.state.pending_decision is not None and s.state.pending_decision.kind == "priority")
+        self.assertEqual({"creature"}, engine._effective_type_parts(session.state.cards[source.object_id])[0])
+        self.cast(session, "A", blink, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[source.object_id]
+        self.assertNotEqual(old_id, returned.logical_object_id)
+        self.assertEqual({"enchantment"}, engine._effective_type_parts(returned)[0])
+        self.replay(session, load=True)
+
+    def test_cast_trigger_returns_only_the_original_source_to_its_owner(self):
+        cases = (("loss", "Turn to Frog"), ("reentry", "Flicker of Fate"), ("ownership", "Ambush Viper"))
+        for seed, (mode, response) in enumerate(cases, 849005):
+            with self.subTest(mode=mode):
+                session = self.session(seed)
+                engine = session.engine
+                source = self.add(engine, "Jackalope Herd", seat="B" if mode == "ownership" else "A")
+                own = self.add(engine, "Ornithopter", zone="hand")
+                interrupt = self.add(engine, response, seat="B", zone="hand")
+                for card in (source, interrupt):
+                    self.assert_closed(session, card)
+                if mode == "ownership":
+                    engine.change_control(source.object_id, "A", reason="Prepared controller-owner distinction")
+                    self.assertEqual(("B", "A"), (source.owner, source.controller))
+                self.prepare(session)
+                session.state.players["B"].mana_pool.update({"C": 2, "U": 1, "W": 1, "G": 1})
+                self.checkpoint(session)
+                if mode != "reentry":
+                    self.cast(session, "B", interrupt, [source.ref] if mode == "loss" else [])
+                    self.assertEqual(0, self.trigger_count(session, source))
+                    self.assertIsNone(self.resolve(session))
+                if mode == "loss":
+                    self.assertTrue(any(operation.op == "remove_all_abilities"
+                        for effect in session.state.continuous_effects for operation in effect.operations))
+
+                self.cast(session, "A", own)
+                self.assertEqual(0 if mode == "loss" else 1, self.trigger_count(session, source))
+                if mode == "reentry":
+                    original = source.logical_object_id
+                    self.cast(session, "B", interrupt, [source.ref])
+                    self.resolve_top(session)
+                    self.assertNotEqual(original, session.state.cards[source.object_id].logical_object_id)
+                    self.assertEqual(1, self.trigger_count(session, source))
+                elif mode == "ownership":
+                    self.assertEqual("A", session.state.stack[-1].controller)
+                    self.resolve_top(session)
+                    self.assertEqual(["spell"], [item.kind for item in session.state.stack])
+                    self.assertIn(source.object_id, session.state.players["B"].zones["hand"])
+                    self.assertNotIn(source.object_id, session.state.players["A"].zones["hand"])
+
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("hand" if mode == "ownership" else "battlefield",
+                    session.state.cards[source.object_id].zone)
+                self.assertEqual("battlefield", session.state.cards[own.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_enchantment_form_and_cast_keyword_require_independent_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.resolution_characteristic_model import (
+            INDEFINITE_ENCHANTMENT_FORM_CAPABILITY, INDEFINITE_ENCHANTMENT_FORM_VERSION,
+        )
+        from quorune.rules.spell_cast_events import (
+            SPELL_CAST_KEYWORD_CAPABILITY, SpellCastEventError, spell_cast_keyword_condition_dependencies,
+        )
+
+        session = self.session(850001)
+        acrolith = self.add(session.engine, "Opal Acrolith")
+        spider = self.add(session.engine, "Hidden Spider")
+        for source in (acrolith, spider):
+            self.assert_closed(session, source)
+        form, = (p for p in session.engine.semantics.programs_for_oracle(acrolith.oracle_id)
+                 if any(e.get("schema_version") == INDEFINITE_ENCHANTMENT_FORM_VERSION for e in p.effects))
+        cast, = session.engine.semantics.programs_for_oracle(spider.oracle_id)
+        for program, capability in (
+            (form, INDEFINITE_ENCHANTMENT_FORM_CAPABILITY),
+            (cast, SPELL_CAST_KEYWORD_CAPABILITY),
+            (cast, "trigger.event.normalized_spell_cast"),
+        ):
+            self.assertIn(capability, program.capability_dependencies)
+            dependencies = tuple(cap for cap in program.capability_dependencies if cap != capability)
+            closure = self.registry.closure(dependencies, profile="commander_review").to_dict() if dependencies else None
+            withdrawn = replace(program, capability_dependencies=dependencies, capability_closure=closure)
+            binding = bind_semantic_program_runtime(withdrawn, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"], binding)
+            self.assertIn("capability:undeclared_runtime_dependency:" + capability, binding["blockers"])
+        effect, = form.effects
+        for changed in ({"card": "$target.0"}, {"characteristics": {"card_type": "Artifact"}},
+                        {"schema_version": 18.0}, {"duration": "until_end_of_turn"}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                fixed_resolution_characteristic_instruction({**effect, **changed})
+        with self.assertRaises(SpellCastEventError):
+            spell_cast_keyword_condition_dependencies({"field": "keywords", "op": "contains_any", "value": ["reach"]})
+
+    def test_opal_acrolith_reverts_through_zero_cost_and_animates_again(self):
+        from quorune.continuous_effects import ContinuousEffectDuration
+
+        session = self.session(850002)
+        engine = session.engine
+        source = self.add(engine, "Opal Acrolith")
+        viper = self.add(engine, "Ambush Viper", seat="B", zone="hand")
+        faerie = self.add(engine, "Faerie Invaders", seat="B", zone="hand")
+        source.counters["+1/+1"] = 1
+        self.assert_closed(session, source)
+        self.prepare(session)
+        session.state.players["B"].mana_pool.update({"C": 5, "G": 1, "U": 1})
+        self.checkpoint(session)
+        identity = source.logical_object_id
+
+        self.cast(session, "B", viper)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(({"creature"}, {"soldier"}), engine._effective_type_parts(source)[:2])
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(({"enchantment"}, set()), engine._effective_type_parts(current)[:2])
+        self.assertEqual(1, current.counters["+1/+1"])
+        layers = [effect for effect in session.state.continuous_effects if effect.source_id == source.object_id]
+        newest = max(layers, key=lambda effect: effect.timestamp)
+        self.assertEqual(Layer.TYPE, newest.layer)
+        self.assertEqual(ContinuousEffectDuration.ZONE_OBJECT, newest.duration,
+                         "Enchantment form belongs to the original incarnation")
+
+        self.cast(session, "B", faerie)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(({"creature"}, {"soldier"}),
+                         engine._effective_type_parts(session.state.cards[source.object_id])[:2])
+        self.assertEqual((3, 5), (engine._numeric_stat(source.object_id, "power"),
+                                  engine._numeric_stat(source.object_id, "toughness")))
+        self.assertEqual(identity, session.state.cards[source.object_id].logical_object_id)
+        self.replay(session, load=True)
+
+    def test_hidden_stag_reverts_on_controller_land_play_and_reanimates_on_opponent_play(self):
+        session = self.session(850003)
+        engine = session.engine
+        source = self.add(engine, "Hidden Stag", seat="B")
+        lands = {seat: self.add(engine, "Forest", seat=seat, zone="hand", ref=f"stag-land-{seat}")
+                 for seat in "ABC"}
+        self.assert_closed(session, source)
+        self.prepare(session)
+        filler = session.state.players["B"].zones["hand"][0]
+        engine.move_card(filler, "library", log=False)
+        self.checkpoint(session)
+        identity = source.logical_object_id
+
+        for seat, types in (("A", {"creature"}), ("B", {"enchantment"}), ("C", {"creature"})):
+            with self.subTest(seat=seat):
+                self.until(session, lambda s: s.state.active_player == seat and s.state.phase == "precombat_main"
+                    and s.state.pending_decision is not None and s.state.pending_decision.kind == "priority")
+                self.priority(session, seat)
+                packet = session.packet(f"pilot:{seat}", full=True)
+                offer = next(row for row in packet["decision"]["ctx"]["legal"]["actions"]
+                             if row["id"].startswith("play-land:") and row.get("card") == lands[seat].ref)
+                command = {"action_id": offer["id"]}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:D", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act(f"pilot:{seat}", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(1, self.trigger_count(session, source))
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[source.object_id]
+                self.assertEqual(types, engine._effective_type_parts(current)[0])
+                self.assertEqual(identity, current.logical_object_id)
+        self.replay(session, load=True)
+
+    def test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy(self):
+        session = self.session(850004)
+        engine = session.engine
+        source = self.add(engine, "Hidden Spider", seat="B")
+        printed = self.add(engine, "Sootfeather Flock", zone="hand")
+        own = self.add(engine, "Faerie Invaders", seat="B", zone="hand", ref="spider-own-flier")
+        rival = self.add(engine, "Faerie Invaders", zone="hand", ref="spider-opposing-flier")
+        for card in (source, printed):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 8, "U": 1})
+        session.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.checkpoint(session)
+
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"] == "cast-morph:" + printed.ref)
+        accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, self.trigger_count(session, source), "Face-down flying must stay absent from cast facts")
+        self.assertNotIn("Sootfeather Flock", json.dumps(session.packet("pilot:C", full=True)))
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.cards[printed.object_id].face_down)
+
+        self.cast(session, "B", own)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", rival)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(({"creature"}, {"spider"}), engine._effective_type_parts(current)[:2])
+        self.assertIn("reach", [keyword.casefold() for keyword in engine._effective_card_data(current)["keywords"]])
+        self.assertEqual((3, 5), (engine._numeric_stat(current.object_id, "power"),
+                                  engine._numeric_stat(current.object_id, "toughness")))
+        self.replay(session, load=True)
+
+    def test_enchantment_form_temporary_duration_mutant_is_killed(self):
+        from unittest.mock import patch
+        from quorune import continuous_effect_state as owner
+        from quorune.continuous_effects import ContinuousEffectDuration
+        from quorune.resolution_characteristic_model import INDEFINITE_ENCHANTMENT_FORM_VERSION
+
+        original = owner._characteristic_effect_timing
+
+        def temporary(host, effect, *, actor, source):
+            if effect.get("schema_version") == INDEFINITE_ENCHANTMENT_FORM_VERSION:
+                return ContinuousEffectDuration.UNTIL_END_OF_TURN, None, None
+            return original(host, effect, actor=actor, source=source)
+
+        with patch.object(owner, "_characteristic_effect_timing", side_effect=temporary):
+            with self.assertRaisesRegex(AssertionError, "Enchantment form belongs to the original incarnation"):
+                self.test_opal_acrolith_reverts_through_zero_cost_and_animates_again()
+
+    def test_cast_keyword_omission_mutant_is_killed_by_face_down_cast(self):
+        from unittest.mock import patch
+        from quorune.compiler.spell_cast_predicates import FixedSpellCastCharacteristicKind, FixedSpellCastCharacteristicTerm
+
+        original = FixedSpellCastCharacteristicTerm.event_condition.fget
+
+        def omit_keyword(term):
+            if term.kind is FixedSpellCastCharacteristicKind.KEYWORD:
+                return {"field": "types", "op": "contains_any", "value": ["creature"]}
+            return original(term)
+
+        with patch.object(FixedSpellCastCharacteristicTerm, "event_condition", property(omit_keyword)):
+            with self.assertRaisesRegex(AssertionError, "Face-down flying must stay absent from cast facts"):
+                self.test_hidden_spider_reads_actual_flying_and_preserves_face_down_privacy()
+
+    def test_temporary_duration_mutant_is_killed_by_native_animation(self):
+        from unittest.mock import patch
+        from quorune import continuous_effect_state as owner
+        from quorune.continuous_effects import ContinuousEffectDuration
+        from quorune.resolution_characteristic_model import INDEFINITE_SOURCE_ANIMATION_VERSION
+
+        original = owner._characteristic_effect_timing
+
+        def temporary(host, effect, *, actor, source):
+            if effect.get("schema_version") == INDEFINITE_SOURCE_ANIMATION_VERSION:
+                return ContinuousEffectDuration.UNTIL_END_OF_TURN, None, None
+            return original(host, effect, actor=actor, source=source)
+
+        with patch.object(owner, "_characteristic_effect_timing", side_effect=temporary):
+            with self.assertRaisesRegex(AssertionError, "Animation must belong to the battlefield incarnation"):
+                self.test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry()

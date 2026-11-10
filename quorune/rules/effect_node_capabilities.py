@@ -3,6 +3,8 @@ from __future__ import annotations
 """Canonical dispatch to independently owned typed effect capability shapes."""
 
 from typing import Any,Mapping,Sequence
+from ..attachment_references import AttachmentReferenceError, attachment_information_capabilities
+from ..preparation_model import preparation_result_node_capabilities
 from ..emblem_program_model import compiled_emblem_node_capabilities
 from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .library_order_shapes import fixed_library_order_capabilities
@@ -30,15 +32,20 @@ from .prepared_creature_power_damage_shapes import prepared_creature_power_damag
 from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from ..delayed_object_model import delayed_object_node_capabilities
 from .delayed_counter_shapes import delayed_counter_node_capabilities
-from .graveyard_card_targets import targeted_own_graveyard_return_node_capabilities
+from .graveyard_card_targets import targeted_graveyard_return_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
-from .public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities, fixed_public_zone_move_set_node_capabilities, public_graveyard_card_exile_node_capabilities
+from .public_zone_move_capability_shapes import (
+    fixed_owner_zone_move_node_capabilities, fixed_public_zone_move_set_node_capabilities,
+    public_graveyard_card_exile_node_capabilities, triggered_source_exile_node_capabilities,
+)
+from .prevention_component_shapes import fixed_prevention_component_capabilities
 from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
 from .counter_removal_capabilities import all_counter_removal_node_capabilities, fixed_counter_removal_node_capabilities
 from .affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
 from .affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities, fixed_controller_discard_node_capabilities, fixed_context_player_discard_node_capabilities
 from .affected_player_discard_capability_shapes import fixed_affected_player_hand_exile_node_capabilities
 from .alternative_discard_shapes import alternative_discard_node_capabilities
+from .entry_permanent_results import entry_permanent_result_capabilities
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
 from .node_capability_shapes import fixed_counter_placement_batch_node_capabilities, fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities, fixed_counter_placement_target_set_node_capabilities, fixed_target_effect_sequence_node_capabilities, fixed_source_effect_sequence_node_capabilities, fixed_source_characteristics_node_capabilities, fixed_target_characteristics_node_capabilities, temporary_declaration_restriction_node_capabilities, fixed_player_counter_placement_node_capabilities, fixed_damage_node_capabilities, mass_destruction_node_capabilities, fixed_draw_node_capabilities, fixed_scry_node_capabilities, single_explore_node_capabilities, single_proliferate_node_capabilities, self_regeneration_node_capabilities, fixed_self_counter_keyword_action_node_capabilities, fixed_bolster_node_capabilities, fixed_amass_node_capabilities, targeted_counter_node_capabilities, targeted_destruction_node_capabilities, targeted_exile_node_capabilities, targeted_return_to_hand_node_capabilities, targeted_tap_state_node_capabilities
 from .token_creation_capability_shapes import fixed_token_creation_node_capabilities
@@ -76,6 +83,7 @@ from .fixed_controller_effect_shapes import fixed_counter_controller_effect_sequ
 from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities, fixed_optional_mana_payment_node_capabilities, fixed_optional_effect_node_capabilities
 from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities, announced_target_set_node_capabilities
 from .closed_effect_program_shapes import closed_effect_program_node_capabilities
+from .linked_exile_return_shapes import linked_ability_exile_node_capabilities
 
 
 def effect_node_capabilities(
@@ -94,8 +102,6 @@ def effect_node_capabilities(
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
     from .occurrence_object_results import occurrence_object_node_capabilities,block_counterpart_zone_capabilities
     from .attack_event_results import attack_event_characteristic_capabilities
-    from .prevention_component_shapes import fixed_prevention_component_capabilities
-    from ..attachment_references import AttachmentReferenceError,attachment_information_capabilities
     try:
         dependencies: set[str] = set(attachment_information_capabilities(effects))
     except AttachmentReferenceError:
@@ -119,6 +125,7 @@ def effect_node_capabilities(
         reveal_until_library_selection_node_capabilities,
         temporary_library_search_node_capabilities,
         occurrence_object_node_capabilities,
+        entry_permanent_result_capabilities,
         attack_event_characteristic_capabilities,
         temporary_cast_node_capabilities,
         random_graveyard_return_node_capabilities,
@@ -177,6 +184,7 @@ def effect_node_capabilities(
         ring_temptation_node_capabilities,
         champion_node_capabilities,
         source_transform_node_capabilities,
+        preparation_result_node_capabilities,
         class_level_node_capabilities,
         fixed_library_search_node_capabilities,
         fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
@@ -187,11 +195,13 @@ def effect_node_capabilities(
         fixed_effect_clause_sequence_node_capabilities,
         fixed_optional_mana_payment_node_capabilities,
         fixed_optional_effect_node_capabilities,
+        linked_ability_exile_node_capabilities,
         closed_effect_program_node_capabilities,
         fixed_scry_node_capabilities,
         fixed_surveil_node_capabilities,
         fixed_self_return_node_capabilities,
         graveyard_self_return_node_capabilities,
+        triggered_source_exile_node_capabilities,
         target_player_sequence_node_capabilities,
         fixed_resolution_characteristic_set_node_capabilities,
         single_explore_node_capabilities,
@@ -208,7 +218,7 @@ def effect_node_capabilities(
         targeted_destruction_node_capabilities,
         targeted_exile_node_capabilities,
         targeted_return_to_hand_node_capabilities,
-        targeted_own_graveyard_return_node_capabilities, fixed_target_reanimation_node_capabilities,
+        targeted_graveyard_return_node_capabilities, fixed_target_reanimation_node_capabilities,
         public_graveyard_card_exile_node_capabilities,
         fixed_owner_zone_move_node_capabilities,
         fixed_public_zone_move_set_node_capabilities,

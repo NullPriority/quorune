@@ -63,6 +63,8 @@ def _singularize_subject(value: str) -> str:
         (r"\bcreatures\b", "creature"),
         (r"\bplaneswalkers\b", "planeswalker"),
         (r"\bartifacts\b", "artifact"),
+        (r"\bmounts\b", "mount"),
+        (r"\bvehicles\b", "vehicle"),
         (r"\benchantments\b", "enchantment"),
         (r"\bpermanents\b", "permanent"),
         (r"\blands\b", "land"),

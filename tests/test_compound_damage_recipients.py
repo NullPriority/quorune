@@ -102,13 +102,13 @@ class CompoundDamageRuntimeTests(unittest.TestCase):
         cls.db.close();cls.temp.cleanup()
 
     def test_printed_cast_rejects_noninteger_x_before_paying_or_stacking(self):
-        from quorune.printed_mana_cost_model import STRICT_ANNOUNCED_CAST_X_VERSION
+        from quorune.printed_mana_cost_model import CURRENT_PRINTED_MANA_COST_VERSION
 
         session = self.session(844250)
         source = self.add(session.engine, "Earthquake", zone="hand")
         self.prepare(session, mana={"R": 1, "C": 2})
         self.checkpoint(session)
-        self.assertEqual(STRICT_ANNOUNCED_CAST_X_VERSION, session.state.printed_mana_cost_version)
+        self.assertEqual(CURRENT_PRINTED_MANA_COST_VERSION, session.state.printed_mana_cost_version)
         self.assertTrue(self.binding(session, source)["strict_capability_ready"])
         action = self.action(session, source)
         command = {"action_id": action["id"], "pay": "auto"}

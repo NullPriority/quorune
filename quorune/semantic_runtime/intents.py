@@ -6,14 +6,17 @@ from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
+from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
+from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
+from ..library_order_model import LibraryArrivalOrder
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
@@ -55,6 +58,8 @@ from .context import SemanticSourceContext
 from .madness_intent import MadnessChoiceIntent
 from .miracle_intent import MiracleCastChoiceIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
+from ..targeted_graveyard_cast_model import GraveyardCastIntent
+from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 
 
 _EXPLORE_LABEL = "Explore"
@@ -168,6 +173,7 @@ class SetPermanentsTappedIntent:
     actor: str
     tapped: bool
     reason: str
+    prohibit_next_untap: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -180,6 +186,8 @@ class SetPermanentsTappedIntent:
             or type(self.actor) is not str
             or not self.actor
             or type(self.tapped) is not bool
+            or type(self.prohibit_next_untap) is not bool
+            or (self.prohibit_next_untap and not self.tapped)
             or type(self.reason) is not str
             or not self.reason
         ):
@@ -330,12 +338,17 @@ class ReturnGraveyardCardToOwnerHandIntent:
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     target_snapshot: FrozenMap | None = None
+    scope: GraveyardReturnScope = GraveyardReturnScope.OWN
 
     def __post_init__(self) -> None:
         if not all((self.actor, self.object_ref, self.reason)):
             raise ValueError(
                 "Graveyard-return intents require actor, object, and reason"
             )
+        if not isinstance(self.scope, GraveyardReturnScope):
+            raise ValueError("Graveyard-return intent scope is unsupported")
+        if self.scope is GraveyardReturnScope.PUBLIC and self.target_snapshot is None:
+            raise ValueError("Public graveyard return requires its announced target incarnation")
         if self.target_snapshot is not None:
             snapshot=self.target_snapshot
             if (not isinstance(snapshot,Mapping) or set(snapshot)!={'ref','object_id','zone_change_counter'}
@@ -473,7 +486,7 @@ class DealFixedDamageSetIntent:
         else:
             recipients = self.allocated_recipients
             if (self.spec is not None or self.death_exile_scope is not None
-                    or not isinstance(recipients, tuple) or self.amount < 1
+                    or not isinstance(recipients, tuple)
                     or any(not isinstance(recipient, AllocatedDamageRecipient) for recipient in recipients)
                     or len({recipient.ref for recipient in recipients}) != len(recipients)
                     or sum(recipient.amount for recipient in recipients) > self.amount):
@@ -680,6 +693,7 @@ class MoveObjectsSimultaneouslyIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     battlefield_controller: PublicBattlefieldController | None = None
     battlefield_tapped: bool = False
+    library_order: LibraryArrivalOrder | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -708,6 +722,16 @@ class MoveObjectsSimultaneouslyIntent:
             or self.battlefield_controller is None and self.battlefield_tapped
         ):
             raise ValueError("Simultaneous object-move intent is malformed")
+        if self.library_order is not None and (
+            not isinstance(self.library_order, LibraryArrivalOrder)
+            or self.library_order.chooser != self.actor
+            or self.destination != "library"
+            or tuple(self.expected_zones) != ("graveyard",)
+            or self.transition_kind is not ZoneTransitionKind.ORDINARY
+            or self.controlled_only
+            or set(self.library_order.members) != set(self.object_refs)
+        ):
+            raise ValueError("Ordered library movement requires the exact graveyard batch")
         object.__setattr__(self, "object_refs", tuple(self.object_refs))
         object.__setattr__(self, "expected_zones", tuple(self.expected_zones))
         object.__setattr__(
@@ -1290,6 +1314,18 @@ class CounterStackIntent:
     stack_ref: str
     reason: str
     countered_by: str
+    counter_destination: str | None = None
+    replacement_selections: tuple[str | FrozenMap, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.counter_destination is not None:
+            from ..zone_trigger_events import counter_destination_fields
+
+            counter_destination_fields(self.counter_destination)
+        elif self.replacement_selections:
+            raise ValueError("Counter replacement selections require a represented destination")
+        object.__setattr__(self, "replacement_selections",
+            _freeze_replacement_selections(self.replacement_selections, family="Countered spell"))
 
 
 @dataclass(frozen=True, slots=True)
@@ -1543,6 +1579,7 @@ SemanticIntent: TypeAlias = (
     | SetCardDesignationIntent
     | BecomeMonstrousIntent
     | BecomeRenownedIntent
+    | PrepareSourceIntent
     | PairSoulbondIntent
     | RecordChoiceIntent
     | ConniveCompletedIntent
@@ -1557,6 +1594,8 @@ SemanticIntent: TypeAlias = (
     | MadnessChoiceIntent
     | MiracleCastChoiceIntent
     | DiscoverCastIntent
+    | GraveyardCastIntent
+    | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
     | ChooseOneRestBottomRandomIntent
     | ShuffleLibraryIntent

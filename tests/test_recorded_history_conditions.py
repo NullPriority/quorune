@@ -23,6 +23,54 @@ import test_public_history_queries as history_controls
 
 
 class RecordedHistoryConditionCompilerTests(unittest.TestCase):
+    def test_movement_history_queries_require_their_exact_facts_and_version(self):
+        from types import SimpleNamespace
+        from quorune.model import TurnHistory, TurnHistoryEvent
+        from quorune.public_history_query_model import PUBLIC_MOVEMENT_HISTORY_CAPABILITY, public_history_query_value
+
+        rows = (
+            TurnHistoryEvent("permanent_arrived_hand", actor="A", object_incarnation="owner-hand", types=("land",)),
+            TurnHistoryEvent("card_arrived_exile", actor="B", object_incarnation="hidden-exile"),
+            TurnHistoryEvent("artifact_subtype_sacrificed", actor="A", object_incarnation="food",
+                             target="food", target_kind="artifact_subtype"),
+            TurnHistoryEvent("permanent_died", actor="A", object_incarnation="current-source",
+                             types=("creature",), creature_subtypes=("human",), token=False),
+        )
+        history = TurnHistory(turn_sequence=7, events=list(rows), public_movement_history_version=1,
+                              permanent_death_history_version=1)
+        self.assertEqual(history, TurnHistory.from_dict(history.to_dict()))
+        with self.assertRaisesRegex(ValueError, "Public movement"):
+            TurnHistory.from_dict({k: v for k, v in history.to_dict().items() if k != "public_movement_history_version"})
+        with self.assertRaises(ValueError):
+            TurnHistoryEvent("card_arrived_exile", actor="A", object_incarnation="hidden", types=("creature",))
+        with self.assertRaises(ValueError):
+            TurnHistoryEvent("artifact_subtype_sacrificed", actor="A", object_incarnation="other",
+                             target="human", target_kind="artifact_subtype")
+        state = SimpleNamespace(turn_sequence=7, turn_history=history,
+                                players={seat: SimpleNamespace(in_game=True) for seat in "AB"})
+        cases = (
+            ("a permanent was put into your hand from the battlefield this turn", 1),
+            ("one or more cards were put into exile this turn", 1),
+            ("you sacrificed a Food this turn", 1),
+            ("you sacrificed a Clue this turn", 0),
+            ("another Human died under your control this turn", 0),
+        )
+        for text, expected in cases:
+            with self.subTest(text=text):
+                condition = fixed_public_state_condition(text, source_name="Movement witness")
+                query = condition.history_query
+                self.assertEqual(query, PublicHistoryQuerySpec.from_dict(query.to_dict()))
+                self.assertIn(PUBLIC_MOVEMENT_HISTORY_CAPABILITY, query.capability_dependencies)
+                self.assertEqual(expected, public_history_query_value(state, "A", query,
+                                                                      source_incarnation="current-source"))
+                if query.exclude_source:
+                    self.assertIsNone(public_history_query_value(state, "A", query))
+                    self.assertEqual(1, public_history_query_value(state, "A", query,
+                                                                   source_incarnation="different-source"))
+        state.turn_history = TurnHistory(turn_sequence=7)
+        query = fixed_public_state_condition(cases[0][0], source_name="Movement witness").history_query
+        self.assertIsNone(public_history_query_value(state, "A", query))
+
     def test_current_turn_printed_conditions_use_closed_history_leaves(self):
         registry = load_default_capability_registry()
         cases = (
@@ -97,6 +145,221 @@ class RecordedHistoryConditionNativeTests(InheritedNativeFixture, unittest.TestC
     def _token_names(self, session):
         return [card.printed_name for card in session.state.cards.values()
                 if card.zone == "battlefield" and card.is_token]
+
+    def test_original_movement_history_triggers_require_independent_runtime_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.public_history_query_model import PUBLIC_MOVEMENT_HISTORY_CAPABILITY
+
+        session = self.session(846001)
+        for name in ("Ichor Shade", "White Glove Gourmand", "Barrin, Tolarian Archmage",
+                     "Ennis, Debate Moderator", "Elanor Gardner", "Kami of Transience"):
+            with self.subTest(card=name):
+                source = self.add(session.engine, name)
+                ir = compile_oracle_card(self.db.lookup(name), capability_registry=self.registry,
+                                         capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assert_closed(session, source)
+                trigger, = (p for p in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                            if PUBLIC_MOVEMENT_HISTORY_CAPABILITY in p.capability_dependencies)
+                self.assertEqual("trusted", trigger.trust_level)
+                self.assertEqual("graveyard" if name == "Kami of Transience" else "battlefield", trigger.active_zone)
+                dependencies = tuple(cap for cap in trigger.capability_dependencies
+                                     if cap != PUBLIC_MOVEMENT_HISTORY_CAPABILITY)
+                changed = replace(trigger, capability_dependencies=dependencies,
+                                  capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+                bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+                self.assertFalse(bound["strict"], bound)
+                self.assertIn("capability:undeclared_runtime_dependency:" + PUBLIC_MOVEMENT_HISTORY_CAPABILITY,
+                              bound["blockers"])
+
+    def test_actual_food_sacrifice_separates_exile_arrival_and_graveyard_triggers(self):
+        for index, (is_token, replacement_present) in enumerate(((True, False), (True, True), (False, True))):
+            with self.subTest(token=is_token, replacement_present=replacement_present):
+                session = self.session(846002 + index)
+                ichor = self.add(session.engine, "Ichor Shade")
+                ennis = self.add(session.engine, "Ennis, Debate Moderator")
+                elanor = self.add(session.engine, "Elanor Gardner", zone="hand" if is_token else "battlefield")
+                private = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand")
+                for source in (ichor, ennis, elanor):
+                    self.assert_closed(session, source)
+                if replacement_present:
+                    self.add(session.engine, "Dauthi Voidwalker", seat="C")
+                redirected = replacement_present and not is_token
+                if not is_token:
+                    food = self.add(session.engine, "Gingerbrute")
+                    rites = self.add(session.engine, "Village Rites", zone="hand")
+                self.prepare(session, mana={"G": 1, "C": 5, "B": 1})
+                self.checkpoint(session)
+                if is_token:
+                    self.cast_for(session, "A", elanor)
+                    self.assertIsNone(self.resolve(session))
+                    self.priority(session, "A")
+                    food, = (card for card in session.state.cards.values() if card.zone == "battlefield"
+                             and card.is_token and card.printed_name == "Food Token")
+                    offers = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    offer, = (row for row in offers if row["id"].startswith(f"activate:{food.ref}:"))
+                    command = {"action_id": offer["id"], "pay": "auto"}
+                else:
+                    offers = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    offer, = (row for row in offers if row["id"] == "cast:" + rites.ref)
+                    command = {"action_id": offer["id"], "sacrifice_cards": [food.ref], "pay": "auto"}
+                original = food.logical_object_id
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:D", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                facts = session.state.turn_history.events
+                qualified, = (event for event in facts if event.kind == "artifact_subtype_sacrificed")
+                self.assertEqual(("A", original, "food"), (qualified.actor, qualified.object_incarnation, qualified.target))
+                self.assertEqual(not redirected, any(event.kind == "permanent_arrived_graveyard"
+                                                     and event.object_incarnation == original for event in facts))
+                exiled = [event for event in facts if event.kind == "card_arrived_exile"]
+                self.assertEqual(0 if is_token else 1, len(exiled))
+                self.assertTrue(all(not event.types for event in exiled))
+                self.assertIsNone(self.resolve(session))
+                self.end_step(session)
+                sources = {item.source_object_id for item in session.state.stack}
+                expected = {elanor.object_id}
+                if not redirected:
+                    expected.add(ichor.object_id)
+                if not is_token:
+                    expected.add(ennis.object_id)
+                self.assertEqual(expected, sources)
+                optional = self.resolve(session)
+                self.assertIsNotNone(optional)
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:D", {"action_id": "choose", "choice": "decline"}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                result = session.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(int(not redirected), session.state.cards[ichor.object_id].counters.get("+1/+1", 0))
+                self.assertEqual(int(not is_token), session.state.cards[ennis.object_id].counters.get("+1/+1", 0))
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:B", full=True)))
+                self.replay(session)
+
+    def test_actual_barrin_uses_hand_owner_instead_of_previous_controller(self):
+        for index, owner in enumerate(("A", "B")):
+            with self.subTest(owner=owner):
+                session = self.session(846010 + index)
+                barrin = self.add(session.engine, "Barrin, Tolarian Archmage")
+                body = self.add(session.engine, "Grizzly Bears", seat=owner)
+                caster = self.add(session.engine, "Boomerang", zone="hand")
+                if owner == "A":
+                    session.engine.change_control(body.object_id, "B", reason="Native owner/controller control")
+                self.prepare(session, mana={"U": 2})
+                self.checkpoint(session)
+                self.cast_for(session, "A", caster, [body.ref])
+                self.assertIsNone(self.resolve(session))
+                fact, = (event for event in session.state.turn_history.events if event.kind == "permanent_arrived_hand")
+                self.assertEqual(owner, fact.actor)
+                self.assertIn(body.object_id, session.state.players[owner].zones["hand"])
+                self.end_step(session)
+                self.assertEqual(owner == "A", self._source_on_stack(session, barrin))
+                hand = len(session.state.players["A"].zones["hand"])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(hand + int(owner == "A"), len(session.state.players["A"].zones["hand"]))
+                self.replay(session)
+
+    def test_actual_white_glove_counts_prior_human_controller_at_death(self):
+        for index, controller in enumerate(("A", "B")):
+            with self.subTest(controller=controller):
+                session = self.session(846020 + index)
+                gourmand = self.add(session.engine, "White Glove Gourmand")
+                human = self.add(session.engine, "Elite Vanguard", seat="B")
+                shock = self.add(session.engine, "Shock", zone="hand")
+                if controller == "A":
+                    session.engine.change_control(human.object_id, "A", reason="Native owner/controller control")
+                self.prepare(session, mana={"R": 1})
+                self.checkpoint(session)
+                self.cast_for(session, "A", shock, [human.ref])
+                self.assertIsNone(self.resolve(session))
+                fact, = (event for event in session.state.turn_history.events if event.kind == "permanent_died")
+                self.assertEqual((controller, ("human", "soldier")), (fact.actor, fact.creature_subtypes))
+                self.assertIn(human.object_id, session.state.players["B"].zones["graveyard"])
+                self.end_step(session)
+                self.assertEqual(controller == "A", self._source_on_stack(session, gourmand))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(["Food Token"] if controller == "A" else [], self._token_names(session))
+                self.replay(session)
+
+    def test_actual_kami_requires_its_own_graveyard_and_an_enchantment_arrival(self):
+        cases = (("graveyard", "A", True), ("graveyard", "B", False), ("battlefield", "A", False))
+        for index, (kami_zone, enchantment_owner, returns) in enumerate(cases):
+            with self.subTest(zone=kami_zone, enchantment_owner=enchantment_owner):
+                session = self.session(846030 + index)
+                kami = self.add(session.engine, "Kami of Transience", zone=kami_zone)
+                enchantment = self.add(session.engine, "Fae Offering", seat=enchantment_owner)
+                destroy = self.add(session.engine, "Naturalize", zone="hand")
+                if enchantment_owner == "A":
+                    session.engine.change_control(enchantment.object_id, "B", reason="Native owner/controller control")
+                self.prepare(session, mana={"G": 1, "C": 1})
+                self.checkpoint(session)
+                self.cast_for(session, "A", destroy, [enchantment.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertIn(enchantment.object_id, session.state.players[enchantment_owner].zones["graveyard"])
+                fact, = (event for event in session.state.turn_history.events if event.kind == "permanent_arrived_graveyard")
+                self.assertEqual(enchantment_owner, fact.actor)
+                self.assertIn("enchantment", fact.types)
+                self.end_step(session)
+                self.assertEqual(returns, self._source_on_stack(session, kami))
+                if returns:
+                    decision = self.resolve(session)
+                    self.assertIsNotNone(decision)
+                    before = authoritative_state_hash(session.state)
+                    command = {"action_id": "choose", "choice": "apply"}
+                    self.assertFalse(session.act("pilot:B", command).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    accepted = session.act("pilot:A", command)
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertIn(kami.object_id, session.state.players["A"].zones["hand"])
+                self.replay(session)
+
+    def test_actual_ennis_ignores_exiled_token_and_a_late_card_exile(self):
+        session = self.session(846040)
+        ennis = self.add(session.engine, "Ennis, Debate Moderator")
+        producer = self.add(session.engine, "White Glove Gourmand", zone="hand")
+        exile = self.add(session.engine, "Final Reward", zone="hand", ref="token-exile")
+        late_exile = self.add(session.engine, "Final Reward", seat="B", zone="hand", ref="late-exile")
+        card = self.add(session.engine, "Grizzly Bears")
+        for index in range(5):
+            self.add(session.engine, "Swamp", seat="B", ref=f"late-exile-source-{index}")
+        self.prepare(session, mana={"W": 1, "B": 2, "C": 9})
+        self.checkpoint(session)
+        self.cast_for(session, "A", producer)
+        self.assertIsNone(self.resolve(session))
+        token = next(card for card in session.state.cards.values() if card.zone == "battlefield" and card.is_token)
+        self.cast_for(session, "A", exile, [token.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(any(event.kind == "card_arrived_exile" for event in session.state.turn_history.events))
+        self.end_step(session)
+        self.assertFalse(self._source_on_stack(session, ennis))
+        self.cast_for(session, "B", late_exile, [card.ref])
+        self.assertIsNone(self.resolve(session))
+        fact, = (event for event in session.state.turn_history.events if event.kind == "card_arrived_exile")
+        self.assertEqual("A", fact.actor)
+        self.assertEqual((), fact.types)
+        self.assertEqual("exile", session.state.cards[card.object_id].zone)
+        self.assertFalse(self._source_on_stack(session, ennis))
+        self.assertEqual(0, session.state.cards[ennis.object_id].counters.get("+1/+1", 0))
+        self.replay(session)
+
+    def test_movement_condition_mutation_is_detected_by_native_barrin(self):
+        from unittest.mock import patch
+        from quorune.public_history_query_model import public_history_query_value
+
+        def wrong_owner(state, controller, spec, **kwargs):
+            if spec.event == "permanent_arrived_hand":
+                controller = "B"
+            return public_history_query_value(state, controller, spec, **kwargs)
+
+        with patch("quorune.public_history_query_model.public_history_query_value", side_effect=wrong_owner):
+            with self.assertRaises(AssertionError):
+                method = "test_actual_barrin_uses_hand_owner_instead_of_previous_controller"
+                getattr(type(self)(method), method)()
 
     def test_actual_nightpack_rechecks_its_controllers_cast_after_triggering(self):
         for index, responder in enumerate(("A", "B")):

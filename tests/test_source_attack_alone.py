@@ -62,8 +62,8 @@ class SourceAttackAloneCompilerTests(unittest.TestCase):
             binding=owner.fixed_public_event_binding_spec(TEXT)
             self.assertIn({'field':'attacking_alone','op':'truthy','value':True},binding.condition['all'])
         witness()
-        def omitted(text):
-            value=original(text)
+        def omitted(text, *, card_name=None):
+            value=original(text, card_name=card_name)
             return replace(value,condition={'all':[v for v in value.condition['all'] if v.get('field')!='attacking_alone']}) if value is not None and value.variant=='source_attacks' else value
         with patch.object(owner,'_public_attack_spec',side_effect=omitted),self.assertRaises(AssertionError):witness()
 
@@ -77,6 +77,25 @@ class SourceAttackAloneCompilerTests(unittest.TestCase):
         self.assertEqual('exact',explicit.status,explicit.material_residuals);self.assertNotEqual('$event.permanent_object',explicit.faces[0].nodes[0].effects[0].get('card'))
         for body in ('it gains lifelink.','it gains an unrepresented ability until end of turn.','it gains lifelink until end of turn. Rewrite history.'):
             self.assertNotEqual('exact',compile_oracle_card(query_record(prefix+body),capability_registry=registry).status)
+
+    def test_attached_attack_pronoun_cannot_fall_back_to_the_aura_source(self):
+        record = replace(query_record(
+            'Enchant creature\nWhenever enchanted creature attacks, it gets +X/+0 until end of turn, '
+            'where X is your devotion to red.',
+        ), type_line='Enchantment — Aura', keywords=('Enchant',), power=None, toughness=None)
+        registry = load_default_capability_registry()
+
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=registry)
+            self.assertEqual('exact', ir.status, ir.material_residuals)
+            trigger, = (node for node in ir.faces[0].nodes if node.event == 'creature.attacks')
+            self.assertEqual('$event.permanent_object', trigger.effects[0]['card'])
+            self.assertIn(RESULT_CAPABILITY, trigger.capability_dependencies)
+
+        witness()
+        with patch('quorune.compiler.attack_event_results.qualified_attack_characteristic_result', return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
 
 
 class SourceAttackAloneNativeTests(unittest.TestCase):

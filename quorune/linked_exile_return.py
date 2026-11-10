@@ -11,7 +11,9 @@ from .continuous_effect_state import (
 )
 from .entry_counter_model import EffectEntryCounter
 from .errors import GameRuleError
-from .linked_exile_return_model import ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_RETURN_OPERATION
+from .linked_exile_return_model import (
+    ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_ABILITY_TIMING, LINKED_RETURN_OPERATION, validate_linked_instruction,
+)
 from .trigger_processing import schedule_delayed_trigger
 from .zone_transitions import ZoneTransitionOwner
 
@@ -116,6 +118,15 @@ def resolve_linked_exile_return(
     *, actor: str, operation: str, reason: str,
 ) -> list[str]:
     del operation
+    spec = _spec(effect)
+    if spec.timing == LINKED_ABILITY_TIMING:
+        from .linked_ability_exile_state import resolve_linked_ability_instruction
+        instruction = {key: value for key, value in effect.items() if key != "_runtime_source"}
+        try:
+            validate_linked_instruction(instruction)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        return resolve_linked_ability_instruction(host, _source_item(host, effect), instruction, actor=actor, reason=reason)
     phase = effect.get("phase")
     required = {"op", "phase", "binding_id", "spec", *(("cards",) if phase == "exile" else ())}
     if phase not in {"exile", "return"} or set(effect) - (required | {"_runtime_source", "_replacement_selections"}) or not required.issubset(effect):
@@ -123,7 +134,6 @@ def resolve_linked_exile_return(
     binding_id = effect["binding_id"]
     if type(binding_id) is not str or not binding_id.startswith("blink:"):
         raise GameRuleError("Linked exile/return binding is malformed")
-    spec = _spec(effect)
     item = _source_item(host, effect)
     journal = item.context.setdefault("linked_exile_returns", {})
     if not isinstance(journal, dict):

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, TypeAlias
 
 from .immutable import FrozenMap, freeze_value, thaw_value
+from .amplify import AmplifyEntryOperation
 from ..devour import DevourSpec,DevourObject,DevourProposal
 
 
@@ -70,6 +71,9 @@ class DevourEntryOperation:
         _exact_fields(value,{'op','controller','component_id','spec','candidates'},operation='prepare_devour_entry')
         if not isinstance(value['candidates'],(list,tuple)):raise ReplacementOperationError('Devour candidate identities must be an array')
         return cls(value['controller'],value['component_id'],DevourSpec.from_dict(value['spec']),tuple(DevourObject.from_dict(v) for v in value['candidates']))
+
+
+ENTRY_OBJECT_SELECTION_OPERATIONS = (DevourEntryOperation, AmplifyEntryOperation)
 
 
 @dataclass(frozen=True, slots=True)
@@ -673,6 +677,7 @@ class ApplyEntryCounterReplacement:
 ReplacementOperation: TypeAlias = (
     SetField
     | DevourEntryOperation
+    | AmplifyEntryOperation
     | AddAmount
     | MultiplyAmount
     | PreventAmount
@@ -699,6 +704,7 @@ ReplacementOperation: TypeAlias = (
 _TYPED_OPERATION_TYPES = (
     SetField,
     DevourEntryOperation,
+    AmplifyEntryOperation,
     AddAmount,
     MultiplyAmount,
     PreventAmount,
@@ -951,6 +957,11 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         )
     op = str(value.get("op") or "")
     if op=='prepare_devour_entry':return DevourEntryOperation.from_dict(value)
+    if op == "prepare_amplify_entry":
+        try:
+            return AmplifyEntryOperation.from_dict(value)
+        except ValueError as exc:
+            raise ReplacementOperationError(str(exc)) from exc
     if op == "set":
         _exact_fields(value, {"op", "field", "value"}, operation=op)
         return SetField(_field(value["field"], operation=op), value["value"])

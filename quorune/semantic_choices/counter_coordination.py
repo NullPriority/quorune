@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
 from ..discover_model import DiscoverCastIntent
+from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
 
 from typing import Any, Mapping, Protocol, Sequence
@@ -282,6 +283,7 @@ def continue_semantic_completion(
                     *DESTRUCTION_INTENT_TYPES,
                     *CHAMPION_INTENT_TYPES,
                     DiscoverCastIntent,
+                    GraveyardCastIntent,
                     PlaceCountersOnSetIntent,
                     MoveCountersIntent,
                     LifeChangeIntent,

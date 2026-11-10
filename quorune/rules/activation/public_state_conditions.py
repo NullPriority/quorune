@@ -21,12 +21,16 @@ def activation_public_state_dependencies(conditions):
     return tuple(sorted(required))
 
 
+def current_activation_public_state_matches(host, source, condition):
+    return fixed_public_state_condition_matches(host.state, source, condition,
+        public_object_resolver=partial(host._public_object_query_result, _maximum_layer=None),
+        quantity_resolver=partial(query_characteristic_count, host, _maximum_layer=None), require_available=True)
+
+
 def activation_public_state_status(host,seat,source,condition):
     if source is None:return 'unresolved','activation_public_source_required'
     if source.controller!=seat:return 'unavailable','activation_public_source_not_controlled'
     try:
-        result=fixed_public_state_condition_matches(host.state,source,condition.public_state,
-            public_object_resolver=partial(host._public_object_query_result,_maximum_layer=None),
-            quantity_resolver=partial(query_characteristic_count,host,_maximum_layer=None),require_available=True)
+        result=current_activation_public_state_matches(host,source,condition.public_state)
     except (AttributeError,KeyError,TypeError,ValueError):return 'unresolved','unavailable_activation_public_state'
     return ('payable',None) if result else ('unavailable','requires_activation_public_state')

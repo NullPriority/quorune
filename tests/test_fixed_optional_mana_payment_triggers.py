@@ -224,10 +224,19 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
         self.assertTrue(mutant.material_residuals)
 
     def test_bound_payment_nested_variable_and_reflexive_forms_remain_residual(self):
+        paid = self.compile(
+            "Whenever this creature attacks, you may pay {W}. When you do, it gains flying until end of turn."
+        )
+        self.assertEqual("exact", paid.status, paid.material_residuals)
+        node, = paid.faces[0].nodes
+        effect, = node.effects
+        self.assertEqual(4, effect["schema_version"])
+        self.assertEqual("reflexive_trigger_program", effect["reflexive_program"]["kind"])
+        self.assertEqual("$source.zone_object", effect["reflexive_program"]["effects"][0]["card"])
         bodies = (
             "you may pay {X}. If you do, it gains flying until end of turn.",
             "you may pay {0}. If you do, it gains flying until end of turn.",
-            "you may pay {W}. When you do, it gains flying until end of turn.",
+            "you may pay {W}. When you do, it gains flying until your next turn.",
             "you may pay {W}. If you do, you may pay {W}. If you do, it gains flying until end of turn.",
             "you may pay {W}. If you do, it gains an unknown ability until end of turn.",
         )
@@ -415,10 +424,13 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
         promoted = self.compile('Whenever you cast a creature spell, you may pay {G}. When you do, draw a card.')
         self.assertEqual('exact', promoted.status, promoted.material_residuals)
         self.assertIn('trigger.reflexive.fixed_action_result', promoted.faces[0].nodes[0].capability_dependencies)
+        hybrid = self.compile('Whenever you cast a creature spell, you may pay {G/U}. If you do, draw a card.')
+        self.assertEqual('exact', hybrid.status, hybrid.material_residuals)
+        self.assertIn('effect.choice.optional_hybrid_mana_payment', hybrid.faces[0].nodes[0].capability_dependencies)
         fixtures = (
             "Whenever you cast a creature spell, you may pay {X}. If you do, "
             "draw a card.",
-            "Whenever you cast a creature spell, you may pay {G/U}. If you do, "
+            "Whenever you cast a creature spell, you may pay {G/U}. When you do, "
             "draw a card.",
             "Whenever you cast a creature spell, you may pay {G/P}. If you do, "
             "draw a card.",

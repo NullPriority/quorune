@@ -1,0 +1,410 @@
+{
+  "cards": [
+    {
+      "oracle_id": "36b67014-0507-4976-ad52-a2a36676197d",
+      "name": "Memory Plunder",
+      "mana_cost": "{U/B}{U/B}{U/B}{U/B}",
+      "type_line": "Instant",
+      "oracle_text": "You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Cipher"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Arcane Heist",
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "oracle_text": "You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead.\nCipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "name": "Impulsivity",
+      "mana_cost": "{6}{R}",
+      "type_line": "Creature \u2014 Elemental Incarnation",
+      "oracle_text": "When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.\nEncore {7}{R}{R} ({7}{R}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": "7",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Encore"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "cmc": 7.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e766a7ec-2761-453b-bfba-956de7b5e125",
+      "name": "Chancellor of the Spires",
+      "mana_cost": "{4}{U}{U}{U}",
+      "type_line": "Creature \u2014 Phyrexian Sphinx",
+      "oracle_text": "You may reveal this card from your opening hand. If you do, at the beginning of the first upkeep, each opponent mills seven cards.\nFlying\nWhen this creature enters, you may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost.",
+      "power": "5",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "cmc": 7.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "focused_targeted_graveyard_cast_cards",
+  "rulings": [
+    {
+      "oracle_id": "36b67014-0507-4976-ad52-a2a36676197d",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If you want to cast the card, you cast it as part of the resolution of Memory Plunder. Timing restrictions based on the card's type are ignored if it's a sorcery. Other casting restrictions are not (such as \u201cCast [this card] only during combat\u201d)."
+    },
+    {
+      "oracle_id": "36b67014-0507-4976-ad52-a2a36676197d",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If you cast a card \u201cwithout paying its mana cost,\u201d you can't pay any alternative costs. On the other hand, if the card has additional costs (such as conspire), you may pay those."
+    },
+    {
+      "oracle_id": "36b67014-0507-4976-ad52-a2a36676197d",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If you are unable to cast the card (there are no legal targets for the spell, for example), nothing happens when Memory Plunder resolves, and the card remains in its owner's graveyard."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The exiled card with cipher grants a triggered ability to the creature it\u2019s encoded on. If that creature loses that ability and subsequently deals combat damage to a player, the triggered ability won\u2019t trigger. However, the exiled card will continue to be encoded on that creature."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the spell you cast has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You cast the copy of the card with cipher during the resolution of the triggered ability. Ignore timing restrictions based on the card\u2019s type."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you cast a spell \u201cwithout paying its mana cost,\u201d you can\u2019t choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the spell has any mandatory additional costs, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If another player gains control of the creature, that player will control the triggered ability. That player will create a copy of the encoded card and may cast it."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The spell with cipher is encoded on the creature as part of that spell\u2019s resolution, just after the spell\u2019s other effects. That card goes directly from the stack to exile. It never goes to the graveyard."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the creature leaves the battlefield, the exiled card will no longer be encoded on any creature. It will stay exiled."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you choose not to cast the copy, or you can\u2019t cast it (perhaps because there are no legal targets available), the copy will cease to exist the next time state-based actions are performed. You won\u2019t get a chance to cast the copy at a later time."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose whether to cast the target instant or sorcery card as Arcane Heist resolves. If you do, you do so as part of the resolution of Arcane Heist. You can\u2019t wait to cast it later in the turn. Timing restrictions based on the card\u2019s types are ignored."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You choose the creature as the spell resolves. The cipher ability doesn\u2019t target that creature."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a creature with an encoded card deals combat damage to more than one player simultaneously (perhaps because some of the combat damage was redirected), the triggered ability will trigger once for each player it deals combat damage to. Each ability will create a copy of the exiled card and allow you to cast it."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The copy of the card with cipher is created in and cast from exile."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the spell with cipher doesn\u2019t resolve, none of its effects will happen, including cipher. The card will go to its owner\u2019s graveyard and won\u2019t be encoded on a creature."
+    },
+    {
+      "oracle_id": "839748e7-ccb4-421e-9626-b6d8be9390ab",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You can choose only a creature to encode the card onto."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Since you are using an alternative cost to cast the spell, you can't pay any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If you choose to cast the instant or sorcery card, you do so while Impulsivity's first ability is resolving and still on the stack. You can't wait to cast it later in the turn. Timing restrictions based on the card's type are ignored."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "The tokens copy only what's on the original card. Effects that modified that creature when it was previously on the battlefield won't be copied."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Opponents who have left the game aren't counted when determining how many tokens to create."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If the spell you cast has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Exiling the card with encore is a cost to activate the encore ability. Once you announce that you're activating it, no player may take actions until you've finished. They can't try to remove the card from your graveyard to stop you from paying the cost."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If one of the tokens somehow is under another player's control as the delayed triggered ability resolves, you can't sacrifice that token. It remains on the battlefield indefinitely, even if you regain control of it later."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If one of the tokens can't attack for any reason (such as being tapped), then it doesn't attack. If there's a cost associated with having it attack, you aren't forced to pay that cost, so it doesn't have to attack in that case either."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Encore is an activated ability that functions from the graveyard. \"Encore [cost]\" means \"[Cost], Exile this card from your graveyard: For each opponent, create a token that's a copy of this card that attacks that opponent this turn if able. The tokens gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.\""
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Each token must attack the appropriate player if able."
+    },
+    {
+      "oracle_id": "02b6900b-219f-4832-8f93-6ef27ee76c0c",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If an effect stops a token from attacking a specific player, that token can attack any player, planeswalker, or battle, or not attack at all. If the effect stops the token from attacking a specific player unless a cost is paid, you don't have to pay that cost unless you want to attack that player."
+    },
+    {
+      "oracle_id": "e766a7ec-2761-453b-bfba-956de7b5e125",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "You may pay additional costs, such as kicker costs, of the instant or sorcery card."
+    },
+    {
+      "oracle_id": "e766a7ec-2761-453b-bfba-956de7b5e125",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If you are unable to cast the card, perhaps because there are no legal targets available, the card remains in its owner's graveyard."
+    },
+    {
+      "oracle_id": "e766a7ec-2761-453b-bfba-956de7b5e125",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If the card has any mandatory additional costs, then you must pay them in order to cast the spell."
+    },
+    {
+      "oracle_id": "e766a7ec-2761-453b-bfba-956de7b5e125",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If you reveal more than one Chancellor of the Spires from your opening hand, each opponent will put the top seven cards of their library into their graveyard that many times (for a total of fourteen, twenty-one, or twenty-eight cards)."
+    },
+    {
+      "oracle_id": "e766a7ec-2761-453b-bfba-956de7b5e125",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "The instant or sorcery card you target with the \"enters\" triggered ability is cast as part of the resolution of that ability. Timing restrictions based on the card's type are ignored. Other restrictions, such as \"Cast [this card] only during combat,\" are not."
+    },
+    {
+      "oracle_id": "e766a7ec-2761-453b-bfba-956de7b5e125",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Oracle and rules witnesses for targeted resolving graveyard casting"
+}

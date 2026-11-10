@@ -278,3 +278,62 @@ class ChosenTypeEventNativeTests(InheritedNativeFixture,unittest.TestCase):
         before=len(s.state.players['A'].zones['hand']);self.attack(s,[(second,'B')])
         self.assertIsNone(self.settle(s));self.assertEqual(before+1,len(s.state.players['A'].zones['hand']))
         self.replay(s,load=True)
+
+
+    def test_actual_banner_reads_effective_cast_types_with_record_provenance(self):
+        from unittest.mock import patch
+        from quorune.cast_event_type_model import CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        cases = (
+            ("Turtleshell Changeling", "goblin", 1, False, 1),
+            ("Turtleshell Changeling", "goblin", None, False, 0),
+            ("Aerie Bowmasters", "dog", 1, True, 0),
+        )
+        for index, (name, subtype, version, face_down, expected) in enumerate(cases):
+            with self.subTest(name=name, version=version, face_down=face_down):
+                session = self.session(205_603_157 + index)
+                engine = session.engine
+                session.state.cast_event_type_snapshot_version = version
+                format_value = format_state_versions(session.state)
+                field = CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD
+                self.assertEqual(version, format_value.get(field))
+                self.assertEqual(version is not None, field in format_value)
+                with self.assertRaises(ValueError):
+                    validate_state_versions({"format": {**format_value, field: True}}, session.state)
+                source = self.add(engine, "Vanquisher's Banner", zone="hand")
+                spell = self.add(engine, name, zone="hand")
+                for card in (source, spell):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 8, **({} if face_down else {"U": 1})})
+                self.checkpoint(session)
+                self.cast(session, "A", source)
+                self.entry_type(session, "A", subtype)
+                self.assertIsNone(self.settle(session))
+                dispatch = engine._dispatch_semantic_event
+                cast_facts = []
+
+                def observe(event, context, *args, **kwargs):
+                    if event == "spell.cast":
+                        cast_facts.append((context["types"], context["subtypes"]))
+                    return dispatch(event, context, *args, **kwargs)
+
+                before = len(session.state.players["A"].zones["hand"])
+                with patch.object(engine, "_dispatch_semantic_event", side_effect=observe):
+                    if face_down:
+                        action_id = f"cast-megamorph:{spell.ref}"
+                        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                        self.assertIn(action_id, {row["id"] for row in actions})
+                        accepted = session.act("pilot:A", {"action_id": action_id, "pay": "auto"})
+                        self.assertTrue(accepted.ok, accepted.summary)
+                    else:
+                        self.cast(session, "A", spell)
+                (types, subtypes), = cast_facts
+                self.assertIn("creature", types)
+                self.assertEqual(bool(expected), subtype in subtypes)
+                if face_down:
+                    self.assertEqual((), tuple(subtypes))
+                self.assertEqual(expected, self.trigger_count(session, source))
+                self.assertIsNone(self.settle(session))
+                self.assertEqual(before - 1 + expected, len(session.state.players["A"].zones["hand"]))
+                self.replay(session, load=True)

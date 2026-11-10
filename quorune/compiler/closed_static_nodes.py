@@ -14,6 +14,7 @@ from .intrinsic_counter_nodes import intrinsic_counter_prohibition_node
 from .maximum_hand_size_nodes import no_maximum_hand_size_node
 from .player_target_protection_nodes import player_target_protection_node
 from .defender_permission_templates import static_defender_permission_handler
+from ..defender_permission import DEFENDER_DECLARATION_EVENT
 from .as_unblocked_templates import static_as_unblocked_handler
 from .toughness_assignment_templates import static_toughness_assignment_handler
 from .block_capacity_templates import static_block_capacity_handler
@@ -43,6 +44,11 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     target_price=target_count_cost_static_node(record=record,node_id=node_id,line=line,material_line=material_line,
         span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if target_price is not None:return target_price
+    from .splice_nodes import splice_static_node
+    splice = splice_static_node(record=record, node_id=node_id, line=line, material_line=material_line,
+        span=span, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if splice is not None:
+        return splice
     from .preparation_nodes import preparation_entry_node
     preparation=preparation_entry_node(record=record,face_name=face_name,node_id=node_id,line=line,material_line=material_line,
         span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
@@ -228,17 +234,17 @@ def _closed_static_body_node(
         source_name=source_name,
     )
     if declaration_grant is not None:
-        numeric_permission = (isinstance(declaration_grant[1], Mapping)
-            and declaration_grant[1].get('handler_id') == 'permission.attack.defender-current-numeric.v1')
+        declaration_permission = (isinstance(declaration_grant[1], Mapping)
+            and declaration_grant[1].get('event') == DEFENDER_DECLARATION_EVENT)
         return runtime_handler_node(
             node_id=node_id,
             line=line,
             span=span,
             compiled=declaration_grant,
             kind="static_ability",
-            event=(declaration_grant[1]['event'] if numeric_permission else "characteristics.evaluate"),
+            event=(DEFENDER_DECLARATION_EVENT if declaration_permission else "characteristics.evaluate"),
             runtime_coverage=("fixed_static_declaration_grant", *(
-                ('current_ability_fragment_required',) if numeric_permission else ())),
+                ('current_ability_fragment_required',) if declaration_permission else ())),
             dependency_reason=(
                 "queried declaration rules require their continuous ability "
                 "grant and combat declaration capabilities"

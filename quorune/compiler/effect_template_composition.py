@@ -20,7 +20,7 @@ from .fixed_resolution_characteristics import fixed_resolution_characteristics_e
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .reflexive_payment_templates import reflexive_payment_template
 from .optional_payment_templates import fixed_optional_mana_payment_template
-from .counter_templates import targeted_controller_payment_template
+from .counter_templates import targeted_controller_payment_followup_template, targeted_controller_payment_template
 from .token_copy_templates import token_copy_recipe_template
 from .resolution_condition_templates import resolution_condition_template
 from .query_counter_sequences import ordered_quantity_sequence_template
@@ -125,9 +125,17 @@ def reviewed_contextual_effect_template(
         removal=temporary_keyword_removal_template(body,source_name=card_name,
             source_is_permanent=source_context.get('source_is_permanent'),source_card_types=tuple(source_context.get('source_card_types',())))
         if removal is not None:return removal
-        controller_payment = targeted_controller_payment_template(body, cast_x_available=cast_x_available)
+        controller_payment = targeted_controller_payment_template(
+            body, cast_x_available=cast_x_available, source_name=card_name,
+        )
         if controller_payment is not None:
             return controller_payment.compiled()
+        followup = targeted_controller_payment_followup_template(
+            body, source_name=card_name, cast_x_available=cast_x_available,
+            compile_component=lambda clause: compile_fixed(clause, card_name=card_name, **source_context),
+        )
+        if followup is not None:
+            return followup
         current = compile_atomic(body, card_name=card_name, **source_context)
         if current[0] is not None:
             return current
@@ -140,6 +148,8 @@ def reviewed_contextual_effect_template(
             source_name=card_name,
             source_is_permanent=source_context.get("source_is_permanent"),
             source_card_types=tuple(source_context.get("source_card_types", ())),
+            source_attachment_relation=source_context.get("source_attachment_relation"),
+            cast_x_available=cast_x_available,
         ) or current
 
     if bargain_available is True:
@@ -287,21 +297,24 @@ def reviewed_effect_template_composition(
     )
     if query_amount is not None:
         return query_amount
+    def compile_fixed_amount(body):
+        return reviewed_effect_template_composition(
+            body, source_name=source_name, compile_atomic=compile_atomic,
+            compile_fixed=compile_fixed, allow_declarations=False,
+        )
+
     if allow_declarations:
-        scalar = scalar_effect_amount_template(text, source_name=source_name,
-            compile_fixed=lambda body: reviewed_effect_template_composition(
-                body, source_name=source_name, compile_atomic=compile_atomic,
-                compile_fixed=compile_fixed, allow_declarations=False))
+        scalar = scalar_effect_amount_template(
+            text, source_name=source_name, compile_fixed=compile_fixed_amount,
+        )
         if scalar is not None:
             return scalar
-        declared = declared_effect_amount_template(
-            text, source_name=source_name, cast_x_available=cast_x_available,
-            forbid_public_x=forbid_public_x,
-            compile_fixed=lambda body: reviewed_effect_template_composition(
-                body, source_name=source_name, compile_atomic=compile_atomic,
-                compile_fixed=compile_fixed, allow_declarations=False,
-            ),
+        compile_amount = partial(
+            declared_effect_amount_template, source_name=source_name,
+            cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
+            compile_fixed=compile_fixed_amount,
         )
+        declared = compile_amount(text)
         if declared is not None:
             return declared
     query_counters = ordered_quantity_sequence_template(text, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed)
@@ -309,7 +322,9 @@ def reviewed_effect_template_composition(
     from .announced_target_sets import announced_target_clause_compiler
     sequence = fixed_effect_clause_sequence_template(
         normalized_blight_sequence(text),
-        compile_clause=announced_target_clause_compiler(compile_atomic) if cast_x_available else compile_atomic,
+        compile_clause=announced_target_clause_compiler(
+            compile_atomic, compile_amount=compile_amount if allow_declarations else None,
+        ) if cast_x_available else compile_atomic,
     )
     if sequence is not None:
         return sequence.compiled()

@@ -53,7 +53,7 @@ from .fixed_resolution_characteristic_shapes import (
 )
 from .prevention_component_shapes import fixed_prevention_component_capabilities
 from .graveyard_card_targets import (
-    targeted_own_graveyard_return_node_capabilities,
+    targeted_graveyard_return_node_capabilities,
 )
 from .node_capability_shapes import (
     fixed_amass_node_capabilities,
@@ -106,10 +106,13 @@ from .monarch_capability_shapes import fixed_monarch_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
 from .transform_capability_shapes import source_transform_node_capabilities
+from ..preparation_model import preparation_result_node_capabilities
 from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
 from .hand_inspection_capability_shapes import fixed_hand_inspection_node_capabilities
 from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
-from .public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
+from .public_zone_move_capability_shapes import (
+    fixed_owner_zone_move_node_capabilities, triggered_source_exile_node_capabilities,
+)
 from .node_capability_shapes import (
     fixed_source_characteristics_node_capabilities,
     fixed_target_effect_sequence_node_capabilities,
@@ -136,6 +139,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    preparation_result_node_capabilities,
     graveyard_return_choice_node_capabilities,
     fixed_land_untap_choice_capabilities,
     fixed_library_order_capabilities,
@@ -209,6 +213,7 @@ _COMPONENT_RESOLVERS = (
     fixed_surveil_node_capabilities,
     fixed_self_return_node_capabilities,
     graveyard_self_return_node_capabilities,
+    triggered_source_exile_node_capabilities,
     fixed_mill_node_capabilities,
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,
@@ -221,7 +226,7 @@ _COMPONENT_RESOLVERS = (
     targeted_counter_node_capabilities,
     targeted_destruction_node_capabilities,
     targeted_exile_node_capabilities,
-    targeted_own_graveyard_return_node_capabilities,
+    targeted_graveyard_return_node_capabilities,
     targeted_return_to_hand_node_capabilities,
     targeted_tap_state_node_capabilities,
     public_graveyard_card_exile_node_capabilities,

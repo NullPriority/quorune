@@ -9,6 +9,7 @@ from .linked_exile_return_model import ExiledObjectIdentity
 
 
 LINKED_ABILITY_EXILE_ANNOTATION = 'linked_ability_exile_v1'
+LINKED_ABILITY_EXILE_CAPABILITY = "zone.exile.linked_ability_pair"
 
 
 @dataclass(frozen=True, slots=True)

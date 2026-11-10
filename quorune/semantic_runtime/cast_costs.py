@@ -56,6 +56,7 @@ from .conspire import FixedConspireHandler
 from .casualty import FixedCasualtyHandler
 from .bargain import BargainCostHandler
 from ..bargain_model import FixedBargainSpec
+from ..rules.splice import SpliceSpec
 from ..declared_cost_reductions import DeclaredCostReductionSpec
 from .declared_cost_reductions import DeclaredCostReductionHandler
 from .targeted_spell_costs import TargetedSpellCostHandler
@@ -582,6 +583,7 @@ class CastCostComponentRegistry(
         | FixedConspireSpec
         | FixedCasualtySpec
         | FixedBargainSpec
+        | SpliceSpec
         | DeclaredCostReductionSpec
         | FixedActivationCostModifierSpec,
     ]
@@ -592,6 +594,7 @@ class CastCostComponentRegistry(
 @lru_cache(maxsize=1)
 def default_cast_cost_component_registry() -> CastCostComponentRegistry:
     from .global_alternative_costs import GlobalAlternativeCostHandler
+    from .splice_costs import SpliceCostHandler
     from .target_count_costs import FixedManaPerTargetCostHandler
     from .optional_life_costs import OptionalLifeColorReductionHandler
     from .turn_cast_grants import TurnCastGrantHandler, turn_cast_rider_handlers, qualified_turn_grant_handlers
@@ -613,6 +616,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaEmergeHandler(),
             FixedManaDisturbHandler(),
             FixedManaReplicateHandler(),
+            SpliceCostHandler(),
             FixedConspireHandler(),
             FixedCasualtyHandler(),
             BargainCostHandler(),

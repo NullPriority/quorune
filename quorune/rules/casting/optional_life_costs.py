@@ -101,8 +101,11 @@ def apply_optional_life_reduction(option):
 
 
 def optional_life_payment_affordable(host, seat, option, response):
+    from ...life_state import LifeStateError, prepare_life_payment
+    from ...printed_mana_cost_model import printed_phyrexian_life_payment
     from ..casting_additional_cost_groups import fixed_life_payment_additional_cost, announced_x_life_additional_cost
-    amount = optional_life_cost_amount(option)
+    printed = printed_phyrexian_life_payment(option)
+    amount = optional_life_cost_amount(option) + printed
     if not amount:
         return True
     for raw in option.get('additional_costs', ()):
@@ -114,4 +117,10 @@ def optional_life_payment_affordable(host, seat, option, response):
             amount += declared.amount_for(option.get('announced_additional_x'))
         elif raw.get('kind') == 'life_x':
             amount += int(response.get('x', 0))
+    if printed:
+        try:
+            prepare_life_payment(host, seat, amount)
+        except LifeStateError:
+            return False
+        return True
     return host.state.players[seat].life >= amount

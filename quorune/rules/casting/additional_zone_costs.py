@@ -89,8 +89,19 @@ def select_zone_change_additional_cost(host,seat,source,option,costs,response,*,
     try:cost=fixed_zone_change_additional_cost(costs[position])
     except AdditionalCostError:return False,None
     if cost is None:return None
-    from ..fixed_payment_groups import fixed_life_zone_costs
+    from ..fixed_payment_groups import fixed_color_tap_zone_costs, fixed_life_zone_costs
     from ...nonmana_kicker import distinct_kicker_zone_costs
-    if len(costs)!=1 and not fixed_life_zone_costs(costs) and not distinct_kicker_zone_costs(option,costs):return False,None
+    tap_zone = fixed_color_tap_zone_costs(costs)
+    if (len(costs) != 1 and not fixed_life_zone_costs(costs)
+        and not distinct_kicker_zone_costs(option, costs) and not tap_zone):
+        return False, None
+    if tap_zone:
+        from .additional_tap_costs import validate_fixed_tap_payment
+        from .source_placement import prospective_fixed_tap_price_host
+        try:
+            tapped = validate_fixed_tap_payment(host, seat, source, option)
+        except (TypeError, ValueError):
+            return False, None
+        host = prospective_fixed_tap_price_host(host, seat, source.object_id, tapped)
     return _fixed_zone_change_selection(host,seat=seat,source_object_id=source.object_id,cost=cost,
         cost_position=position,response=response,hint=hint,choice_schema=choice_schema,option=option)

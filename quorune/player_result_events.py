@@ -3,10 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
-from .life_change import LifeChangeRecord
+from .life_change import FIRST_LIFE_GAIN_EVENT, LifeChangeRecord, first_life_gain_runtime_dependencies
 from .model import StackItem
 from .replacement.immutable import FrozenMap
 from .trigger_processing import enqueue_trigger_batch
+from .turn_history import record_first_life_gain
 
 
 class PlayerResultEventError(ValueError):
@@ -130,6 +131,19 @@ class LifeGainEvent:
         return FrozenMap({"player": self.player, "amount": self.amount})
 
 
+def player_result_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
+    """Bind the committed draw and life results used by a typed program."""
+    required = first_life_gain_runtime_dependencies(program, subscriptions)
+    if program.event == "card.second_draw" and program.provenance.get("template_id") in {
+        "fixed-counter-public-second-draw-trigger-v1",
+        "fixed-typed-effect-public-second-draw-trigger-v1",
+        "fixed-counter-graveyard-self-return-v1",
+        "fixed-typed-effect-graveyard-self-return-v1",
+    }:
+        return (*required, "trigger.event.normalized_card_draw")
+    return required
+
+
 def dispatch_card_draw_event(
     host: PlayerResultEventHost,
     event: CardDrawEvent,
@@ -182,6 +196,7 @@ def dispatch_life_gain_event(
         )
     owns_batch = trigger_batch is None
     pending = trigger_batch if trigger_batch is not None else []
+    first = record_first_life_gain(host, event.player)
     host._dispatch_semantic_event(
         "life.gained",
         event.semantic_context(),
@@ -189,6 +204,11 @@ def dispatch_life_gain_event(
         source_zones=source_zones,
         trigger_batch=pending,
     )
+    if first:
+        # The first-gain source must be present after the gain, before later state actions.
+        host._dispatch_semantic_event(FIRST_LIFE_GAIN_EVENT,
+            FrozenMap({'player': event.player, 'active_player': host.state.active_player}),
+            trigger_batch=pending)
     if owns_batch:
         enqueue_trigger_batch(host, pending)
 

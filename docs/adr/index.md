@@ -176,3 +176,5 @@ deployment modes, or architecture review thresholds.
 - [ADR 0159 — typed trigger source and event participation](0159-typed-trigger-source-and-event-participation.md)
 - [ADR 0160 — versioned completed characteristic queries](0160-versioned-completed-characteristic-queries.md)
 - [ADR 0161 — ordinary attacking-token results](0161-ordinary-attacking-token-results.md)
+- [ADR 0162 — mandatory linked loop draws](0162-mandatory-linked-loop-draws.md)
+- [ADR 0163 — ordered hybrid mana payments](0163-ordered-hybrid-mana-payments.md)

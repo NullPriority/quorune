@@ -8,8 +8,10 @@ from ..announced_damage import (
     ANNOUNCED_DAMAGE_CAPABILITY,
     ANNOUNCED_DAMAGE_EFFECT_FIELD,
     DAMAGE_ALLOCATION_FIELD,
+    VariableDamageAllocationSpec,
     damage_allocation_spec,
     validate_announced_damage_effect,
+    variable_damage_allocation,
 )
 from ..compiler.direct_target import DirectPermanentTargetSpec
 from ..damage_death_exile_model import (
@@ -250,16 +252,36 @@ def _announced_damage_capabilities(effect, target_schema, mechanics) -> tuple[st
     except (TypeError, ValueError):
         return ()
     minimum, maximum = group.get("min"), group.get("max")
-    if ("count" in group or type(minimum) is not int or type(maximum) is not int
-            or not 0 <= minimum <= maximum <= spec.total or maximum == 0):
+    if "count" in group or type(minimum) is not int or type(maximum) is not int:
         return ()
+    if isinstance(spec, VariableDamageAllocationSpec):
+        if minimum != 0 or maximum not in (0, 2):
+            return ()
+        amount = 1
+        allocation_capabilities = spec.capability_dependencies
+    else:
+        if not 0 <= minimum <= maximum <= spec.total or maximum == 0:
+            return ()
+        amount = spec.total
+        allocation_capabilities = (ANNOUNCED_DAMAGE_CAPABILITY,)
     del group["min"], group["max"]
     group["count"] = 1
-    direct = {"op": "damage", "source": "$source", "target": "$target.0", "amount": spec.total}
+    direct = {"op": "damage", "source": "$source", "target": "$target.0", "amount": amount}
     base = _fixed_direct_damage_capabilities(direct, group, mechanics)
     if not base:
         return ()
-    return tuple(sorted({*base, ANNOUNCED_DAMAGE_CAPABILITY, "damage.batch.fixed_set", "target.revalidate_resolution"}))
+    return tuple(sorted({*base, *allocation_capabilities, "damage.batch.fixed_set", "target.revalidate_resolution"}))
+
+
+def variable_damage_allocation_program_requirements(program) -> tuple[str, ...]:
+    schema = program.target_schema
+    if (program.event != "resolve" or not program.ability_id.startswith("spell:")
+            or len(program.effects) != 1 or variable_damage_allocation(schema) is None):
+        raise ValueError("Variable damage allocation requires one complete cast-time spell result")
+    required = _announced_damage_capabilities(program.effects[0], schema, program.coverage)
+    if not required:
+        raise ValueError("Variable damage allocation requires matching effect and target totals")
+    return required
 
 
 def fixed_damage_node_capabilities(

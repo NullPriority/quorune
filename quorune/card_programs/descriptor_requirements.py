@@ -2,9 +2,25 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 from ..suspect_model import SUSPECT_OPERATION
+from ..resolution_characteristic_model import (
+    CHARACTERISTIC_OPERATION, DERIVED_CHARACTERISTIC_CAPABILITY, DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
+    INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, fixed_resolution_characteristic_instruction,
+)
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    version = value.get("schema_version")
+    if value.get("op") == "return_graveyard_card_to_owner_hand":
+        from ..rules.graveyard_card_targets import public_graveyard_return_payload_dependencies
+
+        return public_graveyard_return_payload_dependencies(value)
+    if (value.get("op") == CHARACTERISTIC_OPERATION and type(version) is int
+            and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS):
+        spec, _selection = fixed_resolution_characteristic_instruction(value)
+        return spec.capability_dependencies
+    if value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION:
+        fixed_resolution_characteristic_instruction(value)
+        return (DERIVED_CHARACTERISTIC_CAPABILITY,)
     if value.get("op") == "detain_permanents":
         from ..rules.detain import DETAIN_CAPABILITY, validate_detain_instruction
         validate_detain_instruction(value)
@@ -45,13 +61,16 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
 
 
 def _damage_payload_dependencies(value, mechanics):
-    from ..announced_damage import ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_EFFECT_FIELD, validate_announced_damage_effect
+    from ..announced_damage import (
+        ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_EFFECT_FIELD, VariableDamageAllocationSpec,
+        validate_announced_damage_effect,
+    )
     from ..damage_death_exile_model import damage_death_exile_payload_dependencies
     from ..damage_prevention_permission import unpreventability_payload_dependencies
 
     if ANNOUNCED_DAMAGE_EFFECT_FIELD in value:
-        validate_announced_damage_effect(value)
-        return (ANNOUNCED_DAMAGE_CAPABILITY,)
+        spec = validate_announced_damage_effect(value)
+        return spec.capability_dependencies if isinstance(spec, VariableDamageAllocationSpec) else (ANNOUNCED_DAMAGE_CAPABILITY,)
     return (*unpreventability_payload_dependencies(value, coverage=mechanics),
             *damage_death_exile_payload_dependencies(value, coverage=mechanics))
 
@@ -96,6 +115,28 @@ def _affected_quantity_payload_dependencies(
         from ..rules.mill_capability_shapes import half_mill_payload_dependencies
         return half_mill_payload_dependencies(value) or None
     return None
+
+
+def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    from ..cast_event_amounts import CAST_MANA_VALUE_CAPABILITY
+    from ..query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
+    from ..reflexive_trigger_model import SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY
+    from ..scalar_effect_amount_model import (
+        PAID_SACRIFICE_STAT_CAPABILITY, SCALAR_AMOUNT_CAPABILITY, ScalarAmountOrigin, ScalarEffectAmountSpec,
+    )
+
+    spec = ScalarEffectAmountSpec.from_dict(value)
+    origin_capabilities = {
+        ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE: SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
+        ScalarAmountOrigin.PAID_SACRIFICE_CREATURE: PAID_SACRIFICE_STAT_CAPABILITY,
+        ScalarAmountOrigin.CAST_SPELL_MANA_VALUE: CAST_MANA_VALUE_CAPABILITY,
+    }
+    required = {SCALAR_AMOUNT_CAPABILITY, *spec.history_count_capabilities}
+    if capability := origin_capabilities.get(spec.origin):
+        required.add(capability)
+    if spec.binding_id is not None:
+        required.add(DECLARED_AMOUNT_CAPABILITY)
+    return tuple(sorted(required))
 
 
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
@@ -175,6 +216,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         from ..counter_permission import counter_prohibition_payload_dependencies
         own = (*own,*counter_prohibition_payload_dependencies(value,coverage=mechanics))
         own = (*own, *_damage_payload_dependencies(value, mechanics))
+        from ..zone_trigger_events import counter_destination_payload_dependencies
+        own = (*own, *counter_destination_payload_dependencies(value))
         if value.get('kind') == 'legend_rule_exemption':
             from ..legend_rule_model import legend_rule_payload_dependencies
             own = (*own, *legend_rule_payload_dependencies(value))
@@ -235,14 +278,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
             return tuple(sorted({*own,PUBLIC_QUERY_AMOUNT_CAPABILITY,
                                  *((DECLARED_AMOUNT_CAPABILITY,) if spec.schema_version == 2 else ())}))
         if value.get('kind') == 'scalar_effect_amount':
-            from ..scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, ScalarEffectAmountSpec, SCALAR_AMOUNT_CAPABILITY
-            spec = ScalarEffectAmountSpec.from_dict(value)
-            from ..scalar_effect_amount_model import ScalarAmountOrigin
-            from ..cast_event_amounts import CAST_MANA_VALUE_CAPABILITY
-            return tuple(sorted({SCALAR_AMOUNT_CAPABILITY,
-                                 *((PAID_SACRIFICE_STAT_CAPABILITY,) if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE else ()),
-                                 *((CAST_MANA_VALUE_CAPABILITY,) if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE else ()),
-                                 *((DECLARED_AMOUNT_CAPABILITY,) if spec.binding_id is not None else ())}))
+            return _scalar_amount_payload_dependencies(value)
         return tuple(sorted({*own, *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
     if isinstance(value, (list, tuple)):
         return tuple(sorted({cap for child in value for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics)}))

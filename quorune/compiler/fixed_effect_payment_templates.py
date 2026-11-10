@@ -29,7 +29,8 @@ _OPEN = re.compile(r"\b(?:if|unless|may|when|where|random|repeat|this way|that m
 Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]]
 
 
-def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False) -> FixedEffectPaymentSpec | None:
+def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False,
+                              allow_hybrid_mana: bool = False) -> FixedEffectPaymentSpec | None:
     value=text.strip()
     blight = fixed_blight_effect_template(value)
     if blight is not None:
@@ -57,6 +58,17 @@ def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False
         requirements,symbols=mana_cost_to_vector(mana['cost'])
         if symbols or not any(requirements.values()):return None
         return FixedEffectPaymentSpec('mana',requirements=FrozenMap(requirements))
+    if allow_hybrid_mana:
+        hybrid = re.fullmatch(r"pay (?P<cost>(?:\{(?:[0-9]+|[WUBRGC]|(?:[WUBRG]|2)/[WUBRG])\})+)", value, re.I)
+        if hybrid is not None:
+            from ..rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND, HYBRID_RESOLUTION_PAYMENT_VERSION
+
+            requirements, symbols = mana_cost_to_vector(hybrid["cost"])
+            try:
+                return FixedEffectPaymentSpec(HYBRID_RESOLUTION_PAYMENT_KIND, requirements=FrozenMap(requirements),
+                    hybrid_symbols=tuple(symbols), schema_version=HYBRID_RESOLUTION_PAYMENT_VERSION)
+            except ValueError:
+                return None
     life=re.fullmatch(r"pay (?P<amount>[1-9][0-9]*) life",value,re.I)
     if life is not None:return FixedEffectPaymentSpec('life',amount=int(life['amount']))
     clause='As an additional cost to cast this spell, '+value+'.'
@@ -142,7 +154,7 @@ def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], 
             if match is None:
                 return None
             declined = True
-        cost = fixed_effect_payment_spec(match["cost"], allow_source_sacrifice=True)
+        cost = fixed_effect_payment_spec(match["cost"], allow_source_sacrifice=True, allow_hybrid_mana=not declined)
     body=match['body'].strip()
     if cost is None or _OPEN.search(body) or '"' in body:return None
     template,effects,schema,mechanics=compile_effect(body)

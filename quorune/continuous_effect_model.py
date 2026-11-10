@@ -95,6 +95,7 @@ _OPERATION_LAYERS = {
     "replace_text": Layer.TEXT,
     "set_types": Layer.TYPE,
     "set_basic_land_types": Layer.TYPE,
+    "set_creature_subtype": Layer.TYPE,
     "add_types": Layer.TYPE,
     "remove_types": Layer.TYPE,
     "remove_creature_card_type": Layer.TYPE,
@@ -310,6 +311,11 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
         words=_nonempty_words(value,field_name=op)
         if field is not None or any(word not in BASIC_LAND_MANA for word in words):
             raise ContinuousEffectError('Basic land type setting requires canonical basic subtypes and no field')
+    elif op == "set_creature_subtype":
+        from .creature_subtypes import canonical_creature_subtype
+
+        if canonical_creature_subtype(value) != value or value is None:
+            raise ContinuousEffectError("Creature type setting requires one canonical creature subtype")
     elif op in {"set_types", "add_types", "remove_types"}:
         if field not in {None, "supertypes", "card_types", "subtypes"}:
             raise ContinuousEffectError("Type operations require a represented type field")

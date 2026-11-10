@@ -650,6 +650,8 @@ def _card_from_token_plan(
     controller: str,
     plan: PreparedTokenObject,
 ) -> CardInstance:
+    from .shared_type_doors import SharedTypeDoors, copied_room_door_ids
+    copied_doors = copied_room_door_ids(plan.annotations.get("copy_overrides"))
     card = CardInstance(
         object_id=plan.object_id,
         ref=plan.ref,
@@ -660,6 +662,7 @@ def _card_from_token_plan(
         zone="battlefield",
         is_token=True,
         active_face=(plan.annotations.get('copy_overrides') or {}).get(DEFINED_TOKEN_ACTIVE_FACE_FIELD),
+        shared_type_doors=SharedTypeDoors(copied_doors, printed=False) if copied_doors is not None else None,
         zone_timestamp=plan.zone_timestamp,
         tapped=plan.tapped,
         temporary_keywords=list(plan.temporary_keywords),

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from dataclasses import replace
 from ..devour import DevourProposal,DevourQuality
-from ..replacement import ReplacementEventBatch,ReplacementChoiceRequired,advance_replacement_batch,EntryReplacementScope
+from ..replacement import ReplacementEventBatch,ReplacementChoiceRequired,advance_replacement_batch
 from ..replacement.entry_reservations import share_entry_reservations
-from .zone_replacement_inputs import zone_change_snapshot_event
+from .zone_replacement_inputs import snapshot_entry_scope, zone_change_snapshot_event
 
 
 def _selected_subjects(snapshot,batch,error_type):
@@ -32,10 +32,7 @@ def _selected_subjects(snapshot,batch,error_type):
 def prepare_devour_snapshot(snapshot,*,selections,error_type):
     from .zone_replacements import _prepared_from_event
     values=tuple(selections)
-    scope=EntryReplacementScope(tuple(subject.object_id for subject in snapshot.subjects if subject.destination=='battlefield'),
-        tuple(subject.object_id for subject in snapshot.subjects if subject.destination=='battlefield' and subject.origin=='library'))
-    leaving=tuple(subject.object_id for subject in snapshot.subjects if subject.destination!='battlefield')
-    if leaving:scope=scope.reserve_zone_changes(leaving)
+    scope=snapshot_entry_scope(snapshot)
     events=tuple(replace(zone_change_snapshot_event(snapshot,subject),entry_scope=scope) for subject in snapshot.subjects)
     batch=ReplacementEventBatch(f'replacement:zone.batch:{snapshot.revision}:{snapshot.event_sequence+1}',events,snapshot.apnap_order)
     progress=advance_replacement_batch(batch,snapshot.effects,selections=values,require_all_selections=False)

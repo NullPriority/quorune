@@ -719,6 +719,625 @@
       "released_at": "2016-06-10",
       "toughness": "1",
       "type_line": "Creature — Human Wizard Sorcerer"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Barrin, Tolarian Archmage",
+      "oracle_id": "f98f7cb7-90ca-41e7-9f1d-8054931ecf0e",
+      "oracle_text": "When Barrin enters, return up to one other target creature or planeswalker to its owner's hand.\nAt the beginning of your end step, if a permanent was put into your hand from the battlefield this turn, draw a card.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Food"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Elanor Gardner",
+      "oracle_id": "ad4c39d6-a8b3-4dd9-816d-09761fc9651d",
+      "oracle_text": "When Elanor enters, create a Food token.\nAt the beginning of your end step, if you sacrificed a Food this turn, you may search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Halfling Scout"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Elite Vanguard",
+      "oracle_id": "b3b9a87d-cb95-435c-90b6-037406cab32e",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": "1",
+      "type_line": "Creature — Human Soldier"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Ennis, Debate Moderator",
+      "oracle_id": "97e1fcdf-04e8-40cf-b04a-8505d9b7cecc",
+      "oracle_text": "When Ennis enters, exile up to one other target creature you control. Return that card to the battlefield under its owner's control at the beginning of the next end step.\nAt the beginning of your end step, if one or more cards were put into exile this turn, put a +1/+1 counter on Ennis.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "1",
+      "type_line": "Legendary Creature — Human Cleric"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Ichor Shade",
+      "oracle_id": "083ea8b0-ff2a-406e-90f1-668f33443747",
+      "oracle_text": "At the beginning of your end step, if an artifact or creature was put into a graveyard from the battlefield this turn, put a +1/+1 counter on this creature.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "3",
+      "type_line": "Creature — Phyrexian Shade"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Kami of Transience",
+      "oracle_id": "7baffe00-78a4-4675-9c74-29eb3882bd01",
+      "oracle_text": "Trample\nWhenever you cast an enchantment spell, put a +1/+1 counter on this creature.\nAt the beginning of each end step, if an enchantment was put into your graveyard from the battlefield this turn, you may return this card from your graveyard to your hand.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "2",
+      "type_line": "Creature — Spirit"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Food"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{B}",
+      "name": "White Glove Gourmand",
+      "oracle_id": "3771c0d7-cea3-4c03-933d-f236f32ef2db",
+      "oracle_text": "When this creature enters, create two 1/1 white Human Soldier creature tokens.\nAt the beginning of your end step, if another Human died under your control this turn, create a Food token.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "2",
+      "type_line": "Creature — Human Noble"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Gingerbrute",
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)\n{1}: This creature can't be blocked this turn except by creatures with haste.\n{2}, {T}, Sacrifice this creature: You gain 3 life.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2023-09-08",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Food Golem"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Village Rites",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Dauthi Voidwalker",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.\n{T}, Sacrifice this creature: Choose an exiled card an opponent owns with a void counter on it. You may play it this turn without paying its mana cost.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature — Dauthi Rogue"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Swamp"
     }
   ],
   "rulings": [
@@ -858,6 +1477,210 @@
       "comment": "See Red's last ability is satisfied if any creature has attacked, similar to raid abilities. The creature it enchants doesn't have to have attacked.",
       "oracle_id": "dd33af3e-ab8c-486c-baae-a37cc857f180",
       "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ichor Shade’s ability will check as your end step begins if an artifact or creature was put into a graveyard from the battlefield this turn. If none have, the ability won’t trigger at all.",
+      "oracle_id": "083ea8b0-ff2a-406e-90f1-668f33443747",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a nontoken artifact or creature is put into a graveyard, it doesn’t matter what happens to the card afterward. Ichor Shade’s ability will count it even if the card has left the graveyard by the time the ability resolves.",
+      "oracle_id": "083ea8b0-ff2a-406e-90f1-668f33443747",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability will count any artifact or creature that was put into a graveyard, including tokens.",
+      "oracle_id": "083ea8b0-ff2a-406e-90f1-668f33443747",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "White Glove Gourmand doesn't need to have been on the battlefield when the Human died. For example, if a Human dies during combat on your turn and you cast White Glove Gourmand during your second main phase, its last ability will trigger at the beginning of your end step.",
+      "oracle_id": "3771c0d7-cea3-4c03-933d-f236f32ef2db",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "White Glove Gourmand's last ability will trigger only once during your end step, no matter how many Humans died under your control this turn. However, if no Humans have died under your control so far this turn as your end step begins, the ability won't trigger at all. It's not possible to cause a Human to die under your control during the end step in time to have the ability trigger.",
+      "oracle_id": "3771c0d7-cea3-4c03-933d-f236f32ef2db",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type.",
+      "oracle_id": "3771c0d7-cea3-4c03-933d-f236f32ef2db",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whatever you do, don't eat the delicious cards.",
+      "oracle_id": "3771c0d7-cea3-4c03-933d-f236f32ef2db",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability.",
+      "oracle_id": "3771c0d7-cea3-4c03-933d-f236f32ef2db",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist. Once the exiled permanent returns, it's considered a new object with no relation to the object that it was.",
+      "oracle_id": "97e1fcdf-04e8-40cf-b04a-8505d9b7cecc",
+      "published_at": "2026-03-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Since copies of prepare spells aren't cards, they won't count for Ennis's last ability.",
+      "oracle_id": "97e1fcdf-04e8-40cf-b04a-8505d9b7cecc",
+      "published_at": "2026-03-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Elanor Gardner doesn't need to have been on the battlefield when you sacrificed a Food this turn. For example, if you sacrifice a Food during your first main phase and you cast Elanor Gardner during your second main phase, its last ability will trigger at the beginning of your end step.",
+      "oracle_id": "ad4c39d6-a8b3-4dd9-816d-09761fc9651d",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Elanor Gardner's last ability will trigger only once during your end step, no matter how many Foods you sacrificed this turn. However, if you haven't sacrificed any Foods this turn as your end step begins, the ability won't trigger at all. It's not possible to sacrifice a Food during the end step in time to have the ability trigger.",
+      "oracle_id": "ad4c39d6-a8b3-4dd9-816d-09761fc9651d",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type.",
+      "oracle_id": "ad4c39d6-a8b3-4dd9-816d-09761fc9651d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Tough Cookie (an Artifact Creature — Food Golem) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost).",
+      "oracle_id": "ad4c39d6-a8b3-4dd9-816d-09761fc9651d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whatever you do, don't eat the delicious cards.",
+      "oracle_id": "ad4c39d6-a8b3-4dd9-816d-09761fc9651d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability.",
+      "oracle_id": "ad4c39d6-a8b3-4dd9-816d-09761fc9651d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Barrin's last ability checks the entire turn, even before Barrin was on the battlefield.",
+      "oracle_id": "f98f7cb7-90ca-41e7-9f1d-8054931ecf0e",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent wasn't put into your hand from the battlefield before your end step begins, Barrin's ability doesn't trigger at all.",
+      "oracle_id": "f98f7cb7-90ca-41e7-9f1d-8054931ecf0e",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is returned to your hand, it's put there before it ceases to exist.",
+      "oracle_id": "f98f7cb7-90ca-41e7-9f1d-8054931ecf0e",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The permanent that was returned to your hand doesn't have to still be there.",
+      "oracle_id": "f98f7cb7-90ca-41e7-9f1d-8054931ecf0e",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "You draw only one card, no matter how many permanents were put into your hand from the battlefield during that turn.",
+      "oracle_id": "f98f7cb7-90ca-41e7-9f1d-8054931ecf0e",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activating Gingerbrute's middle ability after it has become blocked by a creature without haste won't cause it to become unblocked.",
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type.",
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Tough Cookie (an Artifact Creature — Food Golem) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost).",
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whatever you do, don't eat the delicious cards.",
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability.",
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you can't cast it without sacrificing a creature, and you can't sacrifice additional creatures.",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card this way, you may not cast it for any other alternative costs it has, but you may pay for additional costs, such as kicker costs. If the spell requires an additional cost, you must pay that cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your opponent discards a card while you control Dauthi Voidwalker, abilities that function when that card is discarded still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Playing a card with Dauthi Voidwalker's last ability is still subject to normal timing restrictions.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens still die while Dauthi Voidwalker is on the battlefield.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Dauthi Voidwalker is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
       "source": "wotc"
     }
   ],

@@ -3,7 +3,9 @@ from __future__ import annotations
 """Runtime minimum and event compatibility for sealed occurrence results."""
 
 from collections.abc import Mapping
+from ..block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
 from .event_subscriptions import FixedEventSubscriptionSet
+from .tap_state_capability_shapes import event_next_untap_node_capabilities
 
 
 def _permanent_receiving_condition(value):
@@ -29,6 +31,9 @@ def _permanent_occurrence_subscriptions(program):
 
 
 def occurrence_object_runtime_dependencies(program):
+    from .creature_power_damage_capability_shapes import occurrence_power_damage_runtime_dependencies
+    if required := occurrence_power_damage_runtime_dependencies(program):
+        return required
     from .combat_removal_shapes import combat_removal_runtime_dependencies
     combat_removal = combat_removal_runtime_dependencies(program)
     if combat_removal:
@@ -66,6 +71,13 @@ def occurrence_object_runtime_dependencies(program):
         if not required:
             required=block_counterpart_zone_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
         if not required:
+            required = event_next_untap_node_capabilities(effects=program.effects, target_schema=None, mechanic_ids=program.coverage)
+            if required:
+                from .block_characteristics import qualified_block_runtime_dependencies
+                if any(not guarantees(condition, BLOCK_CHARACTERISTIC_CONDITION, 'eq', True) for _event, condition in pairs):
+                    raise ValueError('Next-untap block counterparts require sealed counterpart characteristics')
+                required = (*required, *qualified_block_runtime_dependencies(program))
+        if not required:
             raise ValueError('Block counterpart requires one independently closed untargeted result')
         return tuple(sorted(set(required) | {'trigger.event.block_pair_counterpart','trigger.event.normalized_public_action'}
             | ({'trigger.subscription.fixed_multi_event'} if subscriptions else set())))
@@ -83,6 +95,12 @@ def occurrence_object_runtime_dependencies(program):
     controller=any(isinstance(e.get(field),Mapping) and e[field].get('kind')=='occurrence_controller_information'
         for e in program.effects for field in ('target','player'))
     if controller:
+        if program.event == 'creature.blocks':
+            from .event_player_result_shapes import blocking_controller_runtime_dependencies
+            required = blocking_controller_runtime_dependencies(program)
+            if not required:
+                raise ValueError('Blocking controller information requires one closed untargeted result')
+            return required
         from ..received_damage_model import RECEIVED_DAMAGE_EVENTS
         from ..target_controller_information import OCCURRENCE_CONTROLLER_ENTRY_EVENTS
         if program.event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS:

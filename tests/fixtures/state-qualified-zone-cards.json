@@ -46,6 +46,102 @@
       "type_line": "Artifact \u2014 Equipment"
     },
     {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}{B}",
+      "name": "Bridge from Below",
+      "oracle_id": "0f071f64-b69b-4fa0-999c-5028429e3cfb",
+      "oracle_text": "Whenever a nontoken creature is put into your graveyard from the battlefield, if this card is in your graveyard, create a 2/2 black Zombie creature token.\nWhen a creature is put into an opponent's graveyard from the battlefield, if this card is in your graveyard, exile this card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-12-07",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Cackling Counterpart",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "oracle_text": "Create a token that's a copy of target creature you control.\nFlashback {5}{U}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
       "cmc": 1.0,
       "color_identity": [
         "W"
@@ -215,6 +311,55 @@
       "type_line": "Instant"
     },
     {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Dauthi Voidwalker",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.\n{T}, Sacrifice this creature: Choose an exiled card an opponent owns with a void counter on it. You may play it this turn without paying its mana cost.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Dauthi Rogue"
+    },
+    {
       "cmc": 4.0,
       "color_identity": [
         "G",
@@ -334,6 +479,55 @@
       "power": null,
       "produced_mana": [],
       "released_at": "2026-01-01",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{G}",
+      "name": "Grim Feast",
+      "oracle_id": "331233ba-0ddc-4cb2-b3b7-1b782e03529f",
+      "oracle_text": "At the beginning of your upkeep, this enchantment deals 1 damage to you.\nWhenever a creature is put into an opponent's graveyard from the battlefield, you gain life equal to its toughness.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1996-10-08",
       "toughness": null,
       "type_line": "Enchantment"
     },
@@ -525,6 +719,100 @@
       "released_at": "2026-06-26",
       "toughness": null,
       "type_line": "Artifact \u2014 Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Lurking Skirge",
+      "oracle_id": "21e90420-aedb-4a84-ba57-d5eae497b09b",
+      "oracle_text": "When a creature is put into an opponent's graveyard from the battlefield, if this permanent is an enchantment, it becomes a 3/2 Phyrexian Imp creature with flying.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1999-02-15",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}{B}",
+      "name": "Magus of the Bridge",
+      "oracle_id": "e48951ed-1c32-449a-898e-e5b1c0d0ee73",
+      "oracle_text": "Whenever a nontoken creature is put into your graveyard from the battlefield, create a 2/2 black Zombie creature token.\nWhen a creature is put into an opponent's graveyard from the battlefield, exile this creature.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Human Wizard"
     },
     {
       "cmc": 0.0,
@@ -950,6 +1238,53 @@
       "type_line": "Creature \u2014 Goblin Berserker"
     },
     {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Reclaim",
+      "oracle_id": "797155cd-faf4-4321-8629-c8c352392748",
+      "oracle_text": "Put target card from your graveyard on top of your library.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-07-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
       "cmc": 5.0,
       "color_identity": [
         "U",
@@ -1142,6 +1477,55 @@
       "type_line": "Creature \u2014 Snake Shaman"
     },
     {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Thought Scour",
+      "oracle_id": "83101ba8-a569-4827-8c53-9ca0dfcd59a7",
+      "oracle_text": "Target player mills two cards.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
       "cmc": 0.0,
       "color_identity": [],
       "colors": [],
@@ -1235,6 +1619,36 @@
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
     {
+      "comment": "If Bridge from Below isn't in your graveyard immediately before a creature dies, its abilities won't trigger at all. If Bridge from Below isn't still in your graveyard as its first ability resolves, you won't create a token.",
+      "oracle_id": "0f071f64-b69b-4fa0-999c-5028429e3cfb",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a nontoken creature you control and a creature an opponent controls die at the same time, you choose the order in which Bridge from Below's triggered abilities resolve. You can create a token before you exile Bridge from Below.",
+      "oracle_id": "0f071f64-b69b-4fa0-999c-5028429e3cfb",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Neither ability cares who controlled the creature that died, only which graveyard it was put into. This means that if an opponent controls a creature you own, its death causes Bridge from Below's first ability to trigger, not its second.",
+      "oracle_id": "0f071f64-b69b-4fa0-999c-5028429e3cfb",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Bridge from Below is on the battlefield, it has no effect. It does something only if it's in a graveyard. Yes, this is a bit weird.",
+      "oracle_id": "0f071f64-b69b-4fa0-999c-5028429e3cfb",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature.",
+      "oracle_id": "21e90420-aedb-4a84-ba57-d5eae497b09b",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
       "comment": "If one or more static abilities that apply to a creature entering change its power, those abilities are considered when determining whether Garruk's Uprising's last ability triggers. The same is true for replacement effects that apply to it, such as entering with one or more +1/+1 counters or entering as a copy of another creature.",
       "oracle_id": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
       "published_at": "2024-11-08",
@@ -1256,6 +1670,12 @@
       "comment": "The first ability of Garruk's Uprising has you draw just one card, no matter how many creatures you control with power 4 or greater.",
       "oracle_id": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
       "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "It affects all opposing players in a multiplayer game.",
+      "oracle_id": "331233ba-0ddc-4cb2-b3b7-1b782e03529f",
+      "published_at": "2004-10-04",
       "source": "wotc"
     },
     {
@@ -1310,6 +1730,18 @@
       "comment": "An Aura controlled by an opponent does not cause a creature you control to be modified.",
       "oracle_id": "722ab6e4-a2e0-4aaa-a050-7b6436e22b40",
       "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Follow the instructions in the order listed on the card: if you target yourself, you'll put the top two cards of your library into your graveyard and then draw a card.",
+      "oracle_id": "83101ba8-a569-4827-8c53-9ca0dfcd59a7",
+      "published_at": "2011-01-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target player is an illegal target when Thought Scour tries to resolve, it won't resolve and none of its effects will happen. You won't draw a card.",
+      "oracle_id": "83101ba8-a569-4827-8c53-9ca0dfcd59a7",
+      "published_at": "2011-01-22",
       "source": "wotc"
     },
     {
@@ -1469,6 +1901,72 @@
       "source": "wotc"
     },
     {
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any \u201centers\u201d triggered ability of the copied creature will trigger when the token enters the battlefield. Any \u201cas [this creature] enters\u201d or \u201c[this creature] enters with\u201d abilities of the chosen creature will also work.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, the token that\u2019s created copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else, then the token enters the battlefield as whatever that creature copied.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn\u2019t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
       "comment": "If a creature enters the battlefield under your control and gains haste, but then loses it before attacking, it won't be able to attack that turn. This means that you can't use one Lightning Greaves to allow two new creatures to attack in the same turn.",
       "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
       "published_at": "2020-08-07",
@@ -1508,6 +2006,66 @@
       "comment": "If Sultai Flayer dies, and its toughness is still 4 or greater, its own ability will trigger.",
       "oracle_id": "df621822-c811-40fa-99c1-ea9920bcd2e2",
       "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "A token's owner is the player who created it, which may be different from the player who controls it or, in some weird cases, different than the player under whose control it entered the battlefield.",
+      "oracle_id": "e48951ed-1c32-449a-898e-e5b1c0d0ee73",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Neither ability cares who controlled the creature that died, only which graveyard it was put into. This means that if an opponent controls a creature you own, its death causes Magus of the Bridge's first ability to trigger, not its second.",
+      "oracle_id": "e48951ed-1c32-449a-898e-e5b1c0d0ee73",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Unlike its namesake, Bridge from Below, the Magus's abilities work only while it's on the battlefield. They do not work while it is in your graveyard.",
+      "oracle_id": "e48951ed-1c32-449a-898e-e5b1c0d0ee73",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card this way, you may not cast it for any other alternative costs it has, but you may pay for additional costs, such as kicker costs. If the spell requires an additional cost, you must pay that cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your opponent discards a card while you control Dauthi Voidwalker, abilities that function when that card is discarded still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Playing a card with Dauthi Voidwalker's last ability is still subject to normal timing restrictions.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens still die while Dauthi Voidwalker is on the battlefield.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Dauthi Voidwalker is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
       "source": "wotc"
     }
   ],

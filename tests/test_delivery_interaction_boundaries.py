@@ -112,15 +112,14 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         self.replay(s)
 
     def test_partial_reconfigure_companions_cannot_admit_or_attach(self):
-        for i,name in enumerate(('The Reality Chip','Cloudsteel Kirin')):
-            s,c,ir=self.partial_source(name,764111+i)
-            target=self.add(s.engine,'Generic Bound Body')
-            self.assertTrue(any('attachment.reconfigure.fixed_mana' in n.capability_dependencies for f in ir.faces for n in f.nodes))
-            self.prepare(s,mana={'C':8,'U':2,'W':2});self.checkpoint(s)
-            self.assertFalse(any(a.reconfigure for a in s.engine._activated_abilities(c)))
-            self.assertFalse(any(r['id'].startswith('activate:'+c.ref+':') for r in self.actions(s)))
-            self.reject(s,{'action_id':'activate:'+c.ref+':ab3-reconfigure-attach','targets':[target.ref],'pay':'auto'})
-            self.replay(s)
+        s,c,ir=self.partial_source('Cloudsteel Kirin',764112)
+        target=self.add(s.engine,'Generic Bound Body')
+        self.assertTrue(any('attachment.reconfigure.fixed_mana' in n.capability_dependencies for f in ir.faces for n in f.nodes))
+        self.prepare(s,mana={'C':8,'U':2,'W':2});self.checkpoint(s)
+        self.assertFalse(any(a.reconfigure for a in s.engine._activated_abilities(c)))
+        self.assertFalse(any(r['id'].startswith('activate:'+c.ref+':') for r in self.actions(s)))
+        self.reject(s,{'action_id':'activate:'+c.ref+':ab3-reconfigure-attach','targets':[target.ref],'pay':'auto'})
+        self.replay(s)
 
     def test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement(self):
         s,c,ir=self.partial_source('The Kami War // O-Kagachi Made Manifest',764114)

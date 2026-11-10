@@ -111,6 +111,21 @@ pins the mode from the initial checkpoint. Records that omit it retain the
 historical net life transitions from damage. The mode persists when the
 turn history resets.
 
+The optional `turn_history.permanent_death_history_version` is `1` in
+current games. Each committed battlefield-to-graveyard permanent departure
+records its previous controller, incarnation, card types, creature subtypes
+and token status. A merged permanent contributes one fact. Turn rollover
+clears the facts and retains the mode. Older checkpoints omit the marker and
+continue to record only their existing history facts. The initial checkpoint
+and record manifest must agree on the mode.
+
+The optional `turn_history.public_movement_history_version` is `1` in new
+games and is mirrored in manifest format provenance. It records committed
+permanent arrivals in an owner's hand or graveyard, card arrivals in exile,
+and the artifact subtypes of sacrificed permanents. Graveyard arrivals retain
+prior battlefield types. Exile facts carry no characteristics. Earlier
+checkpoints omit the mode and keep their original turn-history hashes.
+
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
 during replay. The mode survives journal reset and turn rollover. A
@@ -261,6 +276,12 @@ absence retains the earlier transition order and remains absent on serialization
 Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
 See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
 
+Current checkpoints carry `cast_event_type_snapshot_version` 1, mirrored in
+manifest format provenance. The cast event and turn history take their type
+facts from the effective stack spell when casting completes. Historical
+checkpoints without the marker retain proposal type facts for exact replay.
+Malformed versions and manifest/checkpoint mismatches reject before replay.
+
 New checkpoints carry `printed_mana_cost_version: 3`, mirrored in manifest
 format provenance. The cast proposal checks that a submitted X is a nonnegative
 integer before payment or stack placement. Version two represents printed snow
@@ -289,6 +310,12 @@ Physical modal double-faced transformation independently pins
 a transform when the other face is a permanent. Archived checkpoints without
 the marker retain the previous physical modal eligibility and their recorded
 hashes. The marker uses the same strict manifest and checkpoint agreement.
+
+Current checkpoints also carry `transform_event_characteristics_version`
+with value `1`. The manifest mirrors it. The committed transform event
+includes the public name, card types and subtypes after the full face-change
+batch. A historical checkpoint without the marker retains its original
+event and state shapes during replay.
 
 Current ordinary turn-up actions independently pin
 `face_status_timestamp_version: 1`. The zone owner assigns a fresh timestamp
@@ -332,6 +359,13 @@ No global state or checkpoint field is added, and earlier trigger contexts omit
 the fact. Unknown scopes, malformed claims and missing authority reject; declared
 runtime provenance remains exact. See
 [ADR 0158](../adr/0158-event-incarnation-trigger-usage.md).
+
+Trigger-limit schema three uses the same pending source identity for an
+optional result. The controller's accepted choice records one
+`trigger_optional_result_used` fact in the current turn history. Its actor,
+source incarnation and ability program remain bound through save/load and
+stack copying. A declined or unavailable choice adds no usage fact. Turn
+rollover clears the fact with the rest of the current turn history.
 
 The `permanent.timestamp_order` decision retains a schema-one closed transform
 request and continuation. Current subjects, expected transform counts, turn/step
@@ -502,6 +536,16 @@ consequences, bound to the original parent, payer, response and suspended
 intent. Save/load resumes that unpaid work without checking or charging the
 already-committed resource again. Continuations without this field retain
 their existing decoding and validation path.
+An unrestricted public graveyard return stores its explicit scope and the
+announced target incarnation. Owner-only graveyard returns keep the historical
+payload with implicit owner scope.
+
+A version-two temporary creature-type choice stores the resolving controller,
+the printed type exclusion, and either the selected object's incarnation or
+the closed public set. The response is checked against the pinned creature
+types. Completion records the selection and commits a layer-four operation
+through the fixed characteristic journal. Older designation choices retain
+their saved effect and designation codec.
 
 Random own-graveyard return instructions serialize a version-one closed subject
 descriptor and fixed or declared-X count. They use the existing seed, stack
@@ -642,6 +686,16 @@ The manifest pins engine, card-data, rules, compiler, CardProgram, capability,
 semantic-handler, runtime-component, profile, and record-format identity as
 applicable. Loading rejects internal disagreement before replay begins.
 
+Private hand-entry schema two retains its haste and delayed sacrifice together
+with the choice and selected move. Save and load preserve the selected hand
+incarnation through any entry replacement. Unversioned hand-entry effects
+retain their existing payloads.
+
+Version-ten optional hybrid prices record their fixed symbol components and
+seal the offered equivalent payment identifiers in the resolution choice.
+The accepted identifier still requires the complete price to be payable.
+Ordinary fixed costs keep their existing continuation shape.
+
 ## Replay contract
 
 New records pin `ninjutsu_band_retention_version: 1`. The Ninja joins combat
@@ -708,6 +762,12 @@ omit it. A checkpoint without the execution marker retains historical
 no-count casting, so later replay does not add payment fields to its hashes.
 The decoder rejects malformed versions, Boolean counts and copy-owned facts.
 
+Current games pin `unearth_leave_replacement_version: 1` in the initial
+checkpoint and record manifest. A later battlefield departure includes the
+incarnation's Unearth replacement in the ordinary replacement choice. Unmarked
+checkpoints use the historical Unearth priority and omit the marker from state
+hashes.
+
 Current games also pin `ability_source_information_version: 1`. Every nonmana
 activation captures its original source before costs, and every triggered
 ability captures its source when created, including abilities without targets.
@@ -738,6 +798,11 @@ The independent `split_permanent_face_values_version: 1` marker binds the
 current battlefield mana value and colors for a shared-type split permanent
 with one active face. Initial checkpoint and manifest must agree. Records
 without the marker replay with their original split permanent values.
+Version two also binds the shared-type split door lifecycle. A current
+battlefield object stores its ordered door identities and unlocked designations.
+Paid unlock offers bind one door to the current incarnation. A copied form
+stores both copiable door definitions separately from these designations.
+Version-one records use their single active-face characteristic view.
 
 Current runtime-trust provenance also identifies a core permanent-spell copy's
 empty resolution through its pinned spell record. It retains the copy-specific
@@ -746,10 +811,12 @@ original spell is still on the stack. Records without runtime-trust metadata
 retain their earlier fallback-lookup behavior. This does not admit an
 unsupported copy-producing card or alter copied casting decisions.
 
-A spell with fixed divided damage records `announced_damage_allocation` in
+A spell with divided damage records `announced_damage_allocation` in
 its stack context. The version-one value stores the positive `shares` array
 in target slot order, or an empty array for a legal cast with no targets.
-Spell copies preserve the array. Resolution skips the share for each illegal
+Version two also stores the nonnegative `total` sealed at cast announcement.
+An amount derived from the battlefield uses that sealed value at resolution.
+Spell copies preserve the total and array. Resolution skips the share for each illegal
 target slot. A pending replacement decision retains the surviving recipients,
 their assigned shares, and the damage event identities for resumption.
 
@@ -791,6 +858,14 @@ and its existing typed condition payload. Source names participate only in
 compilation; replay uses the pinned predicate rather than reparsing Oracle.
 Legacy activation condition fields and fixed-mana payloads keep their original
 forms. The new discriminator adds no game-state or event-history fields.
+
+`turn_history.first_life_gain_history_version` enables one first-positive-gain
+fact per gaining seat and turn. The journal records committed occurrences,
+including gains offset by simultaneous life loss. Turn rollover clears the
+facts and retains the mode. The manifest binds the mode to the initial
+checkpoint, and historical absence preserves the earlier event history.
+
+The first-gain and damage-life modes are independently pinned.
 
 Public-condition schema eight stores one closed `history_query` and a
 nonnegative count or amount threshold. Its version-one query identifies the
@@ -909,6 +984,26 @@ public predicate; save/load preserves empty groups so later entrants can match.
 The decoder accepts the legacy shape and the exact version-two shape, rejecting
 unknown fields, malformed queries, or mixed live and locked recipients. Both
 shapes expire through the same continuous-effect cleanup owner.
+
+A resolved Defender permission uses declaration-rule schema five and a
+typed `permission` field. It carries either one locked battlefield
+incarnation or a live public creature query with an empty locked list.
+Its duration expires at end of turn. Older rule schemas and temporary
+Defender instruction schema three retain their replay encodings.
+
+Version-five linked reanimation adds the `exile_on_leave` rider. The
+`resolution_linked_departure_exile` journal record retains the source and one
+battlefield incarnation until that object changes zones. Its ordinary
+replacement applies to destinations other than exile. The one-shot delayed
+trigger retains its own source and subject independently. Version-four
+reanimation decodes its original Haste and scheduled departure fields.
+
+A fixed target color instruction uses schema fourteen. Its existing layer-five
+journal entry locks one object across the stack and battlefield. A permanent
+spell and the permanent it becomes retain the same locked identity. Cleanup
+expires end-of-turn entries, and a new zone incarnation ends that object's
+entry. These entries affect current characteristics independently of copiable
+values.
 
 A resolved all-able-blocker requirement uses the additive exact
 `schema_version: 3` shape. Its `requirement` field replaces `restriction` and
@@ -1070,6 +1165,11 @@ The instant-or-sorcery scan uses version-three progress to retain its supplying
 library owner independently from the casting controller. Cleanup retains the
 same public exile identities and returns unused cards to that supplier.
 
+Version-four fixed-top progress binds the chosen exile incarnation, its
+supplying player and its free or paid casting mode. The enclosing choice
+retains the unconsumed public results and the current option fingerprint.
+Unused cards remain exiled when the resolving instruction ends.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads
@@ -1169,6 +1269,26 @@ and advertised subject incarnations. Earlier choices stay with that stack
 item until every copied Aura has a legal assignment. The token owner commits
 the batch together and then publishes entry occurrences.
 
+An explicit linked-exile return records each earlier Aura attachment selection
+in its resolving instruction until the simultaneous return commits. Later
+owners choose in APNAP order. Their `aura.entry` packet includes earlier
+selections as public Aura and attachment references in `chosen_attachments`.
+The suspended instruction stays bound to the original trigger and the current
+Aura's exile incarnation.
+
+New games carry an internal `mandatory_linked_loop` witness with schema
+version one. It holds one comparison digest and the current trigger cursor.
+Replay rebuilds the witness and terminal draw from accepted target and priority
+commands. Historical checkpoints omit the field and keep their original rule
+behavior. Projection leaves the witness in the authoritative record.
+
+An ordered mana activation can retain an `input` object with its
+`ability_id`, `cost_option`, and exact colored or colorless `payment`.
+It pays the current activation's price before that step produces mana.
+The top-level `payment` pays the enclosing spell, ability, or resolution
+instruction after the activation steps. Replay uses the same ordered
+provenance spends and revalidates each compiled mode.
+
 Version-three fixed-color or fixed-card-type Protection fragments add a required
 `exempt_aura_incarnation` for one granting Aura. CardProgram attached definitions
 carry the closed source marker; live evaluation binds the current source
@@ -1241,3 +1361,18 @@ binding infers the fixed-multiple capability from these fields; removing a
 program annotation cannot remove that requirement. Source and target identity,
 current-power timing, replacement continuations and damage attribution retain
 the existing record owners.
+
+Version-three occurrence power damage stores `occurrence_power_damage_lki`
+with the originating public event's card reference and incarnation. The same
+snapshot carries the signed power and damage-source facts. Entry starts with
+the current incarnation and pins its final battlefield facts on departure.
+A dies trigger starts with the predeparture snapshot. Existing ability-source
+and fixed-multiple descriptors retain their record formats.
+
+Payment schema four can carry a version-two reflexive child program. A
+targeted child retains version-two `targeting_source_characteristics` for the
+creating ability's incarnation, including its mana value for protection
+checks. An occurrence-power child also retains its event card
+reference, logical identity, and `occurrence_power_damage_lki` snapshot. The
+child's own target declaration and any resolution-time count remain deferred
+to its stack frame. Version one reads the legacy child schema.

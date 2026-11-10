@@ -7,11 +7,33 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..life_change import FIRST_LIFE_GAIN_CAPABILITY, FIRST_LIFE_GAIN_EVENT
 from ..class_levels import CLASS_MECHANIC_ID
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_entry_return_requirements import (
     fixed_entry_return_requirement_spec,
 )
+
+
+def validate_public_trigger_metadata(binding):
+    """Validate the public metadata carried by a fixed trigger binding."""
+    if binding.public_mechanic is not None:
+        if binding.spell_subject is not None:
+            raise ValueError("Public event triggers cannot carry a parallel spell subject")
+        if not binding.public_mechanic or not binding.public_template_id:
+            raise ValueError("Public event triggers require typed owner identities")
+        if binding.public_active_zone not in {None, "battlefield", "hand", "graveyard"}:
+            raise ValueError("Public event triggers require a closed active zone")
+    elif any(value is not None for value in (binding.public_condition, binding.public_active_zone, binding.public_template_id)):
+        raise ValueError("Only public event triggers accept public predicate metadata")
+    if not isinstance(binding.public_capabilities, tuple) or any(
+        type(value) is not str or not value for value in binding.public_capabilities
+    ):
+        raise ValueError("Public event trigger capabilities must be nonempty strings")
+    if len(set(binding.public_capabilities)) != len(binding.public_capabilities):
+        raise ValueError("Public event trigger capabilities must be unique")
+    if binding.public_mechanic is None and binding.public_capabilities:
+        raise ValueError("Only public event triggers accept explicit capabilities")
 
 
 _PUBLIC_DAMAGE_TRIGGER = re.compile(
@@ -61,7 +83,7 @@ _PUBLIC_ATTACK_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _PUBLIC_BLOCK_TRIGGER = re.compile(
-    r"^(?:When|Whenever) (?P<subject>this creature|a creature you control(?: with defender)?) "
+    r"^(?:When|Whenever) (?P<subject>this creature|a creature(?: you control(?: with defender)?)?) "
     r"(?P<event>blocks|becomes blocked)"
     r"(?P<blocked> a creature with flying| by a creature)?, (?P<body>.+)$",
     re.IGNORECASE,
@@ -85,6 +107,10 @@ _SOURCE_FACE_UP_TRIGGER = re.compile(
 )
 _OPPONENT_CARD_DRAW_TRIGGER = re.compile(
     r"^Whenever an opponent draws a card, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_PUBLIC_SECOND_DRAW_TRIGGER = re.compile(
+    r"^Whenever (?P<scope>an opponent|a player) draws their second card each turn, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _HEROIC_TRIGGER = re.compile(
@@ -111,7 +137,8 @@ _CLASS_LEVEL_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _ATTACHMENT_ATTACK_TRIGGER = re.compile(
-    r"^Whenever equipped creature attacks, (?P<body>.+)$",
+    r"^(?:When|Whenever) (?P<relation>enchanted|equipped) creature attacks"
+    r"(?P<alone> alone)?, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _ATTACHMENT_DAMAGE_TRIGGER = re.compile(
@@ -454,6 +481,32 @@ def _artifact_graveyard_spec(
     )
 
 
+_CREATURE_GRAVEYARD_OWNER = re.compile(
+    r"(?:When|Whenever) a (?P<nontoken>nontoken )?creature is put into "
+    r"(?P<owner>your|an opponent's) graveyard from the battlefield, (?P<body>.+)",
+    re.IGNORECASE,
+)
+
+
+def creature_graveyard_owner_spec(
+    material_line: str, *, active_zone: str = "battlefield",
+) -> FixedPublicEventBindingSpec | None:
+    match = _CREATURE_GRAVEYARD_OWNER.fullmatch(material_line)
+    if match is None:
+        return None
+    owner = {
+        "field": "owner",
+        "op": "eq" if match["owner"].casefold() == "your" else "ne",
+        "value": "$source.owner" if active_zone == "graveyard" else "$source.controller",
+    }
+    nontoken = {"field": "token", "op": "eq", "value": False} if match["nontoken"] else None
+    return _spec(
+        "creature.dies", "creature_graveyard_owner", match["body"],
+        "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+        condition=_all_conditions(owner, nontoken), active_zone=active_zone,
+    )
+
+
 def _land_entry_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     match = re.fullmatch(
         r"Whenever a land(?: (?P<relation>an opponent controls))? enters, "
@@ -617,15 +670,14 @@ def _attachment_attack_or_damage_spec(
     if attack is not None:
         return _spec(
             "creature.attacks",
-            "equipped_creature_attacks",
+            f"{attack['relation'].casefold()}_creature_attacks",
             attack.group("body"),
             "fixed-counter-public-attack-trigger-v1",
             "trigger-event-normalized-public-action",
-            condition={
-                "field": "source_attachment_target_ref",
-                "op": "eq",
-                "value": "$context.card",
-            },
+            condition=_all_conditions(
+                {"field": "source_attachment_target_ref", "op": "eq", "value": "$context.card"},
+                {"field": "attacking_alone", "op": "truthy", "value": True} if attack["alone"] else None,
+            ),
             capabilities=("attachment.reference.current_or_lki",),
         )
     damage = _ATTACHMENT_DAMAGE_TRIGGER.fullmatch(material_line)
@@ -831,6 +883,7 @@ def _public_zone_spec(
         return closed
     parsers: tuple[Callable[[str], FixedPublicEventBindingSpec | None], ...] = (
         _artifact_graveyard_spec,
+        creature_graveyard_owner_spec,
         _land_entry_spec,
         _power_entry_spec,
         _source_or_artifact_death_spec,
@@ -923,7 +976,14 @@ def _public_damage_spec(
     )
 
 
-def _public_attack_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> FixedPublicEventBindingSpec | None:
+    saddled = re.fullmatch(r"(?:When|Whenever) (?P<source>.+?) attacks while saddled, (?P<body>.+)",
+        material_line, re.I)
+    if saddled is not None and _source_subject(saddled["source"], card_name=card_name):
+        from ..saddle import SADDLED_ATTACK_CAPABILITY, saddled_attack_condition
+        return _spec("creature.attacks", "source_attacks", saddled["body"],
+            "fixed-counter-public-attack-trigger-v1", "trigger-event-normalized-public-action",
+            condition=saddled_attack_condition(), capabilities=(SADDLED_ATTACK_CAPABILITY,))
     match = _PUBLIC_ATTACK_TRIGGER.fullmatch(material_line)
     if match is None:
         from .qualified_attack_subjects import qualified_attack_binding_spec
@@ -968,7 +1028,8 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
     subject = " ".join(match.group("subject").casefold().split())
     event = match.group("event").casefold()
     blocked_text = str(match.group("blocked") or "").casefold()
-    if subject == "a creature you control" and (event != "becomes blocked" or blocked_text):
+    if (subject == "a creature you control" and (event != "becomes blocked" or blocked_text)
+        or subject == "a creature" and (event != "blocks" or blocked_text)):
         return None
     blocked_flying = blocked_text == " a creature with flying"
     blocked_by_creature = blocked_text == " by a creature"
@@ -998,7 +1059,7 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
             if subject == "this creature"
             else None,
             {"field": "controller", "op": "eq", "value": "$source.controller"}
-            if subject != "this creature"
+            if "you control" in subject
             else None,
             {"field": "keywords", "op": "contains_any", "value": ["defender"]}
             if "defender" in subject
@@ -1074,6 +1135,18 @@ def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
             "fixed-counter-public-face-up-trigger-v1",
             "trigger-event-normalized-public-action",
         )
+    second_draw = _PUBLIC_SECOND_DRAW_TRIGGER.fullmatch(material_line)
+    if second_draw is not None:
+        opponent = second_draw["scope"].casefold() == "an opponent"
+        condition = (
+            {"field": "player", "op": "ne", "value": "$source.controller"}
+            if opponent else {"field": "draw_ordinal", "op": "eq", "value": 2}
+        )
+        return _spec(
+            "card.second_draw", "opponent_second_draw" if opponent else "any_player_second_draw",
+            second_draw["body"], "fixed-counter-public-second-draw-trigger-v1",
+            "trigger-event-normalized-card-draw", condition=condition,
+        )
     opponent_draw = _OPPONENT_CARD_DRAW_TRIGGER.fullmatch(material_line)
     if opponent_draw is not None:
         return _spec(
@@ -1106,6 +1179,92 @@ def _source_any_damage_spec(material_line, *, card_name):
         match['body'],template,RECEIVED_DAMAGE_MECHANIC if receiving else 'trigger-event-normalized-damage',condition=condition)
 
 
+def _transform_into_spec(material_line, *, card_name):
+    if " transforms into " not in material_line.casefold():
+        return None
+    match = re.fullmatch(
+        r"(?:When|Whenever) (?P<subject>.+?) (?P<entry>enters or )?"
+        r"transforms into (?P<result>[^,]+?)(?P<death> or dies)?, (?P<body>.+)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    from ..rules.transform_capability_shapes import PERMANENT_TRANSFORM_CAPABILITY_ID
+    from ..transform_timestamp_model import TRANSFORM_EVENT
+
+    result = match["result"]
+    companion = match["entry"] or match["death"]
+    mechanics = "trigger-event-normalized-public-action"
+    if match["subject"].casefold() == "this permanent" or _source_subject(match["subject"], card_name=card_name):
+        if (match["entry"] and match["death"]
+                or re.match(r"a(?:n)?\s|any\s", result, re.I)
+                or re.search(r"\bor\b", result, re.I)):
+            return None
+        source = {"field": "card", "op": "eq", "value": "$source.ref"}
+        condition = _all_conditions(
+            source, {"field": "transformed_name", "op": "eq", "value": result},
+        )
+        if companion:
+            from ..rules.event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition
+
+            other_event = "permanent.enter" if match["entry"] else "creature.dies"
+            return _spec(
+                TRANSFORM_EVENT, "source_transform_pair", match["body"],
+                "fixed-counter-source-transform-pair-trigger-v1", mechanics,
+                condition=fixed_event_subscription_condition((
+                    FixedEventSubscription(TRANSFORM_EVENT, condition),
+                    FixedEventSubscription(other_event, source),
+                )),
+                capabilities=(
+                    PERMANENT_TRANSFORM_CAPABILITY_ID,
+                    "trigger.event.normalized_zone_change",
+                    "trigger.subscription.fixed_multi_event",
+                ),
+            )
+        return _spec(
+            TRANSFORM_EVENT, "source_transforms_into", match["body"],
+            "fixed-counter-source-transforms-into-trigger-v1", mechanics,
+            condition=condition, capabilities=(PERMANENT_TRANSFORM_CAPABILITY_ID,),
+        )
+    if companion or match["subject"].casefold() != "a permanent you control":
+        return None
+    subject = re.fullmatch(r"an? (?P<quality>.+)", result, re.I)
+    if subject is None:
+        return None
+    excluded = re.fullmatch(r"non-(.+) creature", subject["quality"], re.I)
+    subtype = canonical_creature_subtype(excluded[1] if excluded else subject["quality"])
+    if subtype is None:
+        return None
+    subtype_condition = {"field": "subtypes", "op": "contains_any", "value": [subtype]}
+    condition = _all_conditions(
+        {"field": "controller", "op": "eq", "value": "$source.controller"},
+        {"field": "types", "op": "contains_any", "value": ["creature"]} if excluded else None,
+        {"not": subtype_condition} if excluded else subtype_condition,
+    )
+    return _spec(
+        TRANSFORM_EVENT, "controlled_permanent_transforms_into", match["body"],
+        "fixed-counter-controlled-transforms-into-trigger-v1", mechanics,
+        condition=condition, capabilities=(PERMANENT_TRANSFORM_CAPABILITY_ID,),
+    )
+
+
+_FIRST_LIFE_GAIN = re.compile(
+    r'(?:When|Whenever) you gain life for the first time (each turn|during each of your turns), (?P<body>.+)', re.I,
+)
+
+
+def _first_life_gain_spec(material_line):
+    match = _FIRST_LIFE_GAIN.fullmatch(material_line)
+    if match is None:
+        return None
+    condition = {'field': 'player', 'op': 'eq', 'value': '$source.controller'}
+    if match[1].casefold() != 'each turn':
+        condition = {'all': [condition, {'field': 'active_player', 'op': 'eq', 'value': '$source.controller'}]}
+    return _spec(FIRST_LIFE_GAIN_EVENT, 'controller_first_life_gain', match['body'],
+        'fixed-counter-controller-first-life-gain-trigger-v1', 'trigger-event-normalized-life-gain',
+        condition=condition, capabilities=(FIRST_LIFE_GAIN_CAPABILITY,))
+
+
 def fixed_public_event_binding_spec(
     material_line: str,
     *,
@@ -1125,8 +1284,10 @@ def fixed_public_event_binding_spec(
             'fixed-source-exploit-result-v1','fixed-exploit-result',capabilities=('trigger.keyword.exploit.creature_sacrifice',))
 
     return (
-        _anywhere_graveyard_spec(material_line)
+        _first_life_gain_spec(material_line)
+        or _anywhere_graveyard_spec(material_line)
         or _source_any_damage_spec(material_line,card_name=card_name)
+        or _transform_into_spec(material_line, card_name=card_name)
         or _class_level_spec(material_line)
         or _public_spell_action_spec(material_line, card_name=card_name)
         or _attachment_event_spec(material_line)
@@ -1134,7 +1295,7 @@ def fixed_public_event_binding_spec(
         or _battalion_spec(material_line, card_name=card_name)
         or _public_zone_spec(material_line, card_name=card_name)
         or _public_damage_spec(material_line, card_name=card_name)
-        or _public_attack_spec(material_line)
+        or _public_attack_spec(material_line, card_name=card_name)
         or _public_block_spec(material_line)
         or _public_misc_spec(material_line)
     )

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from .cast_event_type_model import cast_event_type_snapshot_fields, read_cast_event_type_snapshot_version
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
+from .model import unearth_leave_replacement_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
 from .printed_mana_cost_model import (
     PRINTED_MANA_COST_VERSION_FIELD,
@@ -28,10 +30,12 @@ def format_state_versions(state: Any) -> dict[str, int]:
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     stack_authority = stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None))
     departed_turns = getattr(state, "departed_turn_boundary_version", None)
+    unearth = unearth_leave_replacement_version(getattr(state, "unearth_leave_replacement_version", None))
     return {
         **({'legend_rule_choice_version': legend} if legend is not None else {}),
         **({"stack_resolution_authority_version": stack_authority} if stack_authority is not None else {}),
         **({"departed_turn_boundary_version": departed_turns} if departed_turns is not None else {}),
+        **({"unearth_leave_replacement_version": unearth} if unearth is not None else {}),
         "commander_damage_identity_version": commander_damage_identity_version(
             state.commander_damage_identity_version
         ),
@@ -43,12 +47,14 @@ def format_state_versions(state: Any) -> dict[str, int]:
         ),
         **({"arrival_history_version":1} if getattr(getattr(state,"turn_history",None),"arrival_history_version",None)==1 else {}),
         **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
-            'crime_history_version','committed_occurrence_history_version','damage_life_history_version')
+            'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
+            'permanent_death_history_version','first_life_gain_history_version','public_movement_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
         **cast_placement_state_fields(
             getattr(state, "cast_source_placement_version", None), getattr(state, "target_announcement_timing_version", None),
         ),
+        **cast_event_type_snapshot_fields(getattr(state, "cast_event_type_snapshot_version", None)),
         **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
            if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
         **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
@@ -56,6 +62,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
            if getattr(state, "modal_dfc_transform_version", None) is not None else {}),
+        **({"transform_event_characteristics_version": state.transform_event_characteristics_version}
+           if getattr(state, "transform_event_characteristics_version", None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
         **({"split_permanent_face_values_version": state.split_permanent_face_values_version}
            if getattr(state, "split_permanent_face_values_version", None) is not None else {}),
@@ -120,7 +128,8 @@ def validate_state_versions(
     actual_arrival=getattr(getattr(state,'turn_history',None),'arrival_history_version',None) or 0
     if type(arrival) is not int or arrival not in {0,1} or arrival!=actual_arrival:raise ValueError('Arrival-history provenance does not match the initial checkpoint')
     for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
-                'crime_history_version','committed_occurrence_history_version','damage_life_history_version'):
+                'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
+                'permanent_death_history_version','first_life_gain_history_version','public_movement_history_version'):
         declared=format_value.get(key,0);actual=getattr(getattr(state,'turn_history',None),key,None) or 0
         if type(declared) is not int or declared not in {0,1} or declared!=actual:raise ValueError('Qualified history provenance does not match the initial checkpoint')
     tap_version = format_value.get("tap_state_event_version", 0)
@@ -143,9 +152,13 @@ def validate_state_versions(
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')
     if read_target_announcement_timing_version(format_value) != getattr(state, "target_announcement_timing_version", None):
         raise ValueError("Target announcement timing provenance does not match the initial checkpoint")
+    if read_cast_event_type_snapshot_version(format_value) != getattr(state, "cast_event_type_snapshot_version", None):
+        raise ValueError("Cast event type snapshot provenance does not match the initial checkpoint")
     if read_printed_mana_cost_version(format_value) != getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None):
         raise ValueError("Printed mana cost authority provenance does not match the initial checkpoint")
-    from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version
+    from .transform_timestamp_model import (
+        modal_dfc_transform_version, transform_event_characteristics_version, transform_timestamp_version,
+    )
     timestamp=format_value.get('transform_timestamp_version',0)
     if (type(timestamp) is not int or timestamp not in {0,1}
             or timestamp!=(transform_timestamp_version(getattr(state,'transform_timestamp_version',None)) or 0)):
@@ -159,9 +172,15 @@ def validate_state_versions(
     if (
         split_face_version != getattr(state, split_face_field, None)
         or split_face_field in format_value
-        and (type(split_face_version) is not int or split_face_version != 1)
+        and (type(split_face_version) is not int or split_face_version not in {1, 2})
     ):
         raise ValueError("Split permanent face value provenance does not match the initial checkpoint")
+    transform_characteristics = format_value.get("transform_event_characteristics_version", 0)
+    if (type(transform_characteristics) is not int or transform_characteristics not in {0, 1}
+            or transform_characteristics != (transform_event_characteristics_version(
+                getattr(state, "transform_event_characteristics_version", None),
+            ) or 0)):
+        raise ValueError("Transform event characteristics provenance does not match the initial checkpoint")
     from .face_status_timestamp_model import face_status_timestamp_version
     face_status=format_value.get('face_status_timestamp_version',0)
     if (type(face_status) is not int or face_status not in {0,1}
@@ -183,6 +202,11 @@ def validate_state_versions(
     from .permanent_event_state_model import permanent_event_state_version
     from .battle_cry_resolution_model import battle_cry_resolution_version
     from .banding_model import ninjutsu_band_retention_version
+
+    if unearth_leave_replacement_version(format_value.get("unearth_leave_replacement_version")) != getattr(
+        state, "unearth_leave_replacement_version", None,
+    ):
+        raise ValueError("Unearth replacement provenance does not match the initial checkpoint")
     battle_cry=format_value.get('battle_cry_resolution_version',0)
     if (type(battle_cry) is not int or battle_cry not in {0,1}
             or battle_cry!=(battle_cry_resolution_version(getattr(state,'battle_cry_resolution_version',None)) or 0)):

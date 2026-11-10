@@ -2139,7 +2139,7 @@ class SagaCounterProgressionTests(unittest.TestCase):
         registry.mark_evidence_verified("0" * 64)
 
         with self.assertRaisesRegex(
-            ValueError, "intrinsic entry-counter capability is blocked"
+            ValueError, "intrinsic_entry_counter capability is blocked"
         ):
             compile_card_program(
                 self.db,
@@ -2165,7 +2165,7 @@ class SagaCounterProgressionTests(unittest.TestCase):
         registry.mark_evidence_verified("0" * 64)
 
         with self.assertRaisesRegex(
-            ValueError, "intrinsic entry-counter capability is blocked"
+            ValueError, "intrinsic_entry_counter capability is blocked"
         ):
             compile_card_program(
                 self.db,

@@ -6,10 +6,10 @@ from typing import Any, Mapping
 from .carddb import CardRecord
 from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION
 from .model import CardInstance
+from .shared_type_doors import printed_shared_type_faces
 from .omen import omen_characteristic_face
 from .rules.face_characteristic_values import (
     current_face_mana_value,
-    has_shared_permanent_type_line,
     printed_face_colors,
     printed_face_mana_value,
 )
@@ -102,6 +102,36 @@ def library_reveal_printed_identity(record: CardRecord) -> tuple[str, str]:
     return record.name, record.type_line
 
 
+def _shared_type_split_characteristics(card: CardInstance, record: CardRecord) -> dict[str, Any] | None:
+    if (card.shared_type_doors is None or not card.shared_type_doors.printed
+            or card.annotations.get("copy_overrides") is not None):
+        return None
+    faces = printed_shared_type_faces(record)
+    doors = card.shared_type_doors.rebind(tuple(face["name"] for face in faces))
+    unlocked = tuple(face for face in faces if face["name"] in doors.unlocked)
+    text = "\n".join(str(face.get("oracle_text") or "") for face in unlocked)
+    colors = {color for face in unlocked for color in printed_face_colors(face)}
+    return {
+        "name": " // ".join(face["name"] for face in unlocked),
+        "mana_cost": " // ".join(str(face.get("mana_cost") or "") for face in unlocked),
+        "mana_value": sum(printed_face_mana_value(face) for face in unlocked),
+        "type_line": faces[0]["type_line"],
+        "oracle_text": text, "executable_oracle_text": text,
+        "power": None, "toughness": None, "loyalty": None, "defense": None,
+        "colors": [color for color in "WUBRG" if color in colors],
+        "keywords": list(record.keywords) if unlocked else [],
+        "produced_mana": [], "ability_fragments": [],
+    }
+
+
+def shared_type_copy_display_values(values: Mapping[str, Any]) -> dict[str, Any]:
+    """Keep copied door text as display data beside its typed ability catalog."""
+    result = dict(values)
+    result["display_text"] = result.pop("oracle_text", "")
+    result["executable_oracle_text"] = ""
+    return result
+
+
 def base_card_characteristics(
     card: CardInstance,
     record: CardRecord | None,
@@ -157,6 +187,9 @@ def base_card_characteristics(
             ),
         }
 
+    shared_type_values = _shared_type_split_characteristics(card, record)
+    if shared_type_values is not None:
+        return shared_type_values
     face = omen_characteristic_face(card, record, cast_face_version=cast_face_version)
     if (face is None and public_zone_front_faces and record.layout in {'modal_dfc', 'transform'}
             and len(record.faces) == 2 and card.zone in {'graveyard', 'exile', 'command'}
@@ -177,8 +210,8 @@ def base_card_characteristics(
         record.layout != "split" or card.zone == "stack"
         or card.annotations.get("prospective_cast_face") is True
         or (
-            split_permanent_face_values_version == 1 and card.zone == "battlefield"
-            and has_shared_permanent_type_line(record)
+            split_permanent_face_values_version is not None and card.zone == "battlefield"
+            and printed_shared_type_faces(record)
         )
     )
     return {

@@ -7,7 +7,8 @@ from .extra_turn_templates import fixed_extra_turn_effect_template
 from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
-from .hand_entry_templates import fixed_draw_then_hand_entry_template
+from .hand_entry_templates import fixed_draw_then_hand_entry_template, fixed_private_hand_entry_followup_template
+from .attacking_card_entry_templates import fixed_attacking_card_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
 from .as_unblocked_templates import temporary_as_unblocked_template
 from .toughness_assignment_templates import temporary_toughness_assignment_template
@@ -76,9 +77,11 @@ from .fixed_counter_controller_effect_sequences import (
 from .proliferate_templates import single_proliferate_effect_template
 from .reanimation_templates import fixed_target_reanimation_effect_template
 from .reanimation_entry_counter_templates import fixed_reanimation_entry_counter_template
+from .reanimation_followup_templates import fixed_reanimation_followup_template
 from .public_zone_move_templates import public_zone_move_effect_template
 from .return_to_hand_templates import (
     targeted_own_graveyard_return_to_hand_effect_template,
+    targeted_public_graveyard_return_to_hand_effect_template,
     targeted_return_to_hand_effect_template,
 )
 from .self_counter_keyword_actions import (
@@ -91,6 +94,7 @@ from .temporary_target_interactions import temporary_target_interaction_effect_t
 from .source_keyword_choices import source_keyword_choice_template
 from .source_protection_choices import source_protection_choice_template
 from .source_fixed_protection import source_fixed_protection_template
+from .fixed_target_color import fixed_target_color_template
 
 
 CompiledEffectTemplate = tuple[
@@ -101,7 +105,7 @@ CompiledEffectTemplate = tuple[
 ]
 
 
-def _attachment_or_owner_zone_move(
+def _attachment_or_zone_result(
     text: str,
     card_name: str,
     source_is_permanent: bool | None,
@@ -109,6 +113,10 @@ def _attachment_or_owner_zone_move(
 ) -> CompiledEffectTemplate | None:
     from .attached_destruction import attached_destruction_template
     from .exile_templates import attached_exile_effect_template
+    from .fixed_resolution_characteristics import fixed_attached_stat_effect_template
+    attached_stats = fixed_attached_stat_effect_template(text, source_attachment_relation=source_attachment_relation)
+    if attached_stats is not None:
+        return attached_stats
     created_attachment = created_token_attachment_effect_template(
         text, source_attachment_relation=source_attachment_relation,
     )
@@ -134,12 +142,14 @@ def _attachment_or_owner_zone_move(
 
 
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
+    fixed_reanimation_followup_template,
     fixed_reanimation_entry_counter_template,
     fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
     destruction_effect_template,
     targeted_exile_effect_template,
     targeted_return_to_hand_effect_template,
     targeted_own_graveyard_return_to_hand_effect_template,
+    targeted_public_graveyard_return_to_hand_effect_template,
     targeted_counter_effect_template,
     targeted_controller_payment_template,
 )
@@ -149,6 +159,9 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    color = fixed_target_color_template(text)
+    if color is not None:
+        return color
     detain = fixed_detain_effect_template(text)
     if detain is not None:
         return detain
@@ -183,7 +196,8 @@ def _source_context_resolution_template(
     if as_unblocked is not None:return as_unblocked
     permission=temporary_defender_permission_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=tuple(source_card_types))
     if permission is not None:return permission
-    hand_entry=fixed_draw_then_hand_entry_template(text)
+    hand_entry=(fixed_attacking_card_entry_template(text) or fixed_private_hand_entry_followup_template(text)
+        or fixed_draw_then_hand_entry_template(text))
     if hand_entry is not None:return hand_entry
     discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
@@ -204,6 +218,13 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .graveyard_copy_cast_templates import graveyard_copy_cast_template
+    from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
+
+    if (copy_cast := graveyard_copy_cast_template(text)) is not None:
+        return copy_cast
+    if (graveyard_cast := targeted_graveyard_cast_template(text)) is not None:
+        return graveyard_cast
     from .untargeted_untap_templates import fixed_land_untap_choice_template
     untap = fixed_land_untap_choice_template(text)
     if untap is not None:return untap
@@ -277,7 +298,7 @@ def typed_resolution_effect_template(
     )
     if fixed_counter_controller_sequence is not None:
         return fixed_counter_controller_sequence.compiled()
-    attachment = _attachment_or_owner_zone_move(
+    attachment = _attachment_or_zone_result(
         text, card_name, source_is_permanent, source_attachment_relation
     )
     if attachment is not None:

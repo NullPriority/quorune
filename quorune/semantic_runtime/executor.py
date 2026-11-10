@@ -5,6 +5,8 @@ from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
+from ..targeted_graveyard_cast_model import GraveyardCastIntent
+from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
@@ -22,6 +24,7 @@ from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
+from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent, execute_combat_removal, unavailable_optional_combat_removal
 from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
@@ -398,6 +401,7 @@ PermanentObjectIntent = (
     PairSoulbondIntent | GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | EncodeCipherIntent
+    | PrepareSourceIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
@@ -412,6 +416,7 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     SelectMutateMergeIntent,
     ResumeCompositionOrderIntent,
     EncodeCipherIntent,
+    PrepareSourceIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
     GainControlIntent, GainControlSetIntent,
@@ -432,6 +437,10 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, PrepareSourceIntent):
+        from ..preparation import resolve_prepare_source
+
+        return "preparation", resolve_prepare_source(sink, intent)
     if isinstance(intent, CombatRemovalIntent):
         return intent.object_ref, execute_combat_removal(sink, intent)
     if isinstance(intent,SelectMutateMergeIntent):
@@ -537,6 +546,7 @@ def _execute_permanent_object_intent(
             reason=intent.reason,
             replacement_selections=intent.replacement_selections,
             target_snapshot=intent.target_snapshot,
+            scope=intent.scope,
         ),
     )
 
@@ -800,24 +810,35 @@ def _execute_tap_state_intent(
         sink, (card for card in cards if card.tapped != prior_states[card.object_id]),
         tapped=intent.tapped, reason=intent.reason,
     )
+    if intent.prohibit_next_untap:
+        for card in cards:
+            tap_state.prohibit_next_untap(sink, card.ref, actor=intent.actor, reason=intent.reason,
+                                         logical_object_id=card.logical_object_id)
     return intent.actor, result
 
 
 def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent, ExileGraveyardCopiesIntent):
+        from ..semantic_choices.graveyard_copy_cast import execute_exile_graveyard_copies
+        return intent.actor, execute_exile_graveyard_copies(sink, intent)
+    if isinstance(intent, GraveyardCastIntent):
+        from ..semantic_choices.targeted_graveyard_cast import execute_targeted_graveyard_cast
+        execute_targeted_graveyard_cast(sink, intent)
+        return intent.effect["player"], None
     if isinstance(intent,DiscoverCastIntent):
         from ..discover_casting import execute_discover_cast
         execute_discover_cast(sink,intent)
-        return intent.actor
+        return intent.actor, None
     if isinstance(intent,DiscoverCleanupIntent):
         from ..discover_cleanup import execute_discover_cleanup
         execute_discover_cleanup(sink,intent)
-        return intent.actor
+        return intent.actor, None
     if isinstance(intent, MiracleCastChoiceIntent):
         from ..drawing.miracle_casting import execute_miracle_cast_choice
         execute_miracle_cast_choice(sink, intent)
     else:
         sink.madness_choice_intent(intent)
-    return intent.source.card_ref or intent.actor
+    return intent.source.card_ref or intent.actor, None
 
 
 def _synchronize_instruction_observers(sink):
@@ -830,9 +851,27 @@ def _synchronize_instruction_observers(sink):
         reconcile_soulbond_pairs(sink)
 
 
+def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool:
+    child, = effect['effects']
+    actor = effect['player']
+    operation = child['op']
+    if operation == 'draw':
+        from .draw_restrictions import current_draw_permission
+
+        return current_draw_permission(host, actor).allows_complete_draw(child['count'])
+    if operation == 'life' and child['delta'] > 0:
+        from .life_prohibitions import collect_life_gain_permissions
+
+        return collect_life_gain_permissions(host).allows_gain(actor)
+    if operation == 'offer_optional_mana_payment':
+        return bool(host.state.players[actor].zones['hand'])
+    return True
+
+
 def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -> dict[str, Any] | None:
     """Resolve one available instruction without changing its position in the program."""
     from ..card_overrides import normalize_game_record_v3_effect
+    from ..rules.casting.spell_text import cast_text_instruction_has_no_target, scoped_cast_text_instruction
     from ..scheduled_player import scheduled_player_instruction_is_impossible
 
     if scheduled_player_instruction_is_impossible(host, item, raw_effect):
@@ -845,7 +884,23 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         )
         return None
 
-    effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
+    try:
+        scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
+    except ValueError as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    optional_usage = None
+    if raw_effect.get('op') == 'offer_optional_effect':
+        from ..rules.trigger_limits import optional_result_usage_available, optional_result_usage_binding
+
+        try:
+            optional_usage = optional_result_usage_binding(host, scoped_item)
+            if optional_usage is not None and not optional_result_usage_available(host.state, optional_usage):
+                return None
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, scoped_item))
+    if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
+        return None
     if raw_effect.get('op') == 'offer_optional_effect' and unavailable_optional_combat_removal(host, raw_effect, effect):
         return None
     if raw_effect.get("players") == "$targets":
@@ -861,7 +916,8 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         from ..milling import event_mill_recipient_has_left
         if event_mill_recipient_has_left(host, raw_effect, effect):
             return None
-    if any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object')):
+    if (any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object'))
+        or scoped_item is not item and cast_text_instruction_has_no_target(raw_effect, effect)):
         host._log(
             item.controller, 'effect.target.skipped',
             f'Skipped a target-dependent part of {item.ref}.',
@@ -953,8 +1009,9 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             result = sink.move_objects_simultaneously_intent(intent)
             results.append((intent.actor, result))
             continue
-        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent)):
-            results.append((_execute_resolving_cast_choice(sink,intent),None))
+        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
+                               GraveyardCastIntent,ExileGraveyardCopiesIntent)):
+            results.append(_execute_resolving_cast_choice(sink,intent))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):
             results.append(_execute_library_intent(sink, intent))

@@ -31,6 +31,22 @@ class LifeChangeError(ValueError):
 
 
 _LOSS_DIRECTION = "".join(("lo", "ss"))
+FIRST_LIFE_GAIN_EVENT = 'life.first_gain'
+FIRST_LIFE_GAIN_CAPABILITY = 'trigger.event.first_life_gain'
+
+
+def first_life_gain_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
+    first_gain = program.event == FIRST_LIFE_GAIN_EVENT or (
+        subscriptions is not None and subscriptions.subscription_for(FIRST_LIFE_GAIN_EVENT) is not None
+    )
+    if not first_gain:
+        return ()
+    from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+    if (program.active_zone not in {'battlefield', 'graveyard'}
+            or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage):
+        raise ValueError('First life gain requires a current battlefield or graveyard source ability')
+    return (FIRST_LIFE_GAIN_CAPABILITY,)
 
 
 class LifeChangeState(LifeStateView, Protocol):

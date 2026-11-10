@@ -238,16 +238,19 @@ def issue_aura_entry_choice(
         instruction_pointer=instruction_pointer,
         locals={"aura_source": plan.source_object_id},
     )
+    payload = aura_entry_choice_payload(plan, stack_ref=item.ref, aura_ref=host.state.cards[plan.source_object_id].ref)
+    chosen = effect.get("_aura_target_refs")
+    if chosen:
+        payload["chosen_attachments"] = [
+            {"aura": host.state.cards[object_id].ref, "aura_target": ref}
+            for object_id, ref in sorted(chosen.items())
+        ]
     decision = host.permissions.issue(
         kind="aura.entry",
         role=_PILOT_ROLE,
         actors=[plan.controller],
         allowed_actions=["choose"],
-        payload_by_actor={
-            plan.controller: aura_entry_choice_payload(
-                plan, stack_ref=item.ref, aura_ref=host.state.cards[plan.source_object_id].ref,
-            ),
-        },
+        payload_by_actor={plan.controller: payload},
         continuation={
             "schema_version": 1,
             "stack_ref": item.ref,
@@ -353,7 +356,12 @@ def complete_aura_entry_choice(
             "Selected Aura entry target is no longer legal"
         )
     effect = thaw_value(restored.effect)
-    effect["_aura_target_ref"] = selected
+    from ..linked_exile_return_model import LINKED_ABILITY_TIMING, LINKED_EXILE_RETURN_OPERATION
+    if (effect.get("op") == LINKED_EXILE_RETURN_OPERATION and effect.get("phase") == "return"
+            and effect.get("spec", {}).get("timing") == LINKED_ABILITY_TIMING):
+        effect.setdefault("_aura_target_refs", {})[restored.source_object_id] = selected
+    else:
+        effect["_aura_target_ref"] = selected
     host._continue_resolution(
         stack_ref=restored.stack_ref,
         effects=[

@@ -27,6 +27,7 @@ from .attachment_references import (
 from .creature_power_damage import (
     capture_creature_power_damage_source_lki,
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
+    occurrence_power_trigger_context,
 )
 from .errors import GameRuleError
 from .increment_model import CONDITION_FIELD as INCREMENT_CONDITION_FIELD
@@ -38,6 +39,7 @@ from .continuous_conditions import (
 )
 from .rules.event_subscriptions import (
     FixedEventSubscriptionSet, intervening_recheck_condition, public_state_intervening_actual,
+    source_event_intervening_recheck,
 )
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
@@ -338,8 +340,11 @@ def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
     from .attack_batch_model import ATTACK_BATCH_CONDITION
     from .block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
+    from .rules.attacked_player_life import ATTACKED_PLAYER_LIFE_FIELD, attacked_player_life_holds
     from .spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_FIELD
     try:
+        if field == ATTACKED_PLAYER_LIFE_FIELD:
+            return True, attacked_player_life_holds(host, context, source_object_id=source.object_id, controller=source.controller)
         if field==BLOCK_CHARACTERISTIC_CONDITION:
             from .rules.block_characteristics import block_counterpart_matches
             return True,block_counterpart_matches(condition,context)
@@ -666,25 +671,11 @@ def semantic_intervening_condition_matches(
 ) -> bool:
     """Recheck one intervening-if program at its trigger-owner boundary."""
 
-    if 'ravenous_entry_x' in program.coverage:
-        from .ravenous_model import EntryXInformation,ENTRY_X_FIELD,validate_ravenous_condition
-        try:
-            validate_ravenous_condition(program.event_condition)
-            info=EntryXInformation.from_dict(context.get(ENTRY_X_FIELD))
-            if info.object_id!=source_object_id or info.logical_object_id!=context.get('source_logical_object_id'):
-                raise ValueError('Ravenous recheck changed its original entry identity')
-            return info.amount>=5
-        except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
-    if 'source_entry_cast_intervening' in program.coverage:
-        from .rules.entry_cast_information import source_entry_cast_value
-        from .source_entry_cast_information import validate_source_entry_cast_condition
-        from .continuous_effect_model import ContinuousObjectIdentity
-        try:
-            validate_source_entry_cast_condition(program.event_condition)
-            return source_entry_cast_value(host,context,controller=controller,
-                source=ContinuousObjectIdentity(source_object_id,context.get('source_logical_object_id')),
-                origin=program.event_condition.get('origin'))
-        except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
+    source_event_result = source_event_intervening_recheck(
+        host, program, context=context, controller=controller, source_object_id=source_object_id,
+    )
+    if source_event_result is not None:
+        return source_event_result
     return bool(
         source is not None
         and program.event_condition is not None
@@ -993,6 +984,9 @@ def _event_programs_for_source(
         copied_programs=copiable_source_trigger_programs(host,characteristics,active_zone)
         if copied_programs is not None:programs=copied_programs
         elif source.permanent_composition is not None:programs=[]
+    from .card_program_faces import current_shared_type_doors, room_program_face_is_active
+    if current_shared_type_doors(source) is not None:
+        programs = [program for program in programs if room_program_face_is_active(source, program)]
     for granted in granted_triggered_specs(
         canonical_ability_fragments(
             characteristics.get("ability_fragments", ())
@@ -1370,7 +1364,8 @@ def _program_trigger_ability_is_present(program, characteristics):
             or program_has_current_ability_fragments(program, characteristics))
 
 
-def _new_semantic_trigger_item(host, *, source, program, event, context, active_zone, characteristics):
+def _new_semantic_trigger_item(host, *, source, program, event, context, active_zone, characteristics,
+                               departure_characteristics=None):
     """Construct one occurrence with source-pinned context before batching."""
     ref = host._next_ref("S")
     stack_context = _semantic_trigger_context(
@@ -1378,7 +1373,22 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
         active_zone=active_zone, source_characteristics=characteristics,
     )
     from .drawing.miracle_triggers import miracle_trigger_context
+    from .reflexive_trigger_model import bound_reflexive_has_targets
+    from .relative_power_target import bind_relative_mana_value_trigger_schema
+    from .target_source import BOUND_TARGETING_SOURCE_VERSION, capture_targeting_source, TARGETING_SOURCE_CONTEXT
     try:
+        stack_context.update(bind_relative_mana_value_trigger_schema(
+            host, source, program.target_schema,
+            death_context=context if event == "creature.dies" else None,
+            source_characteristics=characteristics,
+        ))
+        if bound_reflexive_has_targets(program.effects):
+            stack_context[TARGETING_SOURCE_CONTEXT] = capture_targeting_source(
+                host, source, characteristics=characteristics, zone=active_zone, schema_version=BOUND_TARGETING_SOURCE_VERSION,
+            ).to_dict()
+        stack_context.update(occurrence_power_trigger_context(
+            host, program, event, context, departure_characteristics,
+        ))
         stack_context.update(miracle_trigger_context(
             source=source, program=program, event=event, context=context, trigger_ref=ref,
         ))
@@ -1493,6 +1503,7 @@ def dispatch_semantic_event(
             item = _new_semantic_trigger_item(
                 host, source=source, program=program, event=event, context=context,
                 active_zone=active_zone, characteristics=characteristics,
+                departure_characteristics=source_characteristics,
             )
             if (
                 trigger_batch is not None
@@ -1512,7 +1523,7 @@ def dispatch_semantic_event(
                 commit_trigger_usage(usage.live_source, ability_id=program.ability_id,
                                      turn_sequence=host.state.turn_sequence)
             triggered.append(item)
-            if program.trigger_limit is None:
+            if program.trigger_limit is None or usage.allows_multipliers:
                 triggered.extend(
                     trigger_multiplier_copies(
                         host,

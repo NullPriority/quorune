@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .damage_death_exile_model import ResolvedDamageDeathExile
+from .linked_departure_exile_model import ResolvedLinkedDepartureExile
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -23,7 +24,9 @@ from .temporary_cast_rule_model import ResolvedCastRestriction
 from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
+from .defender_permission import DefenderAttackPermission
 from .object_predicate import ObjectQuerySpec
+from .resolution_characteristic_model import FIXED_TARGET_COLOR_ZONES, decode_fixed_target_color
 from .next_turn_effect import NEXT_TURN_EFFECT_FIELD
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
 from .keyword_prohibition import prepare_resolution_keyword_exclusions
@@ -179,7 +182,8 @@ def commit_continuous_effect(
 
     if not isinstance(
         effect,
-        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint),
+        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint,
+         ResolvedLinkedDepartureExile),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -253,6 +257,10 @@ def matching_battlefield_objects(
 
 
 def _characteristic_effect_timing(host, effect, *, actor, source):
+    from .resolution_characteristic_model import INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS
+
+    if effect.get("schema_version") in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS:
+        return ContinuousEffectDuration.ZONE_OBJECT, None, None
     if SOURCE_TAP_EFFECT_FIELD not in effect:
         expiry = actor if NEXT_TURN_EFFECT_FIELD in effect else None
         return ContinuousEffectDuration.UNTIL_END_OF_TURN, expiry, None
@@ -276,7 +284,9 @@ def apply_fixed_resolution_characteristics(
     host: Any, effect: Mapping[str, Any], *, actor: str, reason: str,
 ) -> list[str]:
     """Commit a versioned fixed result through the existing multi-layer owner."""
-    from .resolution_characteristic_model import fixed_resolution_characteristic_instruction
+    from .resolution_characteristic_model import (
+        DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
+    )
     from .errors import GameRuleError
 
     instruction = {key: value for key, value in effect.items()
@@ -286,12 +296,12 @@ def apply_fixed_resolution_characteristics(
         # clears a stale reference before this instruction reaches its owner.
         instruction['card']='stale-resolved-reference'
         try:
-            fixed_resolution_characteristic_instruction(instruction)
+            fixed_resolution_characteristic_instruction(instruction, resolved=True)
         except (TypeError,ValueError,KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         return []
     try:
-        spec, selection = fixed_resolution_characteristic_instruction(instruction)
+        spec, selection = fixed_resolution_characteristic_instruction(instruction, resolved=True)
         if isinstance(selection, ObjectQuerySpec):
             from .rules.resolution_characteristic_shapes import fixed_resolution_characteristic_set_is_closed
             if not fixed_resolution_characteristic_set_is_closed(selection):
@@ -307,6 +317,12 @@ def apply_fixed_resolution_characteristics(
         if timing is None:
             return []
         duration, expiry_player, history = timing
+        if isinstance(spec, DerivedResolutionCharacteristicsSpec):
+            from .public_quantity_reductions import public_mana_value
+
+            amount = (public_mana_value(host._effective_card_data(affected[0], maximum_layer=Layer.COPY))
+                      if spec.quantity == RECIPIENT_MANA_VALUE else spec.quantity)
+            spec = spec.materialize(amount)
         components = tuple(ResolutionContinuousComponent(*value) for value in spec.layer_operations())
         create_resolution_continuous_effect_components(
             host, source=source, targets=affected, components=components, duration=duration,
@@ -315,12 +331,49 @@ def apply_fixed_resolution_characteristics(
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     refs = [card.ref for card in affected]
-    if history is not None:
+    if duration is ContinuousEffectDuration.ZONE_OBJECT:
+        duration_label = "for this battlefield incarnation"
+    elif history is not None:
         duration_label = "until the source untaps or leaves the battlefield"
     else:
         duration_label = "until your next turn" if expiry_player is not None else "until end of turn"
     host._log(actor,'permanent.characteristics',f'Fixed characteristics changed {duration_label}.',
               {'objects':refs,'reason':reason},importance=1,changed_objects=[card.object_id for card in affected])
+    return refs
+
+
+def apply_power_toughness_switch(host, effect, *, actor, reason):
+    from .errors import GameRuleError
+    from .rules.power_toughness_switch import decode_switch_recipient
+
+    try:
+        selection = decode_switch_recipient({key: value for key, value in effect.items()
+            if key != "_runtime_source"}, resolved=True)
+        if isinstance(selection, ObjectQuerySpec):
+            cards = matching_battlefield_objects(host, selection)
+        else:
+            refs = selection if isinstance(selection, tuple) else (selection,)
+            present = []
+            for ref in refs:
+                try:
+                    card = host._resolve_object(actor, ref, zones={"battlefield"})
+                except GameRuleError:
+                    continue
+                if not card.phased_out:
+                    present.append(card)
+            cards = tuple(present)
+        if not cards:
+            return []
+        create_resolution_continuous_effect_components(
+            host, source=resolution_effect_source(host, effect, fallback_card=cards[0]), targets=cards,
+            components=(ResolutionContinuousComponent(Layer.POWER_TOUGHNESS, "7d",
+                (ContinuousOperation("switch_power_toughness"),)),),
+        )
+    except (ValueError, TypeError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    refs = [card.ref for card in cards]
+    host._log(actor, "permanent.characteristics", "Switched power and toughness until end of turn.",
+        {"objects": refs, "reason": reason}, importance=1, changed_objects=[card.object_id for card in cards])
     return refs
 
 
@@ -353,6 +406,33 @@ def apply_target_characteristics(host,effect,*,actor,reason):
     return tuple(refs)
 
 
+def apply_fixed_target_color(host, effect, *, actor, reason):
+    from .errors import GameRuleError
+
+    try:
+        reference, colors, duration = decode_fixed_target_color(effect, materialized=True)
+        source = ResolutionEffectSource.from_effect(effect)
+    except (ValueError, TypeError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    item = next((candidate for candidate in host.state.stack if candidate.ref == reference), None)
+    if item is None:
+        card = host._resolve_object(actor, reference, zones={"battlefield"})
+    else:
+        card = host.state.cards.get(item.card_object_id or "")
+        if item.kind not in {"spell", "spell_copy"} or card is None or card.zone != "stack":
+            raise GameRuleError("Fixed target color requires a current spell or permanent")
+    operation = ContinuousOperation("set_colors", colors) if colors else ContinuousOperation("remove_all_colors")
+    applied = create_resolution_continuous_effect(host, source=source, targets=(card,),
+        layer=Layer.COLOR, sublayer="5", operations=(operation,), duration=duration,
+        zones=FIXED_TARGET_COLOR_ZONES)
+    if applied is None:
+        raise GameRuleError("Fixed target color requires the continuous-effect journal")
+    host._log(actor, "effect.color", f"The color of {reference} changed.",
+        {"target": reference, "colors": list(colors), "duration": duration.value},
+        changed_objects=[card.object_id], importance=1)
+    return applied
+
+
 def create_resolution_continuous_effect(
     host: ContinuousEffectStateHost,
     *,
@@ -365,6 +445,7 @@ def create_resolution_continuous_effect(
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
     expires_on_next_turn_of: str | None = None,
+    zones: tuple[str, ...] = ("battlefield",),
 ) -> ContinuousEffect | None:
     """Commit one immutable effect whose current affected set is locked."""
 
@@ -390,7 +471,7 @@ def create_resolution_continuous_effect(
         operations=tuple(operations),
         origin=ContinuousEffectOrigin.RESOLUTION,
         duration=duration,
-        applies=ObjectQuerySpec(zones=("battlefield",)),
+        applies=ObjectQuerySpec(zones=zones),
         locked_objects=identities,
         expires_on_next_turn_of=expires_on_next_turn_of,
     )
@@ -491,7 +572,7 @@ def create_resolution_declaration_rule_effect(
     *,
     source: ResolutionEffectSource,
     targets: Sequence[Any],
-    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate,
+    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate | DefenderAttackPermission,
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
@@ -557,6 +638,15 @@ def active_resolution_effects(
     )
 
 
+def is_fixed_target_color_effect(effect: ContinuousJournalEffect) -> bool:
+    return (isinstance(effect, ContinuousEffect) and effect.layer is Layer.COLOR
+            and effect.applies is not None and effect.applies.zones == FIXED_TARGET_COLOR_ZONES)
+
+
+def fixed_target_color_effects(state: Any, card: Any) -> tuple[ContinuousEffect, ...]:
+    return tuple(effect for effect in active_resolution_effects(state, card) if is_fixed_target_color_effect(effect))
+
+
 def active_resolution_declaration_rule_effects(
     state: Any,
     card: Any,
@@ -583,6 +673,17 @@ def active_resolution_declaration_rule_effects(
             and object_matches_query(query_row, effect.live_query)
         )
     )
+
+
+def expire_zone_departure_effects(state: Any, card: Any) -> None:
+    journal = state.continuous_effects
+    if not journal:
+        return
+    identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+    journal[:] = [effect for effect in journal if not (
+        isinstance(effect, ResolvedLinkedDepartureExile) and effect.subject == identity
+        or is_fixed_target_color_effect(effect) and identity in effect.locked_objects
+    )]
 
 
 def expire_end_of_turn_continuous_effects(state: Any) -> int:

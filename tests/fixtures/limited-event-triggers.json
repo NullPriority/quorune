@@ -469,6 +469,294 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "name": "Earth Kingdom General",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Soldier Ally",
+      "oracle_text": "When this creature enters, earthbend 2. (Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)\nWhenever you put one or more +1/+1 counters on a creature, you may gain that much life. Do this only once each turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Earthbend"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "44594004-52e7-4ce6-8eb0-61f72fd9c73b",
+      "name": "Irreverent Gremlin",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Gremlin",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nWhenever another creature you control with power 2 or less enters, you may discard a card. If you do, draw a card. Do this only once each turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4ac94586-3ac7-4ade-af31-ad0d0e3ffc4a",
+      "name": "Terrasymbiosis",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever you put one or more +1/+1 counters on a creature you control, you may draw that many cards. Do this only once each turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "name": "Flicker of Fate",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature or enchantment, then return it to the battlefield under its owner's control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1d5e32b1-1a2d-4b3d-80f2-f8c688b90587",
+      "name": "Pouncing Cheetah",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Cat",
+      "oracle_text": "Flash",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "60bc63dc-ac9f-4a2f-aef5-c90d0aa31553",
+      "name": "Thrashing Brontodon",
+      "mana_cost": "{1}{G}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "{1}, Sacrifice this creature: Destroy target artifact or enchantment.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -628,6 +916,72 @@
       "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
       "published_at": "2018-03-16",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the targeted land becomes an illegal target before the spell or ability that includes earthbend resolves, earthbend does nothing. If the spell or ability didn't have other targets, it won't resolve."
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If a land was animated by earthbend and would go to any zone other than the graveyard or exile, it will not be returned to the battlefield by the delayed triggered ability created by earthbend."
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Once you choose to gain life using Earth Kingdom General's second ability, that ability won't trigger again that turn."
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Earthbend doesn't give the land you control a color. As most lands are colorless, in most cases the resulting land creature will also be colorless."
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The land will retain any other types, subtypes, or supertypes it previously had. It will also retain any mana abilities it had as a result of those subtypes. For example, a Forest that's turned into a creature this way can still be tapped for {G}."
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "You may target a land that is already a creature, perhaps because of a previous earthbend ability. The land will get the +1/+1 counters, gain haste, and have its base power and toughness set to 0/0."
+    },
+    {
+      "oracle_id": "e43c31ee-1bac-4f96-8b74-334b3238ab73",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "\"Earthbend N\" means \"Target land you control becomes a 0/0 land creature with haste in addition to its other types. Put N +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped under your control.\""
+    },
+    {
+      "oracle_id": "44594004-52e7-4ce6-8eb0-61f72fd9c73b",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Irreverent Gremlin's second ability checks the power of the other creature only at the moment that creature enters. If a creature enters with counters, those counters are included. If a creature's power is 2 or less when it enters but becomes greater than 2 while Irreverent Gremlin's second ability is still on the stack, you'll still have the choice to discard a card when the ability resolves."
+    },
+    {
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won’t return to the battlefield."
+    },
+    {
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an Aura is put onto the battlefield without being cast, the Aura’s controller-to-be chooses what it will enchant as it comes back onto the battlefield. An Aura put onto the battlefield this way doesn’t target anything (so it could be attached to an opponent’s permanent with hexproof, for example), but the Aura’s enchant ability restricts what it can be attached to. If the Aura can’t legally be attached to anything, it remains in its current zone."
+    },
+    {
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once the exiled permanent returns, it’s considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners’ graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist."
     }
   ],
   "schema_version": 1,

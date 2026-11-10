@@ -81,6 +81,16 @@ its canonical hash, current revision, visible definitions/events, and current
 decision. A delta names the exact base hash, resulting view hash, patch, event
 tail, and current decision.
 
+A resolving cast choice over several exiled cards includes a public `card`
+reference in each `cast_options` entry. The submitted `cost_option` selects the
+card, face, casting method and price together. Later choices reflect the spells already cast
+while the enclosing instruction is still resolving.
+
+A spell or permanent with an active fixed color setting carries a public
+`colors` array. An empty array represents colorless. The color field uses the
+current layer result and is visible on a face-down object under its existing
+anonymous reference.
+
 A client must:
 
 1. apply a delta only when its `base` equals the local view hash;
@@ -172,8 +182,11 @@ offers changes to the target references in their original slots. Public stack
 rows show `damage_shares` in the same order as their `targets` array.
 
 An active Assist transaction projects a public `assist_cast` announcement
-in the view state. Only the principal for the current mana or payment window
-receives the `cast.assist` decision and its legal actions.
+in the view state. If the caster chose Splice, the announcement includes
+`spliced_cards` in declaration order. Each entry contains the public
+`id` and `name` of one revealed card. Only the principal for the current
+mana or payment window receives the `cast.assist` decision and its legal
+actions.
 
 Dynamic `mana_modes` fields declare `allowed_colors`, an integral `total`, and
 `single_color` instead of enumerating allocations. Clients accept only objects

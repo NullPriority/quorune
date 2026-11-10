@@ -27,6 +27,7 @@ from ...counter_placement import (
     prepare_counter_placements,
 )
 from ...errors import GameRuleError
+from ...crew import CrewAbilityError, pay_crew_cost
 from ...life_state import LifeStateError, pay_life_cost
 from ...mana_activation import complete_mana_activation
 from ...mana_restrictions import ability_mana_spend_context
@@ -417,6 +418,13 @@ def _pay_object_and_mana_costs(
             raise ActivationProposalError(str(exc), reason="blight_cost_unpayable") from exc
         payer_identity = (payer.object_id, payer.ref, payer.logical_object_id)
         paid_objects, special_cost_context = [], None
+    elif ability.saddle_threshold is not None:
+        try:
+            paid_objects, context = pay_crew_cost(host, seat=proposal.seat, source=source,
+                threshold=ability.saddle_threshold, response=response, kind="saddle")
+        except CrewAbilityError as exc:
+            raise ActivationProposalError(str(exc), reason="saddle_cost_unpayable") from exc
+        special_cost_context = ("saddle", context)
     elif host._crew_threshold(ability) is not None:
         paid_objects, crew_context = host._pay_crew_cost(
             proposal.seat, source, ability, response
@@ -841,6 +849,8 @@ def _commit_activation_costs_and_stack(
     from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
     chosen_source_information = capture_chosen_color_mana_source(source, ability)
     from .payment_commit import commit_activation_payments, announce_targeted_activation
+    from ...triggered_mana import tap_mana_source
+    trigger_source = tap_mana_source(host, source, tap_source=ability.mana_ability and ability.tap_source)
     announcement = announce_targeted_activation(host,proposal,source,ability,response,attachment_snapshot,transmute_context)
     from ..target_announcements import announce_initial_target_triggers, dispatch_target_announcements
     initial_targets_announced = announce_initial_target_triggers(host, announcement)
@@ -886,6 +896,7 @@ def _commit_activation_costs_and_stack(
             source_was_snow=source_was_snow,
             source_information=mana_source_information or chosen_source_information,
             mana_payment=spent,
+            trigger_source=trigger_source,
         )
         return True
     item = _activation_stack_item(

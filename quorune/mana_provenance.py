@@ -217,6 +217,20 @@ def _store_lots(player: Any, lots: Sequence[ManaProvenanceLot]) -> None:
         player.stats.pop(_RESTRICTED_MANA_KEY, None)
 
 
+@dataclass(slots=True)
+class PlanningManaPool:
+    """Isolated pool used by the same provenance operations during planning."""
+
+    mana_pool: dict[str, int]
+    stats: dict[str, Any]
+
+    @classmethod
+    def capture(cls, player):
+        snapshot = cls(normalize_mana_bundle(player.mana_pool), {})
+        _store_lots(snapshot, mana_provenance_lots(player))
+        return snapshot
+
+
 def add_mana(
     player: Any,
     bundle: Mapping[str, int],

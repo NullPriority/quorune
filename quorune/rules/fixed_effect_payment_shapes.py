@@ -7,6 +7,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
 from ..compiler.optional_payment_templates import OPTIONAL_MANA_PAYMENT_OPERATION
 from .blight_model import blight_decline_branch_is_closed
+from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 
 
 def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,
@@ -59,7 +60,7 @@ def fixed_payment_event_player_runtime_dependencies(program):
                 payment=value.get('payment')
                 if not isinstance(payment,Mapping):raise ValueError('Fixed payment descriptor is unavailable')
                 refs=references(value.get('effects',())) | references(value.get('declined_effects',()))
-                if refs or payment.get('kind')=='source_sacrifice':
+                if refs or payment.get('kind') in ('source_sacrifice', HYBRID_RESOLUTION_PAYMENT_KIND):
                     owned=fixed_effect_payment_node_capabilities(effects=(value,),target_schema=program.target_schema,mechanic_ids=program.coverage)
                     if not owned or any(not _event_player_reference_is_closed(program,ref) for ref in refs):
                         raise ValueError('Fixed payment result lacks its closed occurrence-player scope')

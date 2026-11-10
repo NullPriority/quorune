@@ -5,6 +5,7 @@ from ...target_source import spell_targeting_source
 """Target-dependent costs around the existing cost and target authorities."""
 
 from itertools import combinations
+from ...announced_damage import variable_damage_allocation
 from ...targets import available_modes,target_plan
 from ...selection.target_validation import (validate_grouped_target_assignment,
     target_assignment_witnesses, public_target_schema_for_witnesses)
@@ -141,13 +142,21 @@ def apply_target_cost_increase(option):
 
 
 def target_cost_for_x_preview(option):
-    fact=option.get('targeted_cost')
-    return fact if 'target_count_parameter' in option or fact is not None and fact.get('schema_version') in {2,3} else None
+    fact = option.get('targeted_cost')
+    if fact is None:
+        return None
+    if ('target_count_parameter' in option or fact.get('schema_version') in {2, 3}
+            or variable_damage_allocation(option.get('target_schema')) is not None):
+        return fact
+    return None
 
 
 def _preview_option_rank(option):
     raw=option.to_dict()
     version=raw.get('targeted_cost',{}).get('schema_version')
+    if variable_damage_allocation(raw.get('target_schema')) is not None:
+        maximum = raw['choice_schema']['x']['maximum']
+        return -maximum, sum(raw['requirements'].values())
     maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum',0) if version in {2,3} else 0
     if version==3:return -maximum,sum(raw['requirements'].values())
     return sum(raw['requirements'].values()),-maximum
@@ -166,11 +175,16 @@ def consolidate_target_cost_options(options,*,hint):
     result={};witnesses={};prices={}
     for option in options:
         raw=option.to_dict()
+        allocation = variable_damage_allocation(raw.get('target_schema'))
         if 'target_cost_witness' in raw:
             maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum')
+            limit = allocation.total_for_x(maximum) if allocation is not None else maximum
             candidates=raw.get('target_cost_witnesses',[raw['target_cost_witness']])
-            witnesses.setdefault(option.option_id,[]).extend(w for w in candidates
-                if maximum is None or sum(len(refs) for refs in w['targets'].values())<=maximum)
+            payable = [w for w in candidates
+                       if limit is None or sum(len(refs) for refs in w['targets'].values()) <= limit]
+            if allocation is not None and not payable:
+                continue
+            witnesses.setdefault(option.option_id,[]).extend(payable)
         if 'targeted_cost' in raw:
             modes=tuple(raw.get('target_cost_witness',{}).get('modes',()))
             components=tuple(row['component_id'] for row in raw['targeted_cost']['sources'])
@@ -181,7 +195,8 @@ def consolidate_target_cost_options(options,*,hint):
                     for row in raw['targeted_cost']['sources']]} if raw['targeted_cost'].get('schema_version')==3 else {}),
                 **({'target_count':count} if count is not None else {}),
                 'requirements':raw['requirements'], **({'maximum_x':raw['choice_schema']['x']['maximum']}
-                if ('target_count_parameter' in raw or raw['targeted_cost'].get('schema_version') in {2,3}) and 'x' in raw.get('choice_schema',{}) else {})}
+                if (allocation is not None or 'target_count_parameter' in raw
+                    or raw['targeted_cost'].get('schema_version') in {2,3}) and 'x' in raw.get('choice_schema',{}) else {})}
         prior=result.get(option.option_id)
         if prior is None or _preview_option_rank(option)<_preview_option_rank(prior):result[option.option_id]=option
     return tuple(CastCostOption.from_dict({**option.to_dict(),**({'payable_target_witnesses':witnesses[oid],
@@ -198,8 +213,10 @@ def public_target_costs(host,seat,option,*,card=None,spell_program=None):
         return 'Pay '+(value or '{0}')
     kind=('generic_adjustment_per_distinct_target' if any('counted_targets' in row for row in clauses)
         else 'generic_adjustment_once_per_source' if any(row['generic']<0 for row in clauses) else 'generic_increase_once_per_source')
+    shows_x = (option.get('targeted_cost', {}).get('schema_version') in {2, 3}
+               or variable_damage_allocation(option.get('target_schema')) is not None)
     return {'kind':kind,'clauses':clauses,
-        'prices':[{**row,'label':f"Choose X up to {row['maximum_x']}" if option.get('targeted_cost',{}).get('schema_version') in {2,3} and 'maximum_x' in row
+        'prices':[{**row,'label':f"Choose X up to {row['maximum_x']}" if shows_x and 'maximum_x' in row
             else label(row['requirements'])} for row in option.get('target_cost_prices',())]}
 
 

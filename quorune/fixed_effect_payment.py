@@ -10,6 +10,10 @@ from .creature_subtypes import canonical_creature_subtype
 from .counter_names import normalized_counter_name
 from .replacement.immutable import FrozenMap, thaw_value
 from .rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_PAYMENT_VERSION, blight_creature_predicate
+from .rules.hybrid_resolution_payment import (
+    HYBRID_RESOLUTION_PAYMENT_CAPABILITY, HYBRID_RESOLUTION_PAYMENT_KIND,
+    HYBRID_RESOLUTION_PAYMENT_VERSION, hybrid_resolution_mana_options,
+)
 
 
 FIXED_EFFECT_PAYMENT_MECHANIC = "fixed-optional-mana-payment"
@@ -48,12 +52,16 @@ class FixedEffectPaymentSpec:
     schema_version: int = 2
     counter_name: str | None = None
     source_ref: str | None = None
+    hybrid_symbols: tuple[str, ...] = ()
 
     @property
     def mandatory(self) -> bool:
         return type(self.schema_version) is int and self.schema_version == MANDATORY_DISCARD_PAYMENT_VERSION
 
     def __post_init__(self) -> None:
+        hybrid = self.kind == HYBRID_RESOLUTION_PAYMENT_KIND
+        if not hybrid and self.hybrid_symbols != ():
+            raise ValueError("Only hybrid payments carry hybrid symbols")
         if self.kind == "blight":
             self._validate_blight()
             return
@@ -61,10 +69,10 @@ class FixedEffectPaymentSpec:
             self._validate_mandatory_discard()
             return
         another=self.kind=='sacrifice' and type(self.schema_version) is int and self.schema_version==6
-        version=7 if self.kind=='source_sacrifice' else 6 if another else 5 if self.kind=='mana_discard' else 4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
+        version=HYBRID_RESOLUTION_PAYMENT_VERSION if hybrid else 7 if self.kind=='source_sacrifice' else 6 if another else 5 if self.kind=='mana_discard' else 4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
         if type(self.schema_version) is not int or self.schema_version != version:
             raise ValueError("Fixed effect payment version does not match its cost kind")
-        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap", "remove_source_counter", "mana_discard", "source_sacrifice"}:
+        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap", "remove_source_counter", "mana_discard", "source_sacrifice", HYBRID_RESOLUTION_PAYMENT_KIND}:
             raise ValueError("Fixed effect payment kind is unsupported")
         if type(self.amount) is not int or self.amount <= 0:
             raise ValueError("Fixed effect payment amount must be positive")
@@ -87,12 +95,16 @@ class FixedEffectPaymentSpec:
                 raise ValueError('Source counter payments require a canonical named counter and optional current source')
         elif self.counter_name is not None or self.source_ref is not None:
             raise ValueError('Only source counter payments carry counter and source fields')
-        if self.kind == "mana":
+        if self.kind == "mana" or hybrid:
             if not isinstance(self.requirements, Mapping) or set(self.requirements) != _MANA_KEYS or any(
                 type(value) is not int or value < 0 for value in self.requirements.values()
-            ) or not any(self.requirements.values()) or self.amount != 1 or self.predicate is not None:
-                raise ValueError("Fixed mana payments require one positive ordinary vector")
+            ) or (not hybrid and not any(self.requirements.values())) or self.amount != 1 or self.predicate is not None:
+                raise ValueError("Hybrid mana payment requirements are malformed" if hybrid else
+                    "Fixed mana payments require one positive ordinary vector")
             object.__setattr__(self, "requirements", FrozenMap(self.requirements))
+            if hybrid:
+                hybrid_resolution_mana_options(self.requirements, self.hybrid_symbols)
+                object.__setattr__(self, "hybrid_symbols", tuple(self.hybrid_symbols))
         elif self.requirements is not None:
             raise ValueError("Nonmana payments cannot carry mana requirements")
         if self.kind == 'tap':
@@ -154,6 +166,7 @@ class FixedEffectPaymentSpec:
         return {"schema_version":self.schema_version, "kind":self.kind, "amount":self.amount,
                 "requirements":thaw_value(self.requirements) if self.requirements is not None else None,
                 "predicate":self.predicate.to_dict() if self.predicate is not None else None,
+                **({'hybrid_symbols':list(self.hybrid_symbols)} if self.kind==HYBRID_RESOLUTION_PAYMENT_KIND else {}),
                 **({'counter_name':self.counter_name,'source_ref':self.source_ref} if self.kind=='remove_source_counter' else {}),
                 **({'source_ref':self.source_ref} if self.kind=='source_sacrifice' else {})}
 
@@ -164,14 +177,20 @@ class FixedEffectPaymentSpec:
         fields={"schema_version", "kind", "amount", "requirements", "predicate"}
         if isinstance(value,Mapping) and value.get('kind')=='remove_source_counter':fields|={'counter_name','source_ref'}
         if isinstance(value,Mapping) and value.get('kind')=='source_sacrifice':fields|={'source_ref'}
+        if isinstance(value,Mapping) and value.get('kind')==HYBRID_RESOLUTION_PAYMENT_KIND:fields|={'hybrid_symbols'}
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError("Fixed effect payment fields are malformed")
         if value["schema_version"] == MANDATORY_DISCARD_PAYMENT_VERSION and not allow_mandatory:
             raise ValueError("Mandatory discard is outside this payment's resolution scope")
         return cls(kind=value["kind"], amount=value["amount"], schema_version=value["schema_version"],
             counter_name=value.get('counter_name'),source_ref=value.get('source_ref'),
+            hybrid_symbols=value.get('hybrid_symbols',()),
             requirements=FrozenMap(value["requirements"]) if isinstance(value["requirements"],Mapping) else value["requirements"],
             predicate=ObjectQuerySpec.from_dict(value["predicate"]) if isinstance(value["predicate"],Mapping) else value["predicate"])
+
+    @property
+    def hybrid_mana_options(self):
+        return hybrid_resolution_mana_options(self.requirements, self.hybrid_symbols)
 
     @property
     def capabilities(self) -> tuple[str, ...]:
@@ -185,6 +204,7 @@ class FixedEffectPaymentSpec:
         costs['source_sacrifice']=(SOURCE_SACRIFICE_PAYMENT_CAPABILITY,'choice.affected_player.fixed_sacrifice','zone.change.destination_replacement')
         costs['mana_discard']=(MANA_DISCARD_PAYMENT_CAPABILITY,'choice.affected_player.fixed_discard','zone.change.destination_replacement')
         costs["blight"] = (BLIGHT_CAPABILITY,)
+        costs[HYBRID_RESOLUTION_PAYMENT_KIND]=(HYBRID_RESOLUTION_PAYMENT_CAPABILITY,)
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind],
             *((MANDATORY_DISCARD_PAYMENT_CAPABILITY,) if self.mandatory else ()),
             *((ANOTHER_SACRIFICE_PAYMENT_CAPABILITY,) if self.kind=='sacrifice' and self.schema_version==6 else ()))
@@ -202,6 +222,10 @@ def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, .
                 or value.get("player") != "$controller" or payment.predicate.controller != "$controller"):
             raise ValueError("Blight payment requires its closed controller resolution scope")
         return payment.capabilities
+    if descriptor.get("kind") == HYBRID_RESOLUTION_PAYMENT_KIND:
+        if type(value.get("schema_version")) is not int or value["schema_version"] != 2 or "cost" in value:
+            raise ValueError("Hybrid prices require their version-two optional payment wrapper")
+        return FixedEffectPaymentSpec.from_dict(descriptor).capabilities
     mandatory = descriptor.get("schema_version") == MANDATORY_DISCARD_PAYMENT_VERSION
     if not mandatory and descriptor.get("kind") != "mana_discard":
         return ()

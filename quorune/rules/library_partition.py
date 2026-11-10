@@ -1,9 +1,14 @@
 from __future__ import annotations
 
-"""Shared immutable validation for private ordered library partitions."""
+"""Validation and mutation for private library partitions and arrivals."""
 
 from dataclasses import dataclass
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Iterable, Sequence
+
+from ..library_order_model import LibraryArrivalOrder
+
+if TYPE_CHECKING:
+    from ..model import CardInstance
 
 
 class LibraryPartitionError(ValueError):
@@ -93,9 +98,28 @@ def commit_ordered_library_partition(
     library[:] = [*bottom, *untouched, *reversed(top)]
 
 
+def commit_ordered_library_arrivals(
+    library: list[str], order: LibraryArrivalOrder, committed: Iterable[CardInstance],
+) -> None:
+    """Place arriving cards and grant knowledge of their private permutation."""
+    arrivals = {card.object_id: card for card in committed if card.zone == "library"}
+    ordered = tuple(member for member in order.members if member in arrivals)
+    if not ordered:
+        return
+    commit_ordered_library_partition(
+        library,
+        top_top_first=ordered if order.position == "top" else (),
+        bottom_bottom_first=ordered if order.position == "bottom" else (),
+    )
+    if len(ordered) > 1:
+        for member in ordered:
+            arrivals[member].known_to = [order.chooser]
+
+
 __all__ = [
     "LibraryPartitionError",
     "OrderedLibraryPartition",
+    "commit_ordered_library_arrivals",
     "commit_ordered_library_partition",
     "partition_refs",
 ]

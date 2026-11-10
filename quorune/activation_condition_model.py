@@ -16,9 +16,41 @@ ACTIVATION_PHASE_CONDITION_CAPABILITY = "activation.condition.phase_window"
 ACTIVATION_PUBLIC_QUERY_CAPABILITY = "activation.condition.public_query"
 ACTIVATION_PUBLIC_STATE_CAPABILITY='activation.condition.fixed_public_state'
 CLASS_LEVEL_ACTIVATION_CAPABILITY = "permanent.class.fixed_lifecycle"
+PUBLIC_ACTIVATION_CAPABILITY = "activation.permission.public_battlefield"
+PUBLIC_ACTIVATION_FIELD = "public_activation"
 _BASIC_LAND_SUBTYPES = frozenset(
     {"plains", "island", "swamp", "mountain", "forest"}
 )
+
+
+class PublicActivationTiming(str, Enum):
+    PRIORITY = "priority"
+    SORCERY = "sorcery"
+
+
+def public_activation_descriptor(timing: PublicActivationTiming) -> dict[str, Any]:
+    return {"schema_version": 1, "timing": timing.value}
+
+
+def public_activation_program_timing(program: Any) -> PublicActivationTiming | None:
+    cost = getattr(program, "cost_schema", None)
+    if not isinstance(cost, Mapping) or PUBLIC_ACTIVATION_FIELD not in cost:
+        return None
+    descriptor = cost[PUBLIC_ACTIVATION_FIELD]
+    targets = getattr(program, "target_schema", None)
+    has_result = getattr(program, "effects", ()) or (isinstance(targets, Mapping) and targets.get("modes"))
+    if (
+        getattr(program, "event", None) != "activate"
+        or getattr(program, "active_zone", None) != "battlefield"
+        or not has_result
+        or not isinstance(descriptor, Mapping)
+        or set(descriptor) != {"schema_version", "timing"}
+        or type(descriptor["schema_version"]) is not int
+        or descriptor["schema_version"] != 1
+        or type(descriptor["timing"]) is not str
+    ):
+        raise ValueError("Public activation requires a versioned battlefield activation permission")
+    return PublicActivationTiming(descriptor["timing"])
 
 
 class ActivationConditionKind(str, Enum):

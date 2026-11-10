@@ -637,6 +637,11 @@ def _validate_priority_response(
         raise ReplacementEffectError(
             "Mana-payment special-action response is malformed"
         )
+    if action == "unlock_room" and any(
+        type(response.get(field)) is not str or not response[field]
+        for field in ("card", "door", "room_incarnation")
+    ):
+        raise ReplacementEffectError("Mana-payment Room unlock response is malformed")
 
 
 def _validate_replacement_journal(
@@ -1019,6 +1024,7 @@ def _decode_mana_continuation(
             "turn_face_up",
             "suspend",
             "stage_cast_lifecycle",
+            "unlock_room",
         }
         or not isinstance(response, Mapping)
         or not isinstance(frame, Mapping)
@@ -1244,6 +1250,8 @@ def _decode_semantic_intent_continuation(
             "incubate",
             "discover_cleanup",
             "discover_cast",
+            "targeted_graveyard_cast",
+            "exile_graveyard_copies",
             "life_change",
             "life_loss_batch",
             "library_selection",

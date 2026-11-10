@@ -140,6 +140,55 @@ def focused_database(directory: str) -> CardDatabase:
 
 
 class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
+    def test_public_second_draw_scopes_bind_the_committed_event_and_graveyard_owner(self):
+        from dataclasses import replace
+        from types import SimpleNamespace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.compiler.program_generation import register_generated_programs
+        from quorune.semantics import SemanticRegistry
+        from test_bound_effect_programs import record
+
+        cap = "trigger.event.normalized_card_draw"
+        cases = (
+            ("Whenever an opponent draws their second card each turn, draw a card.",
+             "battlefield", {"field": "player", "op": "ne", "value": "$source.controller"}),
+            ("Whenever a player draws their second card each turn, draw a card.",
+             "battlefield", {"field": "draw_ordinal", "op": "eq", "value": 2}),
+            ("Whenever an opponent draws their second card each turn, you may return this card from your graveyard to your hand.",
+             "graveyard", {"field": "player", "op": "ne", "value": "$source.owner"}),
+        )
+        registry = self.capabilities
+        database = SimpleNamespace(rulings=lambda _record: ())
+        options = dict(capability_registry=registry, capability_profile="commander_review")
+        for text, zone, condition in cases:
+            with self.subTest(scope=condition):
+                card = record(text, "Creature — Human Rogue")
+                ir = compile_oracle_card(card, **options)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+                self.assertEqual(("card.second_draw", zone, condition), (node.event, node.active_zone, node.event_condition))
+                self.assertIn(cap, node.capability_dependencies)
+
+                semantics = SemanticRegistry()
+                register_generated_programs(database, semantics, [card], **options, promote_exact_trigger_programs=True)
+                program, = (p for p in semantics.programs_for_oracle(card.oracle_id) if p.event == "card.second_draw")
+                self.assertEqual("trusted", program.trust_level)
+                deps = tuple(value for value in program.capability_dependencies if value != cap)
+                withdrawn = replace(program, coverage=[], capability_dependencies=deps,
+                    capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+                bound = bind_semantic_program_runtime(withdrawn, capability_registry=registry, profile="commander_review")
+                self.assertFalse(bound["strict"])
+                self.assertIn(f"capability:undeclared_runtime_dependency:{cap}", bound["blockers"])
+
+        own = compile_oracle_card(record("Whenever you draw your second card each turn, draw a card.", "Creature — Human"),
+                                  **options)
+        self.assertEqual("exact", own.status, own.material_residuals)
+        self.assertEqual({"field": "player", "op": "eq", "value": "$source.controller"},
+                         own.faces[0].nodes[0].event_condition)
+        unsupported = record(cases[0][0].replace("second", "third"), "Creature — Human")
+        self.assertNotEqual("exact", compile_oracle_card(unsupported, **options).status)
+
     def test_anywhere_graveyard_subscription_withdrawal_omission_and_open_grammar_fail_closed(self):
         from test_bound_effect_programs import record
         from quorune.rules.capabilities import CapabilityRegistry
@@ -2922,6 +2971,11 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "creature.attacks",
             ),
             (
+                "Whenever equipped creature attacks alone, you may draw a card.",
+                "Artifact — Equipment",
+                "creature.attacks",
+            ),
+            (
                 "When enchanted creature dies, you gain 2 life.",
                 "Enchantment — Aura",
                 "creature.dies",
@@ -3284,6 +3338,12 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "Creature — Human",
                 ("creature.attacks", "creature.blocks"),
             ),
+            (
+                "Whenever an enchantment you control enters and whenever you fully "
+                "unlock a Room, draw a card.",
+                "Creature — Fixture",
+                ("permanent.enter", "room.fully_unlocked"),
+            ),
         )
         for text, type_line, expected_events in cases:
             with self.subTest(text=text):
@@ -3330,8 +3390,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         cases = (
             "Whenever your commander enters or attacks, draw a card.",
             "When you cycle this card and when this creature dies, draw a card.",
-            "Whenever an enchantment you control enters and whenever you fully "
-            "unlock a Room, draw a card.",
+            "Whenever an enchantment you control enters and whenever an opponent "
+            "fully unlocks a Room, draw a card.",
             "When this creature enters or the creature it haunts dies, draw a card.",
             "Whenever another creature you control with an unrepresented quality enters or dies, draw a card.",
             "Whenever this creature enters or becomes renowned, draw a card.",
@@ -3571,7 +3631,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         cases = (
             "Whenever an opponent discards one or more cards, you may draw a card.",
             "Whenever you sacrifice a green creature, you may gain 2 life.",
-            "Whenever equipped creature attacks alone, you may draw a card.",
+            "Whenever equipped creature attacks alone with power 4 or greater, "
+            "you may draw a card.",
             "Whenever enchanted permanent dies, you may gain 2 life.",
             "Whenever equipped creature deals damage to each opponent simultaneously, you "
             "may draw a card.",

@@ -15,6 +15,7 @@ from ..rules.detain import (
     DIRECT_PROHIBITION_OPERATION, DIRECT_PROHIBITION_RULES, validate_detain_instruction,
     validate_direct_action_prohibition,
 )
+from ..saddle import SADDLE_CAPABILITY, SADDLE_OPERATION
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,6 +42,8 @@ class DomainEffectHandler:
         if self.operation=='turn_face_up':
             from ..face_up_effect_model import FACE_UP_EFFECT_RULES
             return FACE_UP_EFFECT_RULES
+        if self.operation == SADDLE_OPERATION:
+            return ("400.7", "514.2", "702.171b")
         return self.contract.rule_references
 
     def lower(
@@ -69,6 +72,16 @@ class DomainEffectHandler:
             except (ValueError,TypeError,KeyError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
             return IntentPlan(operation=operation,handler_id=self.handler_id,intents=(intent,))
+        if operation == 'resolve_fixed_object_action' and effect.get('schema_version') == 3:
+            from ..rules.reanimation_followup import linked_departure_intent
+
+            if context.source is None:
+                raise SemanticNodeError('Delayed departure requires its stack source')
+            try:
+                intent = linked_departure_intent(effect, actor=context.actor, reason=context.default_reason)
+            except (ValueError, TypeError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(operation=operation, handler_id=self.handler_id, intents=(intent,))
         reason = str(effect.get("reason") or context.default_reason)
         if not reason:
             raise SemanticNodeError("A domain effect requires a reason")
@@ -76,6 +89,10 @@ class DomainEffectHandler:
             raise SemanticNodeError(
                 "Semantic programs cannot supply authoritative runtime source context"
             )
+        if operation == SADDLE_OPERATION:
+            ref = effect.get("card")
+            if set(effect) - {"op", "card", "reason"} or type(ref) is not str or not ref:
+                raise SemanticNodeError("Saddle requires a closed bound source")
         runtime_effect = dict(effect)
         if operation in {'schedule_fixed_object_action','resolve_fixed_object_action'}:
             from ..delayed_object_model import validate_delayed_object_instruction
@@ -135,6 +152,7 @@ def _domain_capabilities(operation):
         from ..face_up_effect_model import FACE_UP_EFFECT_CAPABILITY
         return (FACE_UP_EFFECT_CAPABILITY,)
     if operation==BLOCKING_REQUIREMENT_OPERATION:return (BLOCKING_REQUIREMENT_CAPABILITY,)
+    if operation == SADDLE_OPERATION: return (SADDLE_CAPABILITY,)
     if operation in {LINKED_EXILE_RETURN_OPERATION,LINKED_RETURN_OPERATION}:return (LINKED_EXILE_RETURN_CAPABILITY,)
     return ()
 

@@ -1287,6 +1287,7 @@ def stack_target_schema(
     categories: Sequence[str],
     types_any: Sequence[str] = (),
     types_none: Sequence[str] = (),
+    subtypes_none: Sequence[str] = (),
     colors_any: Sequence[str] = (),
     predicate: str | None = None,
     colorless: bool | None = None,
@@ -1298,12 +1299,14 @@ def stack_target_schema(
     )
     any_values = _closed_values(types_any, field="types_any")
     none_values = _closed_values(types_none, field="types_none")
+    excluded_subtypes = _closed_values(subtypes_none, field="subtypes_none")
     color_values = _closed_values(colors_any, field="colors_any")
     predicates = sum(
         bool(value)
         for value in (
             any_values,
             none_values,
+            excluded_subtypes,
             color_values,
             predicate,
             colorless,
@@ -1321,6 +1324,10 @@ def stack_target_schema(
         schema["types_any"] = any_values
     elif none_values:
         schema["types_none"] = none_values
+    elif excluded_subtypes:
+        if category_values != ["spell"]:
+            raise ValueError("Direct stack subtype exclusions require a spell target")
+        schema["subtypes_none"] = excluded_subtypes
     elif color_values:
         schema["colors_any"] = color_values
     elif predicate is not None:

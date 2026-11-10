@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..rules.graveyard_card_targets import GraveyardReturnScope, PUBLIC_GRAVEYARD_RETURN_VERSION
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
@@ -89,6 +90,12 @@ class ReturnGraveyardCardToOwnerHandHandler:
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
             return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(intent,))
+        scope = GraveyardReturnScope.OWN
+        if effect.get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION:
+            if type(effect["schema_version"]) is not int:
+                raise SemanticNodeError("Public graveyard return version must be an integer")
+            scope = GraveyardReturnScope.PUBLIC
+            effect = {key: value for key, value in effect.items() if key != "schema_version"}
         fields = validate_direct_target_effect(
             effect,
             context,
@@ -101,7 +108,7 @@ class ReturnGraveyardCardToOwnerHandHandler:
         try:
             intent=ReturnGraveyardCardToOwnerHandIntent(actor=context.actor,object_ref=fields.object_ref,
                 reason=fields.reason,replacement_selections=fields.replacement_selections,
-                target_snapshot=effect.get('target_snapshot'))
+                target_snapshot=effect.get('target_snapshot'), scope=scope)
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
         return IntentPlan(

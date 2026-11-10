@@ -5,6 +5,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
+from .face_queries import build_cast_cost_options
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
 from .additional_zone_costs import select_zone_change_additional_cost
 from ...casting_payment_keywords import (
@@ -374,6 +375,27 @@ def _additional_x_with_free_mana(host, seat, card, program, *, suppress_source_c
     return not printed_x
 
 
+def _printed_or_fixed_cast_base(host, seat, card, program, *, x_value, hint, cast_without_mana,
+                                alternative_base, suppress_source_costs, resolving_exile_authority):
+    if alternative_base is None and not cast_without_mana:
+        if resolving_exile_authority:
+            from .face_queries import current_printed_cast_mana_cost
+            record = host.card_record(card)
+            if record is None or not current_printed_cast_mana_cost(host, card, record).strip():
+                return [], False
+        return host._compiled_printed_cost_options(seat, card, x_value=int(x_value) if x_value is not None else None,
+                                                   hint=hint)
+    if alternative_base is not None and cast_without_mana:
+        return None
+    if x_value is not None and int(x_value) != 0 and not _additional_x_with_free_mana(
+            host, seat, card, program, suppress_source_costs=suppress_source_costs):
+        return None
+    if alternative_base is not None:
+        return [copy.deepcopy(dict(alternative_base))], False
+    return [{"id": "without_mana_cost", "kind": "alternate", "label": "Cast without paying its mana cost",
+             "requirements": host._mana_vector({})}], False
+
+
 def _initial_options(
     host: CastCostHost,
     seat: str,
@@ -386,6 +408,7 @@ def _initial_options(
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
     cast_type_line: str | None = None,
+    resolving_exile_authority: bool = False,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -397,34 +420,15 @@ def _initial_options(
     intrinsic_disturb = (disturb_back_cast_permission(host,seat,card)
         and not (force_without_mana_cost or suppress_source_costs or alternative_base is not None))
     cast_without_mana = force_without_mana_cost or bool(
-        temporary_permission and temporary_permission.get("without_mana_cost") and not intrinsic_disturb
+        temporary_permission and temporary_permission.get("without_mana_cost")
+        and not intrinsic_disturb and not resolving_exile_authority
     )
-    if alternative_base is not None:
-        if cast_without_mana or (x_value is not None and int(x_value) != 0
-                and not _additional_x_with_free_mana(host, seat, card, program, suppress_source_costs=suppress_source_costs)):
-            return None
-        printed = [copy.deepcopy(dict(alternative_base))]
-        has_x = False
-    elif cast_without_mana:
-        if x_value is not None and int(x_value) != 0 and not _additional_x_with_free_mana(
-                host, seat, card, program, suppress_source_costs=suppress_source_costs):
-            return None
-        printed = [
-            {
-                "id": "without_mana_cost",
-                "kind": "alternate",
-                "label": "Cast without paying its mana cost",
-                "requirements": host._mana_vector({}),
-            }
-        ]
-        has_x = False
-    else:
-        printed, has_x = host._compiled_printed_cost_options(
-            seat,
-            card,
-            x_value=int(x_value) if x_value is not None else None,
-            hint=hint,
-        )
+    printed_base = _printed_or_fixed_cast_base(host, seat, card, program, x_value=x_value, hint=hint,
+        cast_without_mana=cast_without_mana, alternative_base=alternative_base,
+        suppress_source_costs=suppress_source_costs, resolving_exile_authority=resolving_exile_authority)
+    if printed_base is None:
+        return None
+    printed, has_x = printed_base
     resolved = _cast_schema_and_mechanics(
         host,
         seat,
@@ -458,6 +462,7 @@ def _initial_options(
         force_without_mana_cost=force_without_mana_cost,
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs or alternative_base is not None,
+        resolving_exile_authority=resolving_exile_authority,
     )
     base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
         enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
@@ -1106,12 +1111,13 @@ def _maximum_affordable_x_with_mechanics(
     mechanics: Sequence[Mapping[str, Any]],
     *,
     spend_context: Any,
+    minimum: int = 0,
     limit: int = 100,
     reserved_cards: Sequence[Any] = (),
     targeted_cost: Mapping[str, Any] | None = None,
 ) -> int:
     maximum = -1
-    for value in range(limit + 1):
+    for value in range(minimum, limit + 1):
         printed, _ = host._compiled_printed_cost_options(
             seat,
             card,
@@ -1404,6 +1410,7 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     elif x_value_policy is not None:
         return None
     elif has_x:
+        minimum_x = option.get('library_top_minimum_x', 0)
         maximum = _maximum_affordable_x_with_mechanics(
             host,
             seat,
@@ -1411,14 +1418,16 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             program,
             mechanics,
             spend_context=spend_context,
+            minimum=minimum_x,
             reserved_cards=reserved_cards,
             targeted_cost=target_cost_for_x_preview(option),
         )
         from .target_cardinality import target_count_preview_maximum
         maximum = target_count_preview_maximum(option, maximum)
-        if maximum < 0:
+        if maximum < minimum_x:
             return None
-        choice_schema["x"] = {"type": "integer", "minimum": 0, "maximum": maximum}
+        choice_schema["x"] = {"type": "integer", "minimum": minimum_x, "maximum": maximum,
+            **({'default': minimum_x} if minimum_x else {})}
     if not _apply_additional_costs(
         host,
         seat,
@@ -1464,24 +1473,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     return CastCostOption.from_dict(option)
 
 
-def build_cast_cost_options(
-    host: CastCostHost,
-    seat: str,
-    card: Any,
-    program: Any,
-    *,
-    response: Mapping[str, Any] | None = None,
-    hint: bool,
-    force_without_mana_cost: bool = False,
-    alternative_base: Mapping[str, Any] | None = None,
-    cast_type_line: str | None = None,
-    suppress_source_costs: bool = False,
-) -> tuple[CastCostOption, ...]:
-    """Return immutable, currently payable server-authoritative cost choices."""
-
-    from .source_placement import casting_affordability_host
-    host=casting_affordability_host(host,card)
-    submission = dict(response or {})
+def _cast_cost_options_for_submission(host, seat, card, program, submission, *, hint, force_without_mana_cost,
+        alternative_base, cast_type_line, suppress_source_costs, resolving_exile_authority,
+        minimum_library_x, source_grant_only=None):
     initial = _initial_options(
         host,
         seat,
@@ -1493,6 +1487,7 @@ def build_cast_cost_options(
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
         cast_type_line=cast_type_line,
+        resolving_exile_authority=resolving_exile_authority,
     )
     if initial is None:
         return ()
@@ -1503,16 +1498,28 @@ def build_cast_cost_options(
     expanded=optional_life_cost_variants(host,seat,card,expanded,cast_type_line=cast_type_line)
     target_mana_x = has_x
     target_schema = getattr(program, "target_schema", None)
-    if not has_x and isinstance(target_schema, Mapping) and "count_parameter" in target_schema:
+    from ...announced_damage import bind_cast_allocation_option, variable_damage_allocation
+    allocation = variable_damage_allocation(target_schema)
+    if not has_x and isinstance(target_schema, Mapping) and (
+            "count_parameter" in target_schema or allocation is not None and allocation.quantity is None):
         _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
         if target_mana_x:
             expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
     declared_cost_x=bool(announced_additional_cost_dependencies(getattr(program,'cost_schema',None))) if not target_mana_x else False
     result = []
+    from .face_queries import bind_library_top_cost_option
     for option in expanded:
+        option = bind_library_top_cost_option(option, submission, has_x=has_x, minimum=minimum_library_x,
+            source_grant_only=source_grant_only)
+        if option is None:
+            continue
         from .target_cardinality import bind_target_count_option
         option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x,
             target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
+        if option is None:
+            continue
+        option = bind_cast_allocation_option(host, seat, card, target_schema, option, submission,
+                                             hint=hint, has_x=target_mana_x or declared_cost_x)
         if option is None:
             continue
         option_cast_type_line = (
@@ -1520,6 +1527,13 @@ def build_cast_cost_options(
             if option.get("cast_type_line")
             else cast_type_line
         )
+        from ..splice import SPLICE_INTERNAL_SELECTION, SPLICE_SELECTION
+        if SPLICE_SELECTION in submission or SPLICE_INTERNAL_SELECTION in submission:
+            from .splice_costs import apply_splice_declaration
+            option = apply_splice_declaration(host, seat, card, program, option, mandatory, submission,
+                type_line=option_cast_type_line, hint=hint)
+            if option is None:
+                continue
         spend_context = host._spell_mana_spend_context(
             str(
                 option_cast_type_line

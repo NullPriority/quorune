@@ -7,7 +7,7 @@ from typing import Iterable
 
 from .applicability import canonical_effects, replacement_choice
 from .model import ReplaceableEvent, ReplacementClass, ReplacementEffect
-from .operations import AddAffectedObjectCounter, ApplyEntryCounterReplacement
+from .operations import AddAffectedObjectCounter, AmplifyEntryOperation, ApplyEntryCounterReplacement
 
 
 def entry_counter_order_effects(
@@ -22,6 +22,12 @@ def entry_counter_order_effects(
         return values
     root_choice = replacement_choice(event, values)
     if root_choice is not None and root_choice.replacement_class < ReplacementClass.OTHER:
+        return values
+    if root_choice is not None and any(
+        effect.effect_id in root_choice.options
+        and any(isinstance(operation, AmplifyEntryOperation) for operation in effect.operations)
+        for effect in values
+    ):
         return values
     adapted = {effect.effect_id: effect for effect in values}
     candidates=tuple(child for child in event.children if child.kind=='counter.place'

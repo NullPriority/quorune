@@ -5,7 +5,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .abilities import ActivatedAbility
 from .errors import GameRuleError
 from .haste import summoning_sickness_prohibits_tap_or_untap_cost
-from .mana import ManaMode
+from .mana import ManaMode, ManaStepInput
 from .mana_ability_runtime import (
     mana_output_for_ability,
     payable_mana_modes,
@@ -17,9 +17,11 @@ from .mana_undo import (
     ReversibleManaActivation,
 )
 from .mana_mode_effects import apply_mana_mode_effects
-from .util import normalize_mana_bundle
+from .util import normalize_mana_bundle, pay_mana_from_pool
 from .tap_state import set_permanent_tapped
 from .mana_source_discovery import mana_plan_abilities
+from .triggered_mana import TapManaSource, commit_triggered_mana, tap_mana_source, triggered_mana_base_response
+from .triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
 
 
 class ManaActivationHost(Protocol):
@@ -75,6 +77,10 @@ class ManaActivationHost(Protocol):
         self, restriction: str, spend_context: str | None
     ) -> bool: ...
 
+    def _spendable_mana_pool(self, seat: str, spend_context: str | None) -> dict[str, int]: ...
+
+    def _apply_mana_spend(self, seat: str, spent: Mapping[str, int], spend_context: str | None) -> None: ...
+
 
 def complete_mana_activation(
     host: ManaActivationHost,
@@ -89,10 +95,11 @@ def complete_mana_activation(
     source_was_snow: bool,
     source_information=None,
     mana_payment=None,
+    trigger_source: TapManaSource | None = None,
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
-    bundle = mana_output_for_ability(host, seat, source, ability, response,
+    bundle = mana_output_for_ability(host, seat, source, ability, triggered_mana_base_response(response),
         source_information=source_information)
     restriction = ability.mana_spend_restriction
     host._add_mana_to_pool(
@@ -152,8 +159,12 @@ def complete_mana_activation(
         changed_objects=[source.object_id, *paid_objects],
         changed_players=[seat],
     )
+    selection = response.get(TRIGGERED_MANA_OPTION_FIELD)
+    triggered = commit_triggered_mana(host, seat, trigger_source, bundle,
+        **({"selection": selection} if selection is not None else {}))
     reversible = bool(
         not host.state.pending_trigger_batches
+        and not triggered
         and ability.tap_source
         and ability.activation_limit is None
         and not sum(ability.mana.values())
@@ -244,12 +255,15 @@ def _selected_plan_mode(
     allow_conditional: bool,
     spend_context: str | None,
     tap_source: bool,
+    input_payment: ManaStepInput | None = None,
 ) -> tuple[ManaMode, str | None]:
+    price_key = input_payment.key if input_payment else None
     mode = next(
         (
             value
             for value in modes
             if normalize_mana_bundle(value.bundle) == bundle and value.tap_source==tap_source
+            and (value.price.key if value.price else None) == price_key
         ),
         None,
     )
@@ -286,6 +300,20 @@ def _selected_plan_mode(
     return mode, compiled
 
 
+def _commit_plan_input(host, seat, mode, input_payment):
+    if mode.price is None:
+        return
+    price = mode.price
+    try:
+        _, spent = pay_mana_from_pool(
+            host._spendable_mana_pool(seat, price.spend_context), price.option.requirements,
+            payment=input_payment.payment, spending_policy=price.spending_policy,
+        )
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._apply_mana_spend(seat, spent, price.spend_context)
+
+
 def _commit_plan_mode(
     host: ManaActivationHost,
     seat: str,
@@ -297,7 +325,9 @@ def _commit_plan_mode(
     *,
     payment_id: str | None,
     replacement_selections_by_event: Mapping[str, Any] | None,
+    triggered_mana_option: str | None = None,
 ) -> None:
+    trigger_source = tap_mana_source(host, card, tap_source=mode.tap_source)
     cost_effects = tuple(
         effect for effect in mode.side_effects
         if effect.get("op") == "sacrifice_source"
@@ -340,6 +370,8 @@ def _commit_plan_mode(
         changed_objects=[card.object_id],
         changed_players=[seat],
     )
+    commit_triggered_mana(host, seat, trigger_source, bundle,
+        **({"selection": triggered_mana_option} if triggered_mana_option is not None else {}))
 
 
 def complete_mana_plan_activations(
@@ -387,6 +419,10 @@ def complete_mana_plan_activations(
             from .mana import mana_modes_preserving_source
 
             modes = mana_modes_preserving_source(modes)
+        try:
+            input_payment = ManaStepInput.from_dict(activation["input"]) if "input" in activation else None
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
         mode, restriction = _selected_plan_mode(
             host,
             seat,
@@ -396,7 +432,9 @@ def complete_mana_plan_activations(
             allow_conditional=bool(activation.get("allow_conditional")),
             spend_context=spend_context,
             tap_source=tap_source,
+            input_payment=input_payment,
         )
+        _commit_plan_input(host, seat, mode, input_payment)
         _commit_plan_mode(
             host,
             seat,
@@ -407,6 +445,7 @@ def complete_mana_plan_activations(
             "snow" in supertypes,
             payment_id=payment_id,
             replacement_selections_by_event=replacement_selections_by_event,
+            triggered_mana_option=activation.get(TRIGGERED_MANA_OPTION_FIELD),
         )
 
 

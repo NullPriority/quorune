@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
 from damage_replacement_support import quantity_descriptor
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
@@ -21,8 +22,9 @@ from quorune.creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
+    OCCURRENCE_POWER_DAMAGE_CONTEXT,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.damage_modifier_state import DamagePreventionScope
 from quorune.damage_prevention import (
     DamageModifierDuration,
@@ -40,7 +42,7 @@ from quorune.record import (
     checkpoint_envelope,
     replay_record,
 )
-from quorune.rules.capabilities import CapabilityRegistry
+from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.rules.creature_power_damage_capability_shapes import (
     fixed_creature_power_damage_node_capabilities,
 )
@@ -228,6 +230,31 @@ class FixedCreaturePowerDamageCompilerTests(unittest.TestCase):
                     node.capability_closure,
                 )
 
+    def test_occurrence_power_damage_requires_its_sealed_source_and_single_target(self):
+        text = "Whenever another creature you control dies, it deals damage equal to its power to target player or planeswalker."
+        ir = self.compile(text, type_line="Creature — Spirit")
+        self.assertEqual("exact", ir.status)
+        node, = [node for node in ir.faces[0].nodes if node.kind == "triggered_ability"]
+        effect, = node.effects
+        self.assertEqual(3, effect["schema_version"])
+        self.assertEqual("$context.card", effect["source"])
+        self.assertEqual(f"$context.{OCCURRENCE_POWER_DAMAGE_CONTEXT}", effect["source_lki"])
+        self.assertEqual("player_or_planeswalker", node.target_schema["predicate"])
+        mechanics = (CREATURE_POWER_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage")
+        for fields in ({"source": "$source"}, {"source_lki": None}, {"target": "$target.1"}, {"schema_version": 2}):
+            self.assertEqual((), fixed_creature_power_damage_node_capabilities(
+                effects=({**effect, **fields},), target_schema=node.target_schema, mechanic_ids=mechanics,
+            ))
+        foreign_chooser = (
+            "Whenever a creature enters, that creature's controller may have it deal damage "
+            "equal to its power to any target of their choice."
+        )
+        self.assertNotEqual("exact", self.compile(foreign_chooser, type_line="Enchantment").status)
+        self.assertEqual("exact", self.compile(
+            "Whenever another creature enters, it deals damage equal to its power to any target.",
+            type_line="Enchantment",
+        ).status)
+
     def test_compiler_and_capability_descriptor_matrix_is_consistent(self):
         cases = (
             (
@@ -304,7 +331,7 @@ class FixedCreaturePowerDamageCompilerTests(unittest.TestCase):
             "Target creature you control deals damage equal to three times its power to any target.",
             "Target creature you control deals damage equal to its power divided as you choose among any number of targets.",
             "It deals damage equal to its power to any target.",
-            "Whenever another creature enters, it deals damage equal to its power to any target.",
+            "Whenever another creature enters, it deals damage equal to its power divided as you choose among any number of targets.",
             "Return target creature card from your graveyard to the battlefield. When you do, it fights target creature.",
         )
         for text in unsupported:
@@ -1179,3 +1206,214 @@ class FixedCreaturePowerDamageRuntimeTests(unittest.TestCase):
             loaded.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+class OccurrencePowerDamageNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "occurrence-power.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / "bound-effect-program-cards.json", fixtures / "prepared-power-damage-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Occurrence power", [DeckEntry("Generic Bound Commander", 1, "commander"),
+                                 DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"],
+        )
+
+    def cast_entrant(self, session, creature):
+        self.cast(session, "A", creature)
+        self.resolve_top(session)
+        self.until(session, lambda game: game.state.pending_decision.kind == "semantic.target")
+        self.assertEqual(["pilot:A"], session.pending_principals())
+
+    def test_warstorm_uses_later_power_and_the_original_damage_source_after_blink(self):
+        for blink in (False, True):
+            with self.subTest(blink=blink):
+                session = self.session(120822001 + blink)
+                watcher = self.add(session.engine, "Warstorm Surge")
+                creature = self.add(session.engine, "Child of Night", zone="hand")
+                growth = self.add(session.engine, "Giant Growth", zone="hand")
+                response = self.add(session.engine, "Cloudshift", zone="hand") if blink else None
+                self.assert_closed(session, watcher)
+                if response is not None:
+                    self.assert_closed(session, response)
+                self.prepare(session, mana={"C": 1, "B": 1, "G": 1, "W": 2})
+                self.checkpoint(session)
+                life = {seat: session.state.players[seat].life for seat in "ABC"}
+                self.cast_entrant(session, creature)
+                original = session.state.cards[creature.object_id].logical_object_id
+                self.target(session, "A", ["B"])
+                trigger = session.state.stack[-1]
+                self.assertEqual(watcher.object_id, trigger.source_object_id)
+                self.assertEqual(2, trigger.context[OCCURRENCE_POWER_DAMAGE_CONTEXT]["power"])
+                self.cast(session, "A", growth, [creature.ref])
+                self.resolve_top(session)
+                self.assertEqual(5, session.engine._numeric_stat(creature.object_id, "power"))
+                if response is not None:
+                    self.cast(session, "A", response, [creature.ref])
+                    self.resolve_top(session)
+                    self.assertNotEqual(original, session.state.cards[creature.object_id].logical_object_id)
+                    old = next(item for item in session.state.stack if item.ref == trigger.ref)
+                    snapshot = old.context[OCCURRENCE_POWER_DAMAGE_CONTEXT]
+                    self.assertEqual(5, snapshot["power"])
+                    self.assertEqual(original, snapshot["source"]["logical_object_id"])
+                    self.target(session, "A", ["C"])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(life["B"] - 5, session.state.players["B"].life)
+                self.assertEqual(life["C"] - (2 if blink else 0), session.state.players["C"].life)
+                self.assertEqual(life["A"] + (7 if blink else 5), session.state.players["A"].life)
+                self.replay(session, load=True)
+
+    def test_warstorm_target_protection_and_damage_protection_use_distinct_sources(self):
+        session = self.session(120822003)
+        self.add(session.engine, "Warstorm Surge")
+        creature = self.add(session.engine, "Child of Night", zone="hand")
+        white = self.add(session.engine, "White Knight", seat="B")
+        silver = self.add(session.engine, "Silver Knight", seat="B")
+        for knight in (white, silver):
+            self.assert_closed(session, knight)
+        self.prepare(session, mana={"C": 1, "B": 1})
+        self.checkpoint(session)
+        before_life = session.state.players["A"].life
+        self.cast_entrant(session, creature)
+        decision = session.packet("pilot:A", full=True)["decision"]
+        action = next(action for action in decision["legal_actions"] if action["id"] == "choose")
+        legal = action["target_schema"]["legal_refs"]
+        self.assertIn(white.ref, legal)
+        self.assertNotIn(silver.ref, legal)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": "choose", "targets": [silver.ref]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.target(session, "A", [white.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[white.object_id]
+        self.assertEqual(("battlefield", 0), (current.zone, current.marked_damage))
+        self.assertEqual(before_life, session.state.players["A"].life)
+        self.replay(session, load=True)
+
+    def test_stalking_vengeance_uses_the_other_creatures_predeath_snapshot(self):
+        session = self.session(120822004)
+        watcher = self.add(session.engine, "Stalking Vengeance")
+        creature = self.add(session.engine, "Child of Night")
+        growth = self.add(session.engine, "Giant Growth", zone="hand")
+        wrath = self.add(session.engine, "Wrath of God", zone="hand")
+        self.assert_closed(session, watcher)
+        self.prepare(session, mana={"C": 2, "W": 2, "G": 1})
+        self.checkpoint(session)
+        original = creature.logical_object_id
+        a_life, b_life = (session.state.players[seat].life for seat in "AB")
+        self.cast(session, "A", growth, [creature.ref])
+        self.resolve_top(session)
+        self.cast(session, "A", wrath)
+        self.resolve_top(session)
+        self.target(session, "A", ["B"])
+        trigger, = [item for item in session.state.stack if item.source_object_id == watcher.object_id]
+        snapshot = trigger.context[OCCURRENCE_POWER_DAMAGE_CONTEXT]
+        self.assertEqual((5, original), (snapshot["power"], snapshot["source"]["logical_object_id"]))
+        self.assertEqual("graveyard", session.state.cards[watcher.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(a_life + 5, session.state.players["A"].life)
+        self.assertEqual(b_life - 5, session.state.players["B"].life)
+        self.replay(session, load=True)
+
+    def test_warstorm_uses_public_face_down_power_without_disclosing_identity(self):
+        session = self.session(120822009)
+        self.add(session.engine, "Warstorm Surge")
+        card = self.add(session.engine, "Lumithread Field", zone="hand", ref="morph-entrant")
+        self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(action for action in actions if action["id"] == f"cast-morph:{card.ref}")
+        result = session.act("pilot:A", {"action_id": offer["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        self.assertTrue(session.state.cards[card.object_id].face_down)
+        self.target(session, "A", ["B"])
+        snapshot = session.state.stack[-1].context[OCCURRENCE_POWER_DAMAGE_CONTEXT]
+        self.assertEqual(2, snapshot["power"])
+        self.assertIsNone(snapshot["source"].get("oracle_id"))
+        before = session.state.players["B"].life
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before - 2, session.state.players["B"].life)
+        for seat in "BCD":
+            packet = json.dumps(session.packet(f"pilot:{seat}", full=True))
+            self.assertNotIn(card.printed_name, packet)
+            self.assertNotIn(card.oracle_id, packet)
+        self.replay(session, load=True)
+
+    def test_flayer_checks_graveyard_owner_and_uses_the_new_creature_controller(self):
+        session = self.session(120822005)
+        watcher = self.add(session.engine, "Flayer of the Hatebound")
+        creature = self.add(session.engine, "Child of Night", zone="graveyard", ref="own-graveyard")
+        other = self.add(session.engine, "Child of Night", seat="B", zone="graveyard", ref="foreign-graveyard")
+        spell = self.add(session.engine, "Rise of the Dark Realms", seat="B", zone="hand")
+        for card in (watcher, spell):
+            self.assert_closed(session, card)
+        self.prepare(session, actor="B", active="B", mana={"C": 7, "B": 2})
+        self.checkpoint(session)
+        b_life, c_life = (session.state.players[seat].life for seat in "BC")
+        self.cast(session, "B", spell)
+        self.resolve_top(session)
+        self.target(session, "A", ["C"])
+        trigger, = [item for item in session.state.stack if item.source_object_id == watcher.object_id]
+        snapshot = trigger.context[OCCURRENCE_POWER_DAMAGE_CONTEXT]["source"]
+        self.assertEqual((creature.object_id, "B"), (snapshot["object_id"], snapshot["controller"]))
+        self.assertIsNone(self.resolve(session))
+        for entrant in (creature, other):
+            self.assertEqual("B", session.state.cards[entrant.object_id].controller)
+        self.assertEqual(b_life + 2, session.state.players["B"].life)
+        self.assertEqual(c_life - 2, session.state.players["C"].life)
+        self.replay(session, load=True)
+
+    def test_pyrogoyf_reads_updated_graveyard_types_and_excludes_other_subtypes(self):
+        session = self.session(120822006)
+        watcher = self.add(session.engine, "Pyrogoyf", zone="hand")
+        other = self.add(session.engine, "Child of Night", zone="hand")
+        growth = self.add(session.engine, "Giant Growth", zone="hand")
+        self.add(session.engine, "Generic Bound Plains", zone="graveyard", ref="land-in-graveyard")
+        self.add(session.engine, "Wrath of God", seat="B", zone="graveyard")
+        self.assert_closed(session, watcher)
+        self.prepare(session, mana={"C": 5, "R": 1, "G": 4, "B": 5})
+        self.checkpoint(session)
+        before = session.state.players["B"].life
+        self.cast_entrant(session, watcher)
+        self.assertEqual(2, session.engine._numeric_stat(watcher.object_id, "power"))
+        self.target(session, "A", ["B"])
+        self.cast(session, "A", growth, [watcher.ref])
+        self.resolve_top(session)
+        self.assertEqual(6, session.engine._numeric_stat(watcher.object_id, "power"))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before - 6, session.state.players["B"].life)
+        self.cast(session, "A", other)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before - 6, session.state.players["B"].life)
+        self.replay(session, load=True)
+
+    def test_electropotence_announces_target_before_payment(self):
+        for pay in (False, True):
+            with self.subTest(pay=pay):
+                session = self.session(120822007 + pay)
+                watcher = self.add(session.engine, "Electropotence")
+                creature = self.add(session.engine, "Child of Night", zone="hand")
+                self.assert_closed(session, watcher)
+                self.prepare(session, mana={"C": 3, "B": 1, "R": 1})
+                self.checkpoint(session)
+                a_life, b_life = (session.state.players[seat].life for seat in "AB")
+                self.cast_entrant(session, creature)
+                self.target(session, "A", ["B"])
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                self.assertEqual(["B"], session.state.stack[-1].targets)
+                self.assertEqual(b_life, session.state.players["B"].life)
+                session = self.replay(session, load=True)
+                result = session.act("pilot:A", {"action_id": "choose", "pay": pay})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(a_life + (2 if pay else 0), session.state.players["A"].life)
+                self.assertEqual(b_life - (2 if pay else 0), session.state.players["B"].life)
+                self.replay(session, load=True)

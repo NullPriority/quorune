@@ -2,6 +2,8 @@ from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..incubate_model import IncubateIntent,decode_incubate_intent_identity
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent,decode_discover_cast_identity,decode_discover_cleanup_identity
+from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyard_cast_identity
+from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
 from ..discard_result_model import DiscardWholeHandsResultIntent, decode_discard_result_identity
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
@@ -19,6 +21,7 @@ from ..affected_permanents import (
     AffectedPermanentSetSpec,
 )
 from ..entry_counter_model import EntryCounterError, EffectEntryCounter
+from ..library_order_model import LibraryArrivalOrder
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime import (
     CounterPlacementAmount,
@@ -324,6 +327,8 @@ def _simultaneous_move_intent_identity(
     }
     if intent.transition_kind is not ZoneTransitionKind.ORDINARY:
         identity["transition_kind"] = intent.transition_kind.value
+    if intent.library_order is not None:
+        identity["library_order"] = intent.library_order.to_dict()
     return "move_objects_simultaneously", identity
 
 
@@ -363,6 +368,8 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     if isinstance(intent,IncubateIntent):return 'incubate',intent.identity()
     if isinstance(intent,DiscoverCleanupIntent):return 'discover_cleanup',intent.identity()
     if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
+    if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
+    if isinstance(intent,ExileGraveyardCopiesIntent):return 'exile_graveyard_copies',intent.identity()
     if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
     if isinstance(intent, DiscardWholeHandsResultIntent):return 'discard_hand_result', intent.identity()
     if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
@@ -772,6 +779,12 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind == 'targeted_graveyard_cast':
+        try:return decode_graveyard_cast_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'exile_graveyard_copies':
+        try:return decode_exile_graveyard_copies_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind=='discover_cast':
         try:return decode_discover_cast_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -953,7 +966,7 @@ def _validate_zone_move_intent_identity(value):
 def _validate_simultaneous_move_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) not in {
+    if not isinstance(value, Mapping) or set(value) - {"library_order"} not in {
         frozenset(_SIMULTANEOUS_MOVE_FIELDS),
         frozenset(_SIMULTANEOUS_MOVE_TRANSITION_FIELDS),
     }:
@@ -972,6 +985,7 @@ def _validate_simultaneous_move_intent_identity(
             transition_kind=ZoneTransitionKind(
                 value.get("transition_kind", ZoneTransitionKind.ORDINARY.value)
             ),
+            library_order=LibraryArrivalOrder.from_dict(value["library_order"]) if "library_order" in value else None,
         )
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(
@@ -1233,6 +1247,8 @@ def with_replacement_selections(
     selections: Sequence[str | FrozenMap | Mapping[str, Any]],
 ) -> (
     DiscoverCastIntent
+    | GraveyardCastIntent
+    | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
     | IncubateIntent
     | PlaceCountersIntent
@@ -1257,6 +1273,8 @@ def with_replacement_selections(
             *DESTRUCTION_INTENT_TYPES,
             *CHAMPION_INTENT_TYPES,
             DiscoverCastIntent,
+            GraveyardCastIntent,
+            ExileGraveyardCopiesIntent,
             DiscoverCleanupIntent,
             IncubateIntent,
             EncodeCipherIntent,

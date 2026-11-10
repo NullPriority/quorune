@@ -357,6 +357,35 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
                 wrong[-1]["effects"][0]["op"] = "unrepresented_operation"
                 self.assertEqual(capability_dependencies_for_node(effects=wrong, target_schema=schema, mechanic_ids=mechanics), ())
 
+    def test_suffix_guards_one_result_and_preserves_the_complete_prefix(self):
+        leading = "Draw a card. If you have no cards in hand, you gain 3 life."
+        trailing = "Draw a card. You gain 3 life if you have no cards in hand."
+        compile_effect = lambda text: _reviewed_effect_template(text, card_name="Condition Witness")
+        expected = compile_effect(leading)
+        self.assertEqual("fixed-resolution-public-condition-v1", expected[0])
+        self.assertEqual(expected, compile_effect(trailing))
+        for text in (
+            "Draw a card, then discard a card if you control an artifact.",
+            "Destroy target creature if you control an artifact.",
+            "Draw a card if that creature died this way.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(resolution_condition_template(text, source_name="Condition Witness",
+                    compile_component=compile_effect))
+
+    def test_graveyard_count_spellings_share_the_typed_creature_card_query(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+
+        first = fixed_public_state_condition("there are four or more creature cards in your graveyard", source_name="Witness")
+        second = fixed_public_state_condition("you have four or more creature cards in your graveyard", source_name="Witness")
+        self.assertIsNotNone(first)
+        self.assertEqual(first, second)
+        self.assertEqual(4, second.amount)
+        self.assertEqual(("graveyard",), second.quantity.query.zones)
+        self.assertEqual(("creature",), second.quantity.query.types_all)
+        self.assertIs(second.quantity.query.token, False)
+        self.assertIsNone(fixed_public_state_condition("you have 0 or more creature cards in your graveyard", source_name="Witness"))
+
     def test_conditional_exclusions_are_fully_consumed(self):
         for text in (
             "Draw a card. If you control an artifact, draw X cards instead.",
@@ -931,6 +960,7 @@ class PublicAlternativeNativeTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([
             ROOT / "tests/fixtures/bound-effect-program-cards.json",
             ROOT / "tests/fixtures/resolution-public-condition-cards.json",
+            ROOT / "tests/fixtures/public-condition-surface-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -1034,6 +1064,168 @@ class PublicAlternativeNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(20, len(session.state.players["B"].zones["graveyard"]))
         self.assertEqual(hand + 2, len(session.state.players["A"].zones["hand"]))
         self.replay(session, load=True)
+
+    def test_pit_keeper_rechecks_its_graveyard_count_with_the_target_still_legal(self):
+        session = self.session(716004)
+        source = self.add(session.engine, "Pit Keeper", zone="hand")
+        target = self.add(session.engine, "Elite Vanguard", zone="graveyard")
+        removed = self.add(session.engine, "Frost Lynx", zone="graveyard")
+        self.add(session.engine, "Wandering Ones", zone="graveyard")
+        self.add(session.engine, "Ornithopter", zone="graveyard")
+        self.add(session.engine, "Island", zone="graveyard")
+        foreign = self.add(session.engine, "Young Wolf", seat="B", zone="graveyard")
+        response = self.add(session.engine, "Cremate", seat="B", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "B": 1})
+        session.state.players["B"].mana_pool["B"] = 1
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        before = authoritative_state_hash(session.state)
+        invalid = session.act("pilot:A", {"action_id": "choose", "targets": [foreign.ref]})
+        self.assertFalse(invalid.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.target(session, "A", [target.ref])
+        reduced = self.replay(session, load=True)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        accepted = session.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("hand", session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+        self.cast(reduced, "B", response, [removed.ref])
+        self.resolve_top(reduced)
+        self.assertEqual("exile", reduced.state.cards[removed.object_id].zone)
+        self.assertIsNone(self.resolve(reduced))
+        self.assertEqual("graveyard", reduced.state.cards[target.object_id].zone)
+        self.replay(reduced, load=True)
+
+    def test_oversold_cemetery_checks_the_own_upkeep_boundary(self):
+        from quorune.engine import TURN_STEPS
+
+        for fourth in (False, True):
+            with self.subTest(fourth=fourth):
+                session = self.session(716005 + int(fourth))
+                source = self.add(session.engine, "Oversold Cemetery", seat="B")
+                target = self.add(session.engine, "Elite Vanguard", seat="B", zone="graveyard")
+                self.add(session.engine, "Ornithopter", seat="B", zone="graveyard")
+                self.add(session.engine, "Frost Lynx", seat="B", zone="graveyard")
+                self.add(session.engine, "Wandering Ones" if fourth else "Island", seat="B", zone="graveyard")
+                self.add(session.engine, "Wandering Ones", zone="graveyard", ref="cemetery-foreign-creature")
+                self.assert_closed(session, source)
+                for object_id in tuple(session.state.players["A"].zones["hand"])[7:]:
+                    session.engine.move_card(object_id, "library", log=False)
+                self.prepare(session)
+                session.state.phase = "ending"
+                session.state.step = "end_step"
+                session.state.phase_index = TURN_STEPS.index(("ending", "end_step"))
+                self.checkpoint(session)
+                self.until(session, lambda game: game.state.active_player == "B" and game.state.step == "upkeep")
+                if fourth:
+                    self.target(session, "B", [target.ref])
+                    self.assertEqual("semantic.choice", self.resolve(session).kind)
+                    result = session.act("pilot:B", {"action_id": "choose", "choice": "apply"})
+                    self.assertTrue(result.ok, result.summary)
+                self.assertFalse(session.state.stack)
+                self.assertEqual("hand" if fourth else "graveyard", session.state.cards[target.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_descend_exiles_creatures_then_counts_distinct_graveyard_types(self):
+        for fourth in (False, True):
+            with self.subTest(fourth=fourth):
+                session = self.session(716007 + int(fourth))
+                source = self.add(session.engine, "Descend upon the Sinful", zone="hand")
+                self.add(session.engine, "Ornithopter", zone="graveyard")
+                self.add(session.engine, "Island", zone="graveyard")
+                self.add(session.engine, "Wandering Ones", zone="graveyard")
+                self.add(session.engine, "Cremate" if fourth else "Frost Lynx", zone="graveyard")
+                creatures = [self.add(session.engine, "Generic Bound Body", seat=seat, ref=f"descend-creature-{seat}")
+                             for seat in "ABC"]
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 4, "W": 2})
+                self.checkpoint(session)
+                self.cast(session, "A", source)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(["exile"] * 3, [session.state.cards[card.object_id].zone for card in creatures])
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                angels = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+                self.assertEqual(int(fourth), len(angels))
+                if fourth:
+                    angel, = angels
+                    self.assertEqual(("Angel Token", "A"), (angel.printed_name, angel.controller))
+                    self.assertEqual((4, 4), tuple(session.engine._numeric_stat(angel.object_id, stat) for stat in ("power", "toughness")))
+                    self.assertIn("flying", session.engine._combat_keywords(angel))
+                self.replay(session, load=True)
+
+    def test_inga_counts_a_third_death_after_the_trigger_is_queued(self):
+        session = self.session(716009)
+        source = self.add(session.engine, "Inga Rune-Eyes")
+        first_body = self.add(session.engine, "Elite Vanguard", seat="D")
+        last_body = self.add(session.engine, "Wandering Ones", seat="C")
+        first_shock = self.add(session.engine, "Shock", seat="B", zone="hand", ref="inga-before-death")
+        murder = self.add(session.engine, "Murder", seat="B", zone="hand")
+        last_shock = self.add(session.engine, "Shock", seat="C", zone="hand", ref="inga-after-death")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        session.state.players["B"].mana_pool.update({"R": 1, "C": 1, "B": 2})
+        session.state.players["C"].mana_pool["R"] = 1
+        self.checkpoint(session)
+        self.cast(session, "B", first_shock, [first_body.ref])
+        self.resolve_top(session)
+        self.cast(session, "B", murder, [source.ref])
+        self.resolve_top(session)
+        trigger, = session.state.stack
+        self.assertEqual(source.object_id, trigger.source_object_id)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        before = set(session.state.players["A"].zones["hand"])
+        response = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before, set(session.state.players["A"].zones["hand"]))
+
+        self.cast(response, "C", last_shock, [last_body.ref])
+        self.resolve_top(response)
+        self.assertEqual("graveyard", response.state.cards[last_body.object_id].zone)
+        self.assertIsNone(self.resolve(response))
+        drawn = set(response.state.players["A"].zones["hand"]) - before
+        self.assertEqual(3, len(drawn))
+        opponent_state = json.dumps(response.packet("pilot:D", full=True)["state"])
+        for object_id in drawn:
+            self.assertNotIn(response.state.cards[object_id].ref, opponent_state)
+        self.replay(response, load=True)
+
+    def test_idle_thoughts_pays_with_a_nonempty_hand_and_checks_at_resolution(self):
+        session = self.session(716010)
+        source = self.add(session.engine, "Idle Thoughts")
+        last = self.add(session.engine, "Unsummon", zone="hand")
+        island = self.add(session.engine, "Island")
+        recipient = self.add(session.engine, "Elite Vanguard", seat="B")
+        for object_id in tuple(session.state.players["A"].zones["hand"]):
+            if object_id != last.object_id:
+                session.engine.move_card(object_id, "library", log=False)
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2})
+        self.checkpoint(session)
+        action, = [row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                   if row["id"].startswith(f"activate:{source.ref}:")]
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        empty_at_resolution = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([last.object_id], session.state.players["A"].zones["hand"])
+
+        self.priority(empty_at_resolution, "A")
+        mana, = [row for row in empty_at_resolution.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                 if row["id"].startswith(f"activate:{island.ref}:")]
+        paid = empty_at_resolution.act("pilot:A", {"action_id": mana["id"]})
+        self.assertTrue(paid.ok, paid.summary)
+        self.cast(empty_at_resolution, "A", last, [recipient.ref])
+        self.resolve_top(empty_at_resolution)
+        self.assertFalse(empty_at_resolution.state.players["A"].zones["hand"])
+        self.assertIsNone(self.resolve(empty_at_resolution))
+        drawn, = empty_at_resolution.state.players["A"].zones["hand"]
+        self.assertNotEqual(last.object_id, drawn)
+        self.replay(empty_at_resolution, load=True)
 
 
 if __name__ == "__main__":

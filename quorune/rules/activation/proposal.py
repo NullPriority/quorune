@@ -4,9 +4,11 @@ from ...target_source import ability_targeting_source
 
 from collections.abc import Mapping
 from dataclasses import replace
-from typing import Any, Protocol
+from typing import Any, Protocol, Sequence
 
 from ...abilities import ActivatedAbility, choose_ability
+from ...announced_damage import announced_allocation_details
+from ...crew import activation_power_tap_hint
 from .pricing import (
     payable_activation_mana_options,
     select_activation_mana_option,
@@ -29,6 +31,8 @@ from .model import (
     ActivationProposalRequest,
     ActivationProposalResult,
 )
+from .offer_payload import activation_offer_cost_hint
+from .query import activation_actor_allowed
 
 
 class ActivationProposalHost(Protocol):
@@ -121,13 +125,7 @@ def _resolve_activation_source(
         controlled_only=False,
         owned_only=False,
     )
-    if source.zone == "battlefield":
-        if source.controller != request.actor:
-            raise ActivationProposalError(
-                "You do not control that ability source",
-                reason="wrong_controller",
-            )
-    elif source.owner != request.actor:
+    if source.zone != "battlefield" and source.owner != request.actor:
         raise ActivationProposalError(
             "You do not own that nonbattlefield ability source",
             reason="wrong_owner",
@@ -139,12 +137,19 @@ def _select_ability(
     host: ActivationProposalHost,
     source: Any,
     selector: str | int | None,
+    *,
+    actor: str,
 ) -> ActivatedAbility:
     abilities = tuple(
         ability
         for ability in host._activated_abilities(source)
-        if source.zone in ability.zones
+        if activation_actor_allowed(host, actor, source, ability)
     )
+    if not abilities and source.zone == "battlefield" and source.controller != actor:
+        raise ActivationProposalError(
+            "You do not control that ability source",
+            reason="wrong_controller",
+        )
     try:
         return choose_ability(abilities, selector)
     except ValueError as exc:
@@ -178,6 +183,16 @@ def _validate_activation_cost_contract(
             status="unresolved",
             reason="uncompiled_cost",
         )
+    from ...granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD
+    payment = ability.granting_attachment_payment
+    program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+    cost = program.cost_schema if program is not None else None
+    declared = cost.get(GRANTING_ATTACHMENT_PAYMENT_FIELD) if isinstance(cost, Mapping) else None
+    if payment is not None or declared is not None:
+        if (payment is None or declared != {'kind': payment.kind.value} or program is None
+                or not host.semantic_program_is_current_trusted(program)):
+            raise ActivationProposalError('Granting Equipment payment requires its trusted activation body',
+                                          status='unresolved', reason='untrusted_granting_equipment_payment')
     if host.state.config.semantic_policy == 'trusted_only' and not activation_result_is_represented(host, source, ability):
         raise ActivationProposalError('This ability has no compiled result semantics',
             status='unresolved', reason='unresolved_result_semantics')
@@ -249,13 +264,20 @@ def _validate_activation_timing_costs(
             raise ActivationProposalError('An absolute rule prohibits this untap cost',status='unpayable',reason='untap_cost_prohibited')
 
 
-def _creature_power_damage_context(
+def _activation_effect_context(
     host: ActivationProposalHost,
     source: Any,
     program: Any,
+    target_schema: Mapping[str, Any] | None,
+    targets: Sequence[str],
+    response: Mapping[str, Any],
 ) -> dict[str, Any]:
+    try:
+        allocation = announced_allocation_details(target_schema, targets, response)
+    except ValueError as exc:
+        raise ActivationProposalError(str(exc), reason="invalid_damage_allocation") from exc
     if program is None:
-        return {}
+        return allocation
     source_lki = capture_creature_power_damage_source_lki(
         host,
         source,
@@ -270,10 +292,12 @@ def _creature_power_damage_context(
     from ...scalar_effect_amounts import scalar_source_context
     from ...token_copy_references import copy_source_context
     from ..stack_damage_sources import fixed_damage_source_context
-    return scalar_source_context(host, source, program.effects) | copy_source_context(host, source, program.effects) | fixed_damage_source_context(host, source, (program.effects, program.target_schema)) | (
-        {CREATURE_POWER_DAMAGE_LKI_CONTEXT: source_lki}
-        if source_lki is not None
-        else {}
+    return (
+        allocation
+        | scalar_source_context(host, source, program.effects)
+        | copy_source_context(host, source, program.effects)
+        | fixed_damage_source_context(host, source, (program.effects, program.target_schema))
+        | ({CREATURE_POWER_DAMAGE_LKI_CONTEXT: source_lki} if source_lki is not None else {})
     )
 
 
@@ -291,7 +315,7 @@ def build_activation_proposal(
             reason="pilot_semantic_key",
         )
     source = _resolve_activation_source(host, request)
-    ability = _select_ability(host, source, request.ability_selector)
+    ability = _select_ability(host, source, request.ability_selector, actor=request.actor)
     from ...activation_x import chosen_activation_x
     try: announced_x = chosen_activation_x(ability, response)
     except ValueError as exc: raise ActivationProposalError(str(exc),reason='invalid_activation_x') from exc
@@ -359,7 +383,7 @@ def build_activation_proposal(
     )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     context = host._fetch_context(request.actor, ability, response)
-    context.update(_creature_power_damage_context(host, source, program))
+    context.update(_activation_effect_context(host, source, program, effective_target_schema, targets, response))
     mana_option = None
     if ability.mana_cost_options:
         try:
@@ -455,12 +479,17 @@ def _activation_choice_schema(
 ) -> dict[str, Any] | None:
     from ..selected_counter_costs import selected_counter_cost_choice_schema
     counter_choice = selected_counter_cost_choice_schema(ability, hint)
-    if counter_choice is not None:
-        return counter_choice
     from .source_counter_choices import source_counter_cost_choice_schema
-    source_counters = source_counter_cost_choice_schema(source, ability)
-    if source_counters is not None:
-        return source_counters
+    cost_choice = counter_choice if counter_choice is not None else source_counter_cost_choice_schema(source, ability)
+    if ability.mana_ability:
+        from ...triggered_mana import triggered_mana_offer_schema
+        from ...triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+
+        triggered_choice = triggered_mana_offer_schema(host, seat, source, ability)
+        if triggered_choice is not None:
+            return {**(cost_choice or {}), TRIGGERED_MANA_OPTION_FIELD: triggered_choice}
+    if cost_choice is not None:
+        return cost_choice
     if ability.mana_ability:
         from ...public_quantity_mana_runtime import public_quantity_mana_choice_schema
         quantity_choice = public_quantity_mana_choice_schema(host, seat, source, ability)
@@ -531,7 +560,7 @@ def build_activation_offer(
     )
     try:
         resolved = _resolve_activation_source(host, request)
-        selected = _select_ability(host, resolved, request.ability_selector)
+        selected = _select_ability(host, resolved, request.ability_selector, actor=seat)
         _validate_activation_cost_contract(host, request, resolved, selected)
         _validate_activation_timing_costs(host, request, resolved, selected)
     except ActivationProposalError as exc:
@@ -566,17 +595,10 @@ def build_activation_offer(
         )
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")
-    hint = selected.compact(source_ref=source.ref, zone=source.zone)
-    if selected.mana_cost_options:
-        hint["mana_options"] = [
-            option.compact()
-            for option in payable_activation_mana_options(
-                host,
-                seat,
-                source,
-                selected,
-            )
-        ]
+    cost_hint = activation_offer_cost_hint(host, seat, source, selected)
+    if cost_hint is None:
+        return ActivationProposalResult('unpayable', 'granting_equipment_payment_unpayable')
+    hint, attachment_label = cost_hint
     if selected.choices:
         hint["choose_cost"] = [
             {
@@ -587,20 +609,9 @@ def build_activation_offer(
             }
             for choice in selected.choices
         ]
-    threshold = host._crew_threshold(selected)
-    if threshold is not None:
-        hint["choose_cost"] = [
-            {
-                "k": "crew",
-                "z": "battlefield",
-                "minimum": 0 if threshold == 0 else 1,
-                "minimum_total_power": threshold,
-                "legal_refs": [
-                    candidate.ref
-                    for candidate in host._crew_candidates(seat, source)
-                ],
-            }
-        ]
+    power_tap = activation_power_tap_hint(host, seat, source, selected)
+    if power_tap is not None:
+        hint["choose_cost"] = [power_tap]
     if station_cost_choice(selected) is not None:
         hint["choose_cost"] = [
             {
@@ -661,7 +672,7 @@ def build_activation_offer(
         action_id=f"activate:{source.ref}:{selected.ability_id}",
         action="activate",
         seat=seat,
-        label=f"{host.display_name(source.object_id)} — {selected.effect_text}",
+        label=f"{host.display_name(source.object_id)} — {selected.effect_text}{attachment_label}",
         expiry_revision=host.state.revision,
         payload=freeze_json(payload),
     )

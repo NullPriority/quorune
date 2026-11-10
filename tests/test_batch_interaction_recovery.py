@@ -209,6 +209,21 @@ class BatchInteractionRecoveryTests(unittest.TestCase):
         for witness in data['admission_boundaries']:
             with self.subTest(card=witness['name']):
                 card = self.db.by_oracle_id(witness['oracle_id'])
+                if card.name == 'Roadside Assistance':
+                    printed = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+                    original = compile_best_available_card_program(
+                        self.db, card, semantic_registry=SemanticRegistry(),
+                        capability_registry=self.registry, capability_profile='commander_review',
+                    )
+                    self.assertEqual('exact', printed.status, printed.material_residuals)
+                    self.assertTrue(bind_card_program_runtime(
+                        original, capability_registry=self.registry, profile='commander_review',
+                    )['strict_capability_ready'])
+                    variable = card.oracle_text.replace(
+                        '2 greater.', 'X greater, where X is the number of Vehicles you control.',
+                    )
+                    self.assertNotEqual(card.oracle_text, variable)
+                    card = replace(card, oracle_id='fixture:roadside-variable-pilot-power', oracle_text=variable)
                 ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
                 program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry, capability_profile='commander_review')

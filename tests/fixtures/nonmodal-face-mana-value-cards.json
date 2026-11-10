@@ -490,6 +490,468 @@
       "released_at": "2017-03-17",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Flicker of Fate",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "oracle_text": "Exile target creature or enchantment, then return it to the battlefield under its owner's control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Copy Enchantment",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "oracle_text": "You may have this enchantment enter as a copy of any enchantment on the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "rulings": [
+        {
+          "comment": "Copy Enchantment copies exactly what was printed on the original permanent and nothing more (unless that permanent is itself copying something or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether it has any counters on it or Auras attached to it, or any noncopy effects that have changed its power, toughness, types, color, and so on.",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        },
+        {
+          "comment": "If Copy Enchantment copies an Aura this way, you choose what the Aura will enchant just before it enters the battlefield. You can't choose any permanents entering the battlefield at the same time as that Aura. This doesn't target the player or permanent it will enchant, so an opponent's permanent with hexproof may be chosen this way. The chosen recipient must be able to legally be enchanted by the Aura, so a player or permanent with protection from one of the Aura's qualities can't be chosen this way. If there's nothing legal for the Aura to enchant, Copy Enchantment stays in its current zone (unless it's a spell, in which case it's put into its owner's graveyard).",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        },
+        {
+          "comment": "If Copy Enchantment somehow enters the battlefield at the same time as another permanent, Copy Enchantment can't become a copy of that permanent. You may choose only a permanent that's already on the battlefield.",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        },
+        {
+          "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when Copy Enchantment enters the battlefield. Any \"as [this enchantment] enters the battlefield\" or \"[this enchantment] enters the battlefield with\" abilities of the chosen permanent will also work.",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        },
+        {
+          "comment": "If the chosen permanent has {X} in its mana cost, X is 0.",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        },
+        {
+          "comment": "If the chosen permanent is a token, Copy Enchantment copies the original characteristics of that token as stated by the effect that created the token. Copy Enchantment does not become a token.",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        },
+        {
+          "comment": "If the chosen permanent is copying something else (for example, if the chosen permanent is another Copy Enchantment), then your Copy Enchantment enters the battlefield as whatever the chosen permanent copied.",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        },
+        {
+          "comment": "You can choose not to copy anything. In that case, Copy Enchantment simply enters the battlefield as an enchantment with an irrelevant ability. We're sure you had your reasons.",
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc"
+        }
+      ],
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Lithoform Engine",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "oracle_text": "{2}, {T}: Copy target activated or triggered ability you control. You may choose new targets for the copy.\n{3}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n{4}, {T}: Copy target permanent spell you control. (The copy becomes a token.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-09-25",
+      "toughness": null,
+      "type_line": "Legendary Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flash",
+        "Eerie"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Entity Tracker",
+      "oracle_id": "c9db5293-4866-46ec-9ae8-059d27bd50fc",
+      "oracle_text": "Flash\nEerie — Whenever an enchantment you control enters and whenever you fully unlock a Room, draw a card.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": "3",
+      "type_line": "Creature — Human Scout"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{G}{U}",
+      "name": "Yarok, the Desecrated",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "oracle_text": "Deathtouch, lifelink\nIf a permanent entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Elemental Horror"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Lifelink",
+        "Eerie"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{B}",
+      "name": "Fear of Infinity",
+      "oracle_id": "018327d1-a3ba-4912-9c88-f0f0c54a1750",
+      "oracle_text": "Flying, lifelink\nThis creature can't block.\nEerie — Whenever an enchantment you control enters and whenever you fully unlock a Room, you may return this card from your graveyard to your hand.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": "2",
+      "type_line": "Enchantment Creature — Nightmare"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Grand Entryway",
+          "oracle_text": "When you unlock this door, create a 1/1 white Glimmer enchantment creature token.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Room"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}",
+          "name": "Elegant Rotunda",
+          "oracle_text": "When you unlock this door, put a +1/+1 counter on each of up to two target creatures.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Room"
+        }
+      ],
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W} // {2}{W}",
+      "name": "Grand Entryway // Elegant Rotunda",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "oracle_text": "Grand Entryway: When you unlock this door, create a 1/1 white Glimmer enchantment creature token.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\n//\nElegant Rotunda: When you unlock this door, put a +1/+1 counter on each of up to two target creatures.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Enchantment — Room // Enchantment — Room"
     }
   ],
   "rulings": [
@@ -629,6 +1091,342 @@
       "comment": "If you target a creature with ward, you may still pay the ward cost, but Abrupt Decay won't be countered even if you don't.",
       "oracle_id": "1c747fe2-289e-492a-a846-aa77707e2dc3",
       "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won’t return to the battlefield.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an Aura is put onto the battlefield without being cast, the Aura’s controller-to-be chooses what it will enchant as it comes back onto the battlefield. An Aura put onto the battlefield this way doesn’t target anything (so it could be attached to an opponent’s permanent with hexproof, for example), but the Aura’s enchant ability restricts what it can be attached to. If the Aura can’t legally be attached to anything, it remains in its current zone.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it’s considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners’ graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Copy Enchantment copies exactly what was printed on the original permanent and nothing more (unless that permanent is itself copying something or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether it has any counters on it or Auras attached to it, or any noncopy effects that have changed its power, toughness, types, color, and so on.",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Copy Enchantment copies an Aura this way, you choose what the Aura will enchant just before it enters the battlefield. You can't choose any permanents entering the battlefield at the same time as that Aura. This doesn't target the player or permanent it will enchant, so an opponent's permanent with hexproof may be chosen this way. The chosen recipient must be able to legally be enchanted by the Aura, so a player or permanent with protection from one of the Aura's qualities can't be chosen this way. If there's nothing legal for the Aura to enchant, Copy Enchantment stays in its current zone (unless it's a spell, in which case it's put into its owner's graveyard).",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Copy Enchantment somehow enters the battlefield at the same time as another permanent, Copy Enchantment can't become a copy of that permanent. You may choose only a permanent that's already on the battlefield.",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when Copy Enchantment enters the battlefield. Any \"as [this enchantment] enters the battlefield\" or \"[this enchantment] enters the battlefield with\" abilities of the chosen permanent will also work.",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the chosen permanent has {X} in its mana cost, X is 0.",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the chosen permanent is a token, Copy Enchantment copies the original characteristics of that token as stated by the effect that created the token. Copy Enchantment does not become a token.",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the chosen permanent is copying something else (for example, if the chosen permanent is another Copy Enchantment), then your Copy Enchantment enters the battlefield as whatever the chosen permanent copied.",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose not to copy anything. In that case, Copy Enchantment simply enters the battlefield as an enchantment with an irrelevant ability. We're sure you had your reasons.",
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent spell is copied, it's put onto the battlefield as a token as the spell resolves rather than putting the copy of the spell onto the battlefield. The rules that apply to a permanent spell becoming a permanent apply to a copy of a spell becoming a token.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any choices made when the spell or ability resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves. Most notably, if a triggered ability asks you to pay a cost (such as that of Leyline Tyrant), you pay that cost for the copy if you wish to have it paid.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an ability is linked to a second ability, copies of that first ability are also linked to that second ability. If the second ability refers to “the exiled card,” it refers to all cards exiled by the first ability and the copy. For example, if Fiend Hunter's enters-the-battlefield ability is copied and two creatures are exiled, they both return when Fiend Hunter leaves the battlefield.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy. Most notably, if the original spell was kicked, the copy is kicked.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The source of the copy from Lithoform Engine's first ability is the same as the source of the original ability.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Lithoform Engine can copy any spell or ability on the stack, not just one with targets. If a permanent spell is copied, new targets can't be chosen for it, if it has any (perhaps because it's an Aura or a mutating creature spell).",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token that a resolving copy of a spell becomes isn't said to have been “created.”",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities contain a colon. They're generally written “[Cost]: [Effect].” Some keyword abilities (such as equip) are activated abilities and will have a colon in their reminder text.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy is created on the stack, so it's not “cast” or “activated.” Creating the copy won't cause abilities that trigger when a player casts a spell or activates an ability to trigger. Abilities that say that a triggered ability triggers additional times won't apply to copying a triggered ability.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy will resolve before the original spell or ability does.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy will have the same targets as the spell or ability it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal).",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Triggered abilities use the word “when,” “whenever,” or “at.” They're often written as “[Trigger condition], [effect].” Some keywords (such as prowess) are triggered abilities and will use “when,” “whenever,” or “at” in their reminder text.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell or ability has damage divided as it was put onto the stack, the division can't be changed, although the targets receiving that damage still can. The same is true of spells and abilities that distribute counters.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Lithoform Engine's first ability targets an activated or triggered ability that is on the stack and creates another instance of that ability on the stack. It doesn't cause any object to gain an ability.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell or ability that's copied has an X whose value was determined as it was cast or activated, the copy will have the same value of X.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell or ability that's copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. A different mode can't be chosen. This doesn't apply to copying a permanent spell with a modal enters-the-battlefield triggered ability, but it does apply to copying that ability.",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent with an eerie ability enters at the same time as one or more enchantments, its ability will trigger for each of those enchantments.",
+      "oracle_id": "c9db5293-4866-46ec-9ae8-059d27bd50fc",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers \"whenever you fully unlock a Room\" triggers when a door becomes unlocked and the other door of that Room is already unlocked, or when both doors of that Room become unlocked simultaneously.",
+      "oracle_id": "c9db5293-4866-46ec-9ae8-059d27bd50fc",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you somehow control two Yaroks, a permanent entering the battlefield causes abilities to trigger three times, not four. A third Yarok causes abilities to trigger four times, a fourth causes abilities to trigger five times, and so on.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some cases involving linked abilities, an ability requires information about \"the exiled card.\" When this happens, the ability gets multiple answers. If these answers are being used to determine the value of a variable, the sum is used. For example, if Elite Arcanist's enters-the-battlefield ability triggers twice, two cards are exiled. The value of X in the activation cost of Elite Arcanist's other ability is the sum of the two cards' mana values. As the ability resolves, you create copies of both cards and can cast none, one, or both of the copies in any order.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Yarok's effect doesn't copy the triggered ability; it just causes the ability to trigger twice. Any choices made as you put the ability onto the stack, such as modes and targets, are made separately for each instance of the ability. Any choices made on resolution, such as whether to put counters on a permanent, are also made individually.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a triggered ability is linked to a second ability, additional instances of that triggered ability are also linked to that second ability. If the second ability refers to \"the exiled card,\" it refers to all cards exiled by instances of the triggered ability.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Yarok affects a permanent's own enters-the-battlefield triggered abilities as well as other triggered abilities that trigger when that permanent enters the battlefield. Such triggered abilities start with \"when\" or \"whenever.\"",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Replacement effects are unaffected by Yarok's ability. For example, a creature that enters the battlefield with one +1/+1 counter on it won't receive an additional +1/+1 counter.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that apply \"as [this creature] enters the battlefield,\" such as choosing a color with Diamond Knight, are also unaffected.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't need to control the permanent entering the battlefield, only the permanent that has the triggered ability.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent entering the battlefield at the same time as Yarok (including Yarok itself) causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers \"whenever you fully unlock a Room\" triggers when a door becomes unlocked and the other door of that Room is already unlocked, or when both doors of that Room become unlocked simultaneously.",
+      "oracle_id": "018327d1-a3ba-4912-9c88-f0f0c54a1750",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent with an eerie ability enters at the same time as one or more enchantments, its ability will trigger for each of those enchantments.",
+      "oracle_id": "018327d1-a3ba-4912-9c88-f0f0c54a1750",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "While on the battlefield, a Room's characteristics are a combination of the characteristics of its unlocked doors. For example, if Bottomless Pool // Locker Room is on the battlefield with both doors unlocked, its names are Bottomless Pool and Locker Room, its mana value is 6, it's a Room Enchantment, and it has the abilities in each door's text box.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some abilities allow you to lock a door of a Room you control. You can't choose to lock a door that's already locked with such an ability. If such an ability requires a target, you can target a Room even if both of its doors are locked, but the ability won't do anything when it resolves.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers \"when you unlock this door\" triggers when that door becomes unlocked. This can happen one of two ways: (1) the door becomes unlocked on the battlefield or (2) the door becomes unlocked as the Room enters the battlefield because you cast the corresponding half. In the latter case, since the door becoming unlocked is what causes the ability to trigger, effects that cause abilities that trigger when a permanent enters to trigger an additional time (such as that of Panharmonicon) won't apply.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Room card is a single card. For example, if you discard a Room card, you've discarded one card, not two. If an effect counts the number of enchantment cards in your graveyard, Bottomless Pool // Locker Room counts once, not twice.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect allows you to cast a spell with certain characteristics, consider only the characteristics of the door you're casting. For example, if an effect allows you to cast a permanent spell with mana value 3 or less from among cards in your graveyard, you could cast Bottomless Pool this way, but not Locker Room.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability would create a copy of a Room spell on the stack, the copy retains the choice of which door was cast but also retains the full characteristics of the spell. The characteristics of the door that wasn't cast are still ignored while the copy is on the stack, and when the copy resolves, the token it becomes will enter with the appropriate door unlocked.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some doors have abilities that trigger whenever you unlock that door and require one or more targets. You can unlock that door even if there would be insufficient legal targets for that triggered ability. The triggered ability won't go on the stack.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Room cards have two card faces with a shared type line on a single card. The characteristics of the door you didn't cast are ignored while the spell is on the stack.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any time you have priority during a main phase of your turn and the stack is empty, you may pay the mana cost of a locked door (also called its \"unlock cost\"). That door becomes unlocked. This is a special action. It doesn't use the stack and can't be responded to.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some abilities allow you to unlock a door of a Room you control. You can't choose to unlock a door that's already unlocked with such an ability. If such an ability requires a target, you can target a Room even if both of its doors are unlocked, but the ability won't do anything when it resolves.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "To cast a Room spell, choose a half (or \"door\") to cast. There's no way to cast both halves of a Room card. When the Room spell resolves, the corresponding door becomes unlocked as the Room enters.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "While in any zone other than the stack or the battlefield, a Room card's characteristics are a combination of its two doors. For example, Bottomless Pool // Locker Room has a mana value of 6 while it's in your library. If an effect allows you to search your library for a card with mana value 4 or less, you can't find Bottomless Pool // Locker Room.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Room card has two names. If an effect instructs you to choose a card name, you may choose one of those names, but not both.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If neither door of a Room is unlocked, it's a Room enchantment with no name and no abilities.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers \"whenever you fully unlock a Room\" triggers when a door becomes unlocked and the other door of that Room is already unlocked, or when both doors of that Room become unlocked simultaneously.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a Room enters from any zone other than the stack, it will enter with both halves locked.",
+      "oracle_id": "f7574379-d10e-4bbf-b0b1-13feee753d8b",
+      "published_at": "2024-09-20",
       "source": "wotc"
     }
   ]

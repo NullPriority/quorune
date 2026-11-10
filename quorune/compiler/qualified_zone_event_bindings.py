@@ -18,7 +18,7 @@ COUNTER_QUALIFIED_ZONE_CAPABILITY = "trigger.event.counter_qualified_zone_change
 QUALIFIED_ZONE_VARIANT = "qualified_public_zone_query"
 _ZONE_EVENT = re.compile(
     r"^(?:When|Whenever) (?P<subject>.+?) "
-    r"(?P<verb>enters|dies|leaves the battlefield|"
+    r"(?P<verb>enters(?: from your graveyard)?|dies|leaves the battlefield|"
     r"is put into (?:a|your) graveyard from the battlefield), (?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -155,10 +155,12 @@ def qualified_public_zone_event_binding_spec(
     verb = match.group("verb").casefold()
     if "your graveyard" in verb:
         condition = _all([value for value in (condition, _field("owner", "eq", "$source.controller")) if value is not None])
+    if verb == "enters from your graveyard":
+        condition = _all([condition, _field("from", "eq", "graveyard")])
     # Retain the established subtype-only dies domain. Explicit noncreature
     # permanent types (for example creature-or-planeswalker) use graveyard facts.
     creature_only = "creature" in spec.types_all or spec.types_any == ("creature",) or (bool(spec.subtypes_any) and not (spec.types_any or spec.types_all))
-    event = ("permanent.enter" if verb == "enters" else "permanent.leave" if verb == "leaves the battlefield"
+    event = ("permanent.enter" if verb.startswith("enters") else "permanent.leave" if verb == "leaves the battlefield"
              else "creature.dies" if verb == "dies" and creature_only else "permanent.graveyard")
     return FixedPublicEventBindingSpec(
         event=event, variant=QUALIFIED_ZONE_VARIANT, body=match.group("body"),

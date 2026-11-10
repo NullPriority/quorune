@@ -19,7 +19,10 @@ from .casting_additional_cost_groups import (
 )
 from ..compiler.creature_subtypes import canonical_creature_subtype
 from ..compiler.direct_target import DirectPermanentTargetSpec
-from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION, FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS
+from ..resolution_characteristic_model import (
+    CHARACTERISTIC_OPERATION, FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS, FIXED_TARGET_COLOR_VERSION,
+)
+from ..defender_permission import is_temporary_defender_permission
 from ..compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
@@ -178,6 +181,7 @@ _FIXED_TARGET_ZONE_OBJECT_KEYWORDS = frozenset(
 _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
     _COUNTER_STACK_BASE,
     {**_COUNTER_STACK_BASE, "types_none": ["creature"]},
+    {**_COUNTER_STACK_BASE, "subtypes_none": ["faerie"]},
     *tuple(
         {**_COUNTER_STACK_BASE, "types_any": list(types)}
         for types in (
@@ -625,17 +629,28 @@ def targeted_counter_node_capabilities(
         or not fixed_stack_counter_target_schema_is_closed(target_schema)
     ):
         return ()
+    from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, counter_destination_payload_dependencies
+
     effect = effects[0]
+    destination_present = COUNTER_DESTINATION_FIELD in effect
+    fields = {"op", "stack"} | ({COUNTER_DESTINATION_FIELD} if destination_present else set())
     if (
-        set(effect) != {"op", "stack"}
+        set(effect) != fields
         or effect.get("op") != "counter_stack_target"
         or effect.get("stack") != "$target.0"
     ):
+        return ()
+    if destination_present and tuple(target_schema.get("categories", ())) != ("spell",):
+        return ()
+    try:
+        destination_dependencies = counter_destination_payload_dependencies(effect)
+    except ValueError:
         return ()
     from ..ability_source_information import ability_source_filter_dependencies
     return (
         "stack.counter.effect",
         "target.revalidate_resolution",
+        *destination_dependencies,
         *ability_source_filter_dependencies(target_schema),
     )
 
@@ -924,6 +939,9 @@ def fixed_target_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed targeted fixed characteristic effect."""
 
+    if any(effect.get("schema_version") == 12 and effect.get("op") == "apply_source_characteristics_until_end_of_turn" for effect in effects):
+        from .power_toughness_switch import power_toughness_switch_node_capabilities
+        return power_toughness_switch_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(effect.get('schema_version')==11 and effect.get('op')=='apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .temporary_keyword_removal import temporary_keyword_removal_capabilities
         return temporary_keyword_removal_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
@@ -979,7 +997,11 @@ def fixed_source_characteristics_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return ownership for one closed source characteristic effect."""
+    """Return ownership for one closed source-bound characteristic effect."""
+
+    if len(effects) == 1 and effects[0].get("op") == "modify_stats_until_end_of_turn":
+        from .fixed_resolution_characteristic_shapes import fixed_attached_stat_node_capabilities
+        return fixed_attached_stat_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
 
     if any(effect.get('card') == '$event.block_counterpart' for effect in effects):
         from ..compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
@@ -1010,9 +1032,13 @@ def fixed_source_characteristics_node_capabilities(
     if any(effect.get('schema_version') == 4 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .as_unblocked_effect import temporary_as_unblocked_capabilities
         return temporary_as_unblocked_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
-    if any(effect.get('schema_version') == 3 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
+    if any(is_temporary_defender_permission(effect) for effect in effects):
         from .defender_permission_effect import temporary_defender_permission_capabilities
         return temporary_defender_permission_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+    if any(effect.get('op') == CHARACTERISTIC_OPERATION
+           and effect.get('schema_version') == FIXED_TARGET_COLOR_VERSION for effect in effects):
+        from .resolution_characteristic_shapes import fixed_target_color_node_capabilities
+        return fixed_target_color_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(effect.get('op') == CHARACTERISTIC_OPERATION
            and type(effect.get('schema_version')) is int
            and effect['schema_version'] in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS for effect in effects):

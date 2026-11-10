@@ -232,10 +232,14 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
     if not is_spell or " damage divided as you choose among " not in oracle_text.casefold():
         return terminal
 
-    from .announced_damage_templates import fixed_announced_damage_template
+    from .announced_damage_templates import fixed_announced_damage_template, variable_announced_damage_template
 
     def compile_spell_effect(text: str, **context):
-        allocation = fixed_announced_damage_template(text, card_name=context.get("card_name") or record.name)
+        name = context.get("card_name") or record.name
+        face = next((face for face in record.faces if face.get("name") == name), None)
+        face_x = face is not None and "X" in mana_cost_to_vector(str(face.get("mana_cost") or ""))[1]
+        allocation = (fixed_announced_damage_template(text, card_name=name)
+                      or variable_announced_damage_template(text, card_name=name, has_cast_x=available or face_x))
         return allocation or terminal(text, **context)
 
     return compile_spell_effect
@@ -279,7 +283,9 @@ def is_closed_declared_amount_program(program: Any, *, required_dependencies: Se
 
     if DECLARED_EFFECT_AMOUNT_MECHANIC not in program.coverage:
         return False
-    context = declared_amount_shape_context(program.effects,set(program.coverage))
+    context = declared_amount_shape_context(
+        program.effects, set(program.coverage), target_schema=program.target_schema,
+    )
     required = set(required_dependencies)
     if context is None or DECLARED_AMOUNT_CAPABILITY not in required or not required.issubset(program.capability_dependencies):
         return False
@@ -291,7 +297,8 @@ def is_closed_declared_amount_program(program: Any, *, required_dependencies: Se
 
 
 def declared_amount_shape_context(
-    effects: Sequence[Mapping[str, Any]], mechanics: set[str],
+    effects: Sequence[Mapping[str, Any]], mechanics: set[str], *,
+    target_schema: Mapping[str, Any] | None = None,
 ) -> tuple[tuple[Mapping[str, Any], ...], set[str]] | None:
     """Validate every symbolic path before asking existing fixed shape owners."""
     from .public_query_effect_amounts import (
@@ -300,6 +307,7 @@ def declared_amount_shape_context(
         public_query_amount_shape_context,
     )
     from ..rules.closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC
+    from .announced_target_sets import ANNOUNCED_TARGET_SET_MECHANIC
 
     count = 0
     def project(value: Any, operation: str, path: tuple[str,...]) -> Any:
@@ -328,6 +336,14 @@ def declared_amount_shape_context(
             return deepcopy(value)
         return value
     def project_instruction(effect: Mapping[str, Any]) -> Mapping[str, Any]:
+        if ANNOUNCED_TARGET_SET_MECHANIC in mechanics and effect.get("announced_target_count") is True:
+            from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_set_node_capabilities
+
+            if not announced_target_set_node_capabilities(
+                effects=(effect,), target_schema=target_schema, mechanic_ids=mechanics,
+            ):
+                raise PublicQueryAmountError("Announced target bound lacks its target-count owner")
+            return deepcopy(effect)
         if effect.get("op") == "search":
             counted_search_bound_dependencies(effect)
         if effect.get("op") == "offer_optional_effect":

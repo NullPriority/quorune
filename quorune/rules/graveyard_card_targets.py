@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed typed targets for one card in the acting player's graveyard."""
+"""Closed typed targets and return authority for public graveyard cards."""
 
 from dataclasses import dataclass
 from enum import Enum
@@ -11,6 +11,11 @@ from ..creature_subtypes import canonical_creature_subtype
 
 class GraveyardCardTargetError(ValueError):
     """A graveyard-card target descriptor is outside the represented grammar."""
+
+
+class GraveyardReturnScope(str, Enum):
+    OWN = "own"
+    PUBLIC = "public"
 
 
 class GraveyardCardTargetKind(str, Enum):
@@ -79,6 +84,7 @@ class PublicGraveyardCardTargetKind(str, Enum):
     PERMANENT_CARD = "permanent card"
     SORCERY_CARD = "sorcery card"
     ARTIFACT_OR_ENCHANTMENT_CARD = "artifact or enchantment card"
+    CREATURE_OR_LAND_CARD = "creature or land card"
     INSTANT_OR_SORCERY_CARD = "instant or sorcery card"
     NONCREATURE_CARD = "noncreature card"
     NONLAND_CARD = "nonland card"
@@ -104,6 +110,7 @@ class PublicGraveyardCardTargetKind(str, Enum):
                 "artifact",
                 "enchantment",
             ),
+            PublicGraveyardCardTargetKind.CREATURE_OR_LAND_CARD: ("creature", "land"),
             PublicGraveyardCardTargetKind.INSTANT_OR_SORCERY_CARD: (
                 "instant",
                 "sorcery",
@@ -544,6 +551,277 @@ class OwnGraveyardCardTargetSpec:
                 "Graveyard target schema is not canonical"
             )
         return spec
+
+
+GRAVEYARD_RETURN_OPERATION = "return_graveyard_card_to_owner_hand"
+OPPOSING_GRAVEYARD_RETURN_OPERATION = "return_opposing_graveyard_targets_to_owner_hand"
+OPPOSING_GRAVEYARD_RETURN_MECHANIC = "opposing-graveyard-return-then-targeted-result"
+OPPOSING_GRAVEYARD_RETURN_CAPABILITY = "card.return.opponent_graveyard_to_owner_hand"
+PUBLIC_GRAVEYARD_RETURN_VERSION = 3
+PUBLIC_GRAVEYARD_RETURN_CAPABILITY = "card.return.public_graveyard_to_owner_hand"
+PUBLIC_GRAVEYARD_RETURN_KINDS = (
+    PublicGraveyardCardTargetKind.CARD,
+    PublicGraveyardCardTargetKind.CREATURE_CARD,
+    PublicGraveyardCardTargetKind.ARTIFACT_OR_ENCHANTMENT_CARD,
+    PublicGraveyardCardTargetKind.CREATURE_OR_LAND_CARD,
+)
+
+
+def public_graveyard_return_effect() -> dict[str, Any]:
+    return {"op": GRAVEYARD_RETURN_OPERATION, "card": "$target.0", "schema_version": PUBLIC_GRAVEYARD_RETURN_VERSION}
+
+
+def opposing_graveyard_return_sequence(count, follower, follower_schema):
+    """Bind a fixed opposing-graveyard group and one independent target."""
+    from ..compiler.program_composition import _scope_component_target
+
+    if type(count) is not int or not 1 <= count <= 6 or not isinstance(follower_schema, Mapping):
+        raise GraveyardCardTargetError("Opposing graveyard return needs a fixed group and a second target")
+    if "id" in follower_schema or type(follower_schema.get("count")) is not int or follower_schema["count"] != 1:
+        raise GraveyardCardTargetError("The independent result needs one fixed target")
+    graveyard = PublicGraveyardCardTargetSpec(PublicGraveyardCardTargetKind.CARD, "opponent").to_target_schema()
+    graveyard.update(count=count, same_owner=True)
+    effects = (
+        {"op": OPPOSING_GRAVEYARD_RETURN_OPERATION, "cards": "$target_group.clause_0", "maximum_targets": count},
+        _scope_component_target(follower, 1),
+    )
+    schema = {"groups": [{"id": "clause_0", **graveyard}, {"id": "clause_1", **follower_schema}]}
+    return effects, schema
+
+
+def _opposing_graveyard_followup_capabilities(effect, schema):
+    from .counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
+    from .destruction_regeneration_capability_shapes import targeted_destruction_node_capabilities
+    from .prevention_component_shapes import fixed_chosen_source_damageable_capabilities
+    from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
+
+    owners = {
+        "destroy": (targeted_destruction_node_capabilities, "destroy"),
+        "reanimate": (fixed_target_reanimation_node_capabilities, "fixed-target-reanimation"),
+        "place_counters": (fixed_counter_placement_node_capabilities, "cr-122-counters"),
+        "choose_damage_source": (fixed_chosen_source_damageable_capabilities, "cr-615-prevention-effects"),
+    }
+    owner = owners.get(effect.get("op"))
+    if owner is None:
+        return ()
+    resolver, mechanic = owner
+    return resolver(effects=(effect,), target_schema=schema, mechanic_ids=(mechanic, "cr-115-targets"))
+
+
+def opposing_graveyard_return_sequence_capabilities(*, effects, target_schema):
+    """Check both independently owned groups against the executable roles."""
+    from ..compiler.program_composition import _component_target_roles_are_exact, _scope_component_target
+    from ..replacement.immutable import freeze_value, thaw_value
+
+    if (len(effects) != 2 or not all(isinstance(effect, Mapping) for effect in effects)
+            or effects[0].get("op") != OPPOSING_GRAVEYARD_RETURN_OPERATION
+            or not isinstance(target_schema, Mapping)):
+        return ()
+    try:
+        prefix, scoped_follower = thaw_value(freeze_value(effects))
+        schema = thaw_value(freeze_value(target_schema))
+        groups = schema.get("groups")
+        if not isinstance(groups, list) or len(groups) != 2 or not all(isinstance(group, Mapping) for group in groups):
+            return ()
+        if not _component_target_roles_are_exact(scoped_follower, 1):
+            return ()
+        follower = _scope_component_target(scoped_follower, 1, restore=True)
+        follower_schema = {key: value for key, value in groups[1].items() if key != "id"}
+        expected, expected_schema = opposing_graveyard_return_sequence(prefix.get("maximum_targets"), follower, follower_schema)
+        if (prefix, scoped_follower) != expected or schema != expected_schema:
+            return ()
+        second = _opposing_graveyard_followup_capabilities(follower, follower_schema)
+    except (TypeError, ValueError):
+        return ()
+    return (OPPOSING_GRAVEYARD_RETURN_CAPABILITY, "target.revalidate_resolution", *second) if second else ()
+
+
+def opposing_graveyard_return_runtime_dependencies(program):
+    if not any(effect.get("op") == OPPOSING_GRAVEYARD_RETURN_OPERATION for effect in program.effects):
+        return ()
+    required = opposing_graveyard_return_sequence_capabilities(effects=program.effects, target_schema=program.target_schema)
+    if getattr(program, "event", None) != "activate" or not required:
+        raise GraveyardCardTargetError("Opposing graveyard return requires its two closed activation target groups")
+    return required
+
+
+def is_closed_opposing_graveyard_return_program(program):
+    if OPPOSING_GRAVEYARD_RETURN_MECHANIC not in program.coverage or getattr(program, "event", None) != "activate":
+        return False
+    required = opposing_graveyard_return_sequence_capabilities(effects=program.effects, target_schema=program.target_schema)
+    return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
+def targeted_graveyard_cast_schema(owner_relation):
+    return PublicGraveyardCardTargetSpec(
+        PublicGraveyardCardTargetKind.INSTANT_OR_SORCERY_CARD, owner_relation,
+    ).to_target_schema()
+
+
+def targeted_graveyard_cast_instruction_schema(owner_relation):
+    from ..relative_power_target import MANA_VALUE_LE_POWER
+
+    schema = targeted_graveyard_cast_schema(owner_relation)
+    if owner_relation == "you":
+        schema["predicate"] = MANA_VALUE_LE_POWER
+    return schema
+
+
+def targeted_graveyard_cast_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..replacement.immutable import FrozenMap, thaw_value
+    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_CAPABILITY, GRAVEYARD_CAST_MECHANIC, validate_graveyard_cast_effect
+
+    if len(effects) != 1 or not isinstance(target_schema, Mapping) or GRAVEYARD_CAST_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        effect = effects[0]
+        validate_graveyard_cast_effect(effect)
+        if thaw_value(FrozenMap(target_schema)) != targeted_graveyard_cast_instruction_schema(effect["owner_relation"]):
+            return ()
+    except (ValueError, TypeError):
+        return ()
+    from ..relative_power_target import MANA_VALUE_POWER_CAPABILITY
+    return (
+        GRAVEYARD_CAST_CAPABILITY, "target.revalidate_resolution",
+        *((MANA_VALUE_POWER_CAPABILITY,) if effect["owner_relation"] == "you" else ()),
+    )
+
+
+def targeted_graveyard_cast_runtime_dependencies(program):
+    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_MECHANIC, GRAVEYARD_CAST_OPERATION
+
+    effects = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_CAST_OPERATION)
+    if not effects:
+        return ()
+    required = targeted_graveyard_cast_node_capabilities(
+        effects=effects, target_schema=program.target_schema, mechanic_ids=(GRAVEYARD_CAST_MECHANIC,),
+    )
+    if not required:
+        raise GraveyardCardTargetError("A graveyard cast requires its closed target and resolving permission")
+    if effects[0]["owner_relation"] == "you":
+        _require_relative_graveyard_attack(program)
+    return required
+
+
+def graveyard_copy_scope_schema(scope):
+    from ..relative_power_target import MANA_VALUE_LE_POWER, MANA_VALUE_LT_POWER
+
+    if scope == "own_source_power":
+        return {**targeted_graveyard_cast_schema("you"), "predicate": MANA_VALUE_LE_POWER}
+    if scope == "public_source_power":
+        return {"zones": ["graveyard"], "categories": ["card"], "owner_relation": "any",
+                "types_none": ["creature", "land"], "count": 1, "predicate": MANA_VALUE_LT_POWER}
+    if scope == "own_all":
+        return None
+    if scope == "paired":
+        return {"groups": [{"id": "clause_0", **targeted_graveyard_cast_schema("you")},
+                           {"id": "clause_1", **targeted_graveyard_cast_schema("opponent")}]}
+    return targeted_graveyard_cast_schema("you" if scope == "own" else scope)
+
+
+def graveyard_copy_cast_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..replacement.immutable import freeze_value, thaw_value
+    from .graveyard_copy_cast_model import GRAVEYARD_COPY_CAPABILITY, GRAVEYARD_COPY_MECHANIC, validate_graveyard_copy_effect
+
+    if len(effects) != 1 or GRAVEYARD_COPY_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        validate_graveyard_copy_effect(effects[0])
+        expected = graveyard_copy_scope_schema(effects[0]["scope"])
+        if thaw_value(freeze_value(target_schema)) != expected:
+            return ()
+    except (ValueError, TypeError):
+        return ()
+    from ..relative_power_target import MANA_VALUE_POWER_CAPABILITY, MANA_VALUE_POWER_PREDICATES
+    from ..source_entry_cast_information import SOURCE_ENTRY_CAST_CAPABILITY, SOURCE_ENTRY_CAST_HAND_CAPABILITY, SOURCE_ENTRY_CAST_HAND_MECHANIC
+
+    return (
+        GRAVEYARD_COPY_CAPABILITY,
+        *(("target.revalidate_resolution",) if expected is not None else ()),
+        *((MANA_VALUE_POWER_CAPABILITY,) if expected and expected.get("predicate") in MANA_VALUE_POWER_PREDICATES else ()),
+        *((SOURCE_ENTRY_CAST_CAPABILITY,) if effects[0]["scope"] == "own_source_power" else ()),
+        *((SOURCE_ENTRY_CAST_HAND_CAPABILITY,) if SOURCE_ENTRY_CAST_HAND_MECHANIC in mechanic_ids else ()),
+    )
+
+
+def graveyard_copy_cast_runtime_dependencies(program):
+    from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION
+
+    effects = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_COPY_OPERATION)
+    if not effects:
+        return ()
+    required = graveyard_copy_cast_node_capabilities(
+        effects=effects, target_schema=program.target_schema, mechanic_ids=(GRAVEYARD_COPY_MECHANIC,),
+    )
+    if not required:
+        raise GraveyardCardTargetError("Graveyard copy casting requires its exact exile and target scope")
+    _validate_relative_graveyard_copy_event(program, effects[0]["scope"])
+    return required
+
+
+def _validate_relative_graveyard_copy_event(program, scope):
+    if scope == "own_source_power":
+        from ..source_entry_cast_information import validate_source_entry_cast_condition
+        if program.active_zone != "battlefield" or program.event != "permanent.enter.self":
+            raise GraveyardCardTargetError("A source-power graveyard copy requires its own entry")
+        validate_source_entry_cast_condition(program.event_condition)
+    if scope == "public_source_power":
+        _require_relative_graveyard_attack(program)
+
+
+def _require_relative_graveyard_attack(program):
+    if (
+        program.active_zone != "battlefield" or program.event != "creature.attacks"
+        or program.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}
+    ):
+        raise GraveyardCardTargetError("A source-power graveyard target requires its own attack")
+
+
+def public_graveyard_return_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    version = effect.get("schema_version")
+    if effect.get("op") != GRAVEYARD_RETURN_OPERATION or version != PUBLIC_GRAVEYARD_RETURN_VERSION:
+        return ()
+    if type(version) is not int or dict(effect) != public_graveyard_return_effect():
+        raise GraveyardCardTargetError("Public graveyard return requires one versioned target operand")
+    return (PUBLIC_GRAVEYARD_RETURN_CAPABILITY, "card.return.own_graveyard_to_owner_hand", "target.revalidate_resolution")
+
+
+def public_graveyard_return_target_spec(schema: Mapping[str, Any]) -> PublicGraveyardCardTargetSpec:
+    spec = PublicGraveyardCardTargetSpec.from_target_schema(schema)
+    if spec.owner_relation != "any" or spec.kind not in PUBLIC_GRAVEYARD_RETURN_KINDS:
+        raise GraveyardCardTargetError("Public graveyard return target predicate is outside the closed family")
+    return spec
+
+
+def targeted_graveyard_return_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if len(effects) == 1 and effects[0].get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION:
+        if not {"return-to-owner-hand", "cr-115-targets"}.issubset(mechanic_ids):
+            return ()
+        try:
+            public_graveyard_return_target_spec(target_schema)
+            return public_graveyard_return_payload_dependencies(effects[0])
+        except (GraveyardCardTargetError, TypeError):
+            return ()
+    return targeted_own_graveyard_return_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+
+
+def public_graveyard_return_runtime_dependencies(program):
+    from ..replacement.immutable import thaw_value
+
+    returns = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_RETURN_OPERATION)
+    if not returns:
+        return ()
+    schema = thaw_value(program.target_schema)
+    public_scope = isinstance(schema, Mapping) and schema.get("zones") == ["graveyard"] and schema.get("owner_relation") == "any"
+    if not public_scope and not any(effect.get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION for effect in returns):
+        return ()
+    public_graveyard_return_target_spec(schema)
+    required = public_graveyard_return_payload_dependencies(returns[0])
+    if len(returns) != 1 or not required:
+        raise GraveyardCardTargetError("Public graveyard return requires its closed versioned result")
+    return required
 
 
 def targeted_own_graveyard_return_node_capabilities(

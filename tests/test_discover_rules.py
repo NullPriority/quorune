@@ -1,6 +1,7 @@
 """Pinned Discover eligibility and resumable procedure contracts."""
 
 import unittest
+from inherited_composition_fixture import InheritedNativeFixture
 
 
 class DiscoverValueTests(unittest.TestCase):
@@ -1056,3 +1057,230 @@ class DiscoverNativeTests(unittest.TestCase):
         self.assertEqual(('command','library','hand','hand'),tuple(engine.state.cards[card.object_id].zone for card in cards))
         self.assertEqual(1,sum(event.code=='library.discover' for event in engine.state.events))
         H.replay(self,session,load=True)
+
+
+class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import tempfile
+        from pathlib import Path
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "fixed-top-exile.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "discover-cards.json", "global-alternative-cost-cards.json",
+            "morph-rules-cards.json", "prototype-cards.json")], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def options(self, session):
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        return session.packet("pilot:A", full=True)["decision"]["ctx"]["cast_options"]
+
+    def cast_result(self, session, card, targets=()):
+        option, = [row for row in self.options(session) if row["card"] == card.ref]
+        cast = {"cost_option": option["id"]}
+        if targets:
+            cast["targets"] = list(targets)
+        result = session.act("pilot:A", {"action_id": "choose", "choice": "cast", "cast": cast})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_fixed_top_exile_requires_its_scope_and_runtime_capability(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.fixed_top_exile import FIXED_TOP_EXILE_CAPABILITY, validate_fixed_top_exile
+        from quorune.oracle_ir import compile_oracle_card
+
+        original = self.db.lookup("Mind's Dilation", fuzzy=False)
+        ir = compile_oracle_card(original, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effect, = ir.faces[0].nodes[0].effects
+        self.assertEqual("cast_event_library", validate_fixed_top_exile(effect))
+        for changed in ({"supplier": "$controller"}, {"scope": "each_library"}, {"schema_version": True},
+                        {"decline": {"op": "draw"}}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                validate_fixed_top_exile({**effect, **changed})
+        with patch("quorune.compiler.discover_templates.cast_event_fixed_top_exile", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=self.registry).status)
+
+        session = self.session(6082801)
+        source = self.add(session.engine, "Mind's Dilation")
+        program, = [p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if p.effects]
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != FIXED_TOP_EXILE_CAPABILITY)
+        altered = replace(program, capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + FIXED_TOP_EXILE_CAPABILITY, binding["blockers"])
+
+    def test_etali_casts_any_order_with_fresh_targets_and_leaves_unused_cards_exiled(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(6082802)
+        engine = session.engine
+        etali = self.add(engine, "Etali, Primal Storm")
+        etali.acquired_control_turn_count = -1
+        bolt = self.add(engine, "Lightning Bolt", zone="library", ref="top-exile-bolt")
+        twincast = self.add(engine, "Twincast", seat="B", zone="library", ref="top-exile-twincast")
+        hidden = self.add(engine, "Generic Bound Growth", seat="C", zone="library", ref="top-exile-private-next-card")
+        bear = self.add(engine, "Grizzly Bears", seat="C", zone="library", ref="top-exile-unused-spell")
+        land = self.add(engine, "Generic Bound Plains", seat="D", zone="library", ref="top-exile-land")
+        self.assert_closed(session, etali)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(etali, "D")])
+        self.assertIsNotNone(self.resolve(session))
+        self.assertEqual(["exile"] * 4, [session.state.cards[c.object_id].zone for c in (bolt, twincast, bear, land)])
+        self.assertEqual({bolt.ref, bear.ref}, {row["card"] for row in self.options(session)})
+        self.assertNotIn(hidden.ref, str(session.packet("pilot:D", full=True)))
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "choice": "cast",
+            "cast": {"cost_option": "unoffered"}}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+
+        self.cast_result(session, bolt, ["D"])
+        bolt_item = session.state.stack[-1]
+        self.assertEqual(bolt.object_id, bolt_item.card_object_id)
+        self.assertEqual({twincast.ref, bear.ref}, {row["card"] for row in self.options(session)})
+        self.cast_result(session, twincast, [bolt_item.ref])
+        self.assertEqual([bear.ref], [row["card"] for row in self.options(session)])
+        self.assertEqual(["triggered_ability", "spell", "spell"], [item.kind for item in session.state.stack])
+        declined = session.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+        self.assertTrue(declined.ok, declined.summary)
+        self.assertEqual(["spell", "spell"], [item.kind for item in session.state.stack])
+        self.assertEqual("exile", session.state.cards[bear.object_id].zone)
+        self.assertEqual("exile", session.state.cards[land.object_id].zone)
+        self.assertEqual("library", session.state.cards[hidden.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_minds_dilation_uses_each_opponents_first_cast_and_only_their_top(self):
+        session = self.session(6082803)
+        engine = session.engine
+        dilation = self.add(engine, "Mind's Dilation")
+        first = self.add(engine, "Lightning Bolt", seat="B", zone="hand", ref="dilation-first-bolt")
+        second = self.add(engine, "Lightning Bolt", seat="B", zone="hand", ref="dilation-second-bolt")
+        third = self.add(engine, "Lightning Bolt", seat="C", zone="hand", ref="dilation-other-bolt")
+        for seat, ref in (("B", "dilation-b-mana-one"), ("B", "dilation-b-mana-two"), ("C", "dilation-c-mana")):
+            self.add(engine, "Mountain", seat=seat, ref=ref)
+        lower = self.add(engine, "Generic Bound Growth", seat="B", zone="library", ref="dilation-untouched")
+        supplied = self.add(engine, "Grizzly Bears", seat="B", zone="library", ref="dilation-supplied")
+        land = self.add(engine, "Generic Bound Plains", seat="C", zone="library", ref="dilation-nonspell")
+        self.assert_closed(session, dilation)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.cast(session, "B", first, ["D"])
+        self.assertIsNotNone(self.resolve(session))
+        self.assertEqual([supplied.ref], [row["card"] for row in self.options(session)])
+        self.cast_result(session, supplied)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(("B", "A", "battlefield"), (supplied.owner, supplied.controller, supplied.zone))
+        self.cast(session, "B", second, ["D"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("library", session.state.cards[lower.object_id].zone)
+        self.cast(session, "C", third, ["D"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[land.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_chandra_pays_printed_cast_cost_and_damage_runs_only_on_decline(self):
+        session = self.session(6082804)
+        engine = session.engine
+        chandra = self.add(engine, "Chandra, Torch of Defiance")
+        chandra.counters["loyalty"] = 4
+        bear = self.add(engine, "Grizzly Bears", zone="library", ref="chandra-paid-top")
+        self.assert_closed(session, chandra)
+        self.prepare(session, mana={"C": 1, "G": 1})
+        self.activate_chandra_exile(session, chandra)
+        self.assertIsNotNone(self.resolve(session))
+        option, = self.options(session)
+        self.assertEqual((1, 1), (option["requirements"]["GENERIC"], option["requirements"]["G"]))
+        declined = self.replay(session, load=True)
+        self.cast_result(session, bear)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[bear.object_id].zone)
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        self.assertEqual([40, 40, 40], [session.state.players[seat].life for seat in "BCD"])
+        self.replay(session, load=True)
+        result = declined.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(declined))
+        self.assertEqual([38, 38, 38], [declined.state.players[seat].life for seat in "BCD"])
+        self.assertEqual("exile", declined.state.cards[bear.object_id].zone)
+        self.replay(declined, load=True)
+
+    def activate_chandra_exile(self, session, chandra):
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        action, = [row for row in actions if row["id"] == f"activate:{chandra.ref}:ab1"]
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_chandra_offers_face_down_cast_and_excludes_absent_printed_price(self):
+        for seed, name in ((6082805, "Zoetic Cavern"), (6082806, "Ancestral Vision")):
+            with self.subTest(name=name):
+                session = self.session(seed)
+                chandra = self.add(session.engine, "Chandra, Torch of Defiance")
+                chandra.counters["loyalty"] = 4
+                card = self.add(session.engine, name, zone="library", ref="chandra-price-witness")
+                self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 3})
+                self.activate_chandra_exile(session, chandra)
+                decision = self.resolve(session)
+                if name == "Ancestral Vision":
+                    self.assertIsNone(decision)
+                    self.assertEqual("exile", session.state.cards[card.object_id].zone)
+                    self.assertEqual([38, 38, 38], [session.state.players[seat].life for seat in "BCD"])
+                else:
+                    self.assertIsNotNone(decision)
+                    option, = self.options(session)
+                    self.assertEqual(("morph", 3), (option["cast_method"], option["requirements"]["GENERIC"]))
+                    self.cast_result(session, card)
+                    self.assertIsNone(self.resolve(session))
+                    current = session.state.cards[card.object_id]
+                    self.assertEqual(("battlefield", True), (current.zone, current.face_down))
+                    self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+                    self.assertEqual([40, 40, 40], [session.state.players[seat].life for seat in "BCD"])
+                self.replay(session, load=True)
+
+    def test_etali_offers_free_prototype_and_rejects_alternate_face_down_cost(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(6082807)
+        etali = self.add(session.engine, "Etali, Primal Storm")
+        etali.acquired_control_turn_count = -1
+        prototype = self.add(session.engine, "Blitz Automaton", zone="library", ref="etali-prototype")
+        morph = self.add(session.engine, "Zoetic Cavern", seat="B", zone="library", ref="etali-morph")
+        for seat in "CD":
+            self.add(session.engine, "Generic Bound Plains", seat=seat, zone="library", ref=f"etali-method-{seat}")
+        self.assert_closed(session, prototype)
+        self.prepare(session, mana={"C": 3})
+        self.checkpoint(session)
+        self.attack(session, [(etali, "D")])
+        self.assertIsNotNone(self.resolve(session))
+        options = self.options(session)
+        self.assertEqual({(prototype.ref, None), (prototype.ref, "prototype")},
+                         {(row["card"], row["cast_method"]) for row in options})
+        chosen, = [row for row in options if row["cast_method"] == "prototype"]
+        self.assertFalse(any(chosen["requirements"].values()))
+        before = authoritative_state_hash(session.state)
+        wrong = session.act("pilot:A", {"action_id": "choose", "choice": "cast",
+            "cast": {"cost_option": chosen["id"], "cast_method": "morph"}})
+        self.assertFalse(wrong.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        cast = session.act("pilot:A", {"action_id": "choose", "choice": "cast", "cast": {"cost_option": chosen["id"]}})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("prototype", session.state.stack[-1].context["cast_method"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[prototype.object_id].zone)
+        self.assertEqual("exile", session.state.cards[morph.object_id].zone)
+        self.replay(session, load=True)

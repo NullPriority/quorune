@@ -7,6 +7,7 @@ from typing import Any
 import re
 from ..rules.source_references import SourceReferenceSpec, CYCLED_SOURCE_DAMAGE_COVERAGE
 
+from .announced_damage_templates import fixed_announced_damage_template
 from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
 )
@@ -27,14 +28,46 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     if event_phrase == 'enters':
         from .suspect_templates import normalize_entering_source_suspect
         body = normalize_entering_source_suspect(body)
-    compiled=source_scalar_effect_amount_template(body,source_name=card_name,
+    compiled = fixed_announced_damage_template(body, card_name=card_name, allow_source_pronoun=True)
+    compiled=compiled or source_scalar_effect_amount_template(body,source_name=card_name,
         event={'enters':'permanent.enter','dies':'creature.dies','leaves the battlefield':'permanent.leave'}[event_phrase],
         compile_fixed=lambda text:effect_template(text,card_name=card_name)) or source_self_contextual_effect_template(
             body,card_name=card_name,event_phrase=event_phrase,compile_effect=effect_template)
-    template,effects,schema,mechanics=compiled if compiled is not None else effect_template(body,card_name=card_name)
+    if compiled is None:
+        from .graveyard_copy_cast_templates import relative_graveyard_copy_template
+        relative = (
+            relative_graveyard_copy_template(body, card_name=card_name, event="enter")
+            if condition is not None else None
+        )
+        if event_phrase == "dies":
+            from .reanimation_templates import relative_target_reanimation_template
+            relative = relative_target_reanimation_template(body, card_name=card_name, event="dies")
+        compiled = relative or effect_template(body, card_name=card_name)
+        if compiled[0] is None:
+            compiled = _source_self_reflexive_payment(body, card_name=card_name,
+                event_phrase=event_phrase, effect_template=effect_template) or compiled
+    template,effects,schema,mechanics=compiled
     if condition is not None:mechanics=tuple(dict.fromkeys((*mechanics,SOURCE_ENTRY_CAST_MECHANIC)))
     if condition is not None and condition.get('origin')=='hand':mechanics=(*mechanics,SOURCE_ENTRY_CAST_HAND_MECHANIC)
     return template,effects,schema,mechanics,condition
+
+
+def _source_self_reflexive_payment(body, *, card_name, event_phrase, effect_template):
+    from .occurrence_object_results import occurrence_power_damage_body
+    from .reflexive_payment_templates import reflexive_payment_template
+
+    def compile_child(text):
+        if event_phrase in {'enters', 'dies'}:
+            source = SourceReferenceSpec(card_name).regex_pattern
+            subject = re.match(rf'^(?:it|this creature|{source}) (?=deals damage equal to its power to )', text, re.I)
+            if subject is not None:
+                power = occurrence_power_damage_body('It ' + text[subject.end():])
+                if power is not None:
+                    return power
+        return source_self_contextual_effect_template(text, card_name=card_name, event_phrase=event_phrase,
+            compile_effect=effect_template) or effect_template(text, card_name=card_name)
+
+    return reflexive_payment_template(body, compile_effect=compile_child, bound_trigger=True)
 
 
 _SOURCE_EVENT = re.compile(
@@ -186,6 +219,10 @@ def _source_self_optional_result(text, *, card_name, event_phrase, compile_effec
 
 def normalized_source_result_body(body: str) -> str | None:
     """Bind only a complete source-led result, never new-object anaphora."""
+    if re.fullmatch(r"It becomes prepared\.?", body, re.I):
+        return "This creature becomes prepared."
+    if re.fullmatch(r"Switch its power and toughness until end of turn\.?", body, re.I):
+        return "Switch this creature's power and toughness until end of turn."
     if re.search(r'\b(?:target|create|choose|another|that)\b',body,re.I):return None
     if not (re.match(r'(?:it|him|her) (?:gets|gains|deals)\b',body,re.I)
             or re.fullmatch(r'(?:Tap|Untap) (?:it|him|her)\.',body,re.I)

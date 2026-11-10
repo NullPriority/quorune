@@ -22,6 +22,790 @@
     {"oracle_id":"00000000-0000-4000-8000-000000001117","name":"Generic Tap Transition Witness","mana_cost":"{W}","cmc":1,"type_line":"Artifact","oracle_text":"{T}: Add {W}.\nWhenever this artifact becomes tapped, draw a card.\nWhenever this artifact becomes untapped, you gain 2 life.","colors":[],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8000-000000001118","name":"Generic Tap Transition Spell","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"Tap target creature.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8000-000000001119","name":"Generic Untap Transition Spell","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"Untap target permanent.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"00000000-0000-4000-8000-000000001120","name":"Generic Event Controller Mill Witness","mana_cost":"{W}","cmc":1,"type_line":"Enchantment","oracle_text":"Whenever a permanent becomes untapped, its controller mills a card.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+    {"oracle_id":"00000000-0000-4000-8000-000000001120","name":"Generic Event Controller Mill Witness","mana_cost":"{W}","cmc":1,"type_line":"Enchantment","oracle_text":"Whenever a permanent becomes untapped, its controller mills a card.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Journey to Nowhere",
+      "oracle_id": "2bfec482-be0d-4768-84e7-1c2c74ea1373",
+      "oracle_text": "When this enchantment enters, exile target creature.\nWhen this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-06-17",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{W}",
+      "name": "Fiend Hunter",
+      "oracle_id": "cb9d557a-fc06-428c-8be6-7d28add33028",
+      "oracle_text": "When this creature enters, you may exile another target creature.\nWhen this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": "3",
+      "type_line": "Creature — Human Cleric"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Oblivion Ring",
+      "oracle_id": "bd9b9772-f5f9-4c6b-913e-7193bea5d0a7",
+      "oracle_text": "When this enchantment enters, exile another target nonland permanent.\nWhen this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-05-22",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{G}{U}",
+      "name": "Yarok, the Desecrated",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "oracle_text": "Deathtouch, lifelink\nIf a permanent entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Elemental Horror"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Pacifism",
+      "oracle_id": "5f5e0b10-c8cf-450c-bfd3-bcb0528ec330",
+      "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Robe of Mirrors",
+      "oracle_id": "093a20e5-ff14-41c7-b16c-1f745ddf6942",
+      "oracle_text": "Enchant creature (Target a creature as you cast this. This card enters attached to that creature.)\nEnchanted creature has shroud. (It can't be the target of spells or abilities.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Wrath of God",
+      "oracle_id": "34515b16-c9a4-4f98-8c77-416a7a523407",
+      "oracle_text": "Destroy all creatures. They can't be regenerated.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Faceless Butcher",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "oracle_text": "When this creature enters, exile another target creature.\nWhen this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "3",
+      "type_line": "Creature — Nightmare Horror"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Faceless Devourer",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nWhen this creature enters, exile another target creature with shadow.\nWhen this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2021-03-19",
+      "toughness": "1",
+      "type_line": "Creature — Nightmare Horror"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "If Journey to Nowhere leaves the battlefield before its first ability has resolved, its second ability will trigger and do nothing. Then its first ability will resolve and exile the targeted creature forever.",
+      "oracle_id": "2bfec482-be0d-4768-84e7-1c2c74ea1373",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Fiend Hunter leaves the battlefield before its first ability has resolved, its second ability will trigger and do nothing. Then its first ability will resolve and exile the target creature indefinitely. This is different from abilities on other cards that exile a permanent \"until\" something happens.",
+      "oracle_id": "cb9d557a-fc06-428c-8be6-7d28add33028",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "cb9d557a-fc06-428c-8be6-7d28add33028",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it won't return to the battlefield.",
+      "oracle_id": "cb9d557a-fc06-428c-8be6-7d28add33028",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if you lose the game, the creature exiled with Fiend Hunter remains exiled indefinitely. This is also different from abilities on other cards that exile a permanent \"until\" something happens.",
+      "oracle_id": "cb9d557a-fc06-428c-8be6-7d28add33028",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Oblivion Ring leaves the battlefield before its first ability has resolved, its second ability will trigger and do nothing. Then its first ability will resolve and exile the targeted nonland permanent forever.",
+      "oracle_id": "bd9b9772-f5f9-4c6b-913e-7193bea5d0a7",
+      "published_at": "2007-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are no nonland permanents on the battlefield other than an Oblivion Ring, and the card it exiled was another Oblivion Ring, casting a third Oblivion Ring will result in an involuntary infinite loop that will end the game in a draw (unless someone chooses to break it by putting another nonland permanent onto the battlefield or destroying one of the Oblivion Rings, for example).",
+      "oracle_id": "bd9b9772-f5f9-4c6b-913e-7193bea5d0a7",
+      "published_at": "2007-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the exiled card is an Aura, that card’s owner chooses what it will enchant as it comes back onto the battlefield. An Aura put onto the battlefield this way doesn’t target anything, but the Aura’s enchant ability restricts what it can be attached to. If the Aura can’t legally be attached to anything, it remains exiled forever.",
+      "oracle_id": "bd9b9772-f5f9-4c6b-913e-7193bea5d0a7",
+      "published_at": "2008-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Auras attached to the exiled permanent will be put into their owners’ graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "bd9b9772-f5f9-4c6b-913e-7193bea5d0a7",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you somehow control two Yaroks, a permanent entering the battlefield causes abilities to trigger three times, not four. A third Yarok causes abilities to trigger four times, a fourth causes abilities to trigger five times, and so on.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some cases involving linked abilities, an ability requires information about \"the exiled card.\" When this happens, the ability gets multiple answers. If these answers are being used to determine the value of a variable, the sum is used. For example, if Elite Arcanist's enters-the-battlefield ability triggers twice, two cards are exiled. The value of X in the activation cost of Elite Arcanist's other ability is the sum of the two cards' mana values. As the ability resolves, you create copies of both cards and can cast none, one, or both of the copies in any order.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Yarok's effect doesn't copy the triggered ability; it just causes the ability to trigger twice. Any choices made as you put the ability onto the stack, such as modes and targets, are made separately for each instance of the ability. Any choices made on resolution, such as whether to put counters on a permanent, are also made individually.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a triggered ability is linked to a second ability, additional instances of that triggered ability are also linked to that second ability. If the second ability refers to \"the exiled card,\" it refers to all cards exiled by instances of the triggered ability.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Yarok affects a permanent's own enters-the-battlefield triggered abilities as well as other triggered abilities that trigger when that permanent enters the battlefield. Such triggered abilities start with \"when\" or \"whenever.\"",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Replacement effects are unaffected by Yarok's ability. For example, a creature that enters the battlefield with one +1/+1 counter on it won't receive an additional +1/+1 counter.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that apply \"as [this creature] enters the battlefield,\" such as choosing a color with Diamond Knight, are also unaffected.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't need to control the permanent entering the battlefield, only the permanent that has the triggered ability.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent entering the battlefield at the same time as Yarok (including Yarok itself) causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "oracle_id": "95b53836-18aa-451a-992d-2a111deeeab2",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Having shroud will prevent the creature from being targeted by Aura spells, but it does not remove any Auras that are already attached to the creature or stop Auras from being moved to the creature by some other method.",
+      "oracle_id": "093a20e5-ff14-41c7-b16c-1f745ddf6942",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Faceless Butcher exiles a token creature, the token will cease to exist after being exiled. It won’t return to the battlefield because of the second ability.",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Faceless Butcher’s first ability isn’t optional. If no other players control any creatures and you do, you must choose a creature you control as the target.",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Faceless Butcher exiles a second Faceless Butcher, and then a third Faceless Butcher comes along and exiles the first one, the second one will return to the battlefield. If there are no other creatures on the battlefield, the second will exile the third one, returning the first one, and so on. If no one can stop the loop, the game will be a draw.",
+      "oracle_id": "5237a105-60c4-4597-b24e-84c12ce7b01f",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist. Once the exiled creature returns, it's considered a new object with no relation to the object that it was.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Three Faceless Devourers entering the battlefield at separate times with no other creatures with shadow on the battlefield will result in an infinite loop. The game ends in a draw unless a player somehow interrupts the loop.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Faceless Devourer leaves the battlefield before its first triggered ability has resolved, its last ability triggers. This ability does nothing when it resolves. Then its first ability resolves and exiles the target creature indefinitely.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature has been blocked, that creature remains blocked and will deal and be dealt combat damage even if it gains or loses shadow or if the blocking creature gains or loses shadow.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Multiple instances of shadow on the same creature are redundant.",
+      "oracle_id": "be291913-dd50-4443-ad06-7cfd04a643eb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    }
   ]
 }

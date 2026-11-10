@@ -2,9 +2,12 @@ from __future__ import annotations
 
 """Existing typed result leaves bound to one normalized trigger occurrence."""
 
+import re
+
+from ..rules.source_references import SourceReferenceSpec
 from .target_announcement_bindings import target_announcement_result, target_announcement_bound_result
 from .tap_state_event_bindings import tap_state_bound_result
-from .scalar_effect_amounts import scalar_effect_amount_template
+from .scalar_effect_amounts import trigger_scalar_effect_amount_template
 from .token_copy_templates import token_copy_recipe_template
 from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
 from .fixed_entry_return_requirements import fixed_entry_return_effect_template
@@ -12,10 +15,43 @@ from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
-    from .discover_templates import damage_player_qualified_exile_cast
-    exile_cast = damage_player_qualified_exile_cast(binding, body)
+    if binding.variant in {"source_attacks", "your end step"} and body == binding.body:
+        from .reanimation_templates import relative_target_reanimation_template
+        event = "attack" if binding.variant == "source_attacks" else "end_step"
+        returned = relative_target_reanimation_template(body, card_name=card_name, event=event)
+        if returned is not None:
+            return returned, False
+    if binding.variant == "source_attacks" and body == binding.body:
+        from .graveyard_copy_cast_templates import relative_graveyard_copy_template
+        from .targeted_graveyard_cast_templates import relative_graveyard_cast_template
+        relative = relative_graveyard_copy_template(body, card_name=card_name, event="attack") or relative_graveyard_cast_template(
+            body, card_name=card_name,
+        )
+        if relative is not None:
+            return relative, False
+    from .exile_templates import triggered_source_exile_template
+    source_exile = triggered_source_exile_template(binding, body)
+    if source_exile is not None:
+        return source_exile, True
+    from .discover_templates import cast_event_fixed_top_exile, damage_player_qualified_exile_cast
+    exile_cast = damage_player_qualified_exile_cast(binding, body) or cast_event_fixed_top_exile(binding, body)
     if exile_cast is not None:
         return exile_cast, False
+    if _allow_payment and _allow_optional and body == binding.body:
+        from .occurrence_object_results import entry_permanent_result
+        entry = entry_permanent_result(binding, body)
+        if entry is not None:
+            return entry
+    if binding.active_zone == "battlefield":
+        from .self_transform_templates import fixed_self_transform_effect_template
+        transformation = fixed_self_transform_effect_template(body, card_name=card_name, triggered=True)
+        if transformation is not None:
+            return transformation, False
+        named_explore = re.fullmatch(r"(?P<source>.+?) explores\.?", body, re.IGNORECASE)
+        if named_explore is not None and SourceReferenceSpec(card_name).matches(named_explore["source"]):
+            from .explore_templates import single_explore_effect_template
+
+            return single_explore_effect_template("This permanent explores.").compiled(), False
     if _allow_payment:
         from .source_sacrifice_payments import normalized_source_sacrifice_payment_text
         body=normalized_source_sacrifice_payment_text(binding,body,card_name=card_name)
@@ -32,8 +68,23 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         combat_removal = optional_blocked_combat_removal_template(binding, body)
         if combat_removal is not None:
             return combat_removal, True
-    return _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
+    compiled, current = _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
         _allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=_allow_optional)
+    if binding.event.value == "spell.cast" and compiled[1] == ({"op": "bounce", "card": "$source"},):
+        from .source_self_effect_templates import pin_source_result_incarnation
+
+        compiled = pin_source_result_incarnation(compiled)
+    result = compiled, current
+    if result[0][0] is not None or not _allow_payment:
+        return result
+    from .reflexive_payment_templates import binding_aware_reflexive_payment_template
+
+    return binding_aware_reflexive_payment_template(
+        body, compile_result=lambda child: binding_effect_template(
+            binding, child, card_name=card_name, effect_template=effect_template,
+            source_counter_variants=source_counter_variants, _allow_payment=False,
+        ),
+    ) or result
 
 
 def _binding_result_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
@@ -75,8 +126,8 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .attack_event_results import qualified_attack_characteristic_result
     attack_result=qualified_attack_characteristic_result(binding,body,effect_template=effect_template,card_name=card_name)
     if attack_result is not None:return attack_result
-    from .occurrence_object_results import occurrence_object_result
-    occurrence=occurrence_object_result(binding,body,effect_template=effect_template,card_name=card_name)
+    from .occurrence_object_results import occurrence_object_result, occurrence_power_damage_result
+    occurrence=occurrence_power_damage_result(binding,body) or occurrence_object_result(binding,body,effect_template=effect_template,card_name=card_name)
     if occurrence is not None:return occurrence
     from .event_counter_results import public_event_counter_set_result
     counter_set=public_event_counter_set_result(binding,body,effect_template=effect_template,card_name=card_name,accepted_variants=source_counter_variants)
@@ -171,9 +222,8 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     event_result = tap_state_bound_result(binding, body, effect_template=effect_template, card_name=card_name)
     if event_result is not None:
         return event_result
-    scalar = scalar_effect_amount_template(
-        body, source_name=card_name, event=binding.event.value,
-        source_event=binding.variant.startswith('source_'),
+    scalar = trigger_scalar_effect_amount_template(
+        body, source_name=card_name, binding=binding,
         compile_fixed=lambda text: effect_template(text, card_name=card_name),
     )
     if scalar is not None:

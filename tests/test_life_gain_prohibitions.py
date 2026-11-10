@@ -16,8 +16,12 @@ from quorune.life_change import (LifeChangeRequest,commit_life_change_batch,
 from quorune.replacement import AddAmount,MultiplyAmount
 from test_life_change import replacement
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
+from optional_result_followup_fixture import OptionalResultFollowupFixture
+from quorune.attachments import attach_objects
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
+from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
 import test_land_search_view_equivalence as native
@@ -391,6 +395,255 @@ class LifeGainProhibitionRuntimeTests(unittest.TestCase):
         method = 'test_real_global_source_blocks_doublers_and_lifelink_then_humble_revokes_it'
         with patch('quorune.semantic_runtime.life_prohibitions.program_has_current_ability_fragments',return_value=True):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+
+
+class FirstLifeGainCompilerTests(unittest.TestCase):
+    def test_first_life_gain_has_closed_timing_and_runtime_authority(self):
+        from types import SimpleNamespace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.life_change import FIRST_LIFE_GAIN_CAPABILITY, FIRST_LIFE_GAIN_EVENT
+        from quorune.oracle_ir import compile_oracle_card, generated_programs
+        from test_qualified_zone_event_queries import query_record
+
+        registry = load_default_capability_registry()
+        options = dict(capability_registry=registry, capability_profile='commander_review')
+        record = query_record('Whenever you gain life for the first time during each of your turns, draw a card.')
+        ir = compile_oracle_card(record, **options)
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(FIRST_LIFE_GAIN_EVENT, node.event)
+        self.assertEqual({'all': [{'field': 'player', 'op': 'eq', 'value': '$source.controller'},
+            {'field': 'active_player', 'op': 'eq', 'value': '$source.controller'}]}, node.event_condition)
+        self.assertEqual((0, len(record.oracle_text)), (node.span.start, node.span.end))
+        program, = generated_programs(SimpleNamespace(rulings=lambda _record: ()), record, trust_level='trusted', **options)
+        bound = bind_semantic_program_runtime(program, capability_registry=registry, profile='commander_review')
+        self.assertTrue(bound['strict'], bound['blockers'])
+        deps = tuple(cap for cap in program.capability_dependencies if cap != FIRST_LIFE_GAIN_CAPABILITY)
+        withdrawn = replace(program, capability_dependencies=deps,
+            capability_closure=registry.closure(deps, profile='commander_review').to_dict())
+        result = bind_semantic_program_runtime(withdrawn, capability_registry=registry, profile='commander_review')
+        self.assertFalse(result['strict'])
+        self.assertIn('capability:undeclared_runtime_dependency:' + FIRST_LIFE_GAIN_CAPABILITY, result['blockers'])
+        second = query_record(record.oracle_text.replace('first time', 'second time'))
+        self.assertNotEqual('exact', compile_oracle_card(second, **options).status)
+
+    def test_first_life_gain_history_and_manifest_keep_legacy_absence(self):
+        from types import SimpleNamespace
+        from quorune.model import TurnHistory, TurnHistoryEvent
+        from quorune.turn_history import record_first_life_gain, roll_turn_history
+
+        old = TurnHistory(turn_sequence=2)
+        wire = old.to_dict()
+        self.assertEqual(wire, TurnHistory.from_dict(wire).to_dict())
+        self.assertNotIn('first_life_gain_history_version', wire)
+        self.assertFalse(record_first_life_gain(SimpleNamespace(state=SimpleNamespace(turn_history=old)), 'A'))
+        fact = TurnHistoryEvent('first_life_gain', target='A', target_kind='player')
+        current = TurnHistory(turn_sequence=2, first_life_gain_history_version=1, events=[fact])
+        self.assertEqual(current, TurnHistory.from_dict(current.to_dict()))
+        next_turn = roll_turn_history(current, next_turn_sequence=3, previous_active_player='A')
+        self.assertEqual(1, next_turn.first_life_gain_history_version)
+        self.assertEqual([], next_turn.events)
+        with self.assertRaises(ValueError):
+            TurnHistory(first_life_gain_history_version=True)
+        with self.assertRaises(ValueError):
+            TurnHistory(first_life_gain_history_version=1, events=[fact, fact])
+        with self.assertRaises(ValueError):
+            TurnHistory(events=[fact])
+        with self.assertRaises(ValueError):
+            TurnHistoryEvent('first_life_gain', target='A', target_kind='player', amount=1)
+
+
+class FirstLifeGainNativeTests(InheritedNativeFixture, unittest.TestCase):
+    finish_turn = OptionalResultFollowupFixture.finish_turn
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'first-life-gain.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/life-gain-prohibition-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('First life gain', [DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
+
+    def first_gainers(self, session):
+        return [event.target for event in session.state.turn_history.events if event.kind == 'first_life_gain']
+
+    def cats(self, session):
+        return [card for card in session.state.cards.values()
+            if card.zone == 'battlefield' and card.is_token and card.controller == 'A'
+            and 'cat' in session.engine._type_parts(session.engine._effective_card_data(card)['type_line'])[1]]
+
+    def lifelink_pinger(self, session):
+        pinger = self.add(session.engine, 'Prodigal Sorcerer')
+        collar = self.add(session.engine, 'Basilisk Collar')
+        pinger.acquired_control_turn_count = -1
+        attach_objects(session.state.cards, collar, pinger, source_timestamp=collar.zone_timestamp,
+            players=session.state.players)
+        self.assert_closed(session, pinger)
+        self.assert_closed(session, collar)
+        return pinger
+
+    def ping(self, session, pinger, target):
+        self.priority(session, 'A')
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        offer = next(row for row in actions if row['id'].startswith('activate:' + pinger.ref + ':'))
+        result = session.act('pilot:A', {'action_id': offer['id'], 'targets': [target], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_cat_collector_uses_the_gaining_player_and_current_turn(self):
+        for seed, turn in enumerate('AB', 827101):
+            with self.subTest(turn=turn):
+                session = self.session(seed)
+                source = self.add(session.engine, 'Cat Collector')
+                gain = self.add(session.engine, "Heroes' Reunion", seat='B', zone='hand')
+                session.state.players['B'].mana_pool.update({'W': 1, 'G': 1})
+                self.assert_closed(session, source)
+                self.prepare(session, active=turn)
+                self.checkpoint(session)
+                self.cast(session, 'B', gain, ['A'])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual((47, 40), tuple(session.state.players[seat].life for seat in 'AB'))
+                self.assertEqual(int(turn == 'A'), len(self.cats(session)), 'Only the first gain on your turn creates a Cat')
+                self.assertEqual(['A'], self.first_gainers(session))
+                self.replay(session)
+
+    def test_first_gain_dispatch_omission_is_detected(self):
+        with patch('quorune.player_result_events.record_first_life_gain', return_value=False):
+            with self.assertRaisesRegex(AssertionError, 'Only the first gain on your turn creates a Cat'):
+                self._assert_first_gain_creates_cat()
+
+    def _assert_first_gain_creates_cat(self):
+        session = self.session(827107)
+        self.add(session.engine, 'Cat Collector')
+        gain = self.add(session.engine, "Heroes' Reunion", zone='hand')
+        self.prepare(session, mana={'G': 1, 'W': 1})
+        self.cast(session, 'A', gain, ['A'])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, len(self.cats(session)), 'Only the first gain on your turn creates a Cat')
+
+    def test_vanguard_seraph_observes_net_zero_lifelink_and_keeps_surveil_private(self):
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        session = self.session(827103)
+        source = self.add(session.engine, 'Vanguard Seraph')
+        pinger = self.lifelink_pinger(session)
+        top = self.add(session.engine, 'Grizzly Bears', zone='library', ref='private-first-gain-surveil')
+        top.known_to = []
+        top.revealed_to = []
+        self.assert_closed(session, source)
+        self.prepare(session)
+        provenance = format_state_versions(session.state)
+        self.assertEqual(1, provenance['first_life_gain_history_version'])
+        validate_state_versions({'format': provenance}, session.state)
+        with self.assertRaisesRegex(ValueError, 'Qualified history provenance'):
+            validate_state_versions({'format': {**provenance, 'first_life_gain_history_version': 0}}, session.state)
+        self.checkpoint(session)
+        before_life = session.state.players['A'].life
+        self.ping(session, pinger, 'A')
+        decision = self.resolve(session)
+        self.assertIsNotNone(decision)
+        self.assertEqual(['A'], decision.actors)
+        self.assertEqual(before_life, session.state.players['A'].life)
+        self.assertEqual(['A'], self.first_gainers(session))
+        life_facts = [
+            (event.kind, event.amount)
+            for event in session.state.turn_history.events
+            if event.target == "A" and event.kind in {"player_gained_life", "player_lost_life"}
+        ]
+        self.assertCountEqual([("player_gained_life", 1), ("player_lost_life", 1)], life_facts)
+        self.assertIn(top.ref, json.dumps(session.packet('pilot:A', full=True)))
+        for seat in 'BCD':
+            self.assertNotIn(top.ref, json.dumps(session.packet('pilot:' + seat, full=True)))
+        response = {'action_id': 'choose', 'cards': {'top': [top.ref], 'graveyard': []}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B', response).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        result = session.act('pilot:A', response)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.replay(session)
+
+    def test_simultaneous_lifelink_keeps_regular_source_events_and_one_first_gain(self):
+        session = self.session(827106)
+        collector = self.add(session.engine, 'Cat Collector')
+        listener = self.add(session.engine, 'Bloodthirsty Aerialist')
+        hawks = [self.add(session.engine, "Healer's Hawk", ref=f'first-gain-hawk-{i}') for i in range(2)]
+        for hawk in hawks:
+            hawk.acquired_control_turn_count = -1
+        self.assert_closed(session, collector)
+        self.assert_closed(session, listener)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(hawk, 'B') for hawk in hawks])
+        self.until(session, lambda game: game.state.phase == 'postcombat_main')
+        self.assertEqual((42, 38), tuple(session.state.players[seat].life for seat in 'AB'))
+        self.assertEqual(2, session.state.cards[listener.object_id].counters['+1/+1'])
+        self.assertEqual(1, len(self.cats(session)))
+        self.assertEqual(['A'], self.first_gainers(session))
+        self.replay(session, load=True)
+
+    def test_healer_and_cleric_share_first_gain_after_prohibition_and_replacement(self):
+        session = self.session(827104)
+        healer = self.add(session.engine, 'Attended Healer')
+        cleric = self.add(session.engine, "Cleric of Life's Bond")
+        late = self.add(session.engine, 'Attended Healer', zone='hand', ref='late-attended-healer')
+        blocker = self.add(session.engine, 'Giant Cindermaw', seat='B')
+        self.add(session.engine, 'Boon Reflection')
+        remove = self.add(session.engine, 'Lightning Bolt', zone='hand')
+        denied = self.add(session.engine, "Heroes' Reunion", zone='hand', ref='prevented-first-life')
+        allowed = self.add(session.engine, "Heroes' Reunion", zone='hand', ref='actual-first-life')
+        for source in (healer, cleric, blocker):
+            self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 8, 'G': 4, 'W': 6, 'R': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', denied, ['A'])
+        self.settle(session)
+        self.assertEqual(40, session.state.players['A'].life)
+        self.assertEqual([], self.first_gainers(session))
+        self.cast(session, 'A', remove, [blocker.ref])
+        self.settle(session)
+        self.cast(session, 'A', allowed, ['A'])
+        self.settle(session)
+        self.assertEqual(54, session.state.players['A'].life)
+        self.assertEqual(1, len(self.cats(session)))
+        self.assertEqual(1, session.state.cards[cleric.object_id].counters['+1/+1'])
+        self.cast(session, 'A', late)
+        self.settle(session)
+        self.assertEqual(56, session.state.players['A'].life)
+        self.assertEqual(1, len(self.cats(session)))
+        self.assertEqual(1, session.state.cards[cleric.object_id].counters['+1/+1'])
+        self.assertEqual(['A'], self.first_gainers(session))
+        self.replay(session, load=True)
+
+    def test_deathless_knight_uses_the_graveyard_before_state_actions_and_the_next_turn(self):
+        session = self.session(827105)
+        knight = self.add(session.engine, 'Deathless Knight')
+        pinger = self.lifelink_pinger(session)
+        later = self.add(session.engine, "Heroes' Reunion", zone='hand', ref='late-knight-gain')
+        next_turn = self.add(session.engine, "Heroes' Reunion", seat='B', zone='hand', ref='next-turn-knight-gain')
+        self.add(session.engine, 'Forest', seat='B')
+        self.add(session.engine, 'Plains', seat='B')
+        self.assert_closed(session, knight)
+        self.prepare(session, mana={'G': 1, 'W': 1})
+        self.checkpoint(session)
+        self.ping(session, pinger, knight.ref)
+        self.settle(session)
+        self.assertEqual('graveyard', session.state.cards[knight.object_id].zone)
+        self.assertEqual(41, session.state.players['A'].life)
+        self.assertEqual(['A'], self.first_gainers(session))
+        session = self.replay(session, load=True)
+        self.cast(session, 'A', later, ['A'])
+        self.settle(session)
+        self.assertEqual('graveyard', session.state.cards[knight.object_id].zone)
+        self.finish_turn(session)
+        self.cast(session, 'B', next_turn, ['A'])
+        self.settle(session)
+        self.assertEqual('hand', session.state.cards[knight.object_id].zone)
+        self.assertEqual(['A'], self.first_gainers(session))
+        self.replay(session, load=True)
 
 
 if __name__ == '__main__':unittest.main()

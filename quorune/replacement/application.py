@@ -18,7 +18,9 @@ from .model import (
     string_sequence,
 )
 from .operations import (
+    AmplifyEntryOperation,
     DevourEntryOperation,
+    ENTRY_OBJECT_SELECTION_OPERATIONS,
     AddAmount,
     AppendValues,
     CapResultLifeLoss,
@@ -761,6 +763,13 @@ def _apply_effect_operations(
     affected_player = event.affected_player
     affected_object = event.affected_object
     for operation in operations:
+        if isinstance(operation, AmplifyEntryOperation):
+            from .amplify import apply_amplify_entry_operation
+            if len(operations) != 1:
+                raise ReplacementEffectError("Amplify requires one closed entry instruction")
+            apply_amplify_entry_operation(event, payload, children, operation,
+                effect_id=effect.effect_id, objects=objects)
+            continue
         if isinstance(operation,DevourEntryOperation):
             from .devour import apply_devour_entry_operation
             entry_scope=apply_devour_entry_operation(event,payload,children,entry_scope,operation,effect_id=effect.effect_id,objects=objects)
@@ -888,7 +897,7 @@ def apply_replacement(
             "Selected replacement is not currently applicable"
         )
     effect = by_id[selection]
-    if objects is not None and not any(isinstance(op,DevourEntryOperation) for op in effect.operations):
+    if objects is not None and not any(isinstance(op,ENTRY_OBJECT_SELECTION_OPERATIONS) for op in effect.operations):
         if objects:raise ReplacementEffectError('This replacement does not select objects')
         objects=None
     return _apply_effect_operations(choice.event, effect, effect.operations,objects=objects)

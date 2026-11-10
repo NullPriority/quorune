@@ -78,6 +78,15 @@ def payable_activation_mana_options(host, seat, source, ability, *, targets=None
     return tuple(result.values())
 
 
+def targetless_activation_prices(host, seat, source, ability):
+    """Current alternatives before affordability, including typed modifiers."""
+    from ...activation_mana_cost import current_activation_mana_options
+
+    raw = current_activation_cost_modifiers(host, seat, source, ability)
+    witness, = activation_modifier_witnesses(host, seat, source, ability, raw, targets=())
+    return current_activation_mana_options(host, seat, ability, source, modifiers=witness.modifiers)
+
+
 def select_activation_mana_option(host, seat, source, ability, requested_id, *, targets=None):
     from ...activation_mana_cost import select_activation_mana_option as owned_option
     raw = current_activation_cost_modifiers(host, seat, source, ability)
@@ -141,8 +150,9 @@ def activation_priced_offer_payload(host, seat, source, ability, hint, public_sc
     from .offer_payload import activation_offer_payload
     projection = activation_target_price_preview(host, seat, source, ability, public_schema)
     if projection is None:
-        if not ability.mana_cost_options and any(getattr(value, 'schema_version', None) == 3
-                for value in current_activation_cost_modifiers(host, seat, source, ability)):
+        if not ability.mana_cost_options and (getattr(ability, 'ability_local_mana_reduction', None) is not None
+                or any(getattr(value, 'schema_version', None) == 3
+                       for value in current_activation_cost_modifiers(host, seat, source, ability))):
             price, _value, _modifiers = select_ordinary_activation_price(host, seat, source, ability)
             hint = {**hint, 'm': {key: value for key, value in price.requirements.items() if value}}
         return activation_offer_payload(source, ability, hint), public_schema

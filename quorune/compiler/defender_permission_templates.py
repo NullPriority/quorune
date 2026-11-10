@@ -7,8 +7,10 @@ from ..ability_fragments import ability_fragment_to_dict
 from ..defender_permission import (
     DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY,
     DEFENDER_PERMISSION_HANDLER, CONDITIONAL_DEFENDER_PERMISSION_HANDLER,
+    DEFENDER_RULE_VERSION,
     DEFENDER_TEMPORARY_MECHANIC, DEFENDER_TEMPORARY_OPERATION,
     DEFENDER_DECLARATION_CAPABILITY, DEFENDER_DECLARATION_EVENT, DEFENDER_DECLARATION_HANDLER,
+    DEFENDER_ATTACHMENT_CAPABILITIES, DEFENDER_ATTACHMENT_HANDLER, DefenderAttachmentScope,
 )
 from ..declaration_costs import normalized_oracle_line
 from .continuous_templates import (
@@ -19,13 +21,22 @@ from .fixed_resolution_characteristics import _subject
 from .fixed_target_effect_sequences import _keyword_list
 
 _PERMISSION = re.compile(r"can attack as though (?:it|they) didn't have defender", re.IGNORECASE)
+_SPLIT_TEMPORARY_PERMISSION = re.compile(
+    r"(?P<subject>.+?) gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and gains "
+    r"(?P<keywords>[^.]+?) until end of turn\. It can attack this turn as though "
+    r"it didn't have defender\.?",
+    re.IGNORECASE,
+)
 
 
 def static_defender_permission_handler(text: str, *, source_name: str):
+    normalized = normalized_oracle_line(text, card_name=source_name)
+    attachment = attachment_defender_permission_handler(normalized)
+    if attachment is not None:
+        return attachment
     late = declaration_defender_permission_handler(text, source_name=source_name)
     if late is not None:
         return late
-    normalized = normalized_oracle_line(text, card_name=source_name)
     fragment = ability_fragment_to_dict(DefenderAttackPermission())
     if normalized == "this creature can attack as though it didn't have defender.":
         return ('static-defender-attack-permission-v1', {
@@ -68,6 +79,26 @@ def static_defender_permission_handler(text: str, *, source_name: str):
     return 'static-defender-permission-composition-v1', handler, tuple(sorted(capabilities))
 
 
+def attachment_defender_permission_handler(normalized: str):
+    if re.fullmatch(
+        r"as long as this creature is (?:enchanted or equipped|equipped or enchanted), "
+        r"(?:this creature|it) can attack as though it didn't have defender\.?",
+        normalized, re.I,
+    ):
+        scope = DefenderAttachmentScope.ENCHANTED_OR_EQUIPPED_SOURCE
+    elif re.fullmatch(
+        r"as long as equipped creature has defender, it can attack as though it didn't have defender\.?",
+        normalized, re.I,
+    ):
+        scope = DefenderAttachmentScope.EQUIPPED_CREATURE
+    else:
+        return None
+    return 'declaration-current-attachment-defender-permission-v1', {
+        'handler_id': DEFENDER_ATTACHMENT_HANDLER, 'schema_version': 1,
+        'event': DEFENDER_DECLARATION_EVENT, 'permission': 'ignore_defender', 'scope': scope.value,
+    }, DEFENDER_ATTACHMENT_CAPABILITIES
+
+
 def declaration_defender_permission_handler(text: str, *, source_name: str):
     from .public_state_queries import fixed_public_state_condition
     from ..semantic_runtime.defender_declarations import DefenderDeclarationRule
@@ -95,25 +126,42 @@ def declaration_defender_permission_handler(text: str, *, source_name: str):
 
 def temporary_defender_permission_template(text: str, *, source_name: str,
         source_is_permanent: bool | None, source_card_types: tuple[str, ...]):
+    normalized = text.strip()
+    split = _SPLIT_TEMPORARY_PERMISSION.fullmatch(normalized)
+    if split is not None:
+        normalized = (
+            f"{split['subject']} gets {split['power']}/{split['toughness']} until end of turn "
+            f"and gains {split['keywords']} until end of turn and can attack this turn "
+            "as though it didn't have defender."
+        )
     match = re.fullmatch(
         r"(?P<subject>.+?) (?:(?:gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) "
         r"until end of turn(?: and gains (?P<pt_keywords>.+?) until end of turn)? and )|"
         r"(?:gains? (?P<keywords>.+?) until end of turn and ))?"
         r"can attack this turn as though (?:it|they) didn't have defender\.?",
-        text.strip(), re.IGNORECASE,
+        normalized, re.IGNORECASE,
     )
     if match is None:
         return None
-    selected = _subject(match['subject'], source_name=source_name,
+    subject = match['subject']
+    defender_group = subject.casefold() == "creatures you control with defender"
+    selected = _subject("Creatures you control" if defender_group else subject, source_name=source_name,
         source_is_permanent=source_is_permanent, source_card_types=source_card_types)
     if selected is None:
         return None
     selection, schema = selected
+    predicate = selection.get("predicate")
+    live_group = predicate is not None and predicate.get("exclude_ref") is None
+    if defender_group:
+        if not live_group:
+            return None
+        selection = {"predicate": {**predicate, "keywords_all": ["defender"]}}
     if schema is not None and schema.get('types_any',schema.get('types_all'))!=['creature']:return None
     keywords = _keyword_list(match['keywords'] or match['pt_keywords']) if (match['keywords'] or match['pt_keywords']) else ()
     if keywords is None:
         return None
-    instruction = {'op': DEFENDER_TEMPORARY_OPERATION, 'schema_version': 3, 'permission': 'ignore_defender',
+    version = DEFENDER_RULE_VERSION if live_group or split is not None else 3
+    instruction = {'op': DEFENDER_TEMPORARY_OPERATION, 'schema_version': version, 'permission': 'ignore_defender',
         'power': int(match['power'] or 0), 'toughness': int(match['toughness'] or 0),
         'keywords': list(keywords), **selection}
     return ('fixed-temporary-defender-permission-v1', (instruction,), schema,

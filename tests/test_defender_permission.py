@@ -6,6 +6,7 @@ from dataclasses import replace
 from pathlib import Path
 import tempfile
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.rules.capabilities import load_default_capability_registry
@@ -15,7 +16,9 @@ import test_bound_effect_programs as witnesses
 from unittest.mock import patch
 from quorune.ability_fragments import ability_fragment_from_dict, ability_fragment_to_dict
 from quorune.defender import defender_prohibits_attack
-from quorune.defender_permission import DefenderAttackPermission
+from quorune.defender_permission import (
+    DEFENDER_RULE_CAPABILITY, DEFENDER_RULE_VERSION, DEFENDER_TEMPORARY_CAPABILITY, DefenderAttackPermission,
+)
 from quorune.compiler.defender_permission_templates import static_defender_permission_handler
 from quorune.compiler.defender_permission_templates import temporary_defender_permission_template
 from quorune.semantic_runtime.conditional_continuous import ConditionalDefenderPermissionHandler
@@ -117,6 +120,51 @@ class DefenderPermissionCompilerTests(unittest.TestCase):
         supplied=capability_dependencies_for_node(effects=(forged,),target_schema=None,mechanic_ids=compiled[3])
         self.assertNotIn('combat.attack.defender_permission.temporary',supplied)
 
+    def test_current_group_permission_requires_its_declaration_journal(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.defender_permission_effect import temporary_defender_permission_capabilities
+        from test_qualified_zone_event_queries import query_record
+
+        body = "Creatures you control with defender can attack this turn as though they didn't have defender."
+        line = replace(query_record("{1}{W}: " + body), type_line="Creature — Gargoyle")
+        registry = load_default_capability_registry()
+        program = compile_oracle_card(line, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", program.status)
+        node, = program.faces[0].nodes
+        self.assertIn(DEFENDER_RULE_CAPABILITY, node.capability_dependencies)
+        effect, = node.effects
+        self.assertEqual(DEFENDER_RULE_VERSION, effect["schema_version"])
+        self.assertEqual(["defender"], effect["predicate"]["keywords_all"])
+        malformed = {**effect, "power": 2}
+        self.assertEqual((), temporary_defender_permission_capabilities(
+            effects=(malformed,), target_schema=None, mechanic_ids=node.mechanics,
+        ))
+        value = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        for row in value["capabilities"]:
+            if row["id"] == DEFENDER_RULE_CAPABILITY:
+                row.update(status="blocked", blockers=["Independent declaration journal unavailable"])
+        blocked = compile_oracle_card(line, capability_registry=CapabilityRegistry(value),
+                                      capability_profile="commander_review")
+        self.assertNotEqual("exact", blocked.status)
+
+    def test_attachment_permission_descriptor_has_closed_recipient_scopes(self):
+        from quorune.semantic_runtime.defender_declarations import DefenderAttachmentPermissionHandler
+        from quorune.defender_permission import DefenderAttachmentScope
+
+        for text, scope in (
+            ("As long as this creature is enchanted or equipped, it can attack as though it didn't have defender.",
+             DefenderAttachmentScope.ENCHANTED_OR_EQUIPPED_SOURCE),
+            ("As long as equipped creature has defender, it can attack as though it didn't have defender.",
+             DefenderAttachmentScope.EQUIPPED_CREATURE),
+        ):
+            with self.subTest(scope=scope):
+                _, descriptor, capabilities = static_defender_permission_handler(text, source_name="Generic Source")
+                self.assertIn("attachment.reference.current_or_lki", capabilities)
+                self.assertIs(scope, DefenderAttachmentPermissionHandler().validate(descriptor))
+                with self.assertRaises(SemanticNodeError):
+                    DefenderAttachmentPermissionHandler().validate({**descriptor, "scope": "all_creatures"})
+
 
 class DefenderPermissionRuntimeTests(unittest.TestCase):
     @classmethod
@@ -206,6 +254,23 @@ class DefenderPermissionRuntimeTests(unittest.TestCase):
         source.acquired_control_turn_count=-1
         self.assertTrue(defender_prohibits_attack(engine._effective_card_data(source)))
 
+    def test_actual_legacy_activation_requires_its_declared_permission_owner(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+
+        engine = self.session(288017).engine
+        source = self.add(engine, 'Krotiq Nestguard')
+        program, = [candidate for candidate in engine.semantics.programs_for_oracle(source.oracle_id)
+                    if any(effect.get('schema_version') == 3 for effect in candidate.effects)]
+        self.assertTrue(bind_semantic_program_runtime(
+            program, capability_registry=self.registry, profile='commander_review',
+        )['strict'])
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != DEFENDER_TEMPORARY_CAPABILITY)
+        incomplete = replace(program, capability_dependencies=dependencies,
+                             capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+        binding = bind_semantic_program_runtime(incomplete, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict'])
+        self.assertIn('capability:undeclared_runtime_dependency:' + DEFENDER_TEMPORARY_CAPABILITY, binding['blockers'])
+
     def test_temporary_permission_journal_mutant_is_killed(self):
         from quorune.rules import defender_permission_effect as owner
         with patch.object(owner,'create_resolution_continuous_effect_components',return_value=()):
@@ -269,11 +334,27 @@ class DefenderPermissionRuntimeTests(unittest.TestCase):
         self.assertNotIn(serpent.ref,self.attackers(session))
 
     def test_temporary_set_locks_current_objects_and_survives_source_departure(self):
-        session=self.session(288007);engine=session.engine
+        from quorune.compiler import resolution_effect_templates as compiler
+
+        compile_permission = compiler.temporary_defender_permission_template
+
+        def legacy_permission(*args, **kwargs):
+            result = compile_permission(*args, **kwargs)
+            if result is None or kwargs.get("source_name") != "Generic Mass Defender Permission":
+                return result
+            template, effects, schema, mechanics = result
+            return template, tuple({**effect, "schema_version": 3} for effect in effects), schema, mechanics
+
+        with patch.object(compiler, "temporary_defender_permission_template", side_effect=legacy_permission):
+            session = self.session(288007)
+        engine = session.engine
         source=self.add(engine,'Generic Mass Defender Permission')
         wall=self.add(engine,'Steel Wall');wall.acquired_control_turn_count=-1
         enemy=self.add(engine,'Steel Wall',seat='B',ref='opponent-wall')
-        action=self.ready(session,source,{'C':1});self.checkpoint(session)
+        ability, = engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertEqual(3, ability.effects[0]["schema_version"])
+        action = self.ready(session, source, {'C': 1})
+        self.checkpoint(session)
         accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
         self.resolve(session)
         self.assertFalse(defender_prohibits_attack(engine._effective_card_data(wall)))
@@ -430,6 +511,181 @@ class DefenderPermissionRuntimeTests(unittest.TestCase):
         self.replay(session,load=True)
         engine.move_card(aura.object_id,'graveyard',log=False)
         self.assertTrue(defender_prohibits_attack(engine._effective_card_data(wall)))
+
+
+class CurrentDefenderRuleTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "current-defender-rules.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/defender-permission-cards.json",
+            ROOT / "tests/fixtures/activated-self-transform-cards.json",
+            ROOT / "tests/fixtures/ability-kind-cost-modifier-cards.json",
+            ROOT / "tests/fixtures/entry-copy-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Current Defender rules",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    def activate(self, session, source, *, cost_cards=(), targets=()):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        action, = [row for row in actions if row["id"].startswith(f"activate:{source.ref}:")]
+        command = {"action_id": action["id"], "pay": "auto"}
+        if cost_cards:
+            command["cost_cards"] = [card.ref for card in cost_cards]
+        if targets:
+            command["targets"] = [card.ref for card in targets]
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_actual_wakestone_admits_a_later_controlled_defender_and_keeps_sickness(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.declaration_rule_effects import ResolutionDeclarationRuleEffect
+        from quorune.continuous_effect_model import ContinuousEffectError
+
+        session = self.session(288101)
+        engine = session.engine
+        gargoyle = self.add(engine, "Wakestone Gargoyle")
+        altar = self.add(engine, "Ashnod's Altar")
+        stolen = self.add(engine, "Steel Wall", seat="B")
+        late = self.add(engine, "Steel Wall", zone="hand", ref="later-defender")
+        theft = self.add(engine, "Act of Treason", zone="hand")
+        for card in (gargoyle, stolen, late, theft):
+            self.assert_closed(session, card)
+        program, = [candidate for candidate in engine.semantics.programs_for_oracle(gargoyle.oracle_id)
+                    if any(effect.get("schema_version") == DEFENDER_RULE_VERSION for effect in candidate.effects)]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != DEFENDER_RULE_CAPABILITY)
+        incomplete = replace(program, capability_dependencies=deps,
+                             capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(incomplete, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + DEFENDER_RULE_CAPABILITY, binding["blockers"])
+        self.prepare(session, mana={"C": 4, "R": 1, "W": 1})
+        self.checkpoint(session)
+        self.activate(session, gargoyle)
+        self.activate(session, altar, cost_cards=(gargoyle,))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[gargoyle.object_id].zone)
+        rule, = [effect for effect in session.state.continuous_effects
+                 if isinstance(effect, ResolutionDeclarationRuleEffect)
+                 and isinstance(effect.restriction, DefenderAttackPermission)]
+        self.assertEqual(("A", ("defender",)), (rule.live_query.controller, rule.live_query.keywords_all))
+        self.assertFalse(rule.locked_objects)
+        self.assertEqual(rule, ResolutionDeclarationRuleEffect.from_dict(rule.to_dict()))
+        with self.assertRaises(ContinuousEffectError):
+            ResolutionDeclarationRuleEffect.from_dict({**rule.to_dict(), "schema_version": 2})
+
+        self.cast(session, "A", theft, [stolen.ref])
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", late)
+        self.assertIsNone(self.resolve(session))
+        session = self.replay(session, load=True)
+        self.until(session, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "combat.attackers")
+        offered = {row["id"] for row in session.state.pending_decision.payload_by_actor["A"]["candidates"]}
+        self.assertIn(stolen.ref, offered)
+        self.assertNotIn(late.ref, offered)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": "attack", "attackers": {late.ref: "C"}})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertIn("Defender", session.engine._effective_card_data(stolen.object_id)["keywords"])
+        self.attack(session, [(stolen, "C")])
+        self.replay(session, load=True)
+
+    def test_actual_roving_keep_applies_characteristics_and_an_independent_rule(self):
+        from quorune.declaration_rule_effects import ResolutionDeclarationRuleEffect
+
+        session = self.session(288102)
+        engine = session.engine
+        keep = self.add(engine, "Roving Keep")
+        keep.acquired_control_turn_count = -1
+        self.assert_closed(session, keep)
+        self.prepare(session, mana={"C": 7})
+        self.checkpoint(session)
+        power = engine._numeric_stat(keep.object_id, "power")
+        self.activate(session, keep)
+        self.assertIsNone(self.resolve(session))
+        data = engine._effective_card_data(keep)
+        self.assertEqual(power + 2, engine._numeric_stat(keep.object_id, "power"))
+        self.assertTrue({"Trample", "Defender"} <= set(data["keywords"]))
+        self.assertTrue(defender_prohibits_attack(data))
+        self.assertFalse(defender_prohibits_attack(data, host=engine, card=keep))
+        rule, = [effect for effect in session.state.continuous_effects
+                 if isinstance(effect, ResolutionDeclarationRuleEffect)]
+        self.assertEqual(keep.logical_object_id, rule.locked_objects[0].logical_object_id)
+
+        session = self.replay(session, load=True)
+        self.attack(session, [(keep, "B")])
+        self.until(session, lambda current: current.state.active_player == "B")
+        restored = session.state.cards[keep.object_id]
+        self.assertEqual(power, session.engine._numeric_stat(restored.object_id, "power"))
+        self.assertTrue(defender_prohibits_attack(
+            session.engine._effective_card_data(restored), host=session.engine, card=restored,
+        ))
+        self.replay(session, load=True)
+
+    def test_actual_novice_and_chariot_follow_current_attachment_relations(self):
+        session = self.session(288103)
+        engine = session.engine
+        novice = self.add(engine, "Novice Knight")
+        chariot = self.add(engine, "Warmonger's Chariot")
+        sword = self.add(engine, "Bonesplitter")
+        aura = self.add(engine, "Holy Strength", zone="hand")
+        wall = self.add(engine, "Steel Wall")
+        other = self.add(engine, "Generic Bound Body")
+        self.add(engine, "Generic Bound Plains")
+        for card in (novice, wall):
+            card.acquired_control_turn_count = -1
+        for card in (novice, chariot, sword, aura, wall):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 8})
+        self.checkpoint(session)
+
+        def prohibited(card):
+            data = engine._effective_card_data(card)
+            self.assertTrue(defender_prohibits_attack(data))
+            return defender_prohibits_attack(data, host=engine, card=card)
+
+        self.assertTrue(prohibited(novice))
+        self.assertTrue(prohibited(wall))
+        self.activate(session, sword, targets=(novice,))
+        self.assertIsNone(self.resolve(session))
+        self.activate(session, chariot, targets=(wall,))
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(prohibited(novice))
+        self.assertFalse(prohibited(wall))
+
+        self.activate(session, sword, targets=(other,))
+        self.assertIsNone(self.resolve(session))
+        self.activate(session, chariot, targets=(other,))
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(prohibited(novice))
+        self.assertTrue(prohibited(wall))
+        self.cast(session, "A", aura, [novice.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(prohibited(novice))
+        self.assertTrue(prohibited(wall))
+
+        session = self.replay(session, load=True)
+        self.until(session, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "combat.attackers")
+        offered = {row["id"] for row in session.state.pending_decision.payload_by_actor["A"]["candidates"]}
+        self.assertIn(novice.ref, offered)
+        self.assertNotIn(wall.ref, offered)
+        before = authoritative_state_hash(session.state)
+        bad = session.act("pilot:A", {"action_id": "attack", "attackers": {wall.ref: "B"}})
+        self.assertFalse(bad.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.attack(session, [(novice, "B")])
+        self.replay(session, load=True)
 
 
 if __name__=='__main__':unittest.main()

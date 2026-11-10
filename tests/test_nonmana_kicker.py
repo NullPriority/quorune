@@ -260,6 +260,7 @@ class NonmanaKickerTests(unittest.TestCase):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
         method='test_subtype_tap_cost_uses_current_untapped_controlled_vampire_without_a_tap_symbol'
         from quorune.rules.casting.additional_tap_costs import _candidates
-        def without_subtype(host,seat,cost):return _candidates(host,seat,replace(cost,schema_version=1,creature_subtypes=()))
+        def without_subtype(host, seat, cost, source_object_id):
+            return _candidates(host, seat, replace(cost, schema_version=1, creature_subtypes=()), source_object_id)
         with patch('quorune.rules.casting.additional_tap_costs._candidates',side_effect=without_subtype):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()

@@ -3,7 +3,9 @@
 import re
 
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
+from ..creature_subtypes import canonical_creature_subtype
 from ..public_history_query_model import PublicHistoryQuerySpec
+from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from ..continuous_conditions import (
     FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
 )
@@ -12,15 +14,36 @@ from .fixed_numbers import fixed_number
 _N=r'a|an|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+'
 
 
-def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),excluded_types=(),at_most=False,reduction='count',origin=None):
-    version=2 if origin is not None or event=='card_arrived_graveyard' and any((types_all,types_any,excluded_types)) else 1
-    query=PublicHistoryQuerySpec(event,relation,types_all,types_any,excluded_types,reduction,schema_version=version,origin=origin)
+def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),excluded_types=(),at_most=False,
+               reduction='count',origin=None,creature_subtype=None,artifact_subtype=None,exclude_source=False):
+    if artifact_subtype is not None or exclude_source:
+        version = 4
+    else:
+        version=2 if origin is not None or event=='card_arrived_graveyard' and any((types_all,types_any,excluded_types)) else 1
+    query=PublicHistoryQuerySpec(event,relation,types_all,types_any,excluded_types,reduction,schema_version=version,origin=origin,
+                                 creature_subtype=creature_subtype,artifact_subtype=artifact_subtype,exclude_source=exclude_source)
     return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST if at_most else FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
         amount=amount,schema_version=8,history_query=query)
 
 
 def fixed_public_history_condition(text):
     text=' '.join(text.strip().rstrip('.').casefold().replace('’',"'").split())
+    if text == "an artifact or creature was put into a graveyard from the battlefield this turn":
+        return _condition("permanent_arrived_graveyard", "any_player", types_any=("artifact", "creature"))
+    if text == "an enchantment was put into your graveyard from the battlefield this turn":
+        return _condition("permanent_arrived_graveyard", types_all=("enchantment",))
+    if text == "a permanent was put into your hand from the battlefield this turn":
+        return _condition("permanent_arrived_hand")
+    if text == "one or more cards were put into exile this turn":
+        return _condition("card_arrived_exile", "any_player")
+    subtype_sacrifice = re.fullmatch(r"you sacrificed (?:a|an) (?P<subtype>[a-z]+) this turn", text)
+    if subtype_sacrifice is not None and subtype_sacrifice["subtype"] in ARTIFACT_SUBTYPES:
+        return _condition("artifact_subtype_sacrificed", artifact_subtype=subtype_sacrifice["subtype"])
+    another_death = re.fullmatch(r"another (?P<subtype>.+?) died under your control this turn", text)
+    if another_death is not None:
+        subtype = canonical_creature_subtype(another_death["subtype"])
+        if subtype is not None:
+            return _condition("permanent_died", creature_subtype=subtype, exclude_source=True)
     if text == "a nonland permanent left the battlefield this turn or a spell was warped this turn":
         return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.ANY, schema_version=6, terms=(
             _condition("permanent_left", "any_player", excluded_types=("land",)),

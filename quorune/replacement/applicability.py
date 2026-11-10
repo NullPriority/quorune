@@ -146,6 +146,7 @@ def replacement_choice(
     if counter_event_is_prohibited(event):
         return None
     values=canonical_effects(effects)
+    from .amplify import AmplifyEntryOperation
     from .composition_scope import replacement_condition_event
     def matches(effect):
         try:return condition_matches(effect.conditions,replacement_condition_event(event,effect))
@@ -158,6 +159,10 @@ def replacement_choice(
         and effect.effect_id not in event.applied_effects
         and (effect.occurrence_id is None or effect.occurrence_id not in used_occurrences)
         and matches(effect)
+        and (event.kind != "zone.change" or all(
+            not isinstance(operation, AmplifyEntryOperation) or operation.eligible_cards(event)
+            for operation in effect.operations
+        ))
     ])
     if not applicable:
         return None

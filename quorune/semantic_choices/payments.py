@@ -7,7 +7,11 @@ from ..compiler.optional_payment_templates import (
     OPTIONAL_MANA_PAYMENT_OPERATION,
 )
 from ..replacement.immutable import FrozenMap, freeze_value
-from ..rules.stack_controller_payment_cost import resolved_stack_controller_payment_cost
+from ..rules.stack_controller_payment_cost import (
+    COUNTER_PAYMENT_FOLLOWUP_FIELD, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
+    STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION, bound_counter_payment_followup_effects,
+    resolved_stack_controller_payment_cost,
+)
 from ..semantic_runtime.intents import (
     CounterStackIntent,
     EliminatePlayersIntent,
@@ -21,7 +25,7 @@ from ..trigger_participation import (
     TriggerParticipationError,
     WardSpec,
 )
-from ..zone_trigger_events import ZoneTransitionKind
+from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
@@ -100,7 +104,9 @@ def _completion_requirements(
 ) -> dict[str, int]:
     value = effect.get("_requirements", FrozenMap())
     if mode == "counter" and "schema_version" in effect:
-        requirements = _controller_payment_requirements(effect, query, str(effect.get("_choice_actor") or ""))
+        requirements = _controller_payment_requirements(
+            effect, query, str(effect.get("_choice_actor") or ""), countering_controller=countering_controller,
+        )
         if dict(value) != requirements or not countering_controller or effect.get("_countering_controller") != countering_controller:
             raise SemanticChoiceError("Controller payment continuation identity changed")
         return requirements
@@ -130,15 +136,44 @@ def _payment_choice(response: Mapping[str, Any]) -> bool:
     return value
 
 
-def _controller_payment_requirements(effect: Mapping[str, Any], query: SemanticChoiceQuery | None, actor: str) -> dict[str, int]:
+def _controller_payment_requirements(
+    effect: Mapping[str, Any], query: SemanticChoiceQuery | None, actor: str, *, countering_controller: str | None,
+) -> dict[str, int]:
     try:
-        requirements = resolved_stack_controller_payment_cost(effect)
+        requirements = resolved_stack_controller_payment_cost(effect, countering_controller=countering_controller)
     except (TypeError, ValueError, KeyError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
     target = query.stack_object(effect["stack"]) if query is not None else None
     if target is None or target.controller != actor or effect["player"] != actor or actor not in query.active_seats:
         raise SemanticChoiceError("The target-controller payment identity is no longer current")
     return requirements
+
+
+def _declined_counter_payment(
+    effect: Mapping[str, Any], actor: str, label: str, query: SemanticChoiceQuery,
+) -> SemanticChoiceCompletion:
+    target = str(effect.get("stack") or "")
+    if query.stack_object(target) is None:
+        return SemanticChoiceCompletion()
+    version = effect.get("schema_version")
+    if version == STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION:
+        return SemanticChoiceCompletion(
+            prepend_effects=(
+                FrozenMap({"op": "counter_stack_target", "stack": target}),
+                *bound_counter_payment_followup_effects(effect, paid=False),
+            ),
+        )
+    if version == STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION:
+        return SemanticChoiceCompletion(prepend_effects=(FrozenMap({
+            "op": "counter_stack_target", "stack": target,
+            COUNTER_DESTINATION_FIELD: effect[COUNTER_DESTINATION_FIELD],
+        }),))
+    return SemanticChoiceCompletion(intents=(CounterStackIntent(
+        actor=actor,
+        stack_ref=target,
+        reason=label,
+        countered_by=effect["_countering_controller"] if version == 2 else actor,
+    ),))
 
 
 def _validated_paid_effects(
@@ -318,7 +353,9 @@ class OptionalPaymentHandler:
         context: SemanticChoiceContext,
     ) -> tuple[dict[str, int], str | None, int | None]:
         if self.mode == "counter" and "schema_version" in effect:
-            return _controller_payment_requirements(effect, context.query, context.actor), None, None
+            return _controller_payment_requirements(
+                effect, context.query, context.actor, countering_controller=context.stack_controller,
+            ), None, None
         if self.mode == "effect":
             _validate_optional_effect_payment(
                 effect,
@@ -752,23 +789,16 @@ class OptionalPaymentHandler:
                     intents=completion.intents,
                     prepend_effects=paid_effects,
                 )
+            if self.mode == "counter" and effect.get("schema_version") == STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION:
+                return SemanticChoiceCompletion(
+                    intents=completion.intents,
+                    prepend_effects=bound_counter_payment_followup_effects(effect, paid=True),
+                )
             return completion
         if self.mode == "effect":
             return SemanticChoiceCompletion()
         if self.mode == "counter":
-            target = str(effect.get("stack") or "")
-            if query.stack_object(target) is None:
-                return SemanticChoiceCompletion()
-            return SemanticChoiceCompletion(
-                intents=(
-                    CounterStackIntent(
-                        actor=actor,
-                        stack_ref=target,
-                        reason=label,
-                        countered_by=(effect["_countering_controller"] if effect.get("schema_version") == 2 else actor),
-                    ),
-                )
-            )
+            return _declined_counter_payment(effect, actor, label, query)
         if self.mode in {*_CUMULATIVE_MODES, "echo"}:
             return _declined_pay_or_sacrifice(
                 self.mode,
@@ -1175,6 +1205,7 @@ PAYMENT_CHOICE_HANDLERS = (
             "reflexive_program",
             "_parent_stack_ref",
             "_legal_objects",
+            "_legal_mana_options",
             "_choice_actor",
             "_requirements",
             "_source_ref",
@@ -1195,7 +1226,7 @@ PAYMENT_CHOICE_HANDLERS = (
         test_modules=("tests.test_targeted_counter_effect_clauses", "tests.test_stack_counter_rules", "tests.test_semantic_choice_characterization"),
         continuation_fields=("player", "cost", "source", "stack", "beneficiary", "stage",
             "_choice_actor", "_requirements", "_source_ref", "_source_logical_object_id", "_stack_label",
-            "schema_version", "_countering_controller"),
+            "schema_version", "_countering_controller", COUNTER_DESTINATION_FIELD, COUNTER_PAYMENT_FOLLOWUP_FIELD),
     ),
     OptionalPaymentHandler(
         operation="cumulative_upkeep",

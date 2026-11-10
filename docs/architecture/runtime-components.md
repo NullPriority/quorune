@@ -511,6 +511,14 @@ Source damage in these frames uses the shared current/last-known source owner;
 a departed source's controller and keywords remain independent of the
 controller of the reflexive ability.
 
+Bound child programs derive payment and consequence requirements during
+runtime admission. Version two carries the creating ability's targeting source
+into the later frame. An occurrence-power child also carries its original
+entrant or dying creature. The departure owner refreshes that snapshot in
+either frame. Linked returns and Role creation use their own target owners,
+and controller-scoped battlefield quantities are evaluated when the child
+result applies.
+
 Fixed delayed object actions retain the original incarnation of their source,
 a sealed blocking counterpart or a damaged creature when the creating ability
 resolves. The existing delayed-trigger
@@ -615,7 +623,12 @@ controlled-creature activation through the existing as-though-haste owner,
 current-library-top visibility and fixed land or spell access, or a fixed
 number of additional land plays. Library access revalidates the exact current
 top identity and cycle-safe effective public characteristics for both offers
-and commands. Projection distinguishes a controller-private look from a
+and commands. Qualified actions use the source's live attachment, chosen type,
+or controller-relative battlefield facts. A fixed spell mana-value threshold
+reads the selected spell face and its announced X. The cost owner previews
+payable values from the required minimum, preserves independent source grants,
+and revalidates the selected X before placing the spell. Projection
+distinguishes a controller-private look from a
 public reveal and exposes no deeper library object. Additional-land components
 contribute to the current total allowance, while a versioned turn ledger counts
 successful ordinary land plays independently of source provenance. Removing,
@@ -838,10 +851,13 @@ activation descriptor, and `generic.unearth.v1` lowers its return and delayed-
 exile results to one typed intent. Runtime admission requires the compiler's
 complete-card certificate, then uses the shared activation proposal and commit
 owners. Resolution delegates the card move, zone-object Haste grant, public
-noncopiable designation, self-replacement, delayed trigger, and CR 400.7 reset
-to their canonical owners. Countered, stale, partial-card, copied, granted,
-multiface, and nonordinary-cost variants fail closed without interpreting
-Oracle or reminder prose.
+noncopiable designation, destination replacement, delayed trigger, and CR 400.7
+reset to their canonical owners. In current games the affected permanent's
+controller chooses among applicable ordinary replacements for a later
+departure. A move already headed to exile bypasses the Unearth replacement.
+Unmarked records use the historical Unearth priority. Countered, stale,
+partial-card, copied, granted, multiface, and nonordinary-cost variants fail
+closed without interpreting Oracle or reminder prose.
 
 `casting.kicker.fixed-mana.v1` owns one single fixed ordinary-mana Kicker cost
 descriptor. It contributes an optional additional total-cost branch only when

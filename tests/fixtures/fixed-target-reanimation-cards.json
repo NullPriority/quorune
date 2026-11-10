@@ -14,13 +14,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -34,13 +43,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -54,13 +72,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -74,13 +101,22 @@
       "toughness": "2",
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -94,13 +130,22 @@
       "toughness": "3",
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -114,13 +159,24 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["W"],
-      "color_identity": ["W"],
-      "keywords": ["Enchant"],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -134,15 +190,455 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
+    },
+    {
+      "oracle_id": "17ce2c17-b69b-4ebf-9c3c-c64e771af101",
+      "name": "Alesha, Who Laughs at Fate",
+      "mana_cost": "{1}{B}{R}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Warrior",
+      "oracle_text": "First strike\nWhenever Alesha attacks, put a +1/+1 counter on it.\nRaid — At the beginning of your end step, if you attacked this turn, return target creature card with mana value less than or equal to Alesha's power from your graveyard to the battlefield.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "First strike",
+        "Raid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "84c24e62-26bd-4ca4-b6b9-d31e2065f13b",
+      "name": "Carmen, Cruel Skymarcher",
+      "mana_cost": "{3}{W}{B}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Vampire Soldier",
+      "oracle_text": "Flying\nWhenever a player sacrifices a permanent, put a +1/+1 counter on Carmen and you gain 1 life.\nWhenever Carmen attacks, return up to one target permanent card with mana value less than or equal to Carmen's power from your graveyard to the battlefield.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d057289d-5e28-43d5-8ff3-4a1bc723477d",
+      "name": "Day of Judgment",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy all creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Disfigure",
+      "oracle_id": "77eafe49-b9c5-461d-89c5-cec217dd2974",
+      "oracle_text": "Target creature gets -2/-2 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-11-18",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "b5d64271-4478-4c55-8c71-ba8f02b47fac",
+      "name": "Fiendish Panda",
+      "mana_cost": "{2}{W}{B}",
+      "cmc": 4.0,
+      "type_line": "Creature — Bear Demon",
+      "oracle_text": "Whenever you gain life, put a +1/+1 counter on this creature.\nWhen this creature dies, return another target non-Bear creature card with mana value less than or equal to this creature's power from your graveyard to the battlefield.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "22fa5324-ed3b-4b97-89b4-31c1f86d6ead",
+      "name": "Gurgling Anointer",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Phyrexian Horror",
+      "oracle_text": "Flying\nWhenever you draw your second card each turn, put a +1/+1 counter on this creature.\nWhen this creature dies, return another target creature card with mana value less than or equal to this creature's power from your graveyard to the battlefield.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Serra Angel",
+      "oracle_id": "4b7ac066-e5c7-43e6-9e7e-2739b24a905d",
+      "oracle_text": "Flying\nVigilance (Attacking doesn't cause this creature to tap.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "4",
+      "type_line": "Creature — Angel"
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "17ce2c17-b69b-4ebf-9c3c-c64e771af101",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If another effect causes Alesha's power to be less than the mana value of the target card as its last ability tries to resolve, it won't resolve and none of its effects will happen."
+    },
+    {
+      "oracle_id": "17ce2c17-b69b-4ebf-9c3c-c64e771af101",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If the mana cost of a creature card in your graveyard includes {X}, X is 0 for the purpose of determining its mana value."
+    },
+    {
+      "oracle_id": "17ce2c17-b69b-4ebf-9c3c-c64e771af101",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Some raid abilities trigger at the beginning of your end step. These abilities trigger if you attacked with a creature that turn, even if the permanent with that raid ability wasn't on the battlefield when you attacked."
+    },
+    {
+      "oracle_id": "17ce2c17-b69b-4ebf-9c3c-c64e771af101",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities care only that you attacked with a creature. It doesn't matter how many creatures you attacked with or which player, planeswalker, or battle those creatures attacked."
+    },
+    {
+      "oracle_id": "17ce2c17-b69b-4ebf-9c3c-c64e771af101",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities evaluate the entire turn to see if you attacked with a creature. That creature doesn't have to still be on the battlefield. Similarly, the player, planeswalker, or battle it attacked doesn't have to still be in the game or on the battlefield."
+    },
+    {
+      "oracle_id": "84c24e62-26bd-4ca4-b6b9-d31e2065f13b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If a permanent is sacrificed to pay a cost of a spell or ability, Carmen, Cruel Skymarcher's second ability will resolve before that spell or ability. Conversely, if a permanent is sacrificed during the resolution of a spell or ability, that spell or ability will finish resolving before Carmen, Cruel Skymarcher's second ability is put onto the stack."
+    },
+    {
+      "oracle_id": "84c24e62-26bd-4ca4-b6b9-d31e2065f13b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If another effect causes Carmen, Cruel Skymarcher's power to be less than the mana value of the target card as its last ability tries to resolve, the target is illegal. You won't return the target card to the battlefield."
+    },
+    {
+      "oracle_id": "84c24e62-26bd-4ca4-b6b9-d31e2065f13b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you sacrifice Carmen, Cruel Skymarcher, its second ability will still trigger."
+    },
+    {
+      "oracle_id": "b5d64271-4478-4c55-8c71-ba8f02b47fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won't cause Fiendish Panda's first ability to trigger, even though it caused your team's life total to increase."
+    },
+    {
+      "oracle_id": "b5d64271-4478-4c55-8c71-ba8f02b47fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If Fiendish Panda is dealt lethal damage at the same time that you gain life, it won't receive a counter from its first ability in time to save it."
+    },
+    {
+      "oracle_id": "b5d64271-4478-4c55-8c71-ba8f02b47fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Use Fiendish Panda's power as it last existed on the battlefield to determine which creature cards may be targeted with its last ability. (Feel free to think of this as a metric of just how fiendish the panda was.)"
+    },
+    {
+      "oracle_id": "b5d64271-4478-4c55-8c71-ba8f02b47fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you gain an amount of life \"for each\" of something or \"equal to the number\" of something, that life is gained as one event and Fiendish Panda's first ability triggers only once."
+    },
+    {
+      "oracle_id": "b5d64271-4478-4c55-8c71-ba8f02b47fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, Fiendish Panda's first ability will trigger twice. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, planeswalkers, and/or battles at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will trigger only once."
+    },
+    {
+      "oracle_id": "b5d64271-4478-4c55-8c71-ba8f02b47fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Fiendish Panda's first ability triggers just once for each life-gaining event, whether it's 1 life from Dazzling Angel or 4 life from Apothecary Stomper."
+    }
+  ]
 }

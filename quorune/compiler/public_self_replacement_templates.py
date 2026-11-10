@@ -15,7 +15,21 @@ def _public_replacement_condition(text,source_name):
         from ..continuous_conditions import FixedPublicStateConditionSpec,FixedPublicStateConditionKind,FixedPublicStateFact
         return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
             amount=1,fact=FixedPublicStateFact.CONTROLLER_LANDS_ENTERED_THIS_TURN,schema_version=4)
-    return fixed_public_state_condition(text,source_name=source_name)
+    condition = fixed_public_state_condition(text, source_name=source_name)
+    if condition is not None:
+        return condition
+    match = re.fullmatch(r'you control (?:a|an) (?P<subject>.+)', text, re.I)
+    if match is None:
+        return None
+    from .query_characteristic_templates import query_characteristic_quantity
+    from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+
+    quantity = query_characteristic_quantity(match['subject'] + ' you control', source_name=source_name)
+    if quantity is None or quantity.schema_version != 6:
+        return None
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST, amount=1, quantity=quantity, schema_version=2,
+    )
 
 
 def normalize_public_replacement_text(text):
@@ -72,9 +86,12 @@ def fixed_public_self_replacement_template(text,*,source_name,compile_component)
     for comma in commas:
         condition=_public_replacement_condition(after[:comma],source_name)
         alternative=_alternative_body(base,after[comma+2:])
-        if condition is None or alternative is None or not resolution_condition_is_closed(condition):continue
+        if condition is None or alternative is None:
+            continue
         normal=compile_component(base)
         targeted=normal[2] is not None
+        if not resolution_condition_is_closed(condition, allow_keyword_count=targeted):
+            continue
         if targeted:
             from .public_replacement_bindings import public_same_target_replacement
             replacement=public_same_target_replacement(base,alternative,normal,compile_component,source_name)

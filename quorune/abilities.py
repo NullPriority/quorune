@@ -29,14 +29,22 @@ from .activation_condition_model import (
     activation_restriction_spec,
 )
 from .activation_restriction_composition import activation_restriction_from_effect
-from .activated_ability_descriptor import validate_activated_ability_descriptor
+from .activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD, validate_activated_ability_descriptor
+from .activation_cost_modifiers import (
+    AbilityLocalManaReduction, ability_local_mana_reduction_from_dict, ability_local_reduction_origin_is_supported,
+    validate_ability_local_mana_reduction,
+)
+from .granted_activation_model import (
+    GRANTING_ATTACHMENT_PAYMENT_FIELD, GrantingAttachmentPayment,
+    validate_bound_granting_attachment_payment,
+)
 from .boast import keyword_activation_restrictions,validate_boast_ability,validate_forecast_ability
 from .forecast_model import FORECAST_UNCOMPILED
 from .ability_line_normalization import forecast_cost_without_source_reveal
 from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
 from .creature_subtypes import canonical_creature_subtype
-from .fixed_mana_abilities import FixedManaMode
+from .fixed_mana_abilities import FixedManaMode, supports_hybrid_filter_price
 from .mana_restrictions import (
     canonical_mana_spend_restriction,
     legacy_mana_spend_restriction_for_tail,
@@ -163,10 +171,15 @@ class ActivatedAbility:
     boast: bool = False
     reconfigure: bool = False
     forecast: bool = False
+    granting_attachment_payment: GrantingAttachmentPayment | None = None
+    saddle_threshold: int | None = None
+    ability_local_mana_reduction: AbilityLocalManaReduction | None = None
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
             raise ValueError('Reconfigure marker must be boolean')
+        if self.granting_attachment_payment is not None:
+            validate_bound_granting_attachment_payment(self)
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
         if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
@@ -175,6 +188,17 @@ class ActivatedAbility:
         _validate_ability_sequences_and_scalars(self)
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
+        if self.ability_local_mana_reduction is not None:
+            validate_ability_local_mana_reduction(self.ability_local_mana_reduction)
+            if (self.mana_ability or self.mana_cost_options
+                    or self.complex_symbols or self.announced_x_symbols is not None
+                    or self.generic_reduction_per_legendary_creature or not self.mana.get("GENERIC")
+                    or not ability_local_reduction_origin_is_supported(self.zones, self.discard_source,
+                                                                       self.ability_local_mana_reduction)):
+                raise ValueError("Ability-local reductions require a represented ordinary fixed activation price")
+        if self.saddle_threshold is not None:
+            from .saddle import validate_saddle_ability
+            validate_saddle_ability(self)
         validate_boast_ability(self)
         validate_forecast_ability(self)
 
@@ -247,6 +271,12 @@ class ActivatedAbility:
         if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
         if self.forecast:result['forecast']=True
+        if self.granting_attachment_payment is not None:
+            result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = self.granting_attachment_payment.to_dict()
+        if self.saddle_threshold is not None:
+            result["saddle_threshold"] = self.saddle_threshold
+        if self.ability_local_mana_reduction is not None:
+            result[ABILITY_LOCAL_MANA_REDUCTION_FIELD] = self.ability_local_mana_reduction.to_dict()
         return result
 
     @classmethod
@@ -254,10 +284,16 @@ class ActivatedAbility:
         value = validate_activated_ability_descriptor(value)
         return cls(
             ability_id=value["ability_id"],
+            ability_local_mana_reduction=(
+                ability_local_mana_reduction_from_dict(value[ABILITY_LOCAL_MANA_REDUCTION_FIELD])
+                if ABILITY_LOCAL_MANA_REDUCTION_FIELD in value else None
+            ),
             announced_x_symbols=value.get('announced_x_symbols'),
             boast=value.get('boast',False),
             reconfigure=value.get('reconfigure', False),
             forecast=value.get('forecast', False),
+            granting_attachment_payment=(GrantingAttachmentPayment.from_dict(value[GRANTING_ATTACHMENT_PAYMENT_FIELD])
+                                         if GRANTING_ATTACHMENT_PAYMENT_FIELD in value else None),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],
@@ -304,6 +340,7 @@ class ActivatedAbility:
                 else FrozenMap(value["target_schema"])
             ),
             crew_threshold=value["crew_threshold"],
+            saddle_threshold=value.get("saddle_threshold"),
             fixed_mana_outputs=tuple(
                 FixedManaMode.from_dict(mode)
                 for mode in value["fixed_mana_outputs"]
@@ -390,6 +427,8 @@ class ActivatedAbility:
             result["target_schema"] = thaw_value(self.target_schema)
         if self.crew_threshold is not None:
             result["crew"] = self.crew_threshold
+        if self.saddle_threshold is not None:
+            result["saddle"] = self.saddle_threshold
         if self.activation_limit is not None:
             result["activation_limit"] = self.activation_limit.value
         if self.library_search_types:
@@ -467,11 +506,12 @@ def _validate_ability_sequences_and_scalars(ability: ActivatedAbility) -> None:
     if len(option_ids) != len(set(option_ids)):
         raise ValueError("activation mana-cost option ids must be unique")
     if ability.mana_cost_options and (
-        ability.complex_symbols or ability.mana_ability
+        ability.complex_symbols or (ability.mana_ability and not supports_hybrid_filter_price(
+            ability, ability.mana_cost_options, ability.fixed_mana_outputs
+        ))
     ):
         raise ValueError(
-            "typed activation mana-cost options cannot retain complex symbols "
-            "or describe a mana ability"
+            "typed mana costs require normalized symbols and a closed price"
         )
     if not isinstance(ability.activation_conditions, tuple) or any(
         not isinstance(condition, ActivationCondition)
@@ -753,35 +793,6 @@ def _fixed_equip_keyword_ability(
         activation_limit=(
             ActivationLimit.ONCE_PER_TURN if spec.once_per_turn else None
         ),
-    )
-
-
-def _legacy_crew_keyword_ability(
-    line: str,
-    line_index: int,
-) -> ActivatedAbility | None:
-    """Interpret historical Game Record v3 Crew text.
-
-    Current source-pinned programs use ``OrdinaryCrewAbilitySpec`` and mask
-    their owned Oracle line before this compatibility parser runs.
-    """
-
-    match = re.fullmatch(r"Crew\s+(?P<power>\d+)", line, re.IGNORECASE)
-    if match is None:
-        return None
-    threshold = int(match.group("power"))
-    return ActivatedAbility(
-        ability_id="crew",
-        line_index=line_index,
-        oracle_line=line,
-        cost_text=f"Crew {threshold}",
-        effect_text=(
-            "This Vehicle becomes an artifact creature until end of turn. "
-            f"Crew {threshold}."
-        ),
-        zones=("battlefield",),
-        mana=normalize_mana_bundle(None),
-        crew_threshold=threshold,
     )
 
 
@@ -1319,8 +1330,10 @@ def _parse_activated_line(
     card_name: str,
     keywords: Sequence[str],
 ) -> tuple[ActivatedAbility, ...]:
+    from .crew import legacy_crew_keyword_ability
+
     raw = raw_line.strip()
-    crew = _legacy_crew_keyword_ability(raw, line_index)
+    crew = legacy_crew_keyword_ability(raw, line_index)
     if crew is not None:
         return (crew,)
     craft = _craft_keyword_abilities(raw, line_index)

@@ -1,26 +1,42 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import FrozenInstanceError
+import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from common import ROOT
+from common import ROOT, without_direct_resolution_compiler
+from inherited_composition_fixture import InheritedNativeFixture
+import test_fixed_conspire as conspire_tests
 from quorune.carddb import CardDatabase, CardRecord
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.compiler.return_to_hand_templates import (
     GraveyardCardTargetKind,
     TargetedOwnGraveyardReturnToHandEffectTemplate,
     targeted_own_graveyard_return_to_hand_effect_template,
+    targeted_public_graveyard_return_to_hand_effect_template,
 )
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import (
+    CapabilityRegistry,
     capability_dependencies_for_node,
     load_default_capability_registry,
 )
 from quorune.rules.graveyard_card_targets import (
     GraveyardCardTargetError,
     OwnGraveyardCardTargetSpec,
+    OPPOSING_GRAVEYARD_RETURN_CAPABILITY,
+    OPPOSING_GRAVEYARD_RETURN_OPERATION,
+    PUBLIC_GRAVEYARD_RETURN_CAPABILITY,
+    PUBLIC_GRAVEYARD_RETURN_KINDS,
+    opposing_graveyard_return_runtime_dependencies,
+    public_graveyard_return_effect,
+    public_graveyard_return_runtime_dependencies,
 )
 from quorune.semantics import SemanticRegistry
 from quorune.targets import TargetGroup
@@ -411,7 +427,7 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
 
     def test_unsupported_graveyard_return_variants_remain_material_residuals(self):
         for text in (
-            "Return target card from a graveyard to its owner's hand.",
+            "Return target artifact or creature card from a graveyard to its owner's hand.",
             "Return target card from an opponent's graveyard to your hand.",
             "Return target historic card from your graveyard to your hand.",
             "Return target colorless creature card from your graveyard to your hand.",
@@ -527,6 +543,341 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
                 "target.revalidate_resolution",
             }.issubset(programs[0].capability_dependencies)
         )
+
+
+class PublicGraveyardReturnCompilerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.registry = load_default_capability_registry()
+
+    def compile(self, text, *, registry=None):
+        return compile_oracle_card(card_record(text), capability_registry=registry or self.registry,
+                                   capability_profile="commander_review")
+
+    def test_opposing_graveyard_return_keeps_two_closed_target_roles(self):
+        def compile_ability(text):
+            return compile_oracle_card(card_record(text, type_line="Creature — Human Cleric"),
+                                       capability_registry=self.registry, capability_profile="commander_review")
+
+        cases = (
+            ("two target cards", "Destroy target attacking creature.", 2, "destroy"),
+            ("three target cards", "Return target creature card from your graveyard to the battlefield.", 3, "reanimate"),
+            ("two target cards", "Destroy target artifact or enchantment.", 2, "destroy"),
+            ("target card", "Prevent all damage that would be dealt to any target this turn by a source of your choice.",
+             1, "choose_damage_source"),
+            ("target card", "Put a +1/+1 counter on target creature.", 1, "place_counters"),
+        )
+        for targets, follower, count, operation in cases:
+            with self.subTest(follower=operation, count=count):
+                text = f"{{T}}: Return {targets} from an opponent's graveyard to their hand. {follower}"
+                ir = compile_ability(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                prefix, result = node.effects
+                self.assertEqual({"op": OPPOSING_GRAVEYARD_RETURN_OPERATION,
+                                  "cards": "$target_group.clause_0", "maximum_targets": count}, prefix)
+                self.assertEqual(operation, result["op"])
+                first, second = node.target_schema["groups"]
+                self.assertEqual(("clause_0", "opponent", True, count),
+                                 (first["id"], first["owner_relation"], first["same_owner"], first["count"]))
+                self.assertEqual(("clause_1", 1), (second["id"], second["count"]))
+                program = SimpleNamespace(event="activate", effects=node.effects, target_schema=node.target_schema)
+                self.assertIn(OPPOSING_GRAVEYARD_RETURN_CAPABILITY, opposing_graveyard_return_runtime_dependencies(program))
+                malformed = deepcopy(node.target_schema)
+                malformed["groups"][0].pop("same_owner")
+                with self.assertRaises(GraveyardCardTargetError):
+                    opposing_graveyard_return_runtime_dependencies(SimpleNamespace(**{**vars(program), "target_schema": malformed}))
+                malformed = ({**prefix, "cards": "$target_group.clause_1"}, result)
+                with self.assertRaises(GraveyardCardTargetError):
+                    opposing_graveyard_return_runtime_dependencies(SimpleNamespace(**{**vars(program), "effects": malformed}))
+        with patch("quorune.compiler.return_to_hand_templates.opposing_graveyard_return_sequence_template", return_value=None):
+            self.assertNotEqual("exact", compile_ability(text).status)
+        self.assertNotEqual("exact", compile_ability(text.replace("Put a +1/+1", "If you do, put a +1/+1")).status)
+
+    def test_public_graveyard_return_lowering_and_runtime_scope(self):
+        for kind in PUBLIC_GRAVEYARD_RETURN_KINDS:
+            with self.subTest(kind=kind):
+                text = f"Return target {kind.value} from a graveyard to its owner's hand."
+                compiled = self.compile(text)
+                self.assertEqual("exact", compiled.status, compiled.material_residuals)
+                node, = compiled.faces[0].nodes
+                self.assertEqual("any", node.target_schema["owner_relation"])
+                self.assertEqual(["graveyard"], node.target_schema["zones"])
+                self.assertEqual(kind.types_any, tuple(node.target_schema.get("types_any", ())))
+                self.assertEqual((public_graveyard_return_effect(),), tuple(node.effects))
+                self.assertIn(PUBLIC_GRAVEYARD_RETURN_CAPABILITY, node.capability_dependencies)
+                program = {"effects": node.effects, "target_schema": node.target_schema}
+                self.assertIn(PUBLIC_GRAVEYARD_RETURN_CAPABILITY,
+                              public_graveyard_return_runtime_dependencies(SimpleNamespace(**program)))
+                malformed = ({"effects": ({"op": node.effects[0]["op"], "card": "$target.0"},)},
+                             {"target_schema": {**node.target_schema, "owner_relation": "you"}},
+                             {"target_schema": {**node.target_schema, "zones": ["hand"]}},
+                             {"target_schema": {**node.target_schema, "count": 2}})
+                for changes in malformed:
+                    with self.assertRaises(GraveyardCardTargetError):
+                        public_graveyard_return_runtime_dependencies(SimpleNamespace(**{**program, **changes}))
+
+    def test_public_graveyard_return_dependencies_fail_closed(self):
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        source = "Return target creature card from a graveyard to its owner's hand."
+        registry_path = ROOT / "quorune/rules/capability-registry.json"
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        discovered = set(discover_tests(ROOT).values())
+        for capability in (PUBLIC_GRAVEYARD_RETURN_CAPABILITY, "card.return.own_graveyard_to_owner_hand",
+                           "variant.commander.zone_return"):
+            with self.subTest(capability=capability):
+                raw = json.loads(registry_path.read_text(encoding="utf-8"))
+                entry = next(row for row in raw["capabilities"] if row["id"] == capability)
+                entry.update(status="blocked", blockers=["Withdrawn for the return scope witness"])
+                registry = CapabilityRegistry(raw)
+                index = build_index(registry_value=raw, declaration_source=declarations, discovered_test_ids=discovered)
+                registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+                self.assertNotEqual("exact", self.compile(source, registry=registry).status)
+                self.assertEqual("exact", self.compile("Draw a card.", registry=registry).status)
+
+    def test_public_graveyard_return_compiler_omission_is_killed(self):
+        source = "Return target creature card from a graveyard to its owner's hand."
+        self.assertIsNotNone(targeted_public_graveyard_return_to_hand_effect_template(source))
+        self.assertEqual("exact", self.compile(source).status)
+        with without_direct_resolution_compiler("targeted_public_graveyard_return_to_hand_effect_template"):
+            self.assertNotEqual("exact", self.compile(source).status)
+            self.assertEqual("exact", self.compile("Return target card from your graveyard to your hand.").status)
+
+
+class PublicGraveyardReturnRuntimeTests(InheritedNativeFixture, unittest.TestCase):
+    conspire_option = conspire_tests.FixedConspireRuntimeTests.conspire_option
+    cast_conspired = conspire_tests.FixedConspireRuntimeTests.cast_conspired
+    choose_copy = conspire_tests.FixedConspireRuntimeTests.choose_copy
+    reject = conspire_tests.FixedConspireRuntimeTests.reject
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "public-graveyard-return.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "targeted-graveyard-return-cards.json", "fixed-conspire-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Public graveyard return witness", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _opposing_return_offer(self, session, source):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(action for action in actions if action["id"].startswith(f"activate:{source.ref}:"))
+
+    def test_original_advocates_apply_independent_counter_reanimation_and_combat_results(self):
+        cases = (("Forcemage Advocate", "battlefield", 1), ("Pulsemage Advocate", "graveyard", 3),
+                 ("Spurnmage Advocate", "battlefield", 2))
+        for index, (name, target_zone, count) in enumerate(cases):
+            with self.subTest(source=name):
+                session = self.session(33886510 + index)
+                engine = session.engine
+                source = self.add(engine, name)
+                targets = [self.add(engine, "Generic Bound Body", seat="B", zone="graveyard", ref=f"return-body-{i}")
+                           for i in range(count)]
+                result_target = self.add(engine, "Generic Bound Body", zone=target_zone, ref="return-result")
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                if name == "Spurnmage Advocate":
+                    self.attack(session, [(result_target, "B")])
+                    self.priority(session, "A")
+                offer = self._opposing_return_offer(session, source)
+                groups = {group["id"]: group for group in offer["target_schema"]["groups"]}
+                self.assertEqual(count, groups["clause_0"]["min"])
+                self.assertIn(result_target.ref, groups["clause_1"]["legal_refs"])
+                if name == "Spurnmage Advocate":
+                    self.assertNotIn(source.ref, groups["clause_1"]["legal_refs"])
+                result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto",
+                    "targets": {"clause_0": [card.ref for card in targets], "clause_1": [result_target.ref]}})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertTrue(session.state.cards[source.object_id].tapped)
+                self.assertTrue(all(card.object_id in session.state.players["B"].zones["hand"] for card in targets))
+                target = session.state.cards[result_target.object_id]
+                if name == "Forcemage Advocate":
+                    self.assertEqual(1, target.counters.get("+1/+1"))
+                elif name == "Pulsemage Advocate":
+                    self.assertEqual(("battlefield", "A"), (target.zone, target.controller))
+                else:
+                    self.assertEqual("graveyard", target.zone)
+                self.replay(session, load=True)
+
+    def test_original_nullmage_advocate_resolves_after_losing_part_or_all_of_return_group(self):
+        for removed in (1, 2):
+            with self.subTest(removed=removed):
+                session = self.session(33886530 + removed)
+                engine = session.engine
+                source = self.add(engine, "Nullmage Advocate")
+                targets = [self.add(engine, "Generic Bound Body", seat="B", zone="graveyard", ref=f"null-return-{i}") for i in range(2)]
+                foreign = self.add(engine, "Generic Bound Body", seat="C", zone="graveyard", ref="null-other-owner")
+                artifact = self.add(engine, "Sol Ring", seat="D")
+                exile = [self.add(engine, "Cremate", seat="B", zone="hand", ref=f"null-cremate-{i}") for i in range(removed)]
+                private = self.add(engine, "Generic Bound Growth", seat="B", zone="hand", ref="null-unrelated-hand")
+                self.assert_closed(session, source)
+                self.prepare(session)
+                session.state.players["B"].mana_pool["B"] = removed
+                offer = self._opposing_return_offer(session, source)
+                first = offer["target_schema"]["groups"][0]
+                self.assertTrue(first["same_owner"])
+                self.assertTrue({targets[0].ref, targets[1].ref, foreign.ref}.issubset(first["legal_refs"]))
+                self.checkpoint(session)
+                command = {"action_id": offer["id"], "pay": "auto"}
+                before = authoritative_state_hash(session.state)
+                bad = {"clause_0": [targets[0].ref, foreign.ref], "clause_1": [artifact.ref]}
+                self.assertFalse(session.act("pilot:A", {**command, "targets": bad}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                groups = {"clause_0": [card.ref for card in targets], "clause_1": [artifact.ref]}
+                result = session.act("pilot:A", {**command, "targets": groups})
+                self.assertTrue(result.ok, result.summary)
+                for spell, target in zip(exile, targets):
+                    self.cast(session, "B", spell, [target.ref])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[artifact.object_id].zone)
+                for index, target in enumerate(targets):
+                    self.assertEqual("exile" if index < removed else "hand", session.state.cards[target.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[foreign.object_id].zone)
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+                self.replay(session, load=True)
+
+    def test_original_shieldmage_advocate_returns_before_source_choice_and_skips_a_lost_recipient(self):
+        for stale in (False, True):
+            with self.subTest(stale=stale):
+                session = self.session(33886550 + stale)
+                engine = session.engine
+                source = self.add(engine, "Shieldmage Advocate")
+                returned = self.add(engine, "Generic Bound Body", seat="B", zone="graveyard", ref="shield-return")
+                recipient = self.add(engine, "Generic Bound Body", ref="shield-recipient")
+                damage_source = self.add(engine, "Generic Bound Body", seat="C", ref="shield-chosen-source")
+                murder = self.add(engine, "Murder", seat="B", zone="hand") if stale else None
+                self.assert_closed(session, source)
+                self.prepare(session)
+                session.state.players["B"].mana_pool.update({"C": 1, "B": 2})
+                self.checkpoint(session)
+                offer = self._opposing_return_offer(session, source)
+                command = {"action_id": offer["id"], "pay": "auto",
+                    "targets": {"clause_0": [returned.ref], "clause_1": [recipient.ref]}}
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                if stale:
+                    self.cast(session, "B", murder, [recipient.ref])
+                waiting = self.resolve(session)
+                self.assertEqual("hand", session.state.cards[returned.object_id].zone)
+                if stale:
+                    self.assertIsNone(waiting)
+                    self.assertEqual("graveyard", session.state.cards[recipient.object_id].zone)
+                    self.assertFalse(session.state.damage_prevention_shields)
+                else:
+                    self.assertEqual("semantic.choice", waiting.kind)
+                    self.assertEqual(("pilot:A",), tuple(session.pending_principals()))
+                    session = self.replay(session, load=True)
+                    chosen = session.act("pilot:A", {"action_id": "choose", "source": damage_source.ref})
+                    self.assertTrue(chosen.ok, chosen.summary)
+                    self.assertIsNone(self.resolve(session))
+                    shield, = session.state.damage_prevention_shields
+                    self.assertEqual(damage_source.ref, shield.chosen_source.ref)
+                self.replay(session, load=True)
+
+    def test_original_conspire_returns_cards_to_different_owners(self):
+        cases = (
+            ("Disturbing Plot", "B", "Walking Corpse", "Walking Corpse", "Walking Corpse"),
+            ("Mine Excavation", "W", "Savannah Lions", "Sphere of Resistance", "Curiosity"),
+        )
+        for index, (name, color, donor, original_name, copy_name) in enumerate(cases):
+            with self.subTest(card=name):
+                session = self.session(854100 + index)
+                engine = session.engine
+                spell = self.add(engine, name, zone="hand")
+                donors = [self.add(engine, donor, ref=f"graveyard-return-donor-{i}") for i in range(2)]
+                original = self.add(engine, original_name, seat="B", zone="graveyard", ref="return-original")
+                copied = self.add(engine, copy_name, seat="C", zone="graveyard", ref="return-copy")
+                wrong = self.add(engine, "Forest", seat="B", zone="graveyard")
+                private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="private-return-control")
+                self.assert_closed(session, spell)
+                self.prepare(session, mana={"C": 1, color: 1})
+                self.checkpoint(session)
+
+                offered = self.action(session, "A", spell)
+                action_id, option = self.conspire_option(session, spell)
+                paid_offer = next(cost for cost in offered["cost_options"] if cost["id"] == option)
+                legal = set(paid_offer["target_schema"]["legal_refs"])
+                self.assertTrue({original.ref, copied.ref} <= legal)
+                self.assertNotIn(wrong.ref, legal)
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+                self.reject(session, action_id, cost_option=option, targets=[wrong.ref], pay="auto")
+                self.assertTrue(all(not donor.tapped for donor in donors))
+                self.cast_conspired(session, spell, [original.ref])
+                self.assertTrue(all(session.state.cards[donor.object_id].tapped for donor in donors))
+                self.assertEqual("semantic.storm", self.resolve(session).kind)
+                self.reject(session, "choose", "C", copy_targets=[[copied.ref]])
+                self.reject(session, "choose", copy_targets=[[wrong.ref]])
+
+                session = self.replay(session, load=True)
+                self.choose_copy(session, [copied.ref])
+                self.assertIsNone(self.resolve(session))
+                for target, owner in ((original, "B"), (copied, "C")):
+                    self.assertIn(target.object_id, session.state.players[owner].zones["hand"])
+                    self.assertNotIn(target.object_id, session.state.players["A"].zones["hand"])
+                moves = [event for event in session.state.events
+                         if event.code == "card.return_from_graveyard_to_owner_hand"]
+                self.assertEqual({("A", "B", original.ref), ("A", "C", copied.ref)},
+                                 {(event.actor, event.details["owner"], event.details["object"]) for event in moves})
+                self.assertEqual(1, len(session.engine._current_turn_history("spell_cast")))
+                self.replay(session)
+
+    def test_pulse_of_murasa_gains_life_only_when_original_target_is_legal(self):
+        for stale in (False, True):
+            with self.subTest(stale=stale):
+                session = self.session(854110 + int(stale))
+                engine = session.engine
+                pulse = self.add(engine, "Pulse of Murasa", zone="hand")
+                target = self.add(engine, "Forest", seat="B", zone="graveyard")
+                wrong = self.add(engine, "Generic Bound Growth", seat="B", zone="graveyard")
+                exile = self.add(engine, "Cremate", seat="B", zone="hand")
+                self.assert_closed(session, pulse)
+                self.assert_closed(session, exile)
+                self.prepare(session, mana={"C": 2, "G": 1})
+                session.state.players["B"].mana_pool["B"] = 1
+                self.checkpoint(session)
+                life = session.state.players["A"].life
+                offered = self.action(session, "A", pulse)
+                self.assertIn(target.ref, offered["target_schema"]["legal_refs"])
+                self.assertNotIn(wrong.ref, offered["target_schema"]["legal_refs"])
+                self.reject(session, offered["id"], targets=[wrong.ref], pay="auto")
+
+                self.cast(session, "A", pulse, [target.ref])
+                if stale:
+                    self.cast(session, "B", exile, [target.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("exile" if stale else "hand", session.state.cards[target.object_id].zone)
+                self.assertEqual(life if stale else life + 6, session.state.players["A"].life)
+                self.replay(session, load=True)
+
+    def test_naya_charm_announces_only_selected_modes_graveyard_target(self):
+        session = self.session(854120)
+        engine = session.engine
+        charm = self.add(engine, "Naya Charm", zone="hand")
+        target = self.add(engine, "Generic Bound Growth", seat="C", zone="graveyard")
+        self.assert_closed(session, charm)
+        self.prepare(session, mana={"R": 1, "G": 1, "W": 1})
+        self.checkpoint(session)
+        offered = self.action(session, "A", charm)
+        self.assertIn("mode_2", offered["target_schema"]["legal_modes"])
+        self.assertNotIn("mode_1", offered["target_schema"]["legal_modes"])
+        self.reject(session, offered["id"], modes=["mode_2"], targets=["C"], pay="auto")
+        result = session.act("pilot:A", {
+            "action_id": offered["id"], "modes": ["mode_2"], "targets": [target.ref], "pay": "auto",
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertIn(target.object_id, session.state.players["C"].zones["hand"])
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":

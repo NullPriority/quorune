@@ -5,18 +5,20 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 
-def nested_effect_operations(value: Any) -> set[str]:
-    found: set[str] = set()
+def nested_effects(value: Any):
     if isinstance(value, Mapping):
         operation = value.get("op")
         if isinstance(operation, str) and operation:
-            found.add(operation)
+            yield value
         for child in value.values():
-            found.update(nested_effect_operations(child))
+            yield from nested_effects(child)
     elif isinstance(value, (list, tuple)):
         for child in value:
-            found.update(nested_effect_operations(child))
-    return found
+            yield from nested_effects(child)
+
+
+def nested_effect_operations(value: Any) -> set[str]:
+    return {effect["op"] for effect in nested_effects(value)}
 
 
 def contains_aftermath_kind(value: Any, kind: str) -> bool:

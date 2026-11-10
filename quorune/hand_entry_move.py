@@ -5,13 +5,14 @@ from __future__ import annotations
 from .errors import GameRuleError
 from .hand_entry_queries import decode_hand_entry_queries, hand_entry_matches
 from .object_query import object_query_result
+from .rules.hand_entry_followup import HAND_ENTRY_FOLLOWUP_FIELDS, decode_hand_entry_followup
 from typing import Any, Mapping
 
 
 def resolve_selected_hand_entry_card(host, effect: Mapping[str, Any], *, actor: str):
     required = {'op', 'card', 'from', 'destination', 'controller', 'tapped',
         'expected_object_identity', 'hand_entry_query'}
-    optional = {'_aura_target_ref', '_replacement_selections', '_runtime_source'}
+    optional = {'_aura_target_ref', '_replacement_selections', '_runtime_source', *HAND_ENTRY_FOLLOWUP_FIELDS}
     if (
         not required <= set(effect) or set(effect) - (required | optional)
         or effect['op'] != 'move' or effect['from'] != 'hand'
@@ -26,6 +27,7 @@ def resolve_selected_hand_entry_card(host, effect: Mapping[str, Any], *, actor: 
     if card.logical_object_id != effect['expected_object_identity']:
         raise GameRuleError('The selected hand card changed logical identity')
     try:
+        decode_hand_entry_followup(effect)
         queries = decode_hand_entry_queries(effect['hand_entry_query'])
     except (TypeError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc

@@ -20,6 +20,8 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_c
 from ..public_zone_moves import (
     FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     FIXED_OWNER_ZONE_MOVE_MECHANIC,
+    GRAVEYARD_LIBRARY_TARGET_CAPABILITY,
+    GRAVEYARD_LIBRARY_TARGET_FIELD,
     PublicZoneMoveError,
     PublicZoneMoveSetSpec,
     PublicZoneSeatRelation,
@@ -173,6 +175,29 @@ def _closed_owner_zone_target_schema(value: Mapping[str, Any] | None) -> bool:
     return False
 
 
+def _closed_graveyard_library_target(effect, target_schema) -> bool:
+    if (set(effect) != {"op", "card", "destination", "position", GRAVEYARD_LIBRARY_TARGET_FIELD}
+            or type(effect[GRAVEYARD_LIBRARY_TARGET_FIELD]) is not int or effect[GRAVEYARD_LIBRARY_TARGET_FIELD] != 1
+            or effect["op"] != "move" or effect["card"] != "$target.0" or effect["destination"] != "library"
+            or effect["position"] not in ("top", "bottom") or not isinstance(target_schema, Mapping)):
+        return False
+    schema = dict(target_schema)
+    if "source_exclusion" in schema and schema.pop("source_exclusion") is not True:
+        return False
+    if "up_to" in schema:
+        up_to = schema.pop("up_to")
+        if type(up_to) is not int or up_to != 1 or "count" in schema:
+            return False
+        schema["count"] = 1
+    for spec in (OwnGraveyardCardTargetSpec, PublicGraveyardCardTargetSpec):
+        try:
+            spec.from_target_schema(schema)
+        except (GraveyardCardTargetError, TypeError, ValueError):
+            continue
+        return True
+    return False
+
+
 def _closed_return_choice(effect: Mapping[str, Any]) -> bool:
     if set(effect) != {
         "op",
@@ -230,6 +255,9 @@ def fixed_owner_zone_move_node_capabilities(
     if FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if GRAVEYARD_LIBRARY_TARGET_FIELD in effect:
+        return ((FIXED_OWNER_ZONE_MOVE_CAPABILITY, GRAVEYARD_LIBRARY_TARGET_CAPABILITY, "target.revalidate_resolution")
+                if _closed_graveyard_library_target(effect, target_schema) else ())
     if _closed_return_choice(effect):
         return (
             (FIXED_OWNER_ZONE_MOVE_CAPABILITY,)
@@ -325,6 +353,42 @@ def public_graveyard_card_exile_node_capabilities(
     )
 
 
+TRIGGERED_SOURCE_EXILE_MECHANIC = "triggered-source-exile"
+_SOURCE_EXILE_BY_ZONE = {
+    "battlefield": ("exile_permanent", "$source.zone_object", "permanent.exile.effect"),
+    "graveyard": ("exile_public_graveyard_card", "$source.graveyard_object", "card.exile.public_graveyard"),
+}
+
+
+def triggered_source_exile_result(zone):
+    operation, reference, _capability = _SOURCE_EXILE_BY_ZONE[zone]
+    return {"op": operation, "card": reference}
+
+
+def triggered_source_exile_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if (target_schema is not None or len(effects) != 1
+            or TRIGGERED_SOURCE_EXILE_MECHANIC not in mechanic_ids):
+        return ()
+    return tuple(capability for zone, (_, _, capability) in _SOURCE_EXILE_BY_ZONE.items()
+                 if effects[0] == triggered_source_exile_result(zone))
+
+
+def triggered_source_exile_runtime_dependencies(program):
+    marked = TRIGGERED_SOURCE_EXILE_MECHANIC in program.coverage
+    if not marked and not any(
+        effect.get("op") in ("exile_permanent", "exile_public_graveyard_card")
+        and effect.get("card") in ("$source.zone_object", "$source.graveyard_object")
+        for effect in program.effects
+    ):
+        return ()
+    zone = program.active_zone
+    if (program.event != "creature.dies" or zone not in _SOURCE_EXILE_BY_ZONE
+            or program.target_schema is not None or len(program.effects) != 1
+            or program.effects[0] != triggered_source_exile_result(zone)):
+        raise ValueError("Triggered source exile requires one source-bound creature death result")
+    return (_SOURCE_EXILE_BY_ZONE[zone][2],)
+
+
 def fixed_public_zone_move_set_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -395,6 +459,12 @@ def fixed_private_hand_entry_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
+    from .hand_entry_followup import (
+        HAND_ENTRY_FOLLOWUP_CAPABILITY, VERSIONED_HAND_ENTRY_FIELDS, decode_hand_entry_followup,
+    )
+    from .attacking_card_entry import ATTACKING_CARD_ENTRY_CAPABILITY, decode_hand_attacking_entry
+    from .reanimation_followup import battlefield_entry_followup_capabilities
+
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
         not {"fixed-private-hand-entry", "fixed-public-zone-move"}.issubset(
@@ -406,7 +476,7 @@ def fixed_private_hand_entry_node_capabilities(
         return ()
     effect = effects[0]
     if (
-        set(effect) != {"op", "player", "query", "tapped"}
+        set(effect) != {"op", "player", "query", "tapped"} | VERSIONED_HAND_ENTRY_FIELDS.intersection(effect)
         or effect.get("op") != "put_card_from_hand"
         or effect.get("player") != "$controller"
         or type(effect.get("tapped")) is not bool
@@ -415,9 +485,16 @@ def fixed_private_hand_entry_node_capabilities(
     from ..hand_entry_queries import decode_hand_entry_queries
     try:
         decode_hand_entry_queries(effect["query"])
+        followup = decode_hand_entry_followup(effect)
+        attacking = decode_hand_attacking_entry(effect)
     except (KeyError, TypeError, ValueError):
         return ()
-    return ("zone.move.fixed_private_hand_choice", "zone.change.destination_replacement")
+    base = ("zone.move.fixed_private_hand_choice", "zone.change.destination_replacement")
+    if attacking:
+        return (*base, ATTACKING_CARD_ENTRY_CAPABILITY)
+    if followup is None:
+        return base
+    return tuple(dict.fromkeys((*base, HAND_ENTRY_FOLLOWUP_CAPABILITY, *battlefield_entry_followup_capabilities(followup))))
 
 
 def fixed_public_tap_state_set_node_capabilities(

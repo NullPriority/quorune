@@ -6,6 +6,7 @@ import re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..rules.spell_cast_events import CAST_SPELL_KEYWORDS
 
 
 _CONTROLLER_SPELL_CAST_TRIGGER = re.compile(
@@ -14,11 +15,11 @@ _CONTROLLER_SPELL_CAST_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _SPELL_CAST_TRIGGER = re.compile(
-    r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
+    r"^When(?:ever)? (?P<relation>you cast|an opponent casts|a player casts) "
     r"(?P<quality>a spell|a creature spell|an artifact spell|"
     r"an enchantment spell|an instant spell|a sorcery spell|"
-    r"an instant or sorcery spell|a noncreature spell), "
-    r"(?P<body>.+)$",
+    r"an instant or sorcery spell|a noncreature spell)"
+    r"(?P<keyword> with flying)?, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _CHARACTERISTIC_SPELL_CAST_TRIGGER = re.compile(
@@ -96,6 +97,7 @@ class FixedSpellCastCharacteristicKind(str, Enum):
     SUBTYPE = "subtypes"
     SUPERTYPE = "supertypes"
     COLOR = "colors"
+    KEYWORD = "keywords"
     COLORLESS = "colorless"
     MULTICOLORED = "multicolored"
 
@@ -128,6 +130,8 @@ class FixedSpellCastCharacteristicTerm:
                 if self.kind is FixedSpellCastCharacteristicKind.COLOR
                 else self.value.strip().casefold()
             )
+            if self.kind is FixedSpellCastCharacteristicKind.KEYWORD and normalized not in CAST_SPELL_KEYWORDS:
+                raise ValueError("Unsupported cast spell keyword")
             object.__setattr__(self, "value", normalized)
 
     @property
@@ -670,10 +674,18 @@ def _basic_spell_cast_binding(
             "an instant spell": FixedSpellCastQuality.INSTANT,
             "a sorcery spell": FixedSpellCastQuality.SORCERY,
         }[ordinary.group("quality").casefold()]
+        keyword = None
+        if ordinary["keyword"] is not None:
+            if quality is not FixedSpellCastQuality.CREATURE:
+                return None
+            keyword = FixedSpellCastCharacteristicQuery((
+                FixedSpellCastCharacteristicTerm(FixedSpellCastCharacteristicKind.KEYWORD, "flying"),
+            ))
         return FixedSpellCastBindingSpec(
             subject=FixedSpellCastSubject(
                 controller=_spell_cast_controller(ordinary.group("relation")),
                 quality=quality,
+                characteristic_query=keyword,
             ),
             body=ordinary.group("body"),
         )

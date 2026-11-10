@@ -368,6 +368,24 @@ occurrences in its existing APNAP batch; rollback covers payment facts and
 collected triggers together. Activation payments and uncast spell copies do
 not enter this journal. See [ADR 0128](../adr/0128-payment-time-expend-occurrences.md).
 
+Static library-top actions collect the current source ability separately from
+private top-card visibility. The typed turn-history qualifiers use the source
+incarnation's declared attack or its controller's committed cast. A Class
+ability also requires its current level membership. Offers and submissions use
+the same land-play and cast permission, with ordinary timing and costs.
+
+Indefinite source animation uses the same layered resolution owner as fixed
+characteristic changes. The current source incarnation receives the creature
+type, base statistics and any fixed abilities at one timestamp. The
+intervening enchantment condition uses live types at trigger and resolution.
+A source that leaves and returns has a new incarnation.
+Cast triggers with a direct source return likewise resolve against the original
+battlefield incarnation.
+An indefinite Enchantment setting adds a layer-four effect to that same
+incarnation. Later type effects take precedence in timestamp order. Cast
+predicates that require flying read the effective keywords of the committed
+spell, including the public characteristics of a face-down cast.
+
 Fuse is a hand-only casting method selected through the ordinary cast offer and
 proposal. It creates one spell with both halves' names, types, colors, and
 combined printed mana cost and mana value. Casting a single half retains that
@@ -636,11 +654,30 @@ source may be tapped or newly controlled; tap-symbol abilities retain their
 ordinary restrictions. The source can contribute once and its sacrifice uses
 the canonical zone-cost owner. Additional costs and choices outside this
 bounded form require explicit activation.
-Mana abilities with a separate mana payment also require explicit activation.
-The source/output-only automatic plan cannot pay that price. Discovery and
-plan commitment exclude the same paid mode while retaining any free mode on
-the same permanent. Explicit activation still pays the complete price through
-the normal proposal and payment owners before producing mana.
+Fixed hybrid tap filters contribute a priced mode to the same planner. The
+planner searches an ordered sequence of distinct sources and applies each
+input and output to an isolated copy of the canonical mana provenance.
+Restrictions and spending permissions are evaluated in each activation's
+context. Snow mana spent as an input leaves the available snow pool.
+Commit checks the current ability and cost option, spends the exact declared
+input, then taps the source and produces mana. A manual plan provides the
+same ordered steps. Other separately priced forms use explicit activation.
+See [ADR 0163](../adr/0163-ordered-hybrid-mana-payments.md).
+
+Fixed triggered mana observes a completed activation that paid its own tap
+symbol and produced mana. Current layer-six abilities select attached lands,
+qualifying permanents tapped by their controller, or lands of a specified type.
+Each qualifying ability adds its fixed bundle before priority. The funding and
+commit paths keep the bonus separate from the original output's spending
+restriction and snow provenance. Both paths account for providers removed by
+mana costs. The production owner recognizes one tap occurrence from the base
+activation, then records its separate bonus outputs.
+
+Triggered mana choices bind the land's base output and each bonus together.
+Copied types come from the base production. Color choices support one mana or
+two in any combination. Direct activation, automatic funding, and Assist carry
+the same typed option through commitment. Funding groups equivalent outcomes by
+mana provenance and by the providers that can leave during payment.
 
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that
@@ -659,6 +696,13 @@ inspection mutation owner records only that selected card as public knowledge
 and publishes its reveal; unchosen candidates remain private. The replacement
 journal preserves the decision through save/load and replay. Decline sets tapped
 entry, while acceptance leaves other tap-state replacements in force.
+
+Amplify uses the replacement decision to select any number of distinct cards
+from the entering controller's hand. The offered and accepted set uses the
+entrant's prospective creature types and excludes the simultaneous entrants.
+Only chosen hand incarnations are revealed. Each Amplify instance has a separate
+choice, and its contribution joins the same prospective entry counter placement
+before counter replacement and entry observers.
 
 Fixed external entry-tapped replacements use the same immutable zone-entry
 snapshot and commit owner. A current battlefield source selects a fixed union
@@ -737,6 +781,18 @@ For a split permanent with a shared printed type line and a single active
 face, the battlefield view derives mana value and colors from that face
 under CR 202.2, 202.3, and 709.5. The ordinary target-legality query reads
 the same values.
+
+The current shared-type split permanent mode stores ordered door designations
+on the battlefield incarnation. Cast entry unlocks the selected half. Other
+entry paths establish both halves locked. Current names, mana cost, colors,
+and printed abilities derive from the unlocked halves while the shared type
+line remains. Copiable values carry both door definitions independently from
+the object's unlocked designations.
+
+Paid unlock uses the ordinary priority capability, mana affordability and
+payment owners. The action changes the permanent in place. The separate
+door and full-unlock occurrences enter the ordinary trigger batch. An unlock
+as part of cast entry shares that batch with the enchantment entry occurrence.
 
 Current face-down copy reads use the existing layer-1b values and an anonymous
 copiable source. Listed Ward remains part of those values; the hidden printed
@@ -1238,6 +1294,25 @@ the same spell-program key from the selected front face name. A typed land-face
 program cannot authorize an unsupported spell face, and a trusted spell target
 schema cannot disappear from its advertised offer.
 
+An assembled spell text plan declares one combined set of targets. Each body
+keeps its original target relations, and each selected mode keeps its own target
+positions. Stack resolution binds instructions against those saved groups using
+the same physical spell and controller throughout. The complete spell determines
+whether all announced targets are illegal. A surviving spell skips instructions
+whose required target is gone and resolves the independent instructions in order.
+
+Splice uses source-pinned hand descriptors and a private ordered choice before
+the ordinary cast commits. Each offered addition has a current price and
+complete target assignment available. Acceptance rechecks the hand incarnations
+and combines their fixed prices before the ordinary cost modifiers. The cast
+reveals the chosen cards during its atomic announcement. Later copies retain the
+already announced text and targeting source through the standard copy owners.
+
+Color-qualified casting prices query the current controlled creature. A
+combined color tap and fixed zone price reads the proposed tap before offering
+the later payment. The same creature can pay both when it still qualifies after
+the tap. The return owner routes it to its owner's hand.
+
 `abilities.py` generically lowers represented colon abilities, the supported
 Craft reminder grammar, and typed activation-usage limits for
 printed Exhaust and ordinary once-only abilities. `activation_usage.py` is the single owner for the
@@ -1401,6 +1476,13 @@ parser. Discard-self and exile-self activation costs use the same destination-
 replacement continuation as casting costs: a competing choice rolls the
 complete priority action back, keeps the continuation private to the affected
 activator, and resumes the exact source-pinned action before stack placement.
+
+An explicit public battlefield activation permission belongs to the trusted
+result program. Offer discovery and command submission both check the live
+source, its effective ability, and the declared timing. The activating player
+chooses targets, pays costs, and controls the stack ability. The source keeps
+its current controller. Sorcery timing uses the activating player's turn.
+
 Exactly one fixed positive named-counter removal from the current battlefield
 source is also part of the pinned catalog. Offer and commit read the same
 public counter state, pin the source incarnation, and pay through the canonical
@@ -1512,6 +1594,11 @@ and restriction payability, and a stale option rejects before source tap, mana
 spend, life payment, or stack placement. The lot journal is authoritative
 checkpoint state but is not projected as mana-source identity.
 
+An optional fixed hybrid price during resolution uses the same canonical mana
+alternatives. The resolving controller can decline or select an affordable
+equivalent. The payment owner revalidates that choice before the mana owner
+spends it and the previously bound effect continues.
+
 Ordinary announced activation X uses that catalog and the same proposal and
 payment path. `activation_x.py` validates the optional symbol count;
 `rules/activation/x_costs.py` prices each symbol at the explicit nonnegative
@@ -1618,9 +1705,29 @@ supertypes and while retaining the source's existing card types and subtypes,
 as required for an "artifact creature" result, and binds that layer-4 effect
 to the source incarnation that created the stack object. A Vehicle that leaves
 and returns is not affected.
+The same cost owner applies fixed self-relative power bonuses from the
+current abilities of printed creatures and typed token definitions. Crew
+bonuses apply to payments for a current Vehicle. The combined Crew and Saddle
+ability also contributes to Saddle payments for a current Mount.
+The creature's actual power remains available to combat and other rules.
+The Crew owner also decodes the historical Game Record v3 Crew syntax.
 Crew prohibitions, alternative costs, becomes-crewed triggers, granted or
 copied Crew, and effects that crew without activating the ability remain
 explicitly unsupported.
+
+Printed fixed `Saddle N` shares the signed-power tap payment with Crew and
+uses ordinary sorcery timing. Payment captures the selected creature
+incarnations, then resolution designates the original battlefield object.
+The designation appears in the public object view and expires at cleanup or
+when that object leaves the battlefield. Copiable values are independent of
+that designation. A self-attack trigger with the while-saddled qualifier
+matches the fact sealed at declaration, so a later zone change preserves the
+trigger on the stack.
+
+Fixed entry triggers can saddle the entering Mount or animate the entering
+Vehicle through cleanup. Both results bind to the entrant's sealed
+incarnation. A later departure of the trigger's source leaves that binding
+available while the entrant is still present.
 
 Mandatory fixed nonmana casting costs use source-spanned typed descriptors.
 The counter-placement and single-object zone-change families share the ordinary
@@ -1786,10 +1893,11 @@ the validated keyword metadata, declared-attack journal and once-per-turn owner.
 
 Preparation cards have normal permanent characteristics and separate copiable
 prepare-spell characteristics. The physical card casts only with its normal
-characteristics. A compiled enters-prepared replacement gives the entering
-permanent a noncopiable prepared designation and creates one linked noncard
-copy of its inset spell in exile. The existing copy owner allocates that object;
-the state-based owner retains it only while its original permanent incarnation
+characteristics. An enters-prepared replacement or a resolving source-only
+result gives the permanent a noncopiable prepared designation and creates one
+linked noncard copy of its inset spell in exile. The source result checks the
+original battlefield incarnation and its current copiable spell. The copy owner
+allocates the object and the state-based owner retains it while that incarnation
 remains present and prepared. Departure or unpreparing ends that exception.
 
 Only the prepared permanent's current controller can cast the exile copy, using
@@ -1797,9 +1905,9 @@ ordinary timing, targets and payment. An offer or a failed payment preserves
 the designation. The accepted cast unprepares the source after the spell enters
 the stack; countering it does not restore preparation. Losing abilities or
 becoming a different copy after preparation leaves the existing link intact.
-A newly copied creature receives the alternative characteristics, but receives
-prepared status only through its own entry replacement. Token copy exceptions
-to its color or base statistics do not alter the inset spell's values.
+A copy receives the alternative characteristics. Its own entry replacement
+or a later instruction can give it prepared status. Token copy exceptions to
+its color or base statistics leave the inset spell's values intact.
 
 Phase boundaries preserve the designation, end the old exile copy, and create
 a new copy on phasing in. This lifecycle does not admit general phasing actions,
@@ -2081,6 +2189,31 @@ departure, but applies only while the affected permanent retains the same
 battlefield logical identity. The runtime does not parse Oracle text or execute
 display rules text to reconstruct that duration.
 
+Linked reanimation grants haste only after the selected graveyard card enters
+the battlefield. It captures the new incarnation separately from the creating
+stack source and schedules one delayed departure through the normal trigger
+owner. The end-step condition can use the resolving controller's next end step.
+The delayed instruction checks the retained incarnation before it moves the
+object and requires current control for sacrifice. A temporary power modifier
+and haste share one timestamp and expire at cleanup.
+
+Optional private hand entry can carry the same haste and next-end-step
+sacrifice. The versioned choice retains the follow-up alongside the sealed hand
+identity. Declining creates no effect. The existing move owner resolves entry
+replacements before the follow-up captures the new battlefield incarnation.
+Creature subtype filters require the creature card type as well as the subtype.
+
+A creature can enter tapped and attacking from a private hand choice, a
+revalidated graveyard target, or its own graveyard attack trigger. The
+graveyard trigger counts only the matching declared attackers and retains
+its source incarnation through the optional mana payment. An intervening
+condition is checked again before the payment choice. A fixed entry counter
+joins the entry replacement transaction. Entry replacement choices come
+before the defending recipient choice. The existing zone owner commits the
+combat assignment before entry events are collected. The entrant keeps the
+selected recipient only while it remains eligible and retains its captured
+identity. The assignment preserves the original declarations and attack bands.
+
 Closed fixed source-counter sequences use the same owners. The compiler emits
 `$source.zone_object`; resolution requires the current battlefield source and
 its stack-pinned logical identity before constructing the counter intent. A
@@ -2163,6 +2296,13 @@ subject applicability, validate their closed codecs and capability dependencies,
 and store no mutable quantity cache. Existing operation payloads retain their
 serialized fields.
 
+Temporary power and toughness switches resolve through the same continuous
+effect owner and lock each current battlefield incarnation. Source, targeted,
+and whole-battlefield switches share the layer 7d operation. It follows
+modifiers and counters and expires at cleanup. A whole-battlefield switch
+includes untargetable creatures and leaves later entrants unaffected. Declared
+target sets use the canonical announcement and resolution revalidation owners.
+
 Keyword-qualified characteristic counts use explicit quantity schema six and
 read candidate characteristics through layer six. Their later P/T modifiers
 are not materialized in an earlier view. This retains current keyword grants
@@ -2231,6 +2371,12 @@ a per-player threshold does not add different players' amounts together.
 Missing or stale history is unavailable, including inside Boolean conditions
 and zero-count comparisons. Intervening conditions retain the existing checks
 at occurrence and resolution under the trigger's locked controller.
+
+Movement facts come from the committed zone-change occurrence after replacement.
+A hand or graveyard arrival of a permanent uses its destination owner and its
+prior battlefield types. A card exile condition also counts face-down arrivals.
+Sacrifice predicates use the previous controller and the artifact's prior
+subtypes. Source-excluding death queries compare logical incarnations.
 
 Qualified history modes also seal a completed cast's original zone and an
 arriving card's graveyard types. Cast-origin conditions count a spell even if

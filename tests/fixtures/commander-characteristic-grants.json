@@ -716,6 +716,147 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Agent of the Shadow Thieves",
+      "oracle_id": "b2142d8b-ea53-443e-bd60-9e70d9da9bd7",
+      "oracle_text": "Commander creatures you own have \"Whenever this creature attacks a player, if no opponent has more life than that player, put a +1/+1 counter on this creature. It gains deathtouch and indestructible until end of turn.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Sword Coast Sailor",
+      "oracle_id": "71248bf6-a6a2-440e-9313-a7abce05a84b",
+      "oracle_text": "Commander creatures you own have \"Whenever this creature attacks a player, if no opponent has more life than that player, this creature can't be blocked this turn.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Hardy Outlander",
+      "oracle_id": "d0a33e9b-dc1e-4643-b179-851f3c71a99d",
+      "oracle_text": "Commander creatures you own have \"Whenever this creature attacks a player, if no opponent has more life than that player, another target creature you control gets +X/+X until end of turn, where X is this creature's power.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1173,6 +1314,42 @@
     {
       "comment": "You can choose two commanders that are the same color or colors.",
       "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability granted by Agent of the Shadow Thieves is looking to see if any of the attacking player's opponents have a higher life total than that defending player. The attacking player's life total is not included in this comparison.",
+      "oracle_id": "b2142d8b-ea53-443e-bd60-9e70d9da9bd7",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability granted by Sword Coast Sailor is looking to see if any of the attacking player's opponents have a higher life total than that defending player. The attacking player's life total is not included in this comparison.",
+      "oracle_id": "71248bf6-a6a2-440e-9313-a7abce05a84b",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the commander creature leaves the battlefield before its triggered ability resolves, use its power as it last existed on the battlefield to determine the value of X.",
+      "oracle_id": "d0a33e9b-dc1e-4643-b179-851f3c71a99d",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability granted by Hardy Outlander is looking to see if any of the attacking player's opponents have a higher life total than that defending player. The attacking player's life total is not included in this comparison.",
+      "oracle_id": "d0a33e9b-dc1e-4643-b179-851f3c71a99d",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X is determined only as the granted triggered ability resolves. Once that happens, the value of X won't change later in the turn even if the commander creature's power changes.",
+      "oracle_id": "d0a33e9b-dc1e-4643-b179-851f3c71a99d",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the commander creature's power is negative as its triggered ability resolves, X is considered to be 0.",
+      "oracle_id": "d0a33e9b-dc1e-4643-b179-851f3c71a99d",
       "published_at": "2022-06-10",
       "source": "wotc"
     }

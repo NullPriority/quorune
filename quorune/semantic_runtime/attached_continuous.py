@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from ..continuous_effect_model import (
@@ -11,7 +11,8 @@ from ..continuous_effect_model import (
     Layer,
 )
 from ..object_predicate import ObjectQuerySpec
-from ..ability_fragments import ability_fragment_from_dict
+from ..ability_fragments import ability_fragment_from_dict, ability_fragment_to_dict
+from ..granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD, GrantedActivatedAbilitySpec
 from ..characteristic_fragments import CharacteristicQuantitySpec
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -87,11 +88,31 @@ def _ability_fragment_values(
                 "modifier.add_ability_fragments entries must be objects"
             )
         try:
-            ability_fragment_from_dict(candidate)
+            fragment = ability_fragment_from_dict(candidate)
+            if (isinstance(fragment, GrantedActivatedAbilitySpec) and fragment.granting_attachment_payment is not None
+                    and fragment.granting_attachment_payment.granting_object is not None):
+                raise ValueError('Attached ability definition cannot preselect its granting Equipment')
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
         result.append(dict(candidate))
     return tuple(result)
+
+
+def _bind_granting_equipment(fragments, context):
+    bound = []
+    for descriptor in fragments:
+        value = descriptor.get('value')
+        if descriptor.get('kind') == 'granted_activated' and isinstance(value, Mapping) and GRANTING_ATTACHMENT_PAYMENT_FIELD in value:
+            fragment = GrantedActivatedAbilitySpec.from_dict(value)
+            try:
+                payment = fragment.granting_attachment_payment.bind(
+                    context.source_object_id, context.source_logical_object_id,
+                )
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            descriptor = ability_fragment_to_dict(replace(fragment, granting_attachment_payment=payment))
+        bound.append(descriptor)
+    return tuple(bound)
 
 
 def _type_operations(value: Any) -> tuple[ContinuousOperation, ...]:
@@ -383,6 +404,7 @@ class AttachedFixedCharacteristicsHandler:
             return ()
         from ..protection_attachment_exceptions import bind_attached_protection_exceptions
         node=bind_attached_protection_exceptions(node,context.source_logical_object_id)
+        node = replace(node, add_ability_fragments=_bind_granting_equipment(node.add_ability_fragments, context))
         common = {
             "source_id": context.source_object_id,
             "timestamp": context.source_timestamp,

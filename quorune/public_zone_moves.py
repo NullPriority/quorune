@@ -29,6 +29,8 @@ from .util import stable_json
 
 FIXED_OWNER_ZONE_MOVE_CAPABILITY = "zone.single_owner_move.fixed_destination"
 FIXED_OWNER_ZONE_MOVE_MECHANIC = "fixed-owner-zone-move"
+GRAVEYARD_LIBRARY_TARGET_CAPABILITY = "zone.single_owner_move.graveyard_library_target"
+GRAVEYARD_LIBRARY_TARGET_FIELD = "graveyard_library_target_version"
 
 
 class PublicZoneMoveError(ValueError):

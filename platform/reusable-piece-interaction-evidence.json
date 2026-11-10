@@ -7811,7 +7811,7 @@
         "zone.change.destination_replacement"
       ],
       "interaction_order": 2,
-      "assertion": "Snow Day's typed draw-discard leaf remains unable to admit the unresolved multiple-target tap body; the focused CardProgram witness proves strict and compatible runtime authority stay withheld for the whole card."
+      "assertion": "Whirlwind Technique retains its typed targeted draw-discard result and its unresolved multiple-target Airbend clause. Both strict and compatible runtime admission reject the complete CardProgram."
     },
     {
       "evidence_class": "interaction",
@@ -14396,7 +14396,7 @@
         "zone.move.fixed_public_set"
       ],
       "interaction_order": 2,
-      "assertion": "Descend upon the Sinful compiles its fixed public creature-set exile while its conditional Delirium result remains material, so the complete CardProgram is unavailable at strict runtime admission."
+      "assertion": "Bazaar of Wonders compiles its fixed public graveyard-set exile while the conditional spell counter still requires linked spell identity and a cross-zone name predicate, so strict runtime admission rejects the complete CardProgram."
     },
     {
       "evidence_class": "interaction",
@@ -15286,7 +15286,7 @@
         "continuous.characteristics.fixed_public_state"
       ],
       "interaction_order": 2,
-      "assertion": "A constructed strictly bound Equipment offers its restricted Halfling Equip only for the current matching creature. Accepted Equip grants conditional Hexproof on the controller turn; changing the active turn removes and restores the live grant, and accepted unrestricted re-equipping transfers it to the new recipient with exact replay. Original Bilbo's Ring retains its unresolved attack-alone sibling and remains untrusted."
+      "assertion": "A constructed strictly bound Equipment offers its restricted Halfling Equip only for the current matching creature. Accepted Equip grants conditional Hexproof on the controller turn; changing the active turn removes and restores the live grant, and accepted unrestricted re-equipping transfers it to the new recipient with exact replay."
     },
     {
       "evidence_class": "interaction",

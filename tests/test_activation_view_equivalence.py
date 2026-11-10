@@ -3,9 +3,14 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 import json,tempfile,unittest
 from unittest.mock import patch
 from common import ROOT
+from quorune.activation_condition_model import (
+    PUBLIC_ACTIVATION_CAPABILITY, PUBLIC_ACTIVATION_FIELD, PublicActivationTiming,
+    public_activation_descriptor, public_activation_program_timing,
+)
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.rules.capabilities import load_default_capability_registry
@@ -149,3 +154,169 @@ class ActivationViewEquivalenceTests(unittest.TestCase):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
         with patch('quorune.card_programs.reviewed_overlay._canonical_effects',return_value=[]):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+
+    def public_activation_offers(self, session, source, *, seat="A"):
+        return [row for row in self.actions(session, seat) if row["id"].startswith(f"activate:{source.ref}:")]
+
+    def assert_public_activation_closed(self, session, source):
+        binding = self.binding(session, source)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        programs = session.engine.semantics.programs_for_oracle(source.oracle_id)
+        program, = (program for program in programs if PUBLIC_ACTIVATION_CAPABILITY in program.capability_dependencies)
+        self.assertTrue(session.engine.semantic_program_is_current_trusted(program))
+        return program
+
+    def test_public_activation_permission_is_closed_and_required(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.activation.restriction_requirements import activation_restriction_runtime_dependencies
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        session = self.session(855010)
+        source = self.add(session.engine, "Endbringer's Revel", seat="B")
+        program = self.assert_public_activation_closed(session, source)
+        self.assertEqual(PublicActivationTiming.SORCERY, public_activation_program_timing(program))
+        independent = SimpleNamespace(**{**program.to_dict(), "capability_dependencies": ()})
+        self.assertIn(PUBLIC_ACTIVATION_CAPABILITY, activation_restriction_runtime_dependencies(independent))
+        valid = {"event": "activate", "active_zone": "battlefield", "effects": program.effects,
+                 "cost_schema": {PUBLIC_ACTIVATION_FIELD: public_activation_descriptor(PublicActivationTiming.PRIORITY)}}
+        for update in (
+            {"event": "resolve"}, {"active_zone": "hand"}, {"effects": ()},
+            {"cost_schema": {PUBLIC_ACTIVATION_FIELD: {"schema_version": True, "timing": "priority"}}},
+            {"cost_schema": {PUBLIC_ACTIVATION_FIELD: {"schema_version": 1, "timing": "other"}}},
+        ):
+            with self.subTest(update=update), self.assertRaises(ValueError):
+                public_activation_program_timing(SimpleNamespace(**{**valid, **update}))
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == PUBLIC_ACTIVATION_CAPABILITY).update(
+            status="blocked", blockers=["Withdrawn for the independent permission witness"])
+        registry = CapabilityRegistry(raw)
+        index = build_index(registry_value=raw,
+            declaration_source=read_evidence_document(ROOT / "platform/capability-evidence-declarations.json"),
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        self.assertNotEqual("exact", compile_oracle_card(self.db.lookup(source.printed_name), capability_registry=registry).status)
+        self.assertEqual("exact", compile_oracle_card(self.db.lookup("Jade Mage"), capability_registry=registry).status)
+
+    def test_foreign_priority_activation_preserves_controller_cost_and_target_protection(self):
+        session = self.session(855020)
+        engine = session.engine
+        hydra = self.add(engine, "Feral Hydra", seat="B")
+        hydra.counters["+1/+1"] = 1
+        sailmonger = self.add(engine, "Sailmonger", seat="B")
+        own = self.add(engine, "Gladecover Scout", ref="own-hexproof")
+        foreign = self.add(engine, "Gladecover Scout", seat="C", ref="foreign-hexproof")
+        ordinary = self.add(engine, "Jade Mage", seat="B", ref="foreign-default")
+        phased = self.add(engine, "Sailmonger", seat="C", ref="phased-public")
+        phased.phased_out = True
+        private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="private-activation-control")
+        for source in (hydra, sailmonger):
+            self.assert_public_activation_closed(session, source)
+        self.prepare(session, mana={"C": 5, "G": 1})
+        session.state.players["B"].mana_pool["C"] = 5
+        self.checkpoint(session)
+
+        self.assertEqual([], self.public_activation_offers(session, ordinary))
+        self.assertEqual([], self.public_activation_offers(session, phased))
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        self.reject(session, {"action_id": f"activate:{ordinary.ref}:ab1", "pay": "auto"})
+        hydra_offer = self.public_activation_offers(session, hydra)
+        self.assertEqual(1, len(hydra_offer))
+        result = session.act("pilot:A", {"action_id": hydra_offer[0]["id"], "pay": "manual", "payment": {"C": 3}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("A", session.state.stack[-1].controller)
+        self.assertIsNone(self.resolve(session))
+        current_hydra = session.state.cards[hydra.object_id]
+        self.assertEqual(("B", 2), (current_hydra.controller, current_hydra.counters["+1/+1"]))
+
+        self.priority(session, "A")
+        offer, = self.public_activation_offers(session, sailmonger)
+        refs = offer["target_schema"]["legal_refs"]
+        self.assertIn(own.ref, refs)
+        self.assertNotIn(foreign.ref, refs)
+        command = {"action_id": offer["id"], "targets": [own.ref], "pay": "manual", "payment": {"C": 2}}
+        self.reject(session, command, seat="C")
+        self.reject(session, {**command, "targets": [foreign.ref]})
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("A", session.state.stack[-1].controller)
+        self.assertIsNone(self.resolve(session))
+        self.assertIn("flying", engine._combat_keywords(session.state.cards[own.object_id]))
+        self.assertEqual("B", session.state.cards[sailmonger.object_id].controller)
+        self.assertEqual(0, session.state.players["A"].mana_pool["C"])
+        self.assertEqual(5, session.state.players["B"].mana_pool["C"])
+        self.replay(session, load=True)
+
+    def test_public_sorcery_activation_uses_activator_turn_and_returns_owner_card(self):
+        for allowed in (True, False):
+            with self.subTest(allowed=allowed):
+                session = self.session(855030 + int(allowed))
+                engine = session.engine
+                revel = self.add(engine, "Endbringer's Revel", seat="B", ref="public-revel")
+                target = self.add(engine, "Grizzly Bears", seat="C", zone="graveyard")
+                self.assert_public_activation_closed(session, revel)
+                self.prepare(session, actor="A", active="A" if allowed else "C", mana={"C": 4})
+                self.checkpoint(session)
+                self.assertEqual("A" if allowed else "C", session.state.active_player)
+                command = {"action_id": f"activate:{revel.ref}:ab1", "targets": [target.ref], "pay": "auto"}
+                offers = self.public_activation_offers(session, revel)
+                if not allowed:
+                    self.assertEqual([], offers)
+                    self.reject(session, command)
+                    self.assertEqual(4, session.state.players["A"].mana_pool["C"])
+                    continue
+                offer, = offers
+                self.assertIn(target.ref, offer["target_schema"]["legal_refs"])
+                result = session.act("pilot:A", {**command, "action_id": offer["id"]})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("A", session.state.stack[-1].controller)
+                self.assertIsNone(self.resolve(session))
+                self.assertIn(target.object_id, session.state.players["C"].zones["hand"])
+                self.assertEqual("B", session.state.cards[revel.object_id].controller)
+                self.replay(session, load=True)
+
+    def test_noncontroller_pays_own_land_and_draws_with_foreign_activation(self):
+        from quorune.rules.activation.availability import activation_availability
+
+        session = self.session(855040)
+        engine = session.engine
+        excavation = self.add(engine, "Excavation", seat="B")
+        own = self.add(engine, "Forest", ref="public-activation-own-land")
+        foreign = self.add(engine, "Forest", seat="B", ref="public-activation-foreign-land")
+        self.assert_public_activation_closed(session, excavation)
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        ability, = engine._activated_abilities(excavation)
+        source_price = replace(ability, sacrifice_source=True, choices=())
+        self.assertEqual(("unavailable", "sacrifice_source_not_controlled"),
+                         activation_availability(engine, "A", excavation, source_price))
+        offer, = self.public_activation_offers(session, excavation)
+        refs = {ref for choice in offer["cost_summary"]["choose_cost"] for ref in choice["legal_refs"]}
+        self.assertIn(own.ref, refs)
+        self.assertNotIn(foreign.ref, refs)
+        self.reject(session, {"action_id": offer["id"], "cost_cards": [foreign.ref], "pay": "auto"})
+        hands = {seat: len(session.state.players[seat].zones["hand"]) for seat in ("A", "B")}
+        result = session.act("pilot:A", {"action_id": offer["id"], "cost_cards": [own.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("A", session.state.stack[-1].controller)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(("graveyard", "battlefield"),
+                         tuple(session.state.cards[card.object_id].zone for card in (own, foreign)))
+        self.assertEqual(hands["A"] + 1, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual(hands["B"], len(session.state.players["B"].zones["hand"]))
+        self.replay(session, load=True)
+
+    def test_missing_public_offer_is_detected_by_the_native_witness(self):
+        from quorune.rules.activation import query
+
+        original = query.activation_actor_allowed
+
+        def controller_only(host, actor, source, ability):
+            return source.controller == actor and original(host, actor, source, ability)
+
+        with patch.object(query, "activation_actor_allowed", side_effect=controller_only):
+            with self.assertRaisesRegex(AssertionError, "1 != 0"):
+                self.test_foreign_priority_activation_preserves_controller_cost_and_target_protection()

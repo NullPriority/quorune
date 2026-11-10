@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..library_order_model import GRAVEYARD_LIBRARY_ORDER_OPERATION
 from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_MECHANIC, FIXED_NONREPEATING_MODAL_MECHANIC,
     FIXED_CHOOSE_ONE_MODAL_CAPABILITY, FIXED_NONREPEATING_MODAL_CAPABILITY,
@@ -72,6 +73,11 @@ def fixed_modal_capability_dependencies(
     # the announced target index of a single, nonmodal instruction sequence.
     if branches is None or any(
         has_target_controller_recipient(effect) for branch in branches for effect in branch.effects
+    ):
+        return ()
+    if target_schema.get("max_modes", 1) > 1 and any(
+        effect.get("op") == GRAVEYARD_LIBRARY_ORDER_OPERATION
+        for branch in branches for effect in branch.effects
     ):
         return ()
     modal_mechanic = (

@@ -26,7 +26,7 @@ def fixed_self_return_node_capabilities(
     if (
         set(effect) != {"op", "card"}
         or effect.get("op") != "bounce"
-        or effect.get("card") != "$source"
+        or effect.get("card") not in ("$source", "$source.zone_object")
     ):
         return ()
     return ("permanent.return.owner_hand",)

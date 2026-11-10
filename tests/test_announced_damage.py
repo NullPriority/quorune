@@ -8,7 +8,10 @@ from unittest.mock import patch
 
 from common import ROOT
 import test_any_number_targets as controls
-from quorune.announced_damage import ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_CONTEXT
+import test_soulbond as combat_controls
+from quorune.announced_damage import (
+    ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_CONTEXT, VARIABLE_DAMAGE_ALLOCATION_CAPABILITY,
+)
 from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
 from quorune.choice_forms import delegated_choice_fields
@@ -28,6 +31,7 @@ class AnnouncedDamageTests(unittest.TestCase):
     actions = controls.AnyNumberTargetTests.actions
     cast = controls.AnyNumberTargetTests.cast
     resolve = controls.AnyNumberTargetTests.resolve
+    until = combat_controls.SoulbondRuntimeTests.until
     replay = controls.AnyNumberTargetTests.replay
     binding = controls.AnyNumberTargetTests.binding
     reject = controls.AnyNumberTargetTests.reject
@@ -42,6 +46,7 @@ class AnnouncedDamageTests(unittest.TestCase):
             fixtures / 'bound-effect-program-cards.json',
             fixtures / 'any-number-target-cards.json',
             fixtures / 'damage-replacement-cards.json',
+            fixtures / 'targeted-spell-cost-cards.json',
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -122,6 +127,142 @@ class AnnouncedDamageTests(unittest.TestCase):
         self.assertIsNone(self.resolve(s))
         self.assertEqual([39, 39, 38, 38], [s.state.players[seat].life for seat in 'ABCD'])
         self.replay(s, load=True)
+
+    def test_actual_arc_mage_announces_before_tap_discard_and_mana(self):
+        s = self.session(769010)
+        source = self.add(s.engine, 'Arc Mage')
+        source.acquired_control_turn_count = -1
+        cost = self.add(s.engine, 'Generic Bound Body', zone='hand', ref='mage-discard')
+        target = self.add(s.engine, 'Generic Bound Body', seat='B', ref='mage-target')
+        bounce = self.add(s.engine, 'Unsummon', seat='B', zone='hand')
+        private = self.add(s.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        s.state.players['B'].mana_pool['U'] = 1
+        self.prepare(s, mana={'R': 1, 'C': 2})
+        self.checkpoint(s)
+        self.assertTrue(self.binding(s, source)['strict_capability_ready'])
+        action = next(a for a in self.actions(s) if a['id'].startswith(f'activate:{source.ref}:'))
+        self.assert_allocation_offer(s.packet('pilot:A', full=True), action, total=2, minimum=1, maximum=2)
+        command = {'action_id': action['id'], 'targets': [target.ref, 'D'], 'cost_cards': [cost.ref], 'pay': 'auto'}
+        allocation = {target.ref: 1, 'D': 1}
+        self.reject(s, {**command, 'damage_allocation': allocation}, 'pilot:C')
+        self.reject(s, command)
+        self.reject(s, {**command, 'damage_allocation': {target.ref: 2, 'D': 1}})
+        accepted = s.act('pilot:A', {**command, 'choices': {'damage_allocation': allocation}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(s.state.cards[source.object_id].tapped)
+        self.assertEqual('graveyard', s.state.cards[cost.object_id].zone)
+        self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+        self.assertEqual({'schema_version': 1, 'shares': [1, 1]}, s.state.stack[-1].context[ANNOUNCED_DAMAGE_CONTEXT])
+        self.cast(s, 'B', bounce, [target.ref])
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual('hand', s.state.cards[target.object_id].zone)
+        self.assertEqual(39, s.state.players['D'].life)
+        self.private_replay(s, private)
+
+    def test_actual_inferno_titan_announces_entry_and_attack_trigger_shares(self):
+        for attacks in (False, True):
+            with self.subTest(attacks=attacks):
+                s = self.session(769011 + attacks)
+                source = self.add(s.engine, 'Inferno Titan', zone='battlefield' if attacks else 'hand')
+                source.acquired_control_turn_count = -1
+                private = self.add(s.engine, 'Generic Bound Growth', seat='C', zone='hand')
+                self.prepare(s, mana={'R': 2, 'C': 4})
+                self.checkpoint(s)
+                self.assertTrue(self.binding(s, source)['strict_capability_ready'])
+                if attacks:
+                    self.until(s, lambda session: getattr(session.state.pending_decision, 'kind', None) == 'combat.attackers')
+                    result = s.act('pilot:A', {'action_id': 'attack', 'attackers': {source.ref: 'B'}})
+                    self.assertTrue(result.ok, result.summary)
+                else:
+                    self.cast(s, 'A', source)
+                self.assertEqual('semantic.target', self.resolve(s).kind)
+                packet = s.packet('pilot:A', full=True)
+                action = next(a for a in packet['decision']['legal_actions'] if a['id'] == 'choose')
+                self.assert_allocation_offer(packet, action, total=3, minimum=1, maximum=3)
+                command = {'action_id': 'choose', 'targets': ['B', 'D']}
+                self.reject(s, {**command, 'damage_allocation': {'B': 1, 'D': 2}}, 'pilot:B')
+                self.reject(s, command)
+                self.reject(s, {**command, 'damage_allocation': {'B': 0, 'D': 3}})
+                self.reject(s, {**command, 'targets': ['B', 'B'], 'damage_allocation': {'B': 3}})
+                s = self.replay(s, load=True)
+                result = s.act('pilot:A', {**command, 'choices': {'damage_allocation': {'D': 2, 'B': 1}}})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual({'schema_version': 1, 'shares': [1, 2]}, s.state.stack[-1].context[ANNOUNCED_DAMAGE_CONTEXT])
+                self.assertEqual(40, s.state.players['D'].life)
+                self.assertIsNone(self.resolve(s))
+                self.assertEqual([39, 38], [s.state.players[seat].life for seat in 'BD'])
+                self.private_replay(s, private)
+
+    def test_actual_gang_of_devils_offers_the_split_to_its_controller(self):
+        s = self.session(769013)
+        source = self.add(s.engine, 'Gang of Devils', seat='B')
+        kill = self.add(s.engine, 'Murder', zone='hand')
+        self.prepare(s, mana={'B': 2, 'C': 1})
+        self.checkpoint(s)
+        self.assertTrue(self.binding(s, source)['strict_capability_ready'])
+        self.cast(s, 'A', kill, [source.ref])
+        pending = self.resolve(s)
+        self.assertEqual('semantic.target', pending.kind)
+        self.assertEqual(['B'], list(pending.actors))
+        self.assertEqual('graveyard', s.state.cards[source.object_id].zone)
+        command = {'action_id': 'choose', 'targets': ['A', 'C'], 'damage_allocation': {'A': 2, 'C': 1}}
+        self.reject(s, command)
+        result = s.act('pilot:B', command)
+        self.assertTrue(result.ok, result.summary)
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual([38, 39], [s.state.players[seat].life for seat in 'AC'])
+        self.replay(s, load=True)
+
+    def test_actual_mogg_mob_uses_sacrificed_source_lifelink_for_the_batch(self):
+        s = self.session(769014)
+        source = self.add(s.engine, 'Mogg Mob')
+        grant = self.add(s.engine, 'Cruel Feeding', zone='hand')
+        self.prepare(s, mana={'B': 1})
+        self.checkpoint(s)
+        self.assertTrue(self.binding(s, source)['strict_capability_ready'])
+        self.cast(s, 'A', grant, [source.ref])
+        self.assertIsNone(self.resolve(s))
+        action = next(a for a in self.actions(s) if a['id'].startswith(f'activate:{source.ref}:'))
+        result = s.act('pilot:A', {'action_id': action['id'], 'targets': ['B', 'D'],
+                                   'damage_allocation': {'B': 2, 'D': 1}, 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('graveyard', s.state.cards[source.object_id].zone)
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual([43, 38, 39], [s.state.players[seat].life for seat in 'ABD'])
+        self.replay(s, load=True)
+
+    def test_actual_atarka_allows_zero_and_filters_opponent_damageable_permanents(self):
+        for choose_targets in (False, True):
+            with self.subTest(choose_targets=choose_targets):
+                s = self.session(769015 + choose_targets)
+                source = self.add(s.engine, 'Dragonlord Atarka', zone='hand')
+                own = self.add(s.engine, 'Generic Bound Body', ref='atarka-own-creature')
+                creature = self.add(s.engine, 'Generic Bound Body', seat='B', ref='atarka-opponent-creature')
+                walker = self.add(s.engine, 'Ral, Caller of Storms', seat='D')
+                walker.counters['loyalty'] = 5
+                self.prepare(s, mana={'R': 1, 'G': 1, 'C': 5})
+                self.checkpoint(s)
+                self.assertTrue(self.binding(s, source)['strict_capability_ready'])
+                self.cast(s, 'A', source)
+                self.assertEqual('semantic.target', self.resolve(s).kind)
+                packet = s.packet('pilot:A', full=True)
+                action = next(a for a in packet['decision']['legal_actions'] if a['id'] == 'choose')
+                self.assert_allocation_offer(packet, action, total=5, minimum=0, maximum=5)
+                self.assertEqual({creature.ref, walker.ref}, set(action['target_schema']['legal_refs']))
+                self.reject(s, {'action_id': 'choose', 'targets': [own.ref], 'damage_allocation': {own.ref: 5}})
+                command = {'action_id': 'choose'}
+                if choose_targets:
+                    command.update(targets=[walker.ref, creature.ref], damage_allocation={walker.ref: 2, creature.ref: 3})
+                result = s.act('pilot:A', command)
+                self.assertTrue(result.ok, result.summary)
+                s = self.replay(s, load=True)
+                self.assertIsNone(self.resolve(s))
+                self.assertEqual(3 if choose_targets else 5, s.state.cards[walker.object_id].counters['loyalty'])
+                self.assertEqual(3 if choose_targets else 0, s.state.cards[creature.object_id].marked_damage)
+                self.replay(s, load=True)
 
     def test_actual_electrolyze_keeps_its_draw_when_only_one_target_remains(self):
         s = self.session(769007)
@@ -220,6 +361,12 @@ class AnnouncedDamageTests(unittest.TestCase):
             ir = compile_oracle_card(replace(record, oracle_text=text), capability_registry=self.registry,
                                      capability_profile='commander_review')
             self.assertNotEqual('exact', ir.status, text)
+        titan = self.db.lookup('Inferno Titan')
+        unbound = replace(titan, oracle_text=titan.oracle_text.replace(
+            'this creature enters or attacks', 'another creature you control enters',
+        ))
+        ir = compile_oracle_card(unbound, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertNotEqual('exact', ir.status, unbound.oracle_text)
         s = self.session(769006)
         source = self.add(s.engine, 'Arc Lightning', zone='hand')
         program = next(p for p in s.engine.semantics.programs_for_oracle(source.oracle_id)
@@ -236,3 +383,256 @@ class AnnouncedDamageTests(unittest.TestCase):
         with patch('quorune.announced_damage.cast_allocation_details', return_value={}):
             with self.assertRaises(AssertionError):
                 getattr(type(self)(method), method)()
+
+    def test_variable_damage_requires_matching_spell_allocation_authority(self):
+        names = (
+            'Fire Covenant', 'Hail of Arrows', 'Jaws of Stone', 'Meteor Shower', 'Monstrous Onslaught',
+            'Rock Slide', 'Rolling Thunder', 'Shatterskull Smashing // Shatterskull, the Hammer Pass',
+            'Volcanic Wind',
+        )
+        s = self.session(843001)
+        for name in names:
+            with self.subTest(card=name):
+                source = self.add(s.engine, name, zone='hand')
+                ir = compile_oracle_card(self.db.lookup(name), capability_registry=self.registry,
+                                         capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                self.assertTrue(self.binding(s, source)['strict_capability_ready'])
+                program, = (program for program in s.engine.semantics.programs_for_oracle(source.oracle_id)
+                            if VARIABLE_DAMAGE_ALLOCATION_CAPABILITY in program.capability_dependencies)
+                self.assertEqual('trusted', program.trust_level)
+                self.assertEqual(program.effects[0]['amount'], program.target_schema['damage_allocation'])
+
+        deps = tuple(cap for cap in program.capability_dependencies if cap != VARIABLE_DAMAGE_ALLOCATION_CAPABILITY)
+        omitted = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile='commander_review').to_dict())
+        self.assertIn('capability:undeclared_runtime_dependency:' + VARIABLE_DAMAGE_ALLOCATION_CAPABILITY,
+                      bind_semantic_program_runtime(omitted, capability_registry=self.registry,
+                                                    profile='commander_review')['blockers'])
+        from quorune.announced_damage import VariableDamageAllocationSpec
+        wrong = replace(program, target_schema={**program.target_schema,
+                                                'damage_allocation': VariableDamageAllocationSpec().to_dict()})
+        self.assertFalse(bind_semantic_program_runtime(wrong, capability_registry=self.registry,
+                                                      profile='commander_review')['strict'])
+
+    def test_actual_rolling_thunder_keeps_x_shares_through_bounce_and_replay(self):
+        s = self.session(843002)
+        source = self.add(s.engine, 'Rolling Thunder', zone='hand')
+        bounce = self.add(s.engine, 'Unsummon', seat='B', zone='hand')
+        target = self.add(s.engine, 'Generic Bound Body', seat='B')
+        private = self.add(s.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        s.state.players['B'].mana_pool['U'] = 1
+        self.prepare(s, mana={'R': 2, 'C': 3})
+        self.checkpoint(s)
+        action = self.action(s, source)
+        self.assertEqual({'schema_version': 2, 'amount': {'kind': 'x', 'increment': 0, 'double_from': None}},
+                         action['target_schema']['damage_allocation'])
+        self.assertEqual(3, action['target_schema']['groups'][0]['max'])
+        packet = s.packet('pilot:A', full=True)['decision']
+        self.assertIn('damage_allocation', delegated_choice_fields(action, decision_kind=packet['kind'], context=packet['ctx']))
+        command = {'action_id': action['id'], 'x': 3, 'targets': [target.ref, 'D'], 'pay': 'auto'}
+        legal = {target.ref: 1, 'D': 2}
+        self.reject(s, {**command, 'damage_allocation': legal}, 'pilot:C')
+        self.reject(s, command)
+        for x in (True, -1, 0, 2, 4):
+            self.reject(s, {**command, 'x': x, 'damage_allocation': legal})
+        self.reject(s, {**command, 'damage_allocation': {target.ref: 0, 'D': 3}})
+        cast = s.act('pilot:A', {**command, 'choices': {'damage_allocation': legal}})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+        self.assertEqual({'schema_version': 2, 'total': 3, 'shares': [1, 2]},
+                         s.state.stack[-1].context[ANNOUNCED_DAMAGE_CONTEXT])
+        for seat in 'ABCD':
+            public = s.packet('pilot:' + seat, full=True)['state']['stack'][0]
+            self.assertEqual([1, 2], public['damage_shares'])
+        self.cast(s, 'B', bounce, [target.ref])
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual('hand', s.state.cards[target.object_id].zone)
+        self.assertEqual(38, s.state.players['D'].life)
+        self.private_replay(s, private)
+
+    def test_actual_fire_covenant_pays_announced_life_after_sealing_shares(self):
+        s = self.session(843003)
+        source = self.add(s.engine, 'Fire Covenant', zone='hand')
+        target = self.add(s.engine, 'Generic Bound Body', seat='B')
+        self.prepare(s, mana={'B': 1, 'R': 1, 'C': 1})
+        self.checkpoint(s)
+        action = self.action(s, source)
+        command = {'action_id': action['id'], 'x': 6, 'targets': [target.ref], 'pay': 'auto'}
+        self.reject(s, {**command, 'damage_allocation': {target.ref: 1}})
+        self.reject(s, {**command, 'x': 41, 'damage_allocation': {target.ref: 41}})
+        accepted = s.act('pilot:A', {**command, 'damage_allocation': {target.ref: 6}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(34, s.state.players['A'].life)
+        self.assertEqual({'schema_version': 2, 'total': 6, 'shares': [6]},
+                         s.state.stack[-1].context[ANNOUNCED_DAMAGE_CONTEXT])
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual('graveyard', s.state.cards[target.object_id].zone)
+
+    def test_actual_jaws_of_stone_copies_sealed_public_count_in_slot_order(self):
+        s = self.session(843004)
+        source = self.add(s.engine, 'Jaws of Stone', zone='hand')
+        copier = self.add(s.engine, 'Reverberate', seat='B', zone='hand')
+        for index in range(3):
+            self.add(s.engine, 'Mountain', ref=f'jaws-mountain-{index}').tapped = True
+        s.state.players['B'].mana_pool['R'] = 2
+        self.prepare(s, mana={'R': 1, 'C': 5})
+        self.checkpoint(s)
+        action = self.action(s, source)
+        self.assertEqual({'schema_version': 2, 'total': 3}, action['target_schema']['damage_allocation'])
+        command = {'action_id': action['id'], 'targets': ['B', 'D'], 'pay': 'auto'}
+        self.reject(s, {**command, 'x': 3, 'damage_allocation': {'B': 1, 'D': 2}})
+        result = s.act('pilot:A', {**command, 'damage_allocation': {'B': 1, 'D': 2}})
+        self.assertTrue(result.ok, result.summary)
+        self.cast(s, 'B', copier, [s.state.stack[-1].ref])
+        self.assertEqual('semantic.choice', self.resolve(s).kind)
+        self.reject(s, {'action_id': 'choose', 'targets': ['A']}, 'pilot:B')
+        s = self.replay(s, load=True)
+        copy = s.act('pilot:B', {'action_id': 'choose', 'targets': ['A', 'C']})
+        self.assertTrue(copy.ok, copy.summary)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual([39, 39, 38, 38], [s.state.players[seat].life for seat in 'ABCD'])
+        self.replay(s, load=True)
+
+    def test_actual_monstrous_onslaught_keeps_cast_power_when_its_source_leaves(self):
+        s = self.session(843005)
+        source = self.add(s.engine, 'Monstrous Onslaught', zone='hand')
+        largest = self.add(s.engine, 'Generic Bound Body', ref='onslaught-power')
+        target = self.add(s.engine, 'Generic Bound Body', seat='D', ref='onslaught-target')
+        bounce = self.add(s.engine, 'Unsummon', seat='B', zone='hand')
+        s.state.players['B'].mana_pool['U'] = 1
+        self.prepare(s, mana={'G': 2, 'C': 3})
+        self.checkpoint(s)
+        action = self.action(s, source)
+        self.assertEqual({'schema_version': 2, 'total': 2}, action['target_schema']['damage_allocation'])
+        cast = s.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref],
+                                'damage_allocation': {target.ref: 2}, 'pay': 'auto'})
+        self.assertTrue(cast.ok, cast.summary)
+        self.cast(s, 'B', bounce, [largest.ref])
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual(2, s.state.cards[target.object_id].marked_damage)
+        self.assertEqual('hand', s.state.cards[largest.object_id].zone)
+
+    def test_actual_meteor_shower_and_rolling_thunder_distinguish_zero_x(self):
+        cases = (
+            ('Meteor Shower', 0, {'R': 1}, 1),
+            ('Rolling Thunder', 0, {'R': 2}, 0),
+            ('Meteor Shower', 2, {'R': 1, 'C': 4}, 3),
+        )
+        for index, (name, x, pool, total) in enumerate(cases):
+            with self.subTest(card=name, x=x):
+                s = self.session(843020 + index)
+                source = self.add(s.engine, name, zone='hand')
+                self.prepare(s, mana=pool)
+                self.checkpoint(s)
+                action = self.action(s, source)
+                self.assertEqual(total, action['target_schema']['groups'][0]['max'])
+                command = {'action_id': action['id'], 'x': x, 'pay': 'auto'}
+                if not total:
+                    self.reject(s, {**command, 'targets': ['D'], 'damage_allocation': {'D': 1}})
+                result = s.act('pilot:A', {**command, 'targets': ['D'] if total else [],
+                                          'damage_allocation': {'D': total} if total else {}})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+                self.assertEqual({'schema_version': 2, 'total': total, 'shares': [total] if total else []},
+                                 s.state.stack[-1].context[ANNOUNCED_DAMAGE_CONTEXT])
+                self.assertIsNone(self.resolve(s))
+                self.assertEqual(40 - total, s.state.players['D'].life)
+
+    def test_actual_shatterskull_divides_double_total_at_threshold(self):
+        s = self.session(843008)
+        source = self.add(s.engine, 'Shatterskull Smashing // Shatterskull, the Hammer Pass', zone='hand')
+        targets = [self.add(s.engine, 'Generic Bound Body', seat=seat, ref=f'smashing-{seat}') for seat in 'BCD']
+        self.prepare(s, mana={'R': 2, 'C': 6})
+        self.checkpoint(s)
+        action = self.action(s, source)
+        self.assertEqual(2, action['target_schema']['groups'][0]['max'])
+        command = {'action_id': action['id'], 'x': 6, 'targets': [c.ref for c in targets[:2]], 'pay': 'auto'}
+        self.reject(s, {**command, 'x': 5, 'damage_allocation': {targets[0].ref: 3, targets[1].ref: 9}})
+        self.reject(s, {**command, 'damage_allocation': {targets[0].ref: 1, targets[1].ref: 5}})
+        self.reject(s, {**command, 'targets': [c.ref for c in targets],
+                        'damage_allocation': {c.ref: 4 for c in targets}})
+        cast = s.act('pilot:A', {**command, 'damage_allocation': {targets[0].ref: 3, targets[1].ref: 9}})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual({'schema_version': 2, 'total': 12, 'shares': [3, 9]},
+                         s.state.stack[-1].context[ANNOUNCED_DAMAGE_CONTEXT])
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual(['battlefield', 'graveyard', 'battlefield'],
+                         [s.state.cards[card.object_id].zone for card in targets])
+        self.assertEqual(3, s.state.cards[targets[0].object_id].marked_damage)
+
+    def test_variable_damage_tax_preview_preserves_the_positive_share_boundary(self):
+        for name, colored, target_available in (('Rolling Thunder', 2, False), ('Meteor Shower', 1, True)):
+            with self.subTest(card=name):
+                s = self.session(843009 + colored)
+                source = self.add(s.engine, name, zone='hand')
+                taxed = self.add(s.engine, 'Boreal Elemental', seat='B')
+                self.prepare(s, mana={'R': colored, 'C': 2})
+                self.checkpoint(s)
+                action = self.action(s, source)
+                self.assertEqual(target_available, taxed.ref in action['target_schema']['legal_refs'])
+                command = {'action_id': action['id'], 'targets': [taxed.ref], 'pay': 'auto',
+                           'damage_allocation': {taxed.ref: 1}}
+                if target_available:
+                    result = s.act('pilot:A', {**command, 'x': 0})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+                    self.assertIsNone(self.resolve(s))
+                    self.assertEqual(1, s.state.cards[taxed.object_id].marked_damage)
+                else:
+                    self.reject(s, {**command, 'x': 1})
+
+    def test_actual_hail_and_rock_slide_filter_declared_combatants(self):
+        s = self.session(843012)
+        hail = self.add(s.engine, 'Hail of Arrows', zone='hand')
+        slide = self.add(s.engine, 'Rock Slide', zone='hand')
+        ground = self.add(s.engine, 'Generic Bound Body', ref='division-ground')
+        flyer = self.add(s.engine, 'Generic Bound Body', ref='division-flyer')
+        flyer.counters['flying'] = 1
+        for creature in (ground, flyer):
+            creature.acquired_control_turn_count = -1
+        for index in range(2):
+            self.add(s.engine, 'Mountain', ref=f'division-mountain-{index}')
+            self.add(s.engine, 'Generic Bound Plains', ref=f'division-plains-{index}')
+        self.prepare(s)
+        self.checkpoint(s)
+        self.until(s, lambda session: getattr(session.state.pending_decision, 'kind', None) == 'combat.attackers')
+        attacks = s.act('pilot:A', {'action_id': 'attack', 'attackers': {ground.ref: 'B', flyer.ref: 'B'}})
+        self.assertTrue(attacks.ok, attacks.summary)
+        slide_offer = self.action(s, slide)
+        hail_offer = self.action(s, hail)
+        self.assertEqual({ground.ref}, set(slide_offer['target_schema']['legal_refs']))
+        self.assertEqual({ground.ref, flyer.ref}, set(hail_offer['target_schema']['legal_refs']))
+        self.reject(s, {'action_id': slide_offer['id'], 'x': 1, 'targets': [flyer.ref],
+                        'damage_allocation': {flyer.ref: 1}, 'pay': 'auto'})
+        result = s.act('pilot:A', {'action_id': slide_offer['id'], 'x': 1, 'targets': [ground.ref],
+                                   'damage_allocation': {ground.ref: 1}, 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual(1, s.state.cards[ground.object_id].marked_damage)
+        hail_offer = self.action(s, hail)
+        result = s.act('pilot:A', {'action_id': hail_offer['id'], 'x': 1, 'targets': [flyer.ref],
+                                   'damage_allocation': {flyer.ref: 1}, 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual(1, s.state.cards[flyer.object_id].marked_damage)
+
+    def test_omitting_variable_allocation_validation_is_caught_by_native_cast(self):
+        method = 'test_actual_rolling_thunder_keeps_x_shares_through_bounce_and_replay'
+        with patch('quorune.announced_damage.cast_allocation_details', return_value={}):
+            with self.assertRaises(AssertionError):
+                getattr(type(self)(method), method)()
+
+    def test_announced_damage_omitting_ability_validation_is_caught_by_native_witnesses(self):
+        cases = (
+            ('quorune.rules.activation.proposal', 'test_actual_arc_mage_announces_before_tap_discard_and_mana'),
+            ('quorune.selection.targeting', 'test_actual_inferno_titan_announces_entry_and_attack_trigger_shares'),
+        )
+        for owner, witness in cases:
+            with self.subTest(owner=owner), patch(f'{owner}.announced_allocation_details', return_value={}):
+                with self.assertRaises(AssertionError):
+                    getattr(type(self)(witness), witness)()

@@ -26,6 +26,7 @@ from .morph import (
     morph_face_down_annotation,
 )
 from .nonmana_morph_model import FixedNonmanaMorphSpec
+from .rules.graveyard_copy_cast_model import GRAVEYARD_COPY_PARENT_FIELD
 
 
 class ZoneObjectStateError(ValueError):
@@ -35,9 +36,17 @@ class ZoneObjectStateError(ValueError):
 def mark_cast_grant_rider(card: CardInstance, binding) -> None:
     from .rules.cast_grant_riders import CAST_GRANT_RIDER_FIELD, CastGrantRiderBinding
     if (not isinstance(binding, CastGrantRiderBinding) or card.zone != 'stack' or not card.is_card_object
-            or binding.logical_object_id != card.logical_object_id or binding.caster != card.owner):
+            or binding.logical_object_id != card.logical_object_id or (binding.owner or binding.caster) != card.owner
+            or binding.owner is not None and binding.caster != card.controller):
         raise ZoneObjectStateError('Casting follow-up requires its original owned spell incarnation')
     card.annotations[CAST_GRANT_RIDER_FIELD] = binding.to_dict()
+
+
+def mark_resolving_graveyard_copy(card: CardInstance, parent_ref: str, *, zone: str = "exile") -> None:
+    if (zone not in {"exile", "stack"} or not card.is_card_copy or card.zone != zone
+            or type(parent_ref) is not str or not parent_ref):
+        raise ZoneObjectStateError("A resolving copy requires its expected zone and parent")
+    card.annotations[GRAVEYARD_COPY_PARENT_FIELD] = parent_ref
 
 
 def mark_resolving_paid_entry_copy(card: CardInstance, context) -> None:
@@ -294,8 +303,14 @@ def reset_card_after_zone_change(
     card.phased_out = False
     card.phasing_record = None
     card.source_continuity = None
+    card.shared_type_doors = None
     if not stack_to_battlefield:
         card.battle_protector = None
+
+    if stack_to_battlefield and card.is_card_copy and GRAVEYARD_COPY_PARENT_FIELD in card.annotations:
+        # CR 608.3f changes this same copy into a token without a creation event.
+        card.object_kind = "token"
+        card.is_token = True
 
     # CR 400.7 gives the destination a new logical object. Retain only state
     # covered by an implemented exception or by initial copiable token data.

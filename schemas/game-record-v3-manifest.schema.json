@@ -102,6 +102,10 @@
           ],
           "type": "integer"
         },
+        "cast_event_type_snapshot_version": {
+          "type": "integer",
+          "const": 1
+        },
         "cast_source_placement_version": {
           "const": 1,
           "type": "integer"
@@ -158,6 +162,10 @@
           "const": 1,
           "type": "integer"
         },
+        "first_life_gain_history_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "first_player_draws": {
           "type": "boolean"
         },
@@ -189,6 +197,10 @@
         "name": {
           "const": "commander"
         },
+        "permanent_death_history_version": {
+          "enum": [0, 1],
+          "type": "integer"
+        },
         "permanent_event_state_version": {
           "enum": [
             0,
@@ -201,8 +213,13 @@
           "enum": [
             1,
             2,
-            3
+            3,
+            4
           ],
+          "type": "integer"
+        },
+        "public_movement_history_version": {
+          "const": 1,
           "type": "integer"
         },
         "profile": {
@@ -215,11 +232,15 @@
           "const": "commander_review"
         },
         "split_permanent_face_values_version": {
-          "const": 1,
+          "enum": [1, 2],
           "type": "integer"
         },
         "starting_life": {
           "minimum": 1,
+          "type": "integer"
+        },
+        "transform_event_characteristics_version": {
+          "enum": [0, 1],
           "type": "integer"
         },
         "transform_timestamp_version": {

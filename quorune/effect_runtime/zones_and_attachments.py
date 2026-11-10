@@ -33,6 +33,8 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
 from ..target_protection_engine_adapter import protection_verdict_for_ref
 from ..protection import ProtectionVerdict
+from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
+from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
 
@@ -51,15 +53,40 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
     reason: str,
 ) -> Any:
     op = operation
+    if op == "move" and "attacking_entry" in effect:
+        from ..rules.attacking_card_entry import apply_attacking_entry_move
+
+        return apply_attacking_entry_move(host, effect, actor=actor, reason=reason)
+    graveyard_library_target = GRAVEYARD_LIBRARY_TARGET_FIELD in effect
+    if graveyard_library_target:
+        version = effect[GRAVEYARD_LIBRARY_TARGET_FIELD]
+        if (type(version) is not int or version != 1 or op != "move"
+                or effect.get("destination") != "library" or effect.get("position") not in ("top", "bottom")):
+            raise GameRuleError("Invalid graveyard library target movement")
+        if effect["card"] is None:
+            return None
     implicit_zones = {
         "sacrifice": {"battlefield"},
         "destroy": {"battlefield"},
         "bounce": {"battlefield"},
         "discard": {"hand"},
     }
+    if graveyard_library_target:
+        implicit_zones["move"] = {"graveyard"}
+    followup = None
     if 'hand_entry_query' in effect:
         from ..hand_entry_move import resolve_selected_hand_entry_card
+        from ..rules.hand_entry_followup import decode_hand_entry_followup
+        from ..continuous_effect_state import ResolutionEffectSource
+
         card=resolve_selected_hand_entry_card(host,effect,actor=actor)
+        followup = decode_hand_entry_followup(effect)
+        if followup is not None:
+            try:
+                source = ResolutionEffectSource.from_effect(effect)
+            except ContinuousEffectStateError as exc:
+                raise GameRuleError(str(exc)) from exc
+            previous_zone_counter = card.zone_change_counter
     else:
         card = host._resolve_object(actor,str(effect["card"]),zones=implicit_zones.get(op))
     if op == "destroy":
@@ -80,7 +107,7 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         "bounce": "hand",
         "discard": "graveyard",
     }.get(op, str(effect.get("destination") or "graveyard"))
-    return host.move_card(
+    moved = host.move_card(
         card.object_id,
         destination,
         controller=effect.get("controller"),
@@ -112,6 +139,12 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
             else None
         ),
     )
+    if followup is not None:
+        from ..rules.reanimation_followup import commit_battlefield_entry_followup
+
+        commit_battlefield_entry_followup(host, moved, previous_zone_counter=previous_zone_counter,
+            actor=actor, source=source, followup=followup)
+    return moved
 
 
 
@@ -791,7 +824,20 @@ def _apply_reanimate(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    followup = None
+    if effect.get("schema_version") in REANIMATION_FOLLOWUP_VERSIONS:
+        from ..continuous_effect_state import ResolutionEffectSource
+        from ..rules.reanimation_followup import current_linked_subject, validate_reanimation_followup
+
+        try:
+            followup = validate_reanimation_followup(effect, materialized=True)
+            source = ResolutionEffectSource.from_effect(effect)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        subject = effect["target_snapshot"]
+        if current_linked_subject(host, subject, zone="graveyard") is None:
+            return None
+        effect = {key: value for key, value in effect.items() if key not in {"schema_version", "followup", "target_snapshot"}}
     allowed = {
         "op",
         "card",
@@ -852,7 +898,7 @@ def _apply_reanimate(
         raise GameRuleError(
             "Reanimation effect requires a permanent card"
         )
-    return host.move_card(
+    entered = host.move_card(
         card.object_id,
         "battlefield",
         controller=controller,
@@ -862,6 +908,12 @@ def _apply_reanimate(
         replacement_selections=tuple(selections),
         aura_target_ref=aura_target_ref,
     )
+    if followup is not None:
+        from ..rules.reanimation_followup import commit_battlefield_entry_followup
+
+        commit_battlefield_entry_followup(host, entered, previous_zone_counter=subject["zone_change_counter"],
+            actor=actor, source=source, followup=followup)
+    return entered
 
 
 

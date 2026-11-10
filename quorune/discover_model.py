@@ -60,6 +60,8 @@ class ExileCastProgress:
     exiled: tuple[LibrarySelectionObjectIdentity,...]
     candidate_ref: str | None
     supplier: str | None = None
+    fixed_top_payment: str | None = None
+    copy_parent_ref: str | None = None
 
     def __post_init__(self):
         if self.amount is not None:
@@ -71,6 +73,15 @@ class ExileCastProgress:
         if not isinstance(self.exiled,(tuple,list)):
             raise ValueError('An exile scan requires an ordered public exile history')
         exiled=tuple(self.exiled)
+        if self.fixed_top_payment is not None and (
+            self.fixed_top_payment not in ("free", "paid") or self.supplier is None
+            or len(exiled) != 1 or self.candidate_ref is None
+        ):
+            raise ValueError("Fixed top casting requires one supplied exile incarnation and its payment mode")
+        if self.copy_parent_ref is not None and (
+            type(self.copy_parent_ref) is not str or not self.copy_parent_ref or self.fixed_top_payment != "free"
+        ):
+            raise ValueError("An exiled copy cast requires its resolving parent and free price")
         if (any(not isinstance(card,LibrarySelectionObjectIdentity) for card in exiled)
                 or any(len({getattr(card,key) for card in exiled})!=len(exiled)
                        for key in ('object_id','logical_object_id','ref'))
@@ -91,18 +102,25 @@ class ExileCastProgress:
 
     @property
     def step_operation(self):
+        if self.fixed_top_payment is not None:
+            return None
         if self.supplier is not None:
             return QUALIFIED_SCAN_STEP_OPERATION
         return NONLAND_SCAN_STEP_OPERATION if self.amount is None else DISCOVER_STEP_OPERATION
 
     @property
     def cast_operation(self):
+        if self.fixed_top_payment is not None:
+            from .fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
+            return FIXED_TOP_EXILE_OFFER_OPERATION
         if self.supplier is not None:
             return QUALIFIED_SCAN_CAST_OPERATION
         return NONLAND_SCAN_CAST_OPERATION if self.amount is None else DISCOVER_CAST_OPERATION
 
     @property
     def finish_operation(self):
+        if self.fixed_top_payment is not None:
+            return None
         if self.supplier is not None:
             return QUALIFIED_SCAN_FINISH_OPERATION
         return DISCOVER_FINISH_OPERATION if self.amount is not None else None
@@ -113,6 +131,12 @@ class ExileCastProgress:
         }
         if self.supplier is not None:
             search = {'schema_version': 3, 'scan': 'first_instant_or_sorcery', 'supplier': self.supplier}
+        if self.fixed_top_payment is not None:
+            search = {"schema_version": 4, "scan": "fixed_top_result", "supplier": self.supplier,
+                      "payment": self.fixed_top_payment}
+        if self.copy_parent_ref is not None:
+            search = {"schema_version": 5, "scan": "graveyard_copy", "supplier": self.supplier,
+                      "copy_parent_ref": self.copy_parent_ref}
         return {**search, 'exiled': [card.to_dict() for card in self.exiled], 'candidate_ref': self.candidate_ref}
 
     @classmethod
@@ -121,6 +145,8 @@ class ExileCastProgress:
         if not isinstance(value, Mapping) or type(value.get('schema_version')) is not int:
             raise ValueError('Exile scan progress has a closed versioned shape')
         supplier = None
+        payment = None
+        copy_parent_ref = None
         if value['schema_version'] == 1 and set(value) == common | {'amount'}:
             amount = value['amount']
             ManaValueLimitSpec(amount)
@@ -131,12 +157,19 @@ class ExileCastProgress:
               and value['scan'] == 'first_instant_or_sorcery'
               and type(value['supplier']) is str and value['supplier']):
             amount, supplier = None, value['supplier']
+        elif (value["schema_version"] == 4 and set(value) == common | {"scan", "supplier", "payment"}
+              and value["scan"] == "fixed_top_result" and value["payment"] in ("free", "paid")):
+            amount, supplier, payment = None, value["supplier"], value["payment"]
+        elif (value["schema_version"] == 5 and set(value) == common | {"scan", "supplier", "copy_parent_ref"}
+              and value["scan"] == "graveyard_copy" and type(value["copy_parent_ref"]) is str):
+            amount, supplier, payment = None, value["supplier"], "free"
+            copy_parent_ref = value["copy_parent_ref"]
         else:
             raise ValueError('Exile scan progress has a closed versioned shape')
         if not isinstance(value['exiled'], (list, tuple)):
             raise ValueError('Exile scan progress requires an ordered history')
         return cls(amount, tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in value['exiled']),
-                   value['candidate_ref'], supplier)
+                   value['candidate_ref'], supplier, payment, copy_parent_ref)
 
 
 DiscoverProgress = ExileCastProgress
@@ -174,6 +207,9 @@ def validate_discover_effect(effect,*,resolved=False):
 def discover_payload_dependencies(value):
     if not isinstance(value, Mapping):
         return ()
+    from .fixed_top_exile import FIXED_TOP_EXILE_OPERATION, fixed_top_exile_dependencies
+    if value.get("op") == FIXED_TOP_EXILE_OPERATION:
+        return fixed_top_exile_dependencies(value)
     if value.get('op') == DISCOVER_OPERATION:
         validate_discover_effect(value)
         return (DISCOVER_CAPABILITY,)

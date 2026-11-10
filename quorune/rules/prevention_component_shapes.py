@@ -7,6 +7,23 @@ from ..damage_modifier_state import DamagePreventionScope
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed
 
 
+def fixed_chosen_source_damageable_capabilities(*, effects, target_schema, mechanic_ids):
+    """Prove the ordinary all-damage shield for one declared damageable target."""
+    from ..compiler.prevention_templates import _chosen_source_effect
+
+    if (len(effects) != 1 or "cr-615-prevention-effects" not in mechanic_ids
+            or target_schema != {"zones": ["player", "battlefield"], "categories": ["player", "permanent"],
+                                 "predicate": "damageable", "count": 1}):
+        return ()
+    expected = _chosen_source_effect(
+        shield={"op": "create_damage_prevention_shield", "source": "$source", "subject": "$target.0",
+                "mode": "all", "duration": "until_end_of_turn"},
+        qualifier=None,
+    )
+    return ("damage.prevention.persistent_amount", "target.revalidate_resolution",
+            "target.public.player_or_damageable_permanent") if effects[0] == expected else ()
+
+
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
     if 'cr-615-prevention-effects' not in set(mechanic_ids) or len(effects)!=1:return ()
     effect=effects[0]

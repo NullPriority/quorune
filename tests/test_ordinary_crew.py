@@ -7,7 +7,20 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
+import test_bound_effect_programs as bound
+from test_qualified_zone_event_queries import query_record
+import test_ring_native_actions as turn_actions
+import test_self_public_zone_casting as public_actions
+from quorune.ability_fragment_primitives import (
+    AbilityFragmentError,
+    CREW_POWER_BONUS_CAPABILITY,
+    CREW_POWER_BONUS_HANDLER_ID,
+    CREW_SADDLE_POWER_BONUS_CAPABILITY,
+    CREW_SADDLE_POWER_BONUS_HANDLER_ID,
+    CrewPowerBonusSpec,
+)
+from quorune.ability_fragments import ability_fragment_from_dict, ability_fragment_to_dict
 from quorune.carddb import CardRecord
 from quorune.compiler import crew_nodes as crew_nodes_module
 from quorune.counter_state import (
@@ -43,6 +56,9 @@ from quorune.semantics import SemanticRegistry
 from quorune.tap_state import set_permanent_tapped
 
 
+COMBINED_POWER_BONUS = "This creature saddles Mounts and crews Vehicles as though its power were 2 greater."
+
+
 def crew_record(
     base: CardRecord,
     oracle_text: str,
@@ -61,6 +77,26 @@ def crew_record(
 
 
 class OrdinaryCrewModelTests(unittest.TestCase):
+    def test_fixed_crew_bonus_codec_rejects_invalid_amounts(self):
+        spec = CrewPowerBonusSpec(2)
+        self.assertEqual({"schema_version": 1, "amount": 2}, spec.to_dict())
+        self.assertEqual(spec, ability_fragment_from_dict(ability_fragment_to_dict(spec)))
+        for change in ({"amount": 0}, {"amount": -2}, {"amount": True},
+                       {"amount": "2"}, {"schema_version": True}, {"scope": "saddle"}):
+            with self.subTest(change=change), self.assertRaises(AbilityFragmentError):
+                CrewPowerBonusSpec.from_dict({**spec.to_dict(), **change})
+
+    def test_combined_power_bonus_codec_keeps_payment_scope_closed(self):
+        spec = CrewPowerBonusSpec(2, schema_version=2, saddle_mounts=True)
+        self.assertEqual({"schema_version": 2, "amount": 2, "saddle_mounts": True}, spec.to_dict())
+        self.assertEqual(spec, ability_fragment_from_dict(ability_fragment_to_dict(spec)))
+        for value in ({"schema_version": 2, "amount": 2},
+                      {**spec.to_dict(), "schema_version": 1},
+                      {**spec.to_dict(), "saddle_mounts": 1},
+                      {**spec.to_dict(), "saddle_mounts": False}):
+            with self.subTest(value=value), self.assertRaises(AbilityFragmentError):
+                CrewPowerBonusSpec.from_dict(value)
+
     def test_ordinary_crew_descriptor_is_strict_immutable_and_round_trips(self):
         spec = compile_ordinary_crew_ability(
             material_line="Crew 3",
@@ -194,6 +230,7 @@ class OrdinaryCrewCompilerTests(unittest.TestCase):
 
         for text in (
             "Creatures you control crew Vehicles as though their power were 2 greater.",
+            "This creature saddles legendary Mounts and crews Vehicles as though its power were 2 greater.",
             "Target Vehicle becomes crewed until end of turn.",
             "Whenever this Vehicle becomes crewed, draw a card.",
             "This creature can't crew Vehicles.",
@@ -202,6 +239,97 @@ class OrdinaryCrewCompilerTests(unittest.TestCase):
                 ir = self.compile(text)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_fixed_crew_bonus_is_source_spanned_and_closed(self):
+        text = "This creature crews Vehicles as though its power were 2 greater."
+        ir = compile_oracle_card(query_record(text), capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        handler, = node.handlers
+        self.assertEqual((text, 0, len(text)), (node.text, node.span.start, node.span.end))
+        self.assertEqual((CREW_POWER_BONUS_CAPABILITY,), node.capability_dependencies)
+        self.assertEqual(CrewPowerBonusSpec(2), ability_fragment_from_dict(handler["fragment"]))
+
+    def test_fixed_crew_bonus_withdrawal_rejects_only_dependent_clause(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        crew = next(row for row in raw["capabilities"] if row["id"] == "activation.crew.fixed_power")
+        crew.update(status="blocked", blockers=["withdrawn for the dependency witness"])
+        registry = CapabilityRegistry(raw)
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        index = build_index(registry_value=raw, declaration_source=declarations,
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        text = "This creature crews Vehicles as though its power were 2 greater."
+        affected = compile_oracle_card(query_record(text), capability_registry=registry,
+            capability_profile="commander_review")
+        control = compile_oracle_card(query_record("Flying"), capability_registry=registry,
+            capability_profile="commander_review")
+        self.assertNotEqual("exact", affected.status)
+        self.assertTrue(affected.material_residuals)
+        self.assertEqual("exact", control.status)
+
+    def test_combined_power_bonus_is_source_spanned_and_bound(self):
+        from quorune.semantic_runtime.ability_fragments import default_ability_fragment_registry
+        from quorune.semantic_runtime.context import SemanticNodeError
+
+        ir = compile_oracle_card(query_record(COMBINED_POWER_BONUS), capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        handler, = node.handlers
+        self.assertEqual(COMBINED_POWER_BONUS, node.text[node.span.start:node.span.end])
+        self.assertEqual((CREW_SADDLE_POWER_BONUS_CAPABILITY,), node.capability_dependencies)
+        self.assertEqual(CREW_SADDLE_POWER_BONUS_HANDLER_ID, handler["handler_id"])
+        registry = default_ability_fragment_registry()
+        self.assertEqual((CrewPowerBonusSpec(2, schema_version=2, saddle_mounts=True),),
+            registry.lower(handler, None))
+        with self.assertRaises(SemanticNodeError):
+            registry.lower({**handler, "handler_id": CREW_POWER_BONUS_HANDLER_ID}, None)
+        with self.assertRaises(SemanticNodeError):
+            registry.lower({**handler, "fragment": ability_fragment_to_dict(CrewPowerBonusSpec(2))}, None)
+
+    def test_combined_power_bonus_preserves_crew_only_when_saddle_owner_is_withdrawn(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        saddle = next(row for row in raw["capabilities"] if row["id"] == "activation.saddle.fixed_power")
+        saddle.update(status="blocked", blockers=["withdrawn for the dependency witness"])
+        registry = CapabilityRegistry(raw)
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        index = build_index(registry_value=raw, declaration_source=declarations,
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        combined = compile_oracle_card(query_record(COMBINED_POWER_BONUS), capability_registry=registry,
+            capability_profile="commander_review")
+        crew_only = compile_oracle_card(query_record(COMBINED_POWER_BONUS.replace("saddles Mounts and ", "")),
+            capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", combined.status)
+        self.assertTrue(combined.material_residuals)
+        self.assertEqual("exact", crew_only.status)
+
+    def test_combined_power_bonus_scope_omission_is_killed(self):
+        original = crew_nodes_module.crew_power_bonus_handler
+
+        def drop_saddle(text):
+            return original(text.replace("saddles Mounts and ", ""))
+
+        with mock.patch.object(crew_nodes_module, "crew_power_bonus_handler", side_effect=drop_saddle):
+            with self.assertRaises(AssertionError):
+                self.test_combined_power_bonus_is_source_spanned_and_bound()
+
+    def test_fixed_crew_bonus_compiler_omission_is_killed(self):
+        with mock.patch.object(crew_nodes_module, "crew_power_bonus_handler", return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_fixed_crew_bonus_is_source_spanned_and_closed()
 
     def test_generated_crew_program_is_capability_closed(self):
         record = crew_record(self.base, "Crew 2")
@@ -251,9 +379,20 @@ class OrdinaryCrewCompilerTests(unittest.TestCase):
 
 
 class OrdinaryCrewRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    add = bound.BoundEffectProgramRuntimeTests.add
+    checkpoint = bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = bound.BoundEffectProgramRuntimeTests.resolve
+    replay = bound.BoundEffectProgramRuntimeTests.replay
+    prepare_native = public_actions.SelfPublicZoneRuntimeTests.prepare
+    cast = public_actions.SelfPublicZoneRuntimeTests.cast
+    assert_closed = public_actions.SelfPublicZoneRuntimeTests.assert_closed
+    until = turn_actions.RingNativeActionTests.until
+
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()
+        cls.registry = load_default_capability_registry()
 
     @classmethod
     def tearDownClass(cls):
@@ -821,7 +960,7 @@ class OrdinaryCrewRuntimeTests(unittest.TestCase):
         with mock.patch.object(
             engine, "_effective_card_data", side_effect=changed
         ), mock.patch(
-            "quorune.compiler.activated_ability_catalog.parse_activated_abilities",
+            "quorune.compiler.activated_ability_catalog.parse_compiled_activated_abilities",
             side_effect=AssertionError("runtime activation discovery recompiled Oracle"),
         ):
             abilities = engine._activated_abilities(source)
@@ -882,6 +1021,102 @@ class OrdinaryCrewRuntimeTests(unittest.TestCase):
 
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_original_pilots_pay_crew_without_changing_actual_power_and_replay(self):
+        session = self.session(70212218, players=4)
+        engine = session.engine
+        hotshot = self.add(engine, "Hotshot Mechanic", zone="hand")
+        shorikai = self.add(engine, "Shorikai, Genesis Engine")
+        prototype = self.add(engine, "Prodigy's Prototype")
+        prototype.acquired_control_turn_count = -1
+        caravan = self.add(engine, "Cultivator's Caravan")
+        caravan.acquired_control_turn_count = -1
+        plain_pilot = self.creature(engine, "A", "Ordinary Pilot", 1)
+        for card in (hotshot, shorikai, prototype, caravan):
+            self.assert_closed(session, card)
+        self.prepare_native(session, mana={"C": 1, "W": 1})
+        self.checkpoint(session)
+
+        def actions_for(card):
+            actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            return [row for row in actions if row["id"].startswith(f"activate:{card.ref}:")]
+
+        def crew_actions(card):
+            return [row for row in actions_for(card)
+                if any(choice["k"] == "crew" for choice in row.get("cost_summary", {}).get("choose_cost", []))]
+
+        self.assertFalse(crew_actions(caravan))
+        self.cast(session, "A", hotshot)
+        self.assertIsNone(self.resolve(session))
+        hotshot = engine.state.cards[hotshot.object_id]
+        self.assertEqual(2, engine._numeric_stat(hotshot.object_id, "power"))
+        action, = crew_actions(caravan)
+        before = authoritative_state_hash(session.state)
+        for seat, candidate in (("D", hotshot), ("A", plain_pilot)):
+            rejected = session.act(f"pilot:{seat}", {"action_id": action["id"], "cost_cards": [candidate.ref]})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [hotshot.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(4, session.state.stack[-1].context["crew"]["total_power"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, engine._numeric_stat(hotshot.object_id, "power"))
+        self.assertFalse(engine.state.cards[plain_pilot.object_id].tapped)
+
+        action, = actions_for(shorikai)
+        hand_before = set(session.state.players["A"].zones["hand"])
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        new_cards = set(session.state.players["A"].zones["hand"]) - hand_before
+        self.assertEqual(2, len(new_cards))
+        chosen = session.state.cards[sorted(new_cards)[0]].ref
+        for seat in "BCD":
+            self.assertNotIn(chosen, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+        result = session.act("pilot:A", {"action_id": "choose", "cards": [chosen]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+
+        def created_pilots():
+            return [card for card in session.state.cards.values() if card.is_token and card.object_id != plain_pilot.object_id
+                and card.zone == "battlefield" and "pilot" in self.effective_subtypes(engine, card)]
+
+        pilot, = created_pilots()
+        self.assertEqual(1, engine._numeric_stat(pilot.object_id, "power"))
+        action, = crew_actions(prototype)
+        result = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [pilot.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(3, session.state.stack[-1].context["crew"]["total_power"])
+        self.assertIsNone(self.resolve(session))
+        self.until(session, lambda game: game.state.pending_decision.kind == "combat.attackers")
+        result = session.act("pilot:A", {"action_id": "attack", "attackers": {prototype.ref: "B", caravan.ref: "C"}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, len(created_pilots()))
+        untapped, = [card for card in created_pilots() if not card.tapped]
+        candidates = {candidate.ref: candidate.power for candidate in crew_candidates(engine, "A", caravan)}
+        self.assertEqual((1, 3), (engine._numeric_stat(untapped.object_id, "power"), candidates[untapped.ref]))
+        self.replay(session, load=True)
+
+    def test_crew_bonus_uses_current_ability_and_vehicle_type(self):
+        session = self.session(70212219)
+        engine = session.engine
+        pilot = self.add(engine, "Hotshot Mechanic")
+        caravan = self.add(engine, "Cultivator's Caravan")
+        loss = self.add(engine, "Dress Down", seat="B", zone="hand")
+        session.state.players["B"].mana_pool.update({"C": 1, "U": 1})
+        caravan.annotations["copy_overrides"] = {"type_line": "Artifact"}
+        candidate, = crew_candidates(engine, "A", caravan)
+        self.assertEqual(2, candidate.power)
+        del caravan.annotations["copy_overrides"]
+        self.prepare_native(session)
+        self.checkpoint(session)
+        candidate, = crew_candidates(engine, "A", caravan)
+        self.assertEqual(4, candidate.power)
+        self.cast(session, "B", loss)
+        self.assertIsNone(self.resolve(session))
+        candidate, = crew_candidates(engine, "A", caravan)
+        self.assertEqual((2, 2), (engine._numeric_stat(pilot.object_id, "power"), candidate.power))
 
 
 if __name__ == "__main__":

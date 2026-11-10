@@ -20,6 +20,7 @@ class CastingCostHostMixin:
         alternative_base: Mapping[str, Any] | None = None,
         cast_type_line: str | None = None,
         suppress_source_costs: bool = False,
+        resolving_exile_authority: bool = False,
     ) -> list[dict[str, Any]]:
         return [
             option.to_dict()
@@ -34,6 +35,7 @@ class CastingCostHostMixin:
                 alternative_base=alternative_base,
                 cast_type_line=cast_type_line,
                 suppress_source_costs=suppress_source_costs,
+                resolving_exile_authority=resolving_exile_authority,
             )
         ]
 

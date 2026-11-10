@@ -149,6 +149,11 @@ def commit_untap_phasing(host, plan: PhasingPlan) -> None:
         affected.append((card, transition))
     if not affected:
         return
+    from .relative_power_target import pin_host_relative_power_source_departures
+
+    pin_host_relative_power_source_departures(
+        host, tuple(card for card, transition in affected if transition.out), phase_out=True,
+    )
     # Commit the entire status batch before recalculating any live observers.
     for card, transition in affected:
         card.phased_out = transition.out

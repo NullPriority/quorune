@@ -7,11 +7,12 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..activation_usage import ActivationLimit
-from ..activation_condition_model import activation_restriction_spec
+from ..activation_condition_model import (
+    PUBLIC_ACTIVATION_CAPABILITY, PublicActivationTiming, activation_restriction_spec,
+)
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
 from ..abilities import (
     ActivatedAbility,
-    parse_activated_abilities,
 )
 from ..color_set_mana_abilities import (
     color_set_mana_handler_descriptor,
@@ -23,6 +24,8 @@ from ..fixed_mana_abilities import (
     fixed_mana_handler_descriptor,
 )
 from ..effect_contracts import REANIMATE_OPERATION
+from ..fixed_top_exile import FIXED_TOP_EXILE_OPERATION
+from ..preparation_model import PREPARATION_RESULT_OPERATION
 from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
@@ -39,10 +42,12 @@ from ..self_zone_move import (
 from .activated_costs import (
     activated_ability_cost,
     activated_ability_cost_capabilities,
+    parse_compiled_activation_line,
 )
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
 from .activation_mana_costs import fixed_complex_activation_mana_cost
+from .announced_damage_templates import fixed_announced_damage_template
 from .power_up_templates import fixed_power_up_ability
 from .dependency_gate import (
     DependencyGate,
@@ -311,9 +316,11 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    "choose_creature_type",
     COMBAT_REMOVAL_OPERATION,
     "life_loss_then_gain_actual",
     'discover',
+    FIXED_TOP_EXILE_OPERATION,
     'exile_until_nonland_then_cast',
     'exile_until_instant_or_sorcery',
     'reveal_until_library_selection',
@@ -372,6 +379,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "populate",
     "regenerate",
     REANIMATE_OPERATION,
+    PREPARATION_RESULT_OPERATION,
     "place_counters",
     "place_counter_batch",
     "place_counters_on_set",
@@ -452,6 +460,7 @@ def _activated_effect_dependency_gate(
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
                 "temporary-source-protection-choice",
+                "opposing-graveyard-return-then-targeted-result",
             }.intersection(mechanics)
         )
         or (
@@ -506,10 +515,13 @@ def _activated_cost_dependency_gate(
     *,
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
+    public_timing: PublicActivationTiming | None = None,
 ) -> DependencyGate:
     """Add closed typed cost ownership without weakening effect blockers."""
 
     additional = activated_ability_cost_capabilities(ability)
+    if public_timing is not None:
+        additional = (*additional, PUBLIC_ACTIVATION_CAPABILITY)
     if not additional:
         return gate
     cost_gate = explicit_capabilities_gate(
@@ -653,6 +665,16 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    from .return_to_hand_templates import opposing_graveyard_return_sequence_template
+
+    graveyard_return = opposing_graveyard_return_sequence_template(
+        text, compile_result=lambda body: _compiled_activated_effect(body, card_name=card_name, effect_template=effect_template),
+    )
+    if graveyard_return is not None:
+        return graveyard_return
+    allocation = fixed_announced_damage_template(text, card_name=card_name, allow_source_pronoun=True)
+    if allocation is not None:
+        return allocation
     transform=fixed_self_transform_effect_template(text,card_name=card_name)
     if transform is not None:return transform
     creature_power = fixed_creature_power_damage_effect_template(
@@ -715,10 +737,8 @@ def activated_oracle_node(
             capability_profile=capability_profile,
             residuals=residuals,
         )
-    abilities = parse_activated_abilities(
-        card_name=card_name,
-        oracle_text=line if parse_line is None else parse_line,
-        keywords=keywords,
+    abilities, public_timing = parse_compiled_activation_line(
+        line if parse_line is None else parse_line, card_name=card_name, keywords=keywords,
     )
     if not abilities:
         return None
@@ -773,11 +793,10 @@ def activated_oracle_node(
     lowerable = not residual_ids and (
         template is not None or ability.mana_ability
     )
-    dependencies = mechanics if template is not None else ()
     gate = _activated_effect_dependency_gate(
         effects=effects,
         target_schema=target_schema,
-        mechanics=dependencies,
+        mechanics=mechanics if template is not None else (),
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
@@ -787,6 +806,7 @@ def activated_oracle_node(
         gate,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        public_timing=public_timing,
     )
     if lowerable and gate.blockers:
         residual_ids.append(
@@ -818,7 +838,7 @@ def activated_oracle_node(
             if ability.mana_ability and template is None
             else template
         ),
-        cost=activated_ability_cost(ability),
+        cost=activated_ability_cost(ability, public_timing=public_timing),
         effects=effects,
         target_schema=target_schema,
         handlers=handlers,

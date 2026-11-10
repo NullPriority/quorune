@@ -573,21 +573,21 @@ _WITNESSES = {
         "{2}{B}",
         ("Madness",),
     ),
-    "snow-day": _Witness(
-        "Snow Day",
-        "Instant",
-        "Tap up to two target creatures. Those creatures don't untap during "
-        "their controller's next untap step.\n"
-        "Draw two cards, then discard a card.",
+    "whirlwind-technique": _Witness(
+        "Whirlwind Technique",
+        "Instant — Lesson",
+        "Target player draws two cards, then discards a card.\n"
+        "Airbend up to two target creatures. (To airbend a creature, exile it. "
+        "While it's exiled, its owner may cast it for {2} rather than its mana cost.)",
         "{4}{U}{U}",
     ),
-    "descend-upon-the-sinful": _Witness(
-        "Descend upon the Sinful",
-        "Sorcery",
-        "Exile all creatures.\n"
-        "Delirium — Create a 4/4 white Angel creature token with flying if "
-        "there are four or more card types among cards in your graveyard.",
-        "{4}{W}{W}",
+    "bazaar-of-wonders": _Witness(
+        "Bazaar of Wonders",
+        "World Enchantment",
+        "When this enchantment enters, exile all graveyards.\n"
+        "Whenever a player casts a spell, counter it if a card with the same name is in a graveyard "
+        "or a nontoken permanent with the same name is on the battlefield.",
+        "{3}{U}{U}",
     ),
     "sphinxs-insight": _Witness(
         "Sphinx's Insight",
@@ -1631,7 +1631,7 @@ _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])
 _bind("bretagard-stronghold", ZONE_AND_CHOICE_PAIRS[7])
 _bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[8])
 _bind("heartless-pillage", ZONE_AND_CHOICE_PAIRS[9])
-_bind("snow-day", ZONE_AND_CHOICE_PAIRS[10])
+_bind("whirlwind-technique", ZONE_AND_CHOICE_PAIRS[10])
 _bind("madness-conditional-choice", MADNESS_AND_CHOICE_PAIRS[1])
 _bind(
     "madness-divided-choice",
@@ -1640,7 +1640,7 @@ _bind(
     MADNESS_AND_CHOICE_PAIRS[3],
 )
 _bind("madness-target-predicate", MADNESS_AND_CHOICE_PAIRS[4])
-_bind("descend-upon-the-sinful", PUBLIC_SET_AND_CHOICE_PAIRS[0])
+_bind("bazaar-of-wonders", PUBLIC_SET_AND_CHOICE_PAIRS[0])
 _bind("gideon-champion-of-justice", PUBLIC_SET_AND_CHOICE_PAIRS[1])
 _bind(
     "counter-cost-prevention-boundary",

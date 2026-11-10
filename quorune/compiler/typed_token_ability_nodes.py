@@ -546,6 +546,17 @@ def typed_token_ability_nodes(
     if parsed is None or capability_registry is None:
         return None
     shell, quoted_abilities = parsed
+    if (
+        not record.faces and "{X}" in record.mana_cost
+        and _SPELL_CARD_TYPES.intersection(printed_card_types) and re.search(r"\bX\b", shell)
+    ):
+        from .declared_effect_amounts import declared_spell_effect_compiler
+
+        effect_template = declared_spell_effect_compiler(
+            record, is_spell=True, oracle_text=record.oracle_text, compile_effect=effect_template,
+        )
+        if material_line.rstrip().endswith('."') and not shell.endswith("."):
+            shell += "."
     # Reuse the fixed creature parser for color, subtype and keyword spelling.
     # The temporary pair is replaced only after both intrinsic stats are proven.
     shell, missing_stats = _CREATURE_TOKEN_WITHOUT_STATS.subn(r"\g<1>0/0 ", shell, count=1)

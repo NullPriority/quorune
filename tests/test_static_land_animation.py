@@ -42,6 +42,219 @@ class StaticLandAnimationTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):cls.db.close();cls.temp.cleanup()
 
+    def test_derived_animation_requires_its_independent_amount_and_target_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.resolution_characteristic_model import DERIVED_CHARACTERISTIC_CAPABILITY
+
+        session = self.session(844001)
+        for name in ("Karn's Touch", "Karn, Silver Golem", "Sydri, Galvanic Genius", "Toymaker", "Fractalize"):
+            with self.subTest(card=name):
+                source = self.add(session.engine, name, zone="hand")
+                ir = compile_oracle_card(self.db.lookup(name), capability_registry=self.registry,
+                                         capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                binding = self.binding(session, source)
+                self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+                program, = (entry for entry in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                            if DERIVED_CHARACTERISTIC_CAPABILITY in entry.capability_dependencies)
+                self.assertEqual("trusted", program.trust_level)
+                deps = tuple(cap for cap in program.capability_dependencies if cap != DERIVED_CHARACTERISTIC_CAPABILITY)
+                omitted = replace(program, capability_dependencies=deps,
+                                  capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+                wrong = replace(program, target_schema={**program.target_schema, "types_any": ["land"]})
+                for changed in (omitted, wrong):
+                    bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+                    self.assertFalse(bound["strict"], bound)
+                self.assertIn("capability:undeclared_runtime_dependency:" + DERIVED_CHARACTERISTIC_CAPABILITY,
+                              bind_semantic_program_runtime(omitted, capability_registry=self.registry,
+                                                            profile="commander_review")["blockers"])
+
+    def test_actual_karns_touch_binds_mana_value_and_keeps_the_artifacts_abilities(self):
+        from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(844002)
+        spell = self.add(session.engine, "Karn's Touch", zone="hand")
+        artifact = self.add(session.engine, "Sol Ring", seat="B")
+        creature = self.add(session.engine, "Memnite", seat="D")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        artifact.acquired_control_turn_count = -1
+        artifact.counters["+1/+1"] = 1
+        self.prepare(session, mana={"U": 2})
+        self.checkpoint(session)
+        action, = (entry for entry in self.offered(session, "A") if entry["id"] == "cast:" + spell.ref)
+        self.assertIn(artifact.ref, action["target_schema"]["legal_refs"])
+        self.assertNotIn(creature.ref, action["target_schema"]["legal_refs"])
+        command = {"action_id": action["id"], "targets": [artifact.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:C", command).ok)
+        self.assertFalse(session.act("pilot:A", {**command, "targets": [creature.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[artifact.object_id]
+        data = session.engine._effective_card_data(current)
+        self.assertEqual({"artifact", "creature"}, session.engine._type_parts(data["type_line"])[0])
+        self.assertEqual((2, 2), tuple(session.engine._numeric_stat(current.object_id, key)
+                                      for key in ("power", "toughness")))
+        setters = [operation.value for effect in session.state.continuous_effects
+                   for operation in getattr(effect, "operations", ()) if operation.op == "set_power_toughness"]
+        self.assertEqual([(1, 1)], setters)
+        self.priority(session, "B")
+        mana, = (entry for entry in self.offered(session, "B") if artifact.ref in entry["id"])
+        result = session.act("pilot:B", {"action_id": mana["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, session.state.players["B"].mana_pool["C"])
+        self.private_replay(session, private)
+        expire_end_of_turn_continuous_effects(session.state)
+        restored = session.engine._effective_card_data(current)
+        self.assertEqual({"artifact"}, session.engine._type_parts(restored["type_line"])[0])
+
+    def test_actual_karns_touch_zero_value_artifact_land_dies_to_toughness(self):
+        session = self.session(844003)
+        spell = self.add(session.engine, "Karn's Touch", zone="hand")
+        land = self.add(session.engine, "Darksteel Citadel", seat="B")
+        self.prepare(session, mana={"U": 2})
+        self.checkpoint(session)
+        self.offered_cast(session, spell, {"U": 2}, [land.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[land.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_animation_reads_the_copy_value_of_sculpting_steel(self):
+        session = self.session(844007)
+        spell = self.add(session.engine, "Karn's Touch", zone="hand")
+        steel = self.add(session.engine, "Sculpting Steel", zone="hand")
+        original = self.add(session.engine, "Sol Ring", seat="B")
+        self.assertTrue(self.binding(session, steel)["strict_capability_ready"])
+        self.prepare(session, mana={"C": 3, "U": 2})
+        self.checkpoint(session)
+        self.offered_cast(session, steel, {"C": 3})
+        self.assertEqual("replacement.order", self.resolve(session).kind)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        selected, = (row for row in options if original.ref in row["id"] and not row["id"].startswith("decline:"))
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": selected["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[steel.object_id]
+        self.assertEqual(3, self.db.lookup("Sculpting Steel").mana_value)
+        self.assertEqual(1, session.engine._effective_card_data(current)["mana_value"])
+        self.offered_cast(session, spell, {"U": 2}, [current.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((1, 1), tuple(session.engine._numeric_stat(current.object_id, key)
+                                      for key in ("power", "toughness")))
+        self.replay(session, load=True)
+
+    def test_actual_toymaker_pays_tap_and_discard_before_animating_a_foreign_artifact(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(844004)
+        source = self.add(session.engine, "Toymaker")
+        source.acquired_control_turn_count = -1
+        discard = self.add(session.engine, "Generic Bound Growth", zone="hand", ref="toymaker-price")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand", ref="toymaker-private")
+        artifact = self.add(session.engine, "Sol Ring", seat="D")
+        creature = self.add(session.engine, "Memnite", seat="D")
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        offer, = (entry for entry in self.offered(session, "A") if entry["id"].startswith(f"activate:{source.ref}:"))
+        self.assertNotIn(discard.ref, str(session.packet("pilot:D", full=True)))
+        command = {"action_id": offer["id"], "targets": [artifact.ref], "cost_cards": [discard.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {**command, "targets": [creature.ref]}).ok)
+        self.assertFalse(session.act("pilot:A", {**command, "cost_cards": [private.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual("graveyard", session.state.cards[discard.object_id].zone)
+        self.assertEqual("D", session.state.cards[artifact.object_id].controller)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.engine._numeric_stat(artifact.object_id, "power"))
+        self.private_replay(session, private)
+
+    def test_actual_sydri_offers_her_second_ability_after_animation(self):
+        session = self.session(844008)
+        sydri = self.add(session.engine, "Sydri, Galvanic Genius")
+        artifact = self.add(session.engine, "Sol Ring", seat="B")
+        self.prepare(session, mana={"U": 1, "W": 1, "B": 1})
+        self.checkpoint(session)
+        animation, = (entry for entry in self.offered(session, "A") if entry["id"].startswith(f"activate:{sydri.ref}:"))
+        accepted = session.act("pilot:A", {"action_id": animation["id"], "targets": [artifact.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.priority(session, "A")
+        grant, = (entry for entry in self.offered(session, "A") if entry["id"].startswith(f"activate:{sydri.ref}:"))
+        self.assertNotEqual(animation["id"], grant["id"])
+        accepted = session.act("pilot:A", {"action_id": grant["id"], "targets": [artifact.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        data = session.engine._effective_card_data(session.state.cards[artifact.object_id])
+        self.assertTrue({"deathtouch", "lifelink"} <= {name.casefold() for name in data["keywords"]})
+        self.replay(session, load=True)
+
+    def test_actual_fractalize_sets_announced_x_plus_one_and_keeps_the_artifact_type(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(844005)
+        spell = self.add(session.engine, "Fractalize", zone="hand")
+        creature = self.add(session.engine, "Memnite", seat="B")
+        creature.counters["+1/+1"] = 1
+        artifact = self.add(session.engine, "Sol Ring", seat="D")
+        self.prepare(session, mana={"U": 1, "C": 2})
+        self.checkpoint(session)
+        action, = (entry for entry in self.offered(session, "A") if entry["id"] == "cast:" + spell.ref)
+        command = {"action_id": action["id"], "targets": [creature.ref], "x": 2, "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {**command, "targets": [artifact.ref]}).ok)
+        self.assertFalse(session.act("pilot:A", {**command, "x": 3}).ok)
+        for malformed in (True, 1.5, "1"):
+            rejected = session.act("pilot:A", {**command, "x": malformed})
+            self.assertFalse(rejected.ok, rejected.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, session.state.stack[-1].x_value)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[creature.object_id]
+        data = session.engine._effective_card_data(current)
+        self.assertEqual(({"artifact", "creature"}, {"fractal"}), session.engine._type_parts(data["type_line"])[:2])
+        self.assertEqual({"U", "G"}, set(data["colors"]))
+        self.assertEqual((4, 4), tuple(session.engine._numeric_stat(current.object_id, key)
+                                      for key in ("power", "toughness")))
+        self.replay(session, load=True)
+
+    def test_derived_animation_checks_noncreature_status_again_after_a_response(self):
+        session = self.session(844006)
+        first = self.add(session.engine, "Karn's Touch", zone="hand", ref="first-animation")
+        response = self.add(session.engine, "Karn's Touch", seat="B", zone="hand", ref="response-animation")
+        artifact = self.add(session.engine, "Sol Ring", seat="D")
+        session.state.players["B"].mana_pool["U"] = 2
+        self.prepare(session, mana={"U": 2})
+        self.checkpoint(session)
+        self.offered_cast(session, first, {"U": 2}, [artifact.ref])
+        self.priority(session, "B")
+        action, = (entry for entry in self.offered(session, "B") if entry["id"] == "cast:" + response.ref)
+        result = session.act("pilot:B", {"action_id": action["id"], "targets": [artifact.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        effects = [effect for effect in session.state.continuous_effects
+                   if getattr(effect, "sublayer", None) == "7b"]
+        self.assertEqual(1, len(effects))
+        self.assertEqual((1, 1), effects[0].operations[0].value)
+        self.replay(session, load=True)
+
+    def test_omitting_actual_mana_value_is_detected_by_native_animation(self):
+        from unittest.mock import patch
+
+        with patch("quorune.public_quantity_reductions.public_mana_value", return_value=5):
+            with self.assertRaises(AssertionError):
+                self.test_actual_karns_touch_binds_mana_value_and_keeps_the_artifacts_abilities()
+
     def test_complete_living_plane_and_natures_revolt_originals_register_before_actions(self):
         session=self.session(752100)
         for name in ('Living Plane',"Nature's Revolt"):

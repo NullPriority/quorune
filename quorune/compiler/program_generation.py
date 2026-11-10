@@ -31,7 +31,7 @@ from ..rules.capabilities import (
     capability_dependencies_for_node,
 )
 from .modal_program_closure import is_closed_fixed_modal_program
-from .public_zone_program_closure import is_closed_reanimation_effect_program,is_closed_own_graveyard_return_program
+from .public_zone_program_closure import is_closed_reanimation_effect_program,is_closed_graveyard_return_program
 from .source_transform_program_closure import is_closed_source_transform_program
 from .resolution_characteristic_program_closure import is_closed_resolution_characteristic_program
 from ..rules.enlist_shapes import is_closed_enlist_reflexive_program
@@ -303,9 +303,13 @@ def _generated_node_is_independently_exact(node: Any) -> bool:
 
 
 def _generated_static_declaration(node: Any) -> bool:
+    from ..triggered_mana_model import CHOSEN_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT
+
     return bool(
         PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage
         or node.handlers
+        or (node.kind == "triggered_ability" and node.event == FIXED_TRIGGERED_MANA_EVENT
+            and tuple(node.capability_dependencies) in ((FIXED_TRIGGERED_MANA_CAPABILITY,), (CHOSEN_TRIGGERED_MANA_CAPABILITY,)))
         or (
             node.kind == "keyword_ability"
             and node.capability_dependencies
@@ -1160,12 +1164,12 @@ def _is_closed_targeted_return_to_hand_program(
     )
 
 
-def _is_closed_targeted_own_graveyard_return_program(
+def _is_closed_targeted_graveyard_return_program(
     program: SemanticProgram,
 ) -> bool:
     """Recognize only the reviewed own-graveyard card return family."""
 
-    return is_closed_own_graveyard_return_program(program)
+    return is_closed_graveyard_return_program(program)
 
 
 def _is_closed_public_graveyard_card_exile_program(
@@ -1200,8 +1204,19 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
     return _node_capabilities_close_program(program, fixed_owner_zone_move_node_capabilities)
 
 
+def _is_closed_targeted_graveyard_cast_program(program: SemanticProgram) -> bool:
+    from ..rules.graveyard_card_targets import targeted_graveyard_cast_node_capabilities
+    return _node_capabilities_close_program(program, targeted_graveyard_cast_node_capabilities)
+
+
+def _is_closed_graveyard_copy_cast_program(program: SemanticProgram) -> bool:
+    from ..rules.graveyard_card_targets import graveyard_copy_cast_node_capabilities
+    return _node_capabilities_close_program(program, graveyard_copy_cast_node_capabilities)
+
+
 
 def _closed_effect_recognizers():
+    from ..preparation import is_closed_activated_preparation_program
     from ..rules.target_player_sequences import is_closed_target_player_sequence_program
     from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
     from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
@@ -1210,12 +1225,14 @@ def _closed_effect_recognizers():
     from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
     from ..rules.library_order_shapes import is_closed_fixed_library_order_program
+    from ..rules.graveyard_card_targets import is_closed_opposing_graveyard_return_program
     from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
     from ..rules.counter_target_set_shapes import is_closed_quantified_counter_target_program
     from ..rules.any_number_target_shapes import is_closed_any_number_target_program
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     return (
+        is_closed_activated_preparation_program,
         is_closed_target_player_sequence_program,
         is_closed_target_set_result_sequence_program,
         is_closed_reanimation_entry_counter_program,
@@ -1226,6 +1243,9 @@ def _closed_effect_recognizers():
         is_closed_all_kind_counter_program,
         is_closed_quantified_counter_target_program,
         is_closed_any_number_target_program,
+        is_closed_opposing_graveyard_return_program,
+        _is_closed_targeted_graveyard_cast_program,
+        _is_closed_graveyard_copy_cast_program,
         closed_fused_program,
         is_closed_library_search_prohibition_program,
         is_closed_announced_target_set_program,
@@ -1295,7 +1315,7 @@ def _closed_effect_recognizers():
         _is_closed_mass_destruction_program,
         _is_closed_targeted_exile_program,
         _is_closed_targeted_return_to_hand_program,
-        _is_closed_targeted_own_graveyard_return_program,
+        _is_closed_targeted_graveyard_return_program,
         _is_closed_public_graveyard_card_exile_program,
         _is_closed_fixed_public_zone_move_set_program,
         _is_closed_targeted_tap_state_program,

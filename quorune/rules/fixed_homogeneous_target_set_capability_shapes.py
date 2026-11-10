@@ -17,6 +17,8 @@ from .graveyard_card_targets import (
 from .permanent_predicate_capability_shapes import (
     direct_target_predicate_capabilities,
 )
+from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
+from .tap_state_capability_shapes import target_set_next_untap_dependencies
 
 
 _OPERATION_CAPABILITIES = {
@@ -122,10 +124,17 @@ def fixed_homogeneous_target_set_node_capabilities(
         owned=fixed_target_reanimation_node_capabilities(effects=(scalar,),target_schema=singular,mechanic_ids=mechanics)
         return (FIXED_HOMOGENEOUS_TARGET_SET_CAPABILITY,FIXED_TARGET_REANIMATION_SET_CAPABILITY,*owned,
             'target.revalidate_resolution') if owned else ()
+    try:
+        next_untap = target_set_next_untap_dependencies(effect)
+    except ValueError:
+        return ()
+    expected_fields = {"op", "cards", "maximum_targets"}
+    if next_untap:
+        expected_fields.add(TAP_TARGET_SET_UNTAP_FIELD)
     if (
         operation not in _OPERATION_CAPABILITIES
         or _OPERATION_MECHANICS[str(operation)] not in mechanics
-        or set(effect) != {"op", "cards", "maximum_targets"}
+        or set(effect) != expected_fields
         or effect.get("cards") != "$targets"
         or type(maximum) is not int
         or not 1 <= maximum <= 6
@@ -170,6 +179,7 @@ def fixed_homogeneous_target_set_node_capabilities(
     return (
         FIXED_HOMOGENEOUS_TARGET_SET_CAPABILITY,
         _OPERATION_CAPABILITIES[str(operation)],
+        *next_untap,
         *predicate_capabilities,
         "target.revalidate_resolution",
     )

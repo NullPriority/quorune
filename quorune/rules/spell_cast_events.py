@@ -8,6 +8,10 @@ from typing import Any, Iterable, Mapping
 from ..util import stable_json
 
 
+SPELL_CAST_KEYWORD_CAPABILITY = "trigger.event.spell_cast_keyword"
+CAST_SPELL_KEYWORDS = frozenset({"flying"})
+
+
 class SpellCastEventError(ValueError):
     """A normalized spell-cast event is malformed or unsupported."""
 
@@ -520,6 +524,35 @@ def cast_creature_target_controllers(host: Any, item: Any) -> tuple[str, ...]:
         if "creature" in types:
             controllers.add(card.controller)
     return tuple(sorted(controllers))
+
+
+def spell_cast_keyword_condition_dependencies(value: Any) -> tuple[str, ...]:
+    if isinstance(value, (list, tuple)):
+        return tuple(sorted({cap for child in value for cap in spell_cast_keyword_condition_dependencies(child)}))
+    if not isinstance(value, Mapping):
+        return ()
+    if value.get("field") == "keywords":
+        keywords = value.get("value")
+        if (set(value) != {"field", "op", "value"} or value.get("op") != "contains_any"
+                or not isinstance(keywords, (list, tuple)) or len(keywords) != 1
+                or type(keywords[0]) is not str or keywords[0] not in CAST_SPELL_KEYWORDS):
+            raise SpellCastEventError("Spell keyword predicates require a closed cast keyword")
+        return (SPELL_CAST_KEYWORD_CAPABILITY,)
+    return tuple(sorted({cap for key in ("all", "any", "not")
+                         for cap in spell_cast_keyword_condition_dependencies(value.get(key))}))
+
+
+def spell_cast_event_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
+    normalized = "trigger.event.normalized_spell_cast"
+    if subscriptions is None:
+        if program.event != "spell.cast":
+            return ()
+        keywords = spell_cast_keyword_condition_dependencies(program.event_condition)
+        return (normalized, *keywords) if keywords else ()
+    cast_conditions = tuple(child.condition for child in subscriptions.subscriptions if child.event == "spell.cast")
+    if not cast_conditions:
+        return ()
+    return (normalized, *spell_cast_keyword_condition_dependencies(cast_conditions))
 
 
 __all__ = ["SpellCastEvent", "SpellCastEventError", "SpellCopyEvent", "cast_creature_target_controllers"]

@@ -174,6 +174,15 @@ def commit_state_based_principal_changes(host: StateBasedPrincipalHost) -> bool:
     return True
 
 
+def commit_game_draw(host, *, reason: str) -> None:
+    """Close the match through the shared terminal outcome boundary."""
+    host.state.game_over = True
+    host.state.draw = True
+    host.state.priority_player = None
+    host.permissions.invalidate_current()
+    host._log(None, "game.draw", reason, importance=3)
+
+
 @dataclass(frozen=True, slots=True)
 class CounterPairRemoval:
     object_id: str

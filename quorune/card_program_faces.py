@@ -54,6 +54,33 @@ def normalized_program_face_id(record: Any, program: Any) -> str:
     return face_id or "front"
 
 
+def current_shared_type_doors(card: Any):
+    """Return the printed door state when its shared type line is current."""
+    if card is None:
+        return None
+    doors = getattr(card, "shared_type_doors", None)
+    overrides = (getattr(card, "annotations", {}) or {}).get("copy_overrides")
+    if overrides is None:
+        return doors if doors is not None and doors.printed else None
+    from .shared_type_doors import SharedTypeDoors, copied_room_door_ids
+    copied = copied_room_door_ids(overrides)
+    if copied is None or (card.zone != "battlefield" and doors is None):
+        return None
+    return doors.rebind(copied) if doors is not None else SharedTypeDoors(copied, printed=False)
+
+
+def room_program_face_is_active(card: Any, program: Any) -> bool:
+    doors = current_shared_type_doors(card)
+    if doors is None:
+        return True
+    face = program.provenance.get("face_id")
+    if face == "front":
+        face = doors.faces[0]
+    elif face == "back":
+        face = doors.faces[1]
+    return face in doors.unlocked
+
+
 def program_matches_face(
     record: Any,
     program: Any,
@@ -61,10 +88,9 @@ def program_matches_face(
     *,
     prospective_name: str | None = None,
 ) -> bool:
-    return normalized_program_face_id(
-        record,
-        program,
-    ) == selected_face_id(
+    if current_shared_type_doors(card) is not None:
+        return room_program_face_is_active(card, program)
+    return normalized_program_face_id(record, program) == selected_face_id(
         record,
         card,
         prospective_name=prospective_name,

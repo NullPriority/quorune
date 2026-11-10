@@ -371,7 +371,8 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
                 self.replay(session)
 
     def test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration(self):
-        expected = {'Mind Rake', 'Scale Up', 'Stirring Address', 'Mizzium Mortars', 'Dynacharge', 'Electrickery', 'Dragonshift'}
+        expected = {'Mind Rake', 'Scale Up', 'Stirring Address', 'Mizzium Mortars', 'Dynacharge',
+                    'Electrickery', 'Dragonshift', "Mizzix's Mastery"}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if 'Overload' in r.get('keywords', ())]
         self.assertEqual(27, len(rows))
         for row in rows:

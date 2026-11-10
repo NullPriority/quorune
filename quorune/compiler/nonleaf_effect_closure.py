@@ -34,6 +34,8 @@ def effect_program_is_closed(program, *, recognizers, recursive_is_closed, compo
 
 
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
+    from ..saddle import is_closed_saddle_program
+    if is_closed_saddle_program(program):return True
     from .fixed_sacrifice_result_promotion import closed_alternative_damage_death_exile_result, closed_fixed_sacrifice_spell_result
     if (closed_fixed_sacrifice_spell_result(program, recognizers=recognizers)
             or closed_alternative_damage_death_exile_result(program, recognizers=recognizers)):

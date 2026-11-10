@@ -6,9 +6,11 @@ from .errors import GameRuleError
 from .aura import complete_aura_entry_choice
 from .replacement_decisions import complete_replacement_order_choice
 from .trigger_processing import complete_trigger_order_decision
+from .trigger_targeting import record_linked_loop_decision
 
 
 def dispatch_completed_decision(host,decision):
+    record_linked_loop_decision(host.state, decision)
     kind=decision.kind
     if kind=='mulligan.declare':host._complete_mulligan_declaration(decision)
     elif kind=='mulligan.bottom':host._complete_mulligan_bottom(decision)
@@ -32,6 +34,9 @@ def dispatch_completed_decision(host,decision):
     elif kind=='battle.enter_protector':host._complete_battle_entry_protector_choice(decision)
     elif kind=='battle.siege_defeated':host._complete_siege_defeated_choice(decision)
     elif kind=='selection.exile_cast':host._complete_one_shot_exile_cast_choice(decision)
+    elif kind=='selection.splice_cast':
+        from .selection.splice_cast import complete_splice_cast
+        complete_splice_cast(host,decision)
     elif kind=='choice.apnap':host._complete_apnap_choice(decision)
     elif kind=='replacement.order':complete_replacement_order_choice(host,decision,error_type=GameRuleError)
     elif kind=='aura.entry':complete_aura_entry_choice(host,decision,error_type=GameRuleError)

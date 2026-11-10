@@ -1784,6 +1784,893 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Arc Mage",
+      "oracle_id": "011bb6cc-f1a1-4790-befc-373acabf63b8",
+      "oracle_text": "{2}{R}, {T}, Discard a card: This creature deals 2 damage divided as you choose among one or two targets.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2000-02-14",
+      "toughness": "2",
+      "type_line": "Creature — Human Spellshaper"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{R}{R}",
+      "name": "Bogardan Hellkite",
+      "oracle_id": "699bc130-2f1f-4bc8-a25f-9329e40efbb1",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, it deals 5 damage divided as you choose among any number of targets.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": "5",
+      "type_line": "Creature — Dragon"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}{G}",
+      "name": "Dragonlord Atarka",
+      "oracle_id": "daff70a4-a990-47c9-b6ef-2c379272c8a3",
+      "oracle_text": "Flying, trample\nWhen Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "8",
+      "type_line": "Legendary Creature — Elder Dragon"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}",
+      "name": "Gang of Devils",
+      "oracle_id": "62110234-690b-4498-8076-26ba910f9f92",
+      "oracle_text": "When this creature dies, it deals 3 damage divided as you choose among one, two, or three targets.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2016-08-26",
+      "toughness": "3",
+      "type_line": "Creature — Devil"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Inferno Titan",
+      "oracle_id": "0ce47c8b-1e1f-463f-94f0-35ca00be89e6",
+      "oracle_text": "{R}: This creature gets +1/+0 until end of turn.\nWhenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": "6",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{R}{R}",
+      "name": "Mogg Mob",
+      "oracle_id": "fb7171f8-60a0-4309-93ff-113e1f62113c",
+      "oracle_text": "Sacrifice this creature: It deals 3 damage divided as you choose among one, two, or three targets.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": "3",
+      "type_line": "Creature — Goblin"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "4",
+      "mana_cost": "{4}{U}{R}",
+      "name": "Ral, Caller of Storms",
+      "oracle_id": "d7b10518-b6dc-4a39-881a-edd346034f28",
+      "oracle_text": "+1: Draw a card.\n−2: Ral deals 3 damage divided as you choose among one, two, or three targets.\n−7: Draw seven cards. Ral deals 7 damage to each creature your opponents control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-10-05",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Ral"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Riot"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Skarrgan Hellkite",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "oracle_text": "Riot (This creature enters with your choice of a +1/+1 counter or haste.)\nFlying\n{3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "4",
+      "type_line": "Creature — Dragon"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{R}",
+      "name": "Fire Covenant",
+      "oracle_id": "025939a0-424a-41bf-8fc9-2ef9ea5485f7",
+      "oracle_text": "As an additional cost to cast this spell, pay X life.\nFire Covenant deals X damage divided as you choose among any number of target creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{W}",
+      "name": "Hail of Arrows",
+      "oracle_id": "37429f88-e29b-4b1b-90fd-23a04d703c0a",
+      "oracle_text": "Hail of Arrows deals X damage divided as you choose among any number of target attacking creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-08-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}",
+      "name": "Jaws of Stone",
+      "oracle_id": "af6a8149-a849-4e6a-bf9d-e6b4bb9b1a04",
+      "oracle_text": "Jaws of Stone deals X damage divided as you choose among any number of targets, where X is the number of Mountains you control as you cast this spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-03-30",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{X}{R}",
+      "name": "Meteor Shower",
+      "oracle_id": "d2110083-b30f-43f1-9352-7536f5e19d3c",
+      "oracle_text": "Meteor Shower deals X plus 1 damage divided as you choose among any number of targets.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2008-09-22",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Monstrous Onslaught",
+      "oracle_id": "52be3da7-1e55-44c4-88bc-fb578a635ec0",
+      "oracle_text": "Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{R}",
+      "name": "Rock Slide",
+      "oracle_id": "0b2e7c1a-dc07-4138-a560-dc80fa723860",
+      "oracle_text": "Rock Slide deals X damage divided as you choose among any number of target attacking or blocking creatures without flying.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1997-02-03",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{R}{R}",
+      "name": "Rolling Thunder",
+      "oracle_id": "9c47888b-28a5-4c43-9ee4-a9059e3c367d",
+      "oracle_text": "Rolling Thunder deals X damage divided as you choose among any number of targets.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-11-16",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{X}{R}{R}",
+          "name": "Shatterskull Smashing",
+          "oracle_text": "Shatterskull Smashing deals X damage divided as you choose among up to two target creatures and/or planeswalkers. If X is 6 or more, Shatterskull Smashing deals twice X damage divided as you choose among them instead.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Shatterskull, the Hammer Pass",
+          "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {R}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Land"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{R}{R} // ",
+      "name": "Shatterskull Smashing // Shatterskull, the Hammer Pass",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "oracle_text": "Shatterskull Smashing: Shatterskull Smashing deals X damage divided as you choose among up to two target creatures and/or planeswalkers. If X is 6 or more, Shatterskull Smashing deals twice X damage divided as you choose among them instead.\n//\nShatterskull, the Hammer Pass: As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {R}.",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2020-09-25",
+      "toughness": null,
+      "type_line": "Sorcery // Land"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Volcanic Wind",
+      "oracle_id": "baa85b14-1c9f-4a19-9f07-93e3192c597d",
+      "oracle_text": "Volcanic Wind deals X damage divided as you choose among any number of target creatures, where X is the number of creatures on the battlefield as you cast this spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1999-10-04",
+      "toughness": null,
+      "type_line": "Sorcery"
     }
   ],
   "rulings": [
@@ -2740,6 +3627,300 @@
       "published_at": "2017-11-17",
       "source": "wotc",
       "comment": "If Electrolyze targets two creatures and one becomes an illegal target, the remaining target is dealt 1 damage, not 2. You'll still draw a card."
+    },
+    {
+      "comment": "You can't choose zero targets. You must choose between 1 and 2 targets.",
+      "oracle_id": "011bb6cc-f1a1-4790-befc-373acabf63b8",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you put Inferno Titan's triggered ability on the stack, not as it resolves. Each target must be assigned at least 1 damage. (In other words, as you put the ability on the stack, you choose whether to have it deal 3 damage to a single target, 2 damage to one target and 1 damage to another target, or 1 damage to each of three targets.)",
+      "oracle_id": "0ce47c8b-1e1f-463f-94f0-35ca00be89e6",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you put Gang of Devils’s triggered ability on the stack, not as it resolves. Each target must be assigned at least 1 damage. (In other words, as you put the ability on the stack, you choose whether to have it deal 3 damage to a single target, 2 damage to one target and 1 damage to another target, or 1 damage to each of three targets.)",
+      "oracle_id": "62110234-690b-4498-8076-26ba910f9f92",
+      "published_at": "2012-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the creatures or players are illegal targets as Bogardan Hellkite's triggered ability tries to resolve, the original division of damage still applies and the damage that would have been dealt to the illegal targets is lost. It won't be dealt instead to a legal target.",
+      "oracle_id": "699bc130-2f1f-4bc8-a25f-9329e40efbb1",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many targets Bogardan Hellkite's triggered ability has and how the damage is divided as you put the ability onto the stack. Each target must receive at least 1 damage.",
+      "oracle_id": "699bc130-2f1f-4bc8-a25f-9329e40efbb1",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Skarrgan Hellkite's ability has two targets and one becomes illegal, the remaining target is dealt 1 damage, not 2.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature entering the battlefield has riot but can't have a +1/+1 counter put onto it, it gains haste.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose for the creature to gain haste, it gains haste indefinitely. It won't lose it as the turn ends or as another player gains control of it.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Skarrgan Hellkite's ability has been activated, it resolves even if all +1/+1 counters are removed from it or if Skarrgan Hellkite leaves the battlefield.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Riot is a replacement effect. Players can't respond to your choice of +1/+1 counter or haste, and they can't take actions while the creature is on the battlefield without one or the other.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you activate Skarrgan Hellkite's ability, not as it resolves. Each target must be assigned at least 1 damage. In other words, as you activate the ability, you choose whether to have Skarrgan Hellkite deal 2 damage to a single target, or deal 1 damage to each of two targets.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets become illegal for Ral's second ability, the original division of damage still applies, and the damage that would have been dealt to illegal targets isn't dealt at all.",
+      "oracle_id": "d7b10518-b6dc-4a39-881a-edd346034f28",
+      "published_at": "2018-10-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets are illegal targets as the ability tries to resolve, the original division of damage still applies but no damage is dealt to the illegal targets. If all targets are illegal, the ability doesn’t resolve.",
+      "oracle_id": "daff70a4-a990-47c9-b6ef-2c379272c8a3",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many targets the ability has and how the damage is divided as you put the ability on the stack. Each target must receive at least 1 damage.",
+      "oracle_id": "daff70a4-a990-47c9-b6ef-2c379272c8a3",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets are illegal as Mogg Mob's activated ability tries to resolve, the original division of damage still applies and the damage that would have been dealt to the illegal targets is lost. It won't be dealt instead to a legal target.",
+      "oracle_id": "fb7171f8-60a0-4309-93ff-113e1f62113c",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many targets Mogg Mob's ability has and how the damage is divided as you activate the ability. Each target must receive at least 1 damage.",
+      "oracle_id": "fb7171f8-60a0-4309-93ff-113e1f62113c",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If X is 0, the number of targets must also be 0.",
+      "oracle_id": "025939a0-424a-41bf-8fc9-2ef9ea5485f7",
+      "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you cast the spell. You can't redistribute the damage if any of the target creatures becomes illegal before the spell resolves.",
+      "oracle_id": "025939a0-424a-41bf-8fc9-2ef9ea5485f7",
+      "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must distribute at least 1 damage to each target.",
+      "oracle_id": "025939a0-424a-41bf-8fc9-2ef9ea5485f7",
+      "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If X is 0, you can’t choose any targets.",
+      "oracle_id": "0b2e7c1a-dc07-4138-a560-dc80fa723860",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how the damage will be divided among the target creatures at the time you cast Hail of Arrows. Each target must be dealt at least 1 damage. If any of those creatures becomes an illegal target before Hail of Arrows resolves, the division of damage among the remaining creatures doesn’t change.",
+      "oracle_id": "37429f88-e29b-4b1b-90fd-23a04d703c0a",
+      "published_at": "2005-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets become illegal, the original division of damage still applies. The damage that was divided among the illegal targets simply isn't dealt; it isn't re-assigned to remaining legal targets.",
+      "oracle_id": "52be3da7-1e55-44c4-88bc-fb578a635ec0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The damage is dealt by Monstrous Onslaught, not by the creature with the greatest power among creatures you control.",
+      "oracle_id": "52be3da7-1e55-44c4-88bc-fb578a635ec0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X is determined at the time you divide damage. It won't change later, even if the greatest power among creatures you control changes.",
+      "oracle_id": "52be3da7-1e55-44c4-88bc-fb578a635ec0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage among the target creatures as you cast Monstrous Onslaught. Each target must be assigned at least 1 damage.",
+      "oracle_id": "52be3da7-1e55-44c4-88bc-fb578a635ec0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "A modal double-faced card can't be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If X is 6 or more, you divide twice X damage; you don't assign X damage and then double that damage.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \"play\") a specific modal double-faced card, you can't play it as a land.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face's name.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can't be put onto the battlefield, it doesn't enter the battlefield.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the targets becomes illegal for Shatterskull Smashing, the original division of damage still applies to the still-legal target, but the damage that would have been dealt to the illegal target isn't dealt at all.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that's being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "There is a single triangle icon in the top left corner of the front face. There is a double triangle icon in the top left corner of the back face.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you're playing and ignore the other face's characteristics.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you cast Shatterskull Smashing, not as it resolves. If you choose two targets, each target must be assigned at least 1 damage.",
+      "oracle_id": "78301998-fd9b-4cd5-afad-dbcb43cac2a7",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If X is 0, you can’t choose any targets.",
+      "oracle_id": "9c47888b-28a5-4c43-9ee4-a9059e3c367d",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Rolling Thunder is copied, the copy will retain the original damage divsion. The spell or ability will likely allow you to choose new targets, but you can’t change the way damage is divided.",
+      "oracle_id": "9c47888b-28a5-4c43-9ee4-a9059e3c367d",
+      "published_at": "2015-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some, but not all, of the targets become illegal by the time Rolling Thunder tries to resolve, the original division of damage still applies, but no damage is dealt to illegal targets. If all the targets are illegal, the spell won’t resolve.",
+      "oracle_id": "9c47888b-28a5-4c43-9ee4-a9059e3c367d",
+      "published_at": "2015-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many targets Rolling Thunder has and how the damage is divided as you cast the spell. Each target must receive at least 1 damage.",
+      "oracle_id": "9c47888b-28a5-4c43-9ee4-a9059e3c367d",
+      "published_at": "2015-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control no Mountains as you cast Jaws of Stone, the number of targets must be zero.",
+      "oracle_id": "af6a8149-a849-4e6a-bf9d-e6b4bb9b1a04",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of damage is locked in as you cast Jaws of Stone. It won’t change, even if the number of Mountains you control changes.",
+      "oracle_id": "af6a8149-a849-4e6a-bf9d-e6b4bb9b1a04",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage among the targets as you cast Jaws of Stone. Each target must be assigned at least 1 damage.",
+      "oracle_id": "af6a8149-a849-4e6a-bf9d-e6b4bb9b1a04",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are no creatures on the battlefield when you cast this, you do not pick any targets and it deals no damage.",
+      "oracle_id": "baa85b14-1c9f-4a19-9f07-93e3192c597d",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X is determined at the time you announce this spell, and you choose the targets and the division of damage among those targets as part of the announcement as well.",
+      "oracle_id": "baa85b14-1c9f-4a19-9f07-93e3192c597d",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can’t choose to do fractional damage to a target.",
+      "oracle_id": "d2110083-b30f-43f1-9352-7536f5e19d3c",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A tip on how this math works: To deal a total of 1 damage, X is 0. The cost is {0} + {0} + {R} = {R}. To deal a total of 2 damage, X is 1. The cost is {1} + {1} + {R} = {2}{R}. To deal a total of 3 damage, X is 2. The cost is {2} + {2} + {R} = {4}{R}. And so on.",
+      "oracle_id": "d2110083-b30f-43f1-9352-7536f5e19d3c",
+      "published_at": "2008-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you cast Meteor Shower, not as it resolves. Each target must be assigned at least 1 damage.",
+      "oracle_id": "d2110083-b30f-43f1-9352-7536f5e19d3c",
+      "published_at": "2008-10-01",
+      "source": "wotc"
     }
   ]
 }

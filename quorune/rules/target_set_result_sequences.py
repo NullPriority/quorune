@@ -1,6 +1,7 @@
 """Require every ordered leaf to close over the same original target schema."""
 from collections.abc import Mapping
 from ..compiler.target_set_result_sequences import TARGET_SET_SEQUENCE_CAPABILITY,TARGET_SET_SEQUENCE_MECHANIC
+from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
 from .target_characteristic_sets import OPERATION as CHARACTERISTICS
 
 _TARGET_OPERATIONS={'tap_targets','untap_targets','place_counters_on_targets',CHARACTERISTICS}
@@ -16,6 +17,7 @@ def target_set_result_sequence_capabilities(*,effects,target_schema,mechanic_ids
     from .token_creation_capability_shapes import fixed_token_creation_node_capabilities
     mechanics=set(mechanic_ids)-{TARGET_SET_SEQUENCE_MECHANIC}
     required={TARGET_SET_SEQUENCE_CAPABILITY};targeted=0;independent=False
+    next_untap = effects[0].get(TAP_TARGET_SET_UNTAP_FIELD) is True
     for effect in effects:
         uses_set=effect.get('cards')=='$targets'
         if uses_set:
@@ -23,7 +25,7 @@ def target_set_result_sequence_capabilities(*,effects,target_schema,mechanic_ids
             targeted+=1
         else:
             if effect.get('op') not in {'draw','scry','create_token'}:return ()
-            if effect.get('op')=='create_token':
+            if effect.get('op')=='create_token' and not next_untap:
                 from ..fixed_token_production import clue_token_effect
                 try:
                     if dict(effect)!=clue_token_effect(effect.get('quantity')):return ()
@@ -35,10 +37,13 @@ def target_set_result_sequence_capabilities(*,effects,target_schema,mechanic_ids
             else target_characteristic_set_capabilities if operation==CHARACTERISTICS
             else fixed_draw_node_capabilities if operation=='draw'
             else fixed_scry_node_capabilities if operation=='scry' else fixed_token_creation_node_capabilities)
-        owned=resolver(effects=(effect,),target_schema=target_schema if uses_set else None,mechanic_ids=mechanics)
+        leaf_mechanics = mechanics
+        if operation == 'create_token' and next_untap:
+            leaf_mechanics = mechanics - {'fixed-homogeneous-target-set', 'cr-115-targets', 'tap-and-untap'}
+        owned=resolver(effects=(effect,),target_schema=target_schema if uses_set else None,mechanic_ids=leaf_mechanics)
         if not owned:return ()
         required.update(owned)
-    return tuple(sorted(required)) if targeted>=2 else ()
+    return tuple(sorted(required)) if targeted>=2 or next_untap else ()
 
 
 def is_closed_target_set_result_sequence_program(program):
@@ -50,7 +55,8 @@ def target_set_result_sequence_runtime_dependencies(program):
     effects=program.effects
     target_leaves=[e for e in effects if isinstance(e,Mapping) and (e.get('op') in _TARGET_OPERATIONS-{CHARACTERISTICS}
         or e.get('op')==CHARACTERISTICS and (e.get('schema_version')==6 or 'maximum_targets' in e))]
-    if len(target_leaves)<2 and TARGET_SET_SEQUENCE_MECHANIC not in program.coverage:return ()
+    shared_set = len(target_leaves) >= 2 or (len(effects) > 1 and effects[0].get(TAP_TARGET_SET_UNTAP_FIELD) is True)
+    if not shared_set and TARGET_SET_SEQUENCE_MECHANIC not in program.coverage:return ()
     from ..compiler.program_composition import composed_spell_family_runtime_dependencies
     scoped=composed_spell_family_runtime_dependencies(program,capability=TARGET_SET_SEQUENCE_CAPABILITY,
         mechanic=TARGET_SET_SEQUENCE_MECHANIC)
@@ -61,7 +67,7 @@ def target_set_result_sequence_runtime_dependencies(program):
             mechanic_ids=set(program.coverage)-{'generated_oracle_ir','spell_resolution'},
             cost_schema=getattr(program,'cost_schema',None))
         if TARGET_SET_SEQUENCE_CAPABILITY in required:return required
-    if len(target_leaves)<2:
+    if not shared_set:
         if TARGET_SET_SEQUENCE_MECHANIC in program.coverage:raise ValueError('Same-set sequence marker has no shared target results')
         return ()
     # Infer primitive owners from the actual executable leaves,not coverage.

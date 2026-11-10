@@ -639,7 +639,9 @@ def complete_replacement_order_choice(
     )
     selection = _scope_effect_destruction_choice(host, restored, pending, selection)
     from .zone_devour import validate_devour_resume
+    from .entry_results import validate_pending_amplify_reveals
     validate_devour_resume(host,batch,effects,selection,error_type=error_type)
+    validate_pending_amplify_reveals(host, batch, effects, selection, error_type=error_type)
     if restored.resume_kind=='opening_hand_entry':
         from .opening_hand import resume_opening_hand_replacement
         resume_opening_hand_replacement(host,restored,selection)

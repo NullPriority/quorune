@@ -6,6 +6,7 @@ from typing import Any, Protocol
 
 from ..semantic_runtime.action_permissions import land_play_permission_options
 from ..mana_undo import priority_actions_with_mana_undo
+from ..crew import activation_power_tap_hint
 from ..station import (
     StationAbilityError,
     station_candidates,
@@ -19,6 +20,7 @@ from .action_proposals import (
     freeze_json,
 )
 from .activation.proposal import build_activation_offer
+from .activation.query import activation_offer_candidates
 from .activation_costs import activation_choice_candidates
 from .casting.proposal import build_cast_offer
 from .casting.face_queries import offered_cast_methods,candidate_zone_cast_permission
@@ -26,11 +28,13 @@ from ..morph import FACE_DOWN_CAST_METHODS
 from .morph_actions import build_turn_face_up_offers
 from ..suspend import build_suspend_offer
 from .staged_cast_lifecycles import build_staged_cast_offer
+from .room_unlock import build_room_unlock_offers
 
 
 class ActionCatalogHost(Protocol):
     state: Any
     active_seats: list[str]
+    semantics: Any
 
     def _compiled_zone_cast_permission(self, seat: str, card: Any) -> bool: ...
 
@@ -225,20 +229,9 @@ def _ability_hint(
             }
             for choice in ability.choices
         ]
-    threshold = host._crew_threshold(ability)
-    if threshold is not None:
-        hint["choose_cost"] = [
-            {
-                "k": "crew",
-                "z": "battlefield",
-                "minimum": 0 if threshold == 0 else 1,
-                "minimum_total_power": threshold,
-                "legal_refs": [
-                    candidate.ref
-                    for candidate in host._crew_candidates(seat, card)
-                ],
-            }
-        ]
+    power_tap = activation_power_tap_hint(host, seat, card, ability)
+    if power_tap is not None:
+        hint["choose_cost"] = [power_tap]
     if station_cost_choice(ability) is not None:
         try:
             candidates = station_candidates(host, seat, card)
@@ -274,48 +267,35 @@ def _ability_offers(
     mana: list[dict[str, Any]] = []
     offers: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
-    player = host.state.players[seat]
-    for zone in ("battlefield", "hand", "graveyard", "exile", "command"):
-        for object_id in player.zones[zone]:
-            card = host.state.cards[object_id]
-            if zone == "battlefield":
-                if card.controller != seat or card.phased_out:
-                    continue
-            elif card.owner != seat:
-                continue
-            for ability in host._activated_abilities(card):
-                if zone not in ability.zones:
-                    continue
-                hint = _ability_hint(host, seat, card, ability)
-                result = build_activation_offer(host, seat, card, ability)
-                if result.status != "payable":
-                    if result.status in {"unpayable", "unresolved"} or result.reason == "mandatory_target_unavailable":
-                        diagnostics.append(
-                            {
-                                **hint,
-                                "id": f"activate:{card.ref}:{ability.ability_id}",
-                                "status": result.status,
-                                "reason": result.reason,
-                            }
-                        )
-                    continue
-                assert result.offer is not None
-                if ability.mana_ability:
-                    mana.append(hint)
-                ordinary_mana = ability.mana_ability and not (
-                    ability.choices
-                    or ability.life_payment
-                    or ability.energy_payment
-                    or ability.random_discard_payment
-                    or ability.discard_source
-                    or ability.sacrifice_source
-                    or ability.exile_source
-                    or ability.source_counter_removal_cost is not None
-                    or ability.uncompiled_costs
-                )
-                if not ordinary_mana:
-                    strategic.append(hint)
-                offers.append(result.offer.to_dict())
+    for card, ability in activation_offer_candidates(host, seat):
+        hint = _ability_hint(host, seat, card, ability)
+        result = build_activation_offer(host, seat, card, ability)
+        if result.status != "payable":
+            if result.status in {"unpayable", "unresolved"} or result.reason == "mandatory_target_unavailable":
+                diagnostics.append({
+                    **hint,
+                    "id": f"activate:{card.ref}:{ability.ability_id}",
+                    "status": result.status,
+                    "reason": result.reason,
+                })
+            continue
+        assert result.offer is not None
+        if ability.mana_ability:
+            mana.append(hint)
+        ordinary_mana = ability.mana_ability and not (
+            ability.choices
+            or ability.life_payment
+            or ability.energy_payment
+            or ability.random_discard_payment
+            or ability.discard_source
+            or ability.sacrifice_source
+            or ability.exile_source
+            or ability.source_counter_removal_cost is not None
+            or ability.uncompiled_costs
+        )
+        if not ordinary_mana:
+            strategic.append(hint)
+        offers.append(result.offer.to_dict())
     return strategic, mana, offers, diagnostics
 
 
@@ -393,6 +373,17 @@ def _staged_cast_offers(
     return refs, offers
 
 
+def _room_unlock_offers(host: ActionCatalogHost, seat: str) -> list[dict[str, Any]]:
+    from ..shared_type_doors import shared_type_doors_enabled
+    if not shared_type_doors_enabled(host.state):
+        return []
+    return [
+        offer.to_dict()
+        for object_id in host.state.players[seat].zones["battlefield"]
+        for offer in build_room_unlock_offers(host, seat, host.state.cards[object_id])
+    ]
+
+
 @characteristic_read_method
 def build_priority_action_catalog(
     host: ActionCatalogHost, seat: str
@@ -407,6 +398,7 @@ def build_priority_action_catalog(
     turn_face_up, turn_face_up_offers = _turn_face_up_offers(host, seat)
     suspend, suspend_offers = _suspend_offers(host, seat)
     staged_cast, staged_cast_offers = _staged_cast_offers(host, seat)
+    room_unlocks = _room_unlock_offers(host, seat)
     actions = priority_actions_with_mana_undo(host.state, seat)
     actions.extend(land_offers)
     actions.extend(cast_offers)
@@ -414,13 +406,14 @@ def build_priority_action_catalog(
     actions.extend(turn_face_up_offers)
     actions.extend(suspend_offers)
     actions.extend(staged_cast_offers)
+    actions.extend(room_unlocks)
     actions.append(_concede_offer(host, seat))
     return {
         "cast": castable,
         "lands": lands,
         "abilities": abilities,
         "mana_abilities": mana_abilities,
-        "special_actions": [*turn_face_up, *suspend, *staged_cast],
+        "special_actions": [*turn_face_up, *suspend, *staged_cast, *(row["card"] for row in room_unlocks)],
         "actions": actions,
         "diagnostic": {
             "unpayable": [

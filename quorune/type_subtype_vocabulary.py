@@ -9,6 +9,7 @@ from .creature_subtypes import CREATURE_SUBTYPES
 
 ARTIFACT_SUBTYPES=frozenset('attraction blood bobblehead book clue contraption equipment food fortification gold '
     'incubator infinity junk lander map mutagen powerstone spacecraft stone treasure vehicle vibranium'.split())
+MOUNT_VEHICLE_SUBTYPES = ("mount", "vehicle")
 ENCHANTMENT_SUBTYPES=frozenset('aura background cartouche case class curse plan role room rune saga shard shrine'.split())
 PLANESWALKER_SUBTYPES=frozenset('ajani aminatou angrath arlinn ashiok bahamut basri bolas calix chandra comet dack '
     'dakkon daretti davriel dellian dihada domri dovin ellywick elminster elspeth estrid freyalise garruk gideon grist '

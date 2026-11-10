@@ -63,6 +63,13 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if ALTERNATIVE_DISCARD_MECHANIC in mechanics:
         from .alternative_discard_shapes import alternative_discard_node_capabilities
         return alternative_discard_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    from .graveyard_card_targets import OPPOSING_GRAVEYARD_RETURN_MECHANIC, opposing_graveyard_return_sequence_capabilities
+    if OPPOSING_GRAVEYARD_RETURN_MECHANIC in mechanics:
+        return opposing_graveyard_return_sequence_capabilities(effects=effects, target_schema=target_schema)
+    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_MECHANIC
+    if GRAVEYARD_CAST_MECHANIC in mechanics:
+        from .graveyard_card_targets import targeted_graveyard_cast_node_capabilities
+        return targeted_graveyard_cast_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     from ..compiler.target_set_result_sequences import TARGET_SET_SEQUENCE_MECHANIC
     if TARGET_SET_SEQUENCE_MECHANIC in mechanics:
         from .target_set_result_sequences import target_set_result_sequence_capabilities
@@ -89,6 +96,14 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if TERMINAL_SPELL_MOVE_MECHANICS.intersection(mechanics):
         return terminal_spell_move_node_capabilities(effects=effects,target_schema=target_schema,
             mechanics=mechanics,cost_schema=cost_schema)
+    from ..compiler.reanimation_templates import RELATIVE_TARGET_REANIMATION_MECHANIC
+    if RELATIVE_TARGET_REANIMATION_MECHANIC in mechanics:
+        from .reanimation_capability_shapes import relative_target_reanimation_node_capabilities
+        return relative_target_reanimation_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
+    from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC
+    if GRAVEYARD_COPY_MECHANIC in mechanics:
+        from .graveyard_card_targets import graveyard_copy_cast_node_capabilities
+        return graveyard_copy_cast_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if 'manifest' in mechanics and all(effect.get('op') == 'manifest_card' for effect in effects):
         from .manifest_shapes import manifest_node_capabilities
         return manifest_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)

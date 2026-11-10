@@ -6,6 +6,28 @@ from test_granted_skulk import record
 
 
 class TargetSetResultSequenceCompilerTests(unittest.TestCase):
+    def test_next_untap_followup_binds_only_the_original_tap_targets(self):
+        from quorune.rules.fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities
+
+        registry = load_default_capability_registry()
+        text = "Tap up to two target creatures. Those creatures don't untap during their controllers' next untap steps."
+        ir = compile_oracle_card(record(text, "Instant"), capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        effect, = node.effects
+        self.assertEqual({"op": "tap_targets", "cards": "$targets", "maximum_targets": 2,
+                          "prohibit_next_untap": True}, effect)
+        self.assertIn("untap.step.prohibit_next_controller", node.capability_dependencies)
+        for change in ({"prohibit_next_untap": False}, {"prohibit_next_untap": 1}, {"op": "untap_targets"}):
+            self.assertEqual((), fixed_homogeneous_target_set_node_capabilities(
+                effects=({**effect, **change},), target_schema=node.target_schema, mechanic_ids=node.mechanics))
+        for changed in (
+            text.replace("Those creatures", "Those artifacts"),
+            text.replace("Those creatures", "Target creature").replace("don't", "doesn't"),
+            text.replace("their controllers'", "that player's"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(record(changed, "Instant"), capability_registry=registry).status)
+
     def test_same_set_counter_and_characteristic_results_are_ordered_and_fully_owned(self):
         registry=load_default_capability_registry()
         cases=(('Tap up to two target creatures. Put a stun counter on each of them.',('tap_targets','place_counters_on_targets')),
@@ -147,3 +169,171 @@ class TargetSetResultSequenceNativeTests(InheritedNativeFixture,unittest.TestCas
         self.assertTrue(all(s.state.cards[targets[p].object_id].tapped for p in 'BC'))
         self.assertIsNone(self.resolve(s));self.assertTrue(all(not s.state.cards[c.object_id].tapped for c in targets.values()))
         self.replay(s,load=True)
+
+    def test_frost_breath_skips_the_next_untap_of_each_surviving_target(self):
+        from dataclasses import replace
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.tap_state import NEXT_UNTAP_PROHIBITION_ANNOTATION
+
+        session = self.session(608601301)
+        engine = session.engine
+        source = self.add(engine, "Frost Breath", zone="hand")
+        first = self.add(engine, "Phyrexian Walker", seat="B", ref="frost-already-tapped")
+        second = self.add(engine, "Phyrexian Walker", seat="C", ref="frost-newly-tapped")
+        other = self.add(engine, "Phyrexian Walker", seat="D", ref="frost-extra-target")
+        first.tapped = True
+        for seat in "ABC":
+            for object_id in tuple(session.state.players[seat].zones["hand"])[5:]:
+                if object_id != source.object_id:
+                    engine.move_card(object_id, "library", log=False)
+        self.assert_closed(session, source)
+        program, = [p for p in engine.semantics.programs_for_oracle(source.oracle_id) if p.effects]
+        required = "untap.step.prohibit_next_controller"
+        self.assertIn(required, program.capability_dependencies)
+        deps = tuple(value for value in program.capability_dependencies if value != required)
+        altered = replace(program, capability_dependencies=deps,
+            capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{required}", binding["blockers"])
+        self.prepare(session, mana={"C": 2, "U": 1})
+        self.checkpoint(session)
+        self.reject(session, "A", {"action_id": f"cast:{source.ref}", "targets": [first.ref, second.ref, other.ref], "pay": "auto"})
+        self.cast(session, "A", source, [first.ref, second.ref])
+        self.assertIsNone(self.resolve(session))
+        for selected in (first, second):
+            self.assertTrue(session.state.cards[selected.object_id].tapped)
+            self.assertIs(session.state.cards[selected.object_id].annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION], True)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[other.object_id].annotations)
+        session = self.replay(session, load=True)
+        self.until(session, lambda game: game.state.active_player == "B" and game.state.step == "upkeep")
+        self.assertTrue(session.state.cards[first.object_id].tapped)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[first.object_id].annotations)
+        self.assertIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[second.object_id].annotations)
+        self.until(session, lambda game: game.state.active_player == "C" and game.state.step == "upkeep")
+        self.assertTrue(session.state.cards[second.object_id].tapped)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[second.object_id].annotations)
+        self.replay(session, load=True)
+
+    def test_sudden_storm_revalidates_frozen_targets_before_its_private_scry(self):
+        from quorune.tap_state import NEXT_UNTAP_PROHIBITION_ANNOTATION
+
+        for count in (0, 1, 2):
+            with self.subTest(chosen=count):
+                session = self.session(608601310 + count)
+                engine = session.engine
+                source = self.add(engine, "Sudden Storm", zone="hand")
+                removed = self.add(engine, "Phyrexian Walker", seat="B", ref="storm-blink-target")
+                survives = self.add(engine, "Phyrexian Walker", seat="D", ref="storm-surviving-target")
+                blink = self.add(engine, "Cloudshift", seat="B", zone="hand")
+                self.add(engine, "Plains", seat="B")
+                top = session.state.cards[session.state.players["A"].zones["library"][-1]].ref
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 3, "U": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", source, [removed.ref, survives.ref][:count])
+                if count:
+                    self.cast(session, "B", blink, [removed.ref])
+                    self.resolve_top(session)
+                decision = self.resolve(session)
+                self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[removed.object_id].annotations)
+                self.assertFalse(session.state.cards[removed.object_id].tapped)
+                self.assertEqual(count == 2, session.state.cards[survives.object_id].tapped)
+                self.assertEqual(count == 2, NEXT_UNTAP_PROHIBITION_ANNOTATION in session.state.cards[survives.object_id].annotations)
+                if count == 1:
+                    self.assertIsNone(decision)
+                else:
+                    self.assertEqual("semantic.choice", decision.kind)
+                    for seat in "BCD":
+                        self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+                    session = self.replay(session, load=True)
+                    choice = session.act("pilot:A", {"action_id": "choose", "cards": {"top": [top], "bottom": []}})
+                    self.assertTrue(choice.ok, choice.summary)
+                self.replay(session, load=True)
+
+    def test_snow_day_without_targets_draws_and_discards_privately(self):
+        session = self.session(608601320)
+        source = self.add(session.engine, "Snow Day", zone="hand")
+        private = self.add(session.engine, "Counterspell", zone="hand", ref="snow-day-private-discard")
+        hand = len(session.state.players["A"].zones["hand"])
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 4, "U": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", source, [])
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        self.assertEqual(hand + 1, len(session.state.players["A"].zones["hand"]))
+        for seat in "BCD":
+            packet = session.packet(f"pilot:{seat}", full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn(private.ref, json.dumps(packet["state"]))
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "cards": [private.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[private.object_id].zone)
+        self.assertEqual(hand, len(session.state.players["A"].zones["hand"]))
+        self.replay(session, load=True)
+
+    def test_saiba_channel_keeps_the_hand_cost_and_opponent_target_constraint(self):
+        from quorune.tap_state import NEXT_UNTAP_PROHIBITION_ANNOTATION
+
+        session = self.session(608601321)
+        source = self.add(session.engine, "Saiba Trespassers", zone="hand")
+        own = self.add(session.engine, "Phyrexian Walker", ref="saiba-own-negative")
+        target = self.add(session.engine, "Phyrexian Walker", seat="B", ref="saiba-legal-target")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3, "U": 1})
+        self.checkpoint(session)
+        offer, = [row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                  if row["id"].startswith(f"activate:{source.ref}:")]
+        self.reject(session, "A", {"action_id": offer["id"], "targets": [own.ref], "pay": "auto"})
+        result = session.act("pilot:A", {"action_id": offer["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.cards[target.object_id].tapped)
+        self.assertTrue(session.state.cards[target.object_id].annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION])
+        self.assertFalse(session.state.cards[own.object_id].tapped)
+        self.replay(session, load=True)
+
+    def test_mana_skimmer_freezes_a_land_of_the_player_it_damaged(self):
+        from quorune.tap_state import NEXT_UNTAP_PROHIBITION_ANNOTATION
+
+        session = self.session(608601322)
+        source = self.add(session.engine, "Mana Skimmer")
+        source.acquired_control_turn_count = -1
+        target = self.add(session.engine, "Plains", seat="B", ref="skimmer-damaged-player-land")
+        unrelated = self.add(session.engine, "Plains", seat="C", ref="skimmer-unrelated-land")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(source, "B")])
+        self.until(session, lambda game: game.state.pending_decision is not None and game.state.pending_decision.kind == "semantic.target")
+        self.reject(session, "A", {"action_id": "choose", "targets": [unrelated.ref]})
+        self.target(session, "A", [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.cards[target.object_id].tapped)
+        self.assertTrue(session.state.cards[target.object_id].annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION])
+        self.assertFalse(session.state.cards[unrelated.object_id].tapped)
+        self.replay(session, load=True)
+
+    def test_adverse_conditions_with_zero_targets_creates_a_trusted_scion(self):
+        session = self.session(608601323)
+        source = self.add(session.engine, "Adverse Conditions", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3, "U": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", source, [])
+        self.assertIsNone(self.resolve(session))
+        token, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(("Eldrazi Scion Token", "A"), (token.printed_name, token.controller))
+        session = self.replay(session, load=True)
+        offer, = [row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                  if row["id"].startswith(f"activate:{token.ref}:")]
+        result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(session.state.stack)
+        self.assertNotIn(token.object_id, session.state.players["A"].zones["battlefield"])
+        self.assertEqual(1, session.state.players["A"].mana_pool["C"])
+        self.replay(session, load=True)

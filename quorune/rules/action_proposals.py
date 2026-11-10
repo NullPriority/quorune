@@ -141,6 +141,7 @@ class ActionOffer:
         "turn_face_up",
         "suspend",
         "stage_cast_lifecycle",
+        "unlock_room",
         "concede",
         "mana_undo",
     ]
@@ -160,6 +161,7 @@ class ActionOffer:
             "turn_face_up",
             "suspend",
             "stage_cast_lifecycle",
+            "unlock_room",
             "concede",
             "mana_undo",
         }:

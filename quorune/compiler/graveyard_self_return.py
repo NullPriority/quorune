@@ -2,7 +2,9 @@
 import re
 from dataclasses import replace
 from ..rules.source_references import SourceReferenceSpec
-from ..rules.graveyard_self_return import GRAVEYARD_SELF_RETURN_CAPABILITY,GRAVEYARD_SELF_RETURN_VERSION
+from ..rules.graveyard_self_return import (
+    GRAVEYARD_SELF_RETURN_CAPABILITY, GRAVEYARD_SELF_RETURN_EVENTS, GRAVEYARD_SELF_RETURN_VERSION,
+)
 
 
 def _return_body(body,card_name,*,optional):
@@ -20,7 +22,8 @@ def graveyard_self_return_binding(text,*,card_name,compile_binding):
     if 'one or more' in split['head'].casefold():return None
     base=compile_binding(split['head']+', draw a card.')
     if base is None or base.public_state_condition is not None:return None
-    if base.event.value not in {'step.begin','spell.cast','land.enter','permanent.enter','creature.enter','artifact.enter','enchantment.enter'}:return None
+    if base.event.value not in GRAVEYARD_SELF_RETURN_EVENTS:
+        return None
     if any(word in split['head'].casefold() for word in ('enchanted','equipped','this creature','this artifact','this enchantment')):return None
     condition=base.event_condition
     def owner_relative(value):
@@ -34,6 +37,13 @@ def graveyard_self_return_binding(text,*,card_name,compile_binding):
 
 
 def graveyard_self_return_result(binding,body,*,card_name):
-    if binding.active_zone!='graveyard' or GRAVEYARD_SELF_RETURN_CAPABILITY not in binding.explicit_capabilities or _return_body(body,card_name,optional=False) is None:return None
+    if binding.active_zone != "graveyard":
+        return None
+    if binding.event.value == "creature.attacks":
+        from .attacking_card_entry_templates import fixed_source_graveyard_attacking_entry_template
+
+        entry = fixed_source_graveyard_attacking_entry_template(body)
+        return (entry, False) if entry is not None else None
+    if GRAVEYARD_SELF_RETURN_CAPABILITY not in binding.explicit_capabilities or _return_body(body,card_name,optional=False) is None:return None
     return ('source-graveyard-hand-v1',({'op':'self_zone_move','origin':'graveyard','destination':'hand',
         'tapped':False,'source_form':'card',GRAVEYARD_SELF_RETURN_VERSION:1},),None,('source-graveyard-hand-return',)),False

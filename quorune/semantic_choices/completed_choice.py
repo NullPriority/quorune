@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..semantic_runtime import intents as typed
 from ..semantic_runtime.domain_intent import DomainEffectIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
@@ -15,7 +16,11 @@ from .model import SemanticChoiceCompletion, SemanticChoiceContinuation, Semanti
 
 
 def _intent_types():
+    from ..targeted_graveyard_cast_model import GraveyardCastIntent
+    from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
     return {cls.__name__:cls for cls in (
+        GraveyardCastIntent,
+        ExileGraveyardCopiesIntent,
         typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,
@@ -29,9 +34,15 @@ def _intent_types():
 
 def _value_types():
     from ..connive import ConnivingObject
+    from ..rules.library_selection import LibrarySelectionObjectIdentity
+    from ..library_order_model import LibraryArrivalOrder
     from ..semantic_runtime.intents import CounterPlacementAmount
     from ..entry_counter_model import EffectEntryCounter
-    return {cls.__name__:cls for cls in (ConnivingObject,CounterPlacementAmount,EffectEntryCounter)}
+    from ..reflexive_trigger_model import ReflexivePaidCreatureSnapshot
+    from ..scalar_effect_amount_model import PaidCreatureStatSnapshot
+    return {cls.__name__:cls for cls in (ConnivingObject, CounterPlacementAmount, EffectEntryCounter, LibraryArrivalOrder,
+                                         LibrarySelectionObjectIdentity,
+                                         ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot)}
 
 
 def _data(value):
@@ -62,6 +73,12 @@ def _intent_data(intent):
     values = {field.name: getattr(intent, field.name) for field in fields(intent)}
     if isinstance(intent, typed.PlaceCountersIntent) and intent.effect_generated:
         values.pop("effect_generated")
+    if isinstance(intent, typed.QueueReflexiveTriggerIntent) and intent.paid_creature is None:
+        values.pop("paid_creature")
+    if isinstance(intent, typed.MoveObjectsSimultaneouslyIntent) and intent.library_order is None:
+        values.pop("library_order")
+    if isinstance(intent, typed.ReturnGraveyardCardToOwnerHandIntent) and intent.scope is GraveyardReturnScope.OWN:
+        values.pop("scope")
     return _data(values)
 
 
@@ -124,10 +141,20 @@ def decode_remaining_completion(value):
         expected_fields = {field.name for field in fields(cls)}
         if cls is typed.PlaceCountersIntent and "effect_generated" not in values:
             expected_fields.remove("effect_generated")
+        if cls is typed.QueueReflexiveTriggerIntent and "paid_creature" not in values:
+            expected_fields.remove("paid_creature")
+        if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent) and "library_order" not in values:
+            expected_fields.remove("library_order")
+        if cls is typed.ReturnGraveyardCardToOwnerHandIntent and "scope" not in values:
+            expected_fields.remove("scope")
         if set(values) != expected_fields:
             raise SemanticChoiceError('Completed choice intent has unknown kind or fields')
         values={key:_restore(child) for key,child in values.items()}
         if 'transition_kind' in values:values['transition_kind']=ZoneTransitionKind(values['transition_kind'])
+        if cls is typed.ReturnGraveyardCardToOwnerHandIntent and "scope" in values:
+            if values["scope"] != GraveyardReturnScope.PUBLIC.value:
+                raise SemanticChoiceError("Completed choice has an invalid graveyard-return scope")
+            values["scope"] = GraveyardReturnScope.PUBLIC
         intent=cls(**values)
         if _intent_data(intent) != _data(encoded['fields']):
             raise SemanticChoiceError('Completed choice intent data are not canonical')

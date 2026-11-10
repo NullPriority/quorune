@@ -3,10 +3,12 @@ from __future__ import annotations
 """Compile complete activated-ability discovery descriptors once."""
 
 from dataclasses import replace
+from hashlib import sha256
 import re
 from typing import Any, Iterable, Mapping
 
 from ..abilities import ActivatedAbility, parse_activated_abilities
+from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
 from ..carddb import CardRecord
 from ..card_programs.admission import CARD_PROGRAM_ADMISSION_FIELD, CompleteCardProgramAdmission
 from ..color_set_mana_abilities import (
@@ -48,6 +50,7 @@ from ..semantic_runtime.mana_abilities import (
     fixed_mana_specs_from_descriptors,
 )
 from ..semantics import SemanticProgram
+from .activated_costs import parse_compiled_activated_abilities
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
 from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation, fixed_blight_activation
@@ -84,7 +87,7 @@ def compile_activated_ability_catalog(
                 ability,
                 source_name=face_name,
             )
-            for ability in parse_activated_abilities(
+            for ability in parse_compiled_activated_abilities(
                 card_name=face_name,
                 oracle_text=station_source if not record.faces else oracle_text,
                 keywords=keywords,
@@ -241,6 +244,28 @@ def _ability_id(program: SemanticProgram) -> str | None:
     return value
 
 
+def _reviewed_channel_catalog(record, program, ability):
+    """Keep an existing reviewed Channel price when its result has no typed price."""
+    provenance = program.provenance
+    if (record.faces or program.active_zone != "hand" or not ability.discard_source
+            or program.trust_level != "trusted" or program.requires_arbiter or program.cost_schema is not None
+            or provenance.get("review_status") != "reviewed"
+            or provenance.get("source_oracle_hash") != sha256(record.oracle_text.encode("utf-8")).hexdigest()
+            or not provenance.get("source_rulings_hash")):
+        return None
+    matches = tuple(
+        previous for previous in parse_activated_abilities(
+            card_name=record.name, oracle_text=record.oracle_text, keywords=record.keywords,
+        )
+        if previous.ability_id == ability.ability_id and previous.zones == ("hand",)
+        and previous.discard_source and previous.generic_reduction_per_legendary_creature == 1
+        and not previous.uncompiled_costs
+    )
+    if len(matches) != 1:
+        return None
+    return _specialize_compiled_ability(matches[0], source_name=record.name)
+
+
 def _catalog_ability_for_program(
     record: CardRecord,
     program: SemanticProgram,
@@ -290,6 +315,11 @@ def _catalog_ability_for_program(
         if len(matches) != 1:
             return None
         ability = matches[0]
+    if (ability.ability_local_mana_reduction is not None
+            and ABILITY_LOCAL_MANA_REDUCTION_FIELD not in (program.cost_schema or {})):
+        ability = _reviewed_channel_catalog(record, program, ability)
+        if ability is None:
+            return None
     target_schema = (
         FrozenMap(program.target_schema)
         if program.target_schema is not None
@@ -395,7 +425,7 @@ def _catalog_provenance(
     references: tuple[SemanticProgram, ...],
     carrier_provenance: Mapping[str, Any] | None,
 ) -> Mapping[str, Any]:
-    if ability.announced_x_symbols is None:
+    if ability.announced_x_symbols is None and ability.ability_local_mana_reduction is None:
         return program.provenance
     reference = next((value for value in references if value.key == program.key), None)
     source = reference.provenance if reference is not None else carrier_provenance or {}
@@ -431,6 +461,8 @@ def _append_catalog_carriers(
     }
     for face_id, abilities in catalog.items():
         for ability in abilities:
+            if ability.ability_local_mana_reduction is not None:
+                continue  # This price requires its complete cost and effect program.
             if (
                 _ability_source_slot(
                     record,

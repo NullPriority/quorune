@@ -222,6 +222,7 @@ from .stack_resolution import (
     trusted_generic_empty_resolution,
 )
 from . import spell_copy_engine_adapter as copy_events
+from .library_order_model import LibraryArrivalOrder
 from .model import (
     CardInstance,
     CombatState,
@@ -355,6 +356,7 @@ from .state_based_actions import (
     evaluate_state_based_actions,
 )
 from .state_based_execution import (
+    commit_game_draw,
     synchronize_state_based_observers,
     commit_state_based_principal_changes,
     commit_state_based_counter_removals,
@@ -605,6 +607,8 @@ class CommanderEngine(
         types: Iterable[str] = (),
         amount: int = 0,
         origin: str | None = None,
+        creature_subtypes: tuple[str, ...] | None = None,
+        token: bool | None = None,
     ) -> None:
         """Append one authoritative current-turn look-back fact.
 
@@ -628,6 +632,8 @@ class CommanderEngine(
                 target_kind=target_kind,
                 target_object_incarnation=target_object_incarnation,
                 types=tuple(sorted({str(value).casefold() for value in types})),
+                creature_subtypes=creature_subtypes,
+                token=token,
                 amount=max(0, int(amount)),
             )
         )
@@ -1286,6 +1292,7 @@ class CommanderEngine(
         ] | None = None,
         tapped: bool | None = None,
         destination_controllers: Mapping[str,str] | None = None,
+        library_order: LibraryArrivalOrder | None = None,
     ) -> list[CardInstance]:
         """Compatibility facade for one simultaneous zone transaction."""
 
@@ -1295,7 +1302,7 @@ class CommanderEngine(
             log=log,
             replacement_selections=replacement_selections,
             transition_kinds=transition_kinds,
-            tapped=tapped,destination_controllers=destination_controllers,
+            tapped=tapped,destination_controllers=destination_controllers,library_order=library_order,
         )
 
     def shuffle_library(self, seat: str, *, reason: str = "shuffle", actor: str | None = None) -> None:
@@ -2990,18 +2997,31 @@ class CommanderEngine(
         record = self.card_record(card)
         if record is None:
             return [], False
-        from .rules.casting.face_queries import current_printed_cast_mana_cost
+        from .rules.casting.face_queries import current_printed_cast_mana_cost, printed_phyrexian_cast_options
         from .printed_mana_cost_model import (
-            PRINTED_MANA_COST_VERSION_FIELD, SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION,
+            PHYREXIAN_MANA_COST_VERSION, PRINTED_MANA_COST_VERSION_FIELD,
+            SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION,
         )
         mana_cost = current_printed_cast_mana_cost(self,card,record)
         cost_version = getattr(self.state, PRINTED_MANA_COST_VERSION_FIELD, None)
         if cost_version is not None and not mana_cost.strip():
             return [], False
+        symbols = parse_mana_symbols(mana_cost)
+        if cost_version == PHYREXIAN_MANA_COST_VERSION and any(symbol.endswith("/P") for symbol in symbols):
+            has_x = "X" in symbols
+            if has_x and x_value is None and not hint:
+                raise GameRuleError(f"Casting {record.name} requires an explicit X value")
+            commander_tax = (2 * self.state.players[seat].commander_casts.get(card.oracle_id, 0)
+                             if card.zone == "command" and card.is_commander else 0)
+            try:
+                return printed_phyrexian_cast_options(mana_cost, x_value=0 if x_value is None else x_value,
+                                                      commander_tax=commander_tax), has_x
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
         variants = [self._mana_vector(None)]
         has_x = False
         snow = 0
-        for symbol in parse_mana_symbols(mana_cost):
+        for symbol in symbols:
             if symbol.isdigit():
                 for variant in variants:
                     variant["GENERIC"] += int(symbol)
@@ -3010,7 +3030,9 @@ class CommanderEngine(
                 for variant in variants:
                     variant[symbol] += 1
                 continue
-            if symbol == "S" and cost_version in (SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION):
+            if symbol == "S" and cost_version in (
+                SNOW_MANA_COST_VERSION, STRICT_ANNOUNCED_CAST_X_VERSION, PHYREXIAN_MANA_COST_VERSION,
+            ):
                 snow += 1
                 continue
             if symbol == "X":
@@ -6787,11 +6809,7 @@ class CommanderEngine(
             self.permissions.invalidate_current()
             self._log(remaining[0], "game.win", f"{remaining[0]} won the game.", importance=3, changed_players=remaining)
         elif not remaining:
-            self.state.game_over = True
-            self.state.draw = True
-            self.state.priority_player = None
-            self.permissions.invalidate_current()
-            self._log(None, "game.draw", "All remaining players lost simultaneously.", importance=3)
+            commit_game_draw(self, reason="All remaining players lost simultaneously.")
         elif self.state.priority_player in unique:
             self.state.priority_player = self._next_active_after(unique[-1])
         from .transform_timestamp_order import reconcile_transform_timestamp_order_after_departure

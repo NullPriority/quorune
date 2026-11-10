@@ -7,26 +7,60 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..rules.trigger_limits import (TriggerLimitSpec,trigger_limit_capabilities,
-    departure_trigger_limit_event,supported_trigger_limit_subscriptions)
+    OPTIONAL_RESULT_LIMIT_KIND, departure_trigger_limit_event, supported_optional_result_limit,
+    supported_trigger_limit_subscriptions)
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, append_residual
 
 _LIMIT = re.compile(r"(?P<body>.+) This ability triggers only once each turn\.", re.IGNORECASE)
+_RESOLUTION_LIMIT = re.compile(r"(?P<body>.+) Do this only once each turn\.", re.IGNORECASE)
+_SACRIFICE_GROUP = re.compile(
+    r"(?P<head>(?:When|Whenever) you sacrifice) one or more (?P<other>other )?"
+    r"(?P<subject>[^,]+?)(?P<turn> during your turn)?, (?P<result>.+)",
+    re.IGNORECASE,
+)
 
 
 def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callable[..., OracleNode | None],
                          arguments: Mapping[str, Any]) -> OracleNode | None:
-    match = _LIMIT.fullmatch(material_line)
+    resolution_match = _RESOLUTION_LIMIT.fullmatch(material_line)
+    match = resolution_match or _LIMIT.fullmatch(material_line)
     if match is None:
         return None
     inner_arguments = dict(arguments)
     private_residuals = []
-    inner_arguments.update(line=match["body"], material_line=match["body"], residuals=private_residuals)
+    material = match["body"]
+    group = _SACRIFICE_GROUP.fullmatch(material) if resolution_match is None else None
+    if group is not None:
+        plural = group["subject"].casefold()
+        if not plural.endswith("s"):
+            return None
+        subject = plural.removesuffix("s")
+        article = "another" if group["other"] else "a"
+        material = f"{group['head']} {article} {subject}{group['turn'] or ''}, {group['result']}"
+    inner_arguments.update(line=match["body"], material_line=material, residuals=private_residuals)
     node = compile_inner(**inner_arguments)
-    if node is None or not node.exact or node.kind != "triggered_ability" or node.active_zone != "battlefield":
+    if (node is None or not node.exact or node.kind != "triggered_ability"
+            or node.active_zone != "battlefield" or node.trigger_limit is not None):
         return None
-    if supported_trigger_limit_subscriptions(node.event,node.event_condition):limit=TriggerLimitSpec()
+    if group is not None:
+        # The existing usage claim suppresses every later matching sacrifice.
+        # These fixed results never read an individual sacrificed object.
+        if node.event != "permanent.sacrificed" or len(node.effects) != 1:
+            return None
+        effect = node.effects[0]
+        if not (
+            effect.get("op") == "grant_declaration_restriction_until_end_of_turn"
+            or effect.get("op") == "damage_each_opponent" and type(effect.get("amount")) is int
+        ):
+            return None
+    if resolution_match is not None:
+        if not (supported_trigger_limit_subscriptions(node.event, node.event_condition)
+                and supported_optional_result_limit(node)):
+            return None
+        limit = TriggerLimitSpec(3, kind=OPTIONAL_RESULT_LIMIT_KIND)
+    elif supported_trigger_limit_subscriptions(node.event,node.event_condition):limit=TriggerLimitSpec()
     elif departure_trigger_limit_event(node.event,node.event_condition):limit=TriggerLimitSpec(2,source_scope='event_incarnation')
     else:return None
     gate = dependency_gate(mechanics=node.mechanics, effects=node.effects, target_schema=node.target_schema,

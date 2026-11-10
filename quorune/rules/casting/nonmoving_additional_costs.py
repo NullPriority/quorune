@@ -44,7 +44,9 @@ def select_fixed_nonmoving_cost(host,seat,source,option,mandatory,response,*,hin
         reveal=fixed_reveal_additional_cost(mandatory[position])
     except AdditionalCostError:return False,None
     if tap is None and reveal is None:return None
-    if len(mandatory)!=1:return False,None
+    from ..fixed_payment_groups import fixed_color_tap_zone_costs
+    if len(mandatory) != 1 and not (tap is not None and fixed_color_tap_zone_costs(mandatory)):
+        return False, None
     if tap is not None:
         try:validate_fixed_tap_payment(host,seat,source,option)
         except ValueError:return False,None

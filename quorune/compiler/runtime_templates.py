@@ -285,7 +285,7 @@ def _source_permanent_participation_template(
     action_permission = (opening_hand_reveal_permission_handler(text,source_name=source_name)
         or opening_hand_battlefield_permission_handler(text,source_name=source_name)
         or fixed_library_search_rule_handler(text)
-        or static_action_permission_handler(text))
+        or static_action_permission_handler(text, source_name=source_name))
     if action_permission is not None:
         opening_hand=action_permission[0] in {'opening-hand-battlefield-permission-v1','opening-hand-reveal-permission-v1'}
         return StaticRuntimeTemplate(

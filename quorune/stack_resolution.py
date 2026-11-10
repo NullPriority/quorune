@@ -20,7 +20,9 @@ from .errors import StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
 from .rules.casting.face_queries import prospective_cast_record
-from .rules.spell_self_exile import SELF_SHUFFLE, spell_self_shuffle_runtime_dependencies
+from .rules.spell_self_exile import (
+    SELF_BOTTOM, SELF_SHUFFLE, spell_self_bottom_runtime_dependencies, spell_self_shuffle_runtime_dependencies,
+)
 from .semantic_runtime.zone_replacements import PreparedZoneChange
 from .stack_counter import current_intrinsic_counter_prohibitions, oracle_has_intrinsic_counter_prohibition
 from .combat_entry_activations import cleanup_ninjutsu_reveal
@@ -198,13 +200,29 @@ def _printed_shuffle_owner(host: StackResolutionCompletionHost, item: StackItem,
     return card.owner
 
 
+def _printed_library_position(host, item, destination):
+    if (item.kind not in {"spell", "spell_copy"} or item.semantic_key is None
+            or destination not in {None, SELF_BOTTOM.destination}):
+        return None
+    program = host.semantics.get(item.semantic_key)
+    if program is None or SELF_BOTTOM.mechanic not in program.coverage:
+        return None
+    required = spell_self_bottom_runtime_dependencies(program)
+    if (not set(required).issubset(program.capability_dependencies)
+            or not host.semantic_program_is_current_trusted(program)):
+        raise StateInvariantError("Resolving spell placement requires its trusted program")
+    return "bottom"
+
+
 def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackItem,
         destination: str | None,prepared_replacement: PreparedZoneChange | None) -> None:
     from .rules.entry_cast_information import resolving_entry_cast_information
     from .rules.ravenous import resolving_ravenous_entry
     shuffle_owner = _printed_shuffle_owner(host, item, destination)
+    library_position = _printed_library_position(host, item, destination)
     with resolving_entry_cast_information(host,item),resolving_ravenous_entry(host,item):
-        _complete_stack_resolution(host,item=item,destination=destination,prepared_replacement=prepared_replacement)
+        _complete_stack_resolution(host, item=item, destination=destination,
+            prepared_replacement=prepared_replacement, library_position=library_position)
         if shuffle_owner is not None:
             host.shuffle_library(shuffle_owner, reason="Resolving spell shuffled into library", actor=item.controller)
 
@@ -215,6 +233,7 @@ def _complete_stack_resolution(
     item: StackItem,
     destination: str | None,
     prepared_replacement: PreparedZoneChange | None,
+    library_position: str | None = None,
 ) -> None:
     """Commit the final physical stack-object transition once choices end."""
 
@@ -284,6 +303,7 @@ def _complete_stack_resolution(
         card.object_id,
         final_destination,
         controller=item.controller,
+        **({"position": library_position} if library_position is not None and final_destination == "library" else {}),
         enter_face=item.chosen_face if final_destination == 'battlefield' else None,
         tapped=(
             True

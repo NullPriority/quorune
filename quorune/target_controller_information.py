@@ -137,12 +137,30 @@ def _uses_occurrence_controller(value):
     return False
 
 
+def _blocking_controller_identity(context):
+    """Read the blocker that participated in the sealed declaration pair."""
+    from .block_transitions import BlockTransitionEvent
+
+    transition = BlockTransitionEvent.from_dict(context.get('block_transition'))
+    participants = {participant.reference: participant for participant in transition.participants}
+    blocker = participants.get(context.get('card'))
+    attacker = participants.get(context.get('blocked_attacker'))
+    if blocker is None or attacker is None or not any(
+        row.blocker_object_id == blocker.object_id and row.attacker_object_id == attacker.object_id
+        for row in transition.assignments
+    ):
+        raise ValueError('Blocking controller information requires the original blocking pair')
+    return blocker.object_id, blocker.logical_object_id
+
+
 def occurrence_controller_context(host, program, event, context):
-    """Seal the original permanent for entry or received-damage controller reads."""
-    if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS
+    """Seal the original permanent for a public occurrence controller read."""
+    if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS | {'creature.blocks'}
             or not _uses_occurrence_controller(program.effects)):
         return {}
-    if event in RECEIVED_DAMAGE_EVENTS:
+    if event == 'creature.blocks':
+        object_id, identity = _blocking_controller_identity(context)
+    elif event in RECEIVED_DAMAGE_EVENTS:
         if (context.get('target_kind') != 'permanent' or 'creature' not in context.get('target_types', ())
                 or type(context.get('amount')) is not int or context['amount'] <= 0):
             raise ValueError('Damage controller information requires a committed creature receipt')
@@ -153,7 +171,7 @@ def occurrence_controller_context(host, program, event, context):
         object_id = identity.rpartition('@')[0] if type(identity) is str else ''
     card = host.state.cards.get(object_id) if object_id else None
     if (card is None or card.zone != 'battlefield' or card.ref != context.get('card')
-            or card.logical_object_id != identity):
+            or card.logical_object_id != identity or event == 'creature.blocks' and card.phased_out):
         raise ValueError('Occurrence controller information requires the original public permanent')
     return {'card_object_id': object_id, 'card_object_identity': identity}
 

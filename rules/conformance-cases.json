@@ -34014,20 +34014,31 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "blocks_trigger_provenance_and_once_per_combat_not_implemented"
+        "effect_created_blocking_provenance_incomplete"
       ],
       "case_id": "cr-509.3a",
       "case_version": 1,
       "classification": "behavioral",
-      "covered_scenarios": [],
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "509.3"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
+      "executable_test_ids": [
+        "tests.test_block_transitions.BlockingControllerNativeTests.test_blocking_results_trigger_once_per_creature_and_use_current_controller",
+        "tests.test_block_transitions.BlockingControllerNativeTests.test_blocking_damage_keeps_the_departure_controller_after_blink"
+      ],
+      "implementation_components": [
+        "quorune.block_transition_engine_adapter._dispatch_block_relationship_triggers",
+        "quorune.rules.block_trigger_multiplicity.block_trigger_already_collected",
+        "quorune.target_controller_information.blocking_controller_context"
+      ],
       "notes": [
-        "Declared, effect-created, and enters-blocking provenance is not modeled for this trigger family."
+        "Declared blocking records one occurrence for the original blocker even with multiple assigned attackers. The witnesses verify unrestricted blocking results and controller information. The remaining case is creating a block by effect after declarations."
       ],
       "required_scenarios": [
         "positive",

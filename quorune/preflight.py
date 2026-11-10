@@ -13,6 +13,7 @@ from .compiler.entry_state_templates import static_entry_state_handler
 from .compiler.preflight_keyword_coverage import static_lines_without_keyword_owners
 from .card_programs.binding import bind_card_program_runtime
 from .card_programs.trust import compute_match_trust_closure
+from .cycling_abilities import PRINTED_CYCLING_KEYWORD_PATTERN
 from .deck import DeckDefinition, DeckLoader
 from .mana import ManaPlanError, extract_mana_modes, parsed_cost
 from .oracle_ir import (
@@ -300,6 +301,10 @@ def _mana_ability_requires_semantics(
 
 def _kernel_compiles_cast_cost(record: CardRecord) -> bool:
     _, complex_symbols = mana_cost_to_vector(record.mana_cost)
+    if any(symbol.endswith("/P") for symbol in complex_symbols):
+        from .rules.casting.face_queries import printed_phyrexian_cast_options
+
+        return bool(printed_phyrexian_cast_options(record.mana_cost, x_value=0, commander_tax=0))
     for symbol in complex_symbols:
         if symbol == "X":
             continue
@@ -492,7 +497,8 @@ def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_r
         all((face,line) in covered_occurrences for face,value in all_occurrences if value==line)}
     keywords=set()
     for keyword in record.keywords:
-        pattern=re.compile(r'\b'+re.escape(keyword)+r's?\b',re.I)
+        pattern=(PRINTED_CYCLING_KEYWORD_PATTERN if keyword.casefold() == 'cycling'
+                 else re.compile(r'\b'+re.escape(keyword)+r's?\b',re.I))
         matches=[(face.face_id,match) for face in oracle_ir.faces
             for match in pattern.finditer(face.oracle_text)]
         if matches and all(any(start<=match.start() and match.end()<=end

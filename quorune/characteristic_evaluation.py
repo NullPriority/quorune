@@ -100,6 +100,10 @@ def _annotation_terms(
     overrides = dict(card.annotations.get("copy_overrides") or {})
     if DEFINED_TOKEN_FACES_FIELD in overrides:
         overrides = defined_token_current_characteristics(card, overrides)
+    from .shared_type_doors import SHARED_TYPE_COPY_FIELD
+    if SHARED_TYPE_COPY_FIELD in overrides:
+        from .rules.room_copy_values import room_copy_characteristics
+        overrides = room_copy_characteristics(card, overrides)
     added_types = [
         str(value).strip()
         for value in card.annotations.get("continuous_add_types", [])
@@ -134,7 +138,7 @@ def _base_characteristic_state(
         str(result.get("type_line") or "")
     )
     return CharacteristicState(
-        name=str(result.get("name") or card.printed_name),
+        name=str(result.get("name", "") if card.shared_type_doors is not None else result.get("name") or card.printed_name),
         controller=card.controller,
         mana_cost=str(result.get("mana_cost") or ""),
         mana_value=float(result.get("mana_value") or 0),

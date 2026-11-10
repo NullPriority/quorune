@@ -6,21 +6,93 @@ from dataclasses import replace
 import re
 from typing import Any, Mapping
 
+from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
-    CHARACTERISTIC_OPERATION, PERMANENT_CHARACTERISTIC_MECHANIC,
-    SUBTYPE_GRANT_INSTRUCTION_VERSION, FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec,
+    CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_CHOICE_VERSION, PERMANENT_CHARACTERISTIC_MECHANIC,
+    DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, RECIPIENT_MANA_VALUE,
+    SUBTYPE_GRANT_INSTRUCTION_VERSION, DerivedResolutionCharacteristicsSpec,
+    FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec, IndefiniteSourceAnimationSpec,
+    INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_SOURCE_ANIMATION_MECHANIC,
+    INDEFINITE_ENCHANTMENT_FORM_VERSION, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
 from .fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
-from .fixed_target_effect_sequences import _animation_description, _keyword_list
+from .fixed_target_effect_sequences import _animation_description, _COLOR_NAMES, _keyword_list
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 
 
 _BASE = re.compile(r"(?P<subject>.+?) (?:has|have) base power and toughness (?P<p>\d+)/(?P<t>\d+)(?P<tail>.*)",re.I)
 _ANIMATE = re.compile(r"(?P<subject>.+?) becomes? (?:an? )?(?:(?P<p>\d+)/(?P<t>\d+) (?P<description>.+)|(?P<base_description>.+?) with base power and toughness (?P<bp>\d+)/(?P<bt>\d+))(?P<tail>.*)",re.I)
+_MANA_VALUE_ANIMATION = re.compile(
+    r"target noncreature artifact becomes an artifact creature with power and toughness each equal to its mana value",
+    re.I,
+)
+_X_BASE_ANIMATION = re.compile(
+    r"target creature becomes an? (?P<definition>.+?) with base power and toughness each equal to X(?: plus (?P<offset>1))?",
+    re.I,
+)
 _PLAYER_SET_SCHEMA = {"zones":["player"],"categories":["player"],"player_relation":"any","count":1}
+_CHOSEN_SUBTYPE = re.compile(
+    r"(?P<subject>.+?) becomes (?:the|a) creature type of your choice until end of turn\.", re.I,
+)
+_CHOSEN_SUBTYPE_PREFIX = re.compile(
+    r"Choose a creature type(?: other than (?P<excluded>[^.]+))?\. "
+    r"(?P<subject>.+?) becomes that type until end of turn\.", re.I,
+)
+
+
+def _chosen_subtype_template(text, *, source_is_permanent, source_attachment_relation):
+    normalized = text.strip().removeprefix("• ")
+    prefix = _CHOSEN_SUBTYPE_PREFIX.fullmatch(normalized)
+    match = prefix or _CHOSEN_SUBTYPE.fullmatch(normalized)
+    if match is None:
+        return None
+    excluded = canonical_creature_subtype(prefix["excluded"]) if prefix and prefix["excluded"] else None
+    if prefix and prefix["excluded"] and excluded is None:
+        return None
+    subject = match["subject"].casefold()
+    schema = None
+    mechanics = ("cr-611-continuous-effects",)
+    if subject in {"this creature", "this permanent"} and source_is_permanent is True:
+        selection = {"card": "$source.zone_object"}
+    elif subject == "enchanted creature" and source_attachment_relation is AttachmentReferenceKind.ENCHANTED:
+        reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+        selection = {"card": reference.to_dict()}
+    elif subject in {"target creature", "another target creature"}:
+        spec = direct_permanent_target_spec(subject)
+        if spec is None:
+            return None
+        schema = spec.to_target_schema()
+        selection = {"card": "$target.0"}
+        mechanics = (*mechanics, "cr-115-targets")
+    elif prefix and subject in {"each creature", "each creature you control"}:
+        selection = {"predicate": ObjectQuerySpec(zones=("battlefield",), types_all=("creature",),
+            controller="$controller" if subject.endswith("you control") else None).to_dict()}
+    else:
+        return None
+    effect = {"op": "choose_creature_type", "schema_version": CHOSEN_SUBTYPE_CHOICE_VERSION,
+              "excluded": excluded, **selection}
+    return "chosen-creature-type-setting-v1", (effect,), schema, mechanics
+
+
+def fixed_attached_stat_effect_template(text: str, *, source_attachment_relation: AttachmentReferenceKind | None):
+    if source_attachment_relation is not AttachmentReferenceKind.ENCHANTED:
+        return None
+    match = re.fullmatch(
+        r"Enchanted creature gets ([+-]\d+)/([+-]\d+) until end of turn\.", text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    power, toughness = map(int, match.groups())
+    if not (power or toughness):
+        return None
+    # The last enchanted object can remain on the battlefield as a noncreature.
+    reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+    effect = {"op": "modify_stats_until_end_of_turn", "card": reference.to_dict(), "power": power, "toughness": toughness}
+    return "fixed-attached-stats-until-end-of-turn-v1", (effect,), None, ("cr-611-continuous-effects",)
 
 
 def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,
@@ -47,11 +119,105 @@ def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,
     return {"predicate":query.to_dict()},None
 
 
+def _derived_target_animation(body: str, *, cast_x_available: bool):
+    mana_value = _MANA_VALUE_ANIMATION.fullmatch(body)
+    x_base = _X_BASE_ANIMATION.fullmatch(body) if cast_x_available else None
+    if mana_value is not None:
+        target = direct_permanent_target_spec("target noncreature artifact")
+        settings = FixedResolutionCharacteristicsSpec(
+            card_types=("Artifact", "Creature"), retain_types=True, retain_creature_subtypes=True,
+        )
+        spec = DerivedResolutionCharacteristicsSpec(settings, RECIPIENT_MANA_VALUE)
+    elif x_base is not None:
+        from ..query_effect_amount_model import CastXAmountSpec
+
+        parsed = _animation_description(x_base["definition"])
+        if parsed is None:
+            return None
+        colors, subtypes = parsed
+        if not colors or not subtypes:
+            return None
+        target = direct_permanent_target_spec("target creature")
+        settings = FixedResolutionCharacteristicsSpec(
+            card_types=("Creature",), creature_subtypes=subtypes, colors=colors, retain_types=True,
+        )
+        spec = DerivedResolutionCharacteristicsSpec(settings, CastXAmountSpec(), int(x_base["offset"] or 0))
+    else:
+        return None
+    assert target is not None
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
+              "characteristics": spec.to_dict(), "card": "$target.0"}
+    return ("fixed-resolution-characteristics-derived-base-v1", (effect,), target.to_target_schema(),
+            ("cr-611-continuous-effects", PERMANENT_CHARACTERISTIC_MECHANIC, "cr-115-targets"))
+
+
+_INDEFINITE_SOURCE_ANIMATION = re.compile(
+    r"(?P<subject>.+?) becomes a (?P<p>[0-9]{1,2})/(?P<t>[0-9]{1,2}) "
+    r"(?P<description>[^.]+?) creature(?: with (?P<abilities>[^.]+))?", re.I,
+)
+_FIXED_PROTECTION_SUFFIX = re.compile(
+    r"(?:^|,? and )protection from (?P<color>white|blue|black|red|green)$", re.I,
+)
+
+
+def _indefinite_source_animation(text, *, source_name, source_is_permanent, source_card_types):
+    match = _INDEFINITE_SOURCE_ANIMATION.fullmatch(text.removesuffix("."))
+    if match is None:
+        return None
+    selected = _subject(match["subject"], source_name=source_name,
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if selected != ({"card": "$source.zone_object"}, None):
+        return None
+    parsed = _animation_description(match["description"])
+    if parsed is None or parsed[0] is not None or not parsed[1]:
+        return None
+    abilities = match["abilities"] or ""
+    protection = _FIXED_PROTECTION_SUFFIX.search(abilities)
+    color = _COLOR_NAMES[protection["color"].casefold()] if protection is not None else None
+    if protection is not None:
+        abilities = abilities[:protection.start()]
+    keywords = _keyword_list(abilities, extended=True) if abilities else ()
+    if keywords is None:
+        return None
+    settings = FixedResolutionCharacteristicsSpec(card_types=("Creature",), creature_subtypes=parsed[1],
+        keywords=keywords, base_power=int(match["p"]), base_toughness=int(match["t"]))
+    spec = IndefiniteSourceAnimationSpec(settings, color)
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": INDEFINITE_SOURCE_ANIMATION_VERSION,
+        "characteristics": spec.to_dict(), "card": "$source.zone_object"}
+    return ("indefinite-source-animation-v1", (effect,), None,
+        ("cr-611-continuous-effects", INDEFINITE_SOURCE_ANIMATION_MECHANIC))
+
+
+def _indefinite_enchantment_form(text, *, source_name, source_is_permanent, source_card_types):
+    match = re.fullmatch(r"(?P<subject>.+?) becomes an enchantment\.", text, re.I)
+    if match is None:
+        return None
+    selected = _subject(match["subject"], source_name=source_name,
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if selected != ({"card": "$source.zone_object"}, None):
+        return None
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": INDEFINITE_ENCHANTMENT_FORM_VERSION,
+        "characteristics": {"card_type": "Enchantment"}, "card": "$source.zone_object"}
+    return ("indefinite-enchantment-form-v1", (effect,), None,
+        ("cr-611-continuous-effects", INDEFINITE_ENCHANTMENT_FORM_MECHANIC))
+
+
 def fixed_resolution_characteristics_effect_template(
     text: str, *, source_name: str, source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
+    source_attachment_relation: AttachmentReferenceKind | None = None,
+    cast_x_available: bool = False,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
+    chosen = _chosen_subtype_template(text, source_is_permanent=source_is_permanent,
+                                     source_attachment_relation=source_attachment_relation)
+    if chosen is not None:
+        return chosen
+    from .power_toughness_switch import power_toughness_switch_effect_template
+    switch = power_toughness_switch_effect_template(text, source_name=source_name,
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if switch is not None:
+        return switch
     normalized = text.strip()
     if any(value in normalized.casefold() for value in ('"','where',' if ',' when ','copy','all creature types')):
         return None
@@ -59,9 +225,16 @@ def fixed_resolution_characteristics_effect_template(
     if prefix is not None:body=prefix['body']
     else:
         suffix=re.fullmatch(r"(?P<body>.+?) until end of turn(?P<rider>\. (?:It's|They're) still (?:a land|lands|a planeswalker|planeswalkers)\.)?\.?",normalized,re.I)
-        if suffix is None:return None
+        if suffix is None:
+            return _indefinite_enchantment_form(normalized, source_name=source_name,
+                source_is_permanent=source_is_permanent, source_card_types=source_card_types) or _indefinite_source_animation(
+                    normalized, source_name=source_name, source_is_permanent=source_is_permanent,
+                    source_card_types=source_card_types)
         body=suffix['body']+(suffix['rider'] or '')
     body=body.rstrip('.')
+    derived = _derived_target_animation(body, cast_x_available=cast_x_available)
+    if derived is not None:
+        return derived
     subtype = _additive_subtype_result(body)
     if subtype is not None:
         return subtype

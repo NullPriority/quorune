@@ -9,6 +9,7 @@ from types import SimpleNamespace
 import tempfile
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
@@ -21,6 +22,25 @@ import test_self_public_zone_casting as zone_actions
 
 
 class ReflexivePaymentCompilerTests(unittest.TestCase):
+    def test_paired_entry_and_step_allow_a_local_linked_target(self):
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+
+        head = "When this enchantment enters and at the beginning of your end step, "
+        body = ("you may pay {1}{W}. When you do, exile target creature you control, "
+                "then return that card to the battlefield under its owner's control.")
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record(head + body, "Enchantment"), capability_registry=registry,
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
+        self.assertEqual(("permanent.enter", "step.begin"), tuple(child.event for child in subscriptions.subscriptions))
+        self.assertIsNone(node.target_schema)
+        self.assertIsNotNone(node.effects[0]["reflexive_program"]["target_schema"])
+        unsupported = compile_oracle_card(record(head + "put a +1/+1 counter on that creature.", "Enchantment"),
+                                          capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", unsupported.status)
+
     def test_deferred_program_preserves_child_binding_and_rejects_malformed_payloads(self):
         from copy import deepcopy
         from quorune.oracle_ir import _contextual_effect_templates
@@ -93,6 +113,81 @@ class ReflexivePaymentCompilerTests(unittest.TestCase):
             self.assertNotEqual('exact', ir.status)
             self.assertTrue(ir.material_residuals)
 
+    def test_occurrence_child_has_its_own_schema_and_rejects_extra_event_references(self):
+        from copy import deepcopy
+        from quorune.reflexive_trigger_model import ReflexiveTriggerProgram
+        from quorune.replacement.immutable import thaw_value
+
+        text = "Whenever another creature you control enters, you may pay {2}. When you do, that creature deals damage equal to its power to target creature."
+        ir = compile_oracle_card(record(text, "Creature — Human"), capability_registry=load_default_capability_registry(),
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertIsNone(node.target_schema)
+        payload = thaw_value(node.effects[0]["reflexive_program"])
+        self.assertEqual(2, payload["schema_version"])
+        self.assertEqual(["creature"], payload["target_schema"]["types_any"])
+        self.assertEqual("$target.0", payload["effects"][0]["target"])
+        with self.assertRaises(ValueError):
+            ReflexiveTriggerProgram.from_dict({**payload, "schema_version": 1})
+        forged = deepcopy(payload)
+        forged["effects"][0]["target"] = "$context.card"
+        with self.assertRaises(ValueError):
+            ReflexiveTriggerProgram.from_dict(forged)
+
+
+    def test_selected_reflexive_sacrifice_rejects_a_forged_paid_power_binding(self):
+        from quorune.compiler.fixed_effect_payment_templates import fixed_effect_payment_spec
+        from quorune.reflexive_trigger_model import (
+            QueueReflexiveTriggerIntent, ReflexivePaidCreatureSnapshot, ReflexiveTriggerProgram,
+            SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
+        )
+        from quorune.replacement.immutable import FrozenMap, thaw_value
+        from quorune.rules.reflexive_payment_shapes import (
+            reflexive_payment_parts, reflexive_program_capabilities, validate_reflexive_paid_power_scope,
+        )
+        from quorune.scalar_effect_amount_model import PaidCreatureStatSnapshot
+        from quorune.semantic_choices.completed_choice import decode_remaining_completion, encode_remaining_completion
+        from quorune.semantic_choices.model import (
+            SemanticChoiceCompletion, SemanticChoiceContinuation, SemanticChoiceFrame,
+        )
+
+        registry = load_default_capability_registry()
+        text = ("When this creature enters, you may sacrifice another creature. "
+                "When you do, this creature deals damage equal to that creature's power to any target.")
+        ir = compile_oracle_card(record(text, 'Creature \u2014 Human'), capability_registry=registry,
+                                 capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        parent = thaw_value(ir.faces[0].nodes[0].effects[0])
+        payment, child = reflexive_payment_parts(parent)
+        self.assertEqual('$source.zone_object', payment.predicate.exclude_ref)
+        self.assertTrue(reflexive_program_capabilities(child))
+        detached = child.to_dict()['effects']
+        with self.assertRaisesRegex(ValueError, 'requires its selected-sacrifice child'):
+            validate_reflexive_paid_power_scope(detached, detached, (SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,))
+        malformed = child.to_dict()
+        malformed['effects'][0]['target'] = '$target.1'
+        self.assertEqual((), reflexive_program_capabilities(ReflexiveTriggerProgram.from_dict(malformed)))
+        with self.assertRaises(ValueError):
+            ReflexiveTriggerProgram.from_dict({**child.to_dict(), 'schema_version': 2})
+        token_price = fixed_effect_payment_spec('sacrifice a token').to_dict()
+        with self.assertRaisesRegex(ValueError, 'creature sacrifice predicate'):
+            reflexive_payment_parts({**parent, 'payment': token_price})
+        unsupported = compile_oracle_card(record(text.replace('another creature', 'a token'), 'Creature \u2014 Human'),
+                                          capability_registry=registry, capability_profile='commander_review')
+        self.assertNotEqual('exact', unsupported.status)
+
+        continuation = SemanticChoiceContinuation(handler_id='choice.payment.optional-fixed-effect.v1',
+            handler_version=1, stack_ref='parent', effect=FrozenMap(parent), remaining=(),
+            destination=None, note='', semantic_frame=SemanticChoiceFrame(semantic_program_id='fixture:trigger',
+                semantic_program_version=1, stack_object='parent', instruction_pointer=0, controller='A'))
+        receipt = ReflexivePaidCreatureSnapshot(PaidCreatureStatSnapshot('paid-incarnation', -2, 4), ('giant',))
+        intent = QueueReflexiveTriggerIntent('A', 'parent', FrozenMap(child.to_dict()), receipt)
+        completed = SemanticChoiceCompletion(intents=(intent,))
+        frozen = encode_remaining_completion(continuation, 'A', {'cards': ['paid-ref']}, completed, 0)
+        restored = decode_remaining_completion(json.loads(json.dumps(frozen)))
+        self.assertEqual(completed.intents, restored[3].intents)
+
 
 class ReflexivePaymentRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add = True
@@ -100,6 +195,7 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
     add = actions.BoundEffectProgramRuntimeTests.add
     checkpoint = actions.BoundEffectProgramRuntimeTests.checkpoint
     resolve = actions.BoundEffectProgramRuntimeTests.resolve
+    resolve_top = InheritedNativeFixture.resolve_top
     replay = actions.BoundEffectProgramRuntimeTests.replay
     prepare = zone_actions.SelfPublicZoneRuntimeTests.prepare
     cast = zone_actions.SelfPublicZoneRuntimeTests.cast
@@ -133,6 +229,17 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
     def choose(self, session, actor='A', **response):
         accepted = session.act('pilot:' + actor, {'action_id': 'choose', **response})
         self.assertTrue(accepted.ok, accepted.summary)
+
+    def pay_for_targeted_child(self, session):
+        parent = session.state.stack[-1]
+        self.assertFalse(parent.targets)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.choose(session, pay=True)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        child = session.state.stack[-1]
+        self.assertEqual(parent.ref, child.context["reflexive_parent"])
+        self.assertNotIn(parent.ref, [item.ref for item in session.state.stack])
+        return child
 
     def test_actual_labyrinth_creates_targeted_response_window_after_payment_and_can_be_countered(self):
         for counter in (False, True):
@@ -304,6 +411,210 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
         self.assertEqual('hand', session.state.cards[discard.object_id].zone)
         self.replay(session, load=True)
 
+    def test_halana_retains_the_entrant_across_payment_and_departure(self):
+        from quorune.creature_power_damage_model import OCCURRENCE_POWER_DAMAGE_CONTEXT
+
+        for depart_before_pay in (False, True):
+            with self.subTest(depart_before_pay=depart_before_pay):
+                session = self.session(603823001 + depart_before_pay)
+                watcher = self.add(session.engine, "Halana, Kessig Ranger")
+                entrant = self.add(session.engine, "Child of Night", zone="hand")
+                boost = self.add(session.engine, "Giant Growth", zone="hand")
+                bounce = self.add(session.engine, "Unsummon", zone="hand")
+                target = self.add(session.engine, "Wall of Stone", seat="B")
+                self.assert_closed(session, watcher)
+                self.prepare(session, mana={"C": 7, "B": 1, "G": 3, "U": 3})
+                self.checkpoint(session)
+                life = session.state.players["A"].life
+                self.cast(session, "A", entrant)
+                self.resolve_top(session)
+                original = session.state.cards[entrant.object_id].logical_object_id
+                if not depart_before_pay:
+                    child = self.pay_for_targeted_child(session)
+                    before = authoritative_state_hash(session.state)
+                    self.assertFalse(session.act("pilot:B", {"action_id": "choose", "targets": [target.ref]}).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    self.choose(session, targets=[target.ref])
+                self.cast(session, "A", boost, [entrant.ref])
+                self.resolve_top(session)
+                self.cast(session, "A", bounce, [entrant.ref])
+                self.resolve_top(session)
+                if depart_before_pay:
+                    session = self.replay(session, load=True)
+                    child = self.pay_for_targeted_child(session)
+                    self.choose(session, targets=[target.ref])
+                pending = next(item for item in session.state.stack if item.ref == child.ref)
+                snapshot = pending.context[OCCURRENCE_POWER_DAMAGE_CONTEXT]
+                self.assertEqual((5, original), (snapshot["power"], snapshot["source"]["logical_object_id"]))
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(5, session.state.cards[target.object_id].marked_damage)
+                self.assertEqual(life + 5, session.state.players["A"].life)
+                self.replay(session, load=True)
+
+    def test_itzquinth_uses_two_distinct_targets_and_a_live_dinosaur_source(self):
+        for source_case in ("live", "noncreature", "departed"):
+            with self.subTest(source_case=source_case):
+                session = self.session(603823004 + ("live", "noncreature", "departed").index(source_case))
+                watcher = self.add(session.engine, "Itzquinth, Firstborn of Gishath", zone="hand")
+                kindred = self.add(session.engine, "Generic Reflexive Kindred Dinosaur")
+                target = self.add(session.engine, "Wall of Stone", seat="B")
+                bounce = self.add(session.engine, "Unsummon", zone="hand")
+                self.assert_closed(session, watcher)
+                self.prepare(session, mana={"C": 5, "R": 1, "G": 1, "U": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", watcher)
+                self.resolve_top(session)
+                self.pay_for_targeted_child(session)
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", {"action_id": "choose", "targets": [watcher.ref, watcher.ref]}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                source = kindred if source_case == "noncreature" else watcher
+                self.choose(session, targets=[source.ref, target.ref])
+                if source_case == "departed":
+                    self.cast(session, "A", bounce, [source.ref])
+                    self.resolve_top(session)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(2 if source_case == "live" else 0, session.state.cards[target.object_id].marked_damage)
+                self.replay(session, load=True)
+
+    def test_cyclops_can_pay_energy_and_deal_its_last_battlefield_power(self):
+        session = self.session(603823007)
+        cyclops = self.add(session.engine, "Cyclops Superconductor", zone="hand")
+        boost = self.add(session.engine, "Giant Growth", zone="hand")
+        wrath = self.add(session.engine, "Wrath of God", zone="hand")
+        self.assert_closed(session, cyclops)
+        self.prepare(session, mana={"C": 8, "R": 4, "G": 4, "W": 5, "U": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", cyclops)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(3, session.state.players["A"].energy)
+        self.cast(session, "A", boost, [cyclops.ref])
+        self.assertIsNone(self.resolve(session))
+        power = session.engine._numeric_stat(cyclops.object_id, "power")
+        life = session.state.players["B"].life
+        self.cast(session, "A", wrath)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.pay_for_targeted_child(session)
+        self.assertEqual(0, session.state.players["A"].energy)
+        self.assertEqual("graveyard", session.state.cards[cyclops.object_id].zone)
+        self.choose(session, targets=["B"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(life - (power + 1), session.state.players["B"].life)
+        self.replay(session, load=True)
+
+    def test_escape_protocol_resolves_the_blink_before_the_cycling_draw(self):
+        session = self.session(603823008)
+        watcher = self.add(session.engine, "Escape Protocol")
+        cycler = self.add(session.engine, "Lonely Sandbar", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body")
+        self.assert_closed(session, watcher)
+        self.assert_closed(session, cycler)
+        self.prepare(session, mana={"U": 1, "C": 2})
+        self.checkpoint(session)
+        original = target.logical_object_id
+        draws = len(session.state.players["A"].draw_history)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(action for action in actions if action["id"].startswith("activate:" + cycler.ref + ":"))
+        result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, len(session.state.stack))
+        self.pay_for_targeted_child(session)
+        self.choose(session, targets=[target.ref])
+        self.resolve_top(session)
+        current = session.state.cards[target.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertNotEqual(original, current.logical_object_id)
+        self.assertEqual(draws, len(session.state.players["A"].draw_history))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(draws + 1, len(session.state.players["A"].draw_history))
+        self.replay(session, load=True)
+
+    def test_sparktongue_targets_using_its_ability_sources_final_battlefield_color(self):
+        from quorune.target_source import TARGETING_SOURCE_CONTEXT
+
+        session = self.session(603823009)
+        source = self.add(session.engine, "Sparktongue Dragon", zone="hand")
+        colorless = self.add(session.engine, "Moonlace", zone="hand")
+        bounce = self.add(session.engine, "Unsummon", zone="hand")
+        knight = self.add(session.engine, "Silver Knight", seat="B")
+        skulk = self.add(session.engine, "Mistmeadow Skulk", seat="B")
+        for card in (source, colorless, knight, skulk):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 9, "R": 4, "U": 4})
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        self.cast(session, "A", colorless, [source.ref])
+        self.resolve_top(session)
+        self.cast(session, "A", bounce, [source.ref])
+        self.resolve_top(session)
+        child = self.pay_for_targeted_child(session)
+        snapshot = child.context[TARGETING_SOURCE_CONTEXT]
+        self.assertEqual(([], 5.0), (snapshot["colors"], snapshot["mana_value"]))
+        action, = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        self.assertIn(knight.ref, action["target_schema"]["legal_refs"])
+        self.assertNotIn(skulk.ref, action["target_schema"]["legal_refs"])
+        self.choose(session, targets=[knight.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[knight.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_merry_bards_keeps_payment_if_no_child_target_remains(self):
+        for remove_target in (False, True):
+            with self.subTest(remove_target=remove_target):
+                session = self.session(603823010 + remove_target)
+                bards = self.add(session.engine, "Merry Bards", zone="hand")
+                bounce = self.add(session.engine, "Unsummon", zone="hand")
+                self.assert_closed(session, bards)
+                self.prepare(session, mana={"C": 5, "R": 2, "U": 2})
+                self.checkpoint(session)
+                self.cast(session, "A", bards)
+                self.resolve_top(session)
+                if remove_target:
+                    self.cast(session, "A", bounce, [bards.ref])
+                    self.resolve_top(session)
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                mana = sum(session.state.players["A"].mana_pool.values())
+                self.choose(session, pay=True)
+                if not remove_target:
+                    self.assertEqual("semantic.target", session.state.pending_decision.kind)
+                    self.choose(session, targets=[bards.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(mana - 1, sum(session.state.players["A"].mana_pool.values()))
+                roles = [card for card in session.state.cards.values() if card.zone == "battlefield" and card.is_token]
+                self.assertEqual(0 if remove_target else 1, len(roles))
+                if roles:
+                    self.assertEqual([roles[0].object_id], session.state.cards[bards.object_id].attachments)
+                self.replay(session, load=True)
+
+    def test_go_shintai_counts_shrines_at_child_resolution_after_a_response(self):
+        from quorune.turn_step_owner import TURN_STEPS
+
+        session = self.session(603823012)
+        watcher = self.add(session.engine, "Go-Shintai of Ancient Wars")
+        other = self.add(session.engine, "Honden of Infinite Rage")
+        response = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+        self.add(session.engine, "Generic Bound Plains", ref="shrine-pay-land")
+        for index in range(2):
+            self.add(session.engine, "Generic Bound Plains", seat="B", ref=f"disenchant-land-{index}")
+        self.assert_closed(session, watcher)
+        self.prepare(session)
+        session.state.phase, session.state.step = "postcombat_main", "main"
+        session.state.phase_index = TURN_STEPS.index(("postcombat_main", "main"))
+        self.checkpoint(session)
+        life = session.state.players["B"].life
+        self.advance_to(session, "semantic.choice")
+        self.pay_for_targeted_child(session)
+        self.choose(session, targets=["B"])
+        self.cast(session, "B", response, [other.ref])
+        self.resolve_top(session)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[other.object_id].zone)
+        self.assertEqual(life - 1, session.state.players["B"].life)
+        self.replay(session, load=True)
+
     def test_existing_reflexive_program_derives_its_required_runtime_authority(self):
         from dataclasses import replace
         from quorune.card_programs import bind_semantic_program_runtime
@@ -320,3 +631,231 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
         bound = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile="commander_review")
         self.assertFalse(bound["strict"])
         self.assertIn(f"capability:undeclared_runtime_dependency:{capability}", bound["blockers"])
+
+    def test_quantum_entanglement_pays_and_targets_after_each_independent_occurrence(self):
+        from quorune.turn_step_owner import TURN_STEPS
+
+        session = self.session(603824001)
+        source = self.add(session.engine, "Quantum Entanglement", zone="hand")
+        other_entry = self.add(session.engine, "Honden of Infinite Rage", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", ref="quantum-owned-target")
+        foreign = self.add(session.engine, "Generic Bound Body", seat="B", ref="quantum-foreign-target")
+        for index in range(4):
+            self.add(session.engine, "Generic Bound Plains", ref=f"quantum-plains-{index}")
+        self.assert_closed(session, source)
+        self.assert_closed(session, other_entry)
+        self.prepare(session, mana={"C": 7, "W": 4, "R": 2})
+        session.state.phase, session.state.step = "postcombat_main", "main"
+        session.state.phase_index = TURN_STEPS.index(("postcombat_main", "main"))
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        self.assertEqual("permanent.enter", session.state.stack[-1].context["event"])
+        self.pay_for_targeted_child(session)
+        before = authoritative_state_hash(session.state)
+        wrong = session.act("pilot:A", {"action_id": "choose", "targets": [foreign.ref]})
+        self.assertFalse(wrong.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        original = session.state.cards[target.object_id].logical_object_id
+        self.choose(session, targets=[target.ref])
+        self.assertIsNone(self.resolve(session))
+        first_return = session.state.cards[target.object_id].logical_object_id
+        self.assertNotEqual(original, first_return)
+
+        self.cast(session, "A", other_entry)
+        self.assertIsNone(self.resolve(session))
+        self.advance_to(session, "semantic.choice")
+        self.assertEqual(("ending", "end_step"), (session.state.phase, session.state.step))
+        self.assertEqual("step.begin", session.state.stack[-1].context["event"])
+        session = self.replay(session, load=True)
+        self.pay_for_targeted_child(session)
+        self.choose(session, targets=[target.ref])
+        self.assertIsNone(self.resolve(session))
+        second_return = session.state.cards[target.object_id].logical_object_id
+        self.assertNotIn(second_return, {original, first_return})
+        self.replay(session, load=True)
+
+        opponent_turn = self.session(603824002)
+        self.add(opponent_turn.engine, "Quantum Entanglement")
+        self.add(opponent_turn.engine, "Generic Bound Body", ref="opposing-turn-eligible-target")
+        self.prepare(opponent_turn, actor="B", active="B")
+        opponent_turn.state.phase, opponent_turn.state.step = "postcombat_main", "main"
+        opponent_turn.state.phase_index = TURN_STEPS.index(("postcombat_main", "main"))
+        self.checkpoint(opponent_turn)
+        for _ in range(8):
+            if opponent_turn.state.step == "end_step":
+                break
+            result = opponent_turn.act(opponent_turn.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("end_step", opponent_turn.state.step)
+        self.assertFalse(opponent_turn.state.stack)
+        self.assertEqual("priority", opponent_turn.state.pending_decision.kind)
+        self.replay(opponent_turn, load=True)
+
+    def _selected_price(self, session, source, price, *, illegal=None):
+        decision = self.resolve(session)
+        self.assertIsNotNone(decision)
+        self.assertEqual('semantic.choice', decision.kind)
+        parent = session.state.stack[-1]
+        self.assertEqual(source.object_id, parent.source_object_id)
+        self.assertFalse(parent.targets)
+        command = {'action_id': 'choose', 'cards': [price.ref]}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        if illegal is not None:
+            self.assertFalse(session.act('pilot:A', {**command, 'cards': [illegal.ref]}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        self.choose(session, cards=[price.ref])
+        self.assertNotEqual('battlefield', getattr(session.state.cards.get(price.object_id), 'zone', None))
+        self.assertFalse(any(item.ref == parent.ref for item in session.state.stack))
+        return parent
+
+    def test_original_shirriff_pays_before_its_linked_target(self):
+        for eligible_target in (False, True):
+            with self.subTest(eligible_target=eligible_target):
+                session = self.session(704_856_100 + eligible_target)
+                source = self.add(session.engine, 'Shire Shirriff', zone='hand')
+                private = self.add(session.engine, 'Generic Bound Growth', seat='D', zone='hand')
+                if eligible_target:
+                    target = self.add(session.engine, 'Generic Bound Body', seat='C')
+                    bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+                    self.add(session.engine, 'Island', seat='B')
+                session.engine.create_token('A', name='Food', characteristics={
+                    'type_line': 'Token Artifact \u2014 Food',
+                    'ability_profile': 'two_tap_sac_gain_three_life_v1',
+                })
+                price = next(card for card in session.state.cards.values()
+                             if card.is_token and card.printed_name == 'Food')
+                self.assert_closed(session, source)
+                self.prepare(session, mana={'C': 2, 'W': 1})
+                self.checkpoint(session)
+                self.cast(session, 'A', source)
+                self.resolve_top(session)
+                parent = self._selected_price(session, source, price, illegal=source)
+                if eligible_target:
+                    self.assertEqual('semantic.target', session.state.pending_decision.kind)
+                    self.assertEqual(parent.ref, session.state.stack[-1].context['reflexive_parent'])
+                    session = self.replay(session, load=True)
+                    self.choose(session, targets=[target.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual('exile', session.state.cards[target.object_id].zone)
+                    self.cast(session, 'B', bounce, [source.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual('battlefield', session.state.cards[target.object_id].zone)
+                else:
+                    self.assertFalse(session.state.stack)
+                    self.assertEqual('priority', session.state.pending_decision.kind)
+                for seat in 'ABC':
+                    self.assertNotIn(private.ref, json.dumps(session.packet('pilot:' + seat, full=True)))
+                self.replay(session, load=True)
+
+    def _assert_surtland_paid_damage(self, name, damage, seed):
+        session = self.session(seed)
+        source = self.add(session.engine, 'Surtland Flinger')
+        price = self.add(session.engine, name)
+        growth = self.add(session.engine, 'Giant Growth', zone='hand')
+        foreign = self.add(session.engine, 'Generic Bound Body', seat='B')
+        for card in (source, price, growth):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={'G': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', growth, [price.ref])
+        self.assertIsNone(self.resolve(session))
+        incarnation = session.state.cards[price.object_id].logical_object_id
+        self.advance_to(session, 'combat.attackers')
+        accepted = session.act('pilot:A', {'action_id': 'attack', 'attackers': {source.ref: 'B'}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        parent = self._selected_price(session, source, price, illegal=foreign)
+        child = session.state.stack[-1]
+        self.assertEqual(parent.ref, child.context['reflexive_parent'])
+        paid = child.context['reflexive_paid_creature']
+        self.assertEqual((4, incarnation), (paid['stats']['power'], paid['stats']['logical_object_id']))
+        self.assertEqual(name == 'Universal Automaton', 'giant' in paid['subtypes'])
+        self.assertEqual('semantic.target', session.state.pending_decision.kind)
+        session = self.replay(session, load=True)
+        self.choose(session, targets=['C'])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(40 - damage, session.state.players['C'].life)
+        self.replay(session, load=True)
+
+    def test_original_surtland_flinger_reads_effective_paid_power_and_subtype(self):
+        self._assert_surtland_paid_damage('Universal Automaton', 8, 704_856_102)
+        self._assert_surtland_paid_damage('Merfolk of the Pearl Trident', 4, 704_856_103)
+
+    def test_reflexive_paid_power_mutant_loses_the_paid_giant_multiplier(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.scalar_effect_amounts import _reflexive_paid_creature_power
+
+        def without_multiplier(item, spec):
+            return _reflexive_paid_creature_power(item, replace(spec, double_for_subtype=None))
+
+        with patch('quorune.scalar_effect_amounts._reflexive_paid_creature_power', side_effect=without_multiplier):
+            with self.assertRaisesRegex(AssertionError, '32 != 36'):
+                self._assert_surtland_paid_damage('Universal Automaton', 8, 704_856_104)
+
+    def test_original_ziatora_loses_all_results_when_its_target_leaves(self):
+        from quorune.turn_step_owner import TURN_STEPS
+
+        for index, mode in enumerate(('legal', 'leaves', 'negative')):
+            with self.subTest(mode=mode):
+                session = self.session(704_856_110 + index)
+                source = self.add(session.engine, 'Ziatora, the Incinerator')
+                price = self.add(session.engine, 'Grizzly Bears')
+                target = self.add(session.engine, 'Generic Bound Body', seat='C')
+                if mode == 'leaves':
+                    bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+                if mode == 'negative':
+                    shrink = self.add(session.engine, 'Hydrosurge', seat='B', zone='hand')
+                self.add(session.engine, 'Island', seat='B')
+                self.assert_closed(session, source)
+                self.prepare(session)
+                session.state.phase, session.state.step = 'postcombat_main', 'main'
+                session.state.phase_index = TURN_STEPS.index(('postcombat_main', 'main'))
+                self.checkpoint(session)
+                if mode == 'negative':
+                    self.cast(session, 'B', shrink, [price.ref])
+                    self.assertIsNone(self.resolve(session))
+                self.advance_to(session, 'semantic.choice')
+                self.assertEqual(('ending', 'end_step'), (session.state.phase, session.state.step))
+                parent = self._selected_price(session, source, price, illegal=source)
+                self.assertEqual('semantic.target', session.state.pending_decision.kind)
+                self.assertEqual(parent.ref, session.state.stack[-1].context['reflexive_parent'])
+                paid_power = session.state.stack[-1].context['reflexive_paid_creature']['stats']['power']
+                self.assertEqual(-3 if mode == 'negative' else 2, paid_power)
+                self.choose(session, targets=[target.ref] if mode == 'leaves' else ['C'])
+                if mode == 'leaves':
+                    self.cast(session, 'B', bounce, [target.ref])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(38 if mode == 'legal' else 40, session.state.players['C'].life)
+                treasures = [card for card in session.state.cards.values() if card.zone == 'battlefield'
+                             and card.controller == 'A' and card.is_token and card.printed_name == 'Treasure Token']
+                self.assertEqual(0 if mode == 'leaves' else 3, len(treasures))
+                self.assertEqual('graveyard', session.state.cards[price.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_original_manticore_uses_paid_creature_power_after_source_leaves(self):
+        session = self.session(704_856_107)
+        source = self.add(session.engine, 'Heart-Piercer Manticore', zone='hand')
+        price = self.add(session.engine, 'Grizzly Bears')
+        growth = self.add(session.engine, 'Giant Growth', zone='hand')
+        bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+        self.add(session.engine, 'Island', seat='B')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 2, 'R': 2, 'G': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', growth, [price.ref])
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, 'A', source)
+        self.resolve_top(session)
+        self.cast(session, 'B', bounce, [source.ref])
+        self._selected_price(session, source, price)
+        self.assertEqual('hand', session.state.cards[source.object_id].zone)
+        self.assertEqual('semantic.target', session.state.pending_decision.kind)
+        self.choose(session, targets=['D'])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(35, session.state.players['D'].life)
+        self.replay(session, load=True)

@@ -2246,6 +2246,318 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "name": "Chandra, Torch of Defiance",
+      "mana_cost": "{2}{R}{R}",
+      "type_line": "Legendary Planeswalker — Chandra",
+      "oracle_text": "+1: Exile the top card of your library. You may cast that card. If you don't, Chandra deals 2 damage to each opponent.\n+1: Add {R}{R}.\n−3: Chandra deals 4 damage to target creature.\n−7: You get an emblem with \"Whenever you cast a spell, this emblem deals 5 damage to any target.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": "4",
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2026-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "name": "Etali, Primal Storm",
+      "mana_cost": "{4}{R}{R}",
+      "type_line": "Legendary Creature — Elder Dinosaur",
+      "oracle_text": "Whenever Etali attacks, exile the top card of each player's library, then you may cast any number of spells from among those cards without paying their mana costs.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 6.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{U}{U}",
+      "name": "Mind's Dilation",
+      "oracle_id": "d4b5e09b-9ca2-4b51-a4f8-080741810df8",
+      "oracle_text": "Whenever an opponent casts their first spell each turn, that player exiles the top card of their library. If it's a nonland card, you may cast it without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "name": "Twincast",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -4102,6 +4414,168 @@
       "published_at": "2020-09-25",
       "source": "wotc",
       "comment": "You must discard exactly one card to cast Tormenting Voice; you can't cast it without discarding a card, and you can't discard additional cards."
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "The emblem created by Chandra's last ability is colorless. The damage it deals is from a colorless source."
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, Chandra's first ability causes 4 damage total to be dealt to the opposing team."
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "You pay the costs for the exiled card if you cast it. You may pay alternative costs such as emerge rather than the card's mana cost."
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "Loyalty abilities can't be mana abilities. Chandra's second ability uses the stack and can be countered or otherwise responded to. Like all loyalty abilities, it can be activated only once per turn, during your main phase, when the stack is empty, and only if no other loyalty abilities of the planeswalker have been activated this turn."
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "If you cast the exiled card, you do so as part of the resolution of Chandra's ability. You can't wait to cast it later in the turn. Timing permissions based on the card's type are ignored, but other restrictions (such as \"Cast [this card] only during combat\") are not."
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "An effect that instructs you to \"cast\" a card doesn't allow you to play lands. If the card exiled with Chandra's first ability is a land card, you can't play it and Chandra deals 2 damage to each opponent."
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "Chandra's emblem's ability resolves before the spell that caused it to trigger."
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If an exiled card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Any cards not cast, including land cards, remain in exile. They can't be cast on later turns, even if Etali attacks again."
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, those must be paid to cast the card."
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any spells or permanents you control from Etali's ability are exiled."
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Because all attacking creatures are chosen at once, a creature cast this way can't attack during the same combat as Etali, even if it has haste."
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you cast more than one of the exiled cards, you choose the order in which to cast them. A spell you cast this way can be the target of a later spell you cast this way. However, permanent spells cast this way won't resolve until you're done casting spells, so the permanents they become can't be the target of spells cast this way. For example, if you exile Twincast and Lightning Strike, you can cast Lightning Strike and then cast Twincast targeting it; but if you exile a creature card and an Aura card, you can't cast that Aura targeting that creature."
+    },
+    {
+      "oracle_id": "078def07-ae5d-4591-8db6-d156834aab97",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you cast any of the exiled cards, you do so as part of the resolution of the triggered ability. You can't wait to cast them later in the turn. Timing permissions based on a card's type are ignored, and the spells resolve before blockers are declared."
+    },
+    {
+      "oracle_id": "d4b5e09b-9ca2-4b51-a4f8-080741810df8",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If you don't cast the card, perhaps because you choose not to or because it's a land card, it remains exiled."
+    },
+    {
+      "oracle_id": "d4b5e09b-9ca2-4b51-a4f8-080741810df8",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "d4b5e09b-9ca2-4b51-a4f8-080741810df8",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If you cast the exiled card, you do so as part of the resolution of Mind's Dilation's ability. You can't wait to cast it later in the turn. Timing permissions based on the card's type are ignored, but other restrictions (such as \"Cast [this card] only during combat\") are not."
+    },
+    {
+      "oracle_id": "d4b5e09b-9ca2-4b51-a4f8-080741810df8",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If you cast an instant or sorcery card this way, it goes to its owner's graveyard as normal. It doesn't return to exile."
+    },
+    {
+      "oracle_id": "d4b5e09b-9ca2-4b51-a4f8-080741810df8",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs, such as emerge costs. You can, however, pay additional costs, such as escalate costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "d4b5e09b-9ca2-4b51-a4f8-080741810df8",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If you cast the card this way, it will resolve before the spell that caused Mind's Dilation's ability to trigger."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Twincast can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast, the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
     }
   ]
 }

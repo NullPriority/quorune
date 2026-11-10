@@ -7,7 +7,7 @@
       "oracle_id": "00a9bdd0-8a39-4489-bd42-2ac92e550781",
       "name": "Labyrinth Adversary",
       "mana_cost": "{3}{R}",
-      "type_line": "Creature \u2014 Minotaur",
+      "type_line": "Creature — Minotaur",
       "oracle_text": "Trample (This creature can deal excess combat damage to the player it's attacking.)\nWhenever you attack, you may pay {1}{R}. When you do, target creature can't block this turn.",
       "power": "4",
       "toughness": "3",
@@ -56,7 +56,7 @@
       "oracle_id": "0828d891-f7c3-4e51-b42e-6ce88d48ac8b",
       "name": "Icewrought Sentry",
       "mana_cost": "{2}{U}",
-      "type_line": "Creature \u2014 Elemental Soldier",
+      "type_line": "Creature — Elemental Soldier",
       "oracle_text": "Vigilance\nWhenever this creature attacks, you may pay {1}{U}. When you do, tap target creature an opponent controls.\nWhenever you tap an untapped creature an opponent controls, this creature gets +2/+1 until end of turn.",
       "power": "2",
       "toughness": "3",
@@ -105,7 +105,7 @@
       "oracle_id": "3726b9a0-67cb-4f45-ab50-62db50f93568",
       "name": "Ty Lee, Artful Acrobat",
       "mana_cost": "{2}{R}",
-      "type_line": "Legendary Creature \u2014 Human Performer",
+      "type_line": "Legendary Creature — Human Performer",
       "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhenever Ty Lee attacks, you may pay {1}. When you do, target creature can't block this turn.",
       "power": "3",
       "toughness": "2",
@@ -202,7 +202,7 @@
       "name": "Generic Reflexive Sacrifice",
       "mana_cost": "{0}",
       "cmc": 0,
-      "type_line": "Creature \u2014 Human",
+      "type_line": "Creature — Human",
       "power": "1",
       "toughness": "1",
       "oracle_text": "When this creature enters, you may sacrifice a creature. When you do, target player draws two cards.",
@@ -221,7 +221,7 @@
       "name": "Generic Reflexive Tap",
       "mana_cost": "{0}",
       "cmc": 0,
-      "type_line": "Creature \u2014 Human",
+      "type_line": "Creature — Human",
       "power": "1",
       "toughness": "1",
       "oracle_text": "When this creature enters, you may pay {1}. When you do, tap target creature an opponent controls.",
@@ -350,8 +350,8 @@
       "oracle_id": "5f694917-f434-4459-bc86-caf9ac1c80e7",
       "name": "Awaken the Honored Dead",
       "mana_cost": "{B}{G}{U}",
-      "type_line": "Enchantment \u2014 Saga",
-      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI \u2014 Destroy target nonland permanent.\nII \u2014 Mill three cards.\nIII \u2014 You may discard a card. When you do, return target creature or land card from your graveyard to your hand.",
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy target nonland permanent.\nII — Mill three cards.\nIII — You may discard a card. When you do, return target creature or land card from your graveyard to your hand.",
       "power": null,
       "toughness": null,
       "loyalty": null,
@@ -415,6 +415,1337 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "name": "Halana, Kessig Ranger",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Archer Ranger",
+      "oracle_text": "Reach\nWhenever another creature you control enters, you may pay {2}. When you do, that creature deals damage equal to its power to target creature.\nPartner (You can have two commanders if both have partner.)",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Child of Night",
+      "oracle_id": "c650a7bc-e350-44a0-a698-d4a233d66156",
+      "oracle_text": "Lifelink",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "1",
+      "type_line": "Creature — Vampire"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Wall of Stone",
+      "oracle_id": "cd4cadb4-3156-49bd-b36e-12ba5c85938b",
+      "oracle_text": "Defender (This creature can't attack.)",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2003-07-28",
+      "toughness": "8",
+      "type_line": "Creature — Wall"
+    },
+    {
+      "oracle_id": "f976a244-1240-4430-9182-bb8d6d932ea0",
+      "name": "Itzquinth, Firstborn of Gishath",
+      "mana_cost": "{R}{G}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Dinosaur",
+      "oracle_text": "Haste\nWhen Itzquinth enters, you may pay {2}. When you do, target Dinosaur you control deals damage equal to its power to another target creature.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "10bca1b1-4f92-40e8-b9c0-d08c534903e1",
+      "name": "Cyclops Superconductor",
+      "mana_cost": "{1}{U}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Cyclops Wizard",
+      "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhen this creature enters, you get {E}{E}{E} (three energy counters).\nWhen this creature dies, you may pay {E}{E}{E}. When you do, this creature deals damage equal to its power to any target.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Prowess"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Wrath of God",
+      "oracle_id": "34515b16-c9a4-4f98-8c77-416a7a523407",
+      "oracle_text": "Destroy all creatures. They can't be regenerated.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "name": "Escape Protocol",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever you cycle a card, you may pay {1}. When you do, exile target artifact or creature you control, then return it to the battlefield under its owner's control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "765863c8-1be0-4bb1-9e9c-db7701cffde3",
+      "name": "Lonely Sandbar",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U}.\nCycling {U} ({U}, Discard this card: Draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1817acd5-5ed0-47b8-8e56-4715a488867e",
+      "name": "Sparktongue Dragon",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\nWhen this creature enters, you may pay {2}{R}. When you do, it deals 3 damage to any target.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "name": "Merry Bards",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Bard",
+      "oracle_text": "When this creature enters, you may pay {1}. When you do, create a Young Hero Role token attached to target creature you control. (If you control another Role on it, put that one into the graveyard. Enchanted creature has \"Whenever this creature attacks, if its toughness is 3 or less, put a +1/+1 counter on it.\")",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Role token"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d145e4d4-a190-4c0b-8dfd-401c0111e995",
+      "name": "Go-Shintai of Ancient Wars",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Legendary Enchantment Creature — Shrine",
+      "oracle_text": "First strike\nAt the beginning of your end step, you may pay {1}. When you do, Go-Shintai of Ancient Wars deals X damage to target player or planeswalker, where X is the number of Shrines you control.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "First strike"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Honden of Infinite Rage",
+      "oracle_id": "0cb76b04-d9c3-46fc-a3f2-5f0cb0d91761",
+      "oracle_text": "At the beginning of your upkeep, Honden of Infinite Rage deals damage to any target equal to the number of Shrines you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment — Shrine"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "52d4dc8a-2799-4b4e-9c20-f14bb75c2279",
+      "name": "Moonlace",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target spell or permanent becomes colorless.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-10-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "aa7cd6e6-35a6-4c18-9d66-dc2a95206401",
+      "name": "Silver Knight",
+      "mana_cost": "{W}{W}",
+      "type_line": "Creature — Human Knight",
+      "oracle_text": "First strike, protection from red",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "First strike",
+        "Protection"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-04-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "07c93bf5-91a3-4594-b2da-f29a19d7bcde",
+      "name": "Generic Reflexive Kindred Dinosaur",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Kindred Enchantment — Dinosaur",
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "490df3b5-ece2-45bb-af38-fcd7f83e37b0",
+      "name": "Mistmeadow Skulk",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Kithkin Rogue",
+      "oracle_text": "Lifelink, protection from mana value 3 or greater",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Lifelink",
+        "Protection"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4b072fbb-5e61-4009-bcb1-d493eb4a1be4",
+      "name": "Quantum Entanglement",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Flash\nWhen this enchantment enters and at the beginning of your end step, you may pay {1}{W}. When you do, exile target creature you control, then return that card to the battlefield under its owner's control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "14f36157-f55f-495d-9ffe-f38135a59750",
+      "name": "Shire Shirriff",
+      "mana_cost": "{1}{W}",
+      "type_line": "Creature — Halfling Soldier",
+      "oracle_text": "Vigilance\nWhen this creature enters, you may sacrifice a token. When you do, exile target creature an opponent controls until this creature leaves the battlefield.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "name": "Heart-Piercer Manticore",
+      "mana_cost": "{2}{R}{R}",
+      "type_line": "Creature — Manticore",
+      "oracle_text": "When this creature enters, you may sacrifice another creature. When you do, this creature deals damage equal to that creature's power to any target.\nEmbalm {5}{R} ({5}{R}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Manticore with no mana cost. Embalm only as a sorcery.)",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Embalm"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-08-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "d46c3fb6-f1c7-4a96-ae42-5bce17fc7c1d",
+      "name": "Ziatora, the Incinerator",
+      "mana_cost": "{3}{B}{R}{G}",
+      "type_line": "Legendary Creature — Demon Dragon",
+      "oracle_text": "Flying\nAt the beginning of your end step, you may sacrifice another creature. When you do, Ziatora deals damage equal to that creature's power to any target and you create three Treasure tokens.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Treasure"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "f701ada1-e9e1-42ce-9a62-c11bcec03da7",
+      "name": "Surtland Flinger",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Creature — Giant Berserker",
+      "oracle_text": "Whenever this creature attacks, you may sacrifice another creature. When you do, this creature deals damage equal to the sacrificed creature's power to any target. If the sacrificed creature was a Giant, this creature deals twice that much damage instead.",
+      "power": "4",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "name": "Universal Automaton",
+      "mana_cost": "{1}",
+      "type_line": "Artifact Creature — Shapeshifter",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Changeling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "218d9277-c179-4de3-9c7f-79b5a6d4fa38",
+      "name": "Merfolk of the Pearl Trident",
+      "mana_cost": "{U}",
+      "type_line": "Creature — Merfolk",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Hydrosurge",
+      "oracle_id": "4c2059d5-9a2e-4b89-a617-9125eb0cd570",
+      "oracle_text": "Target creature gets -5/-0 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-07-18",
+      "toughness": null,
+      "type_line": "Instant"
     }
   ],
   "rulings": [
@@ -422,7 +1753,7 @@
       "oracle_id": "00a9bdd0-8a39-4489-bd42-2ac92e550781",
       "published_at": "2024-07-05",
       "source": "wotc",
-      "comment": "You don\u2019t choose a target for Labyrinth Adversary\u2019s last ability at the time it triggers. Rather, a second \u201creflexive\u201d ability triggers when you pay {1}{R} this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+      "comment": "You don’t choose a target for Labyrinth Adversary’s last ability at the time it triggers. Rather, a second “reflexive” ability triggers when you pay {1}{R} this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
     },
     {
       "oracle_id": "0828d891-f7c3-4e51-b42e-6ce88d48ac8b",
@@ -452,7 +1783,307 @@
       "oracle_id": "5f694917-f434-4459-bc86-caf9ac1c80e7",
       "published_at": "2025-04-04",
       "source": "wotc",
-      "comment": "You don\u2019t choose a target for Awaken the Honored Dead\u2019s final chapter ability at the time it triggers. Rather, a second \u201creflexive\u201d ability triggers when you discard a card this way. You choose a target for that ability as it goes on the stack. You may choose the card you just discarded as the target or a card that was already in your graveyard. Each player may respond to this triggered ability as normal."
+      "comment": "You don’t choose a target for Awaken the Honored Dead’s final chapter ability at the time it triggers. Rather, a second “reflexive” ability triggers when you discard a card this way. You choose a target for that ability as it goes on the stack. You may choose the card you just discarded as the target or a card that was already in your graveyard. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "For the creature that entered the battlefield, use its power as Halana's reflexive triggered ability resolves to determine how much damage is dealt. If it's no longer on the battlefield at that time, use its power as it last existed on the battlefield."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Halana, Kessig Ranger's triggered ability goes on the stack without a target. While that ability is resolving, you may pay {2}. If you do, a second ability triggers and you pick a target that will be dealt damage. This is different from abilities that say \"If you do . . .\" in that players may cast spells and activate abilities after mana is paid but before damage is dealt."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "f5aa7385-12ea-4ecb-86eb-e8622ebb6908",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue."
+    },
+    {
+      "oracle_id": "f976a244-1240-4430-9182-bb8d6d932ea0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You don't choose targets for Itzquinth, Firstborn of Gishath's triggered ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when you pay {2} this way. You choose targets for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "10bca1b1-4f92-40e8-b9c0-d08c534903e1",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Use the power of Cyclops Superconductor as it last existed on the battlefield to determine the amount of damage Cyclops Superconductor deals due to its reflexive triggered ability."
+    },
+    {
+      "oracle_id": "10bca1b1-4f92-40e8-b9c0-d08c534903e1",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You don't choose a target for Cyclops Superconductor's last ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when you pay {E}{E}{E} this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "When the card returns to the battlefield, it will be a new object with no connection to the card that was exiled. Auras attached to the exiled permanent will be put into their owners’ graveyards. Any Equipment will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist."
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "While resolving Escape Protocol’s triggered ability, you can’t pay {1} multiple times to exile multiple permanents you control."
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Escape Protocol’s triggered ability goes on the stack without a target. While that ability is resolving, you may pay {1}. If you do, a second ability triggers and you pick a target artifact or creature you control. This is different from abilities that say “If you do . . .” in that players may cast spells and activate abilities after mana is paid but before the target changes zones."
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Some cards with cycling have an ability that triggers when you cycle them, and some cards have an ability that triggers whenever you cycle any card. These triggered abilities resolve before you draw from the cycling ability."
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You can cycle a card even if it has a triggered ability from cycling that won’t have a legal target. This is because the cycling ability and the triggered ability are separate. This also means that if either ability is countered (with Disallow, for example), the other ability will still resolve."
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Triggered abilities from cycling a card and the cycling ability itself aren’t spells. Effects that interact with spells (such as that of Cancel) won’t affect them."
+    },
+    {
+      "oracle_id": "e875b468-b475-4573-adf6-312ca4ab6994",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won’t return to the battlefield."
+    },
+    {
+      "oracle_id": "1817acd5-5ed0-47b8-8e56-4715a488867e",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You don't choose a target for Sparktongue Dragon's last ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when you pay {2}{R} this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Hexproof and shroud won’t prevent a Role from becoming attached to a permanent if the ability creating that Role attached to that permanent doesn’t target it."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "A permanent can have multiple Roles attached to it if each one is controlled by a different player."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Cards in the Wilds of Eldraine main set create six different Role tokens: Cursed, Monster, Royal, Sorcerer, Wicked, and Young Hero. A seventh Role token, Virtuous, is created by Ellivere of the Wild Court, the commander of the “Virtue and Valor” Commander Deck."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If a permanent has more than one Role attached to it controlled by the same player, each of those Roles except the one with the most recent timestamp is put into its owner’s graveyard. This is a state-based action."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "You don't choose a target for Merry Bards's ability at the time its enters-the-battlefield ability triggers. Rather, a second \"reflexive\" ability triggers when you pay {1} this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If two or more Roles controlled by the same player become attached to a permanent at the same time (perhaps due to an effect such as that of Doubling Season), that player chooses which one to keep and which are put into their owners’ graveyards."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Roles are colorless enchantment tokens. Each one has the Aura and Role subtypes and the enchant creature ability."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Role tokens require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won’t resolve. The Role token won’t be created."
+    },
+    {
+      "oracle_id": "699fa8e6-84f5-4010-a8fe-7b2e4f280ef9",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "In rare cases, a spell or ability might attempt to create a Role token enchanting a permanent that it can’t legally enchant (because of an ability like protection from enchantments). In such cases, the Role token isn’t created."
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it."
+    },
+    {
+      "oracle_id": "52d4dc8a-2799-4b4e-9c20-f14bb75c2279",
+      "published_at": "2006-09-25",
+      "source": "wotc",
+      "comment": "Moonlace's effect doesn't wear off."
+    },
+    {
+      "oracle_id": "52d4dc8a-2799-4b4e-9c20-f14bb75c2279",
+      "published_at": "2006-09-25",
+      "source": "wotc",
+      "comment": "If Moonlace is cast on a spell that becomes a permanent (a creature spell, an artifact spell, or an enchantment spell), the permanent will enter colorless and will remain colorless until it leaves the battlefield (or until another effect changes its color)."
+    },
+    {
+      "oracle_id": "490df3b5-ece2-45bb-af38-fcd7f83e37b0",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "A face-down creature has a mana value of 0, so Mistmeadow Skulk doesn't have protection from it ."
+    },
+    {
+      "oracle_id": "490df3b5-ece2-45bb-af38-fcd7f83e37b0",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "While a spell with X in its cost is on the stack, its mana value takes the chosen value of X into account. Mistmeadow Skulk can be chosen as a target for a Blaze (which has mana cost {X}{R}) if X is 0 or 1, for example, but it can't be chosen as a target for a Blaze if X is 2 or more."
+    },
+    {
+      "oracle_id": "490df3b5-ece2-45bb-af38-fcd7f83e37b0",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "The protection ability means the following: - Mistmeadow Skulk can't be blocked by creatures with mana value 3 or greater. - Mistmeadow Skulk can't be enchanted by Auras with mana value 3 or greater. It also can't be equipped by Equipment with mana value 3 or greater. - Mistmeadow Skulk can't be targeted by spells with mana value 3 or greater. It also can't be targeted by abilities from sources with mana value 3 or greater. - All damage that would be dealt to Mistmeadow Skulk by sources with mana value 3 or greater is prevented."
+    },
+    {
+      "oracle_id": "14f36157-f55f-495d-9ffe-f38135a59750",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "You don't choose a target for Shire Shirriff's last ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when you sacrifice a token this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "14f36157-f55f-495d-9ffe-f38135a59750",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If Shire Shirriff leaves the battlefield before its last ability resolves, you can still sacrifice a token. However, when you do, the target creature won't be exiled when the \"reflexive\" triggered ability resolves. Similarly, if Shire Shirriff leaves the battlefield while the \"reflexive\" ability is still on the stack, the target creature won't be exiled."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "The sacrificed creature's last known existence on the battlefield is checked to determine its power."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "For each card with embalm, a corresponding game play supplement token can be found in some Amonkhet booster packs. These supplements are not required to play with cards with embalm; you can use the same items to represent an embalmed token as you would any other token."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Heart-Piercer Manticore's damage-dealing ability triggers only when you sacrifice a creature as a result of the instruction of its triggered ability. It won't trigger if you sacrifice a creature for any other reason."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "The token copies exactly what was printed on the original card and nothing else. It doesn't copy any information about the object the card was before it was put into your graveyard."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If the card copied by the token had any \"when [this permanent] enters the battlefield\" abilities, then the token also has those abilities and will trigger them when it's created. Similarly, any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities that the token has copied will also work."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "You can't sacrifice multiple creatures to deal damage multiple times."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "The token is a Zombie in addition to its other types and is white instead of its other colors. It has no mana cost, and thus its mana value is 0. These are copiable values of the token that other effects may copy."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Heart-Piercer Manticore features a new style of triggered ability. When it enters the battlefield, its triggered ability goes on the stack without a target. While that ability is resolving, you may sacrifice a creature. If you do, a second ability triggers and you pick a target that will be dealt damage. This is different from other abilities that say \"If you do . . .\" in that players may cast spells and activate abilities before a creature is sacrificed and then again after the creature is sacrificed but before damage is dealt."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Once you've activated an embalm ability, the card is immediately exiled. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation."
+    },
+    {
+      "oracle_id": "253bec96-108c-4880-9c04-8bc99ceafa64",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If a spell or ability puts a creature card with embalm into your graveyard during your main phase, you'll have priority immediately after that spell or ability resolves. You can activate the creature card's embalm ability before any player can exile it with an effect, such as that of Crook of Condemnation, if it's legal for you to do so."
+    },
+    {
+      "oracle_id": "d46c3fb6-f1c7-4a96-ae42-5bce17fc7c1d",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Use the creature's power as it last existed on the battlefield to determine how much damage Ziatora deals."
+    },
+    {
+      "oracle_id": "f701ada1-e9e1-42ce-9a62-c11bcec03da7",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Surtland Flinger’s triggered ability goes on the stack without a target. While that ability is resolving, you may sacrifice another creature. When you do, the reflexive triggered ability triggers and you pick a target to be dealt damage. This is different from effects that say “If you do” in that players may take actions after you’ve sacrificed the creature but before damage is dealt."
+    },
+    {
+      "oracle_id": "f701ada1-e9e1-42ce-9a62-c11bcec03da7",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Use the power of the creature as it was sacrificed to determine how much damage is dealt. Damage will be dealt before blockers are declared."
     }
   ]
 }

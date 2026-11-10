@@ -9,6 +9,7 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import StaticComponentSpec
 from quorune.attachments import attach_objects
 from quorune.carddb import CardDatabase, CardRecord
@@ -30,7 +31,7 @@ from quorune.day_night_model import (
     DAY_NIGHT_CAPABILITY_ID,
     NIGHTBOUND_TEMPLATE_ID,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.effect_runtime.objects_stack_and_tokens import _apply_transform
 from quorune.errors import GameRuleError
 from quorune.model import (
@@ -80,6 +81,45 @@ def focused_database(directory: str) -> CardDatabase:
         path,
     )
     return CardDatabase(path)
+
+
+class DayboundSpellEntryTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "daybound-spell-entry.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json", FIXTURE], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Daybound spell entry",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    def test_actual_daybound_spell_prepares_the_face_that_enters(self):
+        for night in (False, True):
+            with self.subTest(night=night):
+                session = self.session(70127101 + night)
+                source = self.add(session.engine, "Sunlit Adept // Moonlit Adept", zone="hand")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 1, "G": 1})
+                session.state.day_night = "night" if night else "day"
+                self.checkpoint(session)
+                self.cast(session, "A", source)
+                with mock.patch.object(
+                    session.engine, "_dispatch_semantic_event",
+                    wraps=session.engine._dispatch_semantic_event,
+                ) as dispatch:
+                    self.assertIsNone(self.resolve(session))
+                current = session.state.cards[source.object_id]
+                self.assertEqual("battlefield", current.zone)
+                self.assertEqual("Moonlit Adept" if night else "Sunlit Adept", current.active_face)
+                self.assertFalse(any(
+                    call.args and call.args[0] == "permanent.transforms"
+                    for call in dispatch.call_args_list
+                ))
+                self.replay(session, load=True)
 
 
 class SpellHistoryTransformationTests(unittest.TestCase):

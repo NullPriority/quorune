@@ -182,6 +182,21 @@ def _source_pair_spec(
     )
 
 
+def _scheduled_pair_has_local_linked_target(body, card_name):
+    """An exiled-card reference can be bound inside the shared result."""
+    if not card_name:
+        return False
+    from .linked_exile_return_templates import linked_exile_return_effect_template
+    from .reflexive_payment_templates import reflexive_payment_template
+
+    def compile_targeted_link(text):
+        compiled = linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=True)
+        return compiled if compiled is not None and compiled[2] is not None else (None, (), None, ())
+
+    return (compile_targeted_link(body)[0] is not None or
+            reflexive_payment_template(body, compile_effect=compile_targeted_link, bound_trigger=True) is not None)
+
+
 def _scheduled_pair_spec(material_line, *, card_name):
     """Compose a step and a closed entry/cast head without sharing predicates."""
     match = re.fullmatch(
@@ -198,8 +213,9 @@ def _scheduled_pair_spec(material_line, *, card_name):
         return None
     # These bodies require their own event-result composer. Never infer one
     # branch's object/player from the other branch's primary event.
-    if re.search(r'\b(?:it|its|they|them|their|that player|that creature|that card|'
-            r'that spell|this way|that much)\b', match['body'], re.I):
+    if (re.search(r'\b(?:it|its|they|them|their|that player|that creature|that card|'
+            r'that spell|this way|that much)\b', match['body'], re.I)
+            and not _scheduled_pair_has_local_linked_target(match['body'], card_name)):
         return None
     from .fixed_counter_trigger_nodes import (
         fixed_counter_trigger_binding, _public_state_source_self_trigger_binding,

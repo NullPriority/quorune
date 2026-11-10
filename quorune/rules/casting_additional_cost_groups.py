@@ -338,6 +338,9 @@ def fixed_zone_change_additional_cost_capability(
     if cost.schema_version == 5:
         from ..sacrifice_union_model import SACRIFICE_UNION_CAPABILITY
         return SACRIFICE_UNION_CAPABILITY
+    from .casting_additional_costs import COLOR_RETURN_ADDITIONAL_COST_CAPABILITY, COLOR_RETURN_SCHEMA_VERSION
+    if cost.schema_version == COLOR_RETURN_SCHEMA_VERSION:
+        return COLOR_RETURN_ADDITIONAL_COST_CAPABILITY
 
     return {
         DISCARD_ONE_COST: "casting.additional_cost.zone_change.fixed_discard",
@@ -529,8 +532,29 @@ def expand_fixed_alternative_options(
     return alternatives, []
 
 
+def fixed_additional_cost_node_capabilities(*, cost_schema):
+    """Collect the closed fixed price dependencies through their existing owners."""
+    from .node_capability_shapes import (
+        fixed_counter_additional_cost_node_capabilities,
+        fixed_sacrifice_additional_cost_node_capabilities,
+        fixed_zone_change_additional_cost_node_capabilities,
+    )
+    from .tap_additional_cost import fixed_tap_additional_cost_node_capabilities
+
+    owners = (
+        fixed_alternative_additional_cost_node_capabilities,
+        fixed_tap_additional_cost_node_capabilities,
+        fixed_counter_additional_cost_node_capabilities,
+        fixed_life_payment_additional_cost_node_capabilities,
+        fixed_sacrifice_additional_cost_node_capabilities,
+        fixed_zone_change_additional_cost_node_capabilities,
+    )
+    return tuple(capability for owner in owners for capability in owner(cost_schema=cost_schema))
+
+
 __all__ = [
     "expand_fixed_alternative_options",
+    "fixed_additional_cost_node_capabilities",
     "FixedAdditionalCostLeaf",
     "FixedAlternativeAdditionalCost",
     "FixedLifePaymentAdditionalCost",

@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed CR609.4 permission to disregard only the Defender restriction."""
 
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Any, Mapping
 
 DEFENDER_PERMISSION_CAPABILITY = 'combat.attack.defender_permission'
@@ -11,9 +12,26 @@ CONDITIONAL_DEFENDER_PERMISSION_HANDLER = 'continuous.defender-permission.public
 DEFENDER_TEMPORARY_CAPABILITY = 'combat.attack.defender_permission.temporary'
 DEFENDER_TEMPORARY_MECHANIC = 'fixed-temporary-defender-permission'
 DEFENDER_TEMPORARY_OPERATION = 'apply_source_characteristics_until_end_of_turn'
+DEFENDER_RULE_VERSION = 13
+DEFENDER_RULE_CAPABILITY = 'continuous.resolution.declaration_rules_until_end_of_turn'
 DEFENDER_DECLARATION_CAPABILITY = 'combat.attack.defender_permission.declaration_numeric'
 DEFENDER_DECLARATION_HANDLER = 'permission.attack.defender-current-numeric.v1'
 DEFENDER_DECLARATION_EVENT = 'combat.attack.permission'
+DEFENDER_ATTACHMENT_HANDLER = 'permission.attack.defender-current-attachment.v1'
+DEFENDER_ATTACHMENT_CAPABILITIES = (DEFENDER_PERMISSION_CAPABILITY, 'attachment.reference.current_or_lki')
+
+
+def is_temporary_defender_permission(effect: Mapping[str, Any]) -> bool:
+    return (
+        effect.get("op") == DEFENDER_TEMPORARY_OPERATION
+        and effect.get("schema_version") in (3, DEFENDER_RULE_VERSION)
+        and "characteristics" not in effect
+    )
+
+
+class DefenderAttachmentScope(StrEnum):
+    ENCHANTED_OR_EQUIPPED_SOURCE = 'enchanted_or_equipped_source'
+    EQUIPPED_CREATURE = 'equipped_creature'
 
 
 @dataclass(frozen=True, slots=True)

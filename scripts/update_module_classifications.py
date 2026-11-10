@@ -48,13 +48,15 @@ def _hash(value: Any) -> str:
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative == "quorune/announced_damage.py":
         return "rules"
+    if relative in {"quorune/triggered_mana.py", "quorune/triggered_mana_model.py"}:
+        return "rules"
     if relative == "quorune/source_tap_effect.py":
         return "domain"
     if relative in {'quorune/legend_rule_model.py', 'quorune/state_based_legend_model.py'}:
         return 'domain'
     if relative=='quorune/state_based_legend_choices.py':return 'rules'
     if relative=='quorune/created_token_cleanup_model.py':return 'domain'
-    if relative=='quorune/turn_skip_model.py':return 'domain'
+    if relative in {'quorune/turn_skip_model.py', 'quorune/mandatory_loop_model.py'}:return 'domain'
     if relative in {'quorune/earthbend_model.py', 'quorune/suspect_model.py'}:return 'domain'
     if relative in {'quorune/dungeon_catalog.py', 'quorune/dungeon_progress.py', 'quorune/next_turn_effect.py'}:return 'domain'
     if relative == 'quorune/apnap_object_payment.py':return 'domain'
@@ -63,7 +65,10 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/battle_cry_resolution_model.py':return 'domain'
     if relative=='quorune/battle_cry_resolution.py':return 'rules'
     if relative=='quorune/entry_x_amount_model.py':return 'domain'
+    if relative == "quorune/targeted_graveyard_cast_model.py":
+        return "domain"
     if relative=='quorune/ravenous_model.py':return 'domain'
+    if relative=='quorune/fixed_top_exile.py':return 'rules'
     if relative=='quorune/variable_resolution_mana_model.py':return 'rules'
     if relative=='quorune/permanent_event_state_model.py':return 'domain'
     if relative=='quorune/alternative_discard_model.py':return 'domain'
@@ -71,6 +76,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/block_characteristic_model.py':return 'domain'
     if relative=='quorune/unblocked_attacker_model.py':return 'domain'
     if relative in {'quorune/damage_recipient_model.py', 'quorune/damage_death_exile_model.py'}:
+        return 'domain'
+    if relative == 'quorune/linked_departure_exile_model.py':
         return 'domain'
     if relative=='quorune/delayed_object_actions.py':return 'semantics'
     if relative=='quorune/reanimation_entry_counters.py':return 'semantics'
@@ -89,6 +96,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/transform_timestamp_model.py':return 'domain'
     if relative=='quorune/face_status_timestamp_model.py':return 'domain'
     if relative=='quorune/face_down_characteristics_model.py':return 'domain'
+    if relative == "quorune/shared_type_doors.py":
+        return "domain"
     if relative=='quorune/composition_batch_order_model.py':return 'domain'
     if relative=='quorune/commander_damage_identity_model.py':return 'domain'
     if relative=='quorune/composition_commander_replacement_model.py':return 'domain'
@@ -129,6 +138,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/recipient_modifier_model.py",
         "quorune/shared_creature_type_model.py",
         "quorune/state_trigger_model.py",
+        "quorune/cast_event_type_model.py",
         "quorune/cast_source_placement_model.py",
         "quorune/printed_mana_cost_model.py",
         "quorune/library_order_model.py",
@@ -481,6 +491,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/land_entry_coordination.py",
         "quorune/landwalk.py",
         "quorune/mana.py",
+        "quorune/mana_planning.py",
         "quorune/mana_activation.py",
         "quorune/mana_provenance.py",
         "quorune/mana_restrictions.py",
@@ -590,8 +601,16 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == "quorune/targeted_graveyard_cast_model.py":
+        return "casting_activation_and_costs"
+    if relative in {
+        "quorune/shared_type_doors.py", "quorune/rules/room_unlock.py", "quorune/rules/room_copy_values.py",
+    }:
+        return "zones_and_object_identity"
     if relative in {'quorune/damage_death_exile_model.py', 'quorune/rules/damage_death_exile.py'}:
         return 'damage'
+    if relative == 'quorune/linked_departure_exile_model.py':
+        return 'zone_transitions'
     if relative in {'quorune/legend_rule_model.py', 'quorune/rules/legend_rule.py',
                     'quorune/state_based_legend_model.py', 'quorune/state_based_legend_choices.py'}:
         return 'state_based_actions'
@@ -830,6 +849,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/counter_keyword_abilities.py",
         "quorune/class_levels.py",
         "quorune/crew.py",
+        "quorune/saddle.py",
         "quorune/cycling_abilities.py",
         "quorune/transmute.py",
         "quorune/station.py",
@@ -971,6 +991,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/cost_payments.py",
         "quorune/mana_spending_model.py",
         "quorune/mana.py",
+        "quorune/mana_planning.py",
         "quorune/mana_activation.py",
         "quorune/mana_provenance.py",
         "quorune/mana_restrictions.py",
@@ -990,6 +1011,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/mana_mode_effects.py",
         "quorune/mana_payment_continuations.py",
         "quorune/mana_undo.py",
+        "quorune/triggered_mana.py",
+        "quorune/triggered_mana_model.py",
         "quorune/semantic_runtime/color_set_mana_abilities.py",
     }:
         return "mana_rules"
@@ -1112,6 +1135,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
         "quorune/turn_skip_model.py",
+        "quorune/mandatory_loop_model.py",
         "quorune/turn_skip_replacements.py",
     }:
         return "turn_priority_and_decisions"

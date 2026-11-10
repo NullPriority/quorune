@@ -15,6 +15,7 @@ from ..intrinsic_basic_land_mana import (
     IntrinsicBasicLandManaSpec,
     intrinsic_basic_land_mana_specs,
 )
+from ..shared_type_doors import SHARED_TYPE_FORM, SHARED_TYPE_FORM_CAPABILITY, SharedTypeDoors
 from .ir_model import SourceSpan
 
 
@@ -92,7 +93,26 @@ class IntrinsicBasicLandManaRuleNode:
         return self.intrinsic_mana.to_dict()
 
 
-CardFormNode = CardFormRuleNode | IntrinsicBasicLandManaRuleNode
+@dataclass(frozen=True, slots=True)
+class SharedTypeDoorRuleNode:
+    face_id: str
+    source_text: str
+    span: SourceSpan
+    faces: tuple[str, str]
+    capability_dependencies: tuple[str, ...] = (SHARED_TYPE_FORM_CAPABILITY,)
+
+    def __post_init__(self) -> None:
+        SharedTypeDoors(self.faces)
+        if (self.face_id != self.faces[0] or not self.source_text
+                or self.span != SourceSpan(start=0, end=len(self.source_text), line=1)
+                or self.capability_dependencies != (SHARED_TYPE_FORM_CAPABILITY,)):
+            raise ValueError("Shared type line requires a pinned first-face type-line declaration")
+
+    def descriptor(self) -> dict[str, Any]:
+        return {"kind": SHARED_TYPE_FORM, "schema_version": 1, "faces": list(self.faces)}
+
+
+CardFormNode = CardFormRuleNode | IntrinsicBasicLandManaRuleNode | SharedTypeDoorRuleNode
 
 
 @dataclass(frozen=True, slots=True)
@@ -259,9 +279,21 @@ def compile_card_form_rules(
         compiled_face_ids=compiled_face_ids,
     )
     return CardFormRuleCompilation(
-        nodes=(*entry.nodes, *mana.nodes),
+        nodes=(*entry.nodes, *mana.nodes, *_shared_type_forms(record, compiled_face_ids)),
         residuals=(*entry.residuals, *mana.residuals),
     )
+
+
+def _shared_type_forms(record: CardRecord, compiled_face_ids: Sequence[str]) -> tuple[SharedTypeDoorRuleNode, ...]:
+    from .room_bindings import printed_room_form
+
+    faces = printed_room_form(record)
+    if faces is None:
+        return ()
+    if tuple(compiled_face_ids) != faces:
+        raise ValueError("Compiled Room face identities disagree with their printed form")
+    type_line = record.faces[0]["type_line"]
+    return (SharedTypeDoorRuleNode(faces[0], type_line, SourceSpan(0, len(type_line), 1), faces),)
 
 
 __all__ = [

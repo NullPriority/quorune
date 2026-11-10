@@ -12,7 +12,2848 @@
     {"oracle_id":"00000000-0000-4000-8000-000000000957","name":"Generic Controller Payment Draw","mana_cost":"{U}","cmc":1,"type_line":"Instant","oracle_text":"Counter target spell unless its controller pays {3}.\nDraw a card.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8000-000000000958","name":"Generic Activated Controller Payment","mana_cost":"{U}","cmc":1,"type_line":"Creature — Wizard","oracle_text":"Haste\n{U}, {T}: Counter target spell unless its controller pays {1}.","power":"2","toughness":"3","colors":["U"],"color_identity":["U"],"keywords":["Haste"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8000-000000000959","name":"Generic Entry Controller Payment","mana_cost":"{U}","cmc":1,"type_line":"Creature — Wizard","oracle_text":"Flash\nWhen this creature enters, counter target noncreature spell unless its controller pays {1}.","power":"2","toughness":"3","colors":["U"],"color_identity":["U"],"keywords":["Flash"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"00000000-0000-4000-8000-000000000960","name":"Generic Uncounterable Payment Victim","mana_cost":"{U}","cmc":1,"type_line":"Instant","oracle_text":"This spell can't be countered.\nDraw a card.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+    {"oracle_id":"00000000-0000-4000-8000-000000000960","name":"Generic Uncounterable Payment Victim","mana_cost":"{U}","cmc":1,"type_line":"Instant","oracle_text":"This spell can't be countered.\nDraw a card.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {
+      "oracle_id": "2c51e20b-07b2-4c96-8d73-87379aafbc7c",
+      "name": "Countervailing Winds",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1} for each card in your graveyard.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-07-14",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a8fe6204-9f55-45e5-99b3-43f2761ce8a3",
+      "name": "Rakshasa's Disdain",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1} for each card in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-01-23",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "name": "Circular Logic",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1} for each card in your graveyard.\nMadness {U} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Madness"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "983a2a50-3634-4783-8576-30916c3d0818",
+      "name": "Oppressive Will",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1} for each card in your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-06-03",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a2845761-7e43-4a88-8fc2-2d95d471b00c",
+      "name": "Override",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1} for each artifact you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-10-02",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a84c9507-d054-4770-84f3-5a4b5a01d826",
+      "name": "Ixidor's Will",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {2} for each Wizard on the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-10-07",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f30e9371-2c12-496a-80e1-40c3408defed",
+      "name": "Spell Syphon",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1} for each blue permanent you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f9bf996e-ae14-40a3-a8d8-f5725ddaa270",
+      "name": "Spell Stutter",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {2} plus an additional {1} for each Faerie you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "934c50aa-7d2e-4c9e-b91b-1e8c4055e1c6",
+      "name": "Spell Rupture",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {X}, where X is the greatest power among creatures you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-02-01",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4543a99d-eefa-470d-976d-11250524ae28",
+      "name": "Evasive Action",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Domain — Counter target spell unless its controller pays {1} for each basic land type among lands you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Domain"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-03-19",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bc5d9899-1a1c-4779-b9f0-b00f2c233699",
+      "name": "Thassa's Rebuff",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {X}, where X is your devotion to blue. (Each {U} in the mana costs of permanents you control counts toward your devotion to blue.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ede61683-fa78-4103-8248-e0e64162ed49",
+      "name": "Rethink",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {X}, where X is its mana value.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2000-06-05",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Scry",
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Faerie Seer",
+      "oracle_id": "b2e65e8b-5f08-4cc2-ab1d-00f8903dbea2",
+      "oracle_text": "Flying\nWhen this creature enters, scry 2. (Look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": "1",
+      "type_line": "Creature — Faerie Wizard"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "mana_cost": "{3}",
+      "name": "Darksteel Ingot",
+      "oracle_id": "a2529491-7389-4cfa-92d2-145eda779603",
+      "oracle_text": "Indestructible (Effects that say \"destroy\" don't destroy this artifact.)\n{T}: Add one mana of any color.",
+      "power": null,
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "e3886fe8-9b76-4613-8891-4ec74657c087",
+      "name": "Glorious Anthem",
+      "mana_cost": "{1}{W}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Creatures you control get +1/+1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f1750962-a87c-49f6-b731-02ae971ac6ea",
+      "name": "Hallowed Fountain",
+      "mana_cost": "",
+      "type_line": "Land — Plains Island",
+      "oracle_text": "({T}: Add {W} or {U}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "cmc": 0.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "d6ffdaf0-ac08-4de9-bbce-2eab2f86bcca",
+      "name": "Wind Drake",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Drake",
+      "oracle_text": "Flying",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "3428287b-cfd5-45bc-b5f9-1e3f5a425a68",
+      "name": "Mind Spring",
+      "mana_cost": "{X}{U}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Draw X cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000008580",
+      "name": "Generic Payment Sacrifice Wizard",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Creature — Wizard",
+      "oracle_text": "Sacrifice this creature: Add {C}.",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "085bc7be-bd44-40af-8e8f-a1a8006fe22c",
+      "name": "Assert Authority",
+      "mana_cost": "{5}{U}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nCounter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Affinity"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-10-02",
+      "cmc": 7.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "60fc5eb0-95d6-49b0-a538-945ef599e484",
+      "name": "Defabricate",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Counter target artifact or enchantment spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.\n• Counter target activated or triggered ability.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b665a64b-4772-42dd-9fd2-fd8598e689ba",
+      "name": "Deny Existence",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target creature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-04-08",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0146de73-29bf-415a-b450-11074553f715",
+      "name": "Deny the Divine",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target creature or enchantment spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4b2e9aa9-6f91-41de-84b6-e9a89be06a53",
+      "name": "Dissipate",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-09-24",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
+      "name": "Horribly Awry",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Devoid (This card has no color.)\nCounter target creature spell with mana value 4 or less. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Devoid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-10-02",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1b721ad3-d0f6-4eec-9bf0-f57ea9dfa392",
+      "name": "Lapse of Certainty",
+      "mana_cost": "{2}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell. If that spell is countered this way, put it on top of its owner's library instead of into that player's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-02-06",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "dc9ae094-139f-4f28-9d4e-4d6def765744",
+      "name": "Liquify",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell with mana value 3 or less. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-02-04",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Memory Lapse",
+      "oracle_id": "bbfb3e4a-b389-4391-8141-13b68c0ef2e0",
+      "oracle_text": "Counter target spell. If that spell is countered this way, put it on top of its owner's library instead of into that player's graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "7c6e0198-edd8-42b8-ba1b-549e1713d188",
+      "name": "No Escape",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target creature or planeswalker spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.\nScry 1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-05-03",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ead1ee6a-e0da-46d5-89e8-31e8c0270bc2",
+      "name": "No More Lies",
+      "mana_cost": "{W}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "198fed4c-297e-41c0-a172-e471c7401fbb",
+      "name": "Reject",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target creature or planeswalker spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d71cd08e-3e84-41ff-b9db-9e343c0af6b4",
+      "name": "Remand",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell. If that spell is countered this way, put it into its owner's hand instead of into that player's graveyard.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bfaf376f-90f9-45d9-bfbe-dd84a2a4688b",
+      "name": "Spell Shrivel",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Devoid (This card has no color.)\nCounter target spell unless its controller pays {4}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Devoid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-10-02",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "318f7f70-e374-40ef-8afb-3389c10461d8",
+      "name": "Syncopate",
+      "mana_cost": "{X}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {X}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "cmc": 1.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3d9f854e-1ee5-4aa1-a33b-d3ae08f15dd0",
+      "name": "Void Shatter",
+      "mana_cost": "{1}{U}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Devoid (This card has no color.)\nCounter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Devoid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-01-22",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "d4ab7848-5c37-4c6b-be29-0bb703333e5b",
+      "name": "Spell Crumple",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell. If that spell is countered this way, put it on the bottom of its owner's library instead of into that player's graveyard. Put Spell Crumple on the bottom of its owner's library.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "name": "Think Twice",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "6d56bd32-f47a-4e54-a88e-b69d16283ea4",
+      "name": "Dazzling Denial",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {2}. If you control a Bird, counter that spell unless its controller pays {4} instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d799a2c4-628a-45da-b9ca-0337c46e3e14",
+      "name": "Lofty Denial",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1}. If you control a creature with flying, counter that spell unless its controller pays {4} instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bbe370ba-412b-4052-89d9-2d0ae4928118",
+      "name": "Faerie Trickery",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Kindred Instant — Faerie",
+      "oracle_text": "Counter target non-Faerie spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-10-12",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fa43d688-99de-4774-ac2d-2d01866eef58",
+      "name": "Overrule",
+      "mana_cost": "{X}{W}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {X}. You gain X life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-03-30",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4682c39e-c21a-4c8b-bc63-9cbac59dc563",
+      "name": "Mindswipe",
+      "mana_cost": "{X}{U}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {X}. Mindswipe deals X damage to that spell's controller.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "13ca3ede-a4c8-463d-b160-99b4071034b0",
+      "name": "Frightful Delusion",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {1}. That player discards a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-30",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f28a373b-4a8d-40a5-ace1-3bbd8489ad36",
+      "name": "Don't Make a Sound",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {2}. If they do, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Surveil"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "76fdbc2c-d2b1-466f-9230-06e187bcc9e6",
+      "name": "Divert Disaster",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell unless its controller pays {2}. If they do, you create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e8ebf5cb-3a26-4bbd-812b-414c129e4bb7",
+      "name": "Abstruse Interference",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Devoid (This card has no color.)\nCounter target spell unless its controller pays {1}. You create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\" ({C} represents colorless mana.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Devoid"
+      ],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2016-01-22",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Suntail Hawk",
+      "oracle_id": "a8d31e2f-7b2e-4135-8074-9e6ef778bd80",
+      "oracle_text": "Flying",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2013-07-19",
+      "toughness": "1",
+      "type_line": "Creature — Bird"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Jump",
+      "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
+      "oracle_text": "Target creature gains flying until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-07-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fb868840-09fa-49b1-85cb-b08ad065e972",
+      "name": "Bitterblossom",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Kindred Enchantment — Faerie",
+      "oracle_text": "At the beginning of your upkeep, you lose 1 life and create a 1/1 black Faerie Rogue creature token with flying.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-07-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "name": "Universal Automaton",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact Creature — Shapeshifter",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Changeling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "2c51e20b-07b2-4c96-8d73-87379aafbc7c",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Count the number of cards in your graveyard as Countervailing Winds resolves to determine how much mana the controller of the target spell must pay to avoid the spell being countered. Countervailing Winds is still on the stack at this time and won’t count toward this number."
+    },
+    {
+      "oracle_id": "a8fe6204-9f55-45e5-99b3-43f2761ce8a3",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "Count the number of cards in your graveyard as Rakshasa’s Disdain resolves to determine how much mana the controller of the target spell must pay to avoid the spell being countered. Rakshasa’s Disdain is still on the stack at this time and won’t count toward this number."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you discard a card with madness to pay the cost of a spell or activated ability, that card's madness triggered ability (and the spell that card becomes, if you choose to cast it) will resolve before the spell or ability the discard paid for."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Cards are discarded in a Magic game only from a player's hand. Effects that put cards into a player's graveyard from anywhere else do not cause those cards to be discarded."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you discard a card with madness while a spell or ability is resolving, it moves immediately to exile. Continue resolving that spell or ability, noting that the card you discarded is not in your graveyard at this time. Its madness triggered ability will be placed onto the stack once that spell or ability has completely resolved."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A card with madness that's discarded counts as having been discarded even though it's put into exile rather than a graveyard. If it was discarded to pay a cost, that cost is still paid. Abilities that trigger when a card is discarded will still trigger."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Casting a spell with madness ignores the timing rules based on the card's card type. For example, you can cast a sorcery with madness if you discard it during an opponent's turn."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Madness works independently of why you're discarding the card. You could discard it to pay a cost, because a spell or ability tells you to, or because you have too many cards in your hand during your cleanup step. You can't discard a card with madness just because you want to, though."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a madness cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you choose not to cast a card with madness when the madness triggered ability resolves, it's put into your graveyard. Madness doesn't give you another chance to cast it later."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A spell cast for its madness cost is put onto the stack like any other spell. It can be countered, copied, and so on. As it resolves, it's put onto the battlefield if it's a permanent card or into its owner's graveyard if it's an instant or sorcery card."
+    },
+    {
+      "oracle_id": "b071bbaf-79fa-413b-807b-2cc86c8a8125",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Count the number of cards in your graveyard as Circular Logic resolves to determine how much the controller of the target spell has to pay. Circular Logic is still on the stack at that time. It doesn't count itself."
+    },
+    {
+      "oracle_id": "934c50aa-7d2e-4c9e-b91b-1e8c4055e1c6",
+      "published_at": "2013-01-24",
+      "source": "wotc",
+      "comment": "The value of X is the greatest power among creatures you control when Spell Rupture resolves. If you control no creatures at that time, X will be 0. The target spell’s controller can choose to pay {0} (simply by indicating they wish to do so). That player can also choose to not pay {0} and the spell will be countered."
+    },
+    {
+      "oracle_id": "4543a99d-eefa-470d-976d-11250524ae28",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The basic land types are Plains, Island, Swamp, Mountain, and Forest. Land types other than basic land types (such as Desert) don't contribute to domain abilities."
+    },
+    {
+      "oracle_id": "4543a99d-eefa-470d-976d-11250524ae28",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Domain abilities count the number of basic land types among lands you control, not how many lands you control or how many of any type."
+    },
+    {
+      "oracle_id": "bc5d9899-1a1c-4779-b9f0-b00f2c233699",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s)."
+    },
+    {
+      "oracle_id": "bc5d9899-1a1c-4779-b9f0-b00f2c233699",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Numeric mana symbols ({0}, {1}, and so on) in mana costs of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "bc5d9899-1a1c-4779-b9f0-b00f2c233699",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Mana symbols in the text boxes of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "bc5d9899-1a1c-4779-b9f0-b00f2c233699",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it's still on the battlefield at that time."
+    },
+    {
+      "oracle_id": "ede61683-fa78-4103-8248-e0e64162ed49",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The spell’s controller gets the option to pay when this spell resolves."
+    },
+    {
+      "oracle_id": "60fc5eb0-95d6-49b0-a538-945ef599e484",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Triggered abilities use the word \"when,\" \"whenever,\" or \"at.\" They're often written as \"[Trigger condition], [effect].\""
+    },
+    {
+      "oracle_id": "60fc5eb0-95d6-49b0-a538-945ef599e484",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Turn-based actions and special actions like the normal card draw, combat damage, or turning a face-down creature face up can't be targeted. Mana abilities also can't be targeted."
+    },
+    {
+      "oracle_id": "60fc5eb0-95d6-49b0-a538-945ef599e484",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The last mode can target delayed triggered abilities. Notably, it can target the delayed triggered ability that exiles an unearthed permanent at the beginning of the next end step. If that delayed triggered ability is countered, the unearthed permanent remains on the battlefield indefinitely. It will still be exiled, however, if it would die or otherwise leave the battlefield for any other reason."
+    },
+    {
+      "oracle_id": "60fc5eb0-95d6-49b0-a538-945ef599e484",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keyword abilities (such as equip and unearth) are activated abilities and will have colons in their reminder text."
+    },
+    {
+      "oracle_id": "4b2e9aa9-6f91-41de-84b6-e9a89be06a53",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If the spell is not countered (because the spell it targets can't be countered), then it does not get exiled."
+    },
+    {
+      "oracle_id": "4b2e9aa9-6f91-41de-84b6-e9a89be06a53",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The card does not go to the graveyard before being exiled."
+    },
+    {
+      "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "The mana value of a spell doesn't change if its controller paid an alternative cost (such as an evoke cost) to cast it."
+    },
+    {
+      "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Cards with devoid use frames that are variations of the transparent frame traditionally used for Eldrazi. The top part of the card features some color over a background based on the texture of the hedrons that once imprisoned the Eldrazi. This coloration is intended to aid deckbuilding and game play."
+    },
+    {
+      "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Other cards and abilities can give a card with devoid color. If that happens, it's just the new color, not that color and colorless."
+    },
+    {
+      "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "A card with devoid is just colorless. It's not colorless and the colors of mana in its mana cost."
+    },
+    {
+      "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "If a card loses devoid, it will still be colorless. This is because effects that change an object's color (like the one created by devoid) are considered before the object loses devoid."
+    },
+    {
+      "oracle_id": "9cac23a1-a0b3-490c-aea2-dc2928f6dc9e",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Devoid works in all zones, not just on the battlefield."
+    },
+    {
+      "oracle_id": "bbfb3e4a-b389-4391-8141-13b68c0ef2e0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Memory Lapse has a self-replacement effect that replaces the spell going to the graveyard before any other effect can replace that event. If the spell was cast using flashback, however, flashback will change the spell's destination from its owner's library to exile."
+    },
+    {
+      "oracle_id": "7c6e0198-edd8-42b8-ba1b-549e1713d188",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "A creature or planeswalker spell that can’t be countered is a legal target for No Escape. The spell won’t be countered when No Escape resolves, but you’ll still scry 1."
+    },
+    {
+      "oracle_id": "d71cd08e-3e84-41ff-b9db-9e343c0af6b4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you target a card that was cast with flashback with Remand, the card will still be exiled."
+    },
+    {
+      "oracle_id": "d71cd08e-3e84-41ff-b9db-9e343c0af6b4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Remand can target a spell that can't be countered. That spell won't be countered or returned to its owner's hand, but you'll draw a card."
+    },
+    {
+      "oracle_id": "bfaf376f-90f9-45d9-bfbe-dd84a2a4688b",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Other cards and abilities can give a card with devoid color. If that happens, it’s just the new color, not that color and colorless."
+    },
+    {
+      "oracle_id": "bfaf376f-90f9-45d9-bfbe-dd84a2a4688b",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "If a card loses devoid, it will still be colorless. This is because effects that change an object’s color (like the one created by devoid) are considered before the object loses devoid."
+    },
+    {
+      "oracle_id": "bfaf376f-90f9-45d9-bfbe-dd84a2a4688b",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Cards with devoid use frames that are variations of the transparent frame traditionally used for Eldrazi. The top part of the card features some color over a background based on the texture of the hedrons that once imprisoned the Eldrazi. This coloration is intended to aid deckbuilding and game play."
+    },
+    {
+      "oracle_id": "bfaf376f-90f9-45d9-bfbe-dd84a2a4688b",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "A card with devoid is just colorless. It’s not colorless and the colors of mana in its mana cost."
+    },
+    {
+      "oracle_id": "bfaf376f-90f9-45d9-bfbe-dd84a2a4688b",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Devoid works in all zones, not just on the battlefield."
+    },
+    {
+      "oracle_id": "d4ab7848-5c37-4c6b-be29-0bb703333e5b",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If the spell is an illegal target when Spell Crumple tries to resolve, it won’t resolve and none of its effects will happen. Spell Crumple will be put into its owner’s graveyard."
+    },
+    {
+      "oracle_id": "d4ab7848-5c37-4c6b-be29-0bb703333e5b",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If the targeted spell can’t be countered, it won’t be put onto the bottom of its owner’s library. Spell Crumple will still be put on the bottom of its owner’s library."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "6d56bd32-f47a-4e54-a88e-b69d16283ea4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If you control more than one Bird, the controller of the target spell still only needs to pay {4}."
+    },
+    {
+      "oracle_id": "d799a2c4-628a-45da-b9ca-0337c46e3e14",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "If you control more than one creature with flying, Lofty Denial still requires only {4}."
+    },
+    {
+      "oracle_id": "bbe370ba-412b-4052-89d9-2d0ae4928118",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "While it appears only on cards that already have other card types, kindred is a card type and will be counted by effects that refer to the number of card types among cards in a zone."
+    },
+    {
+      "oracle_id": "bbe370ba-412b-4052-89d9-2d0ae4928118",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "This cards was originally printed with the \"tribal\" card type. That card type has been replaced with \"kindred\". This change does not affect the gameplay function of this card."
+    },
+    {
+      "oracle_id": "bbe370ba-412b-4052-89d9-2d0ae4928118",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Kindred is a card type that allows noncreature cards to have creature types. For example, Echoes of Eternity is an Eldrazi (although not a creature) while on the battlefield and an Eldrazi card (although not a creature card) in zones other than the battlefield."
+    },
+    {
+      "oracle_id": "fa43d688-99de-4774-ac2d-2d01866eef58",
+      "published_at": "2006-05-01",
+      "source": "wotc",
+      "comment": "You gain the life whether or not the spell’s controller pays {X} and whether or not the spell is countered."
+    },
+    {
+      "oracle_id": "4682c39e-c21a-4c8b-bc63-9cbac59dc563",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If the controller of the target spell pays {X}, the spell won’t be countered. Mindswipe will still deal damage to that player."
+    },
+    {
+      "oracle_id": "4682c39e-c21a-4c8b-bc63-9cbac59dc563",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If the target spell is an illegal target as Mindswipe tries to resolve (perhaps because it was countered by another spell or ability), Mindswipe won’t resolve and none of its effects will happen. No damage will be dealt."
+    },
+    {
+      "oracle_id": "13ca3ede-a4c8-463d-b160-99b4071034b0",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "The player discards a card even if they pay {1}."
+    },
+    {
+      "oracle_id": "13ca3ede-a4c8-463d-b160-99b4071034b0",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "You must target a spell in order to cast Frightful Delusion. You can’t cast it without a legal target just to make a player discard a card."
+    },
+    {
+      "oracle_id": "e8ebf5cb-3a26-4bbd-812b-414c129e4bb7",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "You get the Eldrazi Scion even if the controller of the spell pays {1}."
+    },
+    {
+      "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "To work as an evasion ability, an attacking creature must already have flying when the declare blockers step begins. Once a creature has become blocked, giving it flying won’t change that."
+    },
+    {
+      "oracle_id": "fb868840-09fa-49b1-85cb-b08ad065e972",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "The effect is mandatory. You'll lose 1 life even if you have only 1 life left."
+    },
+    {
+      "oracle_id": "fb868840-09fa-49b1-85cb-b08ad065e972",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "The life loss isn't a payment. You'll get a token even if you had 0 life (and another effect is stopping you from losing the game)."
+    },
+    {
+      "oracle_id": "fb868840-09fa-49b1-85cb-b08ad065e972",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "While it appears only on cards that already have other card types, kindred is a card type and will be counted by effects that refer to the number of card types among cards in a zone."
+    },
+    {
+      "oracle_id": "fb868840-09fa-49b1-85cb-b08ad065e972",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Kindred is a card type that allows noncreature cards to have creature types. For example, Echoes of Eternity is an Eldrazi (although not a creature) while on the battlefield and an Eldrazi card (although not a creature card) in zones other than the battlefield."
+    },
+    {
+      "oracle_id": "fb868840-09fa-49b1-85cb-b08ad065e972",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "This cards was originally printed with the \"tribal\" card type. That card type has been replaced with \"kindred\". This change does not affect the gameplay function of this card."
+    }
+  ]
 }

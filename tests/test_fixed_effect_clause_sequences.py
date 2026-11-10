@@ -9,7 +9,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import DB_PATH, keep_all, load_assets, make_session
+from common import DB_PATH, ROOT, keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.card_programs.adapters import compile_card_program
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.closed_effect_programs import (
@@ -19,6 +20,7 @@ from quorune.compiler.fixed_effect_clause_sequences import (
     FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
     fixed_effect_clause_sequence_template,
 )
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.model import StackItem
 from quorune.oracle_ir import (
     ORACLE_COMPILER_VERSION,
@@ -36,6 +38,7 @@ from quorune.rules.fixed_effect_clause_shapes import (
     FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY,
     fixed_effect_clause_sequence_node_capabilities,
 )
+from scripts.build_test_database import build_fixture_database
 
 
 def sequence_record(
@@ -719,6 +722,124 @@ class FixedEffectClauseSequenceRuntimeTests(unittest.TestCase):
             "effect.life",
             [event.code for event in engine.state.events[event_start:]],
         )
+
+
+class OrderedTokenAbilityNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'ordered-token-abilities.sqlite3'
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/typed-token-ability-program-cards.json',
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Ordered token abilities', [
+            DeckEntry('Isamaru, Hound of Konda', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30),
+        ], ['Isamaru, Hound of Konda'])
+
+    def battlefield_tokens(self, session):
+        return [card for card in session.state.cards.values() if card.is_token and card.zone == 'battlefield']
+
+    def test_growth_spasm_creates_a_native_mana_token_after_the_private_search(self):
+        session = self.session(60877701)
+        spell = self.add(session.engine, 'Growth Spasm', zone='hand')
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={'C': 2, 'G': 1})
+        self.checkpoint(session)
+        self.cast_for(session, 'A', spell)
+        self.assertEqual('semantic.search', self.resolve(session).kind)
+        self.assertEqual([], self.battlefield_tokens(session))
+        self.assertIsNone(session.packet('pilot:B', full=True)['decision'])
+        session = self.replay(session, load=True)
+        decision = session.packet('pilot:A', full=True)['decision']
+        land_ref = decision['ctx']['search_cards'][0]['id']
+        command = {'action_id': 'choose', 'search_cards': [land_ref]}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        selected = session.act('pilot:A', command)
+        self.assertTrue(selected.ok, selected.summary)
+        self.settle(session)
+        land = next(card for card in session.state.cards.values() if card.ref == land_ref)
+        self.assertEqual(('battlefield', True), (land.zone, land.tapped))
+        token, = self.battlefield_tokens(session)
+        self.priority(session, 'A')
+        actions = session.packet('pilot:A', full=True)['decision']['legal_actions']
+        offered, = [action for action in actions if action['id'].startswith(f'activate:{token.ref}:')]
+        colorless = session.state.players['A'].mana_pool.get('C', 0)
+        command = {'action_id': offered['id'], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:C', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        paid = session.act('pilot:A', command)
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertEqual(colorless + 1, session.state.players['A'].mana_pool.get('C', 0))
+        self.assertEqual([], self.battlefield_tokens(session))
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_spawning_breath_creates_no_token_if_its_only_target_is_illegal(self):
+        session = self.session(60877702)
+        spell = self.add(session.engine, 'Spawning Breath', zone='hand')
+        blocker = self.add(session.engine, 'Grizzly Bears', seat='B')
+        bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+        self.add(session.engine, 'Island', seat='B')
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={'C': 1, 'R': 1})
+        self.checkpoint(session)
+        self.cast_for(session, 'A', spell, [blocker.ref])
+        self.cast_for(session, 'B', bounce, [blocker.ref])
+        self.resolve_top(session)
+        self.assertEqual('hand', session.state.cards[blocker.object_id].zone)
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual('graveyard', session.state.cards[spell.object_id].zone)
+        self.assertEqual([], self.battlefield_tokens(session))
+        self.replay(session, load=True)
+
+    def test_make_mischief_creates_a_token_with_its_own_targeted_death_trigger(self):
+        session = self.session(60877703)
+        spell = self.add(session.engine, 'Make Mischief', zone='hand')
+        removal = self.add(session.engine, 'Murder', seat='B', zone='hand')
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={'C': 2, 'R': 1})
+        session.state.players['B'].mana_pool.update({'C': 1, 'B': 2})
+        self.checkpoint(session)
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        self.cast_for(session, 'A', spell, ['B'])
+        self.resolve_top(session)
+        self.assertEqual(life['B'] - 1, session.state.players['B'].life)
+        token, = self.battlefield_tokens(session)
+        self.cast_for(session, 'B', removal, [token.ref])
+        self.resolve_top(session)
+        self.assertEqual([], self.battlefield_tokens(session))
+        self.assertEqual('semantic.target', session.state.pending_decision.kind)
+        self.assertIsNone(session.packet('pilot:B', full=True)['decision'])
+        session = self.replay(session, load=True)
+        self.target(session, 'A', ['D'])
+        trigger, = session.state.stack
+        self.assertEqual(token.object_id, trigger.source_object_id)
+        self.resolve_top(session)
+        self.assertEqual({**life, 'B': life['B'] - 1, 'D': life['D'] - 1},
+                         {seat: player.life for seat, player in session.state.players.items()})
+        self.replay(session, load=True)
+
+    def test_ordered_token_component_requires_its_typed_ability_mechanic(self):
+        from quorune.fixed_token_production import TYPED_TOKEN_ABILITY_CAPABILITY_ID, TYPED_TOKEN_ABILITY_MECHANIC_ID
+
+        card = self.db.lookup('Corpsehatch', fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = [node for face in ir.faces for node in face.nodes if node.kind == 'spell_ability']
+        self.assertIn(TYPED_TOKEN_ABILITY_CAPABILITY_ID, node.capability_dependencies)
+        self.assertEqual(('destroy', 'create_token'), tuple(effect['op'] for effect in node.effects))
+        self.assertEqual((), fixed_effect_clause_sequence_node_capabilities(
+            effects=node.effects, target_schema=node.target_schema,
+            mechanic_ids=set(node.mechanics) - {TYPED_TOKEN_ABILITY_MECHANIC_ID},
+        ))
 
 
 if __name__ == "__main__":

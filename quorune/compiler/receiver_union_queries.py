@@ -5,11 +5,15 @@ import re
 
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..object_predicate import ObjectQuerySpec
+from ..type_subtype_vocabulary import MOUNT_VEHICLE_SUBTYPES
 
 
 _COLORS = {'white': 'W', 'blue': 'U', 'black': 'B', 'red': 'R', 'green': 'G'}
 _LANDS = {'plains': 'plains', 'islands': 'island', 'swamps': 'swamp',
           'mountains': 'mountain', 'forests': 'forest'}
+_MOUNT_VEHICLE_RECEIVERS = re.compile(
+    r'(?P<other>other )?(?:mounts (?:and|and/or) vehicles|mount or vehicle) you control'
+)
 
 
 def _leaf(text: str, *, creatures: bool = False) -> ObjectQuerySpec | None:
@@ -34,6 +38,10 @@ def fixed_receiver_union_subject(subject: str) -> tuple[str, ObjectQuerySpec, bo
     """Parse a flat union with shared or explicitly repeated controller scope."""
     text = ' '.join(subject.casefold().split())
     text = text.removeprefix('each ')
+    mixed = _MOUNT_VEHICLE_RECEIVERS.fullmatch(text)
+    if mixed is not None:
+        return ('source_controller', ObjectQuerySpec(zones=('battlefield',), subtypes_any=MOUNT_VEHICLE_SUBTYPES),
+            mixed['other'] is not None)
     if ' and ' not in text or ', ' in text or ' or ' in text:
         return None
     global_other = text.startswith('other ')

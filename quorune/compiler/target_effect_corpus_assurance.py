@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v15"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v16"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -61,9 +61,15 @@ SEQUENCE_TEMPLATE_ID = (
 TARGET_TEMPLATE_IDS = frozenset(
     {STANDALONE_TEMPLATE_ID, SEQUENCE_TEMPLATE_ID}
 )
+TRANSFORM_COMPOSING_TEMPLATE_IDS = frozenset(
+    f"fixed-{role}-{form}-trigger-v1"
+    for role in ("counter", "typed-effect")
+    for form in ("source-transform-pair", "source-transforms-into", "controlled-transforms-into")
+)
 COMPOSING_TEMPLATE_IDS = frozenset(
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS
     | FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS
+    | TRANSFORM_COMPOSING_TEMPLATE_IDS
     | {"fixed-source-exploit-result-v1", "fixed-expend-trigger-v1", "public-query-characteristic-amount-v1", "linked-attack-exert-result-v1"}
 )
 SUPPORTED_CONTEXTS = (
@@ -522,6 +528,7 @@ def grammar_source_fingerprint() -> str:
         activation_x_symbols,
         _required_capabilities,
         _composing_event_capabilities,
+        _transform_composition_capabilities,
         _exert_composition_capabilities,
         exert_attack_nodes,
     )
@@ -530,6 +537,7 @@ def grammar_source_fingerprint() -> str:
         "keywords": sorted(FIXED_TARGET_CHARACTERISTIC_KEYWORDS),
         "amount_mechanic_capabilities": AMOUNT_MECHANIC_CAPABILITIES,
         "distinct_clause_target_coverage": DISTINCT_CLAUSE_TARGET_COVERAGE,
+        "transform_composing_templates": sorted(TRANSFORM_COMPOSING_TEMPLATE_IDS),
         "sources": [inspect.getsource(value) for value in values],
     }
     return _sha256(payload)
@@ -654,11 +662,15 @@ def _resolution_body(
         "activated_ability",
         GRANTED_ACTIVATED_ABILITY_KIND,
     }:
-        abilities = parse_activated_abilities(
-            card_name=face_name or record.name,
-            oracle_text=text,
-            keywords=_face_keywords(record, face_index),
-        )
+        from ..activation_condition_model import PUBLIC_ACTIVATION_FIELD, public_activation_descriptor
+        from .activated_costs import parse_compiled_activation_line
+
+        source_name = face_name or record.name
+        keywords = _face_keywords(record, face_index)
+        abilities, timing = parse_compiled_activation_line(text, card_name=source_name, keywords=keywords)
+        permission = public_activation_descriptor(timing) if timing is not None else None
+        if (node.cost or {}).get(PUBLIC_ACTIVATION_FIELD) != permission:
+            return None
         if len(abilities) != 1:
             return None
         return _activated_effect_material(abilities[0],source_name=face_name or record.name)
@@ -812,8 +824,33 @@ def _exert_composition_capabilities(node, *, record, face_id, face_index, face_n
     return expected.capability_dependencies
 
 
+def _transform_composition_capabilities(node: OracleNode, *, source_name: str) -> tuple[str, ...]:
+    from .fixed_counter_trigger_nodes import (
+        FIXED_COUNTER_EVENT_TRIGGER_MECHANIC, FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC,
+        fixed_counter_trigger_binding,
+    )
+    from ..rules.capabilities import MECHANIC_CAPABILITY_DEPENDENCIES
+    from ..transform_timestamp_model import TRANSFORM_EVENT
+
+    binding = fixed_counter_trigger_binding(_without_parenthetical_reminder(node.text), card_name=source_name)
+    if (binding is None or node.kind != "triggered_ability" or node.event != TRANSFORM_EVENT
+            or node.event != binding.event.value or node.active_zone != binding.active_zone
+            or node.template_id not in {binding.template_id, binding.typed_effect_template_id}
+            or stable_json(node.event_condition) != stable_json(binding.event_condition)):
+        raise TargetEffectAssuranceError("Composed transform target effect lost its printed event binding")
+    mechanic = (FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC
+                if node.template_id == binding.typed_effect_template_id else FIXED_COUNTER_EVENT_TRIGGER_MECHANIC)
+    if mechanic not in node.mechanics:
+        raise TargetEffectAssuranceError("Composed transform target effect lost its trigger mechanic")
+    mechanics = ("cr-603-handling-triggered-abilities", mechanic, *binding.event_mechanics)
+    return tuple(sorted({*binding.explicit_capabilities,
+        *(cap for owner in mechanics for cap in MECHANIC_CAPABILITY_DEPENDENCIES.get(owner, ()))}))
+
+
 def _composing_event_capabilities(node: OracleNode, *, record, face_id, face_index, face_name) -> tuple[str, ...]:
     """Known wrappers must preserve their complete printed event binding."""
+    if node.template_id in TRANSFORM_COMPOSING_TEMPLATE_IDS:
+        return _transform_composition_capabilities(node, source_name=face_name or record.name)
     if node.template_id=='linked-attack-exert-result-v1':
         return _exert_composition_capabilities(node,record=record,face_id=face_id,face_index=face_index,face_name=face_name)
     if node.template_id != 'fixed-expend-trigger-v1':

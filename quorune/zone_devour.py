@@ -73,16 +73,18 @@ def publish_token_devour_sacrifices(committed,*,reason):
 
 def validate_devour_resume(host,batch,effects,selection,*,error_type):
     """A saved choice keeps captured identities instead of refreshing authority."""
-    from .replacement.operations import DevourEntryOperation
+    from .replacement.operations import DevourEntryOperation, ENTRY_OBJECT_SELECTION_OPERATIONS
     selected=[]
     if isinstance(selection,dict) and selection.get('objects'):
         effect=next((e for e in effects if e.effect_id==selection['effect_id']),None)
-        operations=tuple(op for op in effect.operations if isinstance(op,DevourEntryOperation)) if effect is not None else ()
-        if len(operations)!=1:raise error_type('Selected replacement has no Devour identity contract')
-        operation=operations[0];candidates={obj.ref:obj for obj in operation.candidates}
-        for ref in selection['objects']:
-            if ref not in candidates:raise error_type('Selected Devour object was not captured')
-            selected.append((operation.controller,operation.spec,candidates[ref]))
+        operations=tuple(op for op in effect.operations if isinstance(op,ENTRY_OBJECT_SELECTION_OPERATIONS)) if effect is not None else ()
+        if len(operations)!=1:raise error_type('Selected replacement has no entry object identity contract')
+        operation=operations[0]
+        if isinstance(operation, DevourEntryOperation):
+            candidates={obj.ref:obj for obj in operation.candidates}
+            for ref in selection['objects']:
+                if ref not in candidates:raise error_type('Selected Devour object was not captured')
+                selected.append((operation.controller,operation.spec,candidates[ref]))
     for event in batch.events:
         for raw in event.payload.get('devour_proposals',()):
             proposal=DevourProposal.from_dict(raw)

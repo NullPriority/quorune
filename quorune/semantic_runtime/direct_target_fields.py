@@ -7,6 +7,8 @@ from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, ImmutableValueError, freeze_value
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
+from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
+from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from ..selection.target_query import target_identity_matches_snapshot
 
@@ -28,6 +30,13 @@ _MUTATING_TARGET_FIELDS = {
 def bound_mutation_target_overrides(host, effect, item, resolve_reference):
     """Omit mutations of a bound incarnation lost during earlier instructions."""
     field = _MUTATING_TARGET_FIELDS.get(effect.get('op'))
+    if effect.get('op') == 'move' and GRAVEYARD_LIBRARY_TARGET_FIELD in effect:
+        field = 'card'
+    if effect.get("op") == "choose_damage_source":
+        shield = effect.get("shield")
+        subject = shield.get("subject") if isinstance(shield, Mapping) else None
+        if isinstance(subject, str) and subject.startswith("$target_group.") and resolve_reference(subject) is None:
+            return {"target": None}
     reference = effect.get(field) if field is not None else None
     if not isinstance(reference, str) or not reference.startswith('$target'):
         return {}
@@ -53,7 +62,8 @@ class DirectTargetFields:
 def bound_graveyard_return_target_snapshot(effect, item, resolve_reference):
     """Retain the original target identity across resolution-time prefixes."""
     if (effect.get('op') != 'return_graveyard_card_to_owner_hand'
-            and not (effect.get('op')=='reanimate' and effect.get('schema_version')==3)):
+            and not (effect.get('op')=='reanimate' and effect.get('schema_version') in (3, *REANIMATION_FOLLOWUP_VERSIONS))
+            and not (effect.get('op') == 'move' and effect.get('from') == 'graveyard' and 'attacking_entry' in effect)):
         return {}
     reference = effect.get('card')
     if not isinstance(reference, str) or not reference.startswith('$target'):

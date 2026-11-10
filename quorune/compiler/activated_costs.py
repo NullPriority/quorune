@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
+import re
+from typing import Any, Sequence
 
-from ..abilities import ActivatedAbility, ActivationLimit
+from ..abilities import ActivatedAbility, ActivationLimit, parse_activated_abilities
+from ..activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD
+from ..activation_cost_modifiers import ability_local_mana_reduction_capabilities
 from ..activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
 from ..activation_usage import ACTIVATION_ONCE_PER_OBJECT_CAPABILITY
 from ..power_up_model import POWER_UP_CAPABILITY
@@ -11,8 +14,56 @@ from ..activation_condition_model import (
     ACTIVATION_PHASE_CONDITION_CAPABILITY,
     ACTIVATION_PUBLIC_QUERY_CAPABILITY,
     CLASS_LEVEL_ACTIVATION_CAPABILITY,
+    PUBLIC_ACTIVATION_FIELD,
     ActivationConditionKind,
+    PublicActivationTiming,
+    public_activation_descriptor,
 )
+
+
+_PUBLIC_ACTIVATION_TAIL = re.compile(
+    r"(?P<body>[^:\n]+:\s*.+?\.)\s+Any player may activate this ability"
+    r"(?P<sorcery> but only as a sorcery)?\.", re.IGNORECASE,
+)
+
+
+def public_activation_material(
+    line: str, *, card_name: str, keywords: Sequence[str],
+) -> tuple[str, PublicActivationTiming | None]:
+    match = _PUBLIC_ACTIVATION_TAIL.fullmatch(line.strip())
+    if match is None:
+        return line, None
+    timing = PublicActivationTiming.SORCERY if match["sorcery"] else PublicActivationTiming.PRIORITY
+    material = match["body"] + (" Activate only as a sorcery." if timing is PublicActivationTiming.SORCERY else "")
+    abilities = parse_activated_abilities(card_name=card_name, oracle_text=material, keywords=keywords)
+    if (len(abilities) != 1 or abilities[0].zones != ("battlefield",) or abilities[0].mana_ability
+            or abilities[0].sorcery_speed != (timing is PublicActivationTiming.SORCERY)):
+        return line, None
+    return material, timing
+
+
+def parse_compiled_activated_abilities(
+    *, card_name: str, oracle_text: str, keywords: Sequence[str],
+) -> tuple[ActivatedAbility, ...]:
+    material = "\n".join(
+        public_activation_material(line, card_name=card_name, keywords=keywords)[0]
+        for line in oracle_text.splitlines()
+    )
+    return _parse_compiled_activation_material(material, card_name=card_name, keywords=keywords)
+
+
+def parse_compiled_activation_line(
+    line: str, *, card_name: str, keywords: Sequence[str],
+) -> tuple[tuple[ActivatedAbility, ...], PublicActivationTiming | None]:
+    material, timing = public_activation_material(line, card_name=card_name, keywords=keywords)
+    return _parse_compiled_activation_material(material, card_name=card_name, keywords=keywords), timing
+
+
+def _parse_compiled_activation_material(material, *, card_name, keywords):
+    from .public_quantity_activation_costs import compile_ability_local_mana_reduction
+
+    abilities = parse_activated_abilities(card_name=card_name, oracle_text=material, keywords=keywords)
+    return tuple(compile_ability_local_mana_reduction(ability, source_name=card_name) for ability in abilities)
 
 
 def activated_ability_cost_capabilities(
@@ -21,6 +72,8 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.ability_local_mana_reduction is not None:
+        additional.extend(ability_local_mana_reduction_capabilities(ability.ability_local_mana_reduction, ability.zones[0]))
     if ability.forecast:
         from ..forecast_model import FORECAST_CAPABILITY
         additional.append(FORECAST_CAPABILITY)
@@ -103,7 +156,9 @@ def activated_ability_cost_capabilities(
     return tuple(dict.fromkeys(additional))
 
 
-def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
+def activated_ability_cost(
+    ability: ActivatedAbility, *, public_timing: PublicActivationTiming | None = None,
+) -> dict[str, Any]:
     """Serialize the compiler-facing cost facts for one activated ability."""
 
     result = {
@@ -127,6 +182,8 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
+    if ability.ability_local_mana_reduction is not None:
+        result[ABILITY_LOCAL_MANA_REDUCTION_FIELD] = ability.ability_local_mana_reduction.to_dict()
     if ability.boast:result['boast']=True
     if ability.waterbend is not None:result['waterbend']=ability.waterbend.to_dict()
     if ability.mana_cost_options:
@@ -139,6 +196,10 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
     if ability.random_discard_payment:result['random_discard_payment']=ability.random_discard_payment
     if ability.crew_threshold is not None:
         result["crew"] = ability.crew_threshold
+    if ability.saddle_threshold is not None:
+        result["saddle"] = ability.saddle_threshold
+    if public_timing is not None:
+        result[PUBLIC_ACTIVATION_FIELD] = public_activation_descriptor(public_timing)
     return result
 
 

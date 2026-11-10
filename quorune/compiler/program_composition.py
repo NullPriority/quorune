@@ -111,6 +111,27 @@ def _scope_component_target(value: Any, role: int, *, restore: bool = False) -> 
     return scalar if value == '$target.0' else group if value == '$targets' else value
 
 
+
+def _scoped_component_effect(effect: Mapping[str, Any], role: int, *, restore: bool = False) -> dict[str, Any]:
+    scoped = _scope_component_target(effect, role, restore=restore)
+    branches = scoped.get('then_by_choice')
+    if scoped.get('op') != 'choose_option' or not isinstance(branches, Mapping) or len(branches) != 2:
+        return scoped
+    reference = '$target.0' if restore else f'$target_group.clause_{role}.0'
+    if not all(isinstance(branch, (list, tuple)) and len(branch) == 1
+               and isinstance(branch[0], Mapping)
+               and branch[0].get('op') == 'grant_keyword_until_end_of_turn'
+               and branch[0].get('card') == reference for branch in branches.values()):
+        return scoped
+    # The option only applies its own target's keyword. Expose that target to
+    # the existing instruction filter before the player is asked to choose.
+    if restore and scoped.get('target') == reference:
+        del scoped['target']
+    elif not restore and 'target' not in scoped:
+        scoped['target'] = reference
+    return scoped
+
+
 def _component_target_roles_are_exact(value: Any, role: int) -> bool:
     if isinstance(value, Mapping):
         return all(_component_target_roles_are_exact(item, role) for item in value.values())
@@ -258,7 +279,7 @@ def is_closed_composed_spell_effect_program(
                 dict(cost_schema) if cost_schema is not None else None
             ),
             coverage=list(coverage),
-            effects=[_scope_component_target(dict(effect), target_offset, restore=True) if multi_target and target_schema is not None
+            effects=[_scoped_component_effect(effect, target_offset, restore=True) if multi_target and target_schema is not None
                 else dict(effect) for effect in program.effects[offset:end]],
             event_condition=(
                 dict(event_condition)
@@ -426,7 +447,11 @@ def _node_group_provenance(
     from ..rules.fuse_model import FUSE_HANDLER
     fuse_source = next((h['fuse'] for f in ir.faces for n in f.nodes for h in n.handlers if h.get('handler_id')==FUSE_HANDLER),None)
     text_variant_requires_complete_source = fuse_source is not None or any(OVERLOAD_BOUNDARY in node.runtime_coverage or CLEAVE_BOUNDARY in node.runtime_coverage for node in nodes)
-    requires_complete_card_program = face_up_requires_complete_source or text_variant_requires_complete_source or copy_requires_complete_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
+    from ..preparation_model import PREPARATION_RESULT_MECHANIC
+    preparation_requires_complete_source = any(PREPARATION_RESULT_MECHANIC in node.mechanics for node in nodes)
+    requires_declared_source = (face_up_requires_complete_source or copy_requires_complete_source
+                                or text_variant_requires_complete_source or preparation_requires_complete_source)
+    requires_complete_card_program = requires_declared_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes
         for handler in node.handlers
@@ -434,7 +459,7 @@ def _node_group_provenance(
     return {
         "source_oracle_hash": ir.oracle_hash,
         **({'fuse_source': fuse_source} if fuse_source is not None else {}),
-        **({'requires_complete_card_program': True} if face_up_requires_complete_source or copy_requires_complete_source or text_variant_requires_complete_source else {}),
+        **({'requires_complete_card_program': True} if requires_declared_source else {}),
         "source_rulings_hash": rulings_hash,
         "authored_by": authored_by,
         "review_status": (
@@ -559,7 +584,7 @@ def program_from_generated_node_group(
     effects = []
     target_offset = 0
     for node in nodes:
-        effects.extend(_scope_component_target(dict(effect), target_offset)
+        effects.extend(_scoped_component_effect(effect, target_offset)
             if multi_target and node.target_schema is not None else dict(effect) for effect in node.effects)
         if node.target_schema is not None:
             target_offset += 1

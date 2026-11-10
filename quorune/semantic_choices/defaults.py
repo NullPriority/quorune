@@ -14,6 +14,7 @@ from .endure import SourceEndureChoiceHandler
 from .blight import FixedBlightChoiceHandler
 from .discover import DiscoverScanHandler, QUALIFIED_SCAN_HANDLERS
 from .discover_cast import DiscoverCastChoiceHandler
+from .fixed_top_exile import FIXED_TOP_EXILE_HANDLERS
 from .variable_library_selection import VariableLibrarySelectionHandler
 from .reveal_until_library_selection import RevealUntilLibrarySelectionHandler
 from .extort import ExtortChoiceHandler
@@ -23,6 +24,8 @@ from .object_selection import OBJECT_SELECTION_HANDLERS
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
 from .ordering import ORDERING_CHOICE_HANDLERS
 from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
+from .targeted_graveyard_cast import TargetedGraveyardCastChoiceHandler
+from .graveyard_copy_cast import GRAVEYARD_COPY_HANDLERS
 from .untargeted_untap import FixedLandUntapChoiceHandler
 from .scry import SCRY_CHOICE_HANDLERS
 from .surveil import SURVEIL_CHOICE_HANDLERS
@@ -109,6 +112,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
                 replay_fixture='first-nonland-exile-and-optional-cast',
             ),
             *QUALIFIED_SCAN_HANDLERS,
+            *FIXED_TOP_EXILE_HANDLERS,
             VariableLibrarySelectionHandler(),
             RevealUntilLibrarySelectionHandler(),
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
@@ -117,6 +121,8 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,
             *ORDERING_CHOICE_HANDLERS,
             *FIXED_TOP_ORDER_HANDLERS,
+            TargetedGraveyardCastChoiceHandler(),
+            *GRAVEYARD_COPY_HANDLERS,
             FixedLandUntapChoiceHandler(),
             *SCRY_CHOICE_HANDLERS,
             *SURVEIL_CHOICE_HANDLERS,

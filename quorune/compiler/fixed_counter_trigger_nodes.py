@@ -19,10 +19,11 @@ from ..continuous_conditions import (
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE, SCHEDULED_PLAYER_MECHANIC
+from .announced_damage_templates import fixed_announced_damage_template
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .trigger_result_templates import binding_effect_template
-from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition
+from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition, validate_public_trigger_metadata
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
@@ -103,7 +104,9 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-public-face-up-trigger-v1",
         "fixed-counter-public-designation-trigger-v1",
         "fixed-counter-public-multi-event-trigger-v1",
+        "fixed-counter-public-room-door-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
+        "fixed-counter-public-second-draw-trigger-v1",
         "fixed-counter-entry-return-public-zone-trigger-v1",
         "fixed-counter-heroic-spell-cast-trigger-v1",
         "fixed-counter-magecraft-spell-action-trigger-v1",
@@ -142,6 +145,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
         "magecraft_instant_or_sorcery",
         "constellation_controlled_enchantment",
         "constellation_source_or_controlled_enchantment",
+        "controlled_enchantment_entry_or_room_unlock",
         "battalion_source_and_two_others_attack",
     }
 )
@@ -178,6 +182,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_combat_damage_player_or_planeswalker",
         "source_combat_damage_player_or_battle",
         "opponent_dealt_noncombat_damage",
+        "controller_sacrifices_source_or_another",
         *{
             f"{actor}_sacrifices_{subject}"
             for actor in ("controller", "opponent", "player")
@@ -192,6 +197,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
                 "enchantment",
                 "permanent",
                 "artifact_or_creature",
+                "qualified_permanent",
             )
         },
         *{
@@ -219,6 +225,8 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         'source_block_pair_counterpart',
+        "source_room_door_unlock",
+        "controlled_enchantment_entry_or_room_unlock",
         "enchanted_creature_tap_or_received_damage",
         "independent_dual_event",
         "qualified_zone_event_pair",
@@ -231,6 +239,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_enters_or_is_turned_face_up",
         "source_enters_or_deals_combat_damage_to_a_player",
         "source_enters_or_becomes_monstrous",
+        "source_transform_pair",
         "source_artifact_enters_and_is_sacrificed",
         "enchanted_creature_attacks_or_blocks",
         "source_attacks_or_blocks_with_controlled_dinosaur",
@@ -486,6 +495,7 @@ class FixedCounterTriggerBinding:
     public_template_id: str | None = None
     public_capabilities: tuple[str, ...] = ()
     public_state_condition: PublicTriggerCondition | None = None
+    attacked_player_life: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -494,6 +504,11 @@ class FixedCounterTriggerBinding:
             raise ValueError("Fixed counter trigger variants must be nonempty")
         if type(self.body) is not str or not self.body:
             raise ValueError("Fixed counter trigger bodies must be nonempty")
+        if type(self.attacked_player_life) is not bool or self.attacked_player_life and (
+            self.event is not FixedCounterTriggerEvent.SOURCE_ATTACKS or self.variant != 'source_attacks'
+            or self.public_mechanic is not None or self.public_state_condition is not None
+        ):
+            raise ValueError('Attacked-player life requires one source attack')
         zone_events = {
             FixedCounterTriggerEvent.PERMANENT_ENTER,
             FixedCounterTriggerEvent.ARTIFACT_ENTER,
@@ -517,48 +532,7 @@ class FixedCounterTriggerBinding:
             raise ValueError(
                 "Fixed spell-cast events require exactly one typed subject"
             )
-        if self.public_mechanic is not None and self.spell_subject is not None:
-            raise ValueError(
-                "Public event triggers cannot carry a parallel spell subject"
-            )
-        if self.public_mechanic is not None:
-            if not self.public_mechanic or not self.public_template_id:
-                raise ValueError(
-                    "Public event triggers require typed owner identities"
-                )
-            if self.public_active_zone not in {None, "battlefield", "hand", "graveyard"}:
-                raise ValueError(
-                    "Public event triggers require a closed active zone"
-                )
-        elif any(
-            value is not None
-            for value in (
-                self.public_condition,
-                self.public_active_zone,
-                self.public_mechanic,
-                self.public_template_id,
-            )
-        ):
-            raise ValueError(
-                "Only public event triggers accept public predicate metadata"
-            )
-        if not isinstance(self.public_capabilities, tuple) or any(
-            type(value) is not str or not value
-            for value in self.public_capabilities
-        ):
-            raise ValueError(
-                "Public event trigger capabilities must be nonempty strings"
-            )
-        if len(set(self.public_capabilities)) != len(
-            self.public_capabilities
-        ):
-            raise ValueError(
-                "Public event trigger capabilities must be unique"
-            )
-        if self.public_mechanic is None and self.public_capabilities:
-            raise ValueError(
-                "Only public event triggers accept explicit capabilities"
-            )
+        validate_public_trigger_metadata(self)
         if self.public_state_condition is not None and not isinstance(
             self.public_state_condition,
             PublicTriggerCondition,
@@ -660,6 +634,7 @@ class FixedCounterTriggerBinding:
     @property
     def explicit_capabilities(self) -> tuple[str, ...]:
         from ..received_damage_model import RECEIVED_DAMAGE_CAPABILITY
+        from ..rules.attacked_player_life import ATTACKED_PLAYER_LIFE_CAPABILITY
         receiving = (RECEIVED_DAMAGE_CAPABILITY,) if self.event in {
             FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE, FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE,
         } else ()
@@ -667,8 +642,14 @@ class FixedCounterTriggerBinding:
         from ..public_history_query_model import public_history_query_dependencies
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
+        from ..rules.spell_cast_events import spell_cast_keyword_condition_dependencies
+
         ordinal=self.spell_subject.qualified_ordinal_spec if self.spell_subject is not None else None
-        return (*receiving,*self.public_capabilities,*condition_capabilities,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
+        cast_keywords = spell_cast_keyword_condition_dependencies(
+            self.spell_subject.event_condition if self.spell_subject is not None else None,
+        )
+        attacked_life = (ATTACKED_PLAYER_LIFE_CAPABILITY,) if self.attacked_player_life else ()
+        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*cast_keywords,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
@@ -849,6 +830,9 @@ class FixedCounterTriggerBinding:
 
     @property
     def event_condition(self) -> Mapping[str, Any] | None:
+        if self.attacked_player_life:
+            from ..rules.attacked_player_life import attacked_player_life_condition
+            return attacked_player_life_condition()
         condition = self._base_event_condition
         if self.public_state_condition is None:
             return condition
@@ -1068,7 +1052,9 @@ def _public_trigger_binding(
     spec = public_trigger_binding_spec(material_line, card_name=card_name)
     if spec is None:
         return None
-    return public_binding_from_spec(spec, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
+    from .attacking_card_entry_templates import source_graveyard_attacking_entry_binding
+    return public_binding_from_spec(source_graveyard_attacking_entry_binding(spec),
+        binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
 
 
 def fixed_counter_trigger_binding(
@@ -1089,6 +1075,12 @@ def fixed_counter_trigger_binding(
         if source_binding is not None:return source_binding
     intervening = PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
+        if (intervening['prefix'].casefold() == 'whenever this creature attacks a player'
+                and intervening['condition'].casefold() == 'no opponent has more life than that player'):
+            return FixedCounterTriggerBinding(
+                event=FixedCounterTriggerEvent.SOURCE_ATTACKS,
+                variant='source_attacks', body=intervening['body'], attacked_player_life=True,
+            )
         return bind_public_intervening_trigger(
             intervening, card_name=card_name, compile_binding=fixed_counter_trigger_binding,
             compile_source_binding=_public_state_source_self_trigger_binding,
@@ -1175,9 +1167,9 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
-def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool) -> tuple[str, ...]:
+def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool, effect_mechanics=()) -> tuple[str, ...]:
     from .trigger_runtime_coverage import trigger_runtime_coverage
-    return trigger_runtime_coverage(binding, current_ability=current_ability,
+    return trigger_runtime_coverage(binding, current_ability=current_ability, effect_mechanics=effect_mechanics,
         qualified_zone_variant=QUALIFIED_ZONE_VARIANT,
         aggregated_zone_variant=AGGREGATED_ZONE_VARIANT,
         ability_word_public_event_variants=_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
@@ -1195,10 +1187,18 @@ def _binding_effect_template(binding, body, *, card_name, effect_template):
     if CYCLE_OR_DISCARD_CAPABILITY in binding.public_capabilities:
         from .source_self_effect_templates import pin_source_result_incarnation
         compiled = pin_source_result_incarnation(compiled)
-    return compiled, current
+    from .room_bindings import EERIE_VARIANT, OWN_DOOR_VARIANT
+    return compiled, current or binding.variant in {EERIE_VARIANT, OWN_DOOR_VARIANT}
 
 
-def _counter_binding_accepts_result(binding,body_mechanics):
+def _counter_binding_accepts_result(binding, body_mechanics, *, effects, target_schema):
+    from .room_bindings import OWN_DOOR_VARIANT
+    if binding.variant == OWN_DOOR_VARIANT:
+        from ..rules.node_capability_shapes import fixed_counter_placement_target_set_node_capabilities
+        if fixed_counter_placement_target_set_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=body_mechanics,
+        ):
+            return True
     return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter', 'fixed-public-event-target-counter','fixed-public-event-set-counter'}.intersection(body_mechanics))
         or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
         or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
@@ -1222,13 +1222,11 @@ def fixed_counter_event_trigger_node(
         Mapping[str, Any] | None,
         tuple[str, ...],
     ]],
+    binding: FixedCounterTriggerBinding | None = None,
 ) -> OracleNode | None:
     """Lower one exact fixed counter effect over a normalized event."""
 
-    binding = fixed_counter_trigger_binding(
-        material_line,
-        card_name=card_name,
-    )
+    binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
     optional_match = re.fullmatch(
@@ -1256,7 +1254,9 @@ def fixed_counter_event_trigger_node(
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
     )
-    if template is None or not nested_counter_operations or not _counter_binding_accepts_result(binding,body_mechanics):
+    if template is None or not nested_counter_operations or not _counter_binding_accepts_result(
+        binding, body_mechanics, effects=effects, target_schema=target_schema,
+    ):
         return None
     if optional_match is not None:
         if (
@@ -1366,6 +1366,7 @@ def fixed_typed_event_effect_trigger_node(
         Mapping[str, Any] | None,
         tuple[str, ...],
     ]],
+    binding: FixedCounterTriggerBinding | None = None,
 ) -> OracleNode | None:
     """Compose one closed event binding with one reviewed typed effect body."""
 
@@ -1380,22 +1381,28 @@ def fixed_typed_event_effect_trigger_node(
         capability_profile=capability_profile,
         residuals=residuals,
         effect_template=effect_template,
+        binding=binding,
     )
     if counter_node is not None:
         return counter_node
 
-    binding = fixed_counter_trigger_binding(
-        material_line,
-        card_name=card_name,
-    )
+    binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
-    compiled, requires_current_ability = _binding_effect_template(
-        binding,
+    allocation = fixed_announced_damage_template(
         binding.body,
         card_name=card_name,
-        effect_template=effect_template,
+        allow_source_pronoun=binding.variant in {"source_attacks", "source_enters_or_attacks"},
     )
+    if allocation is not None:
+        compiled, requires_current_ability = allocation, False
+    else:
+        compiled, requires_current_ability = _binding_effect_template(
+            binding,
+            binding.body,
+            card_name=card_name,
+            effect_template=effect_template,
+        )
     template, effects, target_schema, body_mechanics = compiled
     if (
         template is None
@@ -1460,7 +1467,7 @@ def fixed_typed_event_effect_trigger_node(
         target_schema=target_schema,
         runtime_coverage=(
             *_event_runtime_coverage(
-                binding,
+                binding, effect_mechanics=body_mechanics,
                 current_ability=(
                     requires_current_ability
                     and (

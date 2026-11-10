@@ -52,11 +52,15 @@ def announced_target_set_effect_template(text: str) -> Any:
         tuple(dict.fromkeys((*compiled[3], ANNOUNCED_TARGET_SET_MECHANIC, "cr-115-targets"))))
 
 
-def announced_target_clause_compiler(compile_atomic):
-    """Compose the new target leaf with independently owned atomic results."""
+def announced_target_clause_compiler(compile_atomic, *, compile_amount=None):
+    """Compose the target leaf with independently owned result clauses."""
     def compile_clause(text):
         atomic = compile_atomic(text)
         if atomic[0] is not None:
             return atomic
-        return announced_target_set_effect_template(text) or atomic
+        return (
+            announced_target_set_effect_template(text)
+            or (compile_amount(text) if compile_amount is not None else None)
+            or atomic
+        )
     return compile_clause

@@ -14,11 +14,14 @@ from quorune.semantic_runtime.conditional_continuous import _validate_target
 from test_fixed_direct_target_predicates import record
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.record import authoritative_state_hash
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from common import ROOT
 from scripts.build_test_database import build_fixture_database
 import test_mixed_permanent_targets as native_mixed
+import test_qualified_attack_subjects as qualified_attacks
+import test_ring_native_actions as turns
 
 
 class ConditionalReceiverUnionModelTests(unittest.TestCase):
@@ -60,6 +63,28 @@ class ConditionalReceiverUnionModelTests(unittest.TestCase):
         with patch('quorune.object_query_union.validate_receiver_union_template',return_value=None):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
 
+    def test_mount_vehicle_anthem_has_a_closed_mixed_subtype_scope(self):
+        from quorune.semantic_runtime.components import validate_runtime_handler_descriptors
+        from quorune.semantic_runtime.context import SemanticNodeError
+
+        source = record("Mounts and Vehicles you control get +1/+1.", suffix=596002, type_line="Creature")
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(source, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        handler, = node.handlers
+        condition = handler["condition"]
+        self.assertEqual("source_controller", condition["target_controller"])
+        predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+        self.assertEqual(ObjectQuerySpec(zones=("battlefield",), subtypes_any=("mount", "vehicle")), predicate)
+        validate_runtime_handler_descriptors(node.handlers)
+        for invalid in (
+            {**condition, "predicate": replace(predicate, subtypes_any=("equipment", "vehicle")).to_dict()},
+            {**condition, "target_controller": "any"},
+        ):
+            with self.subTest(condition=invalid), self.assertRaises(SemanticNodeError):
+                validate_runtime_handler_descriptors(({**handler, "condition": invalid},))
+
 
 class ConditionalReceiverUnionRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add=True
@@ -78,6 +103,10 @@ class ConditionalReceiverUnionRuntimeTests(unittest.TestCase):
     settle=native_mixed.MixedPermanentTargetRuntimeTests.settle
     pay_cast=native_mixed.MixedPermanentTargetRuntimeTests.pay_cast
     private_draws=native_mixed.MixedPermanentTargetRuntimeTests.private_draws
+    crew_vehicle=native_mixed.MixedPermanentTargetRuntimeTests.crew_vehicle
+    until=turns.RingNativeActionTests.until
+    attack=qualified_attacks.QualifiedAttackNativeTests.attack
+    trigger_count=qualified_attacks.QualifiedAttackNativeTests.trigger_count
 
     @classmethod
     def setUpClass(cls):
@@ -97,6 +126,95 @@ class ConditionalReceiverUnionRuntimeTests(unittest.TestCase):
 
     def deathtouch(self,s,card):
         return 'deathtouch' in s.engine._combat_keywords(s.state.cards[card.object_id])
+
+    def test_cloudspire_captain_buffs_the_mount_and_crewed_vehicle(self):
+        session = self.session(596120)
+        engine = session.engine
+        captain = self.add(engine, "Cloudspire Captain")
+        mount = self.add(engine, "Brightfield Glider")
+        vehicle = self.add(engine, "Cultivator's Caravan")
+        opposing_mount = self.add(engine, "Brightfield Glider", seat="B", ref="opposing-mount")
+        self.assertTrue(self.binding(session, captain)["strict_capability_ready"])
+        self.prepare(session)
+        self.checkpoint(session)
+        self.assertEqual((2, 2), self.stats(session, mount))
+        self.assertEqual((1, 1), self.stats(session, opposing_mount))
+        self.assertEqual((2, 3), self.stats(session, captain))
+        self.crew_vehicle(session, vehicle, captain)
+        self.assertEqual((6, 6), self.stats(session, vehicle))
+        self.assertEqual((2, 3), self.stats(session, captain))
+        self.replay(session, load=True)
+
+    def test_miriam_uses_turn_scope_and_counts_each_declared_attacker_once(self):
+        session = self.session(596121)
+        engine = session.engine
+        miriam = self.add(engine, "Miriam, Herd Whisperer")
+        mount = self.add(engine, "Brightfield Glider")
+        dual = self.add(engine, "Cultivator's Caravan", ref="dual-subtype-attacker")
+        dual.annotations["copy_overrides"] = {"type_line": "Artifact Creature — Vehicle Mount"}
+        ordinary = self.add(engine, "Generic Bound Body")
+        for attacker in (mount, dual, ordinary):
+            attacker.acquired_control_turn_count = -1
+        vehicle = self.add(engine, "Cultivator's Caravan")
+        self.add(engine, "Sol Ring")
+        removal = self.add(engine, "Disenchant", seat="B", zone="hand")
+        for index in range(2):
+            self.add(engine, "Generic Bound Plains", seat="B", ref=f"miriam-removal-mana-{index}")
+        self.assertTrue(self.binding(session, miriam)["strict_capability_ready"])
+        self.prepare(session)
+        self.checkpoint(session)
+
+        self.priority(session, "B")
+        offered = next(action for action in self.actions(session, "B") if action["id"] == f"cast:{removal.ref}")
+        command = {"action_id": offered["id"], "targets": [vehicle.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        result = session.act("pilot:B", command)
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        self.attack(session, ((mount, "B"), (dual, "C"), (ordinary, "D")))
+        self.assertEqual(2, self.trigger_count(session, miriam))
+        self.assertIsNone(self.settle(session))
+        for target, expected in ((mount, 1), (dual, 1), (ordinary, 0), (vehicle, 0)):
+            self.assertEqual(expected, session.state.cards[target.object_id].counters.get("+1/+1", 0))
+
+        self.until(session, lambda game: game.state.active_player == "B" and game.state.phase == "precombat_main")
+        self.priority(session, "B")
+        offered = next(action for action in self.actions(session, "B") if action["id"] == f"cast:{removal.ref}")
+        result = session.act("pilot:B", {**command, "action_id": offered["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.settle(session))
+        self.assertEqual("graveyard", session.state.cards[vehicle.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_lagorin_saddled_attack_targets_a_mount_and_an_opposing_vehicle(self):
+        session = self.session(596122)
+        engine = session.engine
+        lagorin = self.add(engine, "Lagorin, Soul of Alacria")
+        lagorin.acquired_control_turn_count = -1
+        mount = self.add(engine, "Brightfield Glider")
+        vehicle = self.add(engine, "Cultivator's Caravan", seat="B")
+        helper = self.add(engine, "Generic Bound Body")
+        self.assertTrue(self.binding(session, lagorin)["strict_capability_ready"])
+        self.prepare(session)
+        self.checkpoint(session)
+        saddle = next(action for action in self.actions(session, "A")
+            if action["id"].startswith(f"activate:{lagorin.ref}:"))
+        paid = session.act("pilot:A", {"action_id": saddle["id"], "cost_cards": [helper.ref]})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertIsNone(self.settle(session))
+        self.attack(session, ((lagorin, "B"),))
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        before = authoritative_state_hash(session.state)
+        invalid = session.act("pilot:A", {"action_id": "choose", "targets": [vehicle.ref, helper.ref]})
+        self.assertFalse(invalid.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": "choose", "targets": [mount.ref, vehicle.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.settle(session))
+        self.assertEqual(1, session.state.cards[mount.object_id].counters["+1/+1"])
+        self.assertEqual(1, session.state.cards[vehicle.object_id].counters["+1/+1"])
+        self.replay(session, load=True)
 
     def test_real_swarmweaver_condition_overlap_control_and_graveyard_changes(self):
         s=self.session(596100)

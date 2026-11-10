@@ -804,6 +804,195 @@
       },
       "faces": [],
       "cmc": 2.0
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Wakestone Gargoyle",
+      "oracle_id": "11284767-7095-4e0e-bc60-c69d58098348",
+      "oracle_text": "Defender, flying\n{1}{W}: Creatures you control with defender can attack this turn as though they didn't have defender.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "4",
+      "type_line": "Creature — Gargoyle"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{7}",
+      "name": "Roving Keep",
+      "oracle_id": "6a88784c-d3be-4076-83eb-895cc1b50947",
+      "oracle_text": "Defender\n{7}: This creature gets +2/+0 and gains trample until end of turn. It can attack this turn as though it didn't have defender.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "7",
+      "type_line": "Artifact Creature — Wall"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Novice Knight",
+      "oracle_id": "916d2a0d-1c3e-4102-958d-524b6b4df509",
+      "oracle_text": "Defender (This creature can't attack.)\nAs long as this creature is enchanted or equipped, it can attack as though it didn't have defender.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Human Knight"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Warmonger's Chariot",
+      "oracle_id": "90f4ec87-d33d-46c1-8cc7-3e7ad3f8ad70",
+      "oracle_text": "Equipped creature gets +2/+2.\nAs long as equipped creature has defender, it can attack as though it didn't have defender.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -878,6 +1067,36 @@
       "comment": "This is a change from the most recent wording. As was the case in the past, Animate Wall can now enchant only a Wall.",
       "oracle_id": "c7a6a165-b709-46e0-ae42-6f69a17c0621",
       "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Wakestone Gargoyle’s ability will affect creatures with defender that come under your control after the ability resolves but before you declare attackers (though those creatures still can’t attack unless they have haste).",
+      "oracle_id": "11284767-7095-4e0e-bc60-c69d58098348",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Wakestone Gargoyle’s ability allows itself to attack.",
+      "oracle_id": "11284767-7095-4e0e-bc60-c69d58098348",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Novice Knight has attacked, it will remain in combat even if it’s no longer enchanted or equipped.",
+      "oracle_id": "916d2a0d-1c3e-4102-958d-524b6b4df509",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the equipped creature doesn’t have defender, the second ability simply doesn’t affect it.",
+      "oracle_id": "90f4ec87-d33d-46c1-8cc7-3e7ad3f8ad70",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The second ability doesn’t cause the equipped creature to lose defender. It just lets it attack.",
+      "oracle_id": "90f4ec87-d33d-46c1-8cc7-3e7ad3f8ad70",
+      "published_at": "2010-06-15",
       "source": "wotc"
     }
   ],

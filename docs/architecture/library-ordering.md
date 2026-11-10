@@ -77,6 +77,38 @@ handling retain their existing stack and effect owners. Variable counts,
 another player's library and unrepresented sibling results remain residuals.
 See [ADR 0131](../adr/0131-typed-private-library-ordering.md).
 
+## Fixed hand to library top
+
+A fixed put-back instruction privately offers a controller's current hand.
+When it follows a draw instruction, the hand snapshot comes after all draws
+and their replacements. The choice requires the printed number of cards, or
+every card when fewer are available, in top-first order. An empty hand needs
+no choice. Each offered reference is pinned to its current logical incarnation.
+
+The simultaneous zone owner validates every selected card and destination
+replacement before committing any movement. Cards that actually go to the
+library retain the chosen relative order. Only the controller receives the
+choice and its order. Opponents see ordinary hand and library counts and any
+destination that becomes public. A pending private selection or destination
+replacement resumes through the existing Game Record continuation.
+
+## Ordered graveyard targets
+
+An instruction that puts cards from one graveyard at a library edge uses the
+shared target plan for the announced count, ownership, and current incarnations.
+The controller privately orders the surviving targets. An instruction that
+targets cards from an opposing graveyard requires an explicit ordering
+instruction for the controller and one shared card owner. Zero or one surviving
+target needs no ordering decision. One selected mode can supply the target set.
+
+The simultaneous zone transaction keeps its move order tied to target
+announcement. After destination replacements and before publishing movement
+facts, it places the actual arrivals at the printed edge in the chosen order.
+Only the chooser sees the ordering decision and gains positional knowledge of
+the arrivals when several cards reach the library. Replacement continuations
+bind the private order and the announced batch so replay can resume without
+changing the placement or revealing the permutation.
+
 ## Mill result counts
 
 The existing Mill preparation owner consumes a nonnegative resolved integer.

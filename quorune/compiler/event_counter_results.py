@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-"""Whole fixed counter result on one typed entry occurrence."""
+"""Whole fixed counter result on one typed public occurrence."""
 
 import re
+from ..event_counter_reference import EVENT_ENTRY_OBJECT
+from ..transform_timestamp_model import TRANSFORM_EVENT
+from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
 EVENT_COUNTER_CAPABILITY='counter.producer.fixed_event_object'
 EVENT_COUNTER_MECHANIC='fixed-entry-event-object-counter'
-EVENT_ENTRY_OBJECT='$event.entry_object'
 PUBLIC_SOURCE_COUNTER_CAPABILITY='counter.producer.fixed_public_source_event'
 PUBLIC_SOURCE_COUNTER_MECHANIC='fixed-public-event-source-counter'
 PUBLIC_TARGET_COUNTER_MECHANIC='fixed-public-event-target-counter'
@@ -72,12 +74,21 @@ def public_event_source_counter_result(binding, body, *, effect_template, card_n
 
 def entry_event_counter_result(binding,body,*,effect_template,card_name):
     entry=binding.event.value in {'permanent.enter','creature.enter','artifact.enter','enchantment.enter','land.enter'}
-    action=(binding.event.value=='creature.attacks' and (binding.variant.startswith('public_attack_') or binding.variant=='singular_qualified_attack')
-        or binding.event.value=='damage.dealt' and binding.variant.startswith('public_deals_'))
+    action = (
+        binding.event.value == 'creature.attacks' and (
+            binding.variant.startswith('public_attack_')
+            or binding.variant in {'singular_qualified_attack', *ATTACHED_CREATURE_ATTACK_VARIANTS}
+        )
+        or binding.event.value == 'damage.dealt' and binding.variant.startswith('public_deals_')
+    )
     tap=binding.event.value in {'permanent.tap','permanent.untap'} and binding.variant in {'public_tap_state_transition','source_public_tap_state_transition'}
-    if not entry and not action and not tap:return None
+    transform = binding.event.value == TRANSFORM_EVENT and binding.variant == "controlled_permanent_transforms_into"
+    if not (entry or action or tap or transform):return None
     if binding.variant.startswith('one_or_more') or binding.variant in {'aggregated_zone_event','independent_dual_event'}:return None
-    match=re.fullmatch(r'(?P<head>Put .+? counters? on) (?P<ref>it|that creature|that artifact|that permanent)\.',body,re.I)
+    operation = r'Put .+? counters? on'
+    if binding.variant in ATTACHED_CREATURE_ATTACK_VARIANTS:
+        operation += r'|Double the number of .+? counters on'
+    match = re.fullmatch(rf'(?P<head>{operation}) (?:it|that creature|that artifact|that permanent)\.', body, re.I)
     if match is None:return None
     normalized=match['head']+' this creature.'
     from .scalar_effect_amounts import scalar_effect_amount_template

@@ -12,7 +12,7 @@ from .color_set_mana_abilities import (
     ColorSetSelection,
 )
 from .errors import GameRuleError
-from .mana import ManaMode
+from .mana import ManaMode, ManaModePrice
 from .object_query import object_query_result, query_objects
 from .util import normalize_mana_bundle
 from .chosen_color_mana_runtime import chosen_color_mana_output, chosen_color_mana_modes
@@ -268,18 +268,36 @@ def typed_mana_modes_for_abilities(
 ) -> tuple[ManaMode, ...]:
     """Return deduplicated modes owned by typed mana descriptors."""
 
-    result: dict[tuple[tuple[tuple[str, int], ...], bool], ManaMode] = {}
+    result = {}
     for ability in abilities:
         if not ability.mana_ability:
             continue
-        for mode in mana_modes_for_ability(host, seat, source, ability):
+        modes = mana_modes_for_ability(host, seat, source, ability)
+        if ability.mana_cost_options:
+            modes = _priced_filter_modes(host, seat, source, ability, modes)
+        for mode in modes:
             key = tuple(
                 (color, int(mode.bundle.get(color, 0)))
                 for color in "WUBRGC"
                 if int(mode.bundle.get(color, 0))
             )
-            result.setdefault((key,mode.tap_source), mode)
+            result.setdefault((key, mode.tap_source, mode.price.key if mode.price else None), mode)
     return tuple(result.values())
+
+
+def _priced_filter_modes(host, seat, source, ability, modes):
+    from .fixed_mana_abilities import supports_hybrid_filter_price
+    from .mana_restrictions import ability_mana_spend_context
+    from .rules.activation.pricing import targetless_activation_prices
+    from .semantic_runtime.mana_spending import current_mana_spending_policy
+
+    if not supports_hybrid_filter_price(ability, ability.mana_cost_options, ability.fixed_mana_outputs):
+        return ()
+    context = ability_mana_spend_context(str(host._effective_card_data(source).get("type_line") or ""))
+    policy = current_mana_spending_policy(host, seat, context)
+    options = targetless_activation_prices(host, seat, source, ability)
+    return tuple(replace(mode, price=ManaModePrice(ability.ability_id, option, context, policy))
+                 for mode in modes for option in options)
 
 
 def payable_mana_modes(
@@ -287,7 +305,7 @@ def payable_mana_modes(
 ) -> tuple[ManaMode, ...]:
     """Merge source modes canonically, excluding outputs that cannot pay."""
 
-    result: dict[tuple[tuple[str, int], ...], ManaMode] = {}
+    result = {}
     for mode in (mode for group in groups for mode in group):
         key = tuple(
             (color, int(mode.bundle.get(color, 0)))
@@ -295,7 +313,7 @@ def payable_mana_modes(
             if int(mode.bundle.get(color, 0))
         )
         if key:
-            result.setdefault(key, mode)
+            result.setdefault((key, mode.price.key if mode.price else None), mode)
     return tuple(result.values())
 
 

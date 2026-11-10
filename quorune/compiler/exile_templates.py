@@ -11,8 +11,21 @@ from .direct_target import (
     direct_target_effect,
 )
 from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+from ..rules.public_zone_move_capability_shapes import (
+    TRIGGERED_SOURCE_EXILE_MECHANIC, triggered_source_exile_result,
+)
 
 _EXILE_MECHANIC = "exile"
+
+
+def triggered_source_exile_template(binding, body):
+    if binding.variant != "creature_graveyard_owner" or body != binding.body:
+        return None
+    subject = {"battlefield": "this creature", "graveyard": "this card"}.get(binding.active_zone)
+    if subject is None or re.fullmatch(rf"exile {subject}\.?", body, re.IGNORECASE) is None:
+        return None
+    return ("triggered-source-exile-v1", (triggered_source_exile_result(binding.active_zone),),
+            None, (TRIGGERED_SOURCE_EXILE_MECHANIC,))
 
 
 @dataclass(frozen=True, slots=True)

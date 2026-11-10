@@ -16,7 +16,20 @@ _MAX_OPTIONS = 128
 
 def activation_mana_option_runtime_dependencies(program: Any) -> tuple[str, ...]:
     """Keep typed activation price alternatives bound to their existing owner."""
+    from .fixed_mana_abilities import FIXED_MANA_HANDLER_ID
+
     schema = getattr(program, "cost_schema", None)
+    for descriptor in getattr(program, "handlers", ()):
+        if descriptor.get("handler_id") != FIXED_MANA_HANDLER_ID:
+            continue
+        ability = descriptor.get("ability")
+        if not isinstance(ability, Mapping) or "mana_cost_options" not in ability:
+            continue
+        rows = schema.get("mana_cost_options") if isinstance(schema, Mapping) else None
+        if (not isinstance(rows, (list, tuple)) or schema.get("tap_source") is not True
+                or tuple(ActivationManaCostOption.from_dict(row) for row in rows)
+                != tuple(ActivationManaCostOption.from_dict(row) for row in ability["mana_cost_options"])):
+            raise ValueError("Fixed mana filter prices must match their activation cost schema")
     if not isinstance(schema, Mapping) or not schema.get("mana_cost_options"):
         return ()
     rows = schema["mana_cost_options"]
@@ -141,8 +154,9 @@ def fixed_complex_activation_mana_options(
         ):
             color = next(part for part in parts if part != "2")
             choices = (("generic", 2), ("mana", color))
-        elif len(parts) == 2 and parts[1] == "P" and parts[0] in _COLORS:
-            choices = (("mana", parts[0]), ("life", 2))
+        elif (len(parts) in (2, 3) and parts[-1] == "P"
+                and len(set(parts[:-1])) == len(parts) - 1 and set(parts[:-1]).issubset(_COLORS)):
+            choices = [*(('mana', color) for color in parts[:-1]), ('life', 2)]
         elif symbol == "S":
             choices = (("snow", 1),)
         else:

@@ -4,10 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from math import isfinite
 from .characteristic_evaluation import type_parts
 from .errors import GameRuleError
+from .protection import ProtectionSource
 
 TARGETING_SOURCE_CONTEXT='targeting_source_characteristics'
+BOUND_TARGETING_SOURCE_VERSION = 2
 
 
 @dataclass(frozen=True,slots=True)
@@ -18,6 +21,7 @@ class TargetingSource:
     subtypes: frozenset[str] | None=None
     source_controller: str | None=None
     spell_owner: str | None=None
+    protection_source: ProtectionSource | None = None
 
     def __post_init__(self):
         if self.kind not in {'spell','ability'}:raise ValueError('Targeting source kind must be explicit')
@@ -32,11 +36,17 @@ class TargetingSource:
         if self.colors is not None and not self.colors.issubset(set('WUBRG')):raise ValueError('Targeting colors must be canonical')
         if any(v!=v.casefold() for values in (self.card_types,self.subtypes) if values is not None for v in values):
             raise ValueError('Targeting types must be canonical')
+        if self.protection_source is not None and (
+            not isinstance(self.protection_source, ProtectionSource)
+            or self.protection_source.colors != self.colors
+        ):
+            raise ValueError("Targeting protection requires the acting source's typed characteristics")
 
     @classmethod
-    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None):
+    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None,protection_source=None):
         types,subtypes,_=type_parts(str(value.get('type_line') or ''))
-        return cls(kind,frozenset(str(v).upper() for v in value.get('colors',())),frozenset(types),frozenset(subtypes),controller,spell_owner)
+        return cls(kind, frozenset(str(v).upper() for v in value.get('colors',())), frozenset(types),
+                   frozenset(subtypes), controller, spell_owner, protection_source)
 
 
 @dataclass(frozen=True,slots=True)
@@ -48,6 +58,8 @@ class TargetingSourceBinding:
     controller: str
     type_line: str
     colors: tuple[str,...]
+    mana_value: float | None = None
+    schema_version: int = 1
 
     def __post_init__(self):
         if any(type(v) is not str or not v for v in (self.object_id,self.object_ref,self.logical_object_id,self.zone,self.controller)) or type(self.type_line) is not str:
@@ -55,27 +67,44 @@ class TargetingSourceBinding:
         if self.zone not in {'battlefield','stack','hand','graveyard','exile','command','library'}:raise ValueError('Unknown targeting source zone')
         if type(self.colors) is not tuple or len(set(self.colors))!=len(self.colors) or any(v not in tuple('WUBRG') for v in self.colors):
             raise ValueError('Targeting source binding has malformed colors')
+        if (type(self.schema_version) is not int or self.schema_version not in {1, BOUND_TARGETING_SOURCE_VERSION}
+                or self.mana_value is not None and (self.schema_version != BOUND_TARGETING_SOURCE_VERSION
+                    or type(self.mana_value) not in {int, float} or self.mana_value < 0 or not isfinite(self.mana_value))):
+            raise ValueError('Targeting source binding has malformed protection facts')
 
     def to_dict(self):
-        return {'schema_version':1,'object_id':self.object_id,'object_ref':self.object_ref,'logical_object_id':self.logical_object_id,
-            'zone':self.zone,'controller':self.controller,'type_line':self.type_line,'colors':list(self.colors)}
+        data = {'schema_version':self.schema_version,'object_id':self.object_id,'object_ref':self.object_ref,'logical_object_id':self.logical_object_id,
+                'zone':self.zone,'controller':self.controller,'type_line':self.type_line,'colors':list(self.colors)}
+        if self.schema_version == BOUND_TARGETING_SOURCE_VERSION:
+            data['mana_value'] = self.mana_value
+        return data
 
     @classmethod
     def from_dict(cls,value):
-        if (not isinstance(value,Mapping) or set(value)!={'schema_version','object_id','object_ref','logical_object_id','zone','controller','type_line','colors'}
-                or type(value['schema_version']) is not int or value['schema_version']!=1 or type(value['colors']) not in (list,tuple)):
+        fields = {'schema_version','object_id','object_ref','logical_object_id','zone','controller','type_line','colors'}
+        if isinstance(value, Mapping) and value.get('schema_version') == BOUND_TARGETING_SOURCE_VERSION:
+            fields.add('mana_value')
+        if not isinstance(value,Mapping) or set(value)!=fields or type(value['colors']) not in (list,tuple):
             raise ValueError('Targeting source binding fields are closed')
-        return cls(value['object_id'],value['object_ref'],value['logical_object_id'],value['zone'],value['controller'],value['type_line'],tuple(value['colors']))
+        return cls(value['object_id'],value['object_ref'],value['logical_object_id'],value['zone'],
+                   value['controller'],value['type_line'],tuple(value['colors']),
+                   mana_value=value.get('mana_value'), schema_version=value['schema_version'])
 
-    def facts(self):return TargetingSource.from_characteristics('ability',{'type_line':self.type_line,'colors':self.colors},controller=self.controller)
+    def facts(self):
+        characteristics = {'type_line': self.type_line, 'colors': self.colors, 'mana_value': self.mana_value}
+        protection = ProtectionSource.from_characteristics(characteristics) if self.schema_version == BOUND_TARGETING_SOURCE_VERSION else None
+        return TargetingSource.from_characteristics('ability', characteristics, controller=self.controller,
+                                                    protection_source=protection)
 
 
-def capture_targeting_source(host,source,*,characteristics=None,zone=None):
+def capture_targeting_source(host,source,*,characteristics=None,zone=None,schema_version=1):
     data=host._effective_card_data(source) if characteristics is None else characteristics
     if not isinstance(data,Mapping) or type(data.get('type_line')) is not str:
         raise ValueError('Targeting source characteristics require an explicit type line')
     return TargetingSourceBinding(source.object_id,source.ref,source.logical_object_id,zone or source.zone,source.controller if (zone or source.zone) in {'battlefield','stack'} else source.owner,
-        data['type_line'],tuple(sorted(set(data.get('colors',())))))
+        data['type_line'],tuple(sorted(set(data.get('colors',())))),
+        mana_value=ProtectionSource.from_characteristics(data).mana_value if schema_version == BOUND_TARGETING_SOURCE_VERSION else None,
+        schema_version=schema_version)
 
 
 def spell_targeting_source(host,card):
@@ -104,7 +133,8 @@ def stack_targeting_source(host,item):
         if binding.object_id!=source_id or expected not in {None,binding.logical_object_id}:
             raise GameRuleError('Targeting source binding refers to another incarnation')
         if (source is not None and source.ref==binding.object_ref and source.logical_object_id==binding.logical_object_id
-                and source.zone==binding.zone):return ability_targeting_source(host,source)
+                and source.zone==binding.zone):
+            return capture_targeting_source(host,source,schema_version=binding.schema_version).facts()
         return binding.facts()
     if source is not None and expected==source.logical_object_id:return ability_targeting_source(host,source)
     return TargetingSource('ability')
@@ -127,7 +157,7 @@ def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError):
             if binding.object_id!=item.get('source_object_id'):raise ValueError('Targeting source frame identity changed')
             source=departures.get((binding.object_id,binding.logical_object_id))
             if source is not None and source.zone==binding.zone:
-                updates[item['ref']]=capture_targeting_source(host,source).to_dict()
+                updates[item['ref']]=capture_targeting_source(host,source,schema_version=binding.schema_version).to_dict()
         for index,batch in enumerate(host.state.pending_trigger_batches):
             data=batch.to_dict();changed=False
             for group in data['groups']:
@@ -152,6 +182,30 @@ def ensure_trigger_targeting_source(host,item):
 
 
 def spell_copy_targeting_source(host,template):
+    from .rules.casting.spell_text import CAST_TEXT_COPY_CHARACTERISTICS
+    if CAST_TEXT_COPY_CHARACTERISTICS in template:
+        actor = template.get("controller")
+        return TargetingSource.from_characteristics("spell", template[CAST_TEXT_COPY_CHARACTERISTICS],
+            controller=actor, spell_owner=actor)
     card=host.state.cards.get(str(template.get('card_object_id') or ''))
-    if card is not None:return spell_targeting_source(host,card)
+    if card is not None:
+        from .continuous_effect_state import fixed_target_color_effects
+        if fixed_target_color_effects(host.state, card):
+            from .selection.exile_cast import mana_value_of_cost
+            actor = template.get("controller")
+            characteristics = host._spell_copy_characteristics(card)
+            mana_value = mana_value_of_cost(str(characteristics.get("mana_cost") or ""),
+                                          x_value=int(template.get("x_value") or 0))
+            return TargetingSource.from_characteristics("spell", characteristics,
+                controller=actor, spell_owner=actor,
+                protection_source=ProtectionSource.from_characteristics({**characteristics, "mana_value": mana_value}))
+        return spell_targeting_source(host,card)
     return TargetingSource('spell')
+
+
+def stack_copy_targeting_source(host, item, *, controller):
+    card = host.state.cards.get(item.card_object_id or "")
+    if item.kind in {"spell", "spell_copy"} and card is not None and card.zone == "stack":
+        return spell_copy_targeting_source(host, {"card_object_id": card.object_id,
+            "controller": controller, "x_value": item.x_value})
+    return stack_targeting_source(host, item)
