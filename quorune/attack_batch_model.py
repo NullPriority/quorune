@@ -12,6 +12,22 @@ ATTACK_BATCH_CONTEXT='declared_attacker_snapshots'
 DECLARED_ATTACK_POWER_FIELD = "declared_attacker_total_power"
 DECLARED_ATTACK_POWER_COVERAGE = "declared_attacker_total_power_intervening"
 DECLARED_ATTACK_POWER_CAPABILITY = "trigger.condition.declared_attacker_total_power"
+DIRECT_PLAYER_ATTACK_EVENT = "combat.player_attacked"
+DIRECT_PLAYER_ATTACK_CAPABILITY = "trigger.event.direct_player_attack"
+DIRECT_PLAYER_ATTACK_VARIANTS = ("controller_attacks_player", "controller_attacks_initiative_holder",
+                                 "opponent_attacks_controller", "opponent_attacks_controller_with_two")
+
+
+def direct_player_attack_condition(variant: str) -> dict:
+    if variant not in DIRECT_PLAYER_ATTACK_VARIANTS:
+        raise ValueError("Direct player attack requires a represented subject")
+    field = "player" if variant.startswith("controller_attacks_") else "defender"
+    relation = {"field": field, "op": "eq", "value": "$source.controller"}
+    if variant == "controller_attacks_initiative_holder":
+        return {"all": [relation, {"field": "defender_has_initiative", "op": "eq", "value": True}]}
+    if variant == "opponent_attacks_controller_with_two":
+        return {"all": [relation, {"field": "attacker_count", "op": "gte", "value": 2}]}
+    return relation
 
 
 def declared_attack_power_condition(minimum: int) -> dict:

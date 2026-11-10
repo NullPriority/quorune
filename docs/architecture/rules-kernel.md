@@ -686,6 +686,10 @@ controller for each simultaneous batch. A transfer trigger keeps the
 previous holder as its controller and the attacker as its affected player.
 The existing APNAP queue handles those triggers and upkeep occurrences.
 
+Declared attacks publish one occurrence per directly attacked player. The
+occurrence records the declaring player, the number of creatures declared at
+that player, and whether that player holds the initiative at declaration.
+
 Public-state conditions read the current controller's completed dungeon
 history or initiative designation. A named completion condition uses the
 recorded dungeon identity. When only an aggregate completion count is

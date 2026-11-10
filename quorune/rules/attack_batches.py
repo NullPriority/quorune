@@ -1,5 +1,6 @@
 """Read sealed declaration snapshots; commit no game state or trigger batches."""
 
+from collections import Counter
 from collections.abc import Mapping
 from dataclasses import replace
 
@@ -9,9 +10,14 @@ from ..attack_batch_model import (
     DECLARED_ATTACK_POWER_CAPABILITY,
     DECLARED_ATTACK_POWER_COVERAGE,
     DECLARED_ATTACK_POWER_FIELD,
+    DIRECT_PLAYER_ATTACK_CAPABILITY,
+    DIRECT_PLAYER_ATTACK_EVENT,
+    DIRECT_PLAYER_ATTACK_VARIANTS,
     declared_attack_power_condition,
+    direct_player_attack_condition,
 )
-from ..attack_transition_model import AttackTransitionEvent
+from ..attack_transition_model import AttackRecipientKind, AttackTransitionEvent
+from ..initiative_model import TAKE_INITIATIVE_CAPABILITY
 from ..qualified_attack_model import ATTACK_FACT_PREFIX,ATTACK_FACT_COLLECTIONS,ATTACK_FACT_BOOLEANS,ATTACK_FACT_NUMBERS
 from ..object_query import ObjectQueryResult,object_matches_query
 from ..replacement.immutable import FrozenMap, thaw_value
@@ -26,6 +32,15 @@ def seal_attack_declaration(event,characteristic_contexts):
         'recipient_logical_object_id':a.recipient.logical_object_id,
         'defending_player':a.recipient.defending_player,
         'characteristics':dict(characteristic_contexts[a.attacker_object_id])}) for a in event.assignments)
+
+
+def direct_player_attack_facts(event: AttackTransitionEvent, initiative_holder: str | None) -> tuple[FrozenMap, ...]:
+    counts = Counter(assignment.recipient.reference for assignment in event.assignments
+                     if assignment.recipient.kind is AttackRecipientKind.PLAYER)
+    return tuple(FrozenMap({
+        "player": event.active_player, "defender": defender, "attacker_count": count,
+        "defender_has_initiative": defender == initiative_holder,
+    }) for defender, count in sorted(counts.items()))
 
 
 def _sealed_rows(context):
@@ -171,7 +186,23 @@ def _mentions_declared_attack_power(value):
 
 
 def qualified_attack_batch_runtime_dependencies(program):
-    specs=attack_batch_conditions(program.event_condition)
+    from .event_subscriptions import EVENT_SUBSCRIPTIONS_FIELD, FixedEventSubscriptionSet
+
+    condition = program.event_condition
+    if isinstance(condition, Mapping) and EVENT_SUBSCRIPTIONS_FIELD in condition:
+        subscriptions = FixedEventSubscriptionSet.from_condition(condition)
+        if subscriptions is not None and any(
+            child.event.removesuffix(".self") == DIRECT_PLAYER_ATTACK_EVENT for child in subscriptions.subscriptions
+        ):
+            raise ValueError("Direct player attack requires a single event subscription")
+    if program.event.removesuffix(".self") == DIRECT_PLAYER_ATTACK_EVENT:
+        for variant in DIRECT_PLAYER_ATTACK_VARIANTS:
+            if (program.event == DIRECT_PLAYER_ATTACK_EVENT and program.active_zone == "battlefield"
+                    and condition == direct_player_attack_condition(variant)):
+                return ((DIRECT_PLAYER_ATTACK_CAPABILITY, TAKE_INITIATIVE_CAPABILITY)
+                        if variant == "controller_attacks_initiative_holder" else (DIRECT_PLAYER_ATTACK_CAPABILITY,))
+        raise ValueError("Direct player attack requires a closed battlefield subscription")
+    specs=attack_batch_conditions(condition)
     if specs and (program.event!='creature.attacks' or 'one_or_more_event_batch' not in program.coverage):
         raise ValueError('Qualified attack batches require declared-attack coalescing')
     if DECLARED_ATTACK_POWER_COVERAGE in program.coverage or _mentions_declared_attack_power(program.event_condition):

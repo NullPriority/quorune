@@ -22,6 +22,43 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_direct_player_attack_subscription_requires_its_closed_condition_and_capability(self):
+        from unittest.mock import patch
+
+        from quorune.attack_batch_model import DIRECT_PLAYER_ATTACK_CAPABILITY
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.fixed_public_action_event_bindings import direct_player_attack_binding_spec
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.rules.event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition
+        from quorune.semantics import SemanticProgram
+
+        text = "Whenever an opponent attacks you with two or more creatures, draw a card."
+        spec = direct_player_attack_binding_spec(text)
+        self.assertEqual((DIRECT_PLAYER_ATTACK_CAPABILITY,), spec.capabilities)
+        self.assertEqual({"field": "attacker_count", "op": "gte", "value": 2}, spec.condition["all"][-1])
+        self.assertIsNone(direct_player_attack_binding_spec(text.replace("two", "five")))
+        self.assertIsNone(direct_player_attack_binding_spec(text.replace("attacks you", "attacks a battle")))
+        registry = load_default_capability_registry()
+        deps = ("trigger.event.normalized_public_action",)
+        forged = SemanticProgram("fixture:direct-attack", "Direct attack", event=spec.event, active_zone="battlefield",
+                                 event_condition=spec.condition, capability_dependencies=deps,
+                                 capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + DIRECT_PLAYER_ATTACK_CAPABILITY, binding["blockers"])
+        malformed = replace(forged, event_condition={"field": "attacker_count", "op": "gte", "value": 2})
+        self.assertTrue(any("closed battlefield subscription" in value for value in
+                            bind_semantic_program_runtime(malformed, capability_registry=registry,
+                                                          profile="commander_review")["blockers"]))
+        bundled = replace(forged, event="creature.attacks", event_condition=fixed_event_subscription_condition((
+            FixedEventSubscription("creature.attacks"), FixedEventSubscription(spec.event, spec.condition),
+        )))
+        self.assertTrue(any("requires a single event subscription" in value for value in
+                            bind_semantic_program_runtime(bundled, capability_registry=registry,
+                                                          profile="commander_review")["blockers"]))
+        with patch("quorune.compiler.fixed_public_action_event_bindings.re.fullmatch", return_value=None):
+            with self.assertRaises(AssertionError):
+                self.assertIsNotNone(direct_player_attack_binding_spec(text))
+
     def test_venture_limit_requires_typed_authority_and_versioned_unique_usage(self):
         from types import SimpleNamespace
         from unittest.mock import patch
@@ -811,6 +848,53 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(DungeonRoomRef(DungeonId.LOST_MINE, 1), session.state.players["A"].dungeon_journey.active.room)
         self.assertEqual(1, sum(event.kind == "first_venture" for event in session.state.turn_history.events))
         self.replay(session)
+
+    def test_original_direct_attack_observers_count_each_player_and_exclude_their_planeswalker(self):
+        from quorune.record import authoritative_state_hash
+
+        for direct in (True, False):
+            with self.subTest(direct=direct):
+                session = self.session(508300 + direct)
+                loot = self.add(session.engine, "Loot Dispute")
+                sensor = self.add(session.engine, "Long-Range Sensor")
+                explorer = self.add(session.engine, "Horizon Explorer")
+                ross = self.add(session.engine, "Everett K. Ross, Hapless Attaché", seat="B")
+                walker = self.add(session.engine, "Jace Beleren", seat="B")
+                walker.counters["loyalty"] = 3
+                attackers = tuple(self.add(session.engine, "Grizzly Bears", ref=f"direct-attack-{i}")
+                                  for i in range(3))
+                for card in attackers:
+                    card.acquired_control_turn_count = -1
+                for card in (loot, sensor, explorer, ross):
+                    self.assert_closed(session, card)
+                self.prepare(session)
+                session.state.initiative = "B"
+                self.checkpoint(session)
+                self.until(session, lambda game: game.state.pending_decision.kind == "combat.attackers")
+                recipient = "B" if direct else walker.ref
+                command = {"action_id": "attack", "attackers": {
+                    attackers[0].ref: recipient, attackers[1].ref: recipient, attackers[2].ref: "C",
+                }}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:D", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self._order_triggers(session, 5 if direct else 2)
+                direct_players = 2 if direct else 1
+                self.assertEqual(int(direct), self.trigger_count(session, loot))
+                self.assertEqual(direct_players, self.trigger_count(session, sensor))
+                self.assertEqual(direct_players, self.trigger_count(session, explorer))
+                self.assertEqual(int(direct), self.trigger_count(session, ross))
+                b_hand = len(session.state.players["B"].zones["hand"])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(direct_players, session.state.cards[sensor.object_id].counters["charge"])
+                self.assertEqual(b_hand + int(direct), len(session.state.players["B"].zones["hand"]))
+                token_names = [card.printed_name for card in session.state.cards.values()
+                               if card.is_token and card.zone == "battlefield" and card.controller == "A"]
+                self.assertEqual(int(direct), token_names.count("Treasure Token"))
+                self.assertEqual(direct_players, token_names.count("Lander Token"))
+                self.replay(session, load=direct)
 
     def test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion(self):
         session, source, final = self._reach_last_room(309004, room_multiplier=True)

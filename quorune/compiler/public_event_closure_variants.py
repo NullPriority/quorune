@@ -2,6 +2,7 @@ from __future__ import annotations
 from .received_damage_bindings import RECEIVED_PERMANENT_VARIANTS
 from .designation_event_bindings import DESIGNATION_EVENT_VARIANTS
 from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT
+from ..attack_batch_model import DIRECT_PLAYER_ATTACK_VARIANTS
 from ..dungeon_progress import DUNGEON_COMPLETION_TRIGGER_VARIANT
 
 """Finite public event variants admitted by the shared result composer."""
@@ -14,6 +15,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_transforms_into",
         "controlled_permanent_transforms_into",
         DAMAGE_PERMANENT_VARIANT,
+        *DIRECT_PLAYER_ATTACK_VARIANTS,
         DUNGEON_COMPLETION_TRIGGER_VARIANT,
         'source_damage_death_history',
         'public_anywhere_graveyard_card',

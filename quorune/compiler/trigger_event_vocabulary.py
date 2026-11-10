@@ -1,6 +1,7 @@
 """Closed normalized-event vocabulary shared by trigger binding consumers."""
 from enum import Enum
 
+from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
 from ..dungeon_progress import DUNGEON_COMPLETED_EVENT
 from ..rules.event_subscriptions import LAND_PLAY_EVENT
 from ..life_change import FIRST_LIFE_GAIN_EVENT
@@ -25,6 +26,7 @@ class FixedCounterTriggerEvent(str, Enum):
     PUBLIC_LAND_PLAY = LAND_PLAY_EVENT
     CONTROLLER_SPELL_CAST = "spell.cast"
     SOURCE_ATTACKS = "creature.attacks"
+    DIRECT_PLAYER_ATTACK = DIRECT_PLAYER_ATTACK_EVENT
     ATTACKER_UNBLOCKED = 'creature.unblocked'
     CONTROLLER_LIFE_GAIN = "life.gained"
     CONTROLLER_FIRST_LIFE_GAIN = FIRST_LIFE_GAIN_EVENT

@@ -73291,6 +73291,82 @@
     {
       "applicability": {
         "exclusions": [
+          "Attack declarations at planeswalkers or battles",
+          "Objects entering already attacking",
+          "Unrepresented attacker characteristics and multi-event subscriptions"
+        ],
+        "inputs": [
+          "Committed attack declarations and their direct recipients",
+          "Current initiative designation"
+        ],
+        "outputs": [
+          "One occurrence per attacked seat with its local attacker count",
+          "Normal triggered ability ordering and resolution"
+        ],
+        "summary": "A declared attack at a player contributes one public occurrence per direct recipient, with the declaring player, recipient, local count and initiative qualification."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_public_action",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "The event and exact closed condition independently require direct-attack authority; the initiative qualifier also requires its designation owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.direct_player_attack",
+      "implementation_components": [
+        "quorune.attack_batch_model.direct_player_attack_condition",
+        "quorune.compiler.fixed_public_action_event_bindings.direct_player_attack_binding_spec",
+        "quorune.rules.attack_batches.direct_player_attack_facts",
+        "quorune.rules.attack_batches.qualified_attack_batch_runtime_dependencies",
+        "quorune.attack_transition_engine_adapter.attack_transition_stack_items"
+      ],
+      "implementation_mutation_rationale": "Omitting the event head keeps its exact trigger wording unresolved. The native contrast separates direct-player and planeswalker recipients.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_direct_attack_observers_count_each_player_and_exclude_their_planeswalker"
+      ],
+      "multiplayer_tests": [
+        "test_original_direct_attack_observers_count_each_player_and_exclude_their_planeswalker"
+      ],
+      "negative_tests": [
+        "test_original_direct_attack_observers_count_each_player_and_exclude_their_planeswalker",
+        "test_direct_player_attack_subscription_requires_its_closed_condition_and_capability"
+      ],
+      "official_rules": [
+        "508.1b",
+        "508.3d",
+        "508.3e",
+        "508.4",
+        "603.2",
+        "603.3b",
+        "726.1"
+      ],
+      "positive_tests": [
+        "test_original_direct_attack_observers_count_each_player_and_exclude_their_planeswalker",
+        "test_direct_player_attack_subscription_requires_its_closed_condition_and_capability"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_original_direct_attack_observers_count_each_player_and_exclude_their_planeswalker"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Printed mana value as spending",
           "Mana generation and activation payments",
           "Spell copies without casting",
@@ -90260,7 +90336,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 802,
+  "registry_version": 803,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
