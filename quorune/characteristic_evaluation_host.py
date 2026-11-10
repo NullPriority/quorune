@@ -755,6 +755,10 @@ class CharacteristicEvaluationHostMixin:
 
                 runtime_effects = (*runtime_effects, *compiled_conditional_flash_stack_effects(self, card),
                     *stack_cascade_grant_effects(self, card))
+        if card.zone != "battlefield":
+            from .rules.cross_zone_characteristics import cross_zone_type_effects_for_card
+
+            runtime_effects = (*runtime_effects, *cross_zone_type_effects_for_card(self, card, maximum_layer=maximum_layer))
         enchanted, equipped, modified = (
             self._attachment_public_state(
                 card,

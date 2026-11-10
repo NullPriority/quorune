@@ -561,6 +561,12 @@ def _continuous_static_runtime_template(
 
 
 def _constant_static_characteristic_template(text, *, source_name, source_is_class):
+    from .cross_zone_type_addition_templates import cross_zone_type_addition_handler
+    cross_zone = None if source_is_class else cross_zone_type_addition_handler(text)
+    if cross_zone is not None:
+        return StaticRuntimeTemplate(compiled=cross_zone, kind="static_ability", event="characteristics.evaluate",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Cross-zone type additions require the complete source and shared type-layer owner")
     from .soulbond_templates import paired_characteristics_handler
     paired = paired_characteristics_handler(text, source_name=source_name or 'source')
     if paired is not None:

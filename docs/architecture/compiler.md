@@ -849,6 +849,12 @@ retaining the receiver's existing types. Controller, counter, and token
 predicates keep their existing meanings, and a Land addition supplies no
 basic subtype or intrinsic mana ability on its own.
 
+A cross-zone type addition binds separate receiver predicates for battlefield
+permanents, controlled spells, and any owned cards named by the printed text.
+The same layer-four effects supply the current characteristic query and the
+prospective stack type used for casting. Spell copies use their current
+controller's spell scope, and the owned-card scope uses physical card identity.
+
 General query parsing preserves the earlier direct tap-field encoding for a
 pure tapped or untapped quantity predicate. Compound state predicates retain
 their own representation and validation. Public mana production validates a

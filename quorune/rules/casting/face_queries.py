@@ -25,9 +25,13 @@ def prospective_cast_card(host,card,face_name=None):
 TYPED_MANA_SPEND_TYPE_LINE_FIELD = "typed_mana_spend_type_line"
 
 
-def typed_mana_spend_details(host, cast_view, type_line, *, use_selected_type):
+def typed_mana_spend_details(host, cast_view, type_line, *, actor, use_selected_type):
     """Carry the funding query's effective spell type to typed payment commit."""
     if use_selected_type:
+        return {}
+    from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+    if prospective_cross_zone_spell_type_line(host, cast_view, actor, type_line) is not None:
         return {}
     effective = str(host._effective_card_data(cast_view).get("type_line") or "")
     if not effective or effective == type_line:

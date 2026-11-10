@@ -29675,6 +29675,94 @@
     {
       "applicability": {
         "exclusions": [
+          "type replacement",
+          "unbounded recipients",
+          "off-zone source effects",
+          "nonphysical copies in owned card scopes"
+        ],
+        "inputs": [
+          "complete current static source",
+          "closed public type predicate",
+          "selected spell form and controller"
+        ],
+        "outputs": [
+          "live layer-four types in the specified zones",
+          "consistent prospective stack characteristics for casting"
+        ],
+        "summary": "Apply a fixed additive card type to the printed controlled permanent, controlled spell, and owned card scopes."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "dependency_fail_closed_rationale": "Unknown scope shapes and withdrawal of the cross-zone type capability prevent exact admission.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.characteristics.cross_zone_type_addition",
+      "implementation_components": [
+        "quorune.compiler.cross_zone_type_addition_templates.cross_zone_type_addition_handler",
+        "quorune.semantic_runtime.cross_zone_type_additions.CrossZoneTypeAdditionHandler",
+        "quorune.rules.cross_zone_characteristics.cross_zone_type_effects_for_card",
+        "quorune.rules.cross_zone_characteristics.prospective_cross_zone_spell_type_line"
+      ],
+      "implementation_mutation_rationale": "Removing the owned-card branch fails the exact receiver split witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand",
+        "test_original_mycosynth_uses_permanent_spell_types_for_price_and_keeps_land_cards_unmodified"
+      ],
+      "multiplayer_tests": [
+        "test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand",
+        "test_original_mycosynth_uses_permanent_spell_types_for_price_and_keeps_land_cards_unmodified"
+      ],
+      "negative_tests": [
+        "test_cross_zone_type_addition_keeps_spell_and_owned_card_predicates_distinct",
+        "test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand",
+        "test_original_mycosynth_uses_permanent_spell_types_for_price_and_keeps_land_cards_unmodified"
+      ],
+      "official_rules": [
+        "109.2a",
+        "109.2b",
+        "110.4a",
+        "110.4b",
+        "112.1a",
+        "205.1b",
+        "601.2f",
+        "601.2i",
+        "611.3b",
+        "613.1d",
+        "707.2"
+      ],
+      "positive_tests": [
+        "test_cross_zone_type_addition_keeps_spell_and_owned_card_predicates_distinct",
+        "test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand",
+        "test_original_mycosynth_uses_permanent_spell_types_for_price_and_keeps_land_cards_unmodified"
+      ],
+      "privacy_tests": [
+        "test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand"
+      ],
+      "replay_tests": [
+        "test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand",
+        "test_original_mycosynth_uses_permanent_spell_types_for_price_and_keeps_land_cards_unmodified"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Oracle-equivalent nonkeyword wording",
           "granted Devoid without typed ability propagation",
           "text-changing interactions",
@@ -91068,7 +91156,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 814,
+  "registry_version": 815,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

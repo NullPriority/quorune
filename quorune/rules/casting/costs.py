@@ -1450,6 +1450,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
 def _cast_cost_options_for_submission(host, seat, card, program, submission, *, hint, force_without_mana_cost,
         alternative_base, cast_type_line, suppress_source_costs, resolving_exile_authority,
         minimum_library_x, source_grant_only=None):
+    from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+    cast_type_line = prospective_cross_zone_spell_type_line(host, card, seat, cast_type_line) or cast_type_line
     initial = _initial_options(
         host,
         seat,
@@ -1501,6 +1504,10 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
             if option.get("cast_type_line")
             else cast_type_line
         )
+        if option.get("cast_type_line"):
+            projected = prospective_cross_zone_spell_type_line(host, card, seat, option_cast_type_line)
+            if projected is not None:
+                option["cast_type_line"] = option_cast_type_line = projected
         from ..splice import SPLICE_INTERNAL_SELECTION, SPLICE_SELECTION
         if SPLICE_SELECTION in submission or SPLICE_INTERNAL_SELECTION in submission:
             from .splice_costs import apply_splice_declaration
