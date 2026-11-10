@@ -1347,8 +1347,9 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
     from .nonleaf_effect_closure import effect_program_is_closed
+    from ..rules.attachment_action_capability_shapes import is_closed_fixed_source_equipment_activation_program
     from ..rules.next_spell_payment import is_closed_next_spell_payment_program
-    if is_closed_next_spell_payment_program(program):
+    if is_closed_next_spell_payment_program(program) or is_closed_fixed_source_equipment_activation_program(program):
         return True
     return effect_program_is_closed(program,recognizers=_closed_effect_recognizers(),
         recursive_is_closed=_is_closed_effect_program,composed_is_closed=is_closed_composed_spell_effect_program)

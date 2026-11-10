@@ -3542,6 +3542,11 @@ even when the printed target is a bare subtype; a noncreature Kindred permanent
 with that subtype is not eligible. Offers, choices, and resolution share that
 predicate, and an entry with no legal target leaves the Equipment unattached.
 These triggers do not pay or inherit the separate Equip activation cost.
+A printed instruction to attach this Equipment shares the same source and
+target validation in triggered and activated abilities. The controlled or
+opposing creature relation comes from the instruction. An activated
+instruction retains its own cost and printed timing, including an explicit
+sorcery restriction when present.
 The keyword triggers and printed instructions to create one fixed creature
 token and attach this Equipment use the same replacement-aware token owner.
 A printed optional fixed mana payment uses the existing resolution payment

@@ -5349,9 +5349,10 @@
         "inputs": [
           "one source-spanned fixed attachment instruction",
           "one current battlefield Aura or Equipment source incarnation",
-          "one revalidated legal creature target, including a closed required or excluded creature subtype for Equipment entry",
+          "one revalidated legal creature target with the printed controlled or opponent relation and any represented Equipment entry subtype restriction",
           "the source's compiled Enchant restriction for Aura movement",
-          "one fixed creature creation and its committed replacement-adjusted result incarnations"
+          "one fixed creature creation and its committed replacement-adjusted result incarnations",
+          "compiled activation price and timing for a printed activated attachment"
         ],
         "outputs": [
           "one public target contract",
@@ -5359,9 +5360,10 @@
           "one reciprocal attachment transition",
           "a no-effect result for an absent, stale, or illegal source or target",
           "exact replay of the resulting relation",
-          "one legal created recipient selected before state-based actions"
+          "one legal created recipient selected before state-based actions",
+          "trusted activation only for the closed source, effect, cost, and target contract"
         ],
-        "summary": "Resolve one closed source Equipment or Aura attachment through the canonical reciprocal transaction. The target path retains its source and target incarnations. An Equipment creation instruction binds the actual legal token recipients and lets the current Equipment controller choose when more than one is legal."
+        "summary": "Resolve a closed source Equipment or Aura attachment through the canonical reciprocal transaction. Printed Equipment instructions retain their own activation price, timing, and controller target relation. The target path retains its source and target incarnations. Creation instructions bind the committed legal token recipients."
       },
       "blockers": [],
       "dependencies": [
@@ -5369,7 +5371,7 @@
         "target.permanent.characteristic_predicate",
         "target.revalidate_resolution"
       ],
-      "dependency_fail_closed_rationale": "The compiler requires the existing Aura attachment and target-revalidation capabilities; unsupported source kinds, target shapes, Enchant restrictions, and stale source incarnations cannot reach the attachment mutation. Restricted Equipment entry uses the shared closed permanent-characteristic target owner and rejects noncreatures, foreign controllers, additional selector fields, and stale targets.",
+      "dependency_fail_closed_rationale": "Closed attachment admission requires the existing attachment and target-revalidation capabilities, a complete activation price, and one current source incarnation. The target predicate preserves its printed controller relation and supported entry subtype restrictions.",
       "dependency_fail_closed_status": "passed",
       "id": "attachment.action.fixed_source",
       "implementation_components": [
@@ -5380,7 +5382,8 @@
         "quorune.attachments.attach_objects",
         "quorune.compiler.fixed_attachment_templates.created_token_attachment_effect_template",
         "quorune.rules.attachment_actions.validate_created_token_attachment",
-        "quorune.semantic_choices.created_token_counters.CreatedTokenAttachmentHandler"
+        "quorune.semantic_choices.created_token_counters.CreatedTokenAttachmentHandler",
+        "quorune.rules.attachment_action_capability_shapes.is_closed_fixed_source_equipment_activation_program"
       ],
       "implementation_mutation_rationale": "test_attachment_action_compiler_and_runtime_mutants_are_killed removes either the typed lowering or canonical attach dispatch and the exact relation assertions reject both survivors. test_restricted_attachment_shape_and_compiler_omission_fail_closed removes the fixed attachment lowering and requires the minimal restricted entry to remain residual.",
       "implementation_mutation_status": "killed",
@@ -5393,14 +5396,20 @@
         "test_actual_barbed_spike_attaches_to_the_chosen_created_thopter",
         "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
         "test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions",
-        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source",
+        "test_actual_plating_uses_priority_and_revalidates_the_controlled_target",
+        "test_actual_bloodthirsty_blade_moves_the_live_goad_at_sorcery_speed",
+        "test_actual_mantle_attaches_on_second_draw_and_ignores_later_draws",
+        "test_actual_forebear_and_hylderblade_use_the_departure_at_their_own_times"
       ],
       "multiplayer_tests": [
         "test_four_player_attachment_target_projection_and_replay",
         "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity",
         "test_actual_barbed_spike_attaches_to_the_chosen_created_thopter",
         "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
-        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source",
+        "test_actual_plating_uses_priority_and_revalidates_the_controlled_target",
+        "test_actual_bloodthirsty_blade_moves_the_live_goad_at_sorcery_speed"
       ],
       "negative_tests": [
         "test_adjacent_attachment_grammar_remains_fail_closed",
@@ -5409,7 +5418,11 @@
         "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target",
         "test_created_attachment_payload_rejects_uncommitted_or_malformed_results",
         "test_actual_departed_equipment_creates_rebels_without_an_attachment_choice",
-        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source",
+        "test_printed_source_equipment_activations_share_closed_effect_admission",
+        "test_actual_plating_uses_priority_and_revalidates_the_controlled_target",
+        "test_actual_bloodthirsty_blade_moves_the_live_goad_at_sorcery_speed",
+        "test_actual_mantle_attaches_on_second_draw_and_ignores_later_draws"
       ],
       "official_rules": [
         "301.5c",
@@ -5435,13 +5448,17 @@
         "test_printed_token_attachment_closes_direct_and_paid_entry_bodies",
         "test_actual_barbed_spike_attaches_to_the_chosen_created_thopter",
         "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
-        "test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions"
+        "test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions",
+        "test_printed_source_equipment_activations_share_closed_effect_admission",
+        "test_actual_plating_uses_priority_and_revalidates_the_controlled_target",
+        "test_actual_bloodthirsty_blade_moves_the_live_goad_at_sorcery_speed"
       ],
       "privacy_tests": [
         "test_four_player_attachment_target_projection_and_replay",
         "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity",
         "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
-        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source",
+        "test_actual_mantle_attaches_on_second_draw_and_ignores_later_draws"
       ],
       "replay_tests": [
         "test_four_player_attachment_target_projection_and_replay",
@@ -5451,7 +5468,11 @@
         "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
         "test_actual_departed_equipment_creates_rebels_without_an_attachment_choice",
         "test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions",
-        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source",
+        "test_actual_plating_uses_priority_and_revalidates_the_controlled_target",
+        "test_actual_bloodthirsty_blade_moves_the_live_goad_at_sorcery_speed",
+        "test_actual_mantle_attaches_on_second_draw_and_ignores_later_draws",
+        "test_actual_forebear_and_hylderblade_use_the_departure_at_their_own_times"
       ],
       "required_evidence": [
         "positive",
@@ -5467,7 +5488,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 3
+      "version": 4
     },
     {
       "applicability": {
@@ -87503,7 +87524,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 768,
+  "registry_version": 769,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

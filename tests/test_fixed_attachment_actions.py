@@ -4,6 +4,7 @@ from dataclasses import replace
 import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 
@@ -18,7 +19,7 @@ from quorune.abilities import ActivationLimit, parse_activated_abilities
 from quorune.attachments import AttachmentTransition, attach_objects
 from quorune.carddb import CardRecord
 from quorune.carddb import CardDatabase
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.errors import GameRuleError
 from quorune.model import CardInstance, CombatState
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
@@ -29,10 +30,12 @@ from quorune.record import (
     replay_record,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.attachment_action_capability_shapes import is_closed_fixed_source_equipment_activation_program
 from scripts.build_test_database import build_fixture_database
 
 
 FIXTURE = ROOT / "tests" / "fixtures" / "fixed-attachment-actions-cards.json"
+PRINTED_FIXTURE = ROOT / "tests" / "fixtures" / "printed-source-attachment-cards.json"
 
 
 def focused_database(directory: str) -> CardDatabase:
@@ -408,6 +411,203 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                     replace(base, oracle_text=oracle_text)
                 )
                 self.assertNotEqual("exact", compiled.status)
+
+    def test_printed_source_equipment_activations_share_closed_effect_admission(self):
+        for subject, price in (("you control", "{B}{B}"), ("an opponent controls", "{1}")):
+            with self.subTest(subject=subject):
+                fixture = record("Printed Harness", f"{price}: Attach this Equipment to target creature {subject}.")
+                ir = self.compile(fixture)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual("activate", node.event)
+                self.assertEqual(({"op": "attach", "attachment_kind": "equipment",
+                    "source": "$source.zone_object", "target": "$target.0"},), node.effects)
+                self.assertEqual("you" if subject == "you control" else "opponent",
+                    node.target_schema.get("controller", node.target_schema.get("controller_relation")))
+                program = dict(event=node.event, active_zone=node.active_zone, cost_schema=node.cost,
+                    effects=node.effects, target_schema=node.target_schema, coverage=node.mechanics,
+                    capability_dependencies=node.capability_dependencies)
+                self.assertTrue(is_closed_fixed_source_equipment_activation_program(SimpleNamespace(**program)))
+                for changed in (
+                    {"cost_schema": None},
+                    {"cost_schema": {**node.cost, "uncompiled_costs": ["unrepresented cost"]}},
+                    {"active_zone": "graveyard"},
+                    {"effects": ({**node.effects[0], "source": "$target.0"},)},
+                    {"target_schema": {**node.target_schema, "count": True}},
+                    {"capability_dependencies": tuple(dep for dep in node.capability_dependencies
+                        if dep != "target.revalidate_resolution")},
+                ):
+                    with self.subTest(change=tuple(changed)):
+                        self.assertFalse(is_closed_fixed_source_equipment_activation_program(
+                            SimpleNamespace(**{**program, **changed})))
+
+        for fixture in (
+            record("Open Harness", "{1}: Attach this Equipment to target artifact an opponent controls."),
+            record("False Harness", "{1}: Attach this Equipment to target creature you control.", type_line="Artifact"),
+        ):
+            with self.subTest(oracle=fixture.oracle_text, type_line=fixture.type_line):
+                self.assertTrue(self.compile(fixture).material_residuals)
+
+
+class PrintedSourceAttachmentNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        fixtures = ROOT / "tests" / "fixtures"
+        database = Path(cls.temporary.name) / "printed-source-attachment.sqlite3"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "classic-flash-cards.json",
+            fixtures / "attached-exile-activation-cards.json",
+            fixtures / "additional-conditional-modifier-cards.json",
+            PRINTED_FIXTURE,
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Printed attachment", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def attachment_offers(self, session, source):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return [action for action in actions if action["id"].startswith(f"activate:{source.ref}:")]
+
+    def attach(self, session, source, target):
+        attach_objects(session.state.cards, source, target, source_timestamp=source.zone_timestamp,
+            players=session.state.players)
+
+    def assert_attached(self, session, source, target):
+        self.assertEqual(target.object_id, session.state.cards[source.object_id].attached_to)
+        self.assertIn(source.object_id, session.state.cards[target.object_id].attachments)
+
+    def test_actual_plating_uses_priority_and_revalidates_the_controlled_target(self):
+        for stolen in (False, True):
+            with self.subTest(stolen=stolen):
+                session = self.session(701_300_051 + int(stolen))
+                engine = session.engine
+                plating = self.add(engine, "Cranial Plating")
+                old = self.add(engine, "Generic Bound Body", ref="plating-old-recipient")
+                selected = self.add(engine, "Generic Bound Body", ref="plating-new-recipient")
+                opponent = self.add(engine, "Generic Bound Body", seat="B", ref="plating-opponent-creature")
+                self.attach(session, plating, old)
+                self.assert_closed(session, plating)
+                if stolen:
+                    theft = self.add(engine, "Confiscate", seat="B", zone="hand")
+                    flash = self.add(engine, "Vedalken Orrery", seat="B")
+                    for card in (theft, flash):
+                        self.assert_closed(session, card)
+                    session.state.players["B"].mana_pool.update({"C": 8, "U": 4})
+                self.prepare(session, active="B", mana={"B": 2})
+                self.checkpoint(session)
+                self.priority(session, "A")
+                self.assertEqual("B", session.state.active_player)
+                offer, = self.attachment_offers(session, plating)
+                command = {"action_id": offer["id"], "targets": [opponent.ref], "pay": "auto"}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                result = session.act("pilot:A", {**command, "targets": [selected.ref]})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(0, session.state.players["A"].mana_pool["B"])
+                if stolen:
+                    self.cast(session, "B", theft, [selected.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("B", session.state.cards[selected.object_id].controller)
+                self.assertIsNone(self.resolve(session))
+                self.assert_attached(session, plating, old if stolen else selected)
+                self.replay(session, load=True)
+
+    def test_actual_bloodthirsty_blade_moves_the_live_goad_at_sorcery_speed(self):
+        for active in ("A", "B"):
+            with self.subTest(active=active):
+                session = self.session(701_300_054 + (active == "B"))
+                engine = session.engine
+                blade = self.add(engine, "Bloodthirsty Blade")
+                first = self.add(engine, "Generic Bound Body", seat="B", ref="blade-first-recipient")
+                second = self.add(engine, "Generic Bound Body", seat="C", ref="blade-second-recipient")
+                own = self.add(engine, "Generic Bound Body", ref="blade-controller-creature")
+                self.attach(session, blade, first)
+                self.assert_closed(session, blade)
+                self.prepare(session, active=active, mana={"C": 2})
+                self.checkpoint(session)
+                self.priority(session, "A")
+                offers = self.attachment_offers(session, blade)
+                if active == "B":
+                    self.assertEqual([], offers)
+                    self.replay(session, load=True)
+                    continue
+                offer, = offers
+                command = {"action_id": offer["id"], "targets": [own.ref], "pay": "auto"}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                result = session.act("pilot:A", {**command, "targets": [second.ref]})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assert_attached(session, blade, second)
+                self.assertEqual("A", session.state.cards[blade.object_id].controller)
+                packet = session.packet("spectator", full=True)["state"]["players"]
+                old_recipient = next(obj for obj in packet["B"]["bf"] if obj["id"] == first.ref)
+                new_recipient = next(obj for obj in packet["C"]["bf"] if obj["id"] == second.ref)
+                self.assertNotIn("goad", old_recipient)
+                self.assertEqual(["A"], new_recipient["goad"])
+                self.replay(session, load=True)
+
+    def test_actual_mantle_attaches_on_second_draw_and_ignores_later_draws(self):
+        session = self.session(701_300_056)
+        engine = session.engine
+        mantle = self.add(engine, "Mantle of Tides")
+        recipient = self.add(engine, "Generic Bound Body", ref="mantle-controller-creature")
+        opponent = self.add(engine, "Generic Bound Body", seat="B", ref="mantle-opponent-creature")
+        draws = [self.add(engine, "Divination", zone="hand", ref=f"mantle-draw-{index}") for index in (1, 2)]
+        for card in (mantle, *draws):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 8, "U": 4})
+        drawn_refs = [session.state.cards[object_id].ref for object_id in session.state.players["A"].zones["library"][-2:]]
+        self.checkpoint(session)
+        self.cast(session, "A", draws[0])
+        decision = self.resolve(session)
+        self.assertEqual("semantic.target", decision.kind)
+        self.assertEqual(["A"], decision.actors)
+        for seat in "BCD":
+            packet = json.dumps(session.packet(f"pilot:{seat}", full=True))
+            self.assertTrue(all(ref not in packet for ref in drawn_refs))
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "targets": [opponent.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.target(session, "A", [recipient.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, mantle, recipient)
+        self.cast(session, "A", draws[1])
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, mantle, recipient)
+        self.replay(session, load=True)
+
+    def test_actual_forebear_and_hylderblade_use_the_departure_at_their_own_times(self):
+        session = self.session(701_300_057)
+        engine = session.engine
+        forebear = self.add(engine, "Forebear's Blade")
+        hylderblade = self.add(engine, "Hylderblade")
+        dying = self.add(engine, "Generic Bound Body", ref="forebear-departing-creature")
+        recipient = self.add(engine, "Generic Bound Body", ref="forebear-new-recipient")
+        murder = self.add(engine, "Murder", zone="hand")
+        self.attach(session, forebear, dying)
+        for card in (forebear, hylderblade, murder):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 6, "B": 4})
+        self.checkpoint(session)
+        self.cast(session, "A", murder, [dying.ref])
+        decision = self.resolve(session)
+        self.assertEqual("semantic.target", decision.kind)
+        self.assertEqual("graveyard", session.state.cards[dying.object_id].zone)
+        self.target(session, "A", [recipient.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, forebear, recipient)
+        self.assertIsNone(session.state.cards[hylderblade.object_id].attached_to)
+        self.target(session, "A", [recipient.ref])
+        self.assertEqual("end_step", session.state.step)
+        self.assertIsNone(self.resolve(session))
+        self.assert_attached(session, hylderblade, recipient)
+        self.replay(session, load=True)
 
 
 class AttachedTokenChoiceNativeTests(InheritedNativeFixture, unittest.TestCase):

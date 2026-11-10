@@ -115,7 +115,7 @@ def fixed_source_attachment_effect_template(
     if (
         source_attachment_relation is AttachmentReferenceKind.EQUIPPED
         and re.fullmatch(
-            r"Attach it to target creature you control\.?",
+            r"Attach (?:it|this Equipment) to target creature you control\.?",
             normalized,
             re.IGNORECASE,
         )
@@ -124,6 +124,16 @@ def fixed_source_attachment_effect_template(
             template_id="fixed-source-equipment-attach-trigger-v1",
             attachment_kind="equipment",
             controller_only=True,
+        )
+    if (
+        source_attachment_relation is AttachmentReferenceKind.EQUIPPED
+        and re.fullmatch(r"Attach this Equipment to target creature an opponent controls\.?", normalized, re.I)
+    ):
+        return FixedSourceAttachmentTemplate(
+            template_id="fixed-source-equipment-opponent-attach-v1",
+            attachment_kind="equipment",
+            controller_only=False,
+            target_spec=DirectPermanentTargetSpec(types_any=("creature",), controller_relation="opponent"),
         )
     restricted = re.fullmatch(
         r"Attach it to (?P<target>target .+ you control)\.?", normalized, re.I

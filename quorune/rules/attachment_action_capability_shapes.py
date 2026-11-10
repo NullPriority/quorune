@@ -81,18 +81,19 @@ def fixed_attachment_action_node_capabilities(
             spec = DirectPermanentTargetSpec.from_target_schema(target_schema)
         except (TypeError, ValueError):
             return ()
-        if (
-            spec.controller_relation != "you"
-            or not (spec.types_any == ("creature",) or spec.types_all == ("creature",))
-            or not (spec.subtypes_any or spec.subtypes_none)
-            or spec != DirectPermanentTargetSpec(
+        opponent = DirectPermanentTargetSpec(types_any=("creature",), controller_relation="opponent")
+        restricted_controller = (
+            (spec.types_any == ("creature",) or spec.types_all == ("creature",))
+            and (spec.subtypes_any or spec.subtypes_none)
+            and spec == DirectPermanentTargetSpec(
                 types_any=spec.types_any,
                 types_all=spec.types_all,
                 subtypes_any=spec.subtypes_any,
                 subtypes_none=spec.subtypes_none,
                 controller_relation="you",
             )
-        ):
+        )
+        if spec != opponent and not restricted_controller:
             return ()
         return (
             FIXED_SOURCE_ATTACHMENT_CAPABILITY,
@@ -112,6 +113,7 @@ def fixed_attachment_action_node_capabilities(
         or target_schema.get("zones") != ["battlefield"]
         or target_schema.get("categories") != ["permanent"]
         or target_schema.get("creature") is not True
+        or type(target_schema.get("count")) is not int
         or target_schema.get("count") != 1
         or target_schema.get("controller") not in {None, "you"}
         or target_schema.get("predicate")
@@ -127,6 +129,25 @@ def fixed_attachment_action_node_capabilities(
         FIXED_SOURCE_ATTACHMENT_CAPABILITY,
         "target.revalidate_resolution",
     )
+
+
+def is_closed_fixed_source_equipment_activation_program(program) -> bool:
+    if (
+        program.event != "activate"
+        or program.active_zone != "battlefield"
+        or not isinstance(program.cost_schema, Mapping)
+        or not program.cost_schema
+        or program.cost_schema.get("uncompiled_costs")
+        or len(program.effects) != 1
+        or program.effects[0].get("attachment_kind") != "equipment"
+    ):
+        return False
+    required = fixed_attachment_action_node_capabilities(
+        effects=program.effects,
+        target_schema=program.target_schema,
+        mechanic_ids=program.coverage,
+    )
+    return FIXED_SOURCE_ATTACHMENT_CAPABILITY in required and set(required).issubset(program.capability_dependencies)
 
 
 def reconfigure_node_capabilities(*, effects, target_schema):
@@ -146,4 +167,5 @@ def reconfigure_node_capabilities(*, effects, target_schema):
 __all__ = [
     "attachment_action_covered_mechanics",
     "fixed_attachment_action_node_capabilities",
+    "is_closed_fixed_source_equipment_activation_program",
 ]
