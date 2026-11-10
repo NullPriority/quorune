@@ -18,9 +18,11 @@ from .initiative_model import (
     initiative_effect_player, initiative_instruction,
 )
 from .model import CardInstance, StackItem
+from .semantic_runtime.venture_limit import current_venture_allowed
 from .target_source import BOUND_TARGETING_SOURCE_VERSION, TARGETING_SOURCE_CONTEXT, capture_targeting_source
 from .trigger_discovery import trigger_multiplier_copies
 from .trigger_processing import enqueue_trigger_batch
+from .turn_history import record_first_venture
 from .zone_transitions import ZoneTransitionOwner
 
 
@@ -56,7 +58,7 @@ def check_dungeon_choice_instruction(host, item, effect) -> None:
         mode = venture_instruction(effect, actor=player)
         if item.semantic_key == INHERENT_INITIATIVE_VENTURE and mode is not VentureMode.UNDERCITY:
             raise GameRuleError("The inherent initiative ability must venture into Undercity")
-        if player in host.active_seats:
+        if player in host.active_seats and current_venture_allowed(host, player):
             current = host.state.players[player].dungeon_journey or DungeonJourney()
             offer, _ = prepare_venture(player, current, mode)
             validate_venture_room_offers(host, offer)
@@ -157,6 +159,8 @@ def commit_venture_progress(host, intent: VentureProgressIntent) -> str:
             or not stack.context.get("currently_resolving")):
         raise GameRuleError("Venture lost the active resolving controller")
     player = host.state.players[owner]
+    if not current_venture_allowed(host, owner):
+        raise GameRuleError("Venture permission changed before committing the room choice")
     journey = player.dungeon_journey or DungeonJourney()
     if journey != intent.before:
         raise GameRuleError("The current dungeon position changed before venture")
@@ -175,6 +179,7 @@ def commit_venture_progress(host, intent: VentureProgressIntent) -> str:
     source = (_current_source(host, owner, offer.journey.active)
               if offer.journey.active is not None else _new_source(host, owner, visit, program))
     player.dungeon_journey = entered
+    record_first_venture(host, owner)
     host._log(owner, "dungeon.venture", f"{owner} entered {program.label}.",
               {"player": owner, "object": source.ref, "visit": visit.to_dict(), "mode": offer.mode.value},
               importance=2, changed_objects=[source.object_id], changed_players=[owner])

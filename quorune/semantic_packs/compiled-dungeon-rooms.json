@@ -6,13 +6,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "profile": "commander_review",
         "reachable": [
           "library.scry.fixed_controller"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "library.scry.fixed_controller"
         ],
@@ -43,10 +43,10 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "lost_mine",
@@ -54,7 +54,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "ff65fe7c30c311f0098795e6572f75d3abe3fb19d7358e72b1aadfa3a056dc4b",
+        "semantic_hash": "cbbfa82b0abc23c2da8c74025563ba8a74c8f1204acdf6cf13b4784fde0e522a",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -78,13 +78,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "b823e157a41529d49183f4a7fa5b017bb791dd0bb48f8ceff8ddd6b10a77ed8f",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "96ad46cd2ab1128e98c4f2b447d708573e90034e8d9f4962456c96dae287b7d0",
         "profile": "commander_review",
         "reachable": [
           "token.creation.fixed_definition"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "token.creation.fixed_definition"
         ],
@@ -125,10 +125,10 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "b823e157a41529d49183f4a7fa5b017bb791dd0bb48f8ceff8ddd6b10a77ed8f",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "96ad46cd2ab1128e98c4f2b447d708573e90034e8d9f4962456c96dae287b7d0",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "lost_mine",
@@ -136,7 +136,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "6f0c20a07a1e4a36f88502096fef880897182a507435c57378cb4ba0b0880f5d",
+        "semantic_hash": "e8ec9265930bb4115e52a8d6384182de9890b813e4334d82a8fd61e78dd7245d",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -160,15 +160,15 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "b443a38de0326cece1173abed2c9ae841836010462ee7305c122485405002d7e",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "367292a6dc03a18f609ce218fa648023617df3a1544eaa09e2c78f1968ce370c",
         "profile": "commander_review",
         "reachable": [
           "activation.tap_untap_cost.haste",
           "mana.activated.fixed_output",
           "token.creation.fixed_definition"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "mana.activated.fixed_output",
           "token.creation.fixed_definition"
@@ -208,10 +208,10 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "b443a38de0326cece1173abed2c9ae841836010462ee7305c122485405002d7e",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "367292a6dc03a18f609ce218fa648023617df3a1544eaa09e2c78f1968ce370c",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "lost_mine",
@@ -219,7 +219,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "7385c4bb2287b8072730e63a61fdf723c743ef66714a7b79b86e34412f2c4cbe",
+        "semantic_hash": "cf67bec4fcf1ccd1099aaa5e5437bac7759fea39d5d059647dab6597e41c5360",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -243,15 +243,15 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "70175d7c70d33b5f028f937ae8e5f2680d1babd3800d5f798c1074010e79935c",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "a72e636d9cede1ef7d326caab53d302eb661e2205fa9c82474b52a83c8a97224",
         "profile": "commander_review",
         "reachable": [
           "counter.placement.quantity_replacement",
           "counter.producer.fixed_effect",
           "target.revalidate_resolution"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "counter.producer.fixed_effect",
           "target.revalidate_resolution"
@@ -287,10 +287,10 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "70175d7c70d33b5f028f937ae8e5f2680d1babd3800d5f798c1074010e79935c",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "a72e636d9cede1ef7d326caab53d302eb661e2205fa9c82474b52a83c8a97224",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "lost_mine",
@@ -298,7 +298,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "4e6c5146f5964a5b258584a9e7407aba26dbffcd97d4f7b4e36c03d00a3ea1f6",
+        "semantic_hash": "462d3ef93608fab59966f24850b490df6a0e04af7e898049d6a4a9246d78a713",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -333,13 +333,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "150a569c5b680346be173c034ad6c37903d7d6ef295486093f8ef606400a2b94",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "cc37dd14f386b83ebbdb4810ef47987ff988583ed265318c59d735879e020d87",
         "profile": "commander_review",
         "reachable": [
           "life.change.effect"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "life.change.effect"
         ],
@@ -370,10 +370,10 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "150a569c5b680346be173c034ad6c37903d7d6ef295486093f8ef606400a2b94",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "cc37dd14f386b83ebbdb4810ef47987ff988583ed265318c59d735879e020d87",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "lost_mine",
@@ -381,7 +381,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "18a2b2eb261d3d829f8adbab28b31f60f567f8f47cf68e3e06781a4fe0b922de",
+        "semantic_hash": "bb9454b3b135439e05f6e9d655079089186fbc8a5e7354ecce64850474a9ea54",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -405,8 +405,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "a11a34ca36654678032ad52df1a40d940162f1fad088c320defb6dc3fe2e5554",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "610ea1e4f578e3de9b984bd48b65a8b396f3b20cb96e4713f07117447c3867ee",
         "profile": "commander_review",
         "reachable": [
           "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -418,7 +418,7 @@
           "turn.extra.fixed_after_current",
           "turn.step.static_skip"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "continuous.resolution.fixed_characteristics_until_end_of_turn",
           "continuous.resolution.fixed_target_characteristic_set",
@@ -461,10 +461,10 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "a11a34ca36654678032ad52df1a40d940162f1fad088c320defb6dc3fe2e5554",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "610ea1e4f578e3de9b984bd48b65a8b396f3b20cb96e4713f07117447c3867ee",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "lost_mine",
@@ -472,7 +472,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "3d9e6a5c56a17aae0de70a65e028c8f766e28f30177de73d917317831fa7bfd9",
+        "semantic_hash": "7feedb52366a959fb491cb76941e0e583c9ffd37722ee5bb5e6d87a3778cf193",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -507,13 +507,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "2ad75c94dfd8089adb7a2acce72c4c0775693fbec1251621003aefb91ccc8bf8",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "2f972be5709e12d165b7b9c10b982238bf853f220ee197ebe0ce45daf412742a",
         "profile": "commander_review",
         "reachable": [
           "zone.draw.library_to_hand"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "zone.draw.library_to_hand"
         ],
@@ -545,10 +545,10 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "2ad75c94dfd8089adb7a2acce72c4c0775693fbec1251621003aefb91ccc8bf8",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "2f972be5709e12d165b7b9c10b982238bf853f220ee197ebe0ce45daf412742a",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "lost_mine",
@@ -556,7 +556,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "f6a046f516d662d1bf8add0f4bf965848fd27c1c147cd2d8601f42f7cb5efdd8",
+        "semantic_hash": "0acf38bdd57ba5b3ff0f9addcc73061c29a5fc1d7cefc52a481fa6c2b931fead",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -580,13 +580,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "150a569c5b680346be173c034ad6c37903d7d6ef295486093f8ef606400a2b94",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "cc37dd14f386b83ebbdb4810ef47987ff988583ed265318c59d735879e020d87",
         "profile": "commander_review",
         "reachable": [
           "life.change.effect"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "life.change.effect"
         ],
@@ -617,10 +617,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "150a569c5b680346be173c034ad6c37903d7d6ef295486093f8ef606400a2b94",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "cc37dd14f386b83ebbdb4810ef47987ff988583ed265318c59d735879e020d87",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -628,7 +628,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "6f9346d70ed092ba92bd7eccd56f49dd9723beceb940b061c2e0bc57ea2f2332",
+        "semantic_hash": "7c934a5ca713d3568a986e8ee36ee8e4aa983b213b5cada99441f9d322688c54",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -652,13 +652,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "profile": "commander_review",
         "reachable": [
           "library.scry.fixed_controller"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "library.scry.fixed_controller"
         ],
@@ -689,10 +689,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -700,7 +700,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "619edd66f0dca7d0f01032216f1c225f8c0bbcba7ee6e6d82e5a071a1978bbb7",
+        "semantic_hash": "2bd0516685fc3f3f02c3553ac78d7efdcd71b10b8cbdc51697dbb881a2e1baee",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -724,15 +724,15 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "b443a38de0326cece1173abed2c9ae841836010462ee7305c122485405002d7e",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "367292a6dc03a18f609ce218fa648023617df3a1544eaa09e2c78f1968ce370c",
         "profile": "commander_review",
         "reachable": [
           "activation.tap_untap_cost.haste",
           "mana.activated.fixed_output",
           "token.creation.fixed_definition"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "mana.activated.fixed_output",
           "token.creation.fixed_definition"
@@ -772,10 +772,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "b443a38de0326cece1173abed2c9ae841836010462ee7305c122485405002d7e",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "367292a6dc03a18f609ce218fa648023617df3a1544eaa09e2c78f1968ce370c",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -783,7 +783,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "0faa455f2b31088e1d914ade7a9198202551b20526e8dc91fbdbb83b6a66a015",
+        "semantic_hash": "f743f1554431355f02ebff08d3f2a90cb771cb3a61cc406a0a96bdd8464070c3",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -807,8 +807,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "1a1d0a68cee6106e89be91b73476536fc045e9c8981c34734f38dfdeb64f76ea",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "a087119d0d215963197391ea16bb065797f34891bdcaf2279685fac40cc5b972",
         "profile": "commander_review",
         "reachable": [
           "combat.declaration.typed_components",
@@ -819,7 +819,7 @@
           "turn.extra.fixed_after_current",
           "turn.step.static_skip"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "combat.declaration.typed_components",
           "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -859,10 +859,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "1a1d0a68cee6106e89be91b73476536fc045e9c8981c34734f38dfdeb64f76ea",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "a087119d0d215963197391ea16bb065797f34891bdcaf2279685fac40cc5b972",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -870,7 +870,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "dd3c49dd60f2cefa61bca8a5446df844bf9918b2f6e393a50a15c2ca7fe9b208",
+        "semantic_hash": "285b11b2ba892c72ce5f68c65c73a6c29d8e5be81b0e78de780dbf78e45af452",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -905,13 +905,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "profile": "commander_review",
         "reachable": [
           "library.scry.fixed_controller"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "library.scry.fixed_controller"
         ],
@@ -942,10 +942,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -953,7 +953,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "1f380dfa393205bcb5d4e5f68aed5084ed42d253815502f63da2a3b576fa8a6d",
+        "semantic_hash": "f551106d77dd983f86857c969be58396b35e20703ebd0ce225ae7e8ed5e3e6b1",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -977,8 +977,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "2a9e8a9ca49b8edc87c5abd548bc57f36443e6d629dcba5bed8160558ff21f4b",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "7c5486d79ef35129729449439fec5a9f7aaaa3c7fc4f5e3f79c8b8704a64265f",
         "profile": "commander_review",
         "reachable": [
           "casting.permission.one_shot_exile_without_mana",
@@ -988,7 +988,7 @@
           "zone.exile.fixed_top_resolving_cast",
           "zone.exile.fixed_top_resolving_play"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "zone.exile.fixed_top_resolving_cast",
           "zone.exile.fixed_top_resolving_play"
@@ -1023,10 +1023,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "2a9e8a9ca49b8edc87c5abd548bc57f36443e6d629dcba5bed8160558ff21f4b",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "7c5486d79ef35129729449439fec5a9f7aaaa3c7fc4f5e3f79c8b8704a64265f",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -1034,7 +1034,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "ca738ecfde8da2246b28863b509dfe7807a2fd3edf50962b68fc4d45f1241b46",
+        "semantic_hash": "4726e9e9f6d8438a14e838ea11dcc91ddac82ef0eb661950c2e281a4fc31f66c",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1058,13 +1058,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "b823e157a41529d49183f4a7fa5b017bb791dd0bb48f8ceff8ddd6b10a77ed8f",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "96ad46cd2ab1128e98c4f2b447d708573e90034e8d9f4962456c96dae287b7d0",
         "profile": "commander_review",
         "reachable": [
           "token.creation.fixed_definition"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "token.creation.fixed_definition"
         ],
@@ -1105,10 +1105,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "b823e157a41529d49183f4a7fa5b017bb791dd0bb48f8ceff8ddd6b10a77ed8f",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "96ad46cd2ab1128e98c4f2b447d708573e90034e8d9f4962456c96dae287b7d0",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -1116,7 +1116,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "7d15006190c88273cf8ac0b3e9ca183ab22fe350794964ca78fac1c8b4b399fd",
+        "semantic_hash": "b0d23e91aca86b274631dc6abb025d813b7c6656fe436be2ee05ad2a364c8de9",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1140,13 +1140,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "profile": "commander_review",
         "reachable": [
           "library.scry.fixed_controller"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "library.scry.fixed_controller"
         ],
@@ -1177,10 +1177,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -1188,7 +1188,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "254cdfa8e8b5cd53ec139f9eae20e17a12bfc219b9d34fc952595f49cc414b15",
+        "semantic_hash": "d786e667b0ac996e6786ab5670e2115eac462f3d277c025eaead3308d4450c10",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1212,14 +1212,14 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "ec71a6c92e148fa5c334985bf6399295d60e7a9195d56746633d64c78fc1559e",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "3796ec0c1ef55115f4d2e90b96c96bcfb239714e0f420686fd8e810628ecbcc9",
         "profile": "commander_review",
         "reachable": [
           "zone.draw.library_to_hand",
           "zone.draw.revealed_result_cast"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "zone.draw.library_to_hand",
           "zone.draw.revealed_result_cast"
@@ -1255,10 +1255,10 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "ec71a6c92e148fa5c334985bf6399295d60e7a9195d56746633d64c78fc1559e",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "3796ec0c1ef55115f4d2e90b96c96bcfb239714e0f420686fd8e810628ecbcc9",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "mad_mage",
@@ -1266,7 +1266,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "edcaaacd4412309e82898c0e3bd1ccdee8f55db7231976353421932f83218adb",
+        "semantic_hash": "c56ba2f4fe7c5e8d9f8b5db8dc08aa6525913616661c5647f2b87bc877245009",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1290,13 +1290,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "150a569c5b680346be173c034ad6c37903d7d6ef295486093f8ef606400a2b94",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "cc37dd14f386b83ebbdb4810ef47987ff988583ed265318c59d735879e020d87",
         "profile": "commander_review",
         "reachable": [
           "life.change.effect"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "life.change.effect"
         ],
@@ -1328,10 +1328,10 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "150a569c5b680346be173c034ad6c37903d7d6ef295486093f8ef606400a2b94",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "cc37dd14f386b83ebbdb4810ef47987ff988583ed265318c59d735879e020d87",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "tomb",
@@ -1339,7 +1339,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "cadac97fdb3c98e64572f1df858de42a306cfe6c9c839fcecd650edf01fed035",
+        "semantic_hash": "01c9ffacde7f6f4a653190c02dfcf3b85a4bcaa1a5ac3c2f485dd6b7aafbc632",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1363,8 +1363,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "eac2fab769e45f30ba77db7651b17c6269bb572e3324f0be8bec1ad17e782dfb",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "980dd91d2aae41f2e0c9f10bdb9412b6e6262b77e075011a244d3c5b96a56a03",
         "profile": "commander_review",
         "reachable": [
           "choice.affected_player.fixed_discard",
@@ -1372,7 +1372,7 @@
           "life.change.effect",
           "zone.change.destination_replacement"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "choice.affected_player.fixed_discard",
           "choice.apnap.optional_object_payment_or_life_loss",
@@ -1434,10 +1434,10 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "eac2fab769e45f30ba77db7651b17c6269bb572e3324f0be8bec1ad17e782dfb",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "980dd91d2aae41f2e0c9f10bdb9412b6e6262b77e075011a244d3c5b96a56a03",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "tomb",
@@ -1445,7 +1445,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "d469dea33b04d9bcf5d1626433d7034f69334dc33be4c0c5c4b19ad70b430dfc",
+        "semantic_hash": "c36bba6ef473ce795d28a6bb501ef0fa14a75b1a3aa0b5a26d06a0748ed73e9a",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1469,8 +1469,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "2318960290d693fae8e72d00dbb4e9af10cc1973e9c0d20818cc405b7f3a18f1",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "3a20851049c299d975abe1ddfa94489b011b1020c17478689afaf9a8a8008628",
         "profile": "commander_review",
         "reachable": [
           "choice.affected_player.fixed_sacrifice",
@@ -1478,7 +1478,7 @@
           "life.change.effect",
           "zone.change.destination_replacement"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "choice.affected_player.fixed_sacrifice",
           "choice.apnap.optional_object_payment_or_life_loss",
@@ -1543,10 +1543,10 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "2318960290d693fae8e72d00dbb4e9af10cc1973e9c0d20818cc405b7f3a18f1",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "3a20851049c299d975abe1ddfa94489b011b1020c17478689afaf9a8a8008628",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "tomb",
@@ -1554,7 +1554,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "39507fd8fa82099b21c9f0d5474226e70879aabb77001c92e91edbc4bee351ad",
+        "semantic_hash": "d43f22ae43407b69ded8e527eb2649d429f9c8255f25b7d08bb39f93799b05db",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1578,8 +1578,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "bc5c00c9ba4b921f0e7946abaa45682452a064d0e60e9346eaea9b4f01129a5e",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "cd0b514f4ce25e0753f1647fa0e6684f74d570b1207f91f114f7763953567614",
         "profile": "commander_review",
         "reachable": [
           "choice.affected_player.fixed_controller_discard",
@@ -1588,7 +1588,7 @@
           "choice.permanent.distinct_sacrifice_roles",
           "zone.change.destination_replacement"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "choice.affected_player.fixed_controller_discard",
           "choice.affected_player.fixed_discard",
@@ -1669,10 +1669,10 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "bc5c00c9ba4b921f0e7946abaa45682452a064d0e60e9346eaea9b4f01129a5e",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "cd0b514f4ce25e0753f1647fa0e6684f74d570b1207f91f114f7763953567614",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "tomb",
@@ -1680,7 +1680,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "2cc6b681408c4437e238ea4bcb9b7ff09e4a9f59f20c469ec0b14b16cb56af6d",
+        "semantic_hash": "6e3da802469a6fe440ee7b0309f4c905f95aa2b237c491e9185f7ba7c3018321",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1704,8 +1704,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "bc2d237d34c7c019d467fa3675dcf2e2c8f914b52a3727d3a995dc7708c9539a",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "acf2682b3568744cbffdf746004f43b34c81c6d696f5586ea23cb651e0b35665",
         "profile": "commander_review",
         "reachable": [
           "combat.damage.assignment.canonical",
@@ -1715,7 +1715,7 @@
           "damage.result.deathtouch",
           "token.creation.fixed_definition"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "combat.damage.assignment.deathtouch",
           "damage.result.deathtouch",
@@ -1766,10 +1766,10 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "bc2d237d34c7c019d467fa3675dcf2e2c8f914b52a3727d3a995dc7708c9539a",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "acf2682b3568744cbffdf746004f43b34c81c6d696f5586ea23cb651e0b35665",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "tomb",
@@ -1777,7 +1777,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "e58fcb0eaf750c054a7815005f5968c49383afa754ec132102d81cbee995f77c",
+        "semantic_hash": "e26f451f6b79ddfe6b1d154cac9fea89536b23c87055e6a3ab707ca19ec9fa0d",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1801,15 +1801,15 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "8968f15ef959dfe079018fa760081a77282168f7fed47e80d45a8e0149aa5304",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "e883196fbb7bdb19a0d9e3bbd3c46ae44bc6e6ea11b832f545fe734fac0ca472",
         "profile": "commander_review",
         "reachable": [
           "library.search.fixed_type_to_hand",
           "variant.commander.zone_return",
           "zone.change.destination_replacement"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "library.search.fixed_type_to_hand"
         ],
@@ -1854,10 +1854,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "8968f15ef959dfe079018fa760081a77282168f7fed47e80d45a8e0149aa5304",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "e883196fbb7bdb19a0d9e3bbd3c46ae44bc6e6ea11b832f545fe734fac0ca472",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -1865,7 +1865,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "7322bc06b47bb509b882a1d630fee026c75b03fb66c748a4d6ace8ef54188489",
+        "semantic_hash": "510f0cbc798dbe79b7f5682b6972f3baf6072cd5e3d38cb61e49055979205617",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -1889,15 +1889,15 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "70175d7c70d33b5f028f937ae8e5f2680d1babd3800d5f798c1074010e79935c",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "a72e636d9cede1ef7d326caab53d302eb661e2205fa9c82474b52a83c8a97224",
         "profile": "commander_review",
         "reachable": [
           "counter.placement.quantity_replacement",
           "counter.producer.fixed_effect",
           "target.revalidate_resolution"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "counter.producer.fixed_effect",
           "target.revalidate_resolution"
@@ -1933,10 +1933,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "70175d7c70d33b5f028f937ae8e5f2680d1babd3800d5f798c1074010e79935c",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "a72e636d9cede1ef7d326caab53d302eb661e2205fa9c82474b52a83c8a97224",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -1944,7 +1944,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "5d4230bd0ec554b8ae8d53201be33cd27b7f3f745e6bb8097bd3391dcf8c930e",
+        "semantic_hash": "54a829c30247b6f0cc6e579b1e1eb87eedd8a23f534c60ea90a9d1715febe669",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -1979,13 +1979,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "profile": "commander_review",
         "reachable": [
           "library.scry.fixed_controller"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "library.scry.fixed_controller"
         ],
@@ -2016,10 +2016,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "d0f869317896eacb766875c63ac4ad841862452e981b6e6320e391c953b3f597",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "b295a766a34a7a486a7c0942c11d780b459942c870de866c090e1d0a580d595f",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -2027,7 +2027,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "b9c4c3fb31abbeab3bb1f14b2661560cc92f1fe0dff43a0aad39583f653efe8b",
+        "semantic_hash": "51f1a852d25461ab8094faf3eb7adccfc7996a9f033295e5efa200c086ce451a",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2051,14 +2051,14 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "33db64c895485a74c67cf2301e54e4959f48981855052340f696241142aea4c8",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "6dd73bc713be3c5e6c38b923c392b5fb2c185a9e75277a3cb45b0b295cc9783c",
         "profile": "commander_review",
         "reachable": [
           "life.change.effect",
           "target.revalidate_resolution"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "life.change.effect",
           "target.revalidate_resolution"
@@ -2092,10 +2092,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "33db64c895485a74c67cf2301e54e4959f48981855052340f696241142aea4c8",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "6dd73bc713be3c5e6c38b923c392b5fb2c185a9e75277a3cb45b0b295cc9783c",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -2103,7 +2103,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "ffc623a9ea1014cad7659e73de9854af9715c99186c9e7fdc2b38f18853a3bc6",
+        "semantic_hash": "0ebacdf544ce89616fabd51053dbcb73352d81dfc25b7151bef0e02affe129ce",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2136,8 +2136,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "05c05149e519afe072dd5e90ae6422c6ca82be613418a44f98ab176622a73574",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "b7eff7d709827e30dd956f615779c10f19cfc0e8084de5150fcc90cdb3d4503f",
         "profile": "commander_review",
         "reachable": [
           "combat.declaration.typed_components",
@@ -2145,7 +2145,7 @@
           "combat.goad.prohibition.controller_creatures",
           "target.revalidate_resolution"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "combat.goad.fixed_instruction",
           "target.revalidate_resolution"
@@ -2178,10 +2178,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "05c05149e519afe072dd5e90ae6422c6ca82be613418a44f98ab176622a73574",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "b7eff7d709827e30dd956f615779c10f19cfc0e8084de5150fcc90cdb3d4503f",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -2189,7 +2189,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "c0c1afa0da9cf2bf15c195cb630c5d29266ddd886fe048ba66128912e2b04aa9",
+        "semantic_hash": "27683507fec0071da02fb118013a99e0d3e155dd72ea15667fecc26c0a2a3408",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2224,15 +2224,15 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "b443a38de0326cece1173abed2c9ae841836010462ee7305c122485405002d7e",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "367292a6dc03a18f609ce218fa648023617df3a1544eaa09e2c78f1968ce370c",
         "profile": "commander_review",
         "reachable": [
           "activation.tap_untap_cost.haste",
           "mana.activated.fixed_output",
           "token.creation.fixed_definition"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "mana.activated.fixed_output",
           "token.creation.fixed_definition"
@@ -2272,10 +2272,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "b443a38de0326cece1173abed2c9ae841836010462ee7305c122485405002d7e",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "367292a6dc03a18f609ce218fa648023617df3a1544eaa09e2c78f1968ce370c",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -2283,7 +2283,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "b3f586efa60aa3c605799e8a23bc6c7244b20feedfa0d66d9c3f4a75a9b6adf9",
+        "semantic_hash": "12eb27a7c279355a361f06691f6991c9dd732e6349e8934c5fc2700aa353ca6d",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2307,13 +2307,13 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "2ad75c94dfd8089adb7a2acce72c4c0775693fbec1251621003aefb91ccc8bf8",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "2f972be5709e12d165b7b9c10b982238bf853f220ee197ebe0ce45daf412742a",
         "profile": "commander_review",
         "reachable": [
           "zone.draw.library_to_hand"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "zone.draw.library_to_hand"
         ],
@@ -2345,10 +2345,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "2ad75c94dfd8089adb7a2acce72c4c0775693fbec1251621003aefb91ccc8bf8",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "2f972be5709e12d165b7b9c10b982238bf853f220ee197ebe0ce45daf412742a",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -2356,7 +2356,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "2f14139b001f2dc007ae24715c7183c45829f10dfe2a3370b18e70bfec8e63c1",
+        "semantic_hash": "b8fab8d73b4a94e9c36b8c9cff100568542a207f4fcb4bd9b460ece168555071",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2380,14 +2380,14 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "93e683d42c44bb77dd42d511d7295fc4b1e5daa1ddf860f9315e128359fb5608",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "908a9d9bf99c79e88eb7b6bf8807e9e04113fb040cfc22d7294d5e40e7b68fb0",
         "profile": "commander_review",
         "reachable": [
           "combat.block.menace",
           "token.creation.fixed_definition"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "combat.block.menace",
           "token.creation.fixed_definition"
@@ -2434,10 +2434,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "93e683d42c44bb77dd42d511d7295fc4b1e5daa1ddf860f9315e128359fb5608",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "908a9d9bf99c79e88eb7b6bf8807e9e04113fb040cfc22d7294d5e40e7b68fb0",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -2445,7 +2445,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "ae9800ce6b315517edeacac4dba7c74cd49d3faf61162bac4c8eef7575872c44",
+        "semantic_hash": "0c9e4ececcf28669ff95e16a57bc804a68d0037a82990cb21d9e35d9beb7b8a7",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2469,8 +2469,8 @@
       "active_zone": "command",
       "capability_closure": {
         "blockers": [],
-        "evidence_fingerprint": "91349e33562f4612b3872d5f720baf5341a36515af1144c4bb7f1fea9d543df5",
-        "fingerprint": "7c14f7ce0292a939f74d2efee16e958a7c4b561898585ecc0fc47a62960b670d",
+        "evidence_fingerprint": "5238f9c762292ac334a3312e30ef55048563e41618a65f75a5d8cb6f98d7036b",
+        "fingerprint": "f74d9e1d7667d094e454119e855f76505be92bb2331aabd4c2c08d5393df8183",
         "profile": "commander_review",
         "reachable": [
           "continuous.resolution.until_controller_next_turn",
@@ -2489,7 +2489,7 @@
           "turn.step.static_skip",
           "zone.change.destination_replacement"
         ],
-        "registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "requested": [
           "continuous.resolution.until_controller_next_turn",
           "counter.producer.effect_entry",
@@ -2572,10 +2572,10 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v934",
-        "capability_closure_fingerprint": "7c14f7ce0292a939f74d2efee16e958a7c4b561898585ecc0fc47a62960b670d",
+        "authored_by": "oracle-ir-v935",
+        "capability_closure_fingerprint": "f74d9e1d7667d094e454119e855f76505be92bb2331aabd4c2c08d5393df8183",
         "capability_profile": "commander_review",
-        "capability_registry_fingerprint": "4db9f4f306ab760e5c2e7c764c4ca9945d14c18b18498caa3359cd1688f4de30",
+        "capability_registry_fingerprint": "2b6d5555197b95c1d7e46c0cd5fba01b46b65dca931c0a036a48823040419fae",
         "dependency_trust": "capability_closure_verified",
         "dungeon_room": {
           "dungeon": "undercity",
@@ -2583,7 +2583,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "9d75d917d866f77852d7a57866d136dae65435dcadddbf3c7392eabe8f85ee12",
+        "semantic_hash": "6563cf11a8f3d2b5cf7e1392cb5f95ec67360c15b57411f43e4757c896e54910",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {

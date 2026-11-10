@@ -674,6 +674,11 @@ graveyard incarnation. A once-per-turn Venture trigger on a group of creature
 cards reaching its controller's graveyard uses the first eligible committed
 arrival and consumes its use before going on the stack.
 
+Venture permission reads current effective opponent restrictions and the
+player's first successful Venture in the actual turn. Both entry modes use
+that fact. A prohibited Venture leaves the journey and any outstanding room
+intact, then resolution continues.
+
 `initiative_runtime.py` owns the public designation and materializes its
 three inherent triggered abilities. Taking the initiative again still queues
 a Venture trigger. Combat-damage occurrences group by the damaging creatures'

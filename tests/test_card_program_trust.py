@@ -308,6 +308,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.component_scope",
                 "ability.static.protection",
                 "ability.static.player_target_protection",
+                "ability.static.venture_limit",
                 "ability.static.start_your_engines",
                 "ability.static.prototype",
                 "ability.static.mutate",

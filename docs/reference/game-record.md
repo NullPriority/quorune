@@ -1114,6 +1114,11 @@ ordinary trusted program registration reproduces step and direct-cost checks.
 The existing untap-step descriptor does not admit the new internal any-turn
 participation relation.
 
+Fresh games set `turn_history.venture_history_version` to one and bind it in
+the record manifest. A successful room entry records the first Venture by
+that player in the current actual turn. Rollover clears those facts and
+preserves the marker. An absent marker preserves older journal bytes.
+
 Player-attached characteristic contexts contain a derived enchanted-player
 identity read from the current reciprocal attachment. The fixed descriptor
 contains no player ID, and no additional GameState field or journal is stored.

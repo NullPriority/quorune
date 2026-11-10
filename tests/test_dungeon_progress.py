@@ -22,6 +22,67 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_venture_limit_requires_typed_authority_and_versioned_unique_usage(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.venture_templates import fixed_venture_limit_template
+        from quorune.model import TurnHistory, TurnHistoryEvent
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantic_choices.context import SnapshotSemanticChoiceQuery
+        from quorune.semantic_choices.venture import prepare_venture_choice
+        from quorune.semantic_runtime.venture_limit import VentureLimitHandler, current_venture_allowed
+        from quorune.semantics import SemanticProgram
+        from quorune.turn_history import reset_turn_history
+
+        wording = "Each opponent can't venture into the dungeon more than once each turn."
+        _, descriptor, capability = fixed_venture_limit_template(wording)
+        with self.assertRaises(ValueError):
+            VentureLimitHandler().validate({**descriptor, "maximum_per_turn": 2})
+        self.assertIsNone(fixed_venture_limit_template(wording.replace("Each opponent", "Each player")))
+        registry = load_default_capability_registry()
+        deps = ("variant.dungeon.venture",)
+        forged = SemanticProgram("fixture:venture-limit", "Venture limit", event="characteristics.evaluate",
+                                 active_zone="battlefield", handlers=[descriptor], capability_dependencies=deps,
+                                 capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + capability, binding["blockers"])
+
+        earlier = TurnHistoryEvent("first_venture", actor="A")
+        with self.assertRaises(ValueError):
+            TurnHistory(events=[earlier])
+        with self.assertRaises(ValueError):
+            TurnHistory(events=[earlier, earlier], venture_history_version=1)
+        history = TurnHistory(turn_sequence=2, events=[earlier], venture_history_version=1)
+        self.assertEqual(history, TurnHistory.from_dict(history.to_dict()))
+        self.assertNotIn("venture_history_version", TurnHistory().to_dict())
+        self.assertEqual([], reset_turn_history(history, 3).events)
+
+        source = SimpleNamespace(controller="B", phased_out=False)
+        host = SimpleNamespace(state=SimpleNamespace(turn_history=history, turn_sequence=2), active_seats=("A", "B"),
+                               semantics={"limit": forged}, _semantic_event_sources=lambda **_kwargs: (source,),
+                               _effective_static_component_keys=lambda _source: ("limit",),
+                               semantic_program_is_current_trusted=lambda _program: True)
+        self.assertFalse(current_venture_allowed(host, "A"))
+        self.assertTrue(current_venture_allowed(host, "B"))
+        with patch("quorune.semantic_runtime.venture_limit.ventured_this_turn", return_value=False):
+            with self.assertRaises(AssertionError):
+                self.assertFalse(current_venture_allowed(host, "A"))
+        host.state.turn_history = TurnHistory(turn_sequence=2)
+        with self.assertRaises(ValueError):
+            current_venture_allowed(host, "A")
+
+        last = DungeonJourney(DungeonVisit(DungeonRoomRef(DungeonId.LOST_MINE, 6), 1))
+        query = SnapshotSemanticChoiceQuery(seat_order=("A", "B"), active_order=("A", "B"),
+                                            venture_journey=last, venture_allowed=False)
+        choice = prepare_venture_choice(
+            {"op": "choose_option", "player": "A", "venture": {"schema_version": 1, "mode": "ordinary"}},
+            SimpleNamespace(actor="A", query=query, stack_ref="S1"),
+        )
+        self.assertIsNone(choice.request)
+        self.assertFalse(choice.preparation_intents)
+
     def test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope(self):
         from unittest.mock import patch
 
@@ -696,6 +757,60 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         self._choose(session, cards={"top": visible, "bottom": []})
         self.assertIsNone(self.resolve(session))
         self.replay(session, load=True)
+
+    def test_original_sentry_restricts_both_venture_modes_after_its_ability_returns(self):
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+        from quorune.turn_history import ventured_this_turn
+
+        session = self.session(701493)
+        source = self.add(session.engine, "Keen-Eared Sentry", seat="B")
+        blank = self.add(session.engine, "Dress Down", zone="hand")
+        disenchant = self.add(session.engine, "Disenchant", zone="hand")
+        bounce = self.add(session.engine, "Unsummon", zone="hand")
+        initiative = self.add(session.engine, "Aarakocra Sneak", zone="hand")
+        maps = tuple(self.add(session.engine, "Dungeon Map", ref=f"sentry-map-{i}") for i in range(3))
+        for card in (source, blank, disenchant, bounce, initiative, maps[0]):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 15, "U": 3, "W": 1})
+        self.checkpoint(session)
+        versions = format_state_versions(session.state)
+        self.assertEqual(1, versions["venture_history_version"])
+        with self.assertRaises(ValueError):
+            validate_state_versions({"format": {**versions, "venture_history_version": 0}}, session.state)
+        self.cast_for(session, "A", blank)
+        self.assertIsNone(self.resolve(session))
+        self._activate_map(session, maps[0])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertFalse(ventured_this_turn(session.state, "A"))
+        self._choose(session, choice="lost_mine:0")
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        visible = session.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self._choose(session, cards={"top": visible, "bottom": []})
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(ventured_this_turn(session.state, "A"))
+        journey = session.state.players["A"].dungeon_journey
+
+        self.cast_for(session, "A", disenchant, [blank.ref])
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "A", initiative)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("A", session.state.initiative)
+        self.assertEqual(journey, session.state.players["A"].dungeon_journey)
+        self._activate_map(session, maps[1])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(journey, session.state.players["A"].dungeon_journey)
+
+        session = self.replay(session, load=True)
+        self.cast_for(session, "A", bounce, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self._activate_map(session, maps[2])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("lost_mine:1", "lost_mine:2"), self._room_options(session))
+        self._choose(session, choice="lost_mine:1")
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(DungeonRoomRef(DungeonId.LOST_MINE, 1), session.state.players["A"].dungeon_journey.active.room)
+        self.assertEqual(1, sum(event.kind == "first_venture" for event in session.state.turn_history.events))
+        self.replay(session)
 
     def test_original_hama_doubles_owned_rooms_with_separate_targets_and_completion(self):
         session, source, final = self._reach_last_room(309004, room_multiplier=True)

@@ -82359,6 +82359,82 @@
     {
       "applicability": {
         "exclusions": [
+          "Arbitrary maximums or affected-seat predicates",
+          "Unrepresented future Venture actions"
+        ],
+        "inputs": [
+          "Current effective opponent restriction on the battlefield",
+          "Versioned current-turn successful Venture fact"
+        ],
+        "outputs": [
+          "Either authorized entry mode continues while allowed",
+          "A prohibited instruction performs no Venture or dungeon retirement"
+        ],
+        "summary": "A current effective static ability limits each opponent to one successful Venture per actual turn across both entry modes."
+      },
+      "blockers": [],
+      "dependencies": [
+        "variant.dungeon.venture"
+      ],
+      "dependency_fail_closed_rationale": "The static descriptor independently requires its restriction capability. Absent history cannot prove availability while a live restriction applies.",
+      "dependency_fail_closed_status": "passed",
+      "id": "variant.dungeon.venture_restriction",
+      "implementation_components": [
+        "quorune.compiler.venture_templates.fixed_venture_limit_template",
+        "quorune.semantic_runtime.venture_limit.VentureLimitHandler",
+        "quorune.semantic_runtime.venture_limit.current_venture_allowed",
+        "quorune.turn_history.record_first_venture",
+        "quorune.dungeon_runtime.commit_venture_progress",
+        "quorune.semantic_choices.venture.prepare_venture_choice"
+      ],
+      "implementation_mutation_rationale": "Replacing prior successful Venture with a false history result changes the permission on the same current opponent and is detected by the exact restriction assertion.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_sentry_restricts_both_venture_modes_after_its_ability_returns"
+      ],
+      "multiplayer_tests": [
+        "test_original_sentry_restricts_both_venture_modes_after_its_ability_returns"
+      ],
+      "negative_tests": [
+        "test_original_sentry_restricts_both_venture_modes_after_its_ability_returns",
+        "test_venture_limit_requires_typed_authority_and_versioned_unique_usage"
+      ],
+      "official_rules": [
+        "101.2",
+        "101.3",
+        "611.3b",
+        "613.1f",
+        "701.49a",
+        "701.49b",
+        "701.49c",
+        "701.49d"
+      ],
+      "positive_tests": [
+        "test_original_sentry_restricts_both_venture_modes_after_its_ability_returns",
+        "test_venture_limit_requires_typed_authority_and_versioned_unique_usage"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_original_sentry_restricts_both_venture_modes_after_its_ability_returns"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented player-selection grammar",
           "noncombat and prevented damage"
         ],
@@ -90184,7 +90260,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 801,
+  "registry_version": 802,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -99,6 +99,7 @@ PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
 PLAYER_COUNTERS_FIELD = "counters"
 
 TurnHistoryEventKind = Literal[
+    "first_venture",
     "trigger_optional_result_used",
     "crime_committed",
     "spell_mana_spent",
@@ -190,6 +191,13 @@ class TurnHistoryEvent:
             or self.types or type(self.amount) is not int or self.amount != 0
         ):
             raise ValueError('First life gain history requires only its gaining seat')
+        if self.kind == "first_venture" and (
+            type(self.actor) is not str or not self.actor
+            or any(value is not None for value in (self.object_incarnation, self.target, self.target_kind,
+                                                  self.target_object_incarnation, self.origin))
+            or self.types or type(self.amount) is not int or self.amount != 0
+        ):
+            raise ValueError("First Venture history requires only the venturing seat")
         if self.kind=='crime_committed' and (type(self.actor) is not str or not self.actor
                 or type(self.target) is not str or not self.target or self.target_kind!='stack_object'
                 or type(self.amount) is not int or self.amount!=1 or self.object_incarnation is not None
@@ -291,6 +299,7 @@ class TurnHistory:
     permanent_death_history_version: int | None = None
     public_movement_history_version: int | None = None
     first_life_gain_history_version: int | None = None
+    venture_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -321,6 +330,9 @@ class TurnHistory:
         life_gain_version = self.first_life_gain_history_version
         if life_gain_version is not None and (type(life_gain_version) is not int or life_gain_version != 1):
             raise ValueError('Unsupported first life gain history version')
+        venture_version = self.venture_history_version
+        if venture_version is not None and (type(venture_version) is not int or venture_version != 1):
+            raise ValueError("Unsupported Venture history version")
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
@@ -339,6 +351,9 @@ class TurnHistory:
         first_gainers = [event.target for event in self.events if event.kind == 'first_life_gain']
         if first_gainers and (life_gain_version is None or len(first_gainers) != len(set(first_gainers))):
             raise ValueError('First life gain facts require versioned history and unique gaining seats')
+        first_ventures = [event.actor for event in self.events if event.kind == "first_venture"]
+        if first_ventures and (venture_version is None or len(first_ventures) != len(set(first_ventures))):
+            raise ValueError("First Venture facts require versioned history and unique venturing seats")
         previous_absent = self.previous_turn_sequence is None
         if previous_absent != (self.previous_active_player is None):
             raise ValueError(
@@ -387,6 +402,7 @@ class TurnHistory:
             **({"public_movement_history_version": 1}
                if self.public_movement_history_version is not None else {}),
             **({'first_life_gain_history_version': 1} if self.first_life_gain_history_version is not None else {}),
+            **({"venture_history_version": 1} if self.venture_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -431,6 +447,7 @@ class TurnHistory:
             permanent_death_history_version=data.get("permanent_death_history_version"),
             public_movement_history_version=data.get("public_movement_history_version"),
             first_life_gain_history_version=data.get('first_life_gain_history_version'),
+            venture_history_version=data.get("venture_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

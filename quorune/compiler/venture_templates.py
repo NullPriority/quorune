@@ -8,6 +8,7 @@ import re
 from ..dungeon_catalog import VentureMode
 from ..dungeon_progress import DUNGEON_VENTURE_FIELD, DUNGEON_VENTURE_MECHANIC
 from ..initiative_model import TAKE_INITIATIVE_FIELD, TAKE_INITIATIVE_MECHANIC
+from ..semantic_runtime.venture_limit import VENTURE_LIMIT_CAPABILITY, VENTURE_LIMIT_HANDLER
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,6 +26,13 @@ def fixed_venture_effect_template(text: str) -> FixedVentureTemplate | None:
     if match is None:
         return None
     return FixedVentureTemplate(VentureMode.ORDINARY if match["pool"].casefold() == "the dungeon" else VentureMode.UNDERCITY)
+
+
+def fixed_venture_limit_template(text: str):
+    if text.strip().casefold().removesuffix(".") != "each opponent can't venture into the dungeon more than once each turn":
+        return None
+    descriptor = {"handler_id": VENTURE_LIMIT_HANDLER, "schema_version": 1, "event": "characteristics.evaluate"}
+    return "fixed-opponent-venture-limit-v1", descriptor, VENTURE_LIMIT_CAPABILITY
 
 
 @dataclass(frozen=True, slots=True)

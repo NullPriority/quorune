@@ -539,6 +539,7 @@ class SemanticChoiceCoordinationMixin:
 
         from ..discover_casting import resolving_exile_library_refs
         from ..dungeon_progress import DUNGEON_VENTURE_FIELD, DungeonJourney
+        from ..semantic_runtime.venture_limit import current_venture_allowed
         choice_effect = effect or {}
         object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
@@ -571,6 +572,7 @@ class SemanticChoiceCoordinationMixin:
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             venture_journey=((self.state.players[actor].dungeon_journey or DungeonJourney())
                              if DUNGEON_VENTURE_FIELD in choice_effect else None),
+            venture_allowed=DUNGEON_VENTURE_FIELD not in choice_effect or current_venture_allowed(self, actor),
             counter_permissions=collect_counter_permissions(self),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),

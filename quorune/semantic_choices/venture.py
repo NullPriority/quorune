@@ -48,6 +48,9 @@ def prepare_venture_choice(effect, context):
         mode = venture_instruction(effect, actor=actor)
     except ValueError as exc:
         raise SemanticChoiceError(str(exc)) from exc
+    if not context.query.venture_allowed:
+        return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue(reason="Venture is prohibited for this player this turn."))
     journey = _journey(context.query)
     offer, retired = prepare_venture(actor, journey, mode)
     destinations = offer.destinations
@@ -76,7 +79,7 @@ def complete_venture_choice(continuation, response, query):
     except (KeyError, ValueError, TypeError) as exc:
         raise SemanticChoiceError("The venture continuation is malformed") from exc
     journey = _journey(query)
-    if offer.owner not in query.active_seats or mode != offer.mode or journey != offer.journey:
+    if offer.owner not in query.active_seats or not query.venture_allowed or mode != offer.mode or journey != offer.journey:
         raise SemanticChoiceError("The venture offer no longer belongs to this dungeon position")
     selected = next((room for room in offer.destinations if room.choice_id == response.get("choice")), None)
     if selected is None:

@@ -169,6 +169,9 @@ class SemanticChoiceQuery(
     @property
     def venture_journey(self) -> DungeonJourney | None: ...
 
+    @property
+    def venture_allowed(self) -> bool: ...
+
 
 @dataclass(frozen=True, slots=True)
 class SnapshotSemanticChoiceQuery:
@@ -210,6 +213,7 @@ class SnapshotSemanticChoiceQuery:
     attacking_token_entry_allowed: bool = False
     attacking_card_entry_status: str | None = None
     venture_journey: DungeonJourney | None = None
+    venture_allowed: bool = True
 
     def __post_init__(self) -> None:
         if type(self.attacking_token_entry_allowed) is not bool:

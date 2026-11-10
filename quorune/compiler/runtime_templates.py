@@ -748,6 +748,15 @@ def static_runtime_template(
         trigger_multiplier = _trigger_multiplier_template(text,source_name)
         if trigger_multiplier is not None:
             return trigger_multiplier
+        from .venture_templates import fixed_venture_limit_template
+
+        venture_limit = fixed_venture_limit_template(text)
+        if venture_limit is not None:
+            return StaticRuntimeTemplate(
+                compiled=venture_limit, kind="static_ability", event="characteristics.evaluate",
+                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+                dependency_reason="Venture limits require current static components and turn history",
+            )
         counter_quantity = (
             None
             if source_is_class

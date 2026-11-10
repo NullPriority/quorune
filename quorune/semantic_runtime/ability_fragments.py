@@ -55,6 +55,7 @@ from ..trigger_participation_query_model import DUNGEON_ROOM_MULTIPLIER_COMPONEN
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .player_target_protection import PlayerTargetProtectionHandler
+from .venture_limit import VentureLimitHandler
 from .target_restrictions import TargetRestrictionHandler
 from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
@@ -1581,6 +1582,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             MentorAbilityFragmentHandler(),
             ProtectionAbilityFragmentHandler(),
             PlayerTargetProtectionHandler(),
+            VentureLimitHandler(),
             TargetRestrictionHandler(),
             GraveyardCopyKeywordHandler(),
             StartEnginesHandler(),
