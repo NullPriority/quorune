@@ -9,6 +9,18 @@ QUALIFIED_ATTACK_BATCH_CAPABILITY='trigger.event.qualified_attack_batch'
 QUALIFIED_ATTACK_BATCH_VARIANT='one_or_more_qualified_attack'
 ATTACK_BATCH_CONDITION='qualified_attack_match_count'
 ATTACK_BATCH_CONTEXT='declared_attacker_snapshots'
+DECLARED_ATTACK_POWER_FIELD = "declared_attacker_total_power"
+DECLARED_ATTACK_POWER_COVERAGE = "declared_attacker_total_power_intervening"
+DECLARED_ATTACK_POWER_CAPABILITY = "trigger.condition.declared_attacker_total_power"
+
+
+def declared_attack_power_condition(minimum: int) -> dict:
+    if type(minimum) is not int or minimum < 1:
+        raise ValueError("Declared attack power requires a positive fixed threshold")
+    return {"all": [
+        {"field": "card", "op": "eq", "value": "$source.ref"},
+        {"field": DECLARED_ATTACK_POWER_FIELD, "op": "gte", "value": minimum},
+    ]}
 
 
 def validate_attack_characteristic_query(query):

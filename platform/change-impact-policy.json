@@ -10285,6 +10285,29 @@
       ]
     },
     {
+      "id": "declared-attack-power-conditions",
+      "patterns": [
+        "quorune/attack_batch_model.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/public_trigger_conditions.py",
+        "quorune/compiler/trigger_runtime_coverage.py",
+        "quorune/rules/attack_batches.py",
+        "quorune/rules/event_subscriptions.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/attack-declaration-power-cards.json"
+      ],
+      "test_modules": [
+        "test_attack_transitions",
+        "test_attacking_card_entry",
+        "test_attacking_token_results",
+        "test_card_program_trust",
+        "test_public_state_event_actions",
+        "test_qualified_attack_batches",
+        "test_qualified_attack_subjects",
+        "test_reflexive_payments"
+      ]
+    },
+    {
       "id": "qualified-attack-batches",
       "patterns": [
         "quorune/attack_batch_model.py",

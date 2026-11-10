@@ -305,8 +305,15 @@ def intervening_recheck_condition(program, *, context, controller):
 
 def source_event_intervening_recheck(host, program, *, context, controller, source_object_id):
     """Recheck a condition whose source occurrence carries the relevant facts."""
+    from ..attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
     from .attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE, attacked_player_life_holds
 
+    if DECLARED_ATTACK_POWER_COVERAGE in program.coverage:
+        from .attack_batches import declared_attack_power_recheck
+        try:
+            return declared_attack_power_recheck(program, context, controller=controller, source_object_id=source_object_id)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if ATTACKED_PLAYER_LIFE_COVERAGE in program.coverage:
         try:
             return attacked_player_life_holds(host, context, source_object_id=source_object_id, controller=controller)

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
 from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
 from ..life_change import FIRST_LIFE_GAIN_EVENT
 from ..preparation_model import PREPARATION_RESULT_MECHANIC
@@ -24,6 +25,8 @@ def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, 'intervening_condition', FIXED_PUBLIC_STATE_INTERVENING_COVERAGE))
     if binding.attacked_player_life:
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, 'intervening_condition', ATTACKED_PLAYER_LIFE_COVERAGE))
+    if binding.minimum_declared_attack_power is not None:
+        values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, 'intervening_condition', DECLARED_ATTACK_POWER_COVERAGE))
     if TRIGGERED_SOURCE_TRANSFORM_MECHANIC in effect_mechanics:
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, SPELL_HISTORY_TRANSFORM_COVERAGE))
     return tuple(dict.fromkeys(values))

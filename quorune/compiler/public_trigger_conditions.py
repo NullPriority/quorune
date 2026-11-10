@@ -26,6 +26,11 @@ _UPKEEP_HAND_COUNT = re.compile(
     rf'that player has (?P<threshold>{FIXED_COUNT_PATTERN}) or (?P<direction>fewer|more) cards in hand',
     re.I,
 )
+_DECLARED_POWER_PREFIX = re.compile(r"(?:Pack tactics\s+[—-]\s+)?Whenever this creature attacks", re.I)
+_DECLARED_POWER_CONDITION = re.compile(
+    r"you attacked with creatures with total power (?P<minimum>[1-9][0-9]{0,2}) or greater this combat",
+    re.I,
+)
 
 
 def upkeep_hand_condition(text: str) -> UpkeepParticipantHandCondition | None:
@@ -59,6 +64,10 @@ def _graveyard_source_intervening_binding(match, *, card_name, compile_binding):
 
 
 def bind_public_intervening_trigger(match, *, card_name, compile_binding, compile_source_binding):
+    power = _DECLARED_POWER_CONDITION.fullmatch(match["condition"])
+    if power is not None and _DECLARED_POWER_PREFIX.fullmatch(match["prefix"]) is not None:
+        base = compile_binding(f"Whenever this creature attacks, {match['body']}", card_name=card_name)
+        return None if base is None else replace(base, minimum_declared_attack_power=int(power["minimum"]))
     if match["condition"].casefold() == "this card is in your graveyard":
         return _graveyard_source_intervening_binding(match, card_name=card_name, compile_binding=compile_binding)
     condition = upkeep_hand_condition(match['condition']) or fixed_public_state_condition(

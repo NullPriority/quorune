@@ -10,6 +10,7 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..attack_batch_model import DECLARED_ATTACK_POWER_CAPABILITY, declared_attack_power_condition
 from ..rules.source_references import SourceReferenceSpec
 from .source_self_effect_templates import normalized_source_event_line, named_source_union_candidate
 from ..continuous_conditions import (
@@ -496,6 +497,7 @@ class FixedCounterTriggerBinding:
     public_capabilities: tuple[str, ...] = ()
     public_state_condition: PublicTriggerCondition | None = None
     attacked_player_life: bool = False
+    minimum_declared_attack_power: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -509,6 +511,12 @@ class FixedCounterTriggerBinding:
             or self.public_mechanic is not None or self.public_state_condition is not None
         ):
             raise ValueError('Attacked-player life requires one source attack')
+        if self.minimum_declared_attack_power is not None and (
+            type(self.minimum_declared_attack_power) is not int or self.minimum_declared_attack_power < 1
+            or self.event is not FixedCounterTriggerEvent.SOURCE_ATTACKS or self.variant != "source_attacks"
+            or self.attacked_player_life or self.public_state_condition is not None or self.public_mechanic is not None
+        ):
+            raise ValueError("Declared attack power requires one source attack and a fixed threshold")
         zone_events = {
             FixedCounterTriggerEvent.PERMANENT_ENTER,
             FixedCounterTriggerEvent.ARTIFACT_ENTER,
@@ -649,7 +657,8 @@ class FixedCounterTriggerBinding:
             self.spell_subject.event_condition if self.spell_subject is not None else None,
         )
         attacked_life = (ATTACKED_PLAYER_LIFE_CAPABILITY,) if self.attacked_player_life else ()
-        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*cast_keywords,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
+        attack_power = (DECLARED_ATTACK_POWER_CAPABILITY,) if self.minimum_declared_attack_power is not None else ()
+        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*attack_power,*cast_keywords,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
@@ -830,6 +839,8 @@ class FixedCounterTriggerBinding:
 
     @property
     def event_condition(self) -> Mapping[str, Any] | None:
+        if self.minimum_declared_attack_power is not None:
+            return declared_attack_power_condition(self.minimum_declared_attack_power)
         if self.attacked_player_life:
             from ..rules.attacked_player_life import attacked_player_life_condition
             return attacked_player_life_condition()

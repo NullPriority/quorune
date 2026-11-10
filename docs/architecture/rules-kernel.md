@@ -2095,6 +2095,13 @@ only inside the producer's canonical simultaneous batch, and public damage or
 zone predicates read sealed committed or last-known facts rather than live
 Oracle text.
 
+A fixed total-power condition on a source attack reads the signed power of
+every creature in the original declaration across all defending recipients.
+Trigger discovery and resolution validate the same sealed attacker identities
+and power snapshots. A creature put onto the battlefield attacking never joins
+that declaration. Later movement or power changes leave the historical
+comparison intact.
+
 Named-counter zone predicates consume version-two occurrence counter maps.
 The zone owner captures departure counters before any reset, including for all
 members of a simultaneous move, and captures entry counters after committed

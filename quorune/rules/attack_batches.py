@@ -5,9 +5,16 @@ from dataclasses import replace
 
 from ..attack_batch_model import (ATTACK_BATCH_CONTEXT,QualifiedAttackBatchSpec,
     QUALIFIED_ATTACK_BATCH_CAPABILITY,attack_batch_conditions)
+from ..attack_batch_model import (
+    DECLARED_ATTACK_POWER_CAPABILITY,
+    DECLARED_ATTACK_POWER_COVERAGE,
+    DECLARED_ATTACK_POWER_FIELD,
+    declared_attack_power_condition,
+)
+from ..attack_transition_model import AttackTransitionEvent
 from ..qualified_attack_model import ATTACK_FACT_PREFIX,ATTACK_FACT_COLLECTIONS,ATTACK_FACT_BOOLEANS,ATTACK_FACT_NUMBERS
 from ..object_query import ObjectQueryResult,object_matches_query
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
 
 
 def seal_attack_declaration(event,characteristic_contexts):
@@ -110,8 +117,79 @@ def attack_batch_aggregation_scope(program,context):
     return {'attacked_recipient_kind':kind,'attacked_recipient':reference,'attacked_recipient_logical_object_id':row['recipient_logical_object_id']}
 
 
+def declared_attack_power_total(context, *, source_object_id, source_logical_object_id, controller):
+    """Read the signed power sum of the original declaration, across all defenders."""
+    event = AttackTransitionEvent.from_dict(context.get("attack_transition"))
+    participants = {row.object_id: row for row in event.participants}
+    source = participants.get(source_object_id)
+    assignment = next((row for row in event.assignments if row.attacker_object_id == source_object_id), None)
+    if (
+        context.get("event_id") != event.transition_id
+        or context.get("controller") != controller
+        or event.active_player != controller
+        or source is None
+        or source.logical_object_id != source_logical_object_id
+        or source.reference != context.get("card")
+        or assignment is None
+        or assignment.recipient.reference != context.get("defender")
+        or assignment.recipient.defending_player != context.get("defending_player")
+        or assignment.recipient.kind.value != context.get("attacked_recipient_kind")
+    ):
+        raise ValueError("Declared attack power lost the source's original declaration")
+
+    rows = _sealed_rows(context)
+    facts = {row["reference"]: row["characteristics"] for row in rows}
+    try:
+        by_id = {assignment.attacker_object_id: facts[participants[assignment.attacker_object_id].reference]
+                 for assignment in event.assignments}
+    except KeyError as exc:
+        raise ValueError("Declared attack power requires every declared attacker") from exc
+    if tuple(FrozenMap(row) for row in rows) != seal_attack_declaration(event, by_id):
+        raise ValueError("Declared attack power snapshots differ from the original declaration")
+    powers = tuple(row["characteristics"][ATTACK_FACT_PREFIX + "power"] for row in rows)
+    if any(power is None for power in powers):
+        raise ValueError("Declared attack power requires resolved power for each attacker")
+    return sum(powers)
+
+
+def _declared_attack_power_minimum(condition):
+    condition = thaw_value(condition)
+    try:
+        minimum = condition["all"][1]["value"]
+    except (TypeError, IndexError, KeyError) as exc:
+        raise ValueError("Declared attack power requires its closed source condition") from exc
+    if condition != declared_attack_power_condition(minimum):
+        raise ValueError("Declared attack power requires its closed source condition")
+    return minimum
+
+
+def declared_attack_power_recheck(program, context, *, source_object_id, controller):
+    minimum = _declared_attack_power_minimum(program.event_condition)
+    return declared_attack_power_total(
+        context, source_object_id=source_object_id,
+        source_logical_object_id=context.get("source_logical_object_id"), controller=controller,
+    ) >= minimum
+
+
+def _mentions_declared_attack_power(value):
+    if isinstance(value, Mapping):
+        return value.get("field") == DECLARED_ATTACK_POWER_FIELD or any(
+            _mentions_declared_attack_power(child) for child in value.values()
+        )
+    return isinstance(value, (list, tuple)) and any(_mentions_declared_attack_power(child) for child in value)
+
+
 def qualified_attack_batch_runtime_dependencies(program):
     specs=attack_batch_conditions(program.event_condition)
     if specs and (program.event!='creature.attacks' or 'one_or_more_event_batch' not in program.coverage):
         raise ValueError('Qualified attack batches require declared-attack coalescing')
+    if DECLARED_ATTACK_POWER_COVERAGE in program.coverage or _mentions_declared_attack_power(program.event_condition):
+        if (
+            program.event != "creature.attacks" or program.active_zone != "battlefield"
+            or not {"intervening_condition", DECLARED_ATTACK_POWER_COVERAGE} <= set(program.coverage)
+            or "one_or_more_event_batch" in program.coverage
+        ):
+            raise ValueError("Declared attack power requires one source attack with a resolution recheck")
+        _declared_attack_power_minimum(program.event_condition)
+        return (DECLARED_ATTACK_POWER_CAPABILITY,)
     return (QUALIFIED_ATTACK_BATCH_CAPABILITY,) if specs else ()

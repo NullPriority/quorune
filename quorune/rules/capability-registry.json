@@ -88349,6 +88349,98 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "inputs": [
+          "One normalized source attack and its sealed declaration",
+          "A fixed positive total-power threshold"
+        ],
+        "outputs": [
+          "A typed signed power comparison at occurrence and resolution",
+          "Existing source-bound results and original attacking recipients"
+        ],
+        "exclusions": [
+          "Live combat roster or power after declaration",
+          "Creatures put onto the battlefield attacking"
+        ],
+        "summary": "One source attack reads the signed power sum of the declared attackers from the same original occurrence at trigger discovery and resolution."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_self_attack",
+        "trigger.event.qualified_attack_singular"
+      ],
+      "dependency_fail_closed_rationale": "Removing the required authority, the recheck coverage, or the closed source predicate rejects strict runtime binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.condition.declared_attacker_total_power",
+      "implementation_components": [
+        "quorune.attack_batch_model.declared_attack_power_condition",
+        "quorune.compiler.public_trigger_conditions.bind_public_intervening_trigger",
+        "quorune.rules.attack_batches.declared_attack_power_total",
+        "quorune.rules.attack_batches.declared_attack_power_recheck",
+        "quorune.rules.event_subscriptions.source_event_intervening_recheck"
+      ],
+      "implementation_mutation_rationale": "Clamping negative attack power makes the native five-power declaration qualify. Withdrawing the producer restores the original material residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "multiplayer_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "negative_tests": [
+        "test_pack_tactics_counts_negative_power",
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_runtime_requires_the_capability_and_closed_recheck",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice"
+      ],
+      "official_rules": [
+        "107.1b",
+        "207.2c",
+        "508.1",
+        "508.3a",
+        "508.3c",
+        "508.4",
+        "603.4"
+      ],
+      "positive_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "privacy_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking"
+      ],
+      "replay_tests": [
+        "test_pack_tactics_counts_negative_power",
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -88357,7 +88449,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 777,
+  "registry_version": 778,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -338,7 +338,7 @@ def _keyword_intervening_condition_actual(
 
 def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
-    from .attack_batch_model import ATTACK_BATCH_CONDITION
+    from .attack_batch_model import ATTACK_BATCH_CONDITION, DECLARED_ATTACK_POWER_FIELD
     from .block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
     from .rules.attacked_player_life import ATTACKED_PLAYER_LIFE_FIELD, attacked_player_life_holds
     from .spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_FIELD
@@ -354,6 +354,12 @@ def _extended_action_condition_actual(host,condition,*,source,context):
         if field==ATTACK_BATCH_CONDITION:
             from .rules.attack_batches import qualified_attack_match_count
             return True,qualified_attack_match_count(source,condition,context)
+        if field == DECLARED_ATTACK_POWER_FIELD:
+            from .rules.attack_batches import declared_attack_power_total
+            return True, declared_attack_power_total(
+                context, source_object_id=source.object_id,
+                source_logical_object_id=source.logical_object_id, controller=source.controller,
+            )
     except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     return False,None
 
@@ -1072,7 +1078,8 @@ def _semantic_trigger_context(
     stack_context.update(printed_backup_source_context(source,program))
     from .rules.trigger_limits import event_source_usage_context
     stack_context.update(event_source_usage_context(source,program,host.state.turn_sequence))
-    if 'source_entry_cast_intervening' in program.coverage:
+    from .attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
+    if 'source_entry_cast_intervening' in program.coverage or DECLARED_ATTACK_POWER_COVERAGE in program.coverage:
         stack_context['source_logical_object_id']=source.logical_object_id
     from .connive import connive_trigger_departure_context
     stack_context.update(connive_trigger_departure_context(host, source, program))
