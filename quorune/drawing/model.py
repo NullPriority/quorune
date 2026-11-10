@@ -167,6 +167,24 @@ def _drawn_card_actions(
 
 
 @dataclass(frozen=True, slots=True)
+class DrawCardsIntent:
+    """One typed draw instruction delegated to the draw coordinator."""
+
+    player: str
+    count: int
+    reason: str
+    private: bool = False
+    post_draw_actions: tuple[DrawnCardAction, ...] = ()
+
+    def __post_init__(self) -> None:
+        actions = tuple(self.post_draw_actions)
+        if any(not isinstance(action, (RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard))
+               for action in actions):
+            raise TypeError("Draw intents require typed post-draw actions")
+        object.__setattr__(self, "post_draw_actions", actions)
+
+
+@dataclass(frozen=True, slots=True)
 class QueuedDraw:
     """One immutable draw instruction waiting behind another instruction."""
 

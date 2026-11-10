@@ -655,6 +655,15 @@ chooses the same dungeon again. Completion increments both the total and the
 count for that dungeon. A count gap between the total and the named history
 identifies older aggregate entries whose dungeon identities are unavailable.
 
+Venture choices use the existing resolving controller's semantic choice.
+`dungeon_runtime.py` commits the visit and creates or reuses its nontraditional
+command-zone source. The room's source-bound program enters the regular APNAP
+trigger batch. Target announcement uses the actual dungeon source and keeps
+its captured characteristics available after departure. The state-based
+execution owner retires completed visits with the other prepared state changes
+and publishes the resulting completion events after the moves. The player
+projection includes the public journey after the first venture.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining

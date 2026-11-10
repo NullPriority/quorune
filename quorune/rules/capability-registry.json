@@ -82140,6 +82140,127 @@
     {
       "applicability": {
         "exclusions": [
+          "other owners or arbitrary paths",
+          "unrepresented dungeon pools"
+        ],
+        "inputs": [
+          "resolving controller and exact journey",
+          "fixed ordinary or Undercity entry mode",
+          "checked source-spanned program for every room"
+        ],
+        "outputs": [
+          "native room choice",
+          "command-zone dungeon incarnation",
+          "APNAP room ability",
+          "state-based completion and named completion history"
+        ],
+        "summary": "Advance the resolving controller along the current dungeon graph, enter the authorized dungeon pool, trigger the exact room program and record each completed dungeon."
+      },
+      "blockers": [],
+      "dependencies": [
+        "choice.affected_player.fixed_controller_discard",
+        "choice.affected_player.fixed_discard",
+        "choice.affected_player.fixed_sacrifice",
+        "choice.apnap.optional_object_payment_or_life_loss",
+        "choice.permanent.distinct_sacrifice_roles",
+        "combat.block.menace",
+        "combat.damage.assignment.deathtouch",
+        "combat.declaration.typed_components",
+        "combat.goad.fixed_instruction",
+        "continuous.resolution.declaration_rules_until_end_of_turn",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "continuous.resolution.fixed_target_characteristic_set",
+        "continuous.resolution.until_controller_next_turn",
+        "counter.producer.effect_entry",
+        "counter.producer.fixed_effect",
+        "damage.result.deathtouch",
+        "library.scry.fixed_controller",
+        "library.search.fixed_type_to_hand",
+        "library.select.battlefield_controller",
+        "library.select.fixed_controller",
+        "library.select.revealed_entry_followup",
+        "library.shuffle.fixed_controller",
+        "life.change.effect",
+        "mana.activated.fixed_output",
+        "target.protection.hexproof_permanent",
+        "target.revalidate_resolution",
+        "token.creation.fixed_definition",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement",
+        "zone.draw.library_to_hand",
+        "zone.draw.revealed_result_cast",
+        "zone.exile.fixed_top_resolving_cast",
+        "zone.exile.fixed_top_resolving_play"
+      ],
+      "dependency_fail_closed_rationale": "Independent payload binding still requires the Venture capability after its declaration is removed. The generated room pack verifies that the capability covers every room body.",
+      "dependency_fail_closed_status": "passed",
+      "id": "variant.dungeon.venture",
+      "implementation_components": [
+        "quorune.compiler.venture_templates.fixed_venture_effect_template",
+        "quorune.dungeon_progress.venture_instruction",
+        "quorune.semantic_choices.venture.prepare_venture_choice",
+        "quorune.dungeon_runtime.commit_venture_progress",
+        "quorune.dungeon_runtime.prepare_dungeon_completions",
+        "quorune.trigger_processing.enqueue_trigger_batch"
+      ],
+      "implementation_mutation_rationale": "Removing the whole-body producer leaves the fixed venture sentence unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
+        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending"
+      ],
+      "multiplayer_tests": [
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
+        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending"
+      ],
+      "negative_tests": [
+        "test_venture_compiler_binds_only_a_closed_entry_mode",
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger"
+      ],
+      "official_rules": [
+        "309.2c",
+        "309.4c",
+        "309.6",
+        "309.7",
+        "603.3b",
+        "603.3d",
+        "701.49a",
+        "701.49b",
+        "701.49c",
+        "701.49d",
+        "704.5t"
+      ],
+      "positive_tests": [
+        "test_venture_compiler_binds_only_a_closed_entry_mode",
+        "test_dungeon_room_pack_preserves_the_original_source_spans",
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger"
+      ],
+      "privacy_tests": [
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger"
+      ],
+      "replay_tests": [
+        "test_original_venture_announces_targets_and_completes_after_the_last_trigger",
+        "test_venture_retires_the_last_visit_with_its_room_trigger_still_pending"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "combat-damage transfer trigger",
           "monarch end-step draw",
           "player-leaves transfer"
@@ -89875,7 +89996,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 797,
+  "registry_version": 798,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

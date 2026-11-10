@@ -1,0 +1,2607 @@
+{
+  "name": "compiled-dungeon-rooms",
+  "programs": [
+    {
+      "ability_id": "room:front:0",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "profile": "commander_review",
+        "reachable": [
+          "library.scry.fixed_controller"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "library.scry.fixed_controller"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "library.scry.fixed_controller"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "scry"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 1,
+          "op": "scry",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:lost_mine:0",
+      "label": "Cave Entrance",
+      "notes": "",
+      "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "lost_mine",
+          "index": 0
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "4a70aa922449cc184fe348b8ad97f839fbcf8d033cb38a53335d818eb4c8b34c",
+        "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
+        "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
+        "source_span": {
+          "end": 23,
+          "line": 1,
+          "start": 16
+        },
+        "template_id": "scry-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:scry-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:1",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6679c1988f900ee86749b0b48f8f3252f760831dde7fedf6f8ef836349f69ce1",
+        "profile": "commander_review",
+        "reachable": [
+          "token.creation.fixed_definition"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "token.creation.fixed_definition"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "token.creation.fixed_definition"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-111-tokens"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "characteristics": {
+            "colors": [
+              "R"
+            ],
+            "literal_token_name_version": 1,
+            "power": "1",
+            "toughness": "1",
+            "type_line": "Token Creature — Goblin"
+          },
+          "controller": "$controller",
+          "name": "Goblin Token",
+          "op": "create_token",
+          "quantity": 1
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:lost_mine:1",
+      "label": "Goblin Lair",
+      "notes": "",
+      "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6679c1988f900ee86749b0b48f8f3252f760831dde7fedf6f8ef836349f69ce1",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "lost_mine",
+          "index": 1
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "4a0a7992c9a8e1af6b5db6d1b17a951bdbc54328c8483d8accdc13b7ee8ac237",
+        "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
+        "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
+        "source_span": {
+          "end": 115,
+          "line": 2,
+          "start": 76
+        },
+        "template_id": "create-fixed-creature-token-v2"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:create-fixed-creature-token-v2"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:2",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "f5b0ed81b49321e0c7366b08d50708cc5b71c61fa178aa9982c6d0fbce7d99a9",
+        "profile": "commander_review",
+        "reachable": [
+          "activation.tap_untap_cost.haste",
+          "mana.activated.fixed_output",
+          "token.creation.fixed_definition"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "mana.activated.fixed_output",
+          "token.creation.fixed_definition"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "mana.activated.fixed_output",
+        "token.creation.fixed_definition"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-111-tokens"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "characteristics": {
+            "activated_ability_profile": "tap_sac_any_color_mana_v1",
+            "display_text": "{T}, Sacrifice this token: Add one mana of any color.",
+            "literal_token_name_version": 1,
+            "type_line": "Token Artifact — Treasure"
+          },
+          "controller": "$controller",
+          "name": "Treasure Token",
+          "op": "create_token",
+          "quantity": 1
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:lost_mine:2",
+      "label": "Mine Tunnels",
+      "notes": "",
+      "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "f5b0ed81b49321e0c7366b08d50708cc5b71c61fa178aa9982c6d0fbce7d99a9",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "lost_mine",
+          "index": 2
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "03d9cbe80e2aef4f3bfa1f472ee844509bf9b007fee02c94666213c3b86a78ee",
+        "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
+        "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
+        "source_span": {
+          "end": 188,
+          "line": 3,
+          "start": 164
+        },
+        "template_id": "create-fixed-treasure-token-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:create-fixed-treasure-token-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:3",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "d3e505420d5aff37d6fa35e3b1b36a353ae27c35070e400ea019f58288280eea",
+        "profile": "commander_review",
+        "reachable": [
+          "counter.placement.quantity_replacement",
+          "counter.producer.fixed_effect",
+          "target.revalidate_resolution"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "counter.producer.fixed_effect",
+          "target.revalidate_resolution"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "counter.producer.fixed_effect",
+        "target.revalidate_resolution"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-122-counters",
+        "cr-115-targets"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "amount": 1,
+          "card": "$target.0",
+          "counter": "+1/+1",
+          "op": "place_counters",
+          "source": "$source"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:lost_mine:3",
+      "label": "Storeroom",
+      "notes": "",
+      "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "d3e505420d5aff37d6fa35e3b1b36a353ae27c35070e400ea019f58288280eea",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "lost_mine",
+          "index": 3
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "bed877a3f2a24becbdf4e2e4d922dc15510bc9706e641189715898129c08fc2c",
+        "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
+        "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
+        "source_span": {
+          "end": 276,
+          "line": 4,
+          "start": 237
+        },
+        "template_id": "place-fixed-counter-target-creature-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": {
+        "categories": [
+          "permanent"
+        ],
+        "count": 1,
+        "types_any": [
+          "creature"
+        ],
+        "zones": [
+          "battlefield"
+        ]
+      },
+      "tests": [
+        "oracle_template:place-fixed-counter-target-creature-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:4",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "2fc40cbde5ee2fd1b7eaab4e6ec83b1c9e0da3057ef1588f55f7179b5e20e52a",
+        "profile": "commander_review",
+        "reachable": [
+          "life.change.effect"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "life.change.effect"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "life.change.effect"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-119-life",
+        "cr-101-the-magic-golden-rules"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "amount": 1,
+          "op": "drain_each_opponent"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:lost_mine:4",
+      "label": "Dark Pool",
+      "notes": "",
+      "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "2fc40cbde5ee2fd1b7eaab4e6ec83b1c9e0da3057ef1588f55f7179b5e20e52a",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "lost_mine",
+          "index": 4
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "9913553574bd12c02b764e9816a937619efb5ad9e768954ffbec94c9d26a4110",
+        "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
+        "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
+        "source_span": {
+          "end": 368,
+          "line": 5,
+          "start": 321
+        },
+        "template_id": "drain-each-opponent-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:drain-each-opponent-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:5",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "b1077530ad3a6c57fc84532ed2e3e73564d904452aef0fb3b98902295494056c",
+        "profile": "commander_review",
+        "reachable": [
+          "continuous.resolution.fixed_characteristics_until_end_of_turn",
+          "continuous.resolution.fixed_target_characteristic_set",
+          "continuous.resolution.until_controller_next_turn",
+          "state_query.permanent.public_state_predicate",
+          "target.revalidate_resolution",
+          "turn.boundary.scheduled_skip",
+          "turn.extra.fixed_after_current",
+          "turn.step.static_skip"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "continuous.resolution.fixed_characteristics_until_end_of_turn",
+          "continuous.resolution.fixed_target_characteristic_set",
+          "continuous.resolution.until_controller_next_turn",
+          "target.revalidate_resolution"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "continuous.resolution.fixed_target_characteristic_set",
+        "continuous.resolution.until_controller_next_turn",
+        "target.revalidate_resolution"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-611-continuous-effects",
+        "cr-115-targets"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "cards": "$targets",
+          "keywords": [],
+          "maximum_targets": 1,
+          "op": "apply_source_characteristics_until_end_of_turn",
+          "power": -4,
+          "schema_version": 6,
+          "toughness": 0,
+          "until_controller_next_turn": true
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:lost_mine:5",
+      "label": "Fungi Cavern",
+      "notes": "",
+      "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "b1077530ad3a6c57fc84532ed2e3e73564d904452aef0fb3b98902295494056c",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "lost_mine",
+          "index": 5
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "856205795ca9a90ba15b83d8657ad98210f4646713974184703dc56f247873f5",
+        "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
+        "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
+        "source_span": {
+          "end": 464,
+          "line": 6,
+          "start": 416
+        },
+        "template_id": "fixed-target-characteristic-set-v1-next-turn"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": {
+        "categories": [
+          "permanent"
+        ],
+        "count": 1,
+        "types_any": [
+          "creature"
+        ],
+        "zones": [
+          "battlefield"
+        ]
+      },
+      "tests": [
+        "oracle_template:fixed-target-characteristic-set-v1-next-turn"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:6",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "ab4baa6a654ff0c77e3d75c818409a14072cef3995fc2c2780d15e74ea817458",
+        "profile": "commander_review",
+        "reachable": [
+          "zone.draw.library_to_hand"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "zone.draw.library_to_hand"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "zone.draw.library_to_hand"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-121-drawing-a-card"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 1,
+          "op": "draw",
+          "player": "$controller",
+          "private": true
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:lost_mine:6",
+      "label": "Temple of Dumathoin",
+      "notes": "",
+      "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "ab4baa6a654ff0c77e3d75c818409a14072cef3995fc2c2780d15e74ea817458",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "lost_mine",
+          "index": 6
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "be5f3d15f7e5b63cb5480a60dc1b9c48bd66a38e79b38f6e7abb91f07be82a20",
+        "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
+        "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
+        "source_span": {
+          "end": 531,
+          "line": 7,
+          "start": 519
+        },
+        "template_id": "draw-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:draw-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:0",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "2fc40cbde5ee2fd1b7eaab4e6ec83b1c9e0da3057ef1588f55f7179b5e20e52a",
+        "profile": "commander_review",
+        "reachable": [
+          "life.change.effect"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "life.change.effect"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "life.change.effect"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-119-life"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "delta": 1,
+          "op": "life",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:0",
+      "label": "Yawning Portal",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "2fc40cbde5ee2fd1b7eaab4e6ec83b1c9e0da3057ef1588f55f7179b5e20e52a",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 0
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "f8612aa40b0ef8da69a3bad6800e4469cb7ddd44d1345068f0314b73612f1def",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 33,
+          "line": 1,
+          "start": 17
+        },
+        "template_id": "gain-life-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:gain-life-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:1",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "profile": "commander_review",
+        "reachable": [
+          "library.scry.fixed_controller"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "library.scry.fixed_controller"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "library.scry.fixed_controller"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "scry"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 1,
+          "op": "scry",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:1",
+      "label": "Dungeon Level",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 1
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "8cebaa9bf609c457e798324975acbec331902c781aa450dbe756e4feed05a63e",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 83,
+          "line": 2,
+          "start": 76
+        },
+        "template_id": "scry-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:scry-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:2",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "f5b0ed81b49321e0c7366b08d50708cc5b71c61fa178aa9982c6d0fbce7d99a9",
+        "profile": "commander_review",
+        "reachable": [
+          "activation.tap_untap_cost.haste",
+          "mana.activated.fixed_output",
+          "token.creation.fixed_definition"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "mana.activated.fixed_output",
+          "token.creation.fixed_definition"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "mana.activated.fixed_output",
+        "token.creation.fixed_definition"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-111-tokens"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "characteristics": {
+            "activated_ability_profile": "tap_sac_any_color_mana_v1",
+            "display_text": "{T}, Sacrifice this token: Add one mana of any color.",
+            "literal_token_name_version": 1,
+            "type_line": "Token Artifact — Treasure"
+          },
+          "controller": "$controller",
+          "name": "Treasure Token",
+          "op": "create_token",
+          "quantity": 1
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:2",
+      "label": "Goblin Bazaar",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "f5b0ed81b49321e0c7366b08d50708cc5b71c61fa178aa9982c6d0fbce7d99a9",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 2
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "7c56741d6155c67bf277e554026f69ad5bd3f484070558a532a40b04d64cf203",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 167,
+          "line": 3,
+          "start": 143
+        },
+        "template_id": "create-fixed-treasure-token-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:create-fixed-treasure-token-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:3",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "78140209731bc7d4230adaa60714e7b2003b38cc046ec728c4ff5cee7d719c49",
+        "profile": "commander_review",
+        "reachable": [
+          "combat.declaration.typed_components",
+          "continuous.resolution.declaration_rules_until_end_of_turn",
+          "continuous.resolution.until_controller_next_turn",
+          "target.revalidate_resolution",
+          "turn.boundary.scheduled_skip",
+          "turn.extra.fixed_after_current",
+          "turn.step.static_skip"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "combat.declaration.typed_components",
+          "continuous.resolution.declaration_rules_until_end_of_turn",
+          "continuous.resolution.until_controller_next_turn",
+          "target.revalidate_resolution"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "combat.declaration.typed_components",
+        "continuous.resolution.declaration_rules_until_end_of_turn",
+        "continuous.resolution.until_controller_next_turn",
+        "target.revalidate_resolution"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-115-targets",
+        "cr-611-continuous-effects",
+        "cr-508-declare-attackers-step"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "card": "$target.0",
+          "op": "grant_declaration_restriction_until_end_of_turn",
+          "restriction": "cant_attack",
+          "until_controller_next_turn": true
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:3",
+      "label": "Twisted Caverns",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "78140209731bc7d4230adaa60714e7b2003b38cc046ec728c4ff5cee7d719c49",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 3
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "022cf690f06343db12284e1aee1b1d54ee0377c11fb98f963b5e34c009ef4104",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 259,
+          "line": 4,
+          "start": 209
+        },
+        "template_id": "activated-target-cant-attack-eot-v1-next-turn"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": {
+        "categories": [
+          "permanent"
+        ],
+        "count": 1,
+        "types_any": [
+          "creature"
+        ],
+        "zones": [
+          "battlefield"
+        ]
+      },
+      "tests": [
+        "oracle_template:activated-target-cant-attack-eot-v1-next-turn"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:4",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "profile": "commander_review",
+        "reachable": [
+          "library.scry.fixed_controller"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "library.scry.fixed_controller"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "library.scry.fixed_controller"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "scry"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 2,
+          "op": "scry",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:4",
+      "label": "Lost Level",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 4
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "94b6a967473b56370c894d333598529f0e5ec5bcd568000340dbc1d080ff025f",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 303,
+          "line": 5,
+          "start": 296
+        },
+        "template_id": "scry-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:scry-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:5",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6988f19ee6af1b5fa0c7e58b9392d578edebb68c17914d1296f39d05782496e8",
+        "profile": "commander_review",
+        "reachable": [
+          "casting.permission.one_shot_exile_without_mana",
+          "trigger.event.normalized_spell_cast",
+          "trigger.placement.apnap",
+          "zone.change.destination_replacement",
+          "zone.exile.fixed_top_resolving_cast",
+          "zone.exile.fixed_top_resolving_play"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "zone.exile.fixed_top_resolving_cast",
+          "zone.exile.fixed_top_resolving_play"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "zone.exile.fixed_top_resolving_cast",
+        "zone.exile.fixed_top_resolving_play"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "fixed-top-resolving-play"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 2,
+          "op": "exile_fixed_library_tops_and_cast",
+          "player": "$controller",
+          "schema_version": 3,
+          "scope": "controller_resolving_play"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:5",
+      "label": "Runestone Caverns",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6988f19ee6af1b5fa0c7e58b9392d578edebb68c17914d1296f39d05782496e8",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 5
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "85dc5622735191582c7f42d6384fc1e2137f769257cbb2d504920c3263f4da95",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 433,
+          "line": 6,
+          "start": 374
+        },
+        "template_id": "fixed-top-exile-resolving-play-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:fixed-top-exile-resolving-play-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:6",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6679c1988f900ee86749b0b48f8f3252f760831dde7fedf6f8ef836349f69ce1",
+        "profile": "commander_review",
+        "reachable": [
+          "token.creation.fixed_definition"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "token.creation.fixed_definition"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "token.creation.fixed_definition"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-111-tokens"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "characteristics": {
+            "colors": [
+              "B"
+            ],
+            "literal_token_name_version": 1,
+            "power": "1",
+            "toughness": "1",
+            "type_line": "Token Creature — Skeleton"
+          },
+          "controller": "$controller",
+          "name": "Skeleton Token",
+          "op": "create_token",
+          "quantity": 2
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:6",
+      "label": "Muiral's Graveyard",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6679c1988f900ee86749b0b48f8f3252f760831dde7fedf6f8ef836349f69ce1",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 6
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "61e2c14ac15ddfc250ea42f931f984f8823ca391466f89b0187d8217d4ab123f",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 524,
+          "line": 7,
+          "start": 478
+        },
+        "template_id": "create-fixed-creature-token-v2"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:create-fixed-creature-token-v2"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:7",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "profile": "commander_review",
+        "reachable": [
+          "library.scry.fixed_controller"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "library.scry.fixed_controller"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "library.scry.fixed_controller"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "scry"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 3,
+          "op": "scry",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:7",
+      "label": "Deep Mines",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 7
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "a43bf642e09b609c4a3835b198b2585f86e9f53395f92454a3597700a4ee6739",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 568,
+          "line": 8,
+          "start": 561
+        },
+        "template_id": "scry-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:scry-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:8",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "c17a9751b1e1c748d3872f7441b8748dca6130543e84f612c56608bd10e83894",
+        "profile": "commander_review",
+        "reachable": [
+          "zone.draw.library_to_hand",
+          "zone.draw.revealed_result_cast"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "zone.draw.library_to_hand",
+          "zone.draw.revealed_result_cast"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "zone.draw.library_to_hand",
+        "zone.draw.revealed_result_cast"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-121-drawing-a-card"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "captured_draw_cast": {
+            "count": 3,
+            "schema_version": 1
+          },
+          "op": "choose_objects",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:mad_mage:8",
+      "label": "Mad Wizard's Lair",
+      "notes": "",
+      "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "c17a9751b1e1c748d3872f7441b8748dca6130543e84f612c56608bd10e83894",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "mad_mage",
+          "index": 8
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "de2ad8c79287663122af9ee7543f92955caf1f57f3bb610edab83bc46cdfc21e",
+        "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
+        "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
+        "source_span": {
+          "end": 707,
+          "line": 9,
+          "start": 619
+        },
+        "template_id": "fixed-revealed-draw-result-cast-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:fixed-revealed-draw-result-cast-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:0",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "2fc40cbde5ee2fd1b7eaab4e6ec83b1c9e0da3057ef1588f55f7179b5e20e52a",
+        "profile": "commander_review",
+        "reachable": [
+          "life.change.effect"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "life.change.effect"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "life.change.effect"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-119-life",
+        "cr-101-the-magic-golden-rules"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "amount": 1,
+          "op": "lose_life",
+          "scope": "all_active_players"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:tomb:0",
+      "label": "Trapped Entry",
+      "notes": "",
+      "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "2fc40cbde5ee2fd1b7eaab4e6ec83b1c9e0da3057ef1588f55f7179b5e20e52a",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "tomb",
+          "index": 0
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "00cd44e67f0fbf5c87927b60b737a778e6bdd4bd342856d0e4394e07bec7439f",
+        "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
+        "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
+        "source_span": {
+          "end": 41,
+          "line": 1,
+          "start": 16
+        },
+        "template_id": "lose-life-each-player-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:lose-life-each-player-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:1",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "34af9232bfe57815f95a2f7d19724f0e551e4289c106edf788ee5f42861de65a",
+        "profile": "commander_review",
+        "reachable": [
+          "choice.affected_player.fixed_discard",
+          "choice.apnap.optional_object_payment_or_life_loss",
+          "life.change.effect",
+          "zone.change.destination_replacement"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "choice.affected_player.fixed_discard",
+          "choice.apnap.optional_object_payment_or_life_loss",
+          "zone.change.destination_replacement"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "choice.affected_player.fixed_discard",
+        "choice.apnap.optional_object_payment_or_life_loss",
+        "zone.change.destination_replacement"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "fixed-affected-player-discard",
+        "cr-402-hand"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "actor": "$controller",
+          "count": 1,
+          "declined_life_loss": 2,
+          "hidden": true,
+          "op": "choose_cards_apnap",
+          "players": "all",
+          "predicate": {
+            "colors_all": [],
+            "colors_any": [],
+            "controller": null,
+            "exclude_ref": null,
+            "excluded_types": [],
+            "include_phased_out": false,
+            "keywords_all": [],
+            "known_to_actor": null,
+            "owner": null,
+            "subtypes_all": [],
+            "supertypes_all": [],
+            "tapped": null,
+            "token": null,
+            "types_all": [],
+            "types_any": [],
+            "zones": [
+              "hand"
+            ]
+          },
+          "prompt": "Choose to discard a card or lose 2 life.",
+          "then": "discard",
+          "zone": "hand"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:tomb:1",
+      "label": "Veils of Fear",
+      "notes": "",
+      "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "34af9232bfe57815f95a2f7d19724f0e551e4289c106edf788ee5f42861de65a",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "tomb",
+          "index": 1
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "091d356b49ae07692e94505892a2de191944b6e1c44c817d6fa6206362022635",
+        "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
+        "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
+        "source_span": {
+          "end": 147,
+          "line": 2,
+          "start": 95
+        },
+        "template_id": "fixed-affected-player-discard-each_player-1-v1-or-life-loss"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:fixed-affected-player-discard-each_player-1-v1-or-life-loss"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:2",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "c767055d6d6ef31505bff3864cc02105ec5dd0acd4ae34850e0a4c116fe1bf17",
+        "profile": "commander_review",
+        "reachable": [
+          "choice.affected_player.fixed_sacrifice",
+          "choice.apnap.optional_object_payment_or_life_loss",
+          "life.change.effect",
+          "zone.change.destination_replacement"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "choice.affected_player.fixed_sacrifice",
+          "choice.apnap.optional_object_payment_or_life_loss",
+          "zone.change.destination_replacement"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "choice.affected_player.fixed_sacrifice",
+        "choice.apnap.optional_object_payment_or_life_loss",
+        "zone.change.destination_replacement"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "fixed-affected-player-sacrifice",
+        "sacrifice"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "actor": "$controller",
+          "count": 1,
+          "declined_life_loss": 2,
+          "op": "choose_cards_apnap",
+          "players": "all",
+          "predicate": {
+            "colors_all": [],
+            "colors_any": [],
+            "controller": null,
+            "exclude_ref": null,
+            "excluded_types": [],
+            "include_phased_out": false,
+            "keywords_all": [],
+            "known_to_actor": null,
+            "owner": null,
+            "subtypes_all": [],
+            "supertypes_all": [],
+            "tapped": null,
+            "token": null,
+            "types_all": [],
+            "types_any": [
+              "artifact",
+              "creature",
+              "land"
+            ],
+            "zones": [
+              "battlefield"
+            ]
+          },
+          "prompt": "Choose to sacrifice an eligible permanent or lose 2 life.",
+          "then": "sacrifice",
+          "zone": "battlefield"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:tomb:2",
+      "label": "Sandfall Cell",
+      "notes": "",
+      "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "c767055d6d6ef31505bff3864cc02105ec5dd0acd4ae34850e0a4c116fe1bf17",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "tomb",
+          "index": 2
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "da54f71ff9e47e18c0e4692b297a36397e31c9ba58d903d56615065a66c0c922",
+        "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
+        "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
+        "source_span": {
+          "end": 283,
+          "line": 3,
+          "start": 190
+        },
+        "template_id": "fixed-affected-player-sacrifice-each_player-1-28ba0e936fd9-v1-or-life-loss"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:fixed-affected-player-sacrifice-each_player-1-28ba0e936fd9-v1-or-life-loss"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:3",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "46d2aab294506df07f871ba5fe6a3bd425d048969e63ad5d9c3f85bf093ec829",
+        "profile": "commander_review",
+        "reachable": [
+          "choice.affected_player.fixed_controller_discard",
+          "choice.affected_player.fixed_discard",
+          "choice.affected_player.fixed_sacrifice",
+          "choice.permanent.distinct_sacrifice_roles",
+          "zone.change.destination_replacement"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "choice.affected_player.fixed_controller_discard",
+          "choice.affected_player.fixed_discard",
+          "choice.affected_player.fixed_sacrifice",
+          "choice.permanent.distinct_sacrifice_roles",
+          "zone.change.destination_replacement"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "choice.affected_player.fixed_controller_discard",
+        "choice.affected_player.fixed_discard",
+        "choice.affected_player.fixed_sacrifice",
+        "choice.permanent.distinct_sacrifice_roles",
+        "zone.change.destination_replacement"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "fixed-affected-player-discard",
+        "cr-402-hand",
+        "fixed-controller-card-discard",
+        "sacrifice"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "distinct_sacrifice": {
+            "before": {
+              "actor": "$controller",
+              "count": 1,
+              "hidden": true,
+              "op": "choose_cards_apnap",
+              "players": [
+                "$controller"
+              ],
+              "predicate": {
+                "colors_all": [],
+                "colors_any": [],
+                "controller": null,
+                "exclude_ref": null,
+                "excluded_types": [],
+                "include_phased_out": false,
+                "keywords_all": [],
+                "known_to_actor": null,
+                "owner": null,
+                "subtypes_all": [],
+                "supertypes_all": [],
+                "tapped": null,
+                "token": null,
+                "types_all": [],
+                "types_any": [],
+                "zones": [
+                  "hand"
+                ]
+              },
+              "prompt": "Choose the required card(s) to discard.",
+              "then": "discard",
+              "zone": "hand"
+            },
+            "roles": [
+              "creature",
+              "artifact",
+              "land"
+            ],
+            "schema_version": 1
+          },
+          "op": "choose_objects",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:tomb:3",
+      "label": "Oubliette",
+      "notes": "",
+      "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "46d2aab294506df07f871ba5fe6a3bd425d048969e63ad5d9c3f85bf093ec829",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "tomb",
+          "index": 3
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "e8acf4cf7069d0d123d4bcd3bede4780a4f13d97b0b7316f68d815068f486003",
+        "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
+        "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
+        "source_span": {
+          "end": 397,
+          "line": 4,
+          "start": 332
+        },
+        "template_id": "distinct-permanent-sacrifices-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:distinct-permanent-sacrifices-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:4",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "597919a409abe53e3c2608d271ce41d31d0782864c912eb254680671bee170d4",
+        "profile": "commander_review",
+        "reachable": [
+          "combat.damage.assignment.canonical",
+          "combat.damage.assignment.deathtouch",
+          "combat.damage.participation.strike_steps",
+          "damage.amount.positive",
+          "damage.result.deathtouch",
+          "token.creation.fixed_definition"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "combat.damage.assignment.deathtouch",
+          "damage.result.deathtouch",
+          "token.creation.fixed_definition"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "combat.damage.assignment.deathtouch",
+        "damage.result.deathtouch",
+        "token.creation.fixed_definition"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-111-tokens",
+        "deathtouch",
+        "fixed-token-production",
+        "fixed-named-token"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "characteristics": {
+            "colors": [
+              "B"
+            ],
+            "keywords": [
+              "Deathtouch"
+            ],
+            "literal_token_name_version": 1,
+            "power": "4",
+            "toughness": "4",
+            "type_line": "Token Legendary Creature — God Horror"
+          },
+          "controller": "$controller",
+          "name": "The Atropal",
+          "op": "create_token",
+          "quantity": 1
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:tomb:4",
+      "label": "Cradle of the Death God",
+      "notes": "",
+      "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "597919a409abe53e3c2608d271ce41d31d0782864c912eb254680671bee170d4",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "tomb",
+          "index": 4
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "064d8e2d3022919c11820575e70c9e8c0926c4368ec921696394d8ad826116dc",
+        "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
+        "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
+        "source_span": {
+          "end": 544,
+          "line": 5,
+          "start": 460
+        },
+        "template_id": "create-fixed-named-legendary-creature-token-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:create-fixed-named-legendary-creature-token-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:0",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "3d0a6f903f1bc1c43f0b86fd6515996bf72d5869516b3aabdabb0c7f0cef7fde",
+        "profile": "commander_review",
+        "reachable": [
+          "library.search.fixed_type_to_hand",
+          "variant.commander.zone_return",
+          "zone.change.destination_replacement"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "library.search.fixed_type_to_hand"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "library.search.fixed_type_to_hand"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "fixed-library-search-to-hand"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": {
+            "maximum": 1,
+            "minimum": 1
+          },
+          "destination": "hand",
+          "op": "search",
+          "reveal": true,
+          "selector": {
+            "supertypes": [
+              "basic"
+            ],
+            "types": [
+              "land"
+            ]
+          },
+          "shuffle_after": true,
+          "zone": "library"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:0",
+      "label": "Secret Entrance",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "3d0a6f903f1bc1c43f0b86fd6515996bf72d5869516b3aabdabb0c7f0cef7fde",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 0
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "b5070d430d82bbdbff6d04a1e7d49897dd90130712728b50573b4114d62e33ae",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 185,
+          "line": 2,
+          "start": 95
+        },
+        "template_id": "fixed-library-search-to-hand-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:fixed-library-search-to-hand-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:1",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "d3e505420d5aff37d6fa35e3b1b36a353ae27c35070e400ea019f58288280eea",
+        "profile": "commander_review",
+        "reachable": [
+          "counter.placement.quantity_replacement",
+          "counter.producer.fixed_effect",
+          "target.revalidate_resolution"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "counter.producer.fixed_effect",
+          "target.revalidate_resolution"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "counter.producer.fixed_effect",
+        "target.revalidate_resolution"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-122-counters",
+        "cr-115-targets"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "amount": 2,
+          "card": "$target.0",
+          "counter": "+1/+1",
+          "op": "place_counters",
+          "source": "$source"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:1",
+      "label": "Forge",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "d3e505420d5aff37d6fa35e3b1b36a353ae27c35070e400ea019f58288280eea",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 1
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "a44dca58b0c635a55aa5c3ab85b44020cafa8e222802f8de7acdde8b7421bc0f",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 265,
+          "line": 3,
+          "start": 223
+        },
+        "template_id": "place-fixed-counter-target-creature-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": {
+        "categories": [
+          "permanent"
+        ],
+        "count": 1,
+        "types_any": [
+          "creature"
+        ],
+        "zones": [
+          "battlefield"
+        ]
+      },
+      "tests": [
+        "oracle_template:place-fixed-counter-target-creature-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:2",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "profile": "commander_review",
+        "reachable": [
+          "library.scry.fixed_controller"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "library.scry.fixed_controller"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "library.scry.fixed_controller"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "scry"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 2,
+          "op": "scry",
+          "player": "$controller"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:2",
+      "label": "Lost Well",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "6cb738020c5d439b1cdcba6eb6d07dbefa8c5430737048f6a48119a82d375ce6",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 2
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "2fd096320efa861020547efe432cf2e53fa77440af4efe3bf32ff5f8580cb28e",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 310,
+          "line": 4,
+          "start": 303
+        },
+        "template_id": "scry-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:scry-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:3",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "54c359808043a08bde3cf426fa042b1881be99b7a30b375ac609a2525082403c",
+        "profile": "commander_review",
+        "reachable": [
+          "life.change.effect",
+          "target.revalidate_resolution"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "life.change.effect",
+          "target.revalidate_resolution"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "life.change.effect",
+        "target.revalidate_resolution"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-119-life",
+        "cr-115-targets"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "amount": 5,
+          "op": "lose_life",
+          "player": "$target.0"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:3",
+      "label": "Trap!",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "54c359808043a08bde3cf426fa042b1881be99b7a30b375ac609a2525082403c",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 3
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "ed81882a84859bcd427c5accc44d646816f6ab529fe5e20a9ba444ddee956bc8",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 371,
+          "line": 5,
+          "start": 344
+        },
+        "template_id": "lose-life-target-player-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": {
+        "categories": [
+          "player"
+        ],
+        "count": 1,
+        "player_relation": "any",
+        "zones": [
+          "player"
+        ]
+      },
+      "tests": [
+        "oracle_template:lose-life-target-player-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:4",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "ae4325c74ff2c51245ff0063b867ad343bdf57a3894a26ec241a675d72a6671d",
+        "profile": "commander_review",
+        "reachable": [
+          "combat.declaration.typed_components",
+          "combat.goad.fixed_instruction",
+          "combat.goad.prohibition.controller_creatures",
+          "target.revalidate_resolution"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "combat.goad.fixed_instruction",
+          "target.revalidate_resolution"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "combat.goad.fixed_instruction",
+        "target.revalidate_resolution"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "goad",
+        "cr-115-targets"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "card": "$target.0",
+          "op": "goad"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:4",
+      "label": "Arena",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "ae4325c74ff2c51245ff0063b867ad343bdf57a3894a26ec241a675d72a6671d",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 4
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "55829d75792651c1d6813610c265697604b9f77ea20e914971ed845109a4cc5b",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 422,
+          "line": 6,
+          "start": 401
+        },
+        "template_id": "goad-target-creature-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": {
+        "categories": [
+          "permanent"
+        ],
+        "count": 1,
+        "types_any": [
+          "creature"
+        ],
+        "zones": [
+          "battlefield"
+        ]
+      },
+      "tests": [
+        "oracle_template:goad-target-creature-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:5",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "f5b0ed81b49321e0c7366b08d50708cc5b71c61fa178aa9982c6d0fbce7d99a9",
+        "profile": "commander_review",
+        "reachable": [
+          "activation.tap_untap_cost.haste",
+          "mana.activated.fixed_output",
+          "token.creation.fixed_definition"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "mana.activated.fixed_output",
+          "token.creation.fixed_definition"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "mana.activated.fixed_output",
+        "token.creation.fixed_definition"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-111-tokens"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "characteristics": {
+            "activated_ability_profile": "tap_sac_any_color_mana_v1",
+            "display_text": "{T}, Sacrifice this token: Add one mana of any color.",
+            "literal_token_name_version": 1,
+            "type_line": "Token Artifact — Treasure"
+          },
+          "controller": "$controller",
+          "name": "Treasure Token",
+          "op": "create_token",
+          "quantity": 1
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:5",
+      "label": "Stash",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "f5b0ed81b49321e0c7366b08d50708cc5b71c61fa178aa9982c6d0fbce7d99a9",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 5
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "aea2bdd8b423255fece54b6f6d4c72508e805751d24f21fdd017ab96447d56e0",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 487,
+          "line": 7,
+          "start": 463
+        },
+        "template_id": "create-fixed-treasure-token-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:create-fixed-treasure-token-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:6",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "ab4baa6a654ff0c77e3d75c818409a14072cef3995fc2c2780d15e74ea817458",
+        "profile": "commander_review",
+        "reachable": [
+          "zone.draw.library_to_hand"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "zone.draw.library_to_hand"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "zone.draw.library_to_hand"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-121-drawing-a-card"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "count": 1,
+          "op": "draw",
+          "player": "$controller",
+          "private": true
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:6",
+      "label": "Archives",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "ab4baa6a654ff0c77e3d75c818409a14072cef3995fc2c2780d15e74ea817458",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 6
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "6b094c0184fd0fb0903d74ecaea5348798bd171279b23e953a3fa48ecc152ba8",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 533,
+          "line": 8,
+          "start": 521
+        },
+        "template_id": "draw-controller-v1"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:draw-controller-v1"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:7",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "af1f7f0d20ad02d65a7cd485c309cfa2cb4f3472b73d521e26dfbfc567df5b13",
+        "profile": "commander_review",
+        "reachable": [
+          "combat.block.menace",
+          "token.creation.fixed_definition"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "combat.block.menace",
+          "token.creation.fixed_definition"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "combat.block.menace",
+        "token.creation.fixed_definition"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "cr-111-tokens",
+        "menace"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "characteristics": {
+            "colors": [
+              "B"
+            ],
+            "keywords": [
+              "Menace"
+            ],
+            "literal_token_name_version": 1,
+            "power": "4",
+            "toughness": "1",
+            "type_line": "Token Creature — Skeleton"
+          },
+          "controller": "$controller",
+          "name": "Skeleton Token",
+          "op": "create_token",
+          "quantity": 1
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:7",
+      "label": "Catacombs",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "af1f7f0d20ad02d65a7cd485c309cfa2cb4f3472b73d521e26dfbfc567df5b13",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 7
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "a61a5a6a453c0fa70fbc957afb8aa6a9b7021e8e32fd89bd4c1b37a228818a2b",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 638,
+          "line": 9,
+          "start": 583
+        },
+        "template_id": "create-fixed-creature-token-v2"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:create-fixed-creature-token-v2"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    },
+    {
+      "ability_id": "room:front:8",
+      "active_zone": "command",
+      "capability_closure": {
+        "blockers": [],
+        "evidence_fingerprint": "42600a02ca87463f60bde8d2995a6158f9fe1aa10b5495ecd18e766fcfc4d3ec",
+        "fingerprint": "e3a33429ce1164595a0e4c31c581f11dc2e77d0358c27e59dbdfdbce1e2702d5",
+        "profile": "commander_review",
+        "reachable": [
+          "continuous.resolution.until_controller_next_turn",
+          "counter.placement.quantity_replacement",
+          "counter.producer.effect_entry",
+          "library.select.battlefield_controller",
+          "library.select.fixed_controller",
+          "library.select.revealed_entry_followup",
+          "library.shuffle.fixed_controller",
+          "target.protection.hexproof_permanent",
+          "target.revalidate_resolution",
+          "trigger.event.normalized_zone_change",
+          "trigger.placement.apnap",
+          "turn.boundary.scheduled_skip",
+          "turn.extra.fixed_after_current",
+          "turn.step.static_skip",
+          "zone.change.destination_replacement"
+        ],
+        "registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "requested": [
+          "continuous.resolution.until_controller_next_turn",
+          "counter.producer.effect_entry",
+          "library.select.battlefield_controller",
+          "library.select.fixed_controller",
+          "library.select.revealed_entry_followup",
+          "library.shuffle.fixed_controller",
+          "target.protection.hexproof_permanent"
+        ],
+        "trusted": true
+      },
+      "capability_dependencies": [
+        "continuous.resolution.until_controller_next_turn",
+        "counter.producer.effect_entry",
+        "library.select.battlefield_controller",
+        "library.select.fixed_controller",
+        "library.select.revealed_entry_followup",
+        "library.shuffle.fixed_controller",
+        "target.protection.hexproof_permanent"
+      ],
+      "cost_schema": null,
+      "coverage": [
+        "generated_oracle_ir",
+        "spell_resolution",
+        "fixed-library-selection"
+      ],
+      "destination": null,
+      "effects": [
+        {
+          "entry_followup": {
+            "counters": 3
+          },
+          "entry_tapped": false,
+          "look_count": 10,
+          "mana_value_limit": null,
+          "maximum": 1,
+          "minimum": 1,
+          "op": "fixed_library_selection",
+          "player": "$controller",
+          "predicate_groups": [
+            [
+              {
+                "colors_all": [],
+                "colors_any": [],
+                "controller": null,
+                "exclude_ref": null,
+                "excluded_types": [],
+                "include_phased_out": false,
+                "keywords_all": [],
+                "known_to_actor": null,
+                "owner": null,
+                "subtypes_all": [],
+                "supertypes_all": [],
+                "tapped": null,
+                "token": null,
+                "types_all": [],
+                "types_any": [
+                  "creature"
+                ],
+                "zones": [
+                  "library"
+                ]
+              }
+            ]
+          ],
+          "public_reveal": true,
+          "remainder_destination": "library_shuffle",
+          "remainder_order": "random",
+          "schema_version": 4,
+          "selected_destination": "battlefield",
+          "selected_reveal": false,
+          "selection_policy": "up_to_matching"
+        }
+      ],
+      "event": "dungeon.room",
+      "event_condition": null,
+      "handlers": [],
+      "key": "dungeon-room:undercity:8",
+      "label": "Throne of the Dead Three",
+      "notes": "",
+      "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
+      "provenance": {
+        "authored_by": "oracle-ir-v929",
+        "capability_closure_fingerprint": "e3a33429ce1164595a0e4c31c581f11dc2e77d0358c27e59dbdfdbce1e2702d5",
+        "capability_profile": "commander_review",
+        "capability_registry_fingerprint": "624ba86ea66af7df36c9d864de74e26ed7d555b4ccb9cdc4acc9bb15765631b4",
+        "dependency_trust": "capability_closure_verified",
+        "dungeon_room": {
+          "dungeon": "undercity",
+          "index": 8
+        },
+        "face_id": "front",
+        "review_status": "capability_closure_verified",
+        "semantic_hash": "daf9cdf492749b9cbd7d114bb0fc4528fc87dfa9f946cf600923970ee703c709",
+        "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
+        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "source_span": {
+          "end": 888,
+          "line": 10,
+          "start": 703
+        },
+        "template_id": "library-revealed-creature-entry-followup-v4"
+      },
+      "requires_arbiter": false,
+      "semantic_schema_version": 3,
+      "target_schema": null,
+      "tests": [
+        "oracle_template:library-revealed-creature-entry-followup-v4"
+      ],
+      "trust_level": "trusted",
+      "version": 1
+    }
+  ],
+  "schema_version": 3
+}

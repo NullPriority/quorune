@@ -654,6 +654,8 @@ class StateProjector:
                 ),
                 "cmd": self._zone(p.zones["command"], principal),
             }
+            if p.dungeon_journey is not None:
+                summary["dungeon_journey"] = p.dungeon_journey.to_dict()
             generic_counters = _generic_player_counter_rows(p)
             from .city_blessing_model import player_has_citys_blessing
             if player_has_citys_blessing(p):summary['citys_blessing']=True

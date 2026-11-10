@@ -10,7 +10,8 @@ from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
-from ..drawing.captured_hand import CaptureDrawnHandCard, RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
+from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
+from ..dungeon_progress import VentureProgressIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
@@ -38,7 +39,7 @@ from ..rules.destruction_result_model import DestructionFollowup
 from ..rules.public_exile_result_model import PublicExileFollowup
 from ..rules.revealed_library_top import RevealedLibraryTopSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
-from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
+from ..drawing.model import DrawCardsIntent
 from ..announced_damage import AllocatedDamageRecipient
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..damage_death_exile_model import DamageDeathExileScope
@@ -66,27 +67,6 @@ from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 
 _EXPLORE_LABEL = "Explore"
 _REASON_FIELD = "reason"
-
-
-@dataclass(frozen=True, slots=True)
-class DrawCardsIntent:
-    player: str
-    count: int
-    reason: str
-    private: bool = False
-    post_draw_actions: tuple[DrawnCardAction, ...] = ()
-
-    def __post_init__(self) -> None:
-        actions = tuple(self.post_draw_actions)
-        if any(
-            not isinstance(
-                action,
-                (RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard),
-            )
-            for action in actions
-        ):
-            raise TypeError("Draw intents require typed post-draw actions")
-        object.__setattr__(self, "post_draw_actions", actions)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1561,6 +1541,7 @@ SemanticIntent: TypeAlias = (
     | QueueReflexiveTriggerIntent
     | MillCardsIntent
     | BecomeMonarchIntent
+    | VentureProgressIntent
     | SetPermanentTappedIntent
     | ProhibitNextUntapIntent
     | SetPermanentsTappedIntent

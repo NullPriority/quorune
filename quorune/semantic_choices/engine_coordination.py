@@ -538,6 +538,7 @@ class SemanticChoiceCoordinationMixin:
         """Materialize immutable facts under the instruction's visibility scope."""
 
         from ..discover_casting import resolving_exile_library_refs
+        from ..dungeon_progress import DUNGEON_VENTURE_FIELD, DungeonJourney
         choice_effect = effect or {}
         object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
@@ -568,6 +569,8 @@ class SemanticChoiceCoordinationMixin:
             explore_source_types=materialize_explore_source_types(self, stack_item, choice_effect),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
+            venture_journey=((self.state.players[actor].dungeon_journey or DungeonJourney())
+                             if DUNGEON_VENTURE_FIELD in choice_effect else None),
             counter_permissions=collect_counter_permissions(self),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),
@@ -716,8 +719,10 @@ class SemanticChoiceCoordinationMixin:
             effect = bind_endure_instruction(self, item, effect)
             from ..drawing.miracle_casting import bind_miracle_cast_instruction
             from ..drawing.captured_hand_casting import bind_captured_draw_offer
+            from ..dungeon_runtime import check_venture_instruction
             effect = bind_miracle_cast_instruction(item, effect)
             effect = bind_captured_draw_offer(item, effect)
+            check_venture_instruction(self, item, effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         handler = registry.handler_for_operation(str(effect.get("op") or ""))

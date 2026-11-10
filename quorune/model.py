@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal, Mapping
 from .composition_storage import PermanentCompositionStorage
+from .dungeon_progress import DungeonJourney
 from .creature_subtypes import canonical_creature_subtype
 from .mandatory_loop_model import MandatoryLinkedLoopWatch
 
@@ -87,6 +88,7 @@ ObjectKind = Literal[
     "spell_copy",
     "card_copy",
     "emblem",
+    "dungeon",
 ]
 
 PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
@@ -565,10 +567,15 @@ class CardInstance:
             "spell_copy",
             "card_copy",
             "emblem",
+            "dungeon",
         }:
             raise ValueError(
                 f"Unsupported game object kind {self.object_kind!r}"
             )
+        if self.object_kind == "dungeon" and (
+            self.zone != "command" or self.owner != self.controller or self.is_commander
+        ):
+            raise ValueError("A dungeon is a nontraditional object owned in the command zone")
         if self.commander_designation_id == "":
             raise ValueError("Commander designation IDs cannot be empty")
         if self.commander_designation_id is not None and not self.is_commander:
@@ -794,8 +801,11 @@ class PlayerState:
     rules_seen: list[str] = field(default_factory=list)
     stats: dict[str, Any] = field(default_factory=dict)
     yield_policy: YieldPolicy = field(default_factory=YieldPolicy)
+    dungeon_journey: DungeonJourney | None = None
 
     def __post_init__(self) -> None:
+        if self.dungeon_journey is not None and not isinstance(self.dungeon_journey, DungeonJourney):
+            raise ValueError("Player dungeon state requires a typed journey")
         if (
             type(self.last_upkeep_timestamp) is not int
             or self.last_upkeep_timestamp < 0
@@ -844,6 +854,10 @@ class PlayerState:
             payload.pop("last_upkeep_timestamp")
         if not self.attachments:
             payload.pop("attachments")
+        if self.dungeon_journey is None:
+            payload.pop("dungeon_journey")
+        else:
+            payload["dungeon_journey"] = self.dungeon_journey.to_dict()
         return payload
 
     @classmethod
@@ -851,6 +865,8 @@ class PlayerState:
         payload = dict(data)
         payload["mana_pool"] = normalize_mana_bundle(payload.get("mana_pool"))
         payload["yield_policy"] = YieldPolicy.from_dict(payload.get("yield_policy"))
+        if "dungeon_journey" in payload:
+            payload["dungeon_journey"] = DungeonJourney.from_dict(payload["dungeon_journey"])
         return cls(**payload)
 
 

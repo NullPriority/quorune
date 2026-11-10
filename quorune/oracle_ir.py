@@ -111,6 +111,7 @@ from .compiler.modal_templates import (
     fixed_nonrepeating_modal_template,
 )
 from .compiler.monarch_templates import fixed_monarch_effect_template
+from .compiler.venture_templates import fixed_venture_effect_template
 from .compiler.ring_templates import fixed_ring_temptation_template
 from .compiler.keyword_nodes import (
     bloodthirst_keyword_node,
@@ -179,7 +180,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v928"
+ORACLE_COMPILER_VERSION = "oracle-ir-v929"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -268,9 +269,9 @@ def _effect_template(
     """Compile only whole, reviewed Oracle sentence templates."""
 
     normalized = text.strip()
-    monarch = fixed_monarch_effect_template(normalized)
-    if monarch is not None:
-        return monarch.compiled()
+    variant = fixed_monarch_effect_template(normalized) or fixed_venture_effect_template(normalized)
+    if variant is not None:
+        return variant.compiled()
     ring = fixed_ring_temptation_template(normalized)
     if ring is not None:
         return ring.compiled()

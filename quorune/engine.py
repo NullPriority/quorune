@@ -820,6 +820,8 @@ class CommanderEngine(
 
     def _assert_invariants(self) -> None:
         from .composition_storage import validate_composition_membership
+        from .dungeon_runtime import validate_dungeon_membership
+        validate_dungeon_membership(self)
         try:validate_composition_membership(self.state)
         except ValueError as exc:raise StateInvariantError(str(exc)) from exc
         membership: dict[str, list[tuple[str, str]]] = {}
@@ -6679,8 +6681,10 @@ class CommanderEngine(
         departing_monarch = self.state.monarch in unique
         monarch_before_departure = self.state.monarch
         active_before_departure = self.state.active_player
+        from .dungeon_runtime import remove_departing_dungeon
         for seat in unique:
             player = self.state.players[seat]
+            remove_departing_dungeon(self, seat)
             player.in_game = False
             self.state.eliminated_players.append(seat)
             # Remove owned objects before ending grants and synchronizing custody (CR 800.4a).

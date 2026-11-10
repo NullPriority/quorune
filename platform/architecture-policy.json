@@ -162,6 +162,7 @@
       "quorune/destruction.py": "typed permanent-destruction preflight and authoritative commit owner",
       "quorune/drawing/captured_hand_casting.py": "exact resolving hand incarnation capture and scoped disclosure; delegates casting and payment to canonical owners",
       "quorune/drawing/transaction.py": "canonical replacement-aware draw mutation owner behind CommanderEngine",
+      "quorune/dungeon_runtime.py": "typed Venture, command-zone dungeon lifetime, and state-based completion mutation owner",
       "quorune/effect_runtime/damage_life_and_turns.py": "registry-owned damage and turn effect family",
       "quorune/effect_runtime/damage_modifiers.py": "registry-owned prevention-shield and redirection creation family",
       "quorune/effect_runtime/objects_stack_and_tokens.py": "registry-owned object, stack, and token effect family",

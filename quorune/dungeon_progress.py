@@ -9,6 +9,12 @@ from typing import Any
 from .dungeon_catalog import DUNGEON_CATALOG, DungeonId, VentureMode
 
 
+DUNGEON_VENTURE_FIELD = "venture"
+DUNGEON_VENTURE_CAPABILITY = "variant.dungeon.venture"
+DUNGEON_VENTURE_MECHANIC = "venture-into-the-dungeon"
+DUNGEON_ROOM_EVENT = "dungeon.room"
+
+
 def _require_fields(value: Any, fields: set[str], label: str) -> None:
     if not isinstance(value, Mapping) or set(value) != fields:
         raise ValueError(f"{label} has an invalid shape")
@@ -28,6 +34,14 @@ class DungeonRoomRef:
     @property
     def exits(self) -> tuple[int, ...]:
         return DUNGEON_CATALOG[self.dungeon].rooms[self.index].exits
+
+    @property
+    def choice_id(self) -> str:
+        return f"{self.dungeon.value}:{self.index}"
+
+    @property
+    def program_key(self) -> str:
+        return f"dungeon-room:{self.choice_id}"
 
     def to_dict(self) -> dict[str, str | int]:
         return {"dungeon": self.dungeon.value, "index": self.index}
@@ -177,3 +191,59 @@ def accept_venture(owner: str, journey: DungeonJourney, offer: VentureOffer, sel
     if not isinstance(selected, DungeonRoomRef) or selected not in offer.destinations:
         raise ValueError("The selected dungeon room was not offered")
     return replace(journey, active=DungeonVisit(selected, journey.completed + 1))
+
+
+def venture_instruction(effect: Mapping[str, Any], *, actor: str = "$controller") -> VentureMode:
+    """Validate the fixed-controller instruction shared by both entry pools."""
+    _require_fields(effect, {"op", "player", DUNGEON_VENTURE_FIELD}, "Venture instruction")
+    if effect["op"] != "choose_option" or effect["player"] != actor:
+        raise ValueError("Venture requires the resolving controller")
+    raw = effect[DUNGEON_VENTURE_FIELD]
+    _require_fields(raw, {"schema_version", "mode"}, "Venture mode")
+    if type(raw["schema_version"]) is not int or raw["schema_version"] != 1:
+        raise ValueError("Venture requires its current instruction schema")
+    return VentureMode(raw["mode"])
+
+
+def venture_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    if effect.get("op") != "choose_option" or DUNGEON_VENTURE_FIELD not in effect:
+        return ()
+    venture_instruction(effect)
+    return (DUNGEON_VENTURE_CAPABILITY,)
+
+
+def venture_node_capabilities(*, effects, target_schema, mechanic_ids=()) -> tuple[str, ...]:
+    if target_schema is not None or len(effects) != 1 or DUNGEON_VENTURE_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        return venture_payload_dependencies(effects[0])
+    except (ValueError, TypeError):
+        return ()
+
+
+def is_closed_venture_program(program) -> bool:
+    required = venture_node_capabilities(effects=program.effects, target_schema=program.target_schema,
+                                         mechanic_ids=program.coverage)
+    return bool(required) and set(required) <= set(program.capability_dependencies)
+
+
+@dataclass(frozen=True, slots=True)
+class VentureProgressIntent:
+    stack_ref: str
+    before: DungeonJourney
+    offer: VentureOffer
+    selected: DungeonRoomRef | None
+
+    def __post_init__(self) -> None:
+        if type(self.stack_ref) is not str or not self.stack_ref or not isinstance(self.offer, VentureOffer):
+            raise ValueError("Venture requires a resolving stack item and typed offer")
+        if not isinstance(self.before, DungeonJourney):
+            raise ValueError("Venture requires its current journey")
+        offered, retired = prepare_venture(self.offer.owner, self.before, self.offer.mode)
+        if offered != self.offer:
+            raise ValueError("Venture offer differs from the current journey")
+        if self.selected is None:
+            if retired is None or len(offered.destinations) < 2:
+                raise ValueError("Only a retirement before a new choice may omit the room")
+        elif not isinstance(self.selected, DungeonRoomRef) or self.selected not in offered.destinations:
+            raise ValueError("Venture requires an offered destination")

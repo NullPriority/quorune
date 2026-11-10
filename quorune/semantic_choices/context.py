@@ -10,6 +10,7 @@ from ..object_query import ObjectQueryResult
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
 from ..semantic_runtime.context import SemanticSourceContext
 from ..explore_action_model import explore_action_version
+from ..dungeon_progress import DungeonJourney
 
 ChoiceObjectView = ObjectQueryResult
 
@@ -165,6 +166,9 @@ class SemanticChoiceQuery(
 
     def ring_choice_plan(self, player: str) -> RingBearerChoicePlan: ...
 
+    @property
+    def venture_journey(self) -> DungeonJourney | None: ...
+
 
 @dataclass(frozen=True, slots=True)
 class SnapshotSemanticChoiceQuery:
@@ -205,6 +209,7 @@ class SnapshotSemanticChoiceQuery:
     discard_hand_inputs: FrozenMap | None = None
     attacking_token_entry_allowed: bool = False
     attacking_card_entry_status: str | None = None
+    venture_journey: DungeonJourney | None = None
 
     def __post_init__(self) -> None:
         if type(self.attacking_token_entry_allowed) is not bool:

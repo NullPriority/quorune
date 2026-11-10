@@ -7,6 +7,7 @@ from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
+from ..dungeon_progress import VentureProgressIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
@@ -667,12 +668,14 @@ PlayerIntent = (
     | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
     | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent
+    | VentureProgressIntent
 )
 PLAYER_INTENT_TYPES = (
     BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
     DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
     TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent,
     EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent,
+    VentureProgressIntent,
 )
 TapStateIntent = (
     SetPermanentTappedIntent
@@ -692,6 +695,10 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, VentureProgressIntent):
+        from ..dungeon_runtime import commit_venture_progress
+
+        return intent.offer.owner, commit_venture_progress(sink, intent)
     if isinstance(intent, EarthbendIntent):
         from ..earthbend import animate_earthbend_land
         return intent.actor, animate_earthbend_land(sink, intent)

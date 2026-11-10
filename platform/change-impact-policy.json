@@ -4623,11 +4623,21 @@
       "patterns": [
         "quorune/dungeon_catalog.py",
         "quorune/dungeon_progress.py",
+        "quorune/dungeon_runtime.py",
+        "quorune/compiler/venture_templates.py",
+        "quorune/semantic_choices/venture.py",
+        "quorune/semantic_packs/compiled-dungeon-rooms.json",
+        "scripts/update_dungeon_room_programs.py",
         "tests/fixtures/dungeon-cards.json",
+        "tests/fixtures/venture-dungeon-cards.json",
         "tests/test_dungeon_progress.py"
       ],
       "test_modules": [
-        "test_dungeon_progress"
+        "test_dungeon_progress",
+        "test_card_program_trust",
+        "test_game_record_v3",
+        "test_state_based_actions",
+        "test_trigger_batches"
       ]
     },
     {

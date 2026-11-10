@@ -7,6 +7,7 @@ import re
 import unittest
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.dungeon_catalog import DUNGEON_CATALOG, DungeonId, DungeonRoom, VentureMode
 from quorune.dungeon_progress import (
@@ -21,6 +22,56 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_venture_compiler_binds_only_a_closed_entry_mode(self):
+        from unittest.mock import patch
+        from test_bound_effect_programs import record
+        from quorune.dungeon_progress import DUNGEON_VENTURE_CAPABILITY, DUNGEON_VENTURE_FIELD, venture_instruction
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        options = {"capability_registry": load_default_capability_registry(), "capability_profile": "commander_review"}
+        texts = (("Venture into the dungeon.", VentureMode.ORDINARY), ("Venture into Undercity.", VentureMode.UNDERCITY))
+        for index, (text, mode) in enumerate(texts):
+            with self.subTest(mode=mode):
+                source = replace(record(text), oracle_id=f"fixture:venture-mode-{index}")
+                ir = compile_oracle_card(source, **options)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                effect, = node.effects
+                self.assertIn(DUNGEON_VENTURE_CAPABILITY, node.capability_dependencies)
+                self.assertEqual(mode, venture_instruction(effect))
+                with self.assertRaises(ValueError):
+                    venture_instruction({**effect, DUNGEON_VENTURE_FIELD: {"schema_version": 1, "mode": "other"}})
+        source = replace(record("Venture into any dungeon."), oracle_id="fixture:unsupported-venture-mode")
+        self.assertNotEqual("exact", compile_oracle_card(source, **options).status)
+        probe = replace(record(texts[0][0]), oracle_id="fixture:missing-venture-producer")
+        with patch("quorune.oracle_ir.fixed_venture_effect_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(probe, **options).status)
+
+    def test_dungeon_room_pack_preserves_the_original_source_spans(self):
+        from quorune.dungeon_progress import DUNGEON_ROOM_EVENT
+        from quorune.semantics import SemanticRegistry
+
+        records = json.loads((ROOT / "tests/fixtures/dungeon-cards.json").read_bytes())["cards"]
+        source_by_id = {row["oracle_id"]: row["oracle_text"] for row in records}
+        registry = SemanticRegistry()
+        expected = set()
+        for dungeon, definition in DUNGEON_CATALOG.items():
+            for index, room in enumerate(definition.rooms):
+                ref = DungeonRoomRef(dungeon, index)
+                expected.add(ref.program_key)
+                program = registry.get(ref.program_key)
+                self.assertEqual("trusted", program.trust_level)
+                self.assertEqual(("command", DUNGEON_ROOM_EVENT), (program.active_zone, program.event))
+                self.assertEqual(ref.to_dict(), program.provenance["dungeon_room"])
+                source = source_by_id[program.oracle_id]
+                span = program.provenance["source_span"]
+                self.assertEqual(definition.source_oracle_hash, sha256(source.encode("utf-8")).hexdigest())
+                self.assertEqual(room.label, program.label)
+                self.assertTrue(source[:span["start"]].endswith(room.label + " — "))
+                self.assertNotIn("Leads to", source[span["start"]:span["end"]])
+        self.assertEqual(expected, {program.key for program in registry.programs_for_event(DUNGEON_ROOM_EVENT)})
+
     def test_throne_room_body_closes_the_public_entry_and_shuffle_contract(self):
         from unittest.mock import patch
         from test_bound_effect_programs import record
@@ -221,3 +272,147 @@ class DungeonProgressTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "version 1"):
             VentureOffer.from_dict({**wire, "schema_version": True})
         self.assertEqual(journey, restored.journey)
+
+
+class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "venture.sqlite3"
+        names = ("bound-effect-program-cards.json", "dungeon-cards.json", "venture-dungeon-cards.json",
+                 "paid-sacrifice-creature-stat-cards.json")
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in names], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Venture witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
+                                                        DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def _choose(self, session, **response):
+        result = session.act("pilot:A", {"action_id": "choose", **response})
+        self.assertTrue(result.ok, result.summary)
+
+    def _room_options(self, session):
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        return tuple(option["id"] for option in session.packet("pilot:A", full=True)["decision"]["ctx"]["options"])
+
+    def _activate_map(self, session, card):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = [action for action in actions if action["id"].startswith(f"activate:{card.ref}:")
+                   and not action.get("mana_ability")]
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+
+    def _reach_last_room(self, seed, *, reenter=False):
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.dungeon_progress import DUNGEON_VENTURE_CAPABILITY
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(seed)
+        veteran = self.add(session.engine, "Veteran Dungeoneer", zone="hand")
+        maps = tuple(self.add(session.engine, "Dungeon Map", ref=f"venture-map-{index}") for index in range(3))
+        if reenter:
+            self.add(session.engine, "Clattering Skeletons", ref="venture-skeletons")
+            self.add(session.engine, "Fling", zone="hand", ref="venture-fling")
+        for card in (veteran, maps[0]):
+            self.assert_closed(session, card)
+        program, = [program for program in session.engine.semantics.programs_for_oracle(veteran.oracle_id)
+                    if DUNGEON_VENTURE_CAPABILITY in program.capability_dependencies]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != DUNGEON_VENTURE_CAPABILITY)
+        forged = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + DUNGEON_VENTURE_CAPABILITY, binding["blockers"])
+        self.prepare(session, mana={"C": 13, "W": 1, "R": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", veteran)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("lost_mine:0", "mad_mage:0", "tomb:0"), self._room_options(session))
+        before = authoritative_state_hash(session.state)
+        for seat, choice in (("B", "lost_mine:0"), ("A", "undercity:0"), ("A", "lost_mine:6")):
+            self.assertFalse(session.act(f"pilot:{seat}", {"action_id": "choose", "choice": choice}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        self._choose(session, choice="lost_mine:0")
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        private = session.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self.assertIsNone(session.packet("pilot:C", full=True)["decision"])
+        self._choose(session, cards={"top": private, "bottom": []})
+        source, = [card for card in session.state.cards.values() if card.object_kind == "dungeon"]
+        self.assertEqual(("A", "command"), (source.owner, source.zone))
+
+        self._activate_map(session, maps[0])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("lost_mine:1", "lost_mine:2"), self._room_options(session))
+        self._choose(session, choice="lost_mine:1")
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(any(card.printed_name == "Goblin Token" and card.controller == "A"
+                            for card in session.state.cards.values()))
+
+        self._activate_map(session, maps[1])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("lost_mine:3", "lost_mine:4"), self._room_options(session))
+        self._choose(session, choice="lost_mine:3")
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        room_item = session.state.stack[-1]
+        self.assertEqual(("dungeon-room:lost_mine:3", source.object_id), (room_item.semantic_key, room_item.source_object_id))
+        self.assertFalse(room_item.targets)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", {"action_id": "choose", "targets": [veteran.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self._choose(session, targets=[veteran.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 1}, session.state.cards[veteran.object_id].counters)
+
+        self._activate_map(session, maps[2])
+        self.resolve_top(session)
+        final = session.state.stack[-1]
+        journey = session.state.players["A"].dungeon_journey
+        self.assertEqual(DungeonRoomRef(DungeonId.LOST_MINE, 6), journey.active.room)
+        self.assertEqual(0, journey.completed)
+        self.assertEqual("dungeon-room:lost_mine:6", final.semantic_key)
+        return session, source, final
+
+    def test_original_venture_announces_targets_and_completes_after_the_last_trigger(self):
+        session, source, final = self._reach_last_room(309001)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        journey = session.state.players["A"].dungeon_journey
+        self.assertEqual((None, 1, ((DungeonId.LOST_MINE, 1),)), (journey.active, journey.completed, journey.completed_by_dungeon))
+        self.assertNotIn(source.object_id, session.state.cards)
+        events = session.state.events
+        resolution = next(event.event_id for event in events if event.code == "stack.resolve" and event.details["stack"] == final.ref)
+        completed = next(event.event_id for event in events if event.code == "dungeon.completed")
+        self.assertLess(resolution, completed)
+        self.replay(session)
+
+    def test_venture_retires_the_last_visit_with_its_room_trigger_still_pending(self):
+        session, source, final = self._reach_last_room(309002, reenter=True)
+        fling = next(card for card in session.state.cards.values() if card.ref == "venture-fling")
+        self.priority(session, "A")
+        action = self.action(session, "A", fling)
+        result = session.act("pilot:A", {"action_id": action["id"], "targets": ["D"], "pay": "auto",
+                                         "sacrifice_cards": ["venture-skeletons"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(("lost_mine:0", "mad_mage:0", "tomb:0"), self._room_options(session))
+        self.assertNotIn(source.object_id, session.state.cards)
+        self.assertTrue(any(item.ref == final.ref for item in session.state.stack))
+        self.assertEqual(1, session.state.players["A"].dungeon_journey.completed)
+        session = self.replay(session, load=True)
+        self._choose(session, choice="mad_mage:0")
+        self.assertIsNone(self.resolve(session))
+        journey = session.state.players["A"].dungeon_journey
+        self.assertEqual(DungeonVisit(DungeonRoomRef(DungeonId.MAD_MAGE, 0), 2), journey.active)
+        self.assertEqual(((DungeonId.LOST_MINE, 1),), journey.completed_by_dungeon)
+        self.assertTrue(any(event.code == "stack.resolve" and event.details["stack"] == final.ref
+                            for event in session.state.events))
+        self.replay(session)

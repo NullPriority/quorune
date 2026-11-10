@@ -40,6 +40,7 @@ _CARD_TYPES = {
     "artifact",
     "battle",
     "creature",
+    "dungeon",
     "enchantment",
     "instant",
     "kindred",

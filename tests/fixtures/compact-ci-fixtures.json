@@ -996,6 +996,7 @@
     "tests/fixtures/variable-library-count-cards.json",
     "tests/fixtures/variable-library-selection-cards.json",
     "tests/fixtures/variable-resolution-mana-cards.json",
+    "tests/fixtures/venture-dungeon-cards.json",
     "tests/fixtures/waterbend-cards.json",
     "tests/fixtures/whole-hand-discard-cards.json",
     "tests/fixtures/worldwagon-cards.json"
