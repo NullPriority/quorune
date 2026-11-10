@@ -3168,6 +3168,8 @@
       "patterns": [
         "quorune/compiler/spell_additional_cost_nodes.py",
         "quorune/compiler/paid_sacrifice_amount_templates.py",
+        "quorune/compiler/paid_sacrifice_condition_templates.py",
+        "quorune/paid_sacrifice_conditions.py",
         "quorune/rules/casting/spell_context.py",
         "tests/fixtures/paid-sacrifice-creature-stat-cards.json",
         "quorune/replacement/replay.py",

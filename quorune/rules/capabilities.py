@@ -1335,6 +1335,7 @@ def capability_dependencies_for_node(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_CAPABILITY, DAMAGE_DEATH_EXILE_MECHANIC
+    from ..resolution_conditions import CAST_FACT_CONDITION_MECHANICS
     from .destruction_result_model import DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
     from .public_exile_result_model import PUBLIC_EXILE_RESULT_CAPABILITY, PUBLIC_EXILE_RESULT_MECHANIC
     from .revealed_library_top import REVEAL_TOP_CAPABILITY, REVEAL_TOP_MECHANIC
@@ -1368,8 +1369,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "trigger.entry.fixed_kicked_result": "fixed-kicked-entry-trigger",
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',
         'trigger.event.normalized_counter_placement': 'trigger-event-normalized-counter-placement',
-        'resolution.effect.fixed_cast_fact': 'fixed-cast-fact-condition',
-        'resolution.effect.paid_mana_condition': 'fixed-paid-mana-resolution-condition',
+        **CAST_FACT_CONDITION_MECHANICS,
         'resolution.target_controller_information': 'fixed-target-controller-information',
         'trigger.keyword.provoke.fixed': 'provoke',
         'choice.controller.bounded_return_owner_hand': 'bounded-controlled-return',

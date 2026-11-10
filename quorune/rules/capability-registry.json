@@ -61771,6 +61771,97 @@
     {
       "applicability": {
         "exclusions": [
+          "multiple or optional sacrifice prices",
+          "other paid-object characteristics",
+          "branch-specific targets",
+          "variable results"
+        ],
+        "inputs": [
+          "fixed one-permanent sacrifice price",
+          "sealed effective types, subtypes, and supertypes of that paid incarnation"
+        ],
+        "outputs": [
+          "one independently closed conditional effect or alternate fixed draw count",
+          "copies retain the original paid observation"
+        ],
+        "summary": "Evaluate one closed conditional result from the effective characteristics of a mandatory sacrificed permanent."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.additional_cost.fixed_sacrifice",
+        "resolution.effect.public_condition"
+      ],
+      "dependency_fail_closed_rationale": "Both compiler admission and runtime binding require the fixed price and closed result shapes.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.effect.paid_sacrifice_characteristic",
+      "implementation_components": [
+        "quorune.paid_sacrifice_conditions.PaidSacrificeCharacteristics",
+        "quorune.scalar_effect_amounts.resolve_paid_sacrifice_condition",
+        "quorune.compiler.paid_sacrifice_condition_templates.paid_sacrifice_condition_template",
+        "quorune.rules.casting.spell_context.capture_paid_sacrifice_facts"
+      ],
+      "implementation_mutation_rationale": "The paid-legendary witness detects a trait evaluated against the wrong characteristic field.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_nasty_end_and_copy_read_the_same_legendary_price",
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_paid_vehicle_and_legendary_artifact_keep_their_fixed_results"
+      ],
+      "multiplayer_tests": [
+        "test_original_nasty_end_and_copy_read_the_same_legendary_price",
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_paid_vehicle_and_legendary_artifact_keep_their_fixed_results"
+      ],
+      "negative_tests": [
+        "test_paid_characteristic_requires_original_fixed_price_and_exact_branches",
+        "test_paid_characteristic_receipt_checks_original_incarnation",
+        "test_original_nasty_end_and_copy_read_the_same_legendary_price",
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type"
+      ],
+      "official_rules": [
+        "205.4b",
+        "400.7",
+        "601.2h",
+        "608.2c",
+        "608.2h",
+        "613.1d",
+        "701.21a",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_paid_characteristic_requires_original_fixed_price_and_exact_branches",
+        "test_paid_characteristic_receipt_checks_original_incarnation",
+        "test_original_nasty_end_and_copy_read_the_same_legendary_price",
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_paid_vehicle_and_legendary_artifact_keep_their_fixed_results"
+      ],
+      "privacy_tests": [
+        "test_original_nasty_end_and_copy_read_the_same_legendary_price"
+      ],
+      "replay_tests": [
+        "test_original_nasty_end_and_copy_read_the_same_legendary_price",
+        "test_original_foundry_helix_uses_the_effective_paid_artifact_type",
+        "test_original_paid_vehicle_and_legendary_artifact_keep_their_fixed_results"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "instead or linked-result conditions",
           "object-relative source or attachment conditions",
           "targeted conditional results",
@@ -90872,7 +90963,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 810,
+  "registry_version": 811,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

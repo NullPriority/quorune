@@ -12,7 +12,11 @@ from ..resolution_conditions import (
     validate_resolution_condition_instruction,
 )
 from ..continuous_conditions import FixedPublicStateConditionKind
+from ..paid_sacrifice_conditions import (
+    PAID_SACRIFICE_CONDITION_CAPABILITY, PAID_SACRIFICE_CONDITION_MECHANIC, PAID_SACRIFICE_CONDITION_VERSION,
+)
 from .closed_effect_program_shapes import _contains_target_reference
+from .casting_additional_costs import fixed_sacrifice_price_matches_subject
 
 
 def _same_target_result_closed(effects):
@@ -65,6 +69,13 @@ def resolution_condition_node_capabilities(
     otherwise=wrapper.get('otherwise_effects',())
     same_target=wrapper.get('schema_version') in {5,7,8}
     paid_mana=wrapper.get('schema_version') in {6,7}
+    paid_sacrifice = wrapper.get("schema_version") == PAID_SACRIFICE_CONDITION_VERSION
+    if paid_sacrifice and (
+        PAID_SACRIFICE_CONDITION_MECHANIC not in mechanics or wrapper["cast_fact"] != _condition.reference()
+        or not fixed_sacrifice_price_matches_subject(cost_schema, _condition.subject)
+        or len(prefix) != (0 if otherwise else 1)
+    ):
+        return ()
     if same_target:
         from ..public_replacement_model import public_replacement_target_closed
         from ..replacement.immutable import thaw_value
@@ -95,6 +106,8 @@ def resolution_condition_node_capabilities(
         *public_history_query_dependencies(wrapper["condition"]),
         *public_zone_condition_capabilities(wrapper["condition"]),
     }
+    if paid_sacrifice:
+        dependencies.add(PAID_SACRIFICE_CONDITION_CAPABILITY)
     from ..land_entry_condition_model import land_entry_condition_capabilities
     dependencies.update(land_entry_condition_capabilities(_condition.to_dict()))
     if same_target:
@@ -125,6 +138,7 @@ def resolution_condition_node_capabilities(
         RESOLUTION_CONDITION_MECHANIC,
         'fixed-cast-fact-condition',
         'fixed-paid-mana-resolution-condition',
+        PAID_SACRIFICE_CONDITION_MECHANIC,
         *wrapper["prefix_mechanic_ids"],
         *wrapper["mechanic_ids"],
         *wrapper.get('otherwise_mechanic_ids',()),
@@ -143,7 +157,9 @@ def resolution_condition_node_capabilities(
 
 
 def bound_resolution_condition_runtime_dependencies(program):
-    if not any(effect.get('op')==RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') in {5,8,9,10,11,RESOLUTION_ALTERNATIVE_SCHEMA_VERSION} for effect in program.effects):
+    bound_versions = {5, 8, 9, 10, 11, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION}
+    if not any(effect.get("op") == RESOLUTION_CONDITION_OPERATION and effect.get("schema_version") in bound_versions
+               for effect in program.effects):
         return ()
     dependencies=resolution_condition_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         mechanic_ids=program.coverage,cost_schema=program.cost_schema)

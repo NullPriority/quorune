@@ -825,6 +825,13 @@ it does not bind a target-led or unowned event pronoun. Current counts and
 immediate departure counts remain the existing scalar owner's responsibility,
 so sacrifice costs and later returned incarnations need no alternate evaluator.
 
+A spell with a single fixed sacrifice price can condition a fixed result on
+the paid permanent's card type, supported subtype, or supertype. The payment
+transaction seals the effective characteristics of that battlefield incarnation
+before its zone move. Resolution uses that observation for a later fixed
+instruction or to select an alternate draw count. A spell copy keeps the
+original payment observation and applies its result for the copy's controller.
+
 General query parsing preserves the earlier direct tap-field encoding for a
 pure tapped or untapped quantity predicate. Compound state predicates retain
 their own representation and validation. Public mana production validates a

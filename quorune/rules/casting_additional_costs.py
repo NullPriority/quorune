@@ -639,8 +639,12 @@ def fixed_single_sacrifice_price(
 
 
 def fixed_creature_sacrifice_price(cost_schema: Mapping[str, Any] | None) -> bool:
+    return fixed_sacrifice_price_matches_subject(cost_schema, "creature")
+
+
+def fixed_sacrifice_price_matches_subject(cost_schema: Mapping[str, Any] | None, subject: str) -> bool:
     cost = fixed_single_sacrifice_price(cost_schema)
-    return cost is not None and cost.predicate.types_any == ('creature',)
+    return cost is not None and (subject == "permanent" or cost.predicate.types_any == (subject,))
 
 
 def fixed_counter_cost_candidates(

@@ -37,6 +37,7 @@ from ..resolution_conditions import (
     RESOLUTION_CONDITION_OPERATION, ResolutionConditionBinding,
     validate_resolution_condition_instruction,
 )
+from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VERSION
 from .context import (
     ChoiceObjectView,
     ChoiceStackView,
@@ -548,7 +549,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         condition_facts = {}
-        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12}:
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12,PAID_SACRIFICE_CONDITION_VERSION}:
             try:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
                 if choice_effect["player"] != actor:

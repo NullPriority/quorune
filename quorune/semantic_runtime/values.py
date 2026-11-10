@@ -9,6 +9,7 @@ from ..attachment_references import (
     resolve_source_attachment,
 )
 from ..station import StationAbilityError, station_resolution_power
+from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VALUE
 from ..query_effect_amount_model import (
     PUBLIC_QUERY_AMOUNT_KIND,
     CAST_X_AMOUNT_KIND,
@@ -20,7 +21,7 @@ from .explore import explore_source_controller
 from .query_effect_amounts import resolve_public_query_amount, resolve_cast_x_amount
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND
 from ..rules.revealed_library_top import REVEAL_TOP_OPERATION
-from ..scalar_effect_amounts import resolve_scalar_effect_amount
+from ..scalar_effect_amounts import resolve_paid_sacrifice_condition, resolve_scalar_effect_amount
 from .direct_target_fields import bound_mutation_target_overrides
 
 
@@ -234,6 +235,11 @@ def resolve_semantic_value(
 
     if isinstance(value, list):
         return [resolve_semantic_value(host, child, item) for child in value]
+    if isinstance(value, Mapping) and value.get("kind") == PAID_SACRIFICE_CONDITION_VALUE:
+        try:
+            return resolve_paid_sacrifice_condition(value, item)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get('kind')=='cast_mana_spent_units':
         from ..rules.paid_mana_resolution import resolve_cast_mana_units
         try:return resolve_cast_mana_units(host,value,item)

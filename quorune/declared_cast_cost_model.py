@@ -86,6 +86,7 @@ def declared_cost_copy_fields(context):
         PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT,
         PaidCreatureStatSnapshot, PaidSacrificeManaValueSnapshot,
     )
+    from .paid_sacrifice_conditions import PAID_SACRIFICE_CHARACTERISTICS_CONTEXT, PaidSacrificeCharacteristics
 
     fields = {}
     if DECLARED_CAST_COSTS_FIELD in context:
@@ -95,4 +96,7 @@ def declared_cost_copy_fields(context):
     if PAID_SACRIFICE_MANA_VALUE_CONTEXT in context:
         snapshot = PaidSacrificeManaValueSnapshot.from_dict(context[PAID_SACRIFICE_MANA_VALUE_CONTEXT])
         fields[PAID_SACRIFICE_MANA_VALUE_CONTEXT] = snapshot.to_dict()
+    if PAID_SACRIFICE_CHARACTERISTICS_CONTEXT in context:
+        snapshot = PaidSacrificeCharacteristics.from_dict(context[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT])
+        fields[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT] = snapshot.to_dict()
     return fields

@@ -33,6 +33,7 @@ from .characteristic_fragments import (
     CharacteristicQuantitySpec,
 )
 from .creature_subtypes import CREATURE_SUBTYPES
+from .type_subtype_vocabulary import CARD_SUPERTYPES
 from .all_colors import AllColorsCharacteristicDefinitionSpec,ALL_COLORS
 
 
@@ -48,7 +49,6 @@ _CARD_TYPES = {
     "planeswalker",
     "sorcery",
 }
-_SUPERTYPES = frozenset("basic legendary ongoing snow world".split())
 
 
 def type_parts(type_line: str) -> tuple[set[str], set[str], set[str]]:
@@ -74,7 +74,7 @@ def type_parts(type_line: str) -> tuple[set[str], set[str], set[str]]:
                 ),
             )
         },
-        words.intersection(_SUPERTYPES),
+        words.intersection(CARD_SUPERTYPES),
     )
 
 

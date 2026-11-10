@@ -266,6 +266,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/declaration_rule_effects.py",
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",
+        "quorune/paid_sacrifice_conditions.py",
         "quorune/continuous_effect_model.py",
         "quorune/source_continuity.py",
         "quorune/soulbond_model.py",

@@ -13,8 +13,12 @@ from ...mutate_model import MUTATE_PAYMENT_FIELD
 from ...object_query import exact_numeric_characteristic
 from ...public_quantity_reductions import public_mana_value
 from ...scalar_effect_amount_model import (
+    PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_STAT_CAPABILITY,
     PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT, PaidCreatureStatSnapshot,
     PaidSacrificeManaValueSnapshot,
+)
+from ...paid_sacrifice_conditions import (
+    PAID_SACRIFICE_CHARACTERISTICS_CONTEXT, PAID_SACRIFICE_CONDITION_CAPABILITY, PaidSacrificeCharacteristics,
 )
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from .multikicker_costs import multikicker_cast_context
@@ -25,6 +29,13 @@ from .bargain_costs import declared_bargain_context
 from .characteristic_methods import characteristic_stack_context
 from .model import CastProposalError
 from .spell_text import CAST_TEXT_FRAMES
+
+
+PAID_SACRIFICE_FACT_FIELDS = {
+    PAID_SACRIFICE_STAT_CAPABILITY: ("paid_creature_stats", "The paid creature stats are missing"),
+    PAID_SACRIFICE_MANA_VALUE_CAPABILITY: ("paid_sacrifice_mana_value", "The paid mana value is missing"),
+    PAID_SACRIFICE_CONDITION_CAPABILITY: ("paid_sacrifice_characteristics", "The paid characteristics are missing"),
+}
 
 
 def fixed_cast_cost_object_context(host, paid) -> dict[str, Any]:
@@ -71,6 +82,32 @@ def capture_paid_sacrifice_mana_value(logical_id, effective, previous):
         raise CastProposalError(str(exc), reason='paid_sacrifice_mana_value_invalid') from exc
 
 
+def capture_paid_sacrifice_facts(host, paid, logical_id, data, costs, required):
+    if PAID_SACRIFICE_STAT_CAPABILITY in required:
+        try:
+            costs.paid_creature_stats = capture_paid_creature_stats(host, paid, costs.paid_creature_stats)
+        except ValueError as exc:
+            raise CastProposalError(str(exc), reason="paid_sacrifice_stats_invalid") from exc
+    if PAID_SACRIFICE_MANA_VALUE_CAPABILITY in required:
+        costs.paid_sacrifice_mana_value = capture_paid_sacrifice_mana_value(
+            logical_id, data, costs.paid_sacrifice_mana_value,
+        )
+    if PAID_SACRIFICE_CONDITION_CAPABILITY in required:
+        if costs.paid_sacrifice_characteristics is not None:
+            raise CastProposalError("The paid characteristic requires one sacrificed permanent",
+                                    reason="paid_sacrifice_characteristic_invalid")
+        type_parts = host._type_parts(data["type_line"])
+        costs.paid_sacrifice_characteristics = PaidSacrificeCharacteristics(
+            logical_id, *(tuple(sorted(values)) for values in type_parts),
+        )
+
+
+def require_paid_sacrifice_facts(costs, required):
+    for capability, (field, message) in PAID_SACRIFICE_FACT_FIELDS.items():
+        if capability in required and getattr(costs, field) is None:
+            raise CastProposalError(message, reason="paid_sacrifice_missing")
+
+
 def declared_spell_context(proposal,details,selected_option,costs,*,provenance,lifecycle_context,
         method_spec,used_uncounterable,intrinsic_uncounterable,used_improvise,next_payments=()):
     return {
@@ -114,6 +151,8 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         **({PAID_SACRIFICE_STAT_CONTEXT: costs.paid_creature_stats.to_dict()} if costs.paid_creature_stats is not None else {}),
         **({PAID_SACRIFICE_MANA_VALUE_CONTEXT: costs.paid_sacrifice_mana_value.to_dict()}
            if costs.paid_sacrifice_mana_value is not None else {}),
+        **({PAID_SACRIFICE_CHARACTERISTICS_CONTEXT: costs.paid_sacrifice_characteristics.to_dict()}
+           if costs.paid_sacrifice_characteristics is not None else {}),
         **(
             {
                 EVOKE_PAYMENT_FIELD: copy.deepcopy(

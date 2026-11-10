@@ -13,6 +13,9 @@ from .scalar_effect_amount_model import (
     SCALAR_REFERENCE_CONTEXT, ScalarAmountOrigin, ScalarEffectAmountSpec, scalar_amount_specs,
 )
 from .turn_history import current_turn_history_events
+from .paid_sacrifice_conditions import (
+    PAID_SACRIFICE_CHARACTERISTICS_CONTEXT, PaidSacrificeCharacteristics, paid_sacrifice_condition_from_reference,
+)
 from .drawing.restrictions import drawn_this_turn
 
 
@@ -220,6 +223,13 @@ def _paid_creature_stat_amount(item, characteristic):
     snapshot = PaidCreatureStatSnapshot.from_dict(item.context.get(PAID_SACRIFICE_STAT_CONTEXT))
     _validate_paid_incarnation(item, snapshot.logical_object_id, 'Paid creature stats')
     return getattr(snapshot, characteristic)
+
+
+def resolve_paid_sacrifice_condition(value: Mapping, item) -> bool:
+    condition = paid_sacrifice_condition_from_reference(value)
+    snapshot = PaidSacrificeCharacteristics.from_dict(item.context.get(PAID_SACRIFICE_CHARACTERISTICS_CONTEXT))
+    _validate_paid_incarnation(item, snapshot.logical_object_id, "Paid sacrifice characteristics")
+    return condition.matches(snapshot)
 
 
 def _paid_sacrifice_mana_value(item):

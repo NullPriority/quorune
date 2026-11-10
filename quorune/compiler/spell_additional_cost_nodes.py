@@ -22,6 +22,7 @@ from .spell_additional_cost_templates import (
 )
 from ..rules.capabilities import CapabilityRegistry
 from .paid_sacrifice_amount_templates import paid_sacrifice_amount_template
+from .paid_sacrifice_condition_templates import paid_sacrifice_condition_template
 from .waterbend_costs import fixed_waterbend_additional_cost_template
 from .random_discard_spell_costs import fixed_random_discard_spell_cost_template
 
@@ -188,9 +189,14 @@ def _additional_cost_result_node(
     text: str,
     span: SourceSpan,
 ) -> OracleNode:
+    def compile_fixed(body):
+        return effect_template(body, card_name=card_name)
+
     paid = paid_sacrifice_amount_template(
         rows[1][1], cost_schema=cost.cost_schema, source_name=card_name,
-        compile_fixed=lambda body: effect_template(body, card_name=card_name),
+        compile_fixed=compile_fixed,
+    ) or paid_sacrifice_condition_template(
+        rows[1][1], cost_schema=cost.cost_schema, compile_fixed=compile_fixed,
     )
     template, effects, target_schema, effect_mechanics = paid or effect_template(rows[1][1], card_name=card_name)
     if template is None:

@@ -11,8 +11,12 @@ from .continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from .replacement.immutable import FrozenMap
-from .spell_mana_conditions import ManaSpentCondition
+from .spell_mana_conditions import ManaSpentCondition, PAID_MANA_CONDITION_CAPABILITY, PAID_MANA_CONDITION_MECHANIC
 from .declared_cost_conditions import DeclaredCastCostCondition
+from .paid_sacrifice_conditions import (
+    PAID_SACRIFICE_CONDITION_CAPABILITY, PAID_SACRIFICE_CONDITION_MECHANIC, PAID_SACRIFICE_CONDITION_VERSION,
+    PaidSacrificeCharacteristicCondition, validate_paid_sacrifice_instruction,
+)
 
 
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
@@ -25,6 +29,11 @@ PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_same_ta
 PUBLIC_SOURCE_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_source_self_replacement'
 CAST_FACT_CONDITION_CAPABILITY = 'resolution.effect.fixed_cast_fact'
 CAST_FACT_CONDITION_MECHANIC = 'fixed-cast-fact-condition'
+CAST_FACT_CONDITION_MECHANICS = {
+    CAST_FACT_CONDITION_CAPABILITY: CAST_FACT_CONDITION_MECHANIC,
+    PAID_MANA_CONDITION_CAPABILITY: PAID_MANA_CONDITION_MECHANIC,
+    PAID_SACRIFICE_CONDITION_CAPABILITY: PAID_SACRIFICE_CONDITION_MECHANIC,
+}
 _DERIVED_RESULT_MECHANICS = frozenset({
     "declared-effect-amount", "public-query-effect-amount", "scalar-effect-amount",
 })
@@ -156,9 +165,11 @@ def resolution_condition_is_closed(
 
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
-) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition, tuple[Mapping[str, Any], ...]]:
+) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get("schema_version") == PAID_SACRIFICE_CONDITION_VERSION:
+        return validate_paid_sacrifice_instruction(effect)
     if effect.get('schema_version') == 12:
         from .declared_cost_conditions import validate_declared_cost_instruction
         return validate_declared_cost_instruction(effect)
