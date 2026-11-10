@@ -18,6 +18,7 @@ from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
 from ..entry_x_amount_model import ENTRY_X_AMOUNT_KIND,EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,ENTRY_X_AMOUNT_CAPABILITY
 from ..fixed_token_production import SEQUENTIAL_INVESTIGATE_OPERATION
+from ..impulse_access_model import IMPULSE_ACCESS_DECLARED_COUNT_VERSION
 from ..library_search_model import counted_search_bound_dependencies, counted_search_mana_value_slot
 
 
@@ -44,6 +45,7 @@ _RESULT_FIELDS = {
     'incubate': ('amount',),
     'create_token_then_counters': ('amount',),
     'return_random_graveyard_cards': ('count',),
+    'fixed_impulse_access': ('count',),
     SEQUENTIAL_INVESTIGATE_OPERATION: ('count',),
     "damage": ("amount",), "damage_each_opponent": ("amount",), "damage_fixed_set": ("amount",),
     "draw": ("count",), "draw_each_player": ("count",),
@@ -158,6 +160,11 @@ def declared_effect_amount_template(
         return None
     if not replaced:
         return None
+    effects = tuple(
+        {**effect, "schema_version": IMPULSE_ACCESS_DECLARED_COUNT_VERSION}
+        if effect.get("op") == "fixed_impulse_access" and isinstance(effect.get("count"), Mapping) else effect
+        for effect in effects
+    )
     # A self result must already use the existing logical-object-aware owner.
     if any(effect.get("op") == "modify_stats_until_end_of_turn" and effect.get("card") == "$source" for effect in effects):
         return None
@@ -272,6 +279,9 @@ def declared_amount_dependencies(
     }
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC in mechanics:
         dependencies.update(object_query_capabilities(effects))
+    from ..rules.impulse_access_capability_shapes import declared_impulse_access_dependencies
+    for effect in effects:
+        dependencies.update(declared_impulse_access_dependencies(effect))
     return dependencies
 
 
@@ -346,6 +356,10 @@ def declared_amount_shape_context(
             return deepcopy(effect)
         if effect.get("op") == "search":
             counted_search_bound_dependencies(effect)
+        if effect.get("op") == "fixed_impulse_access":
+            from ..rules.impulse_access_capability_shapes import declared_impulse_access_dependencies
+            if declared_impulse_access_dependencies(effect):
+                effect = {key: value for key, value in effect.items() if key != "schema_version"}
         if effect.get("op") == "offer_optional_effect":
             nested = effect.get("effects")
             if (isinstance(nested, (list, tuple)) and len(nested) == 1

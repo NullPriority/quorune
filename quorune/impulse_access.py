@@ -9,6 +9,7 @@ from .errors import GameRuleError
 from .impulse_access_model import (
     ImpulseAccessDuration,
     TemporaryCastPermissionGrant,
+    impulse_access_count_is_legal,
 )
 from .model import CardInstance, GameState
 from .zone_transitions import ZoneTransitionOwner
@@ -29,6 +30,7 @@ class ImpulseAccessRequest:
     count: int
     duration: ImpulseAccessDuration
     reason: str
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         if any(
@@ -38,10 +40,8 @@ class ImpulseAccessRequest:
             raise GameRuleError(
                 "Impulse-access requests require an actor, player, and reason"
             )
-        if type(self.count) is not int or not 1 <= self.count <= 10:
-            raise GameRuleError(
-                "Impulse-access requests require a fixed count from one to ten"
-            )
+        if not impulse_access_count_is_legal(self.count, self.schema_version):
+            raise GameRuleError("Impulse-access request count is invalid for its version")
         if not isinstance(self.duration, ImpulseAccessDuration):
             raise GameRuleError(
                 "Impulse-access requests require a typed duration"
@@ -96,6 +96,7 @@ class ImpulseAccessResult:
     requested_count: int
     exiled_refs: tuple[str, ...]
     moved_refs: tuple[str, ...]
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         exiled = tuple(self.exiled_refs)
@@ -103,8 +104,7 @@ class ImpulseAccessResult:
         if (
             type(self.player) is not str
             or not self.player
-            or type(self.requested_count) is not int
-            or not 1 <= self.requested_count <= 10
+            or not impulse_access_count_is_legal(self.requested_count, self.schema_version)
             or len(moved) > self.requested_count
             or len(exiled) > len(moved)
             or any(type(value) is not str or not value for value in moved)
@@ -127,7 +127,7 @@ def prepare_fixed_impulse_access(
     host._require_seat(request.actor, in_game=True)
     host._require_seat(request.player, in_game=True)
     library = host.state.players[request.player].zones["library"]
-    object_ids = tuple(reversed(library[-request.count :]))
+    object_ids = tuple(reversed(library[-request.count :])) if request.count else ()
     return ImpulseAccessPlan(
         request=request,
         top_first=tuple(
@@ -238,6 +238,7 @@ def commit_fixed_impulse_access(
         requested_count=plan.request.count,
         exiled_refs=tuple(card.ref for card in exiled),
         moved_refs=tuple(card.ref for card in moved),
+        schema_version=plan.request.schema_version,
     )
 
 

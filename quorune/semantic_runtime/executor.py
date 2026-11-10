@@ -734,6 +734,7 @@ def _execute_player_intent(
                 count=intent.count,
                 duration=intent.duration,
                 reason=intent.reason,
+                schema_version=intent.schema_version,
             ),
         )
         return intent.player, result.exiled_refs

@@ -3,10 +3,36 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Protocol
 
+from ..entry_x_amount_model import ENTRY_X_AMOUNT_CAPABILITY, ENTRY_X_AMOUNT_KIND, EntryXAmountSpec
+from ..impulse_access_model import IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, IMPULSE_ACCESS_DECLARED_COUNT_VERSION
+from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, DECLARED_AMOUNT_CAPABILITY, CastXAmountSpec
+
 from ..compiler.impulse_access_templates import (
     IMPULSE_ACCESS_CAPABILITY_ID,
     IMPULSE_ACCESS_MECHANIC_ID,
 )
+
+
+def declared_impulse_access_dependencies(effect):
+    if effect.get("op") != "fixed_impulse_access":
+        return ()
+    count = effect.get("count")
+    if "schema_version" not in effect:
+        if isinstance(count, Mapping):
+            raise ValueError("A declared impulse count requires its instruction version")
+        return ()
+    if (set(effect) != {"op", "schema_version", "player", "count", "duration"}
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != IMPULSE_ACCESS_DECLARED_COUNT_VERSION
+            or effect["player"] != "$controller"
+            or effect["duration"] not in {"until_end_of_turn", "until_end_of_next_turn"}
+            or not isinstance(count, Mapping)):
+        raise ValueError("Declared impulse access requires a closed controller result")
+    required = (IMPULSE_ACCESS_CAPABILITY_ID, IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, DECLARED_AMOUNT_CAPABILITY)
+    if count.get("kind") == CAST_X_AMOUNT_KIND and CastXAmountSpec.from_dict(count).coefficient == 1:
+        return required
+    if count.get("kind") == ENTRY_X_AMOUNT_KIND and EntryXAmountSpec.from_dict(count).coefficient == 1:
+        return (*required, ENTRY_X_AMOUNT_CAPABILITY)
+    raise ValueError("Impulse access count requires the unscaled cast or sealed entry X")
 
 
 class FixedImpulseAccessProgram(Protocol):
@@ -32,6 +58,11 @@ def fixed_impulse_access_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    try:
+        if declared := declared_impulse_access_dependencies(effect):
+            return declared
+    except (TypeError, ValueError):
+        return ()
     if (
         set(effect) != {"op", "player", "count", "duration"}
         or effect.get("op") != "fixed_impulse_access"

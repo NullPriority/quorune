@@ -85516,6 +85516,93 @@
     },
     {
       "applicability": {
+        "summary": "Resolve own-library impulse access with an announced or sealed entry X and a fixed turn window.",
+        "inputs": [
+          "unscaled cast or sealed entry X",
+          "current own-library top set",
+          "fixed play duration"
+        ],
+        "outputs": [
+          "simultaneous public exile of the available group",
+          "ordinary play permissions over actual exiled results"
+        ],
+        "exclusions": [
+          "unbound X",
+          "scaled or dynamic public formulas",
+          "limited or immediate play",
+          "other library owner"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.impulse_access.fixed",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "dependency_fail_closed_rationale": "The versioned persisted result requires declared count and the fixed play owner. A sealed entry result also independently requires the entry owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.impulse_access.declared_count",
+      "implementation_components": [
+        "quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
+        "quorune.rules.impulse_access_capability_shapes.declared_impulse_access_dependencies",
+        "quorune.semantic_runtime.impulse_access_handlers.FixedImpulseAccessHandler",
+        "quorune.impulse_access.prepare_fixed_impulse_access",
+        "quorune.impulse_access.commit_fixed_impulse_access"
+      ],
+      "implementation_mutation_rationale": "Removing the owned count slot keeps the printed body residual. Native checks use zero, a positive cast count and a twelve-card sealed entry after source departure.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "negative_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_declared_impulse_count_requires_typed_x_and_its_runtime_capability"
+      ],
+      "official_rules": [
+        "107.3a",
+        "107.3m",
+        "400.7j",
+        "406.3",
+        "514.2",
+        "601.1a",
+        "608.2c",
+        "609.3",
+        "611.2a",
+        "701.13a"
+      ],
+      "positive_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "privacy_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing"
+      ],
+      "replay_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
         "summary": "Choose one current card from the simultaneous own-library top exile result and grant ordinary play for a fixed window.",
         "inputs": [
           "current own-library top set",
@@ -89336,7 +89423,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 790,
+  "registry_version": 791,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -15,8 +15,11 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         is_versioned_next_cast_protection, next_cast_protection_payload_dependencies,
     )
     from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_OPERATION, next_spell_payment_payload_dependencies
+    from ..rules.impulse_access_capability_shapes import declared_impulse_access_dependencies
     from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD, NEXT_CAST_COPY_CAPABILITY, next_cast_copy_payload
     from ..rules.temporary_cast_timing import TEMPORARY_CAST_TIMING_FIELD, temporary_cast_timing_payload_dependencies
+    if impulse := declared_impulse_access_dependencies(value):
+        return impulse
     if CHOSEN_IMPULSE_GRANT_FIELD in value:
         raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
     if TEMPORARY_CAST_TIMING_FIELD in value:

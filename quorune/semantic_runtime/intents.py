@@ -41,7 +41,7 @@ from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealD
 from ..announced_damage import AllocatedDamageRecipient
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..damage_death_exile_model import DamageDeathExileScope
-from ..impulse_access_model import ImpulseAccessDuration
+from ..impulse_access_model import ImpulseAccessDuration, impulse_access_count_is_legal
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_scry import ScryArrangement
@@ -124,6 +124,7 @@ class ImpulseAccessIntent:
     count: int
     duration: ImpulseAccessDuration
     reason: str
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         if any(
@@ -133,10 +134,8 @@ class ImpulseAccessIntent:
             raise ValueError(
                 "Impulse-access intents require an actor, player, and reason"
             )
-        if type(self.count) is not int or not 1 <= self.count <= 10:
-            raise ValueError(
-                "Impulse-access intents require a count from one to ten"
-            )
+        if not impulse_access_count_is_legal(self.count, self.schema_version):
+            raise ValueError("Impulse-access intent count is invalid for its version")
         if not isinstance(self.duration, ImpulseAccessDuration):
             raise ValueError(
                 "Impulse-access intents require a typed duration"

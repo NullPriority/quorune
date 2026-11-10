@@ -5,6 +5,18 @@ from enum import Enum
 from typing import Any, Mapping
 
 
+IMPULSE_ACCESS_DECLARED_COUNT_VERSION = 2
+IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY = "zone.impulse_access.declared_count"
+
+
+def impulse_access_count_is_legal(count, version) -> bool:
+    if type(count) is not int or type(version) is not int:
+        return False
+    if version == IMPULSE_ACCESS_DECLARED_COUNT_VERSION:
+        return count >= 0
+    return version == 1 and 1 <= count <= 10
+
+
 class ImpulseAccessDuration(str, Enum):
     END_OF_TURN = "until_end_of_turn"
     END_OF_NEXT_TURN = "until_end_of_next_turn"

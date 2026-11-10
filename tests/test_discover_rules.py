@@ -1074,7 +1074,8 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         path = Path(cls.temporary.name) / "fixed-top-exile.sqlite3"
         build_fixture_database([ROOT / "tests/fixtures" / name for name in (
             "bound-effect-program-cards.json", "discover-cards.json", "global-alternative-cost-cards.json",
-            "morph-rules-cards.json", "prototype-cards.json", "chosen-impulse-access-cards.json")], path)
+            "morph-rules-cards.json", "prototype-cards.json", "chosen-impulse-access-cards.json",
+            "declared-impulse-access-cards.json")], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -1310,6 +1311,107 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         chosen = session.act("pilot:A", {"action_id": "choose", "objects": [land.ref]})
         self.assertTrue(chosen.ok, chosen.summary)
         self.replay(session)
+
+    def test_declared_impulse_count_requires_typed_x_and_its_runtime_capability(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.declared_effect_amounts import _RESULT_FIELDS
+        from quorune.impulse_access_model import IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, impulse_access_count_is_legal
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.impulse_access_capability_shapes import declared_impulse_access_dependencies
+
+        session = self.session(60828030)
+        source = self.add(session.engine, "Commune with Lava", zone="hand")
+        self.assert_closed(session, source)
+        program, = [row for row in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY in row.capability_dependencies]
+        effect, = program.effects
+        self.assertIn(IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, declared_impulse_access_dependencies(effect))
+        for change in ({"schema_version": True}, {"count": 2}, {"count": {**effect["count"], "coefficient": -1}}):
+            with self.assertRaises(ValueError):
+                declared_impulse_access_dependencies({**effect, **change})
+        with self.assertRaises(ValueError):
+            declared_impulse_access_dependencies({key: value for key, value in effect.items() if key != "schema_version"})
+        for count in (0, 12):
+            self.assertTrue(impulse_access_count_is_legal(count, 2))
+            self.assertFalse(impulse_access_count_is_legal(count, 1))
+        self.assertFalse(impulse_access_count_is_legal(-1, 2))
+        deps = tuple(cap for cap in program.capability_dependencies if cap != IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY)
+        altered = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, binding["blockers"])
+        record = replace(self.db.lookup("Commune with Lava"), oracle_id="declared-impulse-mutation-probe")
+        with patch.dict(_RESULT_FIELDS, {"fixed_impulse_access": ()}):
+            ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)
+
+    def cast_impulse_x(self, session, card, amount, *, reserve=None):
+        self.priority(session, "A")
+        offer = self.action(session, "A", card)
+        accepted = session.act("pilot:A", {"action_id": offer["id"], "x": amount,
+                                           "pay": "auto", "reserve": reserve or {}})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing(self):
+        session = self.session(60828031)
+        engine = session.engine
+        zero = self.add(engine, "Commune with Lava", zone="hand", ref="zero-commune")
+        positive = self.add(engine, "Commune with Lava", zone="hand", ref="positive-commune")
+        hidden = self.add(engine, "Generic Bound Plains", zone="library", ref="commune-unexiled")
+        land = self.add(engine, "Mountain", zone="library", ref="commune-exiled-land")
+        bolt = self.add(engine, "Lightning Bolt", zone="library", ref="commune-exiled-bolt")
+        self.assert_closed(session, zero)
+        self.prepare(session, active="B", mana={"R": 5, "C": 6})
+        self.checkpoint(session)
+        initial = tuple(session.state.players["A"].zones["library"])
+        self.cast_impulse_x(session, zero, 0, reserve={"R": 3})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial, tuple(session.state.players["A"].zones["library"]))
+        self.assertEqual([], session.state.players["A"].zones["exile"])
+        self.cast_impulse_x(session, positive, 2, reserve={"R": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial[:-2], tuple(session.state.players["A"].zones["library"]))
+        self.assertEqual({land.object_id, bolt.object_id}, set(session.state.players["A"].zones["exile"]))
+        self.assertNotIn(hidden.ref, str(session.packet("pilot:B", full=True)))
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row["id"] == f"play-land:{land.ref}" for row in actions))
+        red_before = session.state.players["A"].mana_pool["R"]
+        self.cast_for(session, "A", bolt, ["D"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(red_before - 1, session.state.players["A"].mana_pool["R"])
+        self.assertEqual(37, session.state.players["D"].life)
+        self.replay(session, load=True)
+
+    def test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves(self):
+        session = self.session(60828032)
+        engine = session.engine
+        hugs = self.add(engine, "Hugs, Grisly Guardian", zone="hand")
+        bounce = self.add(engine, "Unsummon", seat="B", zone="hand")
+        top = self.add(engine, "Mountain", zone="library", ref="hugs-exiled-land")
+        self.assert_closed(session, hugs)
+        session.state.players["B"].mana_pool["U"] = 1
+        self.prepare(session, mana={"R": 2, "G": 2, "C": 14})
+        self.checkpoint(session)
+        initial = tuple(session.state.players["A"].zones["library"])
+        self.assertGreater(len(initial), 12)
+        self.cast_impulse_x(session, hugs, 12)
+        self.until(session, lambda game: game.state.cards[hugs.object_id].zone == "battlefield"
+                   and any(item.kind == "triggered_ability" for item in game.state.stack))
+        self.cast_for(session, "B", bounce, [hugs.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", engine.state.cards[hugs.object_id].zone)
+        self.assertEqual(initial[:-12], tuple(session.state.players["A"].zones["library"]))
+        self.assertEqual(set(initial[-12:]), set(session.state.players["A"].zones["exile"]))
+        for object_id in initial[-12:]:
+            permission = engine.state.cards[object_id].annotations["temporary_play_permission"]
+            self.assertEqual(("A", "until_end_of_next_turn"), (permission["player"], permission["duration"]))
+        self.priority(session, "A")
+        self.assertTrue(session.act("pilot:A", {"action_id": f"play-land:{top.ref}"}).ok)
+        self.replay(session, load=True)
 
     def test_fixed_top_exile_requires_its_scope_and_runtime_capability(self):
         from dataclasses import replace

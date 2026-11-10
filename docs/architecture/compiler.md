@@ -4316,6 +4316,11 @@ The public choice rechecks the captured identities on completion. A single
 remaining result determines the grant directly. The same window owner handles
 cleanup and normal play of the selected object.
 
+Declared-count impulse access uses the same zone move and window owner. The
+instruction binds the announced X of a resolving spell or the original X
+sealed by a self-entry event. A zero count produces an empty result, and a
+short library supplies its remaining top cards.
+
 Fixed life loss unless each affected player discards or sacrifices one object
 shares the APNAP choice owner. Players choose in turn order. Earlier payment
 decisions are visible, and selected hand identities stay private until the
