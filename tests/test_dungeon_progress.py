@@ -22,6 +22,31 @@ from quorune.dungeon_progress import (
 
 
 class DungeonProgressTests(unittest.TestCase):
+    def test_dungeon_status_reads_the_current_controller_and_exact_named_history(self):
+        from types import SimpleNamespace
+        from quorune.compiler.player_status_conditions import fixed_player_status_condition
+        from quorune.continuous_conditions import FixedPublicStateConditionSpec
+        from quorune.initiative_model import dungeon_status_dependencies, dungeon_status_value
+
+        completed = fixed_player_status_condition("you've completed a dungeon")
+        tomb = fixed_player_status_condition("you haven't completed Tomb of Annihilation")
+        initiative = fixed_player_status_condition("you have the initiative")
+        self.assertIsNone(fixed_player_status_condition("you haven't completed a dungeon with two rooms"))
+        self.assertEqual(tomb, FixedPublicStateConditionSpec.from_dict(tomb.to_dict()))
+        self.assertEqual(("variant.dungeon.venture",), dungeon_status_dependencies(tomb.to_dict()))
+        self.assertEqual(("variant.initiative.take",), dungeon_status_dependencies(initiative.to_dict()))
+        player = SimpleNamespace(dungeon_journey=DungeonJourney(
+            completed=1, completed_by_dungeon=((DungeonId.LOST_MINE, 1),)))
+        state = SimpleNamespace(players={"A": player}, initiative="B")
+        value = lambda condition: dungeon_status_value(state, "A", condition.fact.value, condition.fact_parameter)
+        self.assertEqual((1, 1, 0), (value(completed), value(tomb), value(initiative)))
+        player.dungeon_journey = DungeonJourney(completed=2)
+        self.assertIsNone(value(tomb))
+        player.dungeon_journey = DungeonJourney(completed=2, completed_by_dungeon=((DungeonId.TOMB, 1),))
+        self.assertEqual(0, value(tomb))
+        state.initiative = "A"
+        self.assertEqual(1, value(initiative))
+
     def test_initiative_compiler_and_damage_subject_are_closed(self):
         from types import SimpleNamespace
         from unittest.mock import patch
@@ -323,7 +348,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         path = Path(cls.temporary.name) / "venture.sqlite3"
         names = ("bound-effect-program-cards.json", "dungeon-cards.json", "venture-dungeon-cards.json",
                  "paid-sacrifice-creature-stat-cards.json", "initiative-dungeon-cards.json",
-                 "fixed-extra-turn-cards.json")
+                 "fixed-extra-turn-cards.json", "dungeon-status-cards.json")
         build_fixture_database([ROOT / "tests/fixtures" / name for name in names], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -346,7 +371,7 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
         self.assertTrue(result.ok, result.summary)
 
-    def _reach_last_room(self, seed, *, reenter=False):
+    def _reach_last_room(self, seed, *, reenter=False, status_watch=False):
         from quorune.card_programs import bind_semantic_program_runtime
         from quorune.dungeon_progress import DUNGEON_VENTURE_CAPABILITY
         from quorune.record import authoritative_state_hash
@@ -357,6 +382,11 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         if reenter:
             self.add(session.engine, "Clattering Skeletons", ref="venture-skeletons")
             self.add(session.engine, "Fling", zone="hand", ref="venture-fling")
+        if status_watch:
+            for card in (self.add(session.engine, "Gloom Stalker", ref="venture-stalker"),
+                         self.add(session.engine, "Gloom Stalker", seat="B", ref="venture-other-stalker"),
+                         self.add(session.engine, "Nadaar, Selfless Paladin")):
+                self.assert_closed(session, card)
         for card in (veteran, maps[0]):
             self.assert_closed(session, card)
         program, = [program for program in session.engine.semantics.programs_for_oracle(veteran.oracle_id)
@@ -429,6 +459,36 @@ class DungeonVentureNativeTests(InheritedNativeFixture, unittest.TestCase):
         completed = next(event.event_id for event in events if event.code == "dungeon.completed")
         self.assertLess(resolution, completed)
         self.replay(session)
+
+    def test_original_dungeon_status_changes_only_after_the_last_room_trigger_leaves(self):
+        session, _, _ = self._reach_last_room(309003, status_watch=True)
+        stalker = next(card for card in session.state.cards.values() if card.ref == "venture-stalker")
+        other = next(card for card in session.state.cards.values() if card.ref == "venture-other-stalker")
+        self.assertNotIn("double strike", session.engine._combat_keywords(stalker))
+        self.assertNotIn("double strike", session.engine._combat_keywords(other))
+        before = session.engine._numeric_stat(stalker.object_id, "power")
+        self.assertIsNone(self.resolve(session))
+        self.assertIn("double strike", session.engine._combat_keywords(session.state.cards[stalker.object_id]))
+        self.assertNotIn("double strike", session.engine._combat_keywords(session.state.cards[other.object_id]))
+        self.assertEqual(before + 1, session.engine._numeric_stat(stalker.object_id, "power"))
+        self.replay(session, load=True)
+
+    def test_original_rasaad_reads_the_initiative_at_attack_and_resolution(self):
+        session = self.session(726003)
+        source = self.add(session.engine, "Rasaad yn Bashir")
+        creature = self.add(session.engine, "Grizzly Bears", ref="initiative-toughness")
+        source.acquired_control_turn_count = -1
+        self.assert_closed(session, source)
+        self.prepare(session)
+        session.state.initiative = "A"
+        self.checkpoint(session)
+        before = session.engine._numeric_stat(creature.object_id, "toughness")
+        self.attack(session, [(source, "B")])
+        trigger, = [item for item in session.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual("A", trigger.controller)
+        self.resolve_top(session)
+        self.assertEqual(before * 2, session.engine._numeric_stat(creature.object_id, "toughness"))
+        self.replay(session, load=True)
 
     def test_venture_retires_the_last_visit_with_its_room_trigger_still_pending(self):
         session, source, final = self._reach_last_room(309002, reenter=True)

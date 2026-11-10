@@ -1337,6 +1337,7 @@ def fixed_public_state_characteristics_handler(
     if compiled is None:
         return None
     target, modifier, body_capabilities = compiled
+    from ..initiative_model import dungeon_condition_dependencies
     condition_capabilities = (
         ("variant.monarch.designate",)
         if source_condition.kind
@@ -1360,6 +1361,7 @@ def fixed_public_state_characteristics_handler(
                 {
                     "continuous.characteristics.fixed_public_state",
                     *condition_capabilities,
+                    *dungeon_condition_dependencies(source_condition),
                     *body_capabilities,
                 }
             )

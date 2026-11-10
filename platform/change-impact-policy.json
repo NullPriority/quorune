@@ -4631,6 +4631,7 @@
         "quorune/semantic_packs/compiled-dungeon-rooms.json",
         "scripts/update_dungeon_room_programs.py",
         "tests/fixtures/dungeon-cards.json",
+        "tests/fixtures/dungeon-status-cards.json",
         "tests/fixtures/initiative-dungeon-cards.json",
         "tests/fixtures/venture-dungeon-cards.json",
         "tests/test_dungeon_progress.py"

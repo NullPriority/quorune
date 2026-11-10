@@ -671,6 +671,11 @@ controller for each simultaneous batch. A transfer trigger keeps the
 previous holder as its controller and the attacker as its affected player.
 The existing APNAP queue handles those triggers and upkeep occurrences.
 
+Public-state conditions read the current controller's completed dungeon
+history or initiative designation. A named completion condition uses the
+recorded dungeon identity. When only an aggregate completion count is
+available, an unknown named result stays unavailable.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining

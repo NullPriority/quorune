@@ -113,4 +113,5 @@ def public_trigger_condition_capabilities(condition: PublicTriggerCondition | No
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, SCHEDULED_PLAYER_CAPABILITY, UPKEEP_HAND_COUNT_CAPABILITY)
     if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, 'condition.creature.fixed_numeric_exists')
-    return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+    from ..initiative_model import dungeon_condition_dependencies
+    return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *dungeon_condition_dependencies(condition))

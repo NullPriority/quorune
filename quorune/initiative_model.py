@@ -5,7 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
-from .dungeon_progress import venture_node_capabilities
+from .dungeon_catalog import DungeonId
+from .dungeon_progress import DUNGEON_VENTURE_CAPABILITY, venture_node_capabilities
 
 
 TAKE_INITIATIVE_FIELD = "take_initiative"
@@ -14,6 +15,56 @@ TAKE_INITIATIVE_MECHANIC = "cr-726-the-initiative"
 INHERENT_INITIATIVE_TAKE = "builtin:initiative-take"
 INHERENT_INITIATIVE_VENTURE = "builtin:initiative-venture"
 INITIATIVE_TRIGGER_PLAYER = "initiative_trigger_player"
+
+DUNGEON_COMPLETED_FACT = "controller_completed_a_dungeon"
+DUNGEON_NOT_COMPLETED_FACT = "controller_has_not_completed_named_dungeon"
+INITIATIVE_HOLDER_FACT = "controller_has_the_initiative"
+DUNGEON_STATUS_FACTS = {
+    DUNGEON_COMPLETED_FACT: DUNGEON_VENTURE_CAPABILITY,
+    DUNGEON_NOT_COMPLETED_FACT: DUNGEON_VENTURE_CAPABILITY,
+    INITIATIVE_HOLDER_FACT: TAKE_INITIATIVE_CAPABILITY,
+}
+
+
+def validate_dungeon_status_fact(fact: str, *, amount, parameter, schema_version) -> None:
+    if (fact not in DUNGEON_STATUS_FACTS or type(schema_version) is not int or schema_version != 4
+            or type(amount) is not int or amount != 1):
+        raise ValueError("A dungeon status condition requires one current boolean fact")
+    if fact == DUNGEON_NOT_COMPLETED_FACT:
+        if type(parameter) is not str or parameter not in {dungeon.value for dungeon in DungeonId}:
+            raise ValueError("Named dungeon history requires a known dungeon")
+    elif parameter is not None:
+        raise ValueError("This dungeon status condition has no named parameter")
+
+
+def dungeon_status_dependencies(value) -> tuple[str, ...]:
+    if not isinstance(value, Mapping) or value.get("kind") != "public_fact_at_least":
+        return ()
+    fact = value.get("fact")
+    if type(fact) is not str or fact not in DUNGEON_STATUS_FACTS:
+        return ()
+    validate_dungeon_status_fact(fact, amount=value.get("amount"), parameter=value.get("fact_parameter"),
+                                 schema_version=value.get("schema_version"))
+    return (DUNGEON_STATUS_FACTS[fact],)
+
+
+def dungeon_condition_dependencies(condition) -> tuple[str, ...]:
+    return tuple(sorted({capability for leaf in condition.leaf_conditions()
+                         for capability in dungeon_status_dependencies(leaf.to_dict())}))
+
+
+def dungeon_status_value(state, controller: str, fact: str, parameter: str | None) -> int | None:
+    if fact == INITIATIVE_HOLDER_FACT:
+        return int(getattr(state, "initiative", None) == controller)
+    journey = getattr(state.players[controller], "dungeon_journey", None)
+    if fact == DUNGEON_COMPLETED_FACT:
+        return int(journey is not None and journey.completed > 0)
+    if journey is None:
+        return 1
+    counts = dict(journey.completed_by_dungeon)
+    if counts.get(DungeonId(parameter), 0):
+        return 0
+    return 1 if sum(counts.values()) == journey.completed else None
 
 
 def initiative_effect_player(item, inherent_key: str) -> str:

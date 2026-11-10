@@ -835,6 +835,8 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
             if live.schema_version == 2:
                 own = (*own, LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY, *object_query_capabilities(live.query))
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
+        from .initiative_model import dungeon_status_dependencies
+        own = (*own, *dungeon_status_dependencies(value))
         if (value.get('kind')=='controller_has_citys_blessing'
                 and {'schema_version','amount','counter_name'}<=set(value)):
             own=(*own,'player.designation.citys_blessing')

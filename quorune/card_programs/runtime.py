@@ -180,6 +180,9 @@ class _FixedPublicStateSnapshotResolver:
             return self._most_common_color_quantity(condition)
         if source is None:
             return None
+        from ..initiative_model import DUNGEON_STATUS_FACTS, dungeon_status_value
+        if fact.value in DUNGEON_STATUS_FACTS:
+            return dungeon_status_value(self.state, source.controller, fact.value, condition.fact_parameter)
         from ..public_zone_condition_model import public_zone_fact_value
         zone_value = public_zone_fact_value(self.state, source.controller, fact.value, condition.fact_parameter)
         if zone_value is not None:
