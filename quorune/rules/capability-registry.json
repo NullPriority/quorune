@@ -71350,6 +71350,91 @@
     {
       "applicability": {
         "exclusions": [
+          "opponent fanout",
+          "changed copy characteristics",
+          "next loyalty activation"
+        ],
+        "inputs": [
+          "original resolving source",
+          "committed qualifying spell occurrence"
+        ],
+        "outputs": [
+          "one APNAP trigger for each registration",
+          "canonical copies with printed retargeting choices"
+        ],
+        "summary": "Register a closed same-turn delayed copy of the controller's first qualifying spell."
+      },
+      "blockers": [],
+      "dependencies": [
+        "stack.copy.cast_event_spell",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "Persisted copy grants independently require the typed descriptor and delay capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.delayed.next_cast_spell_copy",
+      "implementation_components": [
+        "quorune.compiler.fixed_stack_spell_copy.next_cast_copy_template",
+        "quorune.event_spell_copy_model.NextCastCopySpec",
+        "quorune.rules.event_spell_copy.schedule_next_cast_copy",
+        "quorune.rules.event_spell_copy.bind_next_cast_copy_occurrence",
+        "quorune.trigger_processing.TriggerProcessingOwner"
+      ],
+      "implementation_mutation_rationale": "Removing the delay producer leaves Doublecast without an exact resolution body.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_two_independent_next_cast_copy_registrations_share_trigger_order",
+        "test_chapter_three_delayed_occurrence_copies_twice_with_independent_targets",
+        "test_flamehold_registration_copies_a_permanent_after_its_source_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_dual_strike_copies_only_the_first_eligible_cast_even_after_countering"
+      ],
+      "negative_tests": [
+        "test_next_cast_copy_closed_shapes_and_independent_runtime_minimum",
+        "test_unconsumed_next_cast_copy_expires_at_the_turn_boundary"
+      ],
+      "official_rules": [
+        "202.3",
+        "202.3e",
+        "405.3",
+        "603.3a",
+        "603.3b",
+        "603.7a",
+        "603.7b",
+        "603.7d",
+        "603.7e",
+        "608.2h",
+        "707.10",
+        "707.10c"
+      ],
+      "positive_tests": [
+        "test_dual_strike_copies_only_the_first_eligible_cast_even_after_countering"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_dual_strike_copies_only_the_first_eligible_cast_even_after_countering",
+        "test_two_independent_next_cast_copy_registrations_share_trigger_order",
+        "test_chapter_three_delayed_occurrence_copies_twice_with_independent_targets"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "counter-placement bodies retained by the fixed counter trigger capability",
           "intervening-if outside the fixed public-state descriptor, reflexive, state, delayed, ambiguous disjunction, first-time, once-per-turn, attachment-relative forms outside the exact closure, and combined-event triggers outside exact Magecraft",
           "discard and sacrifice bindings outside their typed cause owners",
@@ -88978,7 +89063,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 786,
+  "registry_version": 787,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

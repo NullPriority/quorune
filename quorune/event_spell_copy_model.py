@@ -51,3 +51,60 @@ class EventSpellCopySource:
 def event_spell_copy_effect(*,retain_targets_only=False):
     return {'op':'copy_stack_item','stack':'$context.stack','copy_source':'$context.'+EVENT_SPELL_COPY_CONTEXT,
         **({'retain_targets_only':True} if retain_targets_only else {})}
+
+
+NEXT_CAST_COPY_CAPABILITY = "trigger.delayed.next_cast_spell_copy"
+NEXT_CAST_COPY_MECHANIC = "fixed-next-cast-spell-copy"
+NEXT_CAST_COPY_FIELD = "next_cast_copy"
+
+
+@dataclass(frozen=True, slots=True)
+class NextCastCopySpec:
+    scope: str
+    maximum_mana_value: int | None = None
+    copies: int = 1
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if (type(self.schema_version) is not int or self.schema_version != 1
+                or type(self.scope) is not str or self.scope not in {"instant_or_sorcery", "lesson", "any"}
+                or type(self.copies) is not int or self.copies not in (1, 2)
+                or (self.maximum_mana_value is not None
+                    and (type(self.maximum_mana_value) is not int or self.maximum_mana_value < 0))):
+            raise ValueError("Next-cast copy requires a closed spell scope, mana ceiling and fixed copy count")
+
+    def to_dict(self):
+        return {"schema_version": self.schema_version, "scope": self.scope,
+                "maximum_mana_value": self.maximum_mana_value, "copies": self.copies}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {"schema_version", "scope", "maximum_mana_value", "copies"}:
+            raise ValueError("Next-cast copy spec fields are closed")
+        return cls(**dict(value))
+
+
+def next_cast_copy_effect(spec: NextCastCopySpec):
+    return {"op": "delayed_trigger", "controller": "$controller", NEXT_CAST_COPY_FIELD: spec.to_dict()}
+
+
+def next_cast_copy_payload(effect, *, actor="$controller"):
+    fields = {"op", "controller", NEXT_CAST_COPY_FIELD}
+    if actor != "$controller":
+        fields.add("_runtime_source")
+    if not isinstance(effect, Mapping) or set(effect) != fields or effect["op"] != "delayed_trigger" or effect["controller"] != actor:
+        raise ValueError("Next-cast copy effect requires a closed controller and source")
+    return NextCastCopySpec.from_dict(effect[NEXT_CAST_COPY_FIELD])
+
+
+def next_cast_copy_trigger_spec(trigger):
+    if (trigger.event_kind != "spell.cast" or set(trigger.condition) != {NEXT_CAST_COPY_FIELD}
+            or type(trigger.controller) is not str or not trigger.controller or type(trigger.active) is not bool
+            or trigger.once is not True or type(trigger.created_turn_sequence) is not int
+            or trigger.created_turn_sequence < 0 or type(trigger.expires_turn_sequence) is not int
+            or trigger.expires_turn_sequence != trigger.created_turn_sequence or trigger.stack_template != {}
+            or trigger.referred_object_ids
+            or not isinstance(trigger.source_object_id, str) or not trigger.source_object_id
+            or not isinstance(trigger.source_logical_object_id, str) or not trigger.source_logical_object_id):
+        raise ValueError("Next-cast copy trigger requires its original source and same-turn one-shot window")
+    return NextCastCopySpec.from_dict(trigger.condition[NEXT_CAST_COPY_FIELD])

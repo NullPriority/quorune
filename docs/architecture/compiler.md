@@ -75,6 +75,14 @@ copy aftercare delegates to the same scheduling composition while preserving its
 prior encoded delayed records and event journal. Unknown conditions, copy
 recipes, postcreation grants and unrepresented siblings remain residual.
 
+Next-cast copy instructions register the original resolving source in the
+delayed-trigger journal. Each registration matches one committed cast by its
+controller before that turn ends. The cast event supplies the actual spell
+types, subtype and announced mana value. Matching registrations join the
+ordinary APNAP batch and retain the referenced spell through departure. The
+existing copy owner applies each copy's target choices and preserves its modes,
+announced X and paid-text choices.
+
 Compound printed keyword lists preserve each Myriad instance as a separate
 source-spanned node and registered ability identity. Ordinary sibling keywords
 retain their independent owner. Single Myriad declarations keep their existing

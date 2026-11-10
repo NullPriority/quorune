@@ -29,6 +29,7 @@ from .compiler.fixed_public_characteristic_sets import (
     fixed_public_characteristic_set_effect_template,
 )
 from .compiler.fixed_attachment_keyword_nodes import fixed_attachment_keyword_node
+from .compiler.fixed_stack_spell_copy import next_cast_copy_template
 from .compiler.attached_granted_ability_nodes import (
     compile_early_material_nodes as _early_material_nodes,
 )
@@ -178,7 +179,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v916"
+ORACLE_COMPILER_VERSION = "oracle-ir-v917"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1278,7 +1279,7 @@ def _compile_face(
             nodes.append(ability_node)
             continue
 
-        event_nodes = draw_reveal_or_trigger_nodes(
+        event_nodes = None if spell and next_cast_copy_template(material_line) is not None else draw_reveal_or_trigger_nodes(
             permanent=permanent, node_id=node_id,
             line=line, span=span,
             card_name=face_name or record.name,

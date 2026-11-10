@@ -32,6 +32,7 @@ from .turn_history import roll_turn_history
 from .turn_priority_model import apnap_participants
 from .trigger_processing import (
     clear_pending_trigger_batches,
+    expire_next_cast_copy_triggers,
     matching_delayed_triggers,
 )
 from .util import unique_preserving_order
@@ -348,6 +349,7 @@ class TurnStepOwner:
         self.state.active_player = entry.player
         expire_next_turn_continuous_effects(self.state, entry.player)
         self.state.turn_sequence += 1
+        expire_next_cast_copy_triggers(self._host)
         self._bind_turn_skips(entry.player)
         if self.state.turn_history is not None:
             self.state.turn_history = roll_turn_history(

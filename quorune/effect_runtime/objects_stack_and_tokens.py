@@ -306,6 +306,15 @@ def _apply_delayed_trigger(
     reason: str,
 ) -> Any:
     op = operation
+    from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD
+
+    if NEXT_CAST_COPY_FIELD in effect:
+        from ..rules.event_spell_copy import schedule_next_cast_copy
+
+        try:
+            return schedule_next_cast_copy(host, effect, actor=actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
     source = effect.get("source")
     source_id = None
     binding = None

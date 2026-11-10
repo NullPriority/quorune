@@ -53,7 +53,9 @@ def _next_cast_protection_template(text):
 
 
 def temporary_player_rule_template(text):
-    if grant := _temporary_cascade_template(text) or _next_cast_protection_template(text):
+    from .fixed_stack_spell_copy import next_cast_copy_template
+
+    if grant := _temporary_cascade_template(text) or _next_cast_protection_template(text) or next_cast_copy_template(text):
         return grant
     match = re.fullmatch(r"The next spell you cast this turn has (?P<kind>convoke|improvise)\.?", text.strip(), re.I)
     if match is not None:

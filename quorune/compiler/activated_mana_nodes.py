@@ -672,6 +672,13 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    if text.casefold().startswith("add "):
+        from .fixed_stack_spell_copy import next_cast_copy_template
+
+        # This body produces mana immediately. The stack-resolution
+        # composition cannot own that activation.
+        if next_cast_copy_template(text.partition(". ")[2]) is not None:
+            return None, (), None, ()
     from .return_to_hand_templates import opposing_graveyard_return_sequence_template
 
     graveyard_return = opposing_graveyard_return_sequence_template(

@@ -1354,8 +1354,9 @@ def _is_closed_effect_program(program: SemanticProgram) -> bool:
     from ..rules.attachment_action_capability_shapes import is_closed_fixed_source_equipment_activation_program
     from ..rules.cast_cascade_grants import is_closed_cast_cascade_program
     from ..rules.next_spell_payment import is_closed_next_spell_payment_program
+    from ..rules.event_spell_copy import is_closed_next_cast_copy_program
     if (is_closed_next_spell_payment_program(program) or is_closed_cast_cascade_program(program)
-            or is_closed_fixed_source_equipment_activation_program(program)):
+            or is_closed_fixed_source_equipment_activation_program(program) or is_closed_next_cast_copy_program(program)):
         return True
     return effect_program_is_closed(program,recognizers=_closed_effect_recognizers(),
         recursive_is_closed=_is_closed_effect_program,composed_is_closed=is_closed_composed_spell_effect_program)

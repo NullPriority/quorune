@@ -971,6 +971,10 @@ class DelayedTrigger:
                 "Delayed-trigger referred-object IDs must be nonempty strings"
             )
         self.referred_object_ids = list(dict.fromkeys(values))
+        if isinstance(self.condition, dict) and "next_cast_copy" in self.condition:
+            from .event_spell_copy_model import next_cast_copy_trigger_spec
+
+            next_cast_copy_trigger_spec(self)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)

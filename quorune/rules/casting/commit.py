@@ -81,7 +81,7 @@ from ...zone_object_state import (
 )
 from ...stack_counter import oracle_has_intrinsic_counter_prohibition
 from ...tap_state import dispatch_tapped_cost_group, set_permanent_tapped
-from ...trigger_processing import enqueue_trigger_batch
+from ...trigger_processing import collect_trigger_items, enqueue_trigger_batch
 from ..target_announcements import (
     collect_legacy_paid_ward_occurrences, dispatch_legacy_paid_target_announcements,
 )
@@ -1190,11 +1190,8 @@ def _dispatch_cast_events(
     event_sources = _ordered_event_sources(host,None)
     if all(source.object_id != card.object_id for source in event_sources):
         event_sources.append(card)
-    host._dispatch_semantic_event(
-        "spell.cast",
-        context,
-        sources=event_sources,
-        trigger_batch=trigger_batch,
+    trigger_batch = collect_trigger_items(
+        host, "spell.cast", context, sources=event_sources, held_triggers=trigger_batch,
     )
     host._dispatch_semantic_event(
         "spell.cast_or_copy",

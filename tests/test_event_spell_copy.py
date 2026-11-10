@@ -189,6 +189,216 @@ class EventSpellCopyNativeTests(unittest.TestCase):
             else:self.fail('Unexpected copy decision: '+decision.kind)
         self.fail('Event copy did not finish')
 
+    def next_cast_registrations(self, session):
+        return [row for row in session.state.delayed_triggers if row.active and "next_cast_copy" in row.condition]
+
+    def test_next_cast_copy_closed_shapes_and_independent_runtime_minimum(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.compiler.fixed_stack_spell_copy import next_cast_copy_template
+        from quorune.event_spell_copy_model import NEXT_CAST_COPY_CAPABILITY, NextCastCopySpec
+
+        session = self.session(603638080)
+        for name in ("Doublecast", "Dual Strike", "Galvanic Iteration", "Teach by Example"):
+            self.assert_closed(session, self.add(session.engine, name, zone="hand"))
+        card = self.db.lookup("Dual Strike")
+        program, = [p for p in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if NEXT_CAST_COPY_CAPABILITY in p.capability_dependencies]
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != NEXT_CAST_COPY_CAPABILITY)
+        changed = replace(program, capability_dependencies=dependencies,
+                          capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(result["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + NEXT_CAST_COPY_CAPABILITY, result["blockers"])
+
+        spec = NextCastCopySpec("instant_or_sorcery", 4, 2)
+        self.assertEqual(spec, NextCastCopySpec.from_dict(spec.to_dict()))
+        for change in ({"copies": True}, {"scope": "arbitrary"}, {"maximum_mana_value": -1}, {"schema_version": 2}):
+            with self.assertRaises(ValueError):
+                NextCastCopySpec.from_dict({**spec.to_dict(), **change})
+        self.assertIsNone(next_cast_copy_template(
+            "When you next cast a spell this turn, copy it except it isn't legendary. You may choose new targets for the copy."
+        ))
+        mana = replace(query_record(
+            "{T}, Exile this artifact: Add {U}. When you next cast an instant or sorcery spell this turn, "
+            "copy that spell. You may choose new targets for the copy."
+        ), type_line="Artifact")
+        self.assertNotEqual("exact", compile_oracle_card(mana, capability_registry=self.registry).status)
+
+    def test_dual_strike_copies_only_the_first_eligible_cast_even_after_countering(self):
+        session = self.session(603638081)
+        strike = self.add(session.engine, "Dual Strike", zone="hand")
+        expensive = self.add(session.engine, "Blaze", zone="hand", ref="expensive-blaze")
+        eligible = self.add(session.engine, "Blaze", zone="hand", ref="eligible-blaze")
+        creature = self.add(session.engine, "Grizzly Bears", zone="hand")
+        counter = self.add(session.engine, "Counterspell", seat="B", zone="hand")
+        opposing = self.add(session.engine, "Lightning Bolt", seat="B", zone="hand", ref="opposing-bolt")
+        later = self.add(session.engine, "Lightning Bolt", zone="hand", ref="later-bolt")
+        self.assert_closed(session, strike)
+        self.prepare(session, mana={"C": 10, "R": 5, "G": 1})
+        session.state.players["B"].mana_pool.update({"R": 1, "U": 2})
+        self.checkpoint(session)
+        self.cast_for(session, "A", strike)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, len(self.next_cast_registrations(session)))
+        self.cast_for(session, "B", opposing, ["D"], reserve={"U": 2})
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "A", creature, reserve={"R": 3})
+        self.assertIsNone(self.resolve(session))
+        for spell, x in ((expensive, 4), (eligible, 3)):
+            self.priority(session, "A")
+            action = self.action(session, "A", spell)
+            before = authoritative_state_hash(session.state)
+            rejected = session.act("pilot:A", {"action_id": action["id"], "targets": ["invalid-target"], "x": x})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            self.assertEqual(1, len(self.next_cast_registrations(session)))
+            accepted = session.act("pilot:A", {"action_id": action["id"], "targets": ["B"], "x": x, "pay": "auto",
+                                               "reserve": {"R": 2 if x == 4 else 1}})
+            self.assertTrue(accepted.ok, accepted.summary)
+            if x == 4:
+                self.assertIsNone(self.resolve(session))
+        self.assertEqual([], self.next_cast_registrations(session))
+        original = next(item for item in session.state.stack if item.card_object_id == eligible.object_id)
+        self.cast_for(session, "B", counter, [original.ref])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "targets": ["C"]})
+        self.assertTrue(result.ok, result.summary)
+        copied = next(item for item in session.state.stack if item.kind == "spell_copy")
+        self.assertEqual(3, copied.x_value)
+        self.finish(session)
+        self.assertEqual((36, 37, 37), tuple(session.state.players[seat].life for seat in "BCD"))
+        self.cast_for(session, "A", later, ["C"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(34, session.state.players["C"].life)
+        self.replay(session)
+
+    def test_two_independent_next_cast_copy_registrations_share_trigger_order(self):
+        session = self.session(603638082)
+        first = self.add(session.engine, "Doublecast", zone="hand")
+        second = self.add(session.engine, "Teach by Example", zone="hand")
+        spell = self.add(session.engine, "Blaze", zone="hand")
+        self.assert_closed(session, first)
+        self.prepare(session, mana={"C": 1, "R": 5})
+        self.checkpoint(session)
+        for source in (first, second):
+            self.cast_for(session, "A", source, reserve={"C": 1})
+            self.finish(session)
+        waiting = self.next_cast_registrations(session)
+        self.assertEqual(2, len(waiting))
+        self.assertNotEqual(waiting[0].source_logical_object_id, waiting[1].source_logical_object_id)
+
+        self.priority(session, "A")
+        offered = self.action(session, "A", spell)
+        result = session.act("pilot:A", {"action_id": offered["id"], "targets": ["B"], "x": 1, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("trigger.order", session.state.pending_decision.kind)
+        group = next(group for group in session.state.pending_trigger_batches[0].groups if group.controller == "A")
+        refs = [item.ref for item in reversed(group.items)]
+        self.assertEqual(2, len(refs))
+        result = session.act("pilot:A", {"action_id": "order", "triggers": refs})
+        self.assertTrue(result.ok, result.summary)
+        for seat in "CD":
+            self.assertEqual("semantic.choice", self.resolve(session).kind)
+            result = session.act("pilot:A", {"action_id": "choose", "targets": [seat]})
+            self.assertTrue(result.ok, result.summary)
+        self.finish(session)
+        self.assertEqual((39, 39, 39), tuple(session.state.players[seat].life for seat in "BCD"))
+        self.replay(session, load=True)
+
+    def test_unconsumed_next_cast_copy_expires_at_the_turn_boundary(self):
+        session = self.session(603638083)
+        source = self.add(session.engine, "Doublecast", zone="hand")
+        spell = self.add(session.engine, "Lightning Bolt", zone="hand")
+        self.add(session.engine, "Mountain", ref="later-turn-mountain")
+        self.prepare(session, mana={"R": 2})
+        self.checkpoint(session)
+        offered = self.action(session, "A", source)
+        result = session.act("pilot:A", {"action_id": offered["id"], "pay": "manual", "payment": {"R": 2}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, len(self.next_cast_registrations(session)))
+        previous_turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence > previous_turn and game.state.pending_decision.kind == "priority")
+        self.assertEqual([], self.next_cast_registrations(session))
+        self.cast_for(session, "A", spell, ["C"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(37, session.state.players["C"].life)
+        self.replay(session)
+
+    def test_chapter_three_delayed_occurrence_copies_twice_with_independent_targets(self):
+        session = self.session(603638085)
+        source = self.add(session.engine, "Summon: G.F. Cerberus")
+        source.counters["lore"] = 2
+        bastion = self.add(session.engine, "Karn's Bastion")
+        spell = self.add(session.engine, "Blaze", zone="hand")
+        for card in (source, bastion):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 5, "R": 1})
+        self.checkpoint(session)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered, = [row for row in rows if row["id"].startswith("activate:" + bastion.ref + ":")
+                    and "proliferate" in row["label"].casefold()]
+        result = session.act("pilot:A", {"action_id": offered["id"], "pay": "manual", "payment": {"C": 4}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        result = session.act("pilot:A", {"action_id": "choose", "objects": [source.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.finish(session)
+        waiting, = self.next_cast_registrations(session)
+        self.assertEqual(2, waiting.condition["next_cast_copy"]["copies"])
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.priority(session, "A")
+        offered = self.action(session, "A", spell)
+        result = session.act("pilot:A", {"action_id": offered["id"], "targets": ["B"], "x": 1, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        triggers = [item for item in session.state.stack if item.kind == "triggered_ability"]
+        self.assertEqual(1, len(triggers))
+        for seat in "CD":
+            self.assertEqual("semantic.choice", self.resolve(session).kind)
+            result = session.act("pilot:A", {"action_id": "choose", "targets": [seat]})
+            self.assertTrue(result.ok, result.summary)
+        self.finish(session)
+        self.assertEqual((39, 39, 39), tuple(session.state.players[seat].life for seat in "BCD"))
+        self.replay(session)
+
+    def test_flamehold_registration_copies_a_permanent_after_its_source_leaves(self):
+        session = self.session(603638086)
+        source = self.add(session.engine, "Flamehold Grappler", zone="hand")
+        creature = self.add(session.engine, "Grizzly Bears", zone="hand")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "U": 1, "R": 1, "W": 1, "G": 1})
+        session.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(session)
+        self.cast_for(session, "A", source, reserve={"C": 1, "G": 1})
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "B", bounce, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        self.assertEqual(1, len(self.next_cast_registrations(session)))
+        self.cast_for(session, "A", creature)
+        self.finish(session)
+        copies = [card for card in session.state.cards.values() if card.zone == "battlefield" and card.is_token]
+        copied, = copies
+        self.assertEqual("Grizzly Bears", copied.printed_name)
+        self.assertEqual("battlefield", session.state.cards[creature.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_next_cast_copy_producer_omission_is_killed(self):
+        from unittest.mock import patch
+
+        session = self.session(603638084)
+        source = self.add(session.engine, "Doublecast", zone="hand")
+        def witness():
+            ir = compile_oracle_card(self.db.lookup(source.printed_name), capability_registry=self.registry,
+                                     capability_profile="commander_review")
+            self.assertEqual("exact", ir.status)
+        witness()
+        with patch("quorune.compiler.fixed_stack_spell_copy.next_cast_copy_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+
     def test_runtime_event_copy_dependency_is_inferred_without_declaration(self):
         from quorune.card_programs.binding import bind_semantic_program_runtime
         session=self.session(603638001);source=self.add(session.engine,'Double Vision');checked=0

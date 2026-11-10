@@ -139,6 +139,11 @@ class TriggerProcessingOwner:
         ):
             trigger.active = False
             return False
+        if event_kind == "spell.cast":
+            from .event_spell_copy_model import NEXT_CAST_COPY_FIELD
+            from .rules.event_spell_copy import next_cast_copy_matches
+
+            return NEXT_CAST_COPY_FIELD in trigger.condition and next_cast_copy_matches(trigger, context)
         for key, original_expected in trigger.condition.items():
             expected = original_expected
             if key == "after_turn_sequence":
@@ -178,15 +183,22 @@ class TriggerProcessingOwner:
         return matches
 
     def materialize_delayed_trigger(
-        self, trigger: DelayedTrigger
+        self, trigger: DelayedTrigger, *, event_context: Mapping[str, Any] | None = None,
     ) -> StackItem:
         ref = self.host._next_ref("S")
-        return materialize_delayed_trigger(
+        item = materialize_delayed_trigger(
             trigger,
             ref=ref,
             stack_id=self.host._stable_runtime_id("stack", ref),
             visibility=self.host.seats,
         )
+        if trigger.event_kind == "spell.cast":
+            from .rules.event_spell_copy import bind_next_cast_copy_occurrence
+
+            if event_context is None:
+                raise ValueError("Next-cast copy requires its committed spell occurrence")
+            bind_next_cast_copy_occurrence(self.host, trigger, item, event_context)
+        return item
 
     def issue_trigger_order(
         self,
@@ -390,7 +402,7 @@ def collect_trigger_items(
     triggered.extend(_intrinsic_trigger_items(host, event_kind, context))
     owner = TriggerProcessingOwner(host)
     triggered.extend(
-        owner.materialize_delayed_trigger(trigger)
+        owner.materialize_delayed_trigger(trigger, event_context=context)
         for trigger in owner.matching_delayed_triggers(event_kind, context)
     )
     return triggered
@@ -829,6 +841,15 @@ def matching_delayed_triggers(
     return TriggerProcessingOwner(host).matching_delayed_triggers(
         event_kind, context
     )
+
+
+def expire_next_cast_copy_triggers(host: TriggerProcessingHost) -> None:
+    from .event_spell_copy_model import NEXT_CAST_COPY_FIELD
+
+    for trigger in host.state.delayed_triggers:
+        if (trigger.active and NEXT_CAST_COPY_FIELD in trigger.condition
+                and trigger.expires_turn_sequence < host.state.turn_sequence):
+            trigger.active = False
 
 
 def collect_ward_occurrences(

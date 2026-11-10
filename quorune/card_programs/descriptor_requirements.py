@@ -14,6 +14,10 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         is_versioned_next_cast_protection, next_cast_protection_payload_dependencies,
     )
     from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_OPERATION, next_spell_payment_payload_dependencies
+    from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD, NEXT_CAST_COPY_CAPABILITY, next_cast_copy_payload
+    if NEXT_CAST_COPY_FIELD in value:
+        next_cast_copy_payload(value)
+        return (NEXT_CAST_COPY_CAPABILITY,)
     if is_versioned_next_cast_protection(value):
         return next_cast_protection_payload_dependencies(value)
     if value.get("op") == CAST_CASCADE_OPERATION:
