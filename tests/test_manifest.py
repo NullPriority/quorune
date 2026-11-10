@@ -16,6 +16,37 @@ def manifest_record(text: str) -> CardRecord:
 
 
 class ManifestCompilerTests(unittest.TestCase):
+    def test_manifest_activation_and_face_pair_bind_only_complete_source_owned_shapes(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.compiler.fixed_public_multi_event_bindings import fixed_public_multi_event_binding_spec
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+
+        registry = load_default_capability_registry()
+        line = "{3}{W}: Manifest the top card of your library."
+        card = replace(manifest_record(line), mana_cost="{W}", type_line="Enchantment")
+        ir = compile_oracle_card(card, capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(("activated_ability", "activate"), (node.kind, node.event))
+        self.assertEqual(({"op": "manifest_card", "player": "$controller", "mode": "top"},), node.effects)
+        self.assertIn("keyword_action.manifest.card", node.capability_dependencies)
+        self.assertNotEqual("exact", compile_oracle_card(
+            replace(card, oracle_text=line.replace("your library", "that player's library")),
+            capability_registry=registry,
+        ).status)
+
+        paired = ("Whenever a face-down permanent you control enters and whenever this creature or another permanent "
+                  "you control is turned face up, put a +1/+1 counter on this creature.")
+        spec = fixed_public_multi_event_binding_spec(paired)
+        subscriptions = FixedEventSubscriptionSet.from_condition(spec.condition).subscriptions
+        self.assertEqual(("permanent.enter", "permanent.turned_face_up"), tuple(child.event for child in subscriptions))
+        self.assertIn("trigger.event.face_down_entry", spec.capabilities)
+        self.assertIsNone(fixed_public_multi_event_binding_spec(paired.replace("on this creature", "on it")))
+        with patch("quorune.compiler.fixed_public_multi_event_bindings._face_transition_pair_spec", return_value=None):
+            self.assertIsNone(fixed_public_multi_event_binding_spec(paired))
+
     def test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority(self):
         from dataclasses import replace
         from unittest.mock import patch
@@ -296,6 +327,89 @@ class ManifestEntryOwnerTests(unittest.TestCase):
     cast_for = _Native.cast_for
     resolve_top = _Native.resolve_top
     assert_closed = _Native.assert_closed
+
+    def test_original_activated_manifest_pays_costs_before_entry_and_resolves_after_source_leaves(self):
+        from quorune.record import authoritative_state_hash
+
+        for priest in (False, True):
+            with self.subTest(priest=priest):
+                session = self.session(602200 + priest)
+                source = self.add(session.engine, "Qarsi High Priest" if priest else "Mastery of the Unseen")
+                hidden = self.add(session.engine, "Lightning Bolt", zone="library", ref="activated-manifest-hidden")
+                if priest:
+                    source.acquired_control_turn_count = -1
+                    fodder = self.add(session.engine, "Grizzly Bears", ref="activated-manifest-fodder")
+                    bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+                    self.add(session.engine, "Island", seat="B", ref="activated-manifest-response-mana")
+                library = session.state.players["A"].zones["library"]
+                library.remove(hidden.object_id)
+                library.append(hidden.object_id)
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 3, "W": 1, "B": 1})
+                self.checkpoint(session)
+                rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offer = next(row for row in rows if row["id"].startswith(f"activate:{source.ref}:"))
+                command = {"action_id": offer["id"], "pay": "auto"}
+                if priest:
+                    before = authoritative_state_hash(session.state)
+                    denied = session.act("pilot:A", {**command, "cost_cards": [source.ref]})
+                    self.assertFalse(denied.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    command["cost_cards"] = [fodder.ref]
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("library", session.state.cards[hidden.object_id].zone)
+                if priest:
+                    self.assertTrue(session.state.cards[source.object_id].tapped)
+                    self.assertEqual("graveyard", session.state.cards[fodder.object_id].zone)
+                    self.cast_for(session, "B", bounce, [source.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("hand", session.state.cards[source.object_id].zone)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[hidden.object_id]
+                self.assertEqual(("battlefield", "A", True), (current.zone, current.controller, current.face_down))
+                self.assertNotIn("Lightning Bolt", str(session.packet("pilot:B", full=True)))
+                self.replay(session)
+
+    def test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up(self):
+        session = self.session(708303)
+        source = self.add(session.engine, "Cryptid Inspector")
+        ambush = self.add(session.engine, "Ethereal Ambush", zone="hand")
+        first = self.add(session.engine, "Viashino Firstblade", zone="library", ref="paired-manifest-creature")
+        second = self.add(session.engine, "Lightning Bolt", zone="library", ref="paired-manifest-instant")
+        normal = self.add(session.engine, "Grizzly Bears", zone="hand")
+        library = session.state.players["A"].zones["library"]
+        for card in (first, second):
+            library.remove(card.object_id)
+        library.extend((second.object_id, first.object_id))
+        for card in (source, ambush):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 7, "G": 2, "U": 1, "W": 1, "R": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", ambush)
+        self.assertEqual("trigger.order", self.resolve(session).kind)
+        packet = session.packet("pilot:A", full=True)["decision"]
+        refs = [trigger["id"] for trigger in packet["ctx"]["triggers"]]
+        self.assertEqual(2, len(refs))
+        result = session.act("pilot:A", {"action_id": "order", "triggers": refs})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(all(item.source_object_id == source.object_id for item in session.state.stack))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 2}, session.state.cards[source.object_id].counters)
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"] == f"turn-face-up:{first.ref}:manifest")
+        result = session.act("pilot:A", {"action_id": offer["id"]})
+        self.assertTrue(result.ok, result.summary)
+        trigger, = session.state.stack
+        self.assertEqual(source.object_id, trigger.source_object_id)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 3}, session.state.cards[source.object_id].counters)
+        self.cast_for(session, "A", normal)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 3}, session.state.cards[source.object_id].counters)
+        self.replay(session, load=True)
 
     def test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition(self):
         for suppressed in (False, True):

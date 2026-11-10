@@ -2346,6 +2346,9 @@ Face-down entry subscriptions use the entering permanent's effective public
 characteristics. The turn-up occurrence preserves the permanent's controller
 and the acting player for their respective subscriptions. Results referring to
 the turned permanent use its original battlefield incarnation.
+A source-bound result may subscribe independently to controlled face-down
+entries and controlled turn-up events. A bare top-card Manifest also resolves
+through the ordinary activated ability stack after its represented costs.
 Manifested normal-layout creatures with current whole-card
 closure may turn face up for an ordinary printed mana cost; represented Morph,
 Megamorph and Disguise alternatives retain separate offers. Complex mana and

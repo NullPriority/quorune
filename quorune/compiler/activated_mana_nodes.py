@@ -442,8 +442,10 @@ def _activated_effect_dependency_gate(
     }
     capability_shaped_effect = (
         len(effects) == 1
-        and str(effects[0].get("op") or "")
-        in _CAPABILITY_SHAPED_EFFECT_OPERATIONS
+        and (
+            str(effects[0].get("op") or "") in _CAPABILITY_SHAPED_EFFECT_OPERATIONS
+            or effects[0] == {"op": "manifest_card", "player": "$controller", "mode": "top"}
+        )
     )
     closed_prevention_effect = (
         "cr-615-prevention-effects" in mechanics

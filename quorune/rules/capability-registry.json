@@ -47935,7 +47935,8 @@
         "quorune.manifest.physical_manifest_turn_up_spec",
         "quorune.manifest._fixed_manifest_price",
         "quorune.rules.composition_face_up.composed_turn_up_options",
-        "quorune.composition_face_changes.commit_composition_face_up"
+        "quorune.composition_face_changes.commit_composition_face_up",
+        "quorune.compiler.activated_mana_nodes._activated_effect_dependency_gate"
       ],
       "implementation_mutation_rationale": "Unknownmode,privateforeignselection/staleincarnationsfailindependentchoiceandentrywitnesses Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback. Actual Soul Summons plus internal bottom merge has no Manifest offer before this extension. Printed cost versus inherited Megamorph, physical noncreature animation/copy-cost controls, DFC front, one parent clock/event/no entry and native replay distinguish the physical-card price.",
       "implementation_mutation_status": "killed",
@@ -47950,14 +47951,16 @@
         "test_actual_merged_manifest_offers_printed_creature_cost_and_turns_up_without_entering_again",
         "test_actual_merged_manifest_keeps_printed_and_megamorph_prices_distinct",
         "test_merged_manifest_physical_card_authority_ignores_animation_and_copied_costs",
-        "test_actual_merged_manifest_double_faced_card_uses_its_physical_front"
+        "test_actual_merged_manifest_double_faced_card_uses_its_physical_front",
+        "test_original_activated_manifest_pays_costs_before_entry_and_resolves_after_source_leaves"
       ],
       "multiplayer_tests": [
         "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
         "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
-        "test_actual_merged_manifest_offers_printed_creature_cost_and_turns_up_without_entering_again"
+        "test_actual_merged_manifest_offers_printed_creature_cost_and_turns_up_without_entering_again",
+        "test_original_activated_manifest_pays_costs_before_entry_and_resolves_after_source_leaves"
       ],
       "negative_tests": [
         "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
@@ -47973,7 +47976,8 @@
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
         "test_face_status_clock_advances_only_for_an_eligible_current_object",
         "test_actual_merged_manifest_offers_printed_creature_cost_and_turns_up_without_entering_again",
-        "test_merged_manifest_physical_card_authority_ignores_animation_and_copied_costs"
+        "test_merged_manifest_physical_card_authority_ignores_animation_and_copied_costs",
+        "test_original_activated_manifest_pays_costs_before_entry_and_resolves_after_source_leaves"
       ],
       "official_rules": [
         "107.3g",
@@ -48009,7 +48013,8 @@
         "test_face_status_clock_advances_only_for_an_eligible_current_object",
         "test_actual_merged_manifest_offers_printed_creature_cost_and_turns_up_without_entering_again",
         "test_actual_merged_manifest_keeps_printed_and_megamorph_prices_distinct",
-        "test_actual_merged_manifest_double_faced_card_uses_its_physical_front"
+        "test_actual_merged_manifest_double_faced_card_uses_its_physical_front",
+        "test_original_activated_manifest_pays_costs_before_entry_and_resolves_after_source_leaves"
       ],
       "privacy_tests": [
         "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
@@ -48017,7 +48022,8 @@
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
         "test_actual_merged_manifest_offers_printed_creature_cost_and_turns_up_without_entering_again",
-        "test_merged_manifest_physical_card_authority_ignores_animation_and_copied_costs"
+        "test_merged_manifest_physical_card_authority_ignores_animation_and_copied_costs",
+        "test_original_activated_manifest_pays_costs_before_entry_and_resolves_after_source_leaves"
       ],
       "replay_tests": [
         "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
@@ -48029,7 +48035,8 @@
         "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
         "test_actual_merged_manifest_offers_printed_creature_cost_and_turns_up_without_entering_again",
         "test_actual_merged_manifest_keeps_printed_and_megamorph_prices_distinct",
-        "test_actual_merged_manifest_double_faced_card_uses_its_physical_front"
+        "test_actual_merged_manifest_double_faced_card_uses_its_physical_front",
+        "test_original_activated_manifest_pays_costs_before_entry_and_resolves_after_source_leaves"
       ],
       "required_evidence": [
         "positive",
@@ -48045,7 +48052,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 4
+      "version": 5
     },
     {
       "applicability": {
@@ -73761,19 +73768,23 @@
       "implementation_components": [
         "quorune.compiler.fixed_public_event_trigger_bindings._face_transition_spec",
         "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
-        "quorune.rules.event_subscriptions.face_transition_event_dependencies"
+        "quorune.rules.event_subscriptions.face_transition_event_dependencies",
+        "quorune.compiler.fixed_public_multi_event_bindings._face_transition_pair_spec"
       ],
       "implementation_mutation_rationale": "Omitting the exact face-transition head fails the compiler witness. A face-down instant triggers the creature observer, ordinary face-up entry does not, and an entering-creature prohibition suppresses both observers.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "multiplayer_tests": [
-        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "negative_tests": [
         "test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority",
-        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "official_rules": [
         "603.2",
@@ -73785,13 +73796,16 @@
       ],
       "positive_tests": [
         "test_face_transition_subscriptions_bind_distinct_public_facts_and_runtime_authority",
-        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "privacy_tests": [
-        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "replay_tests": [
-        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition"
+        "test_original_face_down_entry_observers_read_effective_creature_and_respect_prohibition",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "required_evidence": [
         "positive",
@@ -73807,7 +73821,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -80783,7 +80797,8 @@
         "quorune.trigger_discovery._selected_event_subscription",
         "quorune.trigger_discovery.semantic_event_matches",
         "quorune.compiler.fixed_public_multi_event_bindings._opponent_cast_or_source_death_spec",
-        "quorune.compiler.fixed_public_multi_event_bindings._color_cast_or_land_entry_spec"
+        "quorune.compiler.fixed_public_multi_event_bindings._color_cast_or_land_entry_spec",
+        "quorune.compiler.fixed_public_multi_event_bindings._face_transition_pair_spec"
       ],
       "implementation_mutation_rationale": "Focused compiler tests remove the shared multi-event parser and block the subscription capability, while runtime witnesses require both distinct events to reach the same typed body. Replacing only the becomes-blocked subscription with a valid attack subscription is killed by actual multiblocker combat consequences, while preserving closed two-event model validation. Removing the color-cast or land-entry producer leaves the printed ability residual.",
       "implementation_mutation_status": "killed",
@@ -80811,7 +80826,8 @@
         "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
-        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "multiplayer_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80834,7 +80850,8 @@
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
-        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "negative_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80869,7 +80886,8 @@
         "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
         "test_staff_printed_pairs_use_one_independent_multi_event_ability",
-        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "official_rules": [
         "603.2",
@@ -80918,7 +80936,8 @@
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
         "test_staff_printed_pairs_use_one_independent_multi_event_ability",
-        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "privacy_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80935,7 +80954,8 @@
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
         "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
-        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw"
+        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "replay_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -80959,7 +80979,8 @@
         "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
-        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry"
+        "test_actual_mind_magus_observes_its_controllers_blue_spell_and_island_entry",
+        "test_original_cryptid_inspector_counts_each_entry_and_distinct_turn_up"
       ],
       "required_evidence": [
         "positive",
@@ -80975,7 +80996,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 7
+      "version": 8
     },
     {
       "applicability": {
@@ -90725,7 +90746,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 806,
+  "registry_version": 807,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -1106,7 +1106,7 @@ def _face_transition_spec(material_line: str) -> FixedPublicEventBindingSpec | N
         )
     turned = re.fullmatch(
         r"Whenever (?:(?P<active>you turn a permanent face up)|"
-        r"(?:a permanent you control|this enchantment or another permanent you control) is turned face up), "
+        r"(?:a permanent you control|this (?:creature|enchantment) or another permanent you control) is turned face up), "
         r"(?P<body>.+)", material_line, re.IGNORECASE,
     )
     if turned is None:
