@@ -63926,7 +63926,7 @@
     },
     {
       "id": "stack.counter.controller_followup",
-      "version": 1,
+      "version": 2,
       "status": "trusted",
       "supported_profiles": [
         "traditional",
@@ -63939,7 +63939,12 @@
         "608.2b",
         "608.2c",
         "608.2h",
-        "701.6a"
+        "701.6a",
+        "101.2",
+        "111.2",
+        "514.2",
+        "601.3",
+        "611.2a"
       ],
       "blockers": [],
       "dependencies": [
@@ -63954,24 +63959,27 @@
         "quorune.rules.stack_counter_followup.stack_counter_followup_node_capabilities",
         "quorune.rules.stack_counter_followup.materialize_stack_counter_followup",
         "quorune.semantic_choices.stack_counter_followup.StackCounterFollowupHandler",
-        "quorune.stack_counter.counter_stack_item"
+        "quorune.stack_counter.counter_stack_item",
+        "quorune.rules.token_creation_capability_shapes._fixed_token_effect_closure",
+        "quorune.rules.temporary_cast_restrictions.temporary_cast_node_capabilities"
       ],
       "applicability": {
         "summary": "Read the current controller of one legal stack target, then run the ordinary counter instruction and the closed ordered followup through their existing owners.",
         "inputs": [
           "one declared spell or ability target",
-          "one closed controller-bound mill, draw, life loss, or discard instruction",
+          "one closed controller-bound mill, draw, life loss, discard, token creation, or temporary casting prohibition",
           "optional closed result for the resolving controller"
         ],
         "outputs": [
           "ordinary replacement-aware counter attempt",
           "resolved controller for the ordered result",
-          "private draw or discard under the existing choice owner"
+          "private draw or discard under the existing choice owner",
+          "fixed token ownership or an end-of-turn casting restriction through its ordinary owner"
         ],
         "exclusions": [
           "owner-relative results or conditional results keyed to counter success",
           "optional or multiple stack targets",
-          "unsupported linked token, spell, or random results"
+          "dynamic or copied token recipes and unsupported linked results"
         ]
       },
       "required_evidence": [
@@ -63985,21 +63993,29 @@
       "positive_tests": [
         "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
         "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
-        "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands"
+        "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands",
+        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
       ],
       "negative_tests": [
         "test_countermand_skips_followup_when_its_original_stack_target_disappears",
         "test_stack_followup_requires_one_bound_target_and_preserves_deferred_operands",
-        "test_counter_followup_withdrawal_and_omitted_compiler_rule_are_detected"
+        "test_counter_followup_withdrawal_and_omitted_compiler_rule_are_detected",
+        "test_three_spell_type_unions_do_not_merge_with_other_stack_domains",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
       ],
       "interaction_tests": [
         "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
         "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
-        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver"
+        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver",
+        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
       ],
       "multiplayer_tests": [
         "test_deny_the_witch_counts_resolvers_creatures_and_binds_an_ability_controller",
-        "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller"
+        "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller",
+        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
       ],
       "privacy_tests": [
         "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller",
@@ -64009,7 +64025,9 @@
         "test_psychic_strike_mills_after_ordinary_and_protected_counter_attempts",
         "test_countermand_skips_followup_when_its_original_stack_target_disappears",
         "test_dismal_failure_discard_choice_belongs_to_the_countered_objects_controller",
-        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver"
+        "test_dream_fracture_draws_for_the_stack_controller_then_the_resolver",
+        "test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails",
+        "test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands"
       ]
     },
     {
@@ -88773,7 +88791,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 782,
+  "registry_version": 783,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

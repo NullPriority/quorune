@@ -1110,6 +1110,102 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "3966bd03-a98e-43b6-a0c0-10d4d81c173c",
+      "name": "Render Silent",
+      "mana_cost": "{W}{U}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell. Its controller can't cast spells this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7ca3aa03-e62d-464a-9111-e754abe17f76",
+      "name": "Strix Serenade",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target artifact, creature, or planeswalker spell. Its controller creates a 2/2 blue Bird creature token with flying.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -1232,6 +1328,42 @@
       "published_at": "2014-04-26",
       "source": "wotc",
       "comment": "You may target a spell that can't be countered with Countermand. If you do, when Countermand resolves, the target spell won't be countered, but its controller will still put the top four cards of their library into their graveyard."
+    },
+    {
+      "oracle_id": "3966bd03-a98e-43b6-a0c0-10d4d81c173c",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "A spell that “can’t be countered” is a legal target for Render Silent. The spell won’t be countered when Render Silent resolves, but that spell’s controller won’t be able to cast spells for the rest of the turn."
+    },
+    {
+      "oracle_id": "3966bd03-a98e-43b6-a0c0-10d4d81c173c",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If the spell is an illegal target when Render Silent tries to resolve (because it’s been countered by another spell, for example), Render Silent won’t resolve and none of its effects will happen."
+    },
+    {
+      "oracle_id": "3966bd03-a98e-43b6-a0c0-10d4d81c173c",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Render Silent doesn’t stop any player from casting spells in response to Render Silent before it resolves."
+    },
+    {
+      "oracle_id": "3966bd03-a98e-43b6-a0c0-10d4d81c173c",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "The affected player can still activate abilities, including abilities of cards in their hand (such as bloodrush abilities), and the player can still play lands."
+    },
+    {
+      "oracle_id": "3966bd03-a98e-43b6-a0c0-10d4d81c173c",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You must be able to target a spell to cast Render Silent."
+    },
+    {
+      "oracle_id": "7ca3aa03-e62d-464a-9111-e754abe17f76",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Strix Serenade can target a spell that can't be countered. That spell won't be countered when Strix Serenade resolves, but its controller will get a Bird token. (This won't come up often, but when it does, it'll be a hoot.)"
     }
   ]
 }

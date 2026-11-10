@@ -5,13 +5,14 @@ from __future__ import annotations
 import re
 
 from ..rules.stack_counter_followup import (
-    STACK_COUNTER_FOLLOWUP_OPERATION, STACK_TARGET_CONTROLLER, stack_counter_followup_node_capabilities,
+    STACK_COUNTER_FOLLOWUP_OPERATION, STACK_TARGET_CONTROLLER, STACK_FOLLOWUP_PLAYER_SCHEMA,
+    stack_counter_followup_node_capabilities, with_stack_counter_recipient,
 )
 from .affected_player_discard_templates import fixed_controller_discard_effect_template
 from .counter_templates import targeted_counter_effect_template
 
 
-_FOLLOWUP = re.compile(r"Its controller (?P<verb>mills|loses|draws|discards) (?P<body>.+)", re.I)
+_FOLLOWUP = re.compile(r"Its controller (?P<verb>mills|loses|draws|discards|creates) (?P<body>.+)", re.I)
 
 
 def stack_counter_followup_template(text, *, compile_component):
@@ -24,21 +25,10 @@ def stack_counter_followup_template(text, *, compile_component):
     if counter is None or counter.counter_destination is not None:
         return None
     tail, second = _split_followups(tail)
-    match = _FOLLOWUP.fullmatch(tail)
-    if match is None:
+    first = _first_followup(tail, compile_component=compile_component)
+    if first is None or first[0] is None or len(first[1]) != 1:
         return None
-    verb = match["verb"].casefold().removesuffix("s")
-    body = f"{verb.capitalize()} {match['body']}"
-    if verb == "discard":
-        discard = fixed_controller_discard_effect_template(body)
-        first = discard.compiled() if discard is not None else None
-    else:
-        first = compile_component(body)
-    if first is None or first[0] is None or first[2] is not None or len(first[1]) != 1:
-        return None
-    leaf = first[1][0]
-    recipient = ({"players": [STACK_TARGET_CONTROLLER]} if verb == "discard" else {"player": STACK_TARGET_CONTROLLER})
-    followups = [{**leaf, **recipient}]
+    followups = [with_stack_counter_recipient(first[1][0], STACK_TARGET_CONTROLLER)]
     mechanics = (*counter.mechanics, *first[3])
     if second is not None:
         compiled = compile_component(second)
@@ -53,6 +43,22 @@ def stack_counter_followup_template(text, *, compile_component):
     ):
         return None
     return "fixed-stack-counter-controller-followup-v1", effects, counter.target_schema, tuple(dict.fromkeys(mechanics))
+
+
+def _first_followup(tail, *, compile_component):
+    if tail.casefold().replace("’", "'") == "its controller can't cast spells this turn.":
+        restriction = compile_component("Target player can't cast spells this turn.")
+        return restriction if restriction[2] == STACK_FOLLOWUP_PLAYER_SCHEMA else None
+    match = _FOLLOWUP.fullmatch(tail)
+    if match is None:
+        return None
+    verb = match["verb"].casefold().removesuffix("s")
+    body = f"{verb.capitalize()} {match['body']}"
+    if verb == "discard":
+        discard = fixed_controller_discard_effect_template(body)
+        return discard.compiled() if discard is not None else None
+    compiled = compile_component(body)
+    return compiled if compiled[2] is None else None
 
 
 def _split_followups(tail):

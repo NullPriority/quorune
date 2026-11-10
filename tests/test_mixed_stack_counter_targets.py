@@ -123,6 +123,23 @@ class MixedStackCounterTargetTests(unittest.TestCase):
                      'Counter target spell. Its controller mills two cards. Draw a card.'):
             self.assertIsNone(compile_text(near))
 
+    def test_three_spell_type_unions_do_not_merge_with_other_stack_domains(self):
+        for name, allowed, excluded in (
+            ('artifact, creature, or planeswalker', ('artifact', 'creature', 'planeswalker'), 'instant'),
+            ('enchantment, instant, or sorcery', ('enchantment', 'instant', 'sorcery'), 'creature'),
+        ):
+            text = 'Counter target ' + name + ' spell.'
+            template = targeted_counter_effect_template(text)
+            self.assertEqual(['spell'], template.target_schema['categories'])
+            self.assertEqual(list(allowed), template.target_schema['types_any'])
+            group = TargetGroup.from_mapping(template.target_schema)
+            self.assertTrue(all(group.matches_type_characteristics(types=(kind,), subtypes=(), supertypes=()) for kind in allowed))
+            self.assertFalse(group.matches_type_characteristics(types=(excluded,), subtypes=(), supertypes=()))
+            forged = {**template.target_schema, 'types_any': [*allowed, excluded]}
+            self.assertEqual((), targeted_counter_node_capabilities(
+                effects=template.effects, target_schema=forged, mechanic_ids=template.mechanics,
+            ))
+
     def test_accepting_every_mixed_stack_predicate_is_detected(self):
         method='test_mixed_counter_predicates_keep_each_restriction_on_its_own_branch'
         with patch.object(predicates,'target_predicate_matches',return_value=True):
@@ -321,6 +338,57 @@ class MixedStackCounterRuntimeTests(unittest.TestCase):
         ir = compile_oracle_card(record, capability_registry=registry)
         self.assertNotEqual('exact', ir.status)
         self.assertTrue(any(dependency in blocker for residual in ir.material_residuals for blocker in residual.blockers))
+
+    def test_counter_token_followups_create_for_the_bound_controller_even_when_countering_fails(self):
+        for i, (target_name, payment, targets, legal) in enumerate((
+            ('Carnage Tyrant', {'C': 4, 'G': 2}, (), True), ('Shock', {'R': 1}, ('A',), False),
+        )):
+            with self.subTest(target=target_name):
+                s, counter, private = self.fixture(115100260 + i, 'Strix Serenade')
+                target = self.add(s.engine, target_name, seat='B', zone='hand')
+                self.assertTrue(self.binding(s, counter)['strict_capability_ready'])
+                self.prepare(s, mana={'U': 1})
+                self.checkpoint(s)
+                self.cast(s, target, targets, seat='B', payment=payment)
+                original = s.state.stack[-1].ref
+                if legal:
+                    self.counter(s, counter, original, payment={'U': 1})
+                else:
+                    self.priority(s, 'A')
+                    self.reject(s, {'action_id': 'cast:' + counter.ref, 'targets': [original], 'pay': 'auto'})
+                self.assertIsNone(self.settle(s))
+                self.assertEqual('battlefield' if legal else 'graveyard', s.state.cards[target.object_id].zone)
+                self.assertEqual(40 if legal else 38, s.state.players['A'].life)
+                tokens = [card for card in s.state.cards.values() if card.is_token and card.zone == 'battlefield']
+                if legal:
+                    bird, = tokens
+                    self.assertEqual(('Bird Token', 'B', 'B'), (bird.printed_name, bird.owner, bird.controller))
+                    self.assertEqual((2, 2), tuple(s.engine._numeric_stat(bird.object_id, stat) for stat in ('power', 'toughness')))
+                    self.assertIn('flying', s.engine._combat_keywords(bird))
+                else:
+                    self.assertFalse(tokens)
+                self.private_replay(s, private)
+
+    def test_render_silent_restricts_the_bound_controllers_cast_offers_and_commands(self):
+        s, counter, private = self.fixture(115100264, 'Render Silent')
+        target = self.add(s.engine, 'Opt', seat='B', zone='hand')
+        next_spell = self.add(s.engine, 'Fugitive Wizard', seat='B', zone='hand')
+        rod = self.add(s.engine, 'Rod of Ruin', seat='B')
+        self.prepare(s, mana={'W': 1, 'U': 2})
+        self.checkpoint(s)
+        self.priority(s, 'B')
+        action_id = 'cast:' + next_spell.ref
+        self.assertIn(action_id, {row['id'] for row in self.actions(s, 'B')})
+        self.cast(s, target, seat='B', payment={'U': 1})
+        self.counter(s, counter, s.state.stack[-1].ref, payment={'W': 1, 'U': 2})
+        self.assertIsNone(self.settle(s))
+        self.priority(s, 'B')
+        self.assertNotIn(action_id, {row['id'] for row in self.actions(s, 'B')})
+        self.reject(s, {'action_id': action_id, 'pay': 'auto'}, seat='B')
+        self.activate(s, rod, seat='B', targets=['C'])
+        self.assertIsNone(self.settle(s))
+        self.assertEqual(39, s.state.players['C'].life)
+        self.private_replay(s, private)
 
     def test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color(self):
         for i,(target_name,allowed,color) in enumerate((('Opt',True,'R'),('Opt',True,'G'),

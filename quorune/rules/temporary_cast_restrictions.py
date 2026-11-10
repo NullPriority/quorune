@@ -45,8 +45,12 @@ def temporary_cast_node_capabilities(*,effects,target_schema,mechanic_ids,**kwar
 
 
 def temporary_cast_runtime_dependencies(program):
+    from .stack_counter_followup import STACK_COUNTER_FOLLOWUP_OPERATION, stack_counter_followup_runtime_dependencies
+
     def walk(value):
         if isinstance(value,Mapping):
+            if value.get('op') == STACK_COUNTER_FOLLOWUP_OPERATION:
+                return {CAPABILITY} & set(stack_counter_followup_runtime_dependencies(program))
             if value.get('op')==OPERATION:
                 spec=TemporaryCastRestrictionSpec.from_dict(value.get('restriction'))
                 required=temporary_cast_node_capabilities(effects=(value,),target_schema=program.target_schema if spec.player_scope=='target' else None,mechanic_ids=program.coverage)

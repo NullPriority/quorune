@@ -14,8 +14,20 @@ STACK_COUNTER_FOLLOWUP_OPERATION = "resolve_stack_counter_followup"
 STACK_COUNTER_FOLLOWUP_CAPABILITY = "stack.counter.controller_followup"
 STACK_TARGET_CONTROLLER = "$target.current_controller.0"
 _COUNTER = {"op": "counter_stack_target", "stack": "$target.0"}
-_RECIPIENT_EFFECTS = frozenset({"draw", "lose_life", "mill", "choose_cards_apnap"})
+STACK_FOLLOWUP_PLAYER_SCHEMA = {"zones": ["player"], "categories": ["player"], "count": 1, "player_relation": "any"}
+_CAST_PROHIBITION = "prohibit_casting_until_end_of_turn"
+_RECIPIENT_EFFECTS = frozenset({"draw", "lose_life", "mill", "choose_cards_apnap", "create_token", _CAST_PROHIBITION})
 _SECOND_EFFECT = {"draw": "draw", "lose_life": "life"}
+
+
+def _recipient_binding(op, recipient):
+    if op == "choose_cards_apnap":
+        return {"players": [recipient]}
+    return {"controller" if op == "create_token" else "player": recipient}
+
+
+def with_stack_counter_recipient(effect, recipient):
+    return {**effect, **_recipient_binding(effect["op"], recipient)}
 
 
 def _leaf_dependencies(effect, *, recipient):
@@ -25,16 +37,28 @@ def _leaf_dependencies(effect, *, recipient):
     from .node_capability_shapes import fixed_draw_node_capabilities
 
     op = effect.get("op")
+    if any(effect.get(field) != expected for field, expected in _recipient_binding(op, recipient).items()):
+        return ()
+    projected = with_stack_counter_recipient(effect, "$controller")
     if op == "choose_cards_apnap":
-        if effect.get("players") != [recipient] or effect.get("actor") != "$controller":
-            return ()
         return fixed_affected_player_discard_node_capabilities(
-            effects=({**effect, "players": ["$controller"]},), target_schema=None,
+            effects=(projected,), target_schema=None,
             mechanic_ids=("fixed-affected-player-discard", "cr-402-hand"), allow_controller=True,
         )
-    if effect.get("player") != recipient:
-        return ()
-    projected = {**effect, "player": "$controller"}
+    if op == "create_token":
+        from .token_creation_capability_shapes import _fixed_token_effect_closure
+
+        closure = _fixed_token_effect_closure(projected)
+        return closure[0] if closure else ()
+    if op == _CAST_PROHIBITION:
+        from .temporary_cast_restrictions import temporary_cast_node_capabilities
+
+        if effect.get("restriction") != {"schema_version": 1, "player_scope": "target", "spell_kind": "any"}:
+            return ()
+        return temporary_cast_node_capabilities(
+            effects=({**effect, "player": "$target.0"},), target_schema=STACK_FOLLOWUP_PLAYER_SCHEMA,
+            mechanic_ids=("temporary-cast-prohibition", "cr-115-targets"),
+        )
     if op == "draw":
         return fixed_draw_node_capabilities(effects=(projected,), target_schema=None,
                                             mechanic_ids=("cr-121-drawing-a-card",))
@@ -152,6 +176,4 @@ def bound_stack_counter_instructions(effect, *, active_seats):
         raise ValueError("Counter followup requires a bound stack object and active player")
     followups, _ = validate_stack_counter_followups(effect["followups"])
     first, *remaining = followups
-    field = "players" if first["op"] == "choose_cards_apnap" else "player"
-    recipient = [effect["recipient"]] if field == "players" else effect["recipient"]
-    return ({**_COUNTER, "stack": effect["stack"]}, {**first, field: recipient}, *remaining)
+    return ({**_COUNTER, "stack": effect["stack"]}, with_stack_counter_recipient(first, effect["recipient"]), *remaining)

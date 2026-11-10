@@ -194,6 +194,8 @@ _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
             ("artifact",),
             ("creature", "enchantment"),
             ("artifact", "creature"),
+            ("artifact", "creature", "planeswalker"),
+            ("enchantment", "instant", "sorcery"),
         )
     ),
     *tuple(
