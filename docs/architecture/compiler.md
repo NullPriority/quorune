@@ -4339,6 +4339,11 @@ decisions are visible, and selected hand identities stay private until the
 discard. The owner commits the object moves together before applying one
 simultaneous life-loss batch to the players who declined.
 
+The fixed distinct-sacrifice instruction can resolve a controller discard
+before its creature, artifact, and land choices. Each choice preserves the
+largest feasible set of distinct controlled permanents. Once the choices are
+complete, the ordinary simultaneous zone-transition owner sacrifices the set.
+
 Aftermath binds only its selected split-card half. It grants owner-graveyard
 casting and prohibits that half from all other zones, including under another
 casting permission. Every actual graveyard cast retains its mandatory

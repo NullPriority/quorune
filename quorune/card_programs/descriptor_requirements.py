@@ -20,6 +20,9 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     from ..rules.temporary_cast_timing import TEMPORARY_CAST_TIMING_FIELD, temporary_cast_timing_payload_dependencies
     if impulse := declared_impulse_access_dependencies(value) or next_end_step_impulse_dependencies(value):
         return impulse
+    from ..rules.distinct_sacrifices import distinct_sacrifice_payload_dependencies
+    if distinct_sacrifices := distinct_sacrifice_payload_dependencies(value):
+        return distinct_sacrifices
     if CHOSEN_IMPULSE_GRANT_FIELD in value:
         raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
     if TEMPORARY_CAST_TIMING_FIELD in value:

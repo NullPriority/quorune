@@ -1076,7 +1076,7 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
             "bound-effect-program-cards.json", "discover-cards.json", "global-alternative-cost-cards.json",
             "morph-rules-cards.json", "prototype-cards.json", "chosen-impulse-access-cards.json",
             "declared-impulse-access-cards.json", "end-step-impulse-access-cards.json",
-            "resolving-top-play-cards.json")], path)
+            "resolving-top-play-cards.json", "distinct-sacrifice-cards.json")], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -1690,6 +1690,126 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual("exile", engine.state.cards[later.object_id].zone)
         self.assertNotIn("temporary_play_permission", engine.state.cards[later.object_id].annotations)
         self.replay(session, load=True)
+
+    def test_oubliette_body_and_matching_require_distinct_roles(self):
+        from dataclasses import replace
+        from itertools import product
+        from unittest.mock import patch
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.distinct_sacrifices import DISTINCT_SACRIFICE_CAPABILITY, distinct_sacrifice_options
+
+        room = next(line for line in self.db.lookup("Tomb of Annihilation").oracle_text.splitlines()
+                    if line.startswith("Oubliette — "))
+        record = self.db.lookup("Generic Distinct Sacrifice Fixture")
+        self.assertEqual(room.split(" — ", 1)[1].split(" (Leads to:", 1)[0], record.oracle_text)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        self.assertEqual("exact", compile_oracle_card(record, **options).status)
+        with patch("quorune.compiler.resolution_effect_templates._distinct_sacrifice_template", return_value=None):
+            mutant = replace(record, oracle_id="distinct-sacrifice-producer-mutation")
+            self.assertNotEqual("exact", compile_oracle_card(mutant, **options).status)
+
+        session = self.session(60828050)
+        source = self.add(session.engine, record.name, zone="hand")
+        self.assert_closed(session, source)
+        program, = [p for p in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if DISTINCT_SACRIFICE_CAPABILITY in p.capability_dependencies]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != DISTINCT_SACRIFICE_CAPABILITY)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(result["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + DISTINCT_SACRIFICE_CAPABILITY, result["blockers"])
+
+        assignments = tuple(product((None, 0, 1, 2), repeat=3))
+        for masks in product(range(1, 8), repeat=3):
+            legal = []
+            for assignment in assignments:
+                used = [card for card in assignment if card is not None]
+                if len(used) == len(set(used)) and all(
+                    card is None or masks[card] & (1 << role) for role, card in enumerate(assignment)
+                ):
+                    legal.append((len(used), assignment[0]))
+            maximum = max(count for count, _ in legal)
+            first = {card for count, card in legal if count == maximum}
+            refs, may_skip, actual = distinct_sacrifice_options({str(i): mask for i, mask in enumerate(masks)}, 3)
+            self.assertEqual((maximum, None in first, {str(i) for i in first if i is not None}),
+                             (actual, may_skip, set(refs)), masks)
+
+    def sacrifice_role_offer(self, session):
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        return next(action["choice_schema"] for action in session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+                    if action["id"] == "choose")
+
+    def test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(60828051)
+        engine = session.engine
+        source = self.add(engine, "Generic Distinct Sacrifice Fixture", zone="hand")
+        discard = self.add(engine, "Lightning Bolt", zone="hand", ref="oubliette-private-discard")
+        artifact = self.add(engine, "Ornithopter", seat="B", ref="oubliette-only-artifact")
+        engine.change_control(artifact.object_id, "A", reason="Fixture control change")
+        creature = self.add(engine, "Grizzly Bears", ref="oubliette-creature")
+        land = self.add(engine, "Mountain", ref="oubliette-land")
+        self.prepare(session)
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        self.assertNotIn(discard.ref, str(session.packet("pilot:B", full=True)))
+        accepted = session.act("pilot:A", {"action_id": "choose", "cards": [discard.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", engine.state.cards[discard.object_id].zone)
+        self.assertEqual([creature.ref], self.sacrifice_role_offer(session)["legal_refs"])
+        before = authoritative_state_hash(session.state)
+        for principal, ref in (("pilot:A", artifact.ref), ("pilot:B", creature.ref)):
+            self.assertFalse(session.act(principal, {"action_id": "choose", "objects": [ref]}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": "choose", "objects": [creature.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual([artifact.ref], self.sacrifice_role_offer(session)["legal_refs"])
+        session = self.replay(session, load=True)
+        accepted = session.act("pilot:A", {"action_id": "choose", "objects": [artifact.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual([land.ref], self.sacrifice_role_offer(session)["legal_refs"])
+        cards = (artifact, creature, land)
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "battlefield" for card in cards))
+        accepted = session.act("pilot:A", {"action_id": "choose", "objects": [land.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "graveyard" for card in cards))
+        self.assertIn(artifact.object_id, session.state.players["B"].zones["graveyard"])
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two(self):
+        session = self.session(60828052)
+        engine = session.engine
+        for object_id in tuple(session.state.players["A"].zones["hand"]):
+            engine.move_card(object_id, "library", reason="Fixture empty hand", log=False, semantic_events=False)
+        source = self.add(engine, "Generic Distinct Sacrifice Fixture", zone="hand")
+        ornithopter = self.add(engine, "Ornithopter")
+        citadel = self.add(engine, "Darksteel Citadel")
+        self.prepare(session)
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual([ornithopter.ref], self.sacrifice_role_offer(session)["legal_refs"])
+        chosen = session.act("pilot:A", {"action_id": "choose", "objects": [ornithopter.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        offer = self.sacrifice_role_offer(session)
+        self.assertEqual([citadel.ref], offer["legal_refs"])
+        self.assertEqual(0, offer["minimum"])
+        skipped = session.act("pilot:A", {"action_id": "choose", "objects": []})
+        self.assertTrue(skipped.ok, skipped.summary)
+        offer = self.sacrifice_role_offer(session)
+        self.assertEqual([citadel.ref], offer["legal_refs"])
+        self.assertEqual(1, offer.get("minimum", 1))
+        self.assertFalse(offer.get("optional", False))
+        last = session.act("pilot:A", {"action_id": "choose", "objects": [citadel.ref]})
+        self.assertTrue(last.ok, last.summary)
+        self.assertEqual({ornithopter.object_id, citadel.object_id, source.object_id},
+                         set(session.state.players["A"].zones["graveyard"]))
+        self.replay(session)
 
     def test_fixed_top_exile_requires_its_scope_and_runtime_capability(self):
         from dataclasses import replace

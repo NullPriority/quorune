@@ -252,7 +252,27 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     return None
 
 
+def _distinct_sacrifice_template(text: str) -> CompiledEffectTemplate | None:
+    from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD, DISTINCT_SACRIFICE_ROLES
+
+    material = " ".join(text.split()).casefold().removesuffix(".")
+    sacrifice = "sacrifice a creature, an artifact, and a land"
+    if material not in {sacrifice, "discard a card and " + sacrifice}:
+        return None
+    before = None
+    mechanics = ("sacrifice",)
+    if material != sacrifice:
+        _, effects, _, discard_mechanics = _discard.standalone_controller_discard_effect_template("Discard a card.")
+        before, = effects
+        mechanics = (*discard_mechanics, *mechanics)
+    effect = {"op": "choose_objects", "player": "$controller",
+              DISTINCT_SACRIFICE_FIELD: {"schema_version": 1, "roles": list(DISTINCT_SACRIFICE_ROLES), "before": before}}
+    return "distinct-permanent-sacrifices-v1", (effect,), None, mechanics
+
+
 def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate | None:
+    if distinct := _distinct_sacrifice_template(text):
+        return distinct
     if 'life unless' in text.casefold():
         from .apnap_object_payment_templates import apnap_object_payment_template
 
