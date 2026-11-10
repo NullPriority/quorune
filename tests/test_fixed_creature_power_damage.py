@@ -168,6 +168,33 @@ class FixedCreaturePowerDamageCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
         )
 
+    def test_targeted_self_damage_requires_one_current_creature_slot(self):
+        text = "Target creature deals damage to itself equal to its power."
+        template = fixed_creature_power_damage_effect_template(text, card_name="Power Damage Fixture")
+        effect, = template.effects
+        self.assertEqual(("bite", "$target.0", "$target.0", None), (
+            effect["kind"], effect["source"], effect["target"], effect["source_lki"],
+        ))
+        self.assertEqual("exact", self.compile(text).status)
+        for unsafe in (
+            {**effect, "target_must_be_creature": 1},
+            {**effect, "kind": "fight"},
+            {**effect, "schema_version": 2, "power_multiplier": 2},
+        ):
+            self.assertEqual((), fixed_creature_power_damage_node_capabilities(
+                effects=(unsafe,), target_schema=template.target_schema, mechanic_ids=template.mechanics,
+            ))
+        group, = template.target_schema["groups"]
+        for altered in ({**group, "count": True}, {**group, "types_any": ["artifact"]}):
+            self.assertEqual((), fixed_creature_power_damage_node_capabilities(
+                effects=template.effects, target_schema={"groups": [altered]}, mechanic_ids=template.mechanics,
+            ))
+        for near in (
+            "Target artifact deals damage to itself equal to its power.",
+            "Target creature deals damage to itself equal to twice its power.",
+        ):
+            self.assertIsNone(fixed_creature_power_damage_effect_template(near, card_name="Power Damage Fixture"))
+
     def test_fixed_creature_power_damage_compiles_across_supported_contexts(self):
         cases = (
             (
@@ -1226,6 +1253,44 @@ class OccurrencePowerDamageNativeTests(InheritedNativeFixture, unittest.TestCase
         self.resolve_top(session)
         self.until(session, lambda game: game.state.pending_decision.kind == "semantic.target")
         self.assertEqual(["pilot:A"], session.pending_principals())
+
+    def test_justice_strike_uses_the_original_creatures_current_power_and_lifelink(self):
+        for blink in (False, True):
+            with self.subTest(blink=blink):
+                session = self.session(120822020 + blink)
+                strike = self.add(session.engine, "Justice Strike", zone="hand")
+                creature = self.add(session.engine, "Vampire Nighthawk", seat="B")
+                response = self.add(session.engine, "Cloudshift" if blink else "Giant Growth", seat="B", zone="hand")
+                self.assert_closed(session, strike)
+                self.assert_closed(session, creature)
+                self.assert_closed(session, response)
+                self.prepare(session, mana={"R": 1, "W": 1})
+                session.state.players["B"].mana_pool.update({"W" if blink else "G": 1})
+                self.checkpoint(session)
+                life_before = {seat: session.state.players[seat].life for seat in "ABCD"}
+                original = creature.logical_object_id
+                offered = self.action(session, "A", strike)
+                command = {"action_id": offered["id"], "targets": [creature.ref], "pay": "auto"}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:C", command).ok)
+                self.assertFalse(session.act("pilot:A", {**command, "targets": [creature.ref, creature.ref]}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.cast_for(session, "B", response, [creature.ref])
+                self.resolve_top(session)
+                current = session.state.cards[creature.object_id]
+                if blink:
+                    self.assertNotEqual(original, current.logical_object_id)
+                else:
+                    self.assertEqual(5, session.engine._numeric_stat(creature.object_id, "power"))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[strike.object_id].zone)
+                self.assertEqual("battlefield" if blink else "graveyard", session.state.cards[creature.object_id].zone)
+                if not blink:
+                    life_before["B"] += 5
+                self.assertEqual(life_before, {seat: session.state.players[seat].life for seat in "ABCD"})
+                self.replay(session, load=True)
 
     def test_warstorm_uses_later_power_and_the_original_damage_source_after_blink(self):
         for blink in (False, True):

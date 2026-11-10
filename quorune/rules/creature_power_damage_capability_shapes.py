@@ -24,6 +24,14 @@ from .fixed_stat_multipliers import (
 )
 
 
+_FIXED_POWER_DAMAGE_DEPENDENCIES = (
+    CREATURE_POWER_DAMAGE_CAPABILITY,
+    "damage.amount.positive",
+    "damage.result.multitype_permanent",
+    "target.revalidate_resolution",
+)
+
+
 _ATTACHED_CREATURE = {
     "kind": "source_attachment",
     "relation": "enchanted_object",
@@ -191,6 +199,31 @@ def occurrence_power_damage_runtime_dependencies(program):
     return (*owners, "trigger.event.normalized_zone_change")
 
 
+def _targeted_self_bite_capabilities(effect, target_schema):
+    expected = {
+        "op": CREATURE_POWER_DAMAGE_OPERATION,
+        "kind": "bite",
+        "source": "$target.0",
+        "target": "$target.0",
+        "target_must_be_creature": True,
+        "source_lki": None,
+    }
+    group = {
+        "id": "fighter",
+        "zones": ["battlefield"],
+        "categories": ["permanent"],
+        "types_any": ["creature"],
+        "controller_relation": "any",
+        "count": 1,
+    }
+    if effect != expected or effect.get("target_must_be_creature") is not True:
+        return ()
+    schema = thaw_value(target_schema)
+    if schema != {"groups": [group]} or type(schema["groups"][0]["count"]) is not int:
+        return ()
+    return tuple(sorted(_FIXED_POWER_DAMAGE_DEPENDENCIES))
+
+
 def fixed_creature_power_damage_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -207,6 +240,8 @@ def fixed_creature_power_damage_node_capabilities(
     }.issubset(mechanics) or len(effects) not in {1, 2}:
         return ()
     effect = effects[-1]
+    if effect.get("source") == effect.get("target") == "$target.0":
+        return _targeted_self_bite_capabilities(effect, target_schema) if len(effects) == 1 else ()
     if effect.get("schema_version") == OCCURRENCE_POWER_DAMAGE_VERSION:
         return _occurrence_power_damage_capabilities(effect, target_schema, mechanics) if len(effects) == 1 else ()
     try:
@@ -307,12 +342,7 @@ def fixed_creature_power_damage_node_capabilities(
             direct=direct,
         ):
             return ()
-    dependencies = {
-        CREATURE_POWER_DAMAGE_CAPABILITY,
-        "damage.amount.positive",
-        "damage.result.multitype_permanent",
-        "target.revalidate_resolution",
-    }
+    dependencies = set(_FIXED_POWER_DAMAGE_DEPENDENCIES)
     dependencies.update(prep_dependencies)
     if multiplier == 2:
         dependencies.add(CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY)

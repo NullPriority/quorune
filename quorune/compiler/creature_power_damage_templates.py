@@ -42,6 +42,9 @@ _DIRECT_BITE = re.compile(
     r"(?P<relation> you don't control| an opponent controls)?\.?$",
     re.IGNORECASE,
 )
+_TARGETED_SELF_BITE = re.compile(
+    r"^Target creature deals damage to itself equal to its power\.?$", re.IGNORECASE,
+)
 _SOURCE_BITE = re.compile(
     r"^(?P<optional>You may have )?(?P<source>this creature|it|enchanted creature|.+?) deal(?:s)? damage equal "
     r"to its power to (?P<second>any other target|any target|"
@@ -430,6 +433,23 @@ def _direct_bite(
     )
 
 
+def _targeted_self_bite() -> FixedCreaturePowerDamageTemplate:
+    creature = _creature_group(group_id="fighter", quality="creature", relation="any")
+    return FixedCreaturePowerDamageTemplate(
+        template_id="fixed-targeted-creature-self-power-damage-v1",
+        effects=({
+            "op": CREATURE_POWER_DAMAGE_OPERATION,
+            "kind": "bite",
+            "source": "$target.0",
+            "target": "$target.0",
+            "target_must_be_creature": True,
+            "source_lki": None,
+        },),
+        target_schema={"groups": [creature]},
+        mechanics=(CREATURE_POWER_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage"),
+    )
+
+
 def _source_bite(
     match: re.Match[str],
     *,
@@ -609,6 +629,8 @@ def fixed_creature_power_damage_effect_template(
             allow_source_pronoun=allow_source_pronoun,
             source_attachment_relation=source_attachment_relation,
         )
+    if _TARGETED_SELF_BITE.fullmatch(normalized):
+        return _targeted_self_bite()
     direct_bite = _DIRECT_BITE.fullmatch(normalized)
     if direct_bite is not None:
         return _direct_bite(direct_bite)
