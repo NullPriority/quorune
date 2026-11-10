@@ -17196,6 +17196,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/entry_return_payment.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/entry_subtype_grants.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -18135,6 +18149,20 @@
     },
     {
       "file": "quorune/rules/live_modifier_quantities.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/mana_pool_payment.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -26317,5 +26345,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "51b6020cda78771f2fdfb86942be2852a05a9813c6becdf07e0bc413a460dd27"
+  "fingerprint": "b732f948c9e12ed406f026087099a1dd3f270ec421e6c4592b19c20e07194ce3"
 }

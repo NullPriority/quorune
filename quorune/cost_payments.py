@@ -6,6 +6,7 @@ from dataclasses import replace
 from typing import Any, Mapping
 from .errors import GameRuleError
 from .mana import ManaPlanError, auto_plan_payment, mana_modes_preserving_source
+from .rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD, decode_pool_payment
 from .util import normalize_mana_bundle, pay_mana_from_pool
 from .semantic_runtime.mana_spending import current_mana_spending_policy
 
@@ -74,11 +75,40 @@ def _activate_payment_sources(host, seat, activations, response, spend_context, 
     )
 
 
+def _pay_from_selected_pool(
+    host, seat, requirements, response, *, spend_context, snow_required, preserve_source_id,
+):
+    if any(key in response for key in ("payment", "snow_payment", "reserve")):
+        raise GameRuleError("An exact mana pool payment replaces the color payment and reserve fields")
+    activations = [dict(item) for item in response.get("mana") or []]
+    _activate_payment_sources(host, seat, activations, response, spend_context, preserve_source_id)
+    player = host.state.players[seat]
+    try:
+        allocation = decode_pool_payment(response[MANA_POOL_PAYMENT_FIELD], player)
+        allocation.require_available(player, host._mana_restriction_allows, spend_context)
+        total, snow = allocation.bundles()
+        plan = auto_plan_payment(
+            requirements, (), starting_pool=total, starting_snow_pool=snow, snow_required=snow_required,
+            spending_policy=current_mana_spending_policy(host, seat, spend_context),
+        )
+        combined = {color: plan.payment.get(color, 0) + plan.snow_payment.get(color, 0) for color in "WUBRGC"}
+        if combined != total:
+            raise GameRuleError("Select exactly the mana needed to pay the cost")
+        host._apply_mana_spend(seat, combined, spend_context, snow_payment=plan.snow_payment,
+                              pool_allocation=allocation)
+    except (ValueError, ManaPlanError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return combined, activations
+
+
 def pay_for_cost(
     host, seat: str, requirements: dict[str,int], response: Mapping[str,Any], *,
     exclude_sources: set[str] | None=None, spend_context: str | None=None, snow_required: int=0,
     preserve_source_id: str | None = None,
 ) -> tuple[dict[str,int],list[dict[str,Any]]]:
+    if MANA_POOL_PAYMENT_FIELD in response:
+        return _pay_from_selected_pool(host, seat, requirements, response, spend_context=spend_context,
+            snow_required=snow_required, preserve_source_id=preserve_source_id)
     spending_policy = current_mana_spending_policy(host, seat, spend_context)
     activations: list[dict[str, Any]] = []
     pay_mode = response.get('pay', 'auto')

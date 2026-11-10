@@ -8,6 +8,7 @@ import re
 from typing import Any
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..rules.entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION, ENTRY_RETURN_PAYMENT_VERSION_FIELD
 from ..object_predicate import ObjectQuerySpec
 
 
@@ -133,7 +134,7 @@ class FixedEntryReturnRequirementSpec:
             "prompt": "Choose the required permanent(s) to return.",
         }
         if self.excludes_source:
-            effect["exclude_ref"] = "$source"
+            effect["exclude_ref"] = "$source.zone_object"
         if full_payment:
             effect["require_full_count"] = True
             effect["fallback_effects"] = [
@@ -153,6 +154,7 @@ class FixedEntryReturnRequirementSpec:
         return (
             {
                 "op": "choose_option",
+                ENTRY_RETURN_PAYMENT_VERSION_FIELD: ENTRY_RETURN_PAYMENT_VERSION,
                 "player": "$controller",
                 "prompt": "Return the required permanent(s) or sacrifice this permanent?",
                 "options": [

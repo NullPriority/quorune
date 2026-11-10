@@ -23,7 +23,7 @@ import type { CommandEnvelope, DecisionPacket, JsonValue, LegalAction } from "./
 import { asList, asRecord, cardName, CardInspector, CardTile } from "./CardSurface";
 import { ingestPacket, type ProjectedView } from "./protocol";
 import { findSafeAutoPass } from "./tableAutomation";
-import { visibleActionLabel } from "./tablePresentation";
+import { choiceSubmitLabel, visibleActionLabel } from "./tablePresentation";
 import { AutomationControls, CommanderDamage, ManaHelp } from "./TableStatus";
 import { TableSettings } from "./TableSettings";
 import { TurnStatus } from "./TurnStatus";
@@ -1646,7 +1646,7 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
               <div>
                 <span className="eyebrow">SERVER-ISSUED CHOICES</span>
                 <h2 id="choice-dialog-title">{selectedAction.label ?? selectedAction.action}</h2>
-                <p id="choice-dialog-description">{selectedAction.action === "cast" ? manualMana ? "Spend the mana you floated in the order you chose. The server validates the pool and can complete any routine remainder." : "Use Auto-mana for a routine payment, or cancel and enable Manual mana to tap sources in your preferred order. The server validates every payment." : "Choose from the legal values supplied for your seat. The server validates the final action."}</p>
+                <p id="choice-dialog-description">{selectedAction.action === "cast" ? manualMana ? "Float mana before casting. Choose an exact pool payment when the form offers it." : "Use Auto-mana for a routine payment, or cancel and enable Manual mana to activate sources first." : "Choose from the legal values supplied for your seat. The server validates the final action."}</p>
               </div>
               <button
                 type="button"
@@ -1676,7 +1676,7 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
                 <button type="button" className="secondary-button" onClick={() => { setTablePreference("autoMana", false); setSelectedAction(null); setNotice("Manual mana enabled. Click highlighted mana sources, then choose the spell again."); }}>Use manual mana</button>
               )}
               <button type="submit" data-testid="submit-choice" disabled={submitting || connection !== "LIVE"}>
-                {submitting ? "Submitting…" : selectedAction.action === "cast" ? manualMana ? selectedAction.label ?? "Cast" : `Auto-mana & ${selectedAction.label ?? "Cast"}` : selectedAction.form?.submit_label ?? "Submit"}
+                {choiceSubmitLabel(selectedAction, manualMana, submitting, choiceValues.mana_pool_payment)}
               </button>
             </div>
           </form>

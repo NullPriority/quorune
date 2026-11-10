@@ -1,4 +1,15 @@
-import type { LegalAction } from "./generated/protocol";
+import type { JsonValue, LegalAction } from "./generated/protocol";
+
+export function choiceSubmitLabel(
+  action: LegalAction, manualMana: boolean, submitting: boolean, allocation: JsonValue | undefined,
+): string {
+  if (submitting) return "Submitting…";
+  if (action.action !== "cast") return action.form?.submit_label ?? "Submit";
+  const selectedPool = allocation && typeof allocation === "object" && !Array.isArray(allocation)
+    && Object.keys(allocation).length > 0;
+  const label = action.label ?? "Cast";
+  return manualMana || selectedPool ? label : `Auto-mana & ${label}`;
+}
 
 export const MACRO_PHASES = [
   { id: "untap", label: "Untap" },

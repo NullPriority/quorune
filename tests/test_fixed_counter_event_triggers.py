@@ -4049,6 +4049,31 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 **arguments,
             ),
         )
+        self.assertEqual(1, node.effects[0]["entry_return_payment_version"])
+        branch = node.effects[0]["then_by_choice"]["return"][0]
+        self.assertEqual("$source.zone_object", branch["exclude_ref"])
+        legacy = deepcopy(node.effects[0])
+        legacy.pop("entry_return_payment_version")
+        legacy["then_by_choice"]["return"][0]["exclude_ref"] = "$source"
+        self.assertEqual(
+            ("choice.controller.fixed_return_owner_hand",),
+            fixed_entry_return_node_capabilities(effects=(legacy,), **arguments),
+        )
+        wrong_incarnation = deepcopy(node.effects[0])
+        wrong_incarnation["then_by_choice"]["return"][0]["exclude_ref"] = "$target.0"
+        wrong_payment_version = deepcopy(node.effects[0])
+        wrong_payment_version["entry_return_payment_version"] = True
+        from types import SimpleNamespace
+        from quorune.rules.entry_return_capability_shapes import checked_entry_return_runtime_dependencies
+        program = dict(effects=node.effects, target_schema=node.target_schema, event=node.event,
+                       active_zone=node.active_zone, event_condition=node.event_condition)
+        self.assertEqual(
+            ("choice.controller.fixed_return_owner_hand",),
+            checked_entry_return_runtime_dependencies(SimpleNamespace(**program)),
+        )
+        for altered in ({"event_condition": None}, {"effects": (wrong_payment_version,)}):
+            with self.assertRaises(ValueError):
+                checked_entry_return_runtime_dependencies(SimpleNamespace(**{**program, **altered}))
         unexpected_field = deepcopy(node.effects[0])
         unexpected_field["unsupported"] = True
         wrong_option = deepcopy(node.effects[0])
@@ -4066,6 +4091,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             wrong_option,
             wrong_fallback,
             open_return,
+            wrong_incarnation,
+            wrong_payment_version,
         ):
             with self.subTest(mutant=mutant):
                 self.assertEqual(

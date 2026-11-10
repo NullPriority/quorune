@@ -744,6 +744,38 @@ class ComplexActivationManaRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected, replay["final_state_hash"])
 
+    def test_exact_pool_payment_requires_the_selected_snow_unit(self):
+        from quorune.rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD, PoolManaUnit
+
+        session = self.session("Snow Channel", seed=174_010_018)
+        engine = session.engine
+        source = self.permanent(engine, "Snow Channel")
+        engine._add_mana_to_pool("A", {"U": 1}, snow_source=True)
+        engine._add_mana_to_pool("A", {"U": 1})
+        self.set_priority(engine)
+        ability = engine._activated_abilities(source)[0]
+        offer = self.offer(session, source, ability)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        before = authoritative_state_hash(engine.state)
+        denied = session.act("pilot:A", {"action_id": offer["id"],
+            MANA_POOL_PAYMENT_FIELD: {PoolManaUnit("U").key: 1}})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.assertFalse(engine.state.cards[source.object_id].tapped)
+        accepted = session.act("pilot:A", {"action_id": offer["id"],
+            MANA_POOL_PAYMENT_FIELD: {PoolManaUnit("U", snow=True).key: 1}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1, engine.state.players["A"].mana_pool["U"])
+        self.assertNotIn(MANA_PROVENANCE_KEY, engine.state.players["A"].stats)
+        self.resolve(session)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "selected-snow-pool"
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertEqual(authoritative_state_hash(engine.state), replay["final_state_hash"])
+
     def test_stale_snow_provenance_rolls_back_before_tap(self):
         session = self.session("Snow Channel", seed=174_010_011)
         engine = session.engine

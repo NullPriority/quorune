@@ -872,6 +872,7 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
     """Resolve one available instruction without changing its position in the program."""
     from ..card_overrides import normalize_game_record_v3_effect
     from ..rules.casting.spell_text import cast_text_instruction_has_no_target, scoped_cast_text_instruction
+    from ..rules.entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION_FIELD, bind_checked_entry_return_payment
     from ..scheduled_player import scheduled_player_instruction_is_impossible
 
     if scheduled_player_instruction_is_impossible(host, item, raw_effect):
@@ -899,6 +900,8 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         except (ValueError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, scoped_item))
+    if ENTRY_RETURN_PAYMENT_VERSION_FIELD in raw_effect:
+        effect = bind_checked_entry_return_payment(host, scoped_item, raw_effect, effect)
     if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
         return None
     if raw_effect.get('op') == 'offer_optional_effect' and unavailable_optional_combat_removal(host, raw_effect, effect):

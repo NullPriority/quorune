@@ -2258,6 +2258,29 @@
       "browser_focuses": [
         "mana-action"
       ],
+      "id": "explicit-mana-pool-payment",
+      "patterns": [
+        "quorune/choice_forms.py",
+        "quorune/cost_payments.py",
+        "quorune/rules/mana_pool_payment.py",
+        "quorune/mana_provenance.py",
+        "quorune/projection.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/service.py",
+        "tests/test_complex_activation_mana_costs.py",
+        "tests/test_restricted_mana_grants.py"
+      ],
+      "test_modules": [
+        "test_application_protocol",
+        "test_complex_activation_mana_costs",
+        "test_permissions_projection",
+        "test_restricted_mana_grants"
+      ]
+    },
+    {
+      "browser_focuses": [
+        "mana-action"
+      ],
       "id": "complex-activation-mana-cost-contract",
       "patterns": [
         "quorune/activation_mana_cost.py",

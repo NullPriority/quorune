@@ -736,13 +736,15 @@ Its battlefield incarnation retains the designation through control changes,
 phasing, and ability removal. The zone-change owner clears it when the
 permanent leaves. Checkpoints omit the field for objects without the designation.
 
-Current games pin `qualified_attack_facts_version: 1`. Declared-attack
+Current games pin `qualified_attack_facts_version: 2`. Declared-attack
 occurrences carry versioned public attacker characteristics sealed after
 declaration and before discovery. Pending triggers retain those facts across
 later characteristic changes, source departure, save/load and replay.
-Checkpoints without the execution marker retain the older event contexts and
-hashes; replay does not append the new fields. Unknown versions and Boolean
-versions are rejected.
+Version two reads signed power and toughness from the full characteristic
+evaluation. Version-one execution retains the historical numeric projection.
+Both execution versions use the same version-one occurrence field layout.
+Unmarked checkpoints replay with the earlier event contexts and hashes.
+Unknown versions and Boolean versions are rejected.
 The same execution marker enables a sealed `declared_attacker_snapshots`
 collection containing public traits, attacker logical identities and declared
 recipients. Qualified batch conditions count this collection rather than live

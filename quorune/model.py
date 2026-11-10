@@ -24,7 +24,7 @@ from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
 from .ability_source_information import ability_source_information_version
-from .qualified_attack_model import qualified_attack_facts_version
+from .qualified_attack_model import QUALIFIED_ATTACK_FULL_STATS_VERSION, qualified_attack_facts_version
 from .permanent_event_state_model import ZONE_EVENT_NUMERICS_VERSION, permanent_event_state_version
 from .battle_cry_resolution_model import battle_cry_resolution_version
 from .block_characteristic_model import block_characteristics_version
@@ -1259,7 +1259,7 @@ class GameState:
     stack_resolution_authority_version: int | None = 1
     token_copy_value_version: int | None = 1
     predefined_token_name_version: int | None = 1
-    qualified_attack_facts_version: int | None = 1
+    qualified_attack_facts_version: int | None = QUALIFIED_ATTACK_FULL_STATS_VERSION
     permanent_event_state_version: int | None = ZONE_EVENT_NUMERICS_VERSION
     battle_cry_resolution_version: int | None = 1
     ninjutsu_band_retention_version: int | None = 1

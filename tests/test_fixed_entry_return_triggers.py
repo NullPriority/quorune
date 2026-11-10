@@ -577,12 +577,13 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
                         candidate_count=available,
                     )
                     seed += 1
-                    selected_return = session.act(
-                        "pilot:A",
-                        {"action_id": "choose", "choice": "return"},
-                    )
-                    self.assertTrue(selected_return.ok, selected_return.summary)
                     if available == count:
+                        self.assertEqual("semantic.choice", session.engine.state.pending_decision.kind)
+                        selected_return = session.act(
+                            "pilot:A",
+                            {"action_id": "choose", "choice": "return"},
+                        )
+                        self.assertTrue(selected_return.ok, selected_return.summary)
                         returned = session.act(
                             "pilot:A",
                             {
@@ -596,13 +597,9 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
                             all(card.zone == "hand" for card in candidates)
                         )
                     else:
-                        self.assertNotEqual(
-                            "choice.apnap",
-                            getattr(
-                                session.engine.state.pending_decision,
-                                "kind",
-                                None,
-                            ),
+                        self.assertNotIn(
+                            getattr(session.engine.state.pending_decision, "kind", None),
+                            {"semantic.choice", "choice.apnap"},
                         )
                         self.assertEqual("graveyard", source.zone)
                         self.assertTrue(
@@ -713,11 +710,10 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
         )
         fallback_engine._stabilize()
         self.resolve_top(fallback_engine)
-        fallback_choice = fallback_session.act(
-            "pilot:A",
-            {"action_id": "choose", "choice": "return"},
+        self.assertNotIn(
+            getattr(fallback_engine.state.pending_decision, "kind", None),
+            {"semantic.choice", "choice.apnap"},
         )
-        self.assertTrue(fallback_choice.ok, fallback_choice.summary)
         self.assertEqual("graveyard", fallback.zone)
 
         removed_session = self.session(121073)
@@ -916,18 +912,25 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
                     )
 
                 self.resolve_top(engine)
-                result = session.act(
-                    "pilot:A",
-                    {"action_id": "choose", "choice": "sacrifice"},
-                )
-
-                self.assertTrue(result.ok, result.summary)
+                if reenter:
+                    self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+                    result = session.act(
+                        "pilot:A",
+                        {"action_id": "choose", "choice": "sacrifice"},
+                    )
+                    self.assertTrue(result.ok, result.summary)
+                else:
+                    self.assertNotIn(
+                        getattr(engine.state.pending_decision, "kind", None),
+                        {"semantic.choice", "choice.apnap"},
+                    )
                 self.assertEqual(
                     "battlefield" if reenter else "graveyard",
                     source.zone,
                 )
 
     def test_reentered_source_remains_excluded_from_another_return_payment(self):
+        """Replay one archived physical-reference exclusion."""
         session = self.session(121085)
         engine = session.engine
         source = self.add_card(
@@ -938,6 +941,13 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
             zone="hand",
         )
         program = self.register_typed_event_trigger(engine, source)
+        legacy_effects = deepcopy(program.effects)
+        self.assertEqual(1, legacy_effects[0].pop("entry_return_payment_version"))
+        legacy_choice = legacy_effects[0]["then_by_choice"]["return"][0]
+        self.assertEqual("$source.zone_object", legacy_choice["exclude_ref"])
+        legacy_choice["exclude_ref"] = "$source"
+        program = replace(program, effects=legacy_effects)
+        engine.semantics.put(program)
         engine.move_card(
             source.object_id,
             "battlefield",
@@ -964,6 +974,9 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
         self.assertNotEqual(old_incarnation, source.logical_object_id)
 
         self.resolve_top(engine)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
         selected_return = session.act(
             "pilot:A",
             {"action_id": "choose", "choice": "return"},
@@ -975,6 +988,12 @@ class FixedEntryReturnTriggerRuntimeTests(unittest.TestCase):
             getattr(engine.state.pending_decision, "kind", None),
         )
         self.assertEqual("battlefield", source.zone)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "legacy-entry-return-exclusion"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(authoritative_state_hash(engine.state), replay["final_state_hash"])
 
 
 if __name__ == "__main__":

@@ -506,7 +506,9 @@ def _pay_object_and_mana_costs(
         )
         mana_response = {**response, "_mana_replacement_selections": mana_journal}
     payer_protection = {"preserve_source_id": payer_identity[0]} if blight is not None else {}
-    if sum(requirements.values()) or snow_required:
+    from ..mana_pool_payment import MANA_POOL_PAYMENT_FIELD
+
+    if sum(requirements.values()) or snow_required or MANA_POOL_PAYMENT_FIELD in mana_response:
         spent, activations = host._pay_for_cost(
             proposal.seat,
             requirements,

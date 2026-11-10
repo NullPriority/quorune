@@ -977,6 +977,8 @@ def _public_damage_spec(
 
 
 def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> FixedPublicEventBindingSpec | None:
+    from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY, defended_player_or_planeswalker_condition
+
     saddled = re.fullmatch(r"(?:When|Whenever) (?P<source>.+?) attacks while saddled, (?P<body>.+)",
         material_line, re.I)
     if saddled is not None and _source_subject(saddled["source"], card_name=card_name):
@@ -1010,14 +1012,9 @@ def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> 
             {"field": "attacking_alone", "op": "truthy", "value": True}
             if match.group("alone") is not None
             else None,
-            {
-                "field": "defending_player",
-                "op": "eq",
-                "value": "$source.controller",
-            }
-            if match.group("recipient") is not None
-            else None,
+            defended_player_or_planeswalker_condition() if match.group("recipient") is not None else None,
         ),
+        capabilities=(QUALIFIED_ATTACK_CAPABILITY,) if match.group("recipient") is not None else (),
     )
 
 
