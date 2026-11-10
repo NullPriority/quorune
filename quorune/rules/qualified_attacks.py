@@ -4,17 +4,25 @@ from collections.abc import Mapping
 from types import SimpleNamespace
 
 from ..qualified_attack_model import (ATTACK_FACT_PREFIX, ATTACK_FACT_COLLECTIONS,
-    ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS, QUALIFIED_ATTACK_CAPABILITY, qualified_attack_facts_version)
+    ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS, QUALIFIED_ATTACK_CAPABILITY,
+    QUALIFIED_ATTACK_FULL_STATS_VERSION, qualified_attack_facts_version)
+from ..object_query import exact_numeric_characteristic
 
 
 def attack_characteristic_context(host, card):
     """Read after declaration; callers seal all occurrences before discovery."""
-    if qualified_attack_facts_version(getattr(host.state, 'qualified_attack_facts_version', None)) is None:
+    version = qualified_attack_facts_version(getattr(host.state, 'qualified_attack_facts_version', None))
+    if version is None:
         return {}
     row = host._public_object_query_result(card)
+    power, toughness = row.effective_power, row.effective_toughness
+    if version == QUALIFIED_ATTACK_FULL_STATS_VERSION:
+        effective = host._effective_card_data(card)
+        power = exact_numeric_characteristic(card, effective, "power")
+        toughness = exact_numeric_characteristic(card, effective, "toughness")
     facts = {name: list(getattr(row, name)) for name in ATTACK_FACT_COLLECTIONS - {'counter_names'}}
     facts.update({name: getattr(row, name) for name in ATTACK_FACT_BOOLEANS - {'monstrous'}})
-    facts.update(version=1, power=row.effective_power, toughness=row.effective_toughness,
+    facts.update(version=1, power=power, toughness=toughness,
         monstrous=row.monstrous_value is not None,
         counter_names=sorted(name for name, amount in row.counters.items() if amount > 0),
         total_counters=sum(row.counters.values()))

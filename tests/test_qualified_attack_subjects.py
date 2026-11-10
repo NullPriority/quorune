@@ -216,13 +216,15 @@ class QualifiedAttackNativeTests(unittest.TestCase):
         from quorune.model import GameState
         from quorune.rules.qualified_attacks import attack_characteristic_context
         session=self.session(508629015);raw=session.state.to_dict()
-        self.assertEqual(1,raw['qualified_attack_facts_version'])
+        self.assertEqual(2,raw['qualified_attack_facts_version'])
         self.assertEqual(raw,GameState.from_dict(raw).to_dict())
+        version_one = {**raw, "qualified_attack_facts_version": 1}
+        self.assertEqual(version_one, GameState.from_dict(version_one).to_dict())
         old=deepcopy(raw);old.pop('qualified_attack_facts_version')
         restored=GameState.from_dict(old);self.assertIsNone(restored.qualified_attack_facts_version)
         self.assertEqual(old,restored.to_dict())
         self.assertEqual({},attack_characteristic_context(SimpleNamespace(state=restored),None))
-        for version in (True,False,0,2,'1'):
+        for version in (True, False, 0, 3, 2.0, '1', '2'):
             with self.assertRaises(ValueError):GameState.from_dict({**raw,'qualified_attack_facts_version':version})
 
     def activate(self,session,seat,card,targets):

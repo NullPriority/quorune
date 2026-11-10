@@ -155,7 +155,9 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'qualified-attack-batches.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/qualified-attack-batch-cards.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/qualified-attack-batch-cards.json',
+            ROOT/'tests/fixtures/defender-declaration-numeric-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Attack batches',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
 
@@ -273,6 +275,44 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
         self.assertEqual(1,session.engine._numeric_stat(large.object_id,'power'))
         self.assertEqual(1,sum(c.zone=='battlefield' and c.is_token for c in session.state.cards.values()))
         self.replay(session,load=True)
+
+    def test_jolene_uses_precombat_growth_and_preserves_version_one_replay(self):
+        from quorune.qualified_attack_model import ATTACK_FACT_PREFIX
+
+        for version in (1, 2):
+            with self.subTest(version=version):
+                session = self.session(508631070 + version)
+                engine = session.engine
+                observer = self.add(engine, "Jolene, Plundering Pugilist")
+                attacker = self.add(engine, "Goblin Piker")
+                attacker.acquired_control_turn_count = -1
+                pump = self.add(engine, "Giant Growth", zone="hand")
+                self.assert_closed(session, observer)
+                self.assert_closed(session, pump)
+                if version == 1:
+                    session.state.qualified_attack_facts_version = 1
+                self.assertEqual(version, session.state.qualified_attack_facts_version)
+                self.prepare(session, mana={"G": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", pump, [attacker.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(5, engine._numeric_stat(attacker.object_id, "power"))
+                self.attack(session, [(attacker, "B")])
+                self.assertEqual(int(version == 2), self.trigger_count(session, observer))
+                if version == 2:
+                    trigger = next(item for item in session.state.stack if item.source_object_id == observer.object_id)
+                    facts = trigger.context
+                    self.assertEqual((1, 5, 4), tuple(facts[ATTACK_FACT_PREFIX + field]
+                        for field in ("version", "power", "toughness")))
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                treasures = [card for card in session.state.cards.values()
+                    if card.is_token and card.zone == "battlefield"]
+                self.assertEqual(int(version == 2), len(treasures))
+                for treasure in treasures:
+                    type_line = session.engine._effective_card_data(treasure)["type_line"]
+                    self.assertIn("treasure", session.engine._type_parts(type_line)[1])
+                self.replay(session, load=True)
 
     def test_actual_metropolis_accepts_any_counter_and_keeps_one_draw_after_counter_removal(self):
         session=self.session(508631080);source=self.add(session.engine,'Metropolis Angel',zone='hand')

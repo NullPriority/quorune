@@ -8,9 +8,10 @@ ATTACK_FACT_COLLECTIONS = frozenset({'types', 'subtypes', 'supertypes', 'colors'
 ATTACK_FACT_BOOLEANS = frozenset({'token', 'tapped', 'attacking', 'blocking', 'enchanted', 'equipped',
     'modified', 'monstrous', 'entered_this_turn', 'commander'})
 ATTACK_FACT_NUMBERS = frozenset({'power', 'toughness', 'total_counters'})
+QUALIFIED_ATTACK_FULL_STATS_VERSION = 2
 
 
 def qualified_attack_facts_version(value):
-    if value is not None and (type(value) is not int or value != 1):
+    if value is not None and (type(value) is not int or value not in {1, QUALIFIED_ATTACK_FULL_STATS_VERSION}):
         raise ValueError('Unsupported qualified-attack facts version')
     return value
