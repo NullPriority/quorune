@@ -30,7 +30,7 @@ from .compiler.fixed_public_characteristic_sets import (
 )
 from .compiler.fixed_attachment_keyword_nodes import fixed_attachment_keyword_node
 from .compiler.attached_granted_ability_nodes import (
-    compile_keyword_or_attached_grant_nodes as _keyword_or_attached_grant_nodes,
+    compile_early_material_nodes as _early_material_nodes,
 )
 from .compiler.effect_template_composition import (
     reviewed_contextual_effect_template,
@@ -178,7 +178,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v893"
+ORACLE_COMPILER_VERSION = "oracle-ir-v894"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1247,7 +1247,7 @@ def _compile_face(
         if player_nodes is not None:
             nodes.extend(player_nodes)
             continue
-        early_nodes = _keyword_or_attached_grant_nodes(
+        early_nodes = _early_material_nodes(
             record=record, face_id=face_id, node_id=node_id, line=line,
             material_line=material_line, span=span,
             source_name=face_name or record.name, effect_template=contextual_effect_template, keywords=keywords,

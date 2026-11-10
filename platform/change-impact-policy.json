@@ -2134,6 +2134,24 @@
       ]
     },
     {
+      "id": "printed-deck-copy-limit-contract",
+      "patterns": [
+        "quorune/deck.py",
+        "quorune/deck_copy_limits.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/deck_copy_limits.py",
+        "quorune/semantic_runtime/deck_copy_limits.py",
+        "tests/fixtures/printed-deck-copy-limit-cards.json",
+        "tests/test_deck_loader.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_commander_match_readiness",
+        "test_deck_loader",
+        "test_server_app"
+      ]
+    },
+    {
       "id": "public-named-quantity-contract",
       "patterns": [
         "quorune/carddb_characteristics.py",

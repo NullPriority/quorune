@@ -202,6 +202,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/prevention_recipient_sets.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
+        "quorune/deck_copy_limits.py",
         "quorune/fixed_blocker_restrictions.py",
         "quorune/source_block_pair_model.py",
         "quorune/temporary_all_blocker_model.py",

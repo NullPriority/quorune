@@ -418,6 +418,14 @@ Commander pairing is also a CardProgram declaration boundary. Exact ordinary
   Unknown Partner variants, granted or changed setup abilities, and stale or duplicate
   declarations fail closed until their distinct typed owners are implemented.
 
+A printed Commander copy-limit exception compiles to a source-spanned
+`deck.construction` declaration in the deck zone. The deck validator reads
+the current exact declaration and applies its finite limit or unrestricted
+copy count to the canonical English name. Deck uploads use the same count
+check alongside ordinary size, color identity, and snapshot legality checks.
+Live ability discovery reads gameplay zones, which keeps this pregame
+declaration out of the match.
+
 ## Inspection and extension
 
 Use `simctl.py card compile`, `explain`, `audit`, `diff`, `trust-closure`, and

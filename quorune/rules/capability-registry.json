@@ -87620,6 +87620,79 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "summary": "One exact source-spanned Commander deck-copy declaration supplies the current canonical name's finite or unrestricted pregame limit.",
+        "inputs": [
+          "printed English card name and one closed copy-limit line",
+          "exact compiler and pregame component binding",
+          "canonical mainboard and commander entries"
+        ],
+        "outputs": [
+          "current copy ceiling for Commander deck validation and upload",
+          "ordinary size, color identity, and snapshot legality checks",
+          "deck-only declaration outside gameplay discovery"
+        ],
+        "exclusions": [
+          "foreign names and conflicting declarations",
+          "unrepresented deck conditions or quantities",
+          "changes to snapshot legality or ordinary commander eligibility"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "Missing compiler authority leaves a material residual. The registered component independently requires its declared capability, and deck validation reads one exact descriptor.",
+      "dependency_fail_closed_status": "passed",
+      "id": "format.commander.printed_copy_limit",
+      "implementation_components": [
+        "quorune.deck_copy_limits.DeckCopyLimitSpec",
+        "quorune.compiler.deck_copy_limits.printed_deck_copy_limit_node",
+        "quorune.compiler.deck_copy_limits.compiled_deck_copy_limit",
+        "quorune.semantic_runtime.deck_copy_limits.DeckCopyLimitFragmentHandler",
+        "quorune.deck.DeckLoader.validate_commander_deck"
+      ],
+      "implementation_mutation_rationale": "Omitting the printed declaration restores the singleton conflict for an otherwise legal Persistent Petitioners list.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
+        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
+        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
+      ],
+      "multiplayer_tests": [],
+      "negative_tests": [
+        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
+        "test_printed_copy_limit_rejects_foreign_names_open_clauses_and_duplicates",
+        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
+        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
+      ],
+      "official_rules": [
+        "101.1",
+        "113.6n",
+        "201.2",
+        "903.5b"
+      ],
+      "positive_tests": [
+        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
+        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
+        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_valid_printed_copy_limit_deck_starts_and_replays_with_both_copies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -87628,7 +87701,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 770,
+  "registry_version": 771,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

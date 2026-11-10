@@ -44,6 +44,7 @@ from .declaration_fragments import (
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
 )
+from .deck_copy_limits import DeckCopyLimitSpec
 from .defender_permission import DefenderAttackPermission
 from .block_capacity_model import BlockCapacitySpec
 from .landwalk_permission_model import LandwalkBlockPermission
@@ -801,6 +802,7 @@ StaticAbilityFragment: TypeAlias = (
     | SpellCastKeywordTriggerSpec
     | ToxicSpec
     | PartnerWithSpec
+    | DeckCopyLimitSpec
     | StaticComponentSpec
     | StaticComponentScopeSpec
     | CounterMaximumSpec
@@ -869,6 +871,8 @@ def ability_fragment_to_dict(
         kind = TOXIC_ABILITY_FRAGMENT_KIND
     elif isinstance(fragment, PartnerWithSpec):
         kind = "partner_with"
+    elif isinstance(fragment, DeckCopyLimitSpec):
+        kind = "deck_copy_limit"
     elif isinstance(fragment, StaticComponentSpec):
         kind = "static_component"
     elif isinstance(fragment, StaticComponentScopeSpec):
@@ -977,8 +981,8 @@ def ability_fragment_from_dict(
         return SpellCastKeywordTriggerSpec.from_dict(value["value"])
     if value["kind"] == TOXIC_ABILITY_FRAGMENT_KIND:
         return ToxicSpec.from_dict(value["value"])
-    if value["kind"] == "partner_with":
-        return PartnerWithSpec.from_dict(value["value"])
+    if value["kind"] in {"partner_with", "deck_copy_limit"}:
+        return (PartnerWithSpec if value["kind"] == "partner_with" else DeckCopyLimitSpec).from_dict(value["value"])
     if value["kind"] == "static_component":
         return StaticComponentSpec.from_dict(value["value"])
     if value["kind"] == "static_component_scope":
@@ -1108,6 +1112,7 @@ def canonical_ability_fragments(
                 SpellCastKeywordTriggerSpec,
                 ToxicSpec,
                 PartnerWithSpec,
+                DeckCopyLimitSpec,
                 StaticComponentSpec,
                 StaticComponentScopeSpec,
                 CounterMaximumSpec,

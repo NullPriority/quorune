@@ -603,7 +603,7 @@ def _source_bound_cost_nodes(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
 
 
-def compile_keyword_or_attached_grant_nodes(
+def compile_early_material_nodes(
     *,
     record: CardRecord,
     face_id: str,
@@ -629,6 +629,13 @@ def compile_keyword_or_attached_grant_nodes(
     grant_effect_templates: Callable[..., tuple[Any, Any]],
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
+    from .deck_copy_limits import DECK_COPY_LIMIT_PREFIX, printed_deck_copy_limit_node
+    if material_line.casefold().startswith(DECK_COPY_LIMIT_PREFIX):
+        deck_limit = printed_deck_copy_limit_node(record=record, node_id=node_id, line=line,
+            material_line=material_line, span=span, capability_registry=capability_registry,
+            capability_profile=capability_profile, residuals=residuals)
+        if deck_limit is not None:
+            return (deck_limit,)
     from .emblem_nodes import compiled_emblem_nodes
     emblem = compiled_emblem_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name, effect_template=effect_template,
@@ -805,5 +812,5 @@ __all__ = [
     "attached_granted_program_ability_id",
     "compile_attached_granted_ability_nodes",
     "compile_fixed_query_granted_ability_nodes",
-    "compile_keyword_or_attached_grant_nodes",
+    "compile_early_material_nodes",
 ]

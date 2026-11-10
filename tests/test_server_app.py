@@ -64,6 +64,30 @@ class ServerApplicationTests(unittest.TestCase):
         cookie = cookies[0]
         self.client.cookies.set(name, value, domain=cookie.domain, path=cookie.path)
 
+    def test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy(self):
+        player, _ = self.guest("Copy Limit Pilot")
+        created = self.client.post("/api/v1/rooms", headers=self.auth(player), json={"seed": 9035})
+        self.assertEqual(201, created.status_code, created.text)
+        room = created.json()["room"]["room_id"]
+        cases = (
+            ("Persistent Petitioners", 2, "Island", "Azami, Lady of Scrolls", 200),
+            ("Seven Dwarves", 7, "Mountain", "Krenko, Tin Street Kingpin", 200),
+            ("Seven Dwarves", 8, "Mountain", "Krenko, Tin Street Kingpin", 409),
+            ("Nazgûl", 9, "Swamp", "Drana, Kalastria Bloodchief", 200),
+            ("Nazgûl", 10, "Swamp", "Drana, Kalastria Bloodchief", 409),
+        )
+        for name, copies, land, commander, status in cases:
+            with self.subTest(card=name, copies=copies):
+                response = self.client.put(f"/api/v1/rooms/{room}/deck", headers=self.auth(player), json={
+                    "name": f"Printed copy limit for {name}", "commander": commander,
+                    "decklist": f"Commander:\n1 {commander}\nMainboard:\n{copies} {name}\n{99 - copies} {land}\n",
+                })
+                self.assertEqual(status, response.status_code, response.text)
+                if status == 200:
+                    self.assertEqual("legal", response.json()["format_legality"]["status"])
+                else:
+                    self.assertIn("printed limit", response.text)
+
     def test_websocket_origin_accepts_exact_same_origin_and_rejects_foreign(self):
         configured = ("http://127.0.0.1:5173",)
         self.assertTrue(

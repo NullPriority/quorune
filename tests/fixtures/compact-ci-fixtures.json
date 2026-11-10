@@ -4,6 +4,17 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/printed-deck-copy-limit-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The compiler witness binds the pinned printed copy-limit cohort by name.",
+      "source": "tests/test_deck_loader.py",
+      "symbol": "DeckLoaderTests.test_printed_copy_limit_originals_have_trusted_pregame_bindings"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/attached-characteristic-closure-cards.json"
       ],
       "oracle_ids": [],
@@ -764,6 +775,7 @@
     "tests/fixtures/prepared-power-damage-cards.json",
     "tests/fixtures/prevention-composition-cards.json",
     "tests/fixtures/priced-mana-source-cards.json",
+    "tests/fixtures/printed-deck-copy-limit-cards.json",
     "tests/fixtures/printed-source-attachment-cards.json",
     "tests/fixtures/protection-list-cards.json",
     "tests/fixtures/prototype-cards.json",

@@ -303,6 +303,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.as_unblocked_assignment",
                 "ability.static.toughness_assignment",
                 "ability.static.attached_goad",
+                "deck.construction.copy_limit",
                 "ability.static.dynamic_power_toughness",
                 "ability.static.component_scope",
                 "ability.static.protection",

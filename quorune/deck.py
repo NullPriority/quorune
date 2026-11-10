@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
-from .carddb import CardDatabase
+from .carddb import CardDatabase, CardRecord
 from .util import normalize_card_name, stable_json, unique_preserving_order
 from .version import __version__
 
@@ -538,15 +538,23 @@ class DeckLoader:
             issues.append(f"Deck has {len(deck.commanders)} commanders")
 
         counts: dict[str, int] = {}
+        records: dict[str, CardRecord] = {}
         for entry in deck.entries:
             if entry.board not in {"mainboard", "commander"}:
                 continue
-            counts[entry.name] = counts.get(entry.name, 0) + entry.quantity
+            card = self.card_db.lookup(entry.name)
+            records[card.name] = card
+            counts[card.name] = counts.get(card.name, 0) + entry.quantity
+        from .compiler.deck_copy_limits import compiled_deck_copy_limit
+
         for name, count in sorted(counts.items()):
-            card = self.card_db.lookup(name)
-            if count > 1 and "Basic" not in card.type_line:
-                # This does not attempt to parse every "any number" exception.
+            if count <= 1 or "Basic" in records[name].type_line:
+                continue
+            limit = compiled_deck_copy_limit(records[name])
+            if limit is None:
                 issues.append(f"Singleton warning: {count} copies of {name}")
+            elif limit.maximum is not None and count > limit.maximum:
+                issues.append(f"Deck has {count} copies of {name}. Its printed limit is {limit.maximum}.")
 
         if check_legality:
             issues.extend(
@@ -559,7 +567,7 @@ class DeckLoader:
             for commander_name in deck.commanders:
                 identity.update(self.card_db.lookup(commander_name).color_identity)
             for name in counts:
-                card_identity = set(self.card_db.lookup(name).color_identity)
+                card_identity = set(records[name].color_identity)
                 if not card_identity.issubset(identity):
                     issues.append(
                         f"Color identity warning: {name} has {sorted(card_identity)}, "
