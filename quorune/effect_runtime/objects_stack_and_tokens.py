@@ -1024,8 +1024,12 @@ def _apply_grant_cast_permission(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
+    from ..impulse_access import apply_chosen_impulse_access
     from ..rules.temporary_cast_timing import TEMPORARY_CAST_TIMING_FIELD, apply_temporary_cast_timing
 
+    if CHOSEN_IMPULSE_GRANT_FIELD in effect:
+        return apply_chosen_impulse_access(host, effect, actor=actor, reason=reason)
     if TEMPORARY_CAST_TIMING_FIELD in effect:
         return apply_temporary_cast_timing(host, effect, actor=actor, reason=reason)
     card = host._resolve_object(

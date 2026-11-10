@@ -11664,6 +11664,7 @@
         "quorune/semantic_choices/discover_cast.py",
         "quorune/fixed_top_exile.py",
         "quorune/semantic_choices/fixed_top_exile.py",
+        "tests/fixtures/chosen-impulse-access-cards.json",
         "quorune/semantic_choices/defaults.py",
         "quorune/semantic_choices/engine_coordination.py",
         "quorune/semantic_choices/intent_replacement.py",

@@ -4306,6 +4306,13 @@ recomputes costs and targets after each accepted cast. The same owner handles
 a normalized caster's top card, a controller's paid cast with a fixed damage
 fallback, and optional free casts in any order from the multiplayer set.
 
+The chosen impulse form captures a fixed group from the resolving controller's
+library. The controller chooses one of the resulting exile incarnations and
+receives ordinary spell-cast or land-play permission for its printed window.
+The public choice rechecks the captured identities on completion. A single
+remaining result determines the grant directly. The same window owner handles
+cleanup and normal play of the selected object.
+
 Fixed life loss unless each affected player discards or sacrifices one object
 shares the APNAP choice owner. Players choose in turn order. Earlier payment
 decisions are visible, and selected hand identities stay private until the

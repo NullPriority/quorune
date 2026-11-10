@@ -251,6 +251,27 @@ def resolve_fixed_impulse_access(
     )
 
 
+def apply_chosen_impulse_access(host, effect, *, actor, reason):
+    from .fixed_top_exile import chosen_impulse_grant
+
+    try:
+        identity, duration = chosen_impulse_grant(
+            {key: value for key, value in effect.items() if key not in {"reason", "_runtime_source"}}, actor=actor,
+        )
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._require_seat(actor, in_game=True)
+    card = host.state.cards.get(identity.object_id)
+    if (card is None or card.zone != "exile" or card.ref != identity.ref or card.owner != actor
+            or card.logical_object_id != identity.logical_object_id or not card.is_card_object or card.face_down):
+        raise GameRuleError("Chosen impulse access requires its current exiled card")
+    card.annotations["temporary_play_permission"] = _play_permission(host, ImpulseAccessRequest(actor, actor, 1, duration, reason))
+    host._log(actor, "permission.play", f"{actor} may play the chosen exiled card.",
+              {"player": actor, "object": card.ref, "duration": duration.value, "reason": reason},
+              importance=2, changed_objects=[card.object_id], changed_players=[actor])
+    return card.ref
+
+
 def grant_temporary_cast_permission(
     host: ImpulseAccessHost,
     *,

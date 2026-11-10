@@ -468,6 +468,7 @@
     "tests/fixtures/chosen-aura-protection-cards.json",
     "tests/fixtures/chosen-color-event-cards.json",
     "tests/fixtures/chosen-color-mana-cards.json",
+    "tests/fixtures/chosen-impulse-access-cards.json",
     "tests/fixtures/chosen-type-event-cards.json",
     "tests/fixtures/cipher-cards.json",
     "tests/fixtures/classic-flash-cards.json",

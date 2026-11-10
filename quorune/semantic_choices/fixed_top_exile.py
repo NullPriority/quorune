@@ -5,13 +5,14 @@ from dataclasses import dataclass
 
 from ..discover_model import DiscoverCastIntent, ExileCastProgress, discover_options_fingerprint, discover_zone_counter
 from ..fixed_top_exile import (
+    CHOSEN_IMPULSE_GRANT_FIELD, CHOSEN_IMPULSE_SCOPE,
     FIXED_TOP_EXILE_CAPABILITY, FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
     FIXED_TOP_EXILE_RULES, fixed_top_exile_result_rows, validate_fixed_top_exile,
 )
 from ..replacement.immutable import FrozenMap
 from ..rules.library_selection import LibrarySelectionObjectIdentity
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
-from .model import (AutoContinue, CastOrDeclineChoice, SemanticChoiceCompletion, SemanticChoiceError,
+from .model import (AutoContinue, CastOrDeclineChoice, ObjectChoice, SemanticChoiceCompletion, SemanticChoiceError,
                     SemanticChoicePreparation, SemanticChoiceRequest)
 
 
@@ -24,6 +25,16 @@ def _decline(effect):
     return (FrozenMap(damage),) if damage is not None else ()
 
 
+def _capture_library_tops(query, owner, count):
+    for ref in query.library_refs(owner, top_first=True)[:count]:
+        card = query.object(ref, zones=("library",))
+        if card is None or card.owner != owner or card.token:
+            raise SemanticChoiceError("Fixed top exile requires owned library tops")
+        before = LibrarySelectionObjectIdentity(card.object_id, card.logical_object_id, card.ref)
+        yield LibrarySelectionObjectIdentity(card.object_id,
+            f"{card.object_id}@{discover_zone_counter(before) + 1}", card.ref)
+
+
 def _prepare_exile(effect, context):
     scope = validate_fixed_top_exile(effect, resolved=True)
     if effect["player"] != context.actor or context.actor != context.stack_controller:
@@ -34,22 +45,11 @@ def _prepare_exile(effect, context):
         owners = (effect["supplier"],)
     else:
         owners = (context.actor,)
-    refs = []
-    results = []
-    for owner in owners:
-        if owner not in context.query.active_seats:
-            continue
-        tops = context.query.library_refs(owner, top_first=True)
-        if not tops:
-            continue
-        card = context.query.object(tops[0], zones=("library",))
-        if card is None or card.owner != owner or card.token:
-            raise SemanticChoiceError("Fixed top exile requires an owned library top")
-        before = LibrarySelectionObjectIdentity(card.object_id, card.logical_object_id, card.ref)
-        after = LibrarySelectionObjectIdentity(card.object_id,
-            f"{card.object_id}@{discover_zone_counter(before) + 1}", card.ref)
-        refs.append(card.ref)
-        results.append({"owner": owner, "identity": after.to_dict()})
+    count = effect["count"] if scope == CHOSEN_IMPULSE_SCOPE else 1
+    captured = tuple((owner, identity) for owner in owners if owner in context.query.active_seats
+                     for identity in _capture_library_tops(context.query, owner, count))
+    refs = tuple(identity.ref for _, identity in captured)
+    results = [{"owner": owner, "identity": identity.to_dict()} for owner, identity in captured]
     intents = ((MoveObjectsSimultaneouslyIntent(context.actor, tuple(refs), ("library",), "exile",
         "Exile the fixed library tops"),) if refs else ())
     return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect), preparation_intents=intents,
@@ -57,10 +57,59 @@ def _prepare_exile(effect, context):
             prepend_effects=(_offer(effect, results),)))
 
 
+def _chosen_impulse_candidates(rows, query):
+    candidates = []
+    for owner, identity in rows:
+        card = query.object(identity.ref, zones=("exile",))
+        if (card is not None and card.owner == owner and card.object_id == identity.object_id
+                and card.logical_object_id == identity.logical_object_id and card.known_to_actor and not card.token):
+            candidates.append((identity, card.printed_name))
+    return tuple(candidates)
+
+
+def _chosen_impulse_fingerprint(candidates):
+    return discover_options_fingerprint(tuple(identity.to_dict() for identity, _ in candidates))
+
+
+def _grant_chosen_impulse(effect, identity):
+    instruction = effect["instruction"]
+    return FrozenMap({"op": "grant_cast_permission", "schema_version": 1, "player": instruction["player"],
+                      CHOSEN_IMPULSE_GRANT_FIELD: {"identity": identity.to_dict(), "duration": instruction["duration"]}})
+
+
+def _prepare_chosen_impulse(effect, context, rows):
+    candidates = _chosen_impulse_candidates(rows, context.query)
+    if len(candidates) <= 1:
+        follow = (_grant_chosen_impulse(effect, candidates[0][0]),) if candidates else ()
+        return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue(reason="Fewer than two captured exile cards remain.", prepend_effects=follow))
+    refs = tuple(identity.ref for identity, _ in candidates)
+    return SemanticChoicePreparation(request=SemanticChoiceRequest(prompt="Choose an exiled card you may play.",
+        choice=ObjectChoice(field_name="objects", legal_refs=refs, zones=("exile",), owner_relation="you"),
+        public_context=FrozenMap({"stack": context.stack_ref, "operation": FIXED_TOP_EXILE_OFFER_OPERATION,
+                                 "objects": [{"id": identity.ref, "name": name} for identity, name in candidates]})),
+        continuation_effect=FrozenMap({**effect, "_stack_ref": context.stack_ref,
+                                       "_options_fingerprint": _chosen_impulse_fingerprint(candidates)}))
+
+
+def _complete_chosen_impulse(effect, rows, response, query, fingerprint):
+    candidates = _chosen_impulse_candidates(rows, query)
+    selected = response.get("objects")
+    if (not isinstance(selected, (list, tuple)) or len(selected) != 1 or type(selected[0]) is not str
+            or _chosen_impulse_fingerprint(candidates) != fingerprint):
+        raise SemanticChoiceError("Choose one current captured exile card")
+    identity = next((identity for identity, _ in candidates if identity.ref == selected[0]), None)
+    if identity is None:
+        raise SemanticChoiceError("The chosen card is outside this exile result")
+    return SemanticChoiceCompletion(prepend_effects=(_grant_chosen_impulse(effect, identity),))
+
+
 def _prepare_offer(effect, context):
-    fixed_top_exile_result_rows(effect)
+    rows = fixed_top_exile_result_rows(effect)
     if effect["instruction"]["player"] != context.actor or context.actor != context.stack_controller:
         raise SemanticChoiceError("Fixed top exile offer belongs to another controller")
+    if effect["instruction"]["scope"] == CHOSEN_IMPULSE_SCOPE:
+        return _prepare_chosen_impulse(effect, context, rows)
     options = tuple(context.query.authorized_cast_options())
     if not options:
         return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
@@ -83,6 +132,8 @@ def _complete_offer(continuation, response, query):
     actor = effect["instruction"]["player"]
     if actor not in query.active_seats:
         raise SemanticChoiceError("Fixed top exile choice belongs to an inactive player")
+    if effect["instruction"]["scope"] == CHOSEN_IMPULSE_SCOPE:
+        return _complete_chosen_impulse(effect, rows, response, query, saved["_options_fingerprint"])
     options = tuple(query.authorized_cast_options())
     if discover_options_fingerprint(options) != saved["_options_fingerprint"]:
         raise SemanticChoiceError("Fixed top exile casting options changed")

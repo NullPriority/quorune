@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 from ..suspect_model import SUSPECT_OPERATION
+from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, DERIVED_CHARACTERISTIC_CAPABILITY, DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
     INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, fixed_resolution_characteristic_instruction,
@@ -16,6 +17,8 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_OPERATION, next_spell_payment_payload_dependencies
     from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD, NEXT_CAST_COPY_CAPABILITY, next_cast_copy_payload
     from ..rules.temporary_cast_timing import TEMPORARY_CAST_TIMING_FIELD, temporary_cast_timing_payload_dependencies
+    if CHOSEN_IMPULSE_GRANT_FIELD in value:
+        raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
     if TEMPORARY_CAST_TIMING_FIELD in value:
         return temporary_cast_timing_payload_dependencies(value)
     if NEXT_CAST_COPY_FIELD in value:

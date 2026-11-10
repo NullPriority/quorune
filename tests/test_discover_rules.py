@@ -1074,7 +1074,7 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
         path = Path(cls.temporary.name) / "fixed-top-exile.sqlite3"
         build_fixture_database([ROOT / "tests/fixtures" / name for name in (
             "bound-effect-program-cards.json", "discover-cards.json", "global-alternative-cost-cards.json",
-            "morph-rules-cards.json", "prototype-cards.json")], path)
+            "morph-rules-cards.json", "prototype-cards.json", "chosen-impulse-access-cards.json")], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Fixed top exile witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -1091,6 +1091,225 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
             cast["targets"] = list(targets)
         result = session.act("pilot:A", {"action_id": "choose", "choice": "cast", "cast": cast})
         self.assertTrue(result.ok, result.summary)
+
+    def chosen_impulse_options(self, session):
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        return {row["id"] for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["objects"]}
+
+    def test_chosen_impulse_scope_and_independent_binding_fail_closed(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.compiler.discover_templates import _chosen_impulse_template
+        from quorune.fixed_top_exile import CHOSEN_IMPULSE_CAPABILITY, CHOSEN_IMPULSE_SCOPE, validate_fixed_top_exile
+        from quorune.oracle_ir import compile_oracle_card
+        from test_public_query_effect_amounts import query_amount_record
+
+        text = ("Exile the top two cards of your library. Choose one of them. "
+                "Until the end of your next turn, you may play that card.")
+        _, (effect,), _, _ = _chosen_impulse_template(text)
+        self.assertEqual(CHOSEN_IMPULSE_SCOPE, validate_fixed_top_exile(effect))
+        for change in ({"count": True}, {"scope": "each_library"}, {"player": "B"}, {"duration": "until_used"}):
+            with self.assertRaises(ValueError):
+                validate_fixed_top_exile({**effect, **change})
+        self.assertIsNone(_chosen_impulse_template(text.replace("Choose one of them. ", "").replace("that card", "one of those cards")))
+        self.assertIsNone(_chosen_impulse_template(text.replace("your library", "an opponent's library")))
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        self.assertEqual("exact", compile_oracle_card(query_amount_record(text, suffix=608280020), **options).status)
+        with patch("quorune.compiler.discover_templates._chosen_impulse_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(query_amount_record(text, suffix=608280021), **options).status)
+
+        session = self.session(60828020)
+        source = self.add(session.engine, "Riverwheel Sweep", zone="hand")
+        self.assert_closed(session, source)
+        program, = [p for p in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if CHOSEN_IMPULSE_CAPABILITY in p.capability_dependencies]
+        deps = tuple(cap for cap in program.capability_dependencies if cap != CHOSEN_IMPULSE_CAPABILITY)
+        forged = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(forged, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + CHOSEN_IMPULSE_CAPABILITY, binding["blockers"])
+
+    def cast_riverwheel(self, session, sweep, creature):
+        self.priority(session, "A")
+        offer = self.action(session, "A", sweep)
+        option = next(row for row in offer["cost_options"]
+                      if row["requirements"]["U"] == 1 and row["requirements"]["GENERIC"] == 4)
+        result = session.act("pilot:A", {"action_id": offer["id"], "cost_option": option["id"],
+                                         "targets": [creature.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(60828021)
+        engine = session.engine
+        sweep = self.add(engine, "Riverwheel Sweep", zone="hand")
+        hand_land = self.add(engine, "Mountain", zone="hand", ref="ordinary-land")
+        creature = self.add(engine, "Grizzly Bears", seat="B")
+        hidden = self.add(engine, "Generic Bound Plains", zone="library", ref="third-hidden-card")
+        bolt = self.add(engine, "Lightning Bolt", zone="library", ref="unchosen-bolt")
+        land = self.add(engine, "Mountain", zone="library", ref="chosen-land")
+        unrelated = self.add(engine, "Mountain", zone="exile", ref="unrelated-exile")
+        self.assert_closed(session, sweep)
+        self.prepare(session, mana={"U": 3, "C": 8, "R": 1})
+        self.checkpoint(session)
+        self.cast_riverwheel(session, sweep, creature)
+        self.assertIsNotNone(self.resolve(session))
+        self.assertEqual({bolt.ref, land.ref}, self.chosen_impulse_options(session))
+        self.assertTrue(engine.state.cards[creature.object_id].tapped)
+        self.assertEqual(3, engine.state.cards[creature.object_id].counters["stun"])
+        self.assertNotIn(hidden.ref, str(session.packet("pilot:B", full=True)))
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        before = authoritative_state_hash(session.state)
+        for principal, selected in (("pilot:B", [land.ref]), ("pilot:A", []),
+                                    ("pilot:A", [unrelated.ref]), ("pilot:A", [bolt.ref, land.ref])):
+            self.assertFalse(session.act(principal, {"action_id": "choose", "objects": selected}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": "choose", "objects": [land.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.priority(session, "A")
+        ids = {row["id"] for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]}
+        self.assertIn(f"play-land:{land.ref}", ids)
+        self.assertNotIn(f"cast:{bolt.ref}", ids)
+        self.assertNotIn(f"play-land:{unrelated.ref}", ids)
+        result = session.act("pilot:A", {"action_id": f"play-land:{land.ref}"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", engine.state.cards[land.object_id].zone)
+        self.assertEqual("exile", engine.state.cards[bolt.object_id].zone)
+        self.priority(session, "A")
+        ids = {row["id"] for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]}
+        self.assertNotIn(f"play-land:{hand_land.ref}", ids)
+        self.replay(session, load=True)
+
+    def test_research_desk_replays_its_pending_choice_after_sacrifice_and_pays_normal_cost(self):
+        session = self.session(60828022)
+        engine = session.engine
+        desk = self.add(engine, "Mishra's Research Desk")
+        mountain = self.add(engine, "Mountain", zone="hand")
+        bear = self.add(engine, "Grizzly Bears", zone="library", ref="desk-unchosen-bear")
+        bolt = self.add(engine, "Lightning Bolt", zone="library", ref="desk-chosen-bolt")
+        self.assert_closed(session, desk)
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        activation, = [row for row in actions if row.get("source") == desk.ref and row["action"] == "activate"]
+        result = session.act("pilot:A", {"action_id": activation["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", engine.state.cards[desk.object_id].zone)
+        self.assertIsNotNone(self.resolve(session))
+        session = self.replay(session, load=True)
+        self.assertEqual({bear.ref, bolt.ref}, self.chosen_impulse_options(session))
+        result = session.act("pilot:A", {"action_id": "choose", "objects": [bolt.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row["id"] == f"cast:{bolt.ref}" for row in actions))
+        result = session.act("pilot:A", {"action_id": f"play-land:{mountain.ref}"})
+        self.assertTrue(result.ok, result.summary)
+        self.cast_for(session, "A", bolt, ["D"])
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.cards[mountain.object_id].tapped)
+        self.assertEqual(37, session.state.players["D"].life)
+        self.assertEqual("exile", session.state.cards[bear.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_riverwheel_illegal_target_exiles_nothing(self):
+        session = self.session(60828023)
+        engine = session.engine
+        sweep = self.add(engine, "Riverwheel Sweep", zone="hand")
+        creature = self.add(engine, "Grizzly Bears", seat="B")
+        unsummon = self.add(engine, "Unsummon", seat="B", zone="hand")
+        top = self.add(engine, "Mountain", zone="library", ref="untouched-top")
+        session.state.players["B"].mana_pool["U"] = 1
+        self.prepare(session, mana={"U": 3, "C": 8})
+        self.checkpoint(session)
+        self.cast_riverwheel(session, sweep, creature)
+        self.cast_for(session, "B", unsummon, [creature.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[creature.object_id].zone)
+        self.assertEqual("library", session.state.cards[top.object_id].zone)
+        self.assertEqual([], session.state.players["A"].zones["exile"])
+        self.replay(session)
+
+    def test_fireglass_choice_follows_second_main_phase_and_opponent_life_loss(self):
+        for seed, life_lost in ((60828024, False), (60828025, True)):
+            with self.subTest(life_lost=life_lost):
+                session = self.session(seed)
+                engine = session.engine
+                source = self.add(engine, "Fireglass Mentor")
+                bolt = self.add(engine, "Lightning Bolt", zone="hand")
+                bear = self.add(engine, "Grizzly Bears", zone="library", ref="mentor-bear")
+                land = self.add(engine, "Mountain", zone="library", ref="mentor-land")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"R": 1})
+                self.checkpoint(session)
+                if life_lost:
+                    self.cast_for(session, "A", bolt, ["C"])
+                    self.assertIsNone(self.resolve(session))
+                self.until(session, lambda game: game.state.phase == "postcombat_main"
+                           and game.state.pending_decision is not None)
+                if not life_lost:
+                    self.assertEqual("library", engine.state.cards[land.object_id].zone)
+                    self.assertFalse(session.state.stack)
+                    continue
+                self.assertIsNotNone(self.resolve(session))
+                self.assertEqual({bear.ref, land.ref}, self.chosen_impulse_options(session))
+                result = session.act("pilot:A", {"action_id": "choose", "objects": [land.ref]})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("until_end_of_turn",
+                    engine.state.cards[land.object_id].annotations["temporary_play_permission"]["duration"])
+                self.replay(session, load=True)
+
+    def test_heroes_hangout_chooses_exile_mode_without_patrol_targets(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(60828026)
+        engine = session.engine
+        spell = self.add(engine, "Heroes' Hangout", zone="hand")
+        bear = self.add(engine, "Grizzly Bears", zone="library", ref="hangout-bear")
+        land = self.add(engine, "Mountain", zone="library", ref="hangout-land")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"R": 1})
+        self.checkpoint(session)
+        offered = self.action(session, "A", spell)
+        self.assertEqual(["mode_1"], offered["target_schema"]["legal_modes"])
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": offered["id"], "modes": ["mode_2"]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": offered["id"], "modes": ["mode_1"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNotNone(self.resolve(session))
+        self.assertEqual({bear.ref, land.ref}, self.chosen_impulse_options(session))
+        chosen = session.act("pilot:A", {"action_id": "choose", "objects": [land.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.replay(session)
+
+    def test_strongbox_raid_uses_the_actual_turn_attack(self):
+        session = self.session(60828027)
+        engine = session.engine
+        raider = self.add(engine, "Strongbox Raider", zone="hand")
+        attacker = self.add(engine, "Grizzly Bears", ref="raid-attacker")
+        attacker.acquired_control_turn_count = -1
+        for index in range(4):
+            self.add(engine, "Mountain", ref=f"raid-mountain-{index}")
+        bolt = self.add(engine, "Lightning Bolt", zone="library", ref="raid-bolt")
+        land = self.add(engine, "Mountain", zone="library", ref="raid-land")
+        self.assert_closed(session, raider)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(attacker, "D")])
+        self.until(session, lambda game: game.state.phase == "postcombat_main" and game.state.pending_decision is not None)
+        self.cast_for(session, "A", raider)
+        self.assertIsNotNone(self.resolve(session))
+        self.assertEqual({bolt.ref, land.ref}, self.chosen_impulse_options(session))
+        chosen = session.act("pilot:A", {"action_id": "choose", "objects": [land.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.replay(session)
 
     def test_fixed_top_exile_requires_its_scope_and_runtime_capability(self):
         from dataclasses import replace

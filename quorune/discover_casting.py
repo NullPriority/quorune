@@ -5,7 +5,7 @@ from __future__ import annotations
 from .discover_model import (ExileCastProgress, discover_spell_qualifies, discover_options_fingerprint,
     QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_STEP_OPERATION, validate_qualified_scan_effect)
 from .errors import GameRuleError,StateInvariantError
-from .fixed_top_exile import (FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
+from .fixed_top_exile import (CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
     fixed_top_exile_result_rows, validate_fixed_top_exile)
 from .replacement.immutable import thaw_value
 from .rules.casting.face_queries import offered_cast_methods, prospective_cast_card
@@ -132,6 +132,8 @@ def fixed_top_exile_cast_options(host, *, item, actor, effect):
     if instruction["player"] != actor:
         raise GameRuleError("Fixed top exile casting controller changed")
     scope = instruction["scope"]
+    if scope == CHOSEN_IMPULSE_SCOPE:
+        return ()
     payment = "paid" if scope == "controller_library" else "free"
     options = []
     for owner, identity in rows:
