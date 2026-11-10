@@ -7,6 +7,7 @@ import re
 from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import CREATURE_SUBTYPES
 from .continuous_templates import (
+    _CARD_TYPE_WORDS,
     _attached_modifier, _attached_definition, _grant_attached_abilities,
     _attached_ability_capabilities,_attached_abilities,
 )
@@ -21,6 +22,9 @@ _COLORS = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
 
 
 def _definition(modifier, text, *, addition):
+    singular = text.casefold().removesuffix("s")
+    if addition and singular in _CARD_TYPE_WORDS:
+        text = singular
     words = text.split()
     normalized = []
     for word in words:

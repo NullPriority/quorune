@@ -623,7 +623,7 @@ def _controlled_battlefield_query(
         exclude_source = bool(match.group("other"))
         subject_kind = match.group("subject").casefold()
         quality = (match.group("quality") or "").casefold()
-        if quality and subject_kind != "creatures":
+        if quality and subject_kind != "creatures" and quality not in {"nontoken", "token"}:
             return None
         if subject_kind != "permanents":
             fields["types_all"] = (subject_kind.removesuffix("s"),)
@@ -642,10 +642,7 @@ def _controlled_battlefield_query(
                 supertypes_all=("legendary",),
             )
         elif quality in {"nontoken", "token"}:
-            fields.update(
-                types_all=("creature",),
-                token=quality == "token",
-            )
+            fields["token"] = quality == "token"
     else:
         return _controlled_subtype_battlefield_query(text)
     return "source_controller", ObjectQuerySpec(**fields), exclude_source

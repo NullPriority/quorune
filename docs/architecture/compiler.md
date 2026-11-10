@@ -843,6 +843,12 @@ view has the same source, complete cost, nonland target predicate, and
 end-of-turn layer operation. Existing records keep their saved reviewed
 program and exact replay authority.
 
+Static type additions use the same public battlefield query as the other fixed
+characteristic settings. Plural card-type wording adds the named type while
+retaining the receiver's existing types. Controller, counter, and token
+predicates keep their existing meanings, and a Land addition supplies no
+basic subtype or intrinsic mana ability on its own.
+
 General query parsing preserves the earlier direct tap-field encoding for a
 pure tapped or untapped quantity predicate. Compound state predicates retain
 their own representation and validation. Public mana production validates a

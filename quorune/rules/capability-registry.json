@@ -30007,7 +30007,10 @@
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
         "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
         "test_static_setting_source_removal_and_ability_order_use_current_layers",
-        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction",
+        "test_original_evening_changes_target_legality_and_loses_it_on_departure",
+        "test_original_flesh_reads_current_counter_qualification_before_the_penalty",
+        "test_original_toph_limits_land_addition_to_controlled_nontoken_artifacts"
       ],
       "multiplayer_tests": [
         "test_actual_crusade_sets_black_adds_zombie_and_keeps_goblin_kindred_and_unrelated_creatures",
@@ -30030,7 +30033,10 @@
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
         "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
-        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction",
+        "test_original_evening_changes_target_legality_and_loses_it_on_departure",
+        "test_original_flesh_reads_current_counter_qualification_before_the_penalty",
+        "test_original_toph_limits_land_addition_to_controlled_nontoken_artifacts"
       ],
       "negative_tests": [
         "test_actual_crusade_sets_black_adds_zombie_and_keeps_goblin_kindred_and_unrelated_creatures",
@@ -30057,7 +30063,11 @@
         "test_verified_setting_withdrawal_blocks_all_four_complete_originals",
         "test_verified_setting_withdrawal_blocks_qualified_addition_with_unrelated_keyword_control",
         "test_retaining_land_animation_uses_closed_layers_and_attached_subject",
-        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction",
+        "test_static_type_addition_keeps_closed_receiver_qualifications",
+        "test_original_evening_changes_target_legality_and_loses_it_on_departure",
+        "test_original_flesh_reads_current_counter_qualification_before_the_penalty",
+        "test_original_toph_limits_land_addition_to_controlled_nontoken_artifacts"
       ],
       "official_rules": [
         "109.5",
@@ -30112,7 +30122,11 @@
         "test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
         "test_static_settings_preserve_exact_types_colors_and_source_spans",
         "test_retaining_land_animation_uses_closed_layers_and_attached_subject",
-        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction",
+        "test_static_type_addition_keeps_closed_receiver_qualifications",
+        "test_original_evening_changes_target_legality_and_loses_it_on_departure",
+        "test_original_flesh_reads_current_counter_qualification_before_the_penalty",
+        "test_original_toph_limits_land_addition_to_controlled_nontoken_artifacts"
       ],
       "privacy_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
@@ -30157,7 +30171,10 @@
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
         "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
-        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction"
+        "test_original_wind_zendikon_retains_land_and_returns_it_after_simultaneous_destruction",
+        "test_original_evening_changes_target_legality_and_loses_it_on_departure",
+        "test_original_flesh_reads_current_counter_qualification_before_the_penalty",
+        "test_original_toph_limits_land_addition_to_controlled_nontoken_artifacts"
       ],
       "required_evidence": [
         "positive",
@@ -30173,7 +30190,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 7
+      "version": 8
     },
     {
       "applicability": {
@@ -91051,7 +91068,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 813,
+  "registry_version": 814,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
