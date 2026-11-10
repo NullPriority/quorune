@@ -249,6 +249,10 @@ first-own-main timing. Result lowering happens at compilation through the
 existing fixed Scry, Mill, token, mana, actual-life-transfer and library-selection
 owners. Paid reveals, unknown results and unrepresented timing remain residual.
 
+Fixed controller Scry accepts a positive printed count with an optional
+explicit “you”. The resolving controller receives the existing private
+library ordering choice.
+
 The existing binary additional-cost production also accepts a canonical
 creature-subtype card revealed from the caster's hand. The reveal leaf uses
 the same typed alternative-price schema as the fixed mana branch, for both

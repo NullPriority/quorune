@@ -4866,11 +4866,13 @@
         "rules/conformance-reviews/cr-701-25-surveil.json",
         "quorune/compiler/declared_effect_amounts.py",
         "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/scry_templates.py",
         "quorune/compiler/fixed_public_action_event_bindings.py",
         "quorune/rules/library_scry.py",
         "quorune/semantic_choices/scry.py",
         "quorune/semantic_choices/surveil.py",
-        "tests/fixtures/variable-library-count-cards.json"
+        "tests/fixtures/variable-library-count-cards.json",
+        "tests/fixtures/fixed-scry-controller-cards.json"
       ],
       "test_modules": [
         "test_variable_library_counts",

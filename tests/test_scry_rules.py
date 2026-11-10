@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import json
 from pathlib import Path
 import tempfile
 import unittest
 import uuid
 from unittest.mock import patch
 
-from common import keep_all, load_assets, make_session
-from quorune.carddb import CardRecord
+from common import ROOT, keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.carddb import CardDatabase, CardRecord
+from quorune.compiler.scry_templates import fixed_scry_effect_template
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.model import StackItem
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import (
@@ -19,6 +23,7 @@ from quorune.record import (
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.node_capability_shapes import fixed_scry_node_capabilities
 from quorune.semantics import SemanticProgram
+from scripts.build_test_database import build_fixture_database
 
 
 SCRY_CAPABILITY = "library.scry.fixed_controller"
@@ -61,20 +66,25 @@ class ScryCompilerTests(unittest.TestCase):
         )
 
     def test_fixed_scry_compiles_capability_closed(self):
-        ir = compile_oracle_card(
-            self.fixture(),
-            capability_registry=self.capabilities,
-            capability_profile="commander_review",
-        )
-        self.assertEqual("exact", ir.status)
-        node = ir.faces[0].nodes[0]
-        self.assertEqual("scry-controller-v1", node.template_id)
-        self.assertEqual(1, node.span.line)
-        self.assertEqual((SCRY_CAPABILITY,), node.capability_dependencies)
-        self.assertEqual(
-            ({"op": "scry", "player": "$controller", "count": 3},),
-            node.effects,
-        )
+        for text in ("Scry 3.", "You scry 3."):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(
+                    self.fixture(text),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("scry-controller-v1", node.template_id)
+                self.assertEqual(1, node.span.line)
+                self.assertEqual((SCRY_CAPABILITY,), node.capability_dependencies)
+                self.assertEqual(
+                    ({"op": "scry", "player": "$controller", "count": 3},),
+                    node.effects,
+                )
+        for text in ("Target player scries 3.", "You scry X.", "You scry 3, then draw a card."):
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_scry_effect_template(text))
 
     def test_fixed_scry_shape_is_closed(self):
         valid = ({"op": "scry", "player": "$controller", "count": 2},)
@@ -348,6 +358,97 @@ class ScryRuntimeTests(unittest.TestCase):
         library = session.state.players["A"].zones["library"]
         self.assertEqual(expected[0], session.state.cards[library[0]].ref)
         self.assertEqual(expected[1], session.state.cards[library[-1]].ref)
+
+
+class ExplicitControllerScryNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "explicit-controller-scry.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "classic-flash-cards.json",
+            fixtures / "attached-exile-activation-cards.json",
+            fixtures / "fixed-scry-controller-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Explicit controller Scry", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def complete_private_scry(self, session, *, actor, decision):
+        self.assertIsNotNone(decision)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assertEqual([actor], decision.actors)
+        schema = decision.payload_by_actor[actor]["legal_actions"][0]["choice_schema"]
+        library = session.state.players[actor].zones["library"]
+        expected = [session.state.cards[object_id].ref for object_id in reversed(library[-2:])]
+        self.assertEqual("ordered_partition", schema["shape"])
+        self.assertEqual(expected, schema["legal_refs"])
+        owner = json.dumps(session.packet(f"pilot:{actor}", full=True))
+        self.assertTrue(all(ref in owner for ref in expected))
+        for seat in set("ABCD") - {actor}:
+            packet = json.dumps(session.packet(f"pilot:{seat}", full=True))
+            self.assertTrue(all(ref not in packet for ref in expected))
+        choice = {"action_id": "choose", "cards": {"top": [expected[1]], "bottom": [expected[0]]}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D", choice).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        resumed = self.replay(session, load=True)
+        result = resumed.act(f"pilot:{actor}", choice)
+        self.assertTrue(result.ok, result.summary)
+        library = resumed.state.players[actor].zones["library"]
+        self.assertEqual(expected[0], resumed.state.cards[library[0]].ref)
+        self.assertEqual(expected[1], resumed.state.cards[library[-1]].ref)
+        self.assertIsNone(self.resolve(resumed))
+        self.replay(resumed, load=True)
+
+    def test_actual_psychic_impetus_scries_for_the_new_aura_controller(self):
+        session = self.session(701_220_041)
+        engine = session.engine
+        aura = self.add(engine, "Psychic Impetus", zone="hand")
+        attacker = self.add(engine, "Generic Bound Body", seat="B")
+        theft = self.add(engine, "Confiscate", seat="C", zone="hand")
+        flash = self.add(engine, "Vedalken Orrery", seat="C")
+        attacker.acquired_control_turn_count = -1
+        for card in (aura, theft, flash):
+            self.assert_closed(session, card)
+        session.state.players["C"].mana_pool.update({"C": 8, "U": 4})
+        self.prepare(session, mana={"C": 7, "U": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", aura, [attacker.ref])
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "C", theft, [aura.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[aura.object_id]
+        self.assertEqual(("A", "C", attacker.object_id), (current.owner, current.controller, current.attached_to))
+
+        self.until(session, lambda s: s.state.pending_decision is not None
+            and s.state.pending_decision.kind == "combat.attackers" and s.state.pending_decision.actors == ["B"])
+        self.assertEqual("combat.attackers", session.packet("pilot:B", full=True)["decision"]["kind"])
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", {"action_id": "attack", "attackers": {attacker.ref: "C"}}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:B", {"action_id": "attack", "attackers": {attacker.ref: "A"}})
+        self.assertTrue(result.ok, result.summary)
+        self.complete_private_scry(session, actor="C", decision=self.resolve(session))
+
+    def test_actual_overwhelmed_apprentice_mills_each_opponent_then_scries_once(self):
+        session = self.session(701_220_042)
+        apprentice = self.add(session.engine, "Overwhelmed Apprentice", zone="hand")
+        self.assert_closed(session, apprentice)
+        self.prepare(session, mana={"U": 2})
+        libraries = {seat: tuple(player.zones["library"]) for seat, player in session.state.players.items()}
+        self.checkpoint(session)
+        self.cast(session, "A", apprentice)
+        decision = self.resolve(session)
+        self.assertEqual(libraries["A"], tuple(session.state.players["A"].zones["library"]))
+        for seat in "BCD":
+            player = session.state.players[seat]
+            self.assertEqual(libraries[seat][:-2], tuple(player.zones["library"]))
+            self.assertTrue(set(libraries[seat][-2:]).issubset(player.zones["graveyard"]))
+        self.complete_private_scry(session, actor="A", decision=decision)
 
 
 if __name__ == "__main__":
