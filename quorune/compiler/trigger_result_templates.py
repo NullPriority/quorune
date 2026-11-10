@@ -54,8 +54,10 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     if exile_cast is not None:
         return exile_cast, False
     if _allow_payment and _allow_optional and body == binding.body:
-        from .occurrence_object_results import entry_permanent_result
-        entry = entry_permanent_result(binding, body)
+        from .occurrence_object_results import entry_equipment_attachment_result, entry_permanent_result
+        entry = entry_permanent_result(binding, body) or entry_equipment_attachment_result(
+            binding, body, card_name=card_name, effect_template=effect_template,
+        )
         if entry is not None:
             return entry
     if binding.active_zone == "battlefield":

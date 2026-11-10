@@ -38,6 +38,139 @@ FIXTURE = ROOT / "tests" / "fixtures" / "fixed-attachment-actions-cards.json"
 PRINTED_FIXTURE = ROOT / "tests" / "fixtures" / "printed-source-attachment-cards.json"
 
 
+ENTRY_EQUIPMENT_ORIGINALS = (
+    "Dredging Claw", "Stormrider Rig", "Cloak and Dagger", "Doc Ock's Tentacles",
+    "Veteran's Armaments", "Diviner's Wand", "Obsidian Battle-Axe",
+    "Hero's Blade", "Sai of the Shinobi", "Inventor's Goggles", "Ronin Warclub",
+)
+
+
+class EntryEquipmentAttachmentTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "entry-equipment-attachment.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/entry-equipment-attachment-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Entry equipment attachment", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def test_entry_equipment_originals_bind(self):
+        for index, name in enumerate(ENTRY_EQUIPMENT_ORIGINALS):
+            with self.subTest(name=name):
+                session = self.session(70103000 + index)
+                self.assert_closed(session, self.add(session.engine, name))
+
+    def test_optional_entry_equipment_moves_to_the_opponents_hexproof_creature(self):
+        for apply in (False, True):
+            with self.subTest(apply=apply):
+                session = self.session(70103012 + apply)
+                equipment = self.add(session.engine, "Cloak and Dagger")
+                old_bearer = self.add(session.engine, "Generic Bound Body")
+                entrant = self.add(session.engine, "Invisible Stalker", seat="B", zone="hand")
+                self.add(session.engine, "Island", seat="B", ref="entry-attachment-blue")
+                self.add(session.engine, "Generic Bound Plains", seat="B", ref="entry-attachment-generic")
+                self.assert_closed(session, equipment)
+                self.prepare(session, mana={"C": 3})
+                self.checkpoint(session)
+                rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                equip, = [row for row in rows if row["id"].startswith("activate:" + equipment.ref + ":")]
+                result = session.act("pilot:A", {"action_id": equip["id"], "targets": [old_bearer.ref], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(old_bearer.object_id, session.state.cards[equipment.object_id].attached_to)
+                self.until(session, lambda current: current.state.active_player == "B"
+                           and current.state.phase == "precombat_main"
+                           and current.pending_principals() == ["pilot:B"])
+                self.cast_for(session, "B", entrant)
+                decision = self.resolve(session)
+                self.assertEqual("semantic.choice", decision.kind)
+                self.assertEqual(["A"], decision.actors)
+                self.assertFalse(session.state.stack[-1].targets)
+                command = {"action_id": "choose", "choice": "apply" if apply else "decline"}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:B", command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[equipment.object_id]
+                self.assertEqual(entrant.object_id if apply else old_bearer.object_id, current.attached_to)
+                self.assertEqual(("A", "B"), (current.controller, session.state.cards[entrant.object_id].controller))
+                self.replay(session)
+
+    def test_protected_entry_skips_the_optional_attachment_choice(self):
+        session = self.session(70103014)
+        equipment = self.add(session.engine, "Stormrider Rig")
+        entrant = self.add(session.engine, "Tel-Jilad Chosen", zone="hand")
+        self.assert_closed(session, equipment)
+        self.prepare(session, mana={"C": 1, "G": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", entrant)
+        self.resolve_top(session)
+        self.assertEqual(equipment.object_id, session.state.stack[-1].source_object_id)
+        self.assertIsNone(self.resolve(session))
+        self.assertIsNone(session.state.cards[equipment.object_id].attached_to)
+        self.replay(session)
+
+    def test_mandatory_entry_attachment_resolves_without_a_choice(self):
+        session = self.session(70103015)
+        equipment = self.add(session.engine, "Ronin Warclub")
+        entrant = self.add(session.engine, "Grizzly Bears", zone="hand")
+        self.assert_closed(session, equipment)
+        self.prepare(session, mana={"C": 1, "G": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", entrant)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(entrant.object_id, session.state.cards[equipment.object_id].attached_to)
+        self.replay(session)
+
+    def test_entry_attachment_does_not_follow_an_entrant_that_returns(self):
+        session = self.session(70103016)
+        equipment = self.add(session.engine, "Dredging Claw")
+        entrant = self.add(session.engine, "Grizzly Bears", zone="graveyard")
+        revive = self.add(session.engine, "Zombify", zone="hand")
+        blink = self.add(session.engine, "Ephemerate", zone="hand")
+        self.assert_closed(session, equipment)
+        self.assert_closed(session, revive)
+        self.prepare(session, mana={"C": 3, "B": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", revive, [entrant.ref], reserve={"W": 1})
+        self.resolve_top(session)
+        self.assertEqual(equipment.object_id, session.state.stack[-1].source_object_id)
+        original = session.state.cards[entrant.object_id].logical_object_id
+        self.cast_for(session, "A", blink, [entrant.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(original, session.state.cards[entrant.object_id].logical_object_id)
+        self.assertIsNone(session.state.cards[equipment.object_id].attached_to)
+        self.replay(session)
+
+    def test_entry_attachment_runtime_scope_rejects_the_wrong_occurrence(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.attachment_actions import ENTRY_ATTACHMENT_CAPABILITY
+
+        session = self.session(70103017)
+        equipment = self.add(session.engine, "Stormrider Rig")
+        program, = [value for value in session.engine.semantics.programs_for_oracle(equipment.oracle_id)
+                    if ENTRY_ATTACHMENT_CAPABILITY in value.capability_dependencies]
+        wrong = replace(program, event="creature.attacks")
+        binding = bind_semantic_program_runtime(wrong, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertTrue(any(value.startswith("runtime_occurrence_object:invalid:") for value in binding["blockers"]))
+
+    def test_entry_attachment_legality_omission_is_killed(self):
+        with mock.patch("quorune.rules.attachment_actions.equipment_attachment_is_legal", return_value=True):
+            with self.assertRaises(AssertionError):
+                self.test_protected_entry_skips_the_optional_attachment_choice()
+
+
 def focused_database(directory: str) -> CardDatabase:
     database = Path(directory) / "fixed-attachment-actions.sqlite3"
     build_fixture_database(

@@ -5338,6 +5338,86 @@
     {
       "applicability": {
         "exclusions": [
+          "targeted instructions",
+          "multiple entrant selection",
+          "events other than battlefield entry"
+        ],
+        "inputs": [
+          "one original battlefield Equipment",
+          "one sealed entry occurrence"
+        ],
+        "outputs": [
+          "optional apply or decline or mandatory reciprocal attachment"
+        ],
+        "summary": "Resolve a fixed Equipment instruction on the original entrant using the ordinary attachment transaction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "attachment.action.fixed_source",
+        "trigger.event.normalized_zone_change"
+      ],
+      "dependency_fail_closed_rationale": "The runtime binder requires a closed battlefield entry occurrence and the typed original source and entrant payload.",
+      "dependency_fail_closed_status": "passed",
+      "id": "attachment.action.entry_equipment",
+      "implementation_components": [
+        "quorune.compiler.occurrence_object_results.entry_equipment_attachment_result",
+        "quorune.rules.attachment_actions.validate_entry_equipment_attachment",
+        "quorune.rules.attachment_actions.entry_equipment_attachment_runtime_dependencies",
+        "quorune.rules.attachment_actions.equipment_attachment_is_legal",
+        "quorune.effect_runtime.zones_and_attachments._apply_attach"
+      ],
+      "implementation_mutation_rationale": "Removing the live attachment predicate exposes an apply choice to a creature with protection from artifacts.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_entry_attachment_does_not_follow_an_entrant_that_returns"
+      ],
+      "multiplayer_tests": [
+        "test_optional_entry_equipment_moves_to_the_opponents_hexproof_creature"
+      ],
+      "negative_tests": [
+        "test_protected_entry_skips_the_optional_attachment_choice",
+        "test_entry_attachment_runtime_scope_rejects_the_wrong_occurrence"
+      ],
+      "official_rules": [
+        "113.7a",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "400.7",
+        "603.3a",
+        "608.2d",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "702.16d"
+      ],
+      "positive_tests": [
+        "test_optional_entry_equipment_moves_to_the_opponents_hexproof_creature",
+        "test_mandatory_entry_attachment_resolves_without_a_choice"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_optional_entry_equipment_moves_to_the_opponents_hexproof_creature",
+        "test_entry_attachment_does_not_follow_an_entrant_that_returns"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "target-selected attachment sources",
           "more than one target",
           "attachments to players or noncreature objects",
@@ -88898,7 +88978,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 785,
+  "registry_version": 786,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

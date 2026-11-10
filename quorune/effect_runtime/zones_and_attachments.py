@@ -5,6 +5,7 @@ from typing import Any, Mapping, Sequence
 
 from ..attachments import attach_objects, detach_object
 from ..rules.reconfigure import source_has_reconfigure, commit_reconfigure_attachment_effect
+from ..rules.attachment_actions import ENTRY_ATTACHMENT_VERSION, equipment_attachment_is_legal, validate_entry_equipment_attachment
 from ..aura import legal_aura_target_refs
 from ..zone_object_cleanup import resolve_zone_object_cleanup_group
 from ..continuous_effects import ContinuousOperation, Layer
@@ -31,8 +32,6 @@ from ..milling import mill_cards, MillRequest
 from ..linked_exile_return import resolve_linked_exile_return, return_linked_exiled_objects
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
-from ..target_protection_engine_adapter import protection_verdict_for_ref
-from ..protection import ProtectionVerdict
 from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
@@ -459,6 +458,8 @@ def _attachment_target_is_legal(
     *,
     attachment_kind: str,
 ) -> bool:
+    if attachment_kind == "equipment":
+        return equipment_attachment_is_legal(host, attachment, creature)
     attachment_types, attachment_subtypes, _ = host._type_parts(
         str(host._effective_card_data(attachment).get("type_line") or "")
     )
@@ -467,15 +468,6 @@ def _attachment_target_is_legal(
     )
     if "creature" not in creature_types:
         return False
-    if attachment_kind == "equipment":
-        return bool(
-            "artifact" in attachment_types
-            and "equipment" in attachment_subtypes
-            and attachment.object_id != creature.object_id
-            and ('creature' not in attachment_types or source_has_reconfigure(host, attachment))
-            and protection_verdict_for_ref(host, host._effective_card_data(creature), attachment.ref)
-                is ProtectionVerdict.ALLOWED
-        )
     enchant_spec = host._compiled_enchant_spec(attachment)
     return bool(
         "enchantment" in attachment_types
@@ -501,6 +493,11 @@ def _apply_attach(
     reason: str,
 ) -> Any:
     op = operation
+    if ENTRY_ATTACHMENT_VERSION in effect:
+        try:
+            validate_entry_equipment_attachment(effect, resolved=True)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
     legacy_equipment_shape = (
         "equipment" in effect
         and "creature" in effect

@@ -56,6 +56,15 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    if operation == "attach":
+        from ..rules.attachment_actions import ENTRY_ATTACHMENT_VERSION, validate_entry_equipment_attachment
+
+        if ENTRY_ATTACHMENT_VERSION in effect:
+            try:
+                validate_entry_equipment_attachment(effect, resolved=True)
+            except ValueError as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return
     if operation == "discard_random_cards":
         from ..random_discard import random_discard_node_capabilities
         restored = {**effect, "actor": "$controller", "players": ["$controller"]}

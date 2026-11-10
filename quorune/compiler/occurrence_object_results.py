@@ -65,6 +65,27 @@ def entry_permanent_result(binding, body):
         (ENTRY_PERMANENT_RESULT_MECHANIC,)), True
 
 
+def entry_equipment_attachment_result(binding, body, *, card_name, effect_template):
+    from ..rules.attachment_actions import ENTRY_ATTACHMENT_EVENTS, entry_equipment_attachment_effect
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+    match = re.fullmatch(r"(?P<optional>you may )?attach this Equipment to (?:it|that creature)\.", body, re.I)
+    if (match is None or binding.event.value not in ENTRY_ATTACHMENT_EVENTS
+            or binding.active_zone != "battlefield"):
+        return None
+    targeted = effect_template("Attach this Equipment to target creature you control.", card_name=card_name)
+    if targeted[1] != ({"op": "attach", "attachment_kind": "equipment",
+                        "source": "$source.zone_object", "target": "$target.0"},):
+        return None
+    template = "fixed-entry-equipment-attachment-v1"
+    effects = (entry_equipment_attachment_effect(),)
+    mechanics = ("cr-701-3-attach",)
+    if match["optional"]:
+        compiled = FixedOptionalEffectTemplate(template, effects, None, (FIXED_OPTIONAL_EFFECT_MECHANIC, *mechanics))
+        return compiled.compiled(), True
+    return (template, effects, None, mechanics), True
+
+
 def occurrence_object_result(binding,body,*,effect_template,card_name):
     if body == binding.body and _EVENT_NEXT_UNTAP.fullmatch(body):
         reference = {

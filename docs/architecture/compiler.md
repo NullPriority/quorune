@@ -712,6 +712,12 @@ change or counter placement on that source. A linked Exert result may also
 pair a self-rule with the controller's scry. Each instruction keeps its printed
 position and resolves independently when the original permanent is unavailable.
 
+Equipment entry results can attach the original source to the sealed entrant.
+The resolution check applies current equipment and protection rules before
+offering the controller a choice. Mandatory instructions use the same
+attachment transaction. The entrant reference carries no target schema, so
+the ordinary attachment rules determine eligibility.
+
 A separate source-specific production lowers "target creature can't block this
 creature this turn". Its typed journal entry locks both the chosen blocker and
 the activation source incarnation. It permits that blocker to block other
