@@ -895,6 +895,7 @@ def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool
 def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -> dict[str, Any] | None:
     """Resolve one available instruction without changing its position in the program."""
     from ..card_overrides import normalize_game_record_v3_effect
+    from ..event_card_return import prepare_event_library_order
     from ..rules.casting.spell_text import cast_text_instruction_has_no_target, scoped_cast_text_instruction
     from ..rules.entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION_FIELD, bind_checked_entry_return_payment
     from ..scheduled_player import scheduled_player_instruction_is_impossible
@@ -969,7 +970,7 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
             importance=1,
         )
         return None
-    return effect
+    return prepare_event_library_order(host, effect)
 
 
 def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:

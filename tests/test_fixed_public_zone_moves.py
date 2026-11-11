@@ -284,8 +284,10 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
     def test_source_library_move_binds_the_departure_and_rejects_unversioned_roles(self):
         from types import SimpleNamespace
         from quorune.event_card_return import (
-            EVENT_LIBRARY_MOVE_CAPABILITY, EVENT_LIBRARY_MOVE_VERSION, event_library_move_runtime_dependencies,
+            EVENT_LIBRARY_COMPOSITION_CAPABILITY, EVENT_LIBRARY_MOVE_CAPABILITY, EVENT_LIBRARY_MOVE_VERSION,
+            event_library_move_runtime_dependencies,
         )
+        from quorune.library_order_model import GRAVEYARD_LIBRARY_ORDER_CAPABILITY
 
         text = ("When this creature dies or is put into exile from the battlefield, "
                 "you may put it into its owner's library third from the top.")
@@ -301,9 +303,12 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
             effects=node.effects, event=node.event, event_condition=node.event_condition,
             active_zone=node.active_zone, target_schema=node.target_schema, coverage=node.mechanics,
         )
-        self.assertIn(EVENT_LIBRARY_MOVE_CAPABILITY, event_library_move_runtime_dependencies(program))
+        required = (EVENT_LIBRARY_MOVE_CAPABILITY, EVENT_LIBRARY_COMPOSITION_CAPABILITY, GRAVEYARD_LIBRARY_ORDER_CAPABILITY)
+        self.assertEqual(2, movement[EVENT_LIBRARY_MOVE_VERSION])
+        self.assertTrue(set(required) <= set(event_library_move_runtime_dependencies(program)))
         for changed in (
             {key: value for key, value in movement.items() if key != EVENT_LIBRARY_MOVE_VERSION},
+            {**movement, "components": "$context.card"},
             {**movement, "owner": "$controller"},
             {**movement, "expected_zone_change_counter": 1},
         ):
@@ -314,12 +319,14 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
         program.event_condition = {"field": "to", "op": "eq", "value": "exile"}
         with self.assertRaises(ValueError):
             event_library_move_runtime_dependencies(program)
-        blocked = deepcopy(self.registry_value)
-        capability = next(row for row in blocked["capabilities"] if row["id"] == EVENT_LIBRARY_MOVE_CAPABILITY)
-        capability.update(status="blocked", blockers=["withdrawn event library move owner"])
-        registry = CapabilityRegistry(blocked)
-        registry.mark_evidence_verified("0" * 64)
-        self.assertNotEqual("exact", self.compile(text, type_line="Creature — Test", capabilities=registry).status)
+        for owner in required:
+            with self.subTest(owner=owner):
+                blocked = deepcopy(self.registry_value)
+                capability = next(row for row in blocked["capabilities"] if row["id"] == owner)
+                capability.update(status="blocked", blockers=["withdrawn event library move owner"])
+                registry = CapabilityRegistry(blocked)
+                registry.mark_evidence_verified("0" * 64)
+                self.assertNotEqual("exact", self.compile(text, type_line="Creature — Test", capabilities=registry).status)
         with patch("quorune.compiler.event_card_return_templates.source_departure_library_binding", return_value=None):
             self.assertNotEqual("exact", self.compile(text, type_line="Creature — Test").status)
 

@@ -720,6 +720,9 @@
     {
       "id": "fixed-owner-zone-move-contract",
       "patterns": [
+        "quorune/zone_trigger_processing.py",
+        "quorune/library_order_model.py",
+        "quorune/semantic_choices/fixed_top_order.py",
         "quorune/effect_runtime/linked_zone_movement.py",
         "quorune/event_card_return.py",
         "quorune/compiler/event_card_return_templates.py",
@@ -742,6 +745,7 @@
         "test_fixed_public_zone_moves",
         "test_public_exile_followups",
         "test_committed_destruction_followups",
+        "test_mutate_cast_native",
         "test_game_record_v3",
         "test_rules_scheduler",
         "test_zone_general_rules"

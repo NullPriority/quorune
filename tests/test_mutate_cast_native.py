@@ -26,7 +26,8 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
             ROOT/'tests/fixtures/mutate-casting-cards.json',
             ROOT/'tests/fixtures/counter-placement-event-cards.json',
-            ROOT/'tests/fixtures/self-public-cost-cards.json'],path)
+            ROOT/'tests/fixtures/self-public-cost-cards.json',
+            ROOT/'tests/fixtures/fixed-public-zone-move-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Mutate native',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),
             DeckEntry('Generic Bound Plains',14)],['Isamaru, Hound of Konda'])
@@ -85,6 +86,95 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
             self.assertEqual("graveyard", session.state.cards[card.object_id].zone)
             self.assertFalse(session.state.cards[card.object_id].counters)
         self.assertEqual("battlefield", session.state.cards[replacement.object_id].zone)
+        self.replay(session, load=True)
+
+    def _complete_public_departure_order(self, session, chooser, cards):
+        decision = self.resolve(session)
+        self.assertEqual(("semantic.choice", [chooser]), (decision.kind, decision.actors))
+        context = session.packet("pilot:" + chooser, full=True)["decision"]["ctx"]
+        self.assertEqual("composition_departure_order", context["operation"])
+        self.assertEqual({card.ref for card in cards}, {row["id"] for row in context["objects"]})
+        accepted = session.act("pilot:" + chooser, {"action_id": "choose", "cards": [card.ref for card in cards]})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_merged_library_shuffle_moves_every_surviving_original_component(self):
+        for remove_root in (False, True):
+            with self.subTest(remove_root=remove_root):
+                session = self.session(730_303_200 + remove_root)
+                root = self.add(session.engine, "Alabaster Dragon")
+                part = self.add(session.engine, "Dreamtail Heron", zone="hand")
+                removal = self.add(session.engine, "Murder", seat="B", zone="hand")
+                unrelated = self.add(session.engine, "Generic Bound Body", zone="graveyard")
+                exile = self.add(session.engine, "Public Grave Exile", seat="C", zone="hand") if remove_root else None
+                for card in (root, part, removal, unrelated, *((exile,) if exile is not None else ())):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 3, "U": 1})
+                session.state.players["B"].mana_pool.update({"C": 1, "B": 2})
+                session.state.players["C"].mana_pool["B"] = 1
+                self.checkpoint(session)
+                self.mutate(session, part, root)
+                session = self.choose_merge(session, "bottom")
+                self.assertIsNone(self.resolve(session))
+                self.cast(session, "B", removal, [root.ref])
+                self._complete_public_departure_order(session, "A", (root, part))
+                for card in (root, part):
+                    self.assertEqual("graveyard", session.state.cards[card.object_id].zone)
+                if exile is not None:
+                    self.cast(session, "C", exile, [root.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("exile", session.state.cards[root.object_id].zone)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("library", session.state.cards[part.object_id].zone)
+                self.assertEqual("exile" if remove_root else "library", session.state.cards[root.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[unrelated.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_merged_fixed_library_placement_uses_controller_then_private_owner_order(self):
+        session = self.session(401_473_030)
+        engine = session.engine
+        root = self.add(engine, "God-Eternal Oketra", seat="B")
+        engine.change_control(root.object_id, "A")
+        part = self.add(engine, "Dreamtail Heron", seat="B", zone="hand")
+        removal = self.add(engine, "Murder", seat="C", zone="hand")
+        for card in (root, part, removal):
+            self.assert_closed(session, card)
+        self.prepare(session, actor="B", active="B", mana={"C": 3, "U": 1})
+        session.state.players["C"].mana_pool.update({"C": 1, "B": 2})
+        self.checkpoint(session)
+        self.mutate(session, part, root, actor="B")
+        session = self.choose_merge(session, "bottom", actor="B")
+        self.assertIsNone(self.resolve(session))
+        previous = list(reversed(session.state.players["B"].zones["library"]))
+        controller_library = list(session.state.players["A"].zones["library"])
+        self.cast(session, "C", removal, [root.ref])
+        self._complete_public_departure_order(session, "B", (root, part))
+        decision = self.resolve(session)
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors))
+        apply = {"action_id": "choose", "choice": "apply"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", apply).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        applied = session.act("pilot:A", apply)
+        self.assertTrue(applied.ok, applied.summary)
+        decision = session.state.pending_decision
+        self.assertEqual(("semantic.choice", ["B"]), (decision.kind, decision.actors))
+        owner_view = session.packet("pilot:B", full=True)["decision"]["ctx"]
+        observer = session.packet("pilot:A", full=True).get("decision") or {}
+        self.assertEqual({root.ref, part.ref}, {row["id"] for row in owner_view["objects"]})
+        self.assertNotIn("objects", observer.get("ctx", {}))
+        order = {"action_id": "choose", "cards": [part.ref, root.ref]}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", order).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        ordered = session.act("pilot:B", order)
+        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertIsNone(self.resolve(session))
+        expected = [*previous[:2], part.object_id, root.object_id, *previous[2:]]
+        self.assertEqual(expected, list(reversed(session.state.players["B"].zones["library"])))
+        self.assertEqual(controller_library, session.state.players["A"].zones["library"])
+        for card in (root, part):
+            self.assertEqual(["B"], session.state.cards[card.object_id].known_to)
         self.replay(session, load=True)
 
     def scene(self,seed,*,source='Dreamtail Heron',actor='A',foreign_exile=False,copier=None):

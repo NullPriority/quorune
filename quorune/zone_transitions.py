@@ -1157,12 +1157,17 @@ class ZoneTransitionOwner:
             raise GameRuleError("Library order must describe the whole requested batch")
         self.host._require_seat(order.chooser, in_game=True)
         cards = tuple(self.state.cards.get(member) for member in order.members)
-        if any(card is None or card.zone != "graveyard" or card.permanent_composition is not None for card in cards):
-            raise GameRuleError("Ordered library movements must begin in the graveyard")
+        if any(card is None or card.zone not in order.origin_zones or card.permanent_composition is not None for card in cards):
+            raise GameRuleError("Ordered library movements require the original public-zone cards")
         owners = {card.owner for card in cards}
         if len(owners) != 1:
             raise GameRuleError("Ordered library movements require a single library")
-        return next(iter(owners))
+        owner, = owners
+        from .library_order_model import DepartedLibraryArrivalOrder
+
+        if isinstance(order, DepartedLibraryArrivalOrder) and order.chooser != owner:
+            raise GameRuleError("The library owner must order a departed card group")
+        return owner
 
     def _commit_simultaneous_zone_batch(self,changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,*,reason,log,destination_timestamp=None):
         """Commit an already validated group without publishing partial facts."""

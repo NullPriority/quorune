@@ -101,11 +101,40 @@ class LibraryArrivalOrder:
     def to_dict(self) -> dict[str, Any]:
         return {"chooser": self.chooser, "position": self.position, "members": list(self.members)}
 
+    @property
+    def origin_zones(self) -> tuple[str, ...]:
+        return ("graveyard",)
+
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "LibraryArrivalOrder":
+        if isinstance(value, Mapping) and set(value) == {"chooser", "position", "members", "scope"}:
+            if value["scope"] == "event_departure":
+                return DepartedLibraryArrivalOrder(value["chooser"], value["position"], value["members"])
         if not isinstance(value, Mapping) or set(value) != {"chooser", "position", "members"}:
             raise ValueError("Library arrival order has unknown or missing fields")
         return cls(value["chooser"], value["position"], value["members"])
+
+
+@dataclass(frozen=True, slots=True)
+class DepartedLibraryArrivalOrder(LibraryArrivalOrder):
+    """The owner's private order for a surviving public departure group."""
+
+    position: str | int
+
+    def __post_init__(self) -> None:
+        members = _library_order_members(self.members)
+        if (type(self.chooser) is not str or not self.chooser or len(members) < 2
+                or type(self.position) not in (str, int)
+                or self.position not in ("top", "bottom", 2, 3, 4, 5)):
+            raise ValueError("Departed library order requires a private owner and fixed group position")
+        object.__setattr__(self, "members", members)
+
+    @property
+    def origin_zones(self) -> tuple[str, ...]:
+        return ("graveyard", "exile")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {**LibraryArrivalOrder.to_dict(self), "scope": "event_departure"}
 
 
 def validate_graveyard_library_order_effect(value: Mapping[str, Any], *, resolved: bool = False) -> None:

@@ -3346,7 +3346,10 @@ A source's fixed library-placement trigger binds the original public
 incarnation from its own battlefield departure. The trigger controller makes
 any optional choice, and placement uses the captured card owner's library.
 Shuffle instructions still shuffle that library when the original card has
-since moved. A fixed scry follows through the existing scry owner.
+since moved. A merged departure seals each physical component's first public
+incarnation. The original trigger moves the surviving cards together, and the
+library owner privately orders a group placed at a fixed position. A fixed scry
+follows through the existing scry owner.
 
 One-card graveyard exile also accepts the closed `your graveyard` and
 `an opponent's graveyard` owner relations. They reuse the public-card type

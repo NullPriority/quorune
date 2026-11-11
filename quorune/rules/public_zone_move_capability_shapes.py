@@ -253,8 +253,7 @@ def fixed_owner_zone_move_node_capabilities(
     if linked:
         return linked
     from ..event_card_return import (
-        EVENT_LIBRARY_MOVE_CAPABILITY,
-        is_event_library_move, validate_event_library_move,
+        event_library_move_capabilities, is_event_library_move, validate_event_library_move,
     )
 
     if len(effects) == 1 and is_event_library_move(effects[0]):
@@ -264,7 +263,7 @@ def fixed_owner_zone_move_node_capabilities(
             validate_event_library_move(effects[0])
         except (TypeError, ValueError):
             return ()
-        return (FIXED_OWNER_ZONE_MOVE_CAPABILITY, EVENT_LIBRARY_MOVE_CAPABILITY)
+        return (FIXED_OWNER_ZONE_MOVE_CAPABILITY, *event_library_move_capabilities(effects[0]))
     if FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]

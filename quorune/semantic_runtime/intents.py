@@ -19,7 +19,7 @@ from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
-from ..library_order_model import LibraryArrivalOrder
+from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
@@ -706,9 +706,9 @@ class MoveObjectsSimultaneouslyIntent:
             raise ValueError("Simultaneous object-move intent is malformed")
         if self.library_order is not None and (
             not isinstance(self.library_order, LibraryArrivalOrder)
-            or self.library_order.chooser != self.actor
+            or not isinstance(self.library_order, DepartedLibraryArrivalOrder) and self.library_order.chooser != self.actor
             or self.destination != "library"
-            or tuple(self.expected_zones) != ("graveyard",)
+            or tuple(self.expected_zones) != self.library_order.origin_zones
             or self.transition_kind is not ZoneTransitionKind.ORDINARY
             or self.controlled_only
             or set(self.library_order.members) != set(self.object_refs)

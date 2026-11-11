@@ -7387,6 +7387,99 @@
     {
       "applicability": {
         "exclusions": [
+          "future turns",
+          "unrepresented scope combinations",
+          "failed and reversed casts",
+          "library identity reads"
+        ],
+        "inputs": [
+          "resolved controller-scoped grant",
+          "announced cast origin and spell types",
+          "completed authoritative payment"
+        ],
+        "outputs": [
+          "one live stack keyword instance per grant",
+          "remaining independent uses",
+          "ordinary distinct Cascade triggers"
+        ],
+        "summary": "Attach resolved turn-bound Cascade grants to eligible spells at announcement and consume one-shot uses only when the cast completes."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.keyword.cascade"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and materialized operation independently require temporary cast grants and the ordinary Cascade owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.ability.temporary_cascade_grant",
+      "implementation_components": [
+        "quorune.compiler.temporary_player_rule_templates._temporary_cascade_template",
+        "quorune.rules.cast_cascade_grants.cast_cascade_effect_scopes",
+        "quorune.rules.cast_cascade_grants.reserve_cast_cascade_grants",
+        "quorune.rules.cast_cascade_grants.commit_cast_cascade_grants",
+        "quorune.effect_runtime.state_and_permissions._apply_cast_cascade_grant",
+        "quorune.semantic_runtime.battlefield_cascade_grants.stack_cascade_grant_effects"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed result producer restores a material original-card residual. Native tests distinguish early triggers, late grants, failed payment and lost multiplicity.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "multiplayer_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "negative_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast",
+        "test_temporary_cascade_capability_and_scope_omission_fail_closed"
+      ],
+      "official_rules": [
+        "514.2",
+        "601.2a",
+        "601.2i",
+        "611.2a",
+        "611.2f",
+        "702.85a",
+        "702.85c",
+        "733"
+      ],
+      "positive_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "privacy_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell"
+      ],
+      "replay_tests": [
+        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
+        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "test_stagecoach_reserves_instant_and_sorcery_independently",
+        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "nonmana, variable, hybrid or multiple printed cost instances; repeated counts without a dedicated fine capability",
           "unsupported face layouts and dynamically granted additional-cost definitions",
           "unadmitted copied-spell producers are not implemented by the copy-context seam test"
@@ -12275,6 +12368,94 @@
     {
       "applicability": {
         "exclusions": [
+          "colored reductions with generic spill",
+          "variable reductions",
+          "open source or caster scopes"
+        ],
+        "inputs": [
+          "current battlefield source and retained creature-type choice",
+          "declared spell subject and caster"
+        ],
+        "outputs": [
+          "fixed generic or colored-only reduction in the common cast price"
+        ],
+        "summary": "Reduce fixed generic or explicit colored-only spell costs using a current source's public creature-type designation and the declared spell's prospective characteristics."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.cost.modifier.fixed_query",
+        "zone.entry.public_designation"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the chosen-type cost capability blocks exact admission of the typed source.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.cost.modifier.chosen_creature_type",
+      "implementation_components": [
+        "quorune.compiler.chosen_type_cast_costs.chosen_type_spell_cost_handler",
+        "quorune.semantic_runtime.chosen_type_cast_costs.ChosenTypeSpellCostModifierHandler",
+        "quorune.semantic_runtime.chosen_type_cast_costs.chosen_type_cost_spell_row",
+        "quorune.rules.chosen_type_events.chosen_type_event_value",
+        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions",
+        "quorune.rules.casting.static_modifiers.apply_static_reductions"
+      ],
+      "implementation_mutation_rationale": "Omitting the chosen-type producer leaves the fixed printed creature-spell clause residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "multiplayer_tests": [
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller"
+      ],
+      "negative_tests": [
+        "test_chosen_type_costs_lower_closed_creature_and_colored_spell_scopes",
+        "test_chosen_type_costs_reject_open_qualifiers_and_missing_authority",
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "official_rules": [
+        "101.1",
+        "109.5",
+        "118.7a",
+        "118.7b",
+        "205.3m",
+        "601.2f",
+        "601.2h",
+        "614.12a",
+        "707.6"
+      ],
+      "positive_tests": [
+        "test_chosen_type_costs_lower_closed_creature_and_colored_spell_scopes",
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
+        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
+        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "target-relative, chosen, named, secret, or linked predicates",
           "power, toughness, greatest-value, distinct card-type or mana-value, and other cycle-sensitive quantities",
           "floors, caps, Trinisphere-style minimums, cost-setting effects, and arbitrary payment changes",
@@ -12391,94 +12572,6 @@
         "commander_review"
       ],
       "version": 5
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "colored reductions with generic spill",
-          "variable reductions",
-          "open source or caster scopes"
-        ],
-        "inputs": [
-          "current battlefield source and retained creature-type choice",
-          "declared spell subject and caster"
-        ],
-        "outputs": [
-          "fixed generic or colored-only reduction in the common cast price"
-        ],
-        "summary": "Reduce fixed generic or explicit colored-only spell costs using a current source's public creature-type designation and the declared spell's prospective characteristics."
-      },
-      "blockers": [],
-      "dependencies": [
-        "casting.cost.modifier.fixed_query",
-        "zone.entry.public_designation"
-      ],
-      "dependency_fail_closed_rationale": "Withdrawing the chosen-type cost capability blocks exact admission of the typed source.",
-      "dependency_fail_closed_status": "passed",
-      "id": "casting.cost.modifier.chosen_creature_type",
-      "implementation_components": [
-        "quorune.compiler.chosen_type_cast_costs.chosen_type_spell_cost_handler",
-        "quorune.semantic_runtime.chosen_type_cast_costs.ChosenTypeSpellCostModifierHandler",
-        "quorune.semantic_runtime.chosen_type_cast_costs.chosen_type_cost_spell_row",
-        "quorune.rules.chosen_type_events.chosen_type_event_value",
-        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions",
-        "quorune.rules.casting.static_modifiers.apply_static_reductions"
-      ],
-      "implementation_mutation_rationale": "Omitting the chosen-type producer leaves the fixed printed creature-spell clause residual.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
-        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
-        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
-      ],
-      "multiplayer_tests": [
-        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
-        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller"
-      ],
-      "negative_tests": [
-        "test_chosen_type_costs_lower_closed_creature_and_colored_spell_scopes",
-        "test_chosen_type_costs_reject_open_qualifiers_and_missing_authority",
-        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
-        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
-        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
-      ],
-      "official_rules": [
-        "101.1",
-        "109.5",
-        "118.7a",
-        "118.7b",
-        "205.3m",
-        "601.2f",
-        "601.2h",
-        "614.12a",
-        "707.6"
-      ],
-      "positive_tests": [
-        "test_chosen_type_costs_lower_closed_creature_and_colored_spell_scopes",
-        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
-        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
-        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
-      ],
-      "privacy_tests": [],
-      "replay_tests": [
-        "test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs",
-        "test_actual_morophon_prices_hybrid_choices_for_its_current_controller",
-        "test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
     },
     {
       "applicability": {
@@ -17060,6 +17153,92 @@
     {
       "applicability": {
         "exclusions": [
+          "historical games without payment provenance",
+          "copied casting decisions as payment",
+          "unsupported conditional clauses, variable thresholds or mixed results"
+        ],
+        "inputs": [
+          "original cast payment and incarnation",
+          "version-one spell mana counts",
+          "complete current source program"
+        ],
+        "outputs": [
+          "sealed concrete mana-unit counts",
+          "typed fixed threshold entry amount",
+          "canonical affected-object counter event"
+        ],
+        "summary": "Preserve immutable actual mana units paid for a cast, pinned to the original spell incarnation and omitted from spell copies and historical no-count execution."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The canonical casting payment owner captures actual concrete mana types; the additive execution version preserves historical no-count records.",
+      "dependency_fail_closed_status": "not_applicable",
+      "id": "casting.payment.mana_unit_counts",
+      "implementation_components": [
+        "quorune.spell_mana_counts.SpellManaSpentCounts",
+        "quorune.spell_mana_counts.capture_spell_mana_counts",
+        "quorune.rules.casting.commit._create_spell_item"
+      ],
+      "implementation_mutation_rationale": "Fresh actual Ardenvale casts kill omission of the entry compiler, payment capture, or actual colored-unit contribution.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_copy_provenance_retains_the_historical_no_runtime_trust_mode",
+        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability"
+      ],
+      "negative_tests": [
+        "test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
+        "test_legacy_no_count_execution_retains_an_absent_payment_field",
+        "test_verified_capability_withdrawal_and_stripped_runtime_minima_reject"
+      ],
+      "official_rules": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.1c",
+        "614.12",
+        "614.16"
+      ],
+      "positive_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
+        "test_excess_white_qualifies_but_three_wrong_color_units_do_not"
+      ],
+      "privacy_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability"
+      ],
+      "replay_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+        "test_legacy_no_count_execution_retains_an_absent_payment_field"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "ordinal and spell-quality-qualified grants",
           "unrepresented payment keywords and durations"
         ],
@@ -17136,92 +17315,6 @@
         "test_actual_flockchaser_grant_survives_the_attacking_source_departure",
         "test_actual_archway_grant_pays_with_an_artifact_and_expires_at_cleanup",
         "test_actual_wand_and_archway_compose_disjoint_tap_payment_resources"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "historical games without payment provenance",
-          "copied casting decisions as payment",
-          "unsupported conditional clauses, variable thresholds or mixed results"
-        ],
-        "inputs": [
-          "original cast payment and incarnation",
-          "version-one spell mana counts",
-          "complete current source program"
-        ],
-        "outputs": [
-          "sealed concrete mana-unit counts",
-          "typed fixed threshold entry amount",
-          "canonical affected-object counter event"
-        ],
-        "summary": "Preserve immutable actual mana units paid for a cast, pinned to the original spell incarnation and omitted from spell copies and historical no-count execution."
-      },
-      "blockers": [],
-      "dependencies": [],
-      "dependency_fail_closed_rationale": "The canonical casting payment owner captures actual concrete mana types; the additive execution version preserves historical no-count records.",
-      "dependency_fail_closed_status": "not_applicable",
-      "id": "casting.payment.mana_unit_counts",
-      "implementation_components": [
-        "quorune.spell_mana_counts.SpellManaSpentCounts",
-        "quorune.spell_mana_counts.capture_spell_mana_counts",
-        "quorune.rules.casting.commit._create_spell_item"
-      ],
-      "implementation_mutation_rationale": "Fresh actual Ardenvale casts kill omission of the entry compiler, payment capture, or actual colored-unit contribution.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
-        "test_copy_provenance_retains_the_historical_no_runtime_trust_mode",
-        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts"
-      ],
-      "multiplayer_tests": [
-        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
-        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability"
-      ],
-      "negative_tests": [
-        "test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
-        "test_legacy_no_count_execution_retains_an_absent_payment_field",
-        "test_verified_capability_withdrawal_and_stripped_runtime_minima_reject"
-      ],
-      "official_rules": [
-        "207.2c",
-        "400.7d",
-        "601.2h",
-        "609.4b",
-        "614.1c",
-        "614.12",
-        "614.16"
-      ],
-      "positive_tests": [
-        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
-        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
-        "test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
-        "test_excess_white_qualifies_but_three_wrong_color_units_do_not"
-      ],
-      "privacy_tests": [
-        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
-        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability"
-      ],
-      "replay_tests": [
-        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
-        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
-        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
-        "test_legacy_no_count_execution_retains_an_absent_payment_field"
       ],
       "required_evidence": [
         "positive",
@@ -19978,92 +20071,6 @@
     {
       "applicability": {
         "exclusions": [
-          "arbitrary role expressions",
-          "repeat sacrifice of one object",
-          "infeasible or uncontrolled objects",
-          "optional costs"
-        ],
-        "inputs": [
-          "ordered creature, artifact, and land roles",
-          "current controlled permanents",
-          "optional preceding fixed discard"
-        ],
-        "outputs": [
-          "feasible actor-scoped choices",
-          "one simultaneous sacrifice transition for the distinct selected set"
-        ],
-        "summary": "Select the greatest feasible set of differently typed, distinct controlled permanents and sacrifice the set together."
-      },
-      "blockers": [],
-      "dependencies": [
-        "choice.affected_player.fixed_sacrifice",
-        "zone.change.destination_replacement"
-      ],
-      "dependency_fail_closed_rationale": "The typed body requires distinct roles and the ordinary discard and sacrifice owners.",
-      "dependency_fail_closed_status": "passed",
-      "id": "choice.permanent.distinct_sacrifice_roles",
-      "implementation_components": [
-        "quorune.compiler.resolution_effect_templates._distinct_sacrifice_template",
-        "quorune.rules.distinct_sacrifices.distinct_sacrifice_effect",
-        "quorune.rules.distinct_sacrifices.maximum_sacrifices",
-        "quorune.semantic_choices.distinct_sacrifices.prepare_distinct_sacrifices",
-        "quorune.semantic_choices.distinct_sacrifices.complete_distinct_sacrifices"
-      ],
-      "implementation_mutation_rationale": "Removing the producer leaves the room body residual. A bounded reference enumerator and the native overlapping-type choices distinguish a greedy result.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
-        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
-      ],
-      "multiplayer_tests": [
-        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set"
-      ],
-      "negative_tests": [
-        "test_oubliette_body_and_matching_require_distinct_roles",
-        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
-        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
-      ],
-      "official_rules": [
-        "101.3",
-        "101.4c",
-        "400.7",
-        "608.2c",
-        "608.2d",
-        "609.3",
-        "701.9a",
-        "701.21a",
-        "702.26b"
-      ],
-      "positive_tests": [
-        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
-        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
-      ],
-      "privacy_tests": [
-        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set"
-      ],
-      "replay_tests": [
-        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
-        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
           "unknown fractions, qualifiers or ambiguous subjects",
           "client-authored counts or changed candidate domains",
           "unrepresented object-controller references"
@@ -20732,6 +20739,92 @@
       "replay_tests": [
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
         "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "arbitrary role expressions",
+          "repeat sacrifice of one object",
+          "infeasible or uncontrolled objects",
+          "optional costs"
+        ],
+        "inputs": [
+          "ordered creature, artifact, and land roles",
+          "current controlled permanents",
+          "optional preceding fixed discard"
+        ],
+        "outputs": [
+          "feasible actor-scoped choices",
+          "one simultaneous sacrifice transition for the distinct selected set"
+        ],
+        "summary": "Select the greatest feasible set of differently typed, distinct controlled permanents and sacrifice the set together."
+      },
+      "blockers": [],
+      "dependencies": [
+        "choice.affected_player.fixed_sacrifice",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The typed body requires distinct roles and the ordinary discard and sacrifice owners.",
+      "dependency_fail_closed_status": "passed",
+      "id": "choice.permanent.distinct_sacrifice_roles",
+      "implementation_components": [
+        "quorune.compiler.resolution_effect_templates._distinct_sacrifice_template",
+        "quorune.rules.distinct_sacrifices.distinct_sacrifice_effect",
+        "quorune.rules.distinct_sacrifices.maximum_sacrifices",
+        "quorune.semantic_choices.distinct_sacrifices.prepare_distinct_sacrifices",
+        "quorune.semantic_choices.distinct_sacrifices.complete_distinct_sacrifices"
+      ],
+      "implementation_mutation_rationale": "Removing the producer leaves the room body residual. A bounded reference enumerator and the native overlapping-type choices distinguish a greedy result.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
+        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
+      ],
+      "multiplayer_tests": [
+        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set"
+      ],
+      "negative_tests": [
+        "test_oubliette_body_and_matching_require_distinct_roles",
+        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
+        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
+      ],
+      "official_rules": [
+        "101.3",
+        "101.4c",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "609.3",
+        "701.9a",
+        "701.21a",
+        "702.26b"
+      ],
+      "positive_tests": [
+        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
+        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
+      ],
+      "privacy_tests": [
+        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set"
+      ],
+      "replay_tests": [
+        "test_oubliette_discards_privately_then_sacrifices_a_complete_feasible_set",
+        "test_oubliette_empty_hand_can_leave_one_role_vacant_to_sacrifice_two"
       ],
       "required_evidence": [
         "positive",
@@ -24622,6 +24715,101 @@
     {
       "applicability": {
         "exclusions": [
+          "global or linked live goad subjects",
+          "condition- or duration-qualified clauses",
+          "open prefix or independent body siblings"
+        ],
+        "inputs": [
+          "reciprocal current attachment and current creature type",
+          "current source subtype, ability, and controller",
+          "current goad prohibitions and timed designations"
+        ],
+        "outputs": [
+          "one pair of declaration requirements per goading player",
+          "public goading seats",
+          "attached cause ends with source applicability",
+          "same-player Goad instruction remains redundant"
+        ],
+        "summary": "Read an attached creature's current goad causes from its Aura and Equipment abilities and combine them with committed timed designations."
+      },
+      "blockers": [],
+      "dependencies": [
+        "attachment.reference.current_or_lki",
+        "combat.declaration.typed_components",
+        "combat.goad.prohibition.controller_creatures"
+      ],
+      "dependency_fail_closed_rationale": "The compiler withdraws exact support if the static goad reader or typed declaration capability is blocked. The runtime fragment rejects unsupported attachment types, versions, and additional fields.",
+      "dependency_fail_closed_status": "passed",
+      "id": "combat.goad.attached_creature",
+      "implementation_components": [
+        "quorune.declaration_fragments.AttachedGoadSpec",
+        "quorune.compiler.combat_metadata_templates.attached_goad_handler",
+        "quorune.semantic_runtime.combat_metadata.AttachedGoadFragmentHandler",
+        "quorune.semantic_runtime.combat_metadata.active_attached_goaders",
+        "quorune.semantic_runtime.combat_metadata.active_goading_players",
+        "quorune.declaration_requirement_runtime.typed_attacker_requirements",
+        "quorune.projection.StateProjector"
+      ],
+      "implementation_mutation_rationale": "Removing attached goad lowering makes an otherwise closed attached stat and goad sentence material again.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
+        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
+      ],
+      "multiplayer_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player"
+      ],
+      "negative_tests": [
+        "test_attached_goad_rejects_open_grammar_and_malformed_descriptors",
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime"
+      ],
+      "official_rules": [
+        "101.2",
+        "113.12",
+        "301.5a",
+        "303.4b",
+        "508.1d",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "701.15b",
+        "701.15c",
+        "701.15d"
+      ],
+      "positive_tests": [
+        "test_closed_attached_goad_composes_only_with_closed_prefixes",
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
+      ],
+      "privacy_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime"
+      ],
+      "replay_tests": [
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
+        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "continuous static is-goaded producers",
           "linked instruction-result sets",
           "unrepresented multi-target cardinalities",
@@ -26487,6 +26675,91 @@
       "status": "trusted",
       "supported_profiles": [
         "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "copied spells, unsupported source timing and unrepresented grant conditions",
+          "retroactive trigger creation after the cast"
+        ],
+        "inputs": [
+          "current complete source ability and caster",
+          "committed spell face, origin, mana value and typed characteristics"
+        ],
+        "outputs": [
+          "current layer-six keyword and distinct ability instances",
+          "one ordinary cast-trigger occurrence per instance"
+        ],
+        "summary": "A live battlefield ability grants a bounded number of separate Cascade instances to qualifying spells its controller casts."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.keyword.cascade"
+      ],
+      "dependency_fail_closed_rationale": "Compiler closure and the runtime handler independently require the live grant capability and the ordinary Cascade owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.ability.battlefield_cascade_grant",
+      "implementation_components": [
+        "quorune.compiler.battlefield_cascade_grants.battlefield_cascade_grant_handler",
+        "quorune.semantic_runtime.battlefield_cascade_grants.BattlefieldCascadeGrantSpec",
+        "quorune.semantic_runtime.battlefield_cascade_grants.BattlefieldCascadeGrantHandler",
+        "quorune.semantic_runtime.battlefield_cascade_grants.battlefield_cascade_stack_effects",
+        "quorune.cascade.cascade_trigger_items"
+      ],
+      "implementation_mutation_rationale": "Omitting the compiler producer restores the printed grant residual. The cast witnesses also distinguish missing, combined or late instances.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library",
+        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify"
+      ],
+      "multiplayer_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library"
+      ],
+      "negative_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify",
+        "test_battlefield_cascade_dependency_and_compiler_omission_fail_closed"
+      ],
+      "official_rules": [
+        "601.2i",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "702.85a",
+        "702.85c"
+      ],
+      "positive_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library"
+      ],
+      "privacy_tests": [
+        "test_cast_grant_survives_source_removal_and_preserves_private_library"
+      ],
+      "replay_tests": [
+        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
+        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
+        "test_cast_grant_survives_source_removal_and_preserves_private_library",
+        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
         "commander_duel",
         "commander_review"
       ],
@@ -33551,6 +33824,134 @@
         "commander_review"
       ],
       "version": 10
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "Variable repetition and unrepresented recipient bindings"
+        ],
+        "inputs": [
+          "Closed source, creature target, controlled creature set, attack occurrence, or equipped creature",
+          "Effective signed characteristics at resolution"
+        ],
+        "outputs": [
+          "Locked additive layer 7c effects through cleanup",
+          "Independently sampled amounts per current affected incarnation",
+          "Shared effect timestamp for the optional fixed first strike grant"
+        ],
+        "summary": "A fixed power or toughness multiplier samples each current recipient at resolution and locks its signed additive result."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "dependency_fail_closed_rationale": "Runtime binding independently requires the new capability and validates the typed factor, statistic and recipient.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.fixed_stat_multiplier",
+      "implementation_components": [
+        "quorune.compiler.fixed_stat_multipliers.fixed_stat_multiplier_effect_template",
+        "quorune.rules.fixed_stat_multipliers.FixedStatMultiplier",
+        "quorune.rules.fixed_stat_multipliers.apply_fixed_stat_multiplier"
+      ],
+      "implementation_mutation_rationale": "Clamping a negative power changes Unleash Fury's native result. Omitting the compiler production leaves the original residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "multiplayer_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "negative_tests": [
+        "test_attack_multiplier_ignores_a_new_incarnation",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_multiplier_occurrence_owner_withdrawal_and_malformed_grant_fail_closed",
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_requires_exact_capability_and_kills_the_unsigned_mutation",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "official_rules": [
+        "107.1b",
+        "107.2",
+        "208.3",
+        "400.7",
+        "508.3a",
+        "608.2b",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "613.4c",
+        "701.10a",
+        "701.10b",
+        "701.10c",
+        "701.11b",
+        "701.11c",
+        "701.14a",
+        "701.14b",
+        "702.7a"
+      ],
+      "positive_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "privacy_tests": [
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "replay_tests": [
+        "test_attack_multiplier_ignores_a_new_incarnation",
+        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
+        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
+        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
+        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
+        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
+        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
+        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
+        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
+        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
+        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
@@ -46533,6 +46934,79 @@
     {
       "applicability": {
         "exclusions": [
+          "foreign names and conflicting declarations",
+          "unrepresented deck conditions or quantities",
+          "changes to snapshot legality or ordinary commander eligibility"
+        ],
+        "inputs": [
+          "printed English card name and one closed copy-limit line",
+          "exact compiler and pregame component binding",
+          "canonical mainboard and commander entries"
+        ],
+        "outputs": [
+          "current copy ceiling for Commander deck validation and upload",
+          "ordinary size, color identity, and snapshot legality checks",
+          "deck-only declaration outside gameplay discovery"
+        ],
+        "summary": "One exact source-spanned Commander deck-copy declaration supplies the current canonical name's finite or unrestricted pregame limit."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "Missing compiler authority leaves a material residual. The registered component independently requires its declared capability, and deck validation reads one exact descriptor.",
+      "dependency_fail_closed_status": "passed",
+      "id": "format.commander.printed_copy_limit",
+      "implementation_components": [
+        "quorune.deck_copy_limits.DeckCopyLimitSpec",
+        "quorune.compiler.deck_copy_limits.printed_deck_copy_limit_node",
+        "quorune.compiler.deck_copy_limits.compiled_deck_copy_limit",
+        "quorune.semantic_runtime.deck_copy_limits.DeckCopyLimitFragmentHandler",
+        "quorune.deck.DeckLoader.validate_commander_deck"
+      ],
+      "implementation_mutation_rationale": "Omitting the printed declaration restores the singleton conflict for an otherwise legal Persistent Petitioners list.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
+        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
+        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
+      ],
+      "multiplayer_tests": [],
+      "negative_tests": [
+        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
+        "test_printed_copy_limit_rejects_foreign_names_open_clauses_and_duplicates",
+        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
+        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
+      ],
+      "official_rules": [
+        "101.1",
+        "113.6n",
+        "201.2",
+        "903.5b"
+      ],
+      "positive_tests": [
+        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
+        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
+        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_valid_printed_copy_limit_deck_starts_and_replays_with_both_copies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "revealed-hand and mulligan-time abilities",
           "paid or conditional opening clauses",
           "unrepresented sibling semantics"
@@ -49697,6 +50171,100 @@
     {
       "applicability": {
         "exclusions": [
+          "variable counts",
+          "another player's hand or library",
+          "non-top destinations"
+        ],
+        "inputs": [
+          "one announced player or opponent or a represented APNAP seat set",
+          "fixed count and private own-hand choices"
+        ],
+        "outputs": [
+          "private top-first selection per affected player",
+          "one simultaneous library destination batch"
+        ],
+        "summary": "Place fixed ordered cards from each instructed player's own hand on top of that player's library through private APNAP choices and a simultaneous zone transaction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The exact payload independently requires the affected-player ordering capability, including after removal of printed coverage metadata.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.order.affected_player_hand_to_top",
+      "implementation_components": [
+        "quorune.compiler.affected_player_discard_templates.fixed_affected_player_hand_top_effect_template",
+        "quorune.rules.affected_player_discard_capability_shapes.fixed_hand_top_apnap_payload_dependencies",
+        "quorune.selection.apnap_contract.revalidate_ordered_hand_choices",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Omitting the affected-player producer makes a fixed targeted hand order residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "negative_tests": [
+        "test_affected_hand_top_rejects_other_zones_counts_and_open_actor_fields",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand"
+      ],
+      "official_rules": [
+        "101.4",
+        "101.4a",
+        "101.4b",
+        "400.7",
+        "401.4",
+        "402.3",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "609.3",
+        "903.9b"
+      ],
+      "positive_tests": [
+        "test_affected_hand_top_compiles_and_requires_its_own_capability",
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "privacy_tests": [
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "replay_tests": [
+        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
+        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand",
+        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
+        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Variable count",
           "Opponent library or actor/player substitutions",
           "Unowned coupled results"
@@ -49887,100 +50455,6 @@
         "test_actual_blocked_draw_still_puts_back_the_only_hand_card",
         "test_actual_riverwise_augur_resolves_draw_before_private_top_order",
         "test_actual_brainstorm_keeps_put_back_after_a_resumed_dredge"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "variable counts",
-          "another player's hand or library",
-          "non-top destinations"
-        ],
-        "inputs": [
-          "one announced player or opponent or a represented APNAP seat set",
-          "fixed count and private own-hand choices"
-        ],
-        "outputs": [
-          "private top-first selection per affected player",
-          "one simultaneous library destination batch"
-        ],
-        "summary": "Place fixed ordered cards from each instructed player's own hand on top of that player's library through private APNAP choices and a simultaneous zone transaction."
-      },
-      "blockers": [],
-      "dependencies": [
-        "zone.change.destination_replacement"
-      ],
-      "dependency_fail_closed_rationale": "The exact payload independently requires the affected-player ordering capability, including after removal of printed coverage metadata.",
-      "dependency_fail_closed_status": "passed",
-      "id": "library.order.affected_player_hand_to_top",
-      "implementation_components": [
-        "quorune.compiler.affected_player_discard_templates.fixed_affected_player_hand_top_effect_template",
-        "quorune.rules.affected_player_discard_capability_shapes.fixed_hand_top_apnap_payload_dependencies",
-        "quorune.selection.apnap_contract.revalidate_ordered_hand_choices",
-        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
-        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
-        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
-      ],
-      "implementation_mutation_rationale": "Omitting the affected-player producer makes a fixed targeted hand order residual.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand",
-        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
-        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
-      ],
-      "multiplayer_tests": [
-        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
-        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
-      ],
-      "negative_tests": [
-        "test_affected_hand_top_rejects_other_zones_counts_and_open_actor_fields",
-        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
-        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand"
-      ],
-      "official_rules": [
-        "101.4",
-        "101.4a",
-        "101.4b",
-        "400.7",
-        "401.4",
-        "402.3",
-        "608.2b",
-        "608.2c",
-        "608.2d",
-        "609.3",
-        "903.9b"
-      ],
-      "positive_tests": [
-        "test_affected_hand_top_compiles_and_requires_its_own_capability",
-        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
-        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
-        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
-      ],
-      "privacy_tests": [
-        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
-        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
-        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
-      ],
-      "replay_tests": [
-        "test_actual_rats_and_imp_bind_the_announced_opponent_hand",
-        "test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand",
-        "test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement",
-        "test_actual_augermage_collects_private_apnap_choices_before_any_library_move"
       ],
       "required_evidence": [
         "positive",
@@ -51387,95 +51861,6 @@
     {
       "applicability": {
         "exclusions": [
-          "another player library",
-          "unowned quantities",
-          "unrepresented selected destinations or linked followups"
-        ],
-        "inputs": [
-          "owned declared/cast/scalar count",
-          "complete existing selection and remainder schema",
-          "resolving controller"
-        ],
-        "outputs": [
-          "one fixed-library instruction or zero inspection",
-          "principal-correct pending selection/load/replay"
-        ],
-        "summary": "Owned variable self-library inspection count normalizes to an existing fixed partition before looking; zero performs no inspection."
-      },
-      "blockers": [],
-      "dependencies": [
-        "library.select.fixed_controller"
-      ],
-      "dependency_fail_closed_rationale": "New and fixed-owner dependency withdrawal prevent exact compilation; schema/authority boundaries reject.",
-      "dependency_fail_closed_status": "passed",
-      "id": "library.select.variable_controller",
-      "implementation_components": [
-        "quorune.variable_library_selection_model.fixed_selection_for_resolved_count",
-        "quorune.compiler.variable_library_selection_templates.variable_library_selection_effect_template",
-        "quorune.semantic_choices.variable_library_selection.VariableLibrarySelectionHandler"
-      ],
-      "implementation_mutation_rationale": "Withdrawing the variable compiler production rejects the original complete instruction.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
-        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
-        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
-      ],
-      "multiplayer_tests": [
-        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
-        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
-        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
-      ],
-      "negative_tests": [
-        "test_unknown_authority_shapes_and_boolean_counts_reject_even_at_zero",
-        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
-        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
-      ],
-      "official_rules": [
-        "107.1b",
-        "400.2",
-        "401.4",
-        "608.2c",
-        "609.3",
-        "701.20a",
-        "701.20b",
-        "701.20d",
-        "701.20e"
-      ],
-      "positive_tests": [
-        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
-        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
-        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
-      ],
-      "privacy_tests": [
-        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
-        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
-        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
-      ],
-      "replay_tests": [
-        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
-        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
-        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
           "objects deeper than the public prefix",
           "other libraries",
           "unrepresented duration or destination changes"
@@ -51548,6 +51933,95 @@
       "replay_tests": [
         "test_throne_replaces_entry_counters_and_expires_hexproof_on_the_actual_next_turn",
         "test_throne_shuffles_when_the_public_prefix_has_no_creature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "another player library",
+          "unowned quantities",
+          "unrepresented selected destinations or linked followups"
+        ],
+        "inputs": [
+          "owned declared/cast/scalar count",
+          "complete existing selection and remainder schema",
+          "resolving controller"
+        ],
+        "outputs": [
+          "one fixed-library instruction or zero inspection",
+          "principal-correct pending selection/load/replay"
+        ],
+        "summary": "Owned variable self-library inspection count normalizes to an existing fixed partition before looking; zero performs no inspection."
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.select.fixed_controller"
+      ],
+      "dependency_fail_closed_rationale": "New and fixed-owner dependency withdrawal prevent exact compilation; schema/authority boundaries reject.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.select.variable_controller",
+      "implementation_components": [
+        "quorune.variable_library_selection_model.fixed_selection_for_resolved_count",
+        "quorune.compiler.variable_library_selection_templates.variable_library_selection_effect_template",
+        "quorune.semantic_choices.variable_library_selection.VariableLibrarySelectionHandler"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the variable compiler production rejects the original complete instruction.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
+        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
+        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
+      ],
+      "multiplayer_tests": [
+        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
+        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
+        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
+      ],
+      "negative_tests": [
+        "test_unknown_authority_shapes_and_boolean_counts_reject_even_at_zero",
+        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
+        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
+      ],
+      "official_rules": [
+        "107.1b",
+        "400.2",
+        "401.4",
+        "608.2c",
+        "609.3",
+        "701.20a",
+        "701.20b",
+        "701.20d",
+        "701.20e"
+      ],
+      "positive_tests": [
+        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
+        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
+        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
+      ],
+      "privacy_tests": [
+        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
+        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
+        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
+      ],
+      "replay_tests": [
+        "test_original_machinate_locks_public_count_then_keeps_look_and_order_private",
+        "test_original_enshrined_memories_announced_zero_and_three_reveal_only_inspected_cards",
+        "test_original_machinate_short_library_and_stale_top_reject_before_movement"
       ],
       "required_evidence": [
         "positive",
@@ -52743,6 +53217,75 @@
     {
       "applicability": {
         "exclusions": [
+          "different subtypes and unsupported spending contexts"
+        ],
+        "inputs": [
+          "canonical chosen subtype at production",
+          "typed public spell or ability-source subtype facts"
+        ],
+        "outputs": [
+          "shared funding and accepted payment eligibility for the sealed subtype"
+        ],
+        "summary": "Use a production-bound creature subtype for the represented spell and ability-source mana spending rule."
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.activated.typed_spend_rules"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.activated.chosen_subtype_spending",
+      "implementation_components": [
+        "quorune.mana_spend_rules.ManaSpendRule.allows",
+        "quorune.mana_spend_rules.bind_mana_spend_rule",
+        "quorune.fixed_mana_spend_templates.fixed_mana_spend_rule_template"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "multiplayer_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "negative_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell",
+        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
+      ],
+      "official_rules": [
+        "106.6",
+        "205.3m",
+        "601.2h",
+        "605.1a",
+        "605.3b"
+      ],
+      "positive_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "privacy_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "replay_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "triggered mana abilities",
           "monocolored-only queries",
           "linked or exiled-card queries",
@@ -53210,6 +53753,98 @@
         "commander_review"
       ],
       "version": 4
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "unsupported paid-result riders",
+          "untethered chosen-type substitutions",
+          "copies of protected spells"
+        ],
+        "inputs": [
+          "closed fixed-output mana ability",
+          "canonical source designation at production",
+          "actual consumed mana and typed spend context"
+        ],
+        "outputs": [
+          "production-bound restriction",
+          "shared funding and payment eligibility",
+          "counter protection on the spell that spends its eligible lot"
+        ],
+        "summary": "Produce a typed mana lot with a chosen creature spending rule or an eligible paid spell counter-protection rider."
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.activated.restricted_fixed_output"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and the versioned fixed-output handler both require typed spending authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.activated.typed_spend_rules",
+      "implementation_components": [
+        "quorune.fixed_mana_spend_templates.fixed_mana_spend_rule_template",
+        "quorune.semantic_runtime.mana_abilities.FixedManaSpendRuleAbilityHandler",
+        "quorune.mana_spend_rules.bind_mana_spend_rule",
+        "quorune.mana_restrictions.mana_restriction_allows",
+        "quorune.mana_provenance.ManaProvenanceHostMixin._apply_mana_spend"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed parser restores the original clause residual. Live witnesses distinguish the chosen subtype, card type, ability-source eligibility and consumption rider.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_selected_creature_mana_is_offered_for_changeling_casts",
+        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "multiplayer_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "negative_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana",
+        "test_typed_spend_rule_and_runtime_authority_fail_closed"
+      ],
+      "official_rules": [
+        "106.6",
+        "601.2h",
+        "605.1a",
+        "605.3b",
+        "701.6a",
+        "707.2"
+      ],
+      "positive_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_selected_creature_mana_is_offered_for_changeling_casts",
+        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "privacy_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending"
+      ],
+      "replay_tests": [
+        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
+        "test_selected_creature_mana_is_offered_for_changeling_casts",
+        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
+        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
+        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
@@ -53920,6 +54555,88 @@
       "status": "trusted",
       "supported_profiles": [
         "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "unpaid mana or unsupported spend predicates",
+          "later incarnations and copiable characteristics"
+        ],
+        "inputs": [
+          "actual consumed mana and typed creature spell facts",
+          "closed haste lifetime"
+        ],
+        "outputs": [
+          "layer-six haste on the cast incarnation",
+          "represented stack-to-battlefield continuity",
+          "canonical turn and departure expiry"
+        ],
+        "summary": "Bind haste to a qualifying cast that spends a represented mana lot, then carry it to the resulting permanent."
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.activated.typed_spend_rules"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.spend.creature_haste",
+      "implementation_components": [
+        "quorune.mana_spend_rules.ManaSpendRule.haste_lifetime",
+        "quorune.mana_restrictions.mana_spend_haste_lifetime",
+        "quorune.continuous_effect_state.commit_paid_mana_haste",
+        "quorune.continuous_effect_state.stack_resolution_effects"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_generator_servant_spends_both_units_and_haste_expires",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "multiplayer_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "negative_tests": [
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast",
+        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
+      ],
+      "official_rules": [
+        "106.6",
+        "400.7a",
+        "601.2h",
+        "605.1a",
+        "611.2a",
+        "702.10",
+        "707.2"
+      ],
+      "positive_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_generator_servant_spends_both_units_and_haste_expires",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "privacy_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup"
+      ],
+      "replay_tests": [
+        "test_hall_paid_haste_survives_resolution_and_cleanup",
+        "test_generator_servant_spends_both_units_and_haste_expires",
+        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
         "commander_duel",
         "commander_review"
       ],
@@ -59502,6 +60219,110 @@
     {
       "applicability": {
         "exclusions": [
+          "hidden-zone predicates",
+          "chosen-name and different-name quantities",
+          "unrepresented conjunctions and open object qualifiers"
+        ],
+        "inputs": [
+          "version-seven named count and one closed public zone predicate",
+          "current public type and controller or graveyard owner",
+          "effective battlefield copy and Room names or printed graveyard face names"
+        ],
+        "outputs": [
+          "one count per matching object",
+          "ordinary source exclusion, active roster, and type filtering",
+          "existing consumers for spell amounts, mana, and characteristic definitions or modifiers"
+        ],
+        "summary": "Count objects with one literal English rules name through the existing public quantity evaluator."
+      },
+      "blockers": [],
+      "dependencies": [
+        "permanent.shared_type_doors.lifecycle"
+      ],
+      "dependency_fail_closed_rationale": "The compiler leaves a material residual when the name-count authority is absent. Runtime binding independently infers the capability from the version-seven quantity.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.public_named_count",
+      "implementation_components": [
+        "quorune.characteristic_fragments.CharacteristicQuantitySpec",
+        "quorune.characteristic_fragments.characteristic_quantity_capabilities",
+        "quorune.compiler.collection_quantity_templates.named_collection_quantity",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.carddb_characteristics.public_object_rules_names",
+        "quorune.rules.room_copy_values.current_room_rules_names"
+      ],
+      "implementation_mutation_rationale": "Omitting the literal-name production eliminates the exact Powerstone Shard quantity. Native controls independently distinguish nameless, nonmatching, opposing, and wrong-zone objects.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_public_name_facts_distinguish_faces_rooms_and_literal_separators",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "multiplayer_tests": [
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "negative_tests": [
+        "test_literal_name_codec_preserves_old_shapes_and_rejects_nonpublic_domains",
+        "test_public_name_facts_distinguish_faces_rooms_and_literal_separators",
+        "test_original_named_owners_close_and_runtime_requires_the_dependency",
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private"
+      ],
+      "official_rules": [
+        "201.2",
+        "201.2a",
+        "201.5",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "707.2",
+        "708.2a",
+        "709.4a",
+        "709.5",
+        "712.8a",
+        "715.4"
+      ],
+      "positive_tests": [
+        "test_literal_name_codec_preserves_old_shapes_and_rejects_nonpublic_domains",
+        "test_original_named_owners_close_and_runtime_requires_the_dependency",
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "privacy_tests": [
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private"
+      ],
+      "replay_tests": [
+        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
+        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
+        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
+        "test_actual_plague_rats_definition_counts_both_current_battlefields",
+        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "hidden quality reads",
           "unsupported zone or scope mixtures",
           "linked exiled-object grants",
@@ -60480,6 +61301,85 @@
       "status": "trusted",
       "supported_profiles": [
         "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "current attachment as a substitute for the sealed attacker",
+          "other quantity recipients and unsupported event contexts"
+        ],
+        "inputs": [
+          "one exact named creature count or sealed lone attack characteristic result",
+          "captured logical source or event recipient identity"
+        ],
+        "outputs": [
+          "one resolution-time integer with the designated incarnation excluded",
+          "current characteristics and controller relation for all remaining candidates"
+        ],
+        "summary": "Count a supported current controlled battlefield collection excluding its captured source or sealed lone attacker."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "dependency_fail_closed_rationale": "The compiler and typed runtime binding independently require the source-relative amount authority. An incomplete descriptor stays unresolved.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.source_relative_effect_count",
+      "implementation_components": [
+        "quorune.query_effect_amount_model.PublicQueryAmountSpec",
+        "quorune.query_effect_amount_model.source_relative_count_capabilities",
+        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+        "quorune.compiler.attack_event_results.qualified_attack_characteristic_result",
+        "quorune.rules.attack_event_results.attack_event_characteristic_capabilities"
+      ],
+      "implementation_mutation_rationale": "Omitting the sealed attacker amount binding restores a material residual on the original Equipment.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal",
+        "test_sealed_attack_count_survives_attachment_movement_and_requires_its_context"
+      ],
+      "multiplayer_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "negative_tests": [
+        "test_source_relative_count_authority_and_compiler_omission_fail_closed",
+        "test_sealed_attack_count_survives_attachment_movement_and_requires_its_context",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "official_rules": [
+        "400.7",
+        "506.5",
+        "508.1",
+        "603.2",
+        "608.2h"
+      ],
+      "positive_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "privacy_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature"
+      ],
+      "replay_tests": [
+        "test_hare_counts_a_returned_source_as_another_creature",
+        "test_sigil_counts_other_creatures_after_equipment_removal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
         "commander_duel",
         "commander_review"
       ],
@@ -65920,6 +66820,93 @@
       "status": "trusted",
       "supported_profiles": [
         "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "other players and future turns",
+          "spells already cast and copies that were not cast",
+          "unsupported type or result qualifiers"
+        ],
+        "inputs": [
+          "one resolved controller-scoped result",
+          "selected spell type at announcement",
+          "accepted casting costs"
+        ],
+        "outputs": [
+          "one protected cast incarnation",
+          "remaining scopes after consumption",
+          "ordinary counter targeting and resolution"
+        ],
+        "summary": "Resolve a closed next-cast counter protection and bind its eligible scope through the authoritative cast transaction."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The original clause and its versioned runtime descriptor independently require the scoped protection capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "stack.counter.prohibition.next_cast",
+      "implementation_components": [
+        "quorune.compiler.temporary_player_rule_templates._next_cast_protection_template",
+        "quorune.rules.next_cast_counter_protection.next_cast_protection_effect_scope",
+        "quorune.rules.next_cast_counter_protection.reserve_next_cast_protection",
+        "quorune.rules.next_cast_counter_protection.commit_next_cast_protection",
+        "quorune.stack_counter.stack_item_can_be_countered"
+      ],
+      "implementation_mutation_rationale": "Omitting the typed result producer restores the original clause residual. Native casts distinguish eligibility, rollback, and independent draw.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
+      ],
+      "multiplayer_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
+      ],
+      "negative_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable",
+        "test_village_unused_window_expires_during_cleanup",
+        "test_next_cast_protection_dependency_and_compiler_omission_fail_closed"
+      ],
+      "official_rules": [
+        "101.2",
+        "514.2",
+        "601.2a",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2f",
+        "701.6a"
+      ],
+      "positive_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
+      ],
+      "privacy_tests": [
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws"
+      ],
+      "replay_tests": [
+        "test_village_protects_only_the_cast_announced_after_its_activation",
+        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
+        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable",
+        "test_village_unused_window_expires_during_cleanup"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
         "commander_duel",
         "commander_review"
       ],
@@ -71903,6 +72890,103 @@
       "status": "trusted",
       "supported_profiles": [
         "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "Live combat roster or power after declaration",
+          "Creatures put onto the battlefield attacking"
+        ],
+        "inputs": [
+          "One normalized source attack with full effective power sealed on each declared participant",
+          "A fixed positive total-power threshold"
+        ],
+        "outputs": [
+          "A typed signed power comparison at occurrence and resolution",
+          "Existing source-bound results and original attacking recipients"
+        ],
+        "summary": "One source attack reads the signed power sum of the declared attackers from the same original occurrence at trigger discovery and resolution."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_self_attack",
+        "trigger.event.qualified_attack_singular"
+      ],
+      "dependency_fail_closed_rationale": "Removing the required authority, the recheck coverage, or the closed source predicate rejects strict runtime binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.condition.declared_attacker_total_power",
+      "implementation_components": [
+        "quorune.attack_batch_model.declared_attack_power_condition",
+        "quorune.compiler.public_trigger_conditions.bind_public_intervening_trigger",
+        "quorune.rules.attack_batches.declared_attack_power_total",
+        "quorune.rules.attack_batches.declared_attack_power_recheck",
+        "quorune.rules.event_subscriptions.source_event_intervening_recheck",
+        "quorune.attack_transition_engine_adapter.EngineAttackTransitionQuery.participant"
+      ],
+      "implementation_mutation_rationale": "Clamping negative attack power makes the native five-power declaration qualify. Withdrawing the producer restores the original material residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "multiplayer_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "negative_tests": [
+        "test_pack_tactics_counts_negative_power",
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_runtime_requires_the_capability_and_closed_recheck",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice"
+      ],
+      "official_rules": [
+        "107.1b",
+        "207.2c",
+        "508.1",
+        "508.3a",
+        "508.3c",
+        "508.4",
+        "603.4"
+      ],
+      "positive_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "privacy_tests": [
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking"
+      ],
+      "replay_tests": [
+        "test_pack_tactics_counts_negative_power",
+        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
+        "test_pack_tactics_reads_power_after_a_precombat_pump",
+        "test_pack_tactics_rechecks_original_six_power_across_defenders",
+        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
+        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
         "commander_duel",
         "commander_review"
       ],
@@ -82484,6 +83568,94 @@
     {
       "applicability": {
         "exclusions": [
+          "historical attack conditions",
+          "hidden count predicates",
+          "absolute untap prohibitions",
+          "variable queries"
+        ],
+        "inputs": [
+          "current source or attachment identity",
+          "effective public battlefield counts or current monarch"
+        ],
+        "outputs": [
+          "source-pinned prohibition for its controller's simultaneous untap step"
+        ],
+        "summary": "Evaluate fixed public controller counts, separate opponent counts, or an attached monarchy exception before applying a current own-step untap prohibition."
+      },
+      "blockers": [],
+      "dependencies": [
+        "untap.step.static_participation"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the conditional participation capability blocks exact admission of the source.",
+      "dependency_fail_closed_status": "passed",
+      "id": "untap.step.conditional_participation",
+      "implementation_components": [
+        "quorune.compiler.conditional_untap_templates.conditional_untap_step_handler",
+        "quorune.semantic_runtime.conditional_untap.ConditionalUntapStepParticipationHandler",
+        "quorune.semantic_runtime.conditional_untap.conditional_untap_applies",
+        "quorune.card_programs.runtime.fixed_public_state_condition_matches",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.untap_step.plan_untap_step"
+      ],
+      "implementation_mutation_rationale": "Omitting the conditional producer leaves its otherwise closed source residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "multiplayer_tests": [
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "negative_tests": [
+        "test_conditional_untap_compiles_closed_current_state_scopes",
+        "test_conditional_untap_producer_and_capability_withdrawal_fail_closed",
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "official_rules": [
+        "109.5",
+        "502.3",
+        "502.4",
+        "611.3a",
+        "613.1f",
+        "701.26b"
+      ],
+      "positive_tests": [
+        "test_conditional_untap_compiles_closed_current_state_scopes",
+        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
+        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
+        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
+        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "standalone activated Exert costs",
           "unrepresented conditional Exert permissions",
           "unsupported phasing or skipped-step compositions",
@@ -83042,94 +84214,6 @@
         "commander_review"
       ],
       "version": 3
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "historical attack conditions",
-          "hidden count predicates",
-          "absolute untap prohibitions",
-          "variable queries"
-        ],
-        "inputs": [
-          "current source or attachment identity",
-          "effective public battlefield counts or current monarch"
-        ],
-        "outputs": [
-          "source-pinned prohibition for its controller's simultaneous untap step"
-        ],
-        "summary": "Evaluate fixed public controller counts, separate opponent counts, or an attached monarchy exception before applying a current own-step untap prohibition."
-      },
-      "blockers": [],
-      "dependencies": [
-        "untap.step.static_participation"
-      ],
-      "dependency_fail_closed_rationale": "Withdrawing the conditional participation capability blocks exact admission of the source.",
-      "dependency_fail_closed_status": "passed",
-      "id": "untap.step.conditional_participation",
-      "implementation_components": [
-        "quorune.compiler.conditional_untap_templates.conditional_untap_step_handler",
-        "quorune.semantic_runtime.conditional_untap.ConditionalUntapStepParticipationHandler",
-        "quorune.semantic_runtime.conditional_untap.conditional_untap_applies",
-        "quorune.card_programs.runtime.fixed_public_state_condition_matches",
-        "quorune.dynamic_characteristics.query_characteristic_count",
-        "quorune.untap_step.plan_untap_step"
-      ],
-      "implementation_mutation_rationale": "Omitting the conditional producer leaves its otherwise closed source residual.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
-        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
-        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
-      ],
-      "multiplayer_tests": [
-        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
-        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
-        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
-      ],
-      "negative_tests": [
-        "test_conditional_untap_compiles_closed_current_state_scopes",
-        "test_conditional_untap_producer_and_capability_withdrawal_fail_closed",
-        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
-        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
-        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
-      ],
-      "official_rules": [
-        "109.5",
-        "502.3",
-        "502.4",
-        "611.3a",
-        "613.1f",
-        "701.26b"
-      ],
-      "positive_tests": [
-        "test_conditional_untap_compiles_closed_current_state_scopes",
-        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
-        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
-        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
-        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
-      ],
-      "privacy_tests": [],
-      "replay_tests": [
-        "test_actual_alirios_rechecks_its_controllers_reflection_before_the_step",
-        "test_actual_walking_dream_requires_two_creatures_under_one_opponents_control",
-        "test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap",
-        "test_actual_fall_from_favor_uses_the_attached_controllers_monarchy"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
     },
     {
       "applicability": {
@@ -86193,6 +87277,75 @@
     {
       "applicability": {
         "exclusions": [
+          "unlisted values and unsupported linked choices"
+        ],
+        "inputs": [
+          "source-spanned canonical creature subtype list",
+          "affected entering incarnation and destination controller"
+        ],
+        "outputs": [
+          "actor-bound replacement choices",
+          "retained designation for the entering incarnation"
+        ],
+        "summary": "Resolve an intrinsic entry designation through a closed printed list of creature subtypes."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.entry.public_designation"
+      ],
+      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.entry.limited_creature_type_designation",
+      "implementation_components": [
+        "quorune.compiler.entry_designation_templates._listed_creature_type_entry_handler",
+        "quorune.semantic_runtime.entry_designations.LimitedCreatureTypeEntryDesignationHandler"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "multiplayer_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "negative_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell",
+        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
+      ],
+      "official_rules": [
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "616.1"
+      ],
+      "positive_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "privacy_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "replay_tests": [
+        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "compound, optional or restricted entry choices",
           "multiple same-kind entry choices",
           "entry choices linked to source-type additions",
@@ -87309,6 +88462,181 @@
     {
       "applicability": {
         "exclusions": [
+          "deferred one-of-many permission",
+          "free or immediate play",
+          "other library owner",
+          "arbitrary duration"
+        ],
+        "inputs": [
+          "current own-library top set",
+          "resolved controller",
+          "actual exiled incarnations"
+        ],
+        "outputs": [
+          "one principal-bound public choice",
+          "ordinary play permission for the selected incarnation"
+        ],
+        "summary": "Choose one current card from the simultaneous own-library top exile result and grant ordinary play for a fixed window."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.exile.fixed_top_resolving_cast",
+        "zone.impulse_access.fixed"
+      ],
+      "dependency_fail_closed_rationale": "The persisted typed payload requires independently verified capture, play and selection capabilities.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.impulse_access.chosen_top_exile",
+      "implementation_components": [
+        "quorune.fixed_top_exile.validate_fixed_top_exile",
+        "quorune.compiler.discover_templates._chosen_impulse_template",
+        "quorune.semantic_choices.fixed_top_exile.FixedTopExileHandler",
+        "quorune.impulse_access.apply_chosen_impulse_access"
+      ],
+      "implementation_mutation_rationale": "Removing the scoped producer leaves the choice text residual. Native checks distinguish unselected and unrelated cards, target failure, role and ordinary payment.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_research_desk_replays_its_pending_choice_after_sacrifice_and_pays_normal_cost",
+        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land",
+        "test_riverwheel_illegal_target_exiles_nothing"
+      ],
+      "multiplayer_tests": [
+        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
+      ],
+      "negative_tests": [
+        "test_chosen_impulse_scope_and_independent_binding_fail_closed",
+        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land",
+        "test_riverwheel_illegal_target_exiles_nothing"
+      ],
+      "official_rules": [
+        "305.1",
+        "305.2a",
+        "400.7",
+        "400.7j",
+        "406.3",
+        "601.1a",
+        "608.2c",
+        "608.2d",
+        "609.3",
+        "611.2a",
+        "701.13a"
+      ],
+      "positive_tests": [
+        "test_research_desk_replays_its_pending_choice_after_sacrifice_and_pays_normal_cost",
+        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
+      ],
+      "privacy_tests": [
+        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
+      ],
+      "replay_tests": [
+        "test_research_desk_replays_its_pending_choice_after_sacrifice_and_pays_normal_cost",
+        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "unbound X",
+          "scaled or dynamic public formulas",
+          "limited or immediate play",
+          "other library owner"
+        ],
+        "inputs": [
+          "unscaled cast or sealed entry X",
+          "current own-library top set",
+          "fixed play duration"
+        ],
+        "outputs": [
+          "simultaneous public exile of the available group",
+          "ordinary play permissions over actual exiled results"
+        ],
+        "summary": "Resolve own-library impulse access with an announced or sealed entry X and a fixed turn window."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.impulse_access.fixed",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "dependency_fail_closed_rationale": "The versioned persisted result requires declared count and the fixed play owner. A sealed entry result also independently requires the entry owner.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.impulse_access.declared_count",
+      "implementation_components": [
+        "quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
+        "quorune.rules.impulse_access_capability_shapes.declared_impulse_access_dependencies",
+        "quorune.semantic_runtime.impulse_access_handlers.FixedImpulseAccessHandler",
+        "quorune.impulse_access.prepare_fixed_impulse_access",
+        "quorune.impulse_access.commit_fixed_impulse_access"
+      ],
+      "implementation_mutation_rationale": "Removing the owned count slot keeps the printed body residual. Native checks use zero, a positive cast count and a twelve-card sealed entry after source departure.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "negative_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_declared_impulse_count_requires_typed_x_and_its_runtime_capability"
+      ],
+      "official_rules": [
+        "107.3a",
+        "107.3m",
+        "400.7j",
+        "406.3",
+        "514.2",
+        "601.1a",
+        "608.2c",
+        "609.3",
+        "611.2a",
+        "701.13a"
+      ],
+      "positive_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "privacy_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing"
+      ],
+      "replay_tests": [
+        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
+        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "dynamic counts or counts derived from prior actions",
           "opponent, target-player, shared-library, or non-top access",
           "cast-only, type-, color-, mana-value-, or timing-restricted permission",
@@ -87474,181 +88802,6 @@
         "negative",
         "interaction",
         "multiplayer",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "unbound X",
-          "scaled or dynamic public formulas",
-          "limited or immediate play",
-          "other library owner"
-        ],
-        "inputs": [
-          "unscaled cast or sealed entry X",
-          "current own-library top set",
-          "fixed play duration"
-        ],
-        "outputs": [
-          "simultaneous public exile of the available group",
-          "ordinary play permissions over actual exiled results"
-        ],
-        "summary": "Resolve own-library impulse access with an announced or sealed entry X and a fixed turn window."
-      },
-      "blockers": [],
-      "dependencies": [
-        "zone.impulse_access.fixed",
-        "quantity_expression.declared_effect_amount"
-      ],
-      "dependency_fail_closed_rationale": "The versioned persisted result requires declared count and the fixed play owner. A sealed entry result also independently requires the entry owner.",
-      "dependency_fail_closed_status": "passed",
-      "id": "zone.impulse_access.declared_count",
-      "implementation_components": [
-        "quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
-        "quorune.rules.impulse_access_capability_shapes.declared_impulse_access_dependencies",
-        "quorune.semantic_runtime.impulse_access_handlers.FixedImpulseAccessHandler",
-        "quorune.impulse_access.prepare_fixed_impulse_access",
-        "quorune.impulse_access.commit_fixed_impulse_access"
-      ],
-      "implementation_mutation_rationale": "Removing the owned count slot keeps the printed body residual. Native checks use zero, a positive cast count and a twelve-card sealed entry after source departure.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
-        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
-      ],
-      "multiplayer_tests": [
-        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
-        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
-      ],
-      "negative_tests": [
-        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
-        "test_declared_impulse_count_requires_typed_x_and_its_runtime_capability"
-      ],
-      "official_rules": [
-        "107.3a",
-        "107.3m",
-        "400.7j",
-        "406.3",
-        "514.2",
-        "601.1a",
-        "608.2c",
-        "609.3",
-        "611.2a",
-        "701.13a"
-      ],
-      "positive_tests": [
-        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
-        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
-      ],
-      "privacy_tests": [
-        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing"
-      ],
-      "replay_tests": [
-        "test_commune_uses_announced_x_and_keeps_ordinary_play_costs_and_timing",
-        "test_hugs_uses_twelve_sealed_entry_cards_after_the_source_leaves"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "deferred one-of-many permission",
-          "free or immediate play",
-          "other library owner",
-          "arbitrary duration"
-        ],
-        "inputs": [
-          "current own-library top set",
-          "resolved controller",
-          "actual exiled incarnations"
-        ],
-        "outputs": [
-          "one principal-bound public choice",
-          "ordinary play permission for the selected incarnation"
-        ],
-        "summary": "Choose one current card from the simultaneous own-library top exile result and grant ordinary play for a fixed window."
-      },
-      "blockers": [],
-      "dependencies": [
-        "zone.exile.fixed_top_resolving_cast",
-        "zone.impulse_access.fixed"
-      ],
-      "dependency_fail_closed_rationale": "The persisted typed payload requires independently verified capture, play and selection capabilities.",
-      "dependency_fail_closed_status": "passed",
-      "id": "zone.impulse_access.chosen_top_exile",
-      "implementation_components": [
-        "quorune.fixed_top_exile.validate_fixed_top_exile",
-        "quorune.compiler.discover_templates._chosen_impulse_template",
-        "quorune.semantic_choices.fixed_top_exile.FixedTopExileHandler",
-        "quorune.impulse_access.apply_chosen_impulse_access"
-      ],
-      "implementation_mutation_rationale": "Removing the scoped producer leaves the choice text residual. Native checks distinguish unselected and unrelated cards, target failure, role and ordinary payment.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_research_desk_replays_its_pending_choice_after_sacrifice_and_pays_normal_cost",
-        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land",
-        "test_riverwheel_illegal_target_exiles_nothing"
-      ],
-      "multiplayer_tests": [
-        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
-      ],
-      "negative_tests": [
-        "test_chosen_impulse_scope_and_independent_binding_fail_closed",
-        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land",
-        "test_riverwheel_illegal_target_exiles_nothing"
-      ],
-      "official_rules": [
-        "305.1",
-        "305.2a",
-        "400.7",
-        "400.7j",
-        "406.3",
-        "601.1a",
-        "608.2c",
-        "608.2d",
-        "609.3",
-        "611.2a",
-        "701.13a"
-      ],
-      "positive_tests": [
-        "test_research_desk_replays_its_pending_choice_after_sacrifice_and_pays_normal_cost",
-        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
-      ],
-      "privacy_tests": [
-        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
-      ],
-      "replay_tests": [
-        "test_research_desk_replays_its_pending_choice_after_sacrifice_and_pays_normal_cost",
-        "test_riverwheel_chooses_only_actual_exile_results_and_plays_a_land"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
         "replay"
       ],
       "status": "trusted",
@@ -89466,6 +90619,94 @@
     {
       "applicability": {
         "exclusions": [
+          "unbound or duplicate departure rows",
+          "later incarnations of the same physical card"
+        ],
+        "inputs": [
+          "one original composed battlefield departure",
+          "each committed physical card's first public zone and logical incarnation",
+          "one fixed owner library placement or shuffle"
+        ],
+        "outputs": [
+          "the surviving cards move together",
+          "the library owner privately orders a fixed placement",
+          "the trigger controller retains the printed optional choice"
+        ],
+        "summary": "An original composed battlefield departure can move its surviving physical cards to the owner's library."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.return.fixed_event_library",
+        "zone.composition.destination_result"
+      ],
+      "dependency_fail_closed_rationale": "The versioned instruction requires the full physical departure binding and independently withdrawable ordering authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.return.fixed_event_library_components",
+      "implementation_components": [
+        "quorune.event_card_return.event_library_departure_context",
+        "quorune.event_card_return.validate_event_library_move",
+        "quorune.event_card_return.prepare_event_library_order",
+        "quorune.effect_runtime.linked_zone_movement._apply_library_component_move",
+        "quorune.library_order_model.DepartedLibraryArrivalOrder",
+        "quorune.semantic_choices.fixed_top_order.GraveyardLibraryOrderingHandler",
+        "quorune.rules.library_partition.commit_ordered_library_arrivals"
+      ],
+      "implementation_mutation_rationale": "The native shuffle witness observes the original root-only regression. The compiler witness rejects substituting the root reference for the component group.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_merged_fixed_library_placement_uses_controller_then_private_owner_order",
+        "test_merged_library_shuffle_moves_every_surviving_original_component"
+      ],
+      "multiplayer_tests": [
+        "test_merged_fixed_library_placement_uses_controller_then_private_owner_order",
+        "test_merged_library_shuffle_moves_every_surviving_original_component"
+      ],
+      "negative_tests": [
+        "test_merged_fixed_library_placement_uses_controller_then_private_owner_order",
+        "test_merged_library_shuffle_moves_every_surviving_original_component",
+        "test_source_library_move_binds_the_departure_and_rejects_unversioned_roles"
+      ],
+      "official_rules": [
+        "400.7",
+        "400.7e",
+        "401.4",
+        "401.7",
+        "603.6c",
+        "608.2d",
+        "701.24c",
+        "730.3c"
+      ],
+      "positive_tests": [
+        "test_merged_fixed_library_placement_uses_controller_then_private_owner_order",
+        "test_merged_library_shuffle_moves_every_surviving_original_component",
+        "test_source_library_move_binds_the_departure_and_rejects_unversioned_roles"
+      ],
+      "privacy_tests": [
+        "test_merged_fixed_library_placement_uses_controller_then_private_owner_order"
+      ],
+      "replay_tests": [
+        "test_merged_fixed_library_placement_uses_controller_then_private_owner_order",
+        "test_merged_library_shuffle_moves_every_surviving_original_component"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "targeted returns",
           "milled-this-way-only or linked batch restrictions",
           "multi-card or arbitrary predicate choices",
@@ -90323,1159 +91564,6 @@
         "commander_review"
       ],
       "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "global or linked live goad subjects",
-          "condition- or duration-qualified clauses",
-          "open prefix or independent body siblings"
-        ],
-        "inputs": [
-          "reciprocal current attachment and current creature type",
-          "current source subtype, ability, and controller",
-          "current goad prohibitions and timed designations"
-        ],
-        "outputs": [
-          "one pair of declaration requirements per goading player",
-          "public goading seats",
-          "attached cause ends with source applicability",
-          "same-player Goad instruction remains redundant"
-        ],
-        "summary": "Read an attached creature's current goad causes from its Aura and Equipment abilities and combine them with committed timed designations."
-      },
-      "blockers": [],
-      "dependencies": [
-        "attachment.reference.current_or_lki",
-        "combat.declaration.typed_components",
-        "combat.goad.prohibition.controller_creatures"
-      ],
-      "dependency_fail_closed_rationale": "The compiler withdraws exact support if the static goad reader or typed declaration capability is blocked. The runtime fragment rejects unsupported attachment types, versions, and additional fields.",
-      "dependency_fail_closed_status": "passed",
-      "id": "combat.goad.attached_creature",
-      "implementation_components": [
-        "quorune.declaration_fragments.AttachedGoadSpec",
-        "quorune.compiler.combat_metadata_templates.attached_goad_handler",
-        "quorune.semantic_runtime.combat_metadata.AttachedGoadFragmentHandler",
-        "quorune.semantic_runtime.combat_metadata.active_attached_goaders",
-        "quorune.semantic_runtime.combat_metadata.active_goading_players",
-        "quorune.declaration_requirement_runtime.typed_attacker_requirements",
-        "quorune.projection.StateProjector"
-      ],
-      "implementation_mutation_rationale": "Removing attached goad lowering makes an otherwise closed attached stat and goad sentence material again.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
-        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
-        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
-      ],
-      "multiplayer_tests": [
-        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
-        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player"
-      ],
-      "negative_tests": [
-        "test_attached_goad_rejects_open_grammar_and_malformed_descriptors",
-        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime"
-      ],
-      "official_rules": [
-        "101.2",
-        "113.12",
-        "301.5a",
-        "303.4b",
-        "508.1d",
-        "604.1",
-        "611.3a",
-        "611.3b",
-        "701.15b",
-        "701.15c",
-        "701.15d"
-      ],
-      "positive_tests": [
-        "test_closed_attached_goad_composes_only_with_closed_prefixes",
-        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
-        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
-      ],
-      "privacy_tests": [
-        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime"
-      ],
-      "replay_tests": [
-        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
-        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
-        "test_actual_eye_of_nidhogg_preserves_characteristics_and_live_goad"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "hidden-zone predicates",
-          "chosen-name and different-name quantities",
-          "unrepresented conjunctions and open object qualifiers"
-        ],
-        "inputs": [
-          "version-seven named count and one closed public zone predicate",
-          "current public type and controller or graveyard owner",
-          "effective battlefield copy and Room names or printed graveyard face names"
-        ],
-        "outputs": [
-          "one count per matching object",
-          "ordinary source exclusion, active roster, and type filtering",
-          "existing consumers for spell amounts, mana, and characteristic definitions or modifiers"
-        ],
-        "summary": "Count objects with one literal English rules name through the existing public quantity evaluator."
-      },
-      "blockers": [],
-      "dependencies": [
-        "permanent.shared_type_doors.lifecycle"
-      ],
-      "dependency_fail_closed_rationale": "The compiler leaves a material residual when the name-count authority is absent. Runtime binding independently infers the capability from the version-seven quantity.",
-      "dependency_fail_closed_status": "passed",
-      "id": "quantity_expression.public_named_count",
-      "implementation_components": [
-        "quorune.characteristic_fragments.CharacteristicQuantitySpec",
-        "quorune.characteristic_fragments.characteristic_quantity_capabilities",
-        "quorune.compiler.collection_quantity_templates.named_collection_quantity",
-        "quorune.dynamic_characteristics.query_characteristic_count",
-        "quorune.carddb_characteristics.public_object_rules_names",
-        "quorune.rules.room_copy_values.current_room_rules_names"
-      ],
-      "implementation_mutation_rationale": "Omitting the literal-name production eliminates the exact Powerstone Shard quantity. Native controls independently distinguish nameless, nonmatching, opposing, and wrong-zone objects.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_public_name_facts_distinguish_faces_rooms_and_literal_separators",
-        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
-        "test_actual_plague_rats_definition_counts_both_current_battlefields",
-        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
-      ],
-      "multiplayer_tests": [
-        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
-        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
-        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
-        "test_actual_plague_rats_definition_counts_both_current_battlefields",
-        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
-      ],
-      "negative_tests": [
-        "test_literal_name_codec_preserves_old_shapes_and_rejects_nonpublic_domains",
-        "test_public_name_facts_distinguish_faces_rooms_and_literal_separators",
-        "test_original_named_owners_close_and_runtime_requires_the_dependency",
-        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
-        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private"
-      ],
-      "official_rules": [
-        "201.2",
-        "201.2a",
-        "201.5",
-        "400.7",
-        "608.2c",
-        "608.2h",
-        "707.2",
-        "708.2a",
-        "709.4a",
-        "709.5",
-        "712.8a",
-        "715.4"
-      ],
-      "positive_tests": [
-        "test_literal_name_codec_preserves_old_shapes_and_rejects_nonpublic_domains",
-        "test_original_named_owners_close_and_runtime_requires_the_dependency",
-        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
-        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
-        "test_actual_plague_rats_definition_counts_both_current_battlefields",
-        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
-      ],
-      "privacy_tests": [
-        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private"
-      ],
-      "replay_tests": [
-        "test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards",
-        "test_actual_powerstone_shard_counts_its_named_controlled_artifact",
-        "test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private",
-        "test_actual_plague_rats_definition_counts_both_current_battlefields",
-        "test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "foreign names and conflicting declarations",
-          "unrepresented deck conditions or quantities",
-          "changes to snapshot legality or ordinary commander eligibility"
-        ],
-        "inputs": [
-          "printed English card name and one closed copy-limit line",
-          "exact compiler and pregame component binding",
-          "canonical mainboard and commander entries"
-        ],
-        "outputs": [
-          "current copy ceiling for Commander deck validation and upload",
-          "ordinary size, color identity, and snapshot legality checks",
-          "deck-only declaration outside gameplay discovery"
-        ],
-        "summary": "One exact source-spanned Commander deck-copy declaration supplies the current canonical name's finite or unrestricted pregame limit."
-      },
-      "blockers": [],
-      "dependencies": [],
-      "dependency_fail_closed_rationale": "Missing compiler authority leaves a material residual. The registered component independently requires its declared capability, and deck validation reads one exact descriptor.",
-      "dependency_fail_closed_status": "passed",
-      "id": "format.commander.printed_copy_limit",
-      "implementation_components": [
-        "quorune.deck_copy_limits.DeckCopyLimitSpec",
-        "quorune.compiler.deck_copy_limits.printed_deck_copy_limit_node",
-        "quorune.compiler.deck_copy_limits.compiled_deck_copy_limit",
-        "quorune.semantic_runtime.deck_copy_limits.DeckCopyLimitFragmentHandler",
-        "quorune.deck.DeckLoader.validate_commander_deck"
-      ],
-      "implementation_mutation_rationale": "Omitting the printed declaration restores the singleton conflict for an otherwise legal Persistent Petitioners list.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
-        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
-        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
-      ],
-      "multiplayer_tests": [],
-      "negative_tests": [
-        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
-        "test_printed_copy_limit_rejects_foreign_names_open_clauses_and_duplicates",
-        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
-        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
-      ],
-      "official_rules": [
-        "101.1",
-        "113.6n",
-        "201.2",
-        "903.5b"
-      ],
-      "positive_tests": [
-        "test_printed_copy_limit_originals_have_trusted_pregame_bindings",
-        "test_printed_copy_limits_apply_to_resolved_names_and_preserve_other_checks",
-        "test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy"
-      ],
-      "privacy_tests": [],
-      "replay_tests": [
-        "test_valid_printed_copy_limit_deck_starts_and_replays_with_both_copies"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "current attachment as a substitute for the sealed attacker",
-          "other quantity recipients and unsupported event contexts"
-        ],
-        "inputs": [
-          "one exact named creature count or sealed lone attack characteristic result",
-          "captured logical source or event recipient identity"
-        ],
-        "outputs": [
-          "one resolution-time integer with the designated incarnation excluded",
-          "current characteristics and controller relation for all remaining candidates"
-        ],
-        "summary": "Count a supported current controlled battlefield collection excluding its captured source or sealed lone attacker."
-      },
-      "blockers": [],
-      "dependencies": [
-        "quantity_expression.public_query_effect_amount"
-      ],
-      "dependency_fail_closed_rationale": "The compiler and typed runtime binding independently require the source-relative amount authority. An incomplete descriptor stays unresolved.",
-      "dependency_fail_closed_status": "passed",
-      "id": "quantity_expression.source_relative_effect_count",
-      "implementation_components": [
-        "quorune.query_effect_amount_model.PublicQueryAmountSpec",
-        "quorune.query_effect_amount_model.source_relative_count_capabilities",
-        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
-        "quorune.compiler.attack_event_results.qualified_attack_characteristic_result",
-        "quorune.rules.attack_event_results.attack_event_characteristic_capabilities"
-      ],
-      "implementation_mutation_rationale": "Omitting the sealed attacker amount binding restores a material residual on the original Equipment.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_hare_counts_a_returned_source_as_another_creature",
-        "test_sigil_counts_other_creatures_after_equipment_removal",
-        "test_sealed_attack_count_survives_attachment_movement_and_requires_its_context"
-      ],
-      "multiplayer_tests": [
-        "test_hare_counts_a_returned_source_as_another_creature",
-        "test_sigil_counts_other_creatures_after_equipment_removal"
-      ],
-      "negative_tests": [
-        "test_source_relative_count_authority_and_compiler_omission_fail_closed",
-        "test_sealed_attack_count_survives_attachment_movement_and_requires_its_context",
-        "test_sigil_counts_other_creatures_after_equipment_removal"
-      ],
-      "official_rules": [
-        "400.7",
-        "506.5",
-        "508.1",
-        "603.2",
-        "608.2h"
-      ],
-      "positive_tests": [
-        "test_hare_counts_a_returned_source_as_another_creature",
-        "test_sigil_counts_other_creatures_after_equipment_removal"
-      ],
-      "privacy_tests": [
-        "test_hare_counts_a_returned_source_as_another_creature"
-      ],
-      "replay_tests": [
-        "test_hare_counts_a_returned_source_as_another_creature",
-        "test_sigil_counts_other_creatures_after_equipment_removal"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "copied spells, unsupported source timing and unrepresented grant conditions",
-          "retroactive trigger creation after the cast"
-        ],
-        "inputs": [
-          "current complete source ability and caster",
-          "committed spell face, origin, mana value and typed characteristics"
-        ],
-        "outputs": [
-          "current layer-six keyword and distinct ability instances",
-          "one ordinary cast-trigger occurrence per instance"
-        ],
-        "summary": "A live battlefield ability grants a bounded number of separate Cascade instances to qualifying spells its controller casts."
-      },
-      "blockers": [],
-      "dependencies": [
-        "trigger.keyword.cascade"
-      ],
-      "dependency_fail_closed_rationale": "Compiler closure and the runtime handler independently require the live grant capability and the ordinary Cascade owner.",
-      "dependency_fail_closed_status": "passed",
-      "id": "continuous.ability.battlefield_cascade_grant",
-      "implementation_components": [
-        "quorune.compiler.battlefield_cascade_grants.battlefield_cascade_grant_handler",
-        "quorune.semantic_runtime.battlefield_cascade_grants.BattlefieldCascadeGrantSpec",
-        "quorune.semantic_runtime.battlefield_cascade_grants.BattlefieldCascadeGrantHandler",
-        "quorune.semantic_runtime.battlefield_cascade_grants.battlefield_cascade_stack_effects",
-        "quorune.cascade.cascade_trigger_items"
-      ],
-      "implementation_mutation_rationale": "Omitting the compiler producer restores the printed grant residual. The cast witnesses also distinguish missing, combined or late instances.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
-        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
-        "test_cast_grant_survives_source_removal_and_preserves_private_library",
-        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify"
-      ],
-      "multiplayer_tests": [
-        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
-        "test_cast_grant_survives_source_removal_and_preserves_private_library"
-      ],
-      "negative_tests": [
-        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
-        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
-        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify",
-        "test_battlefield_cascade_dependency_and_compiler_omission_fail_closed"
-      ],
-      "official_rules": [
-        "601.2i",
-        "611.3a",
-        "611.3b",
-        "613.1f",
-        "702.85a",
-        "702.85c"
-      ],
-      "positive_tests": [
-        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
-        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
-        "test_cast_grant_survives_source_removal_and_preserves_private_library"
-      ],
-      "privacy_tests": [
-        "test_cast_grant_survives_source_removal_and_preserves_private_library"
-      ],
-      "replay_tests": [
-        "test_first_sliver_grants_only_from_battlefield_to_its_caster",
-        "test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value",
-        "test_cast_grant_survives_source_removal_and_preserves_private_library",
-        "test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "future turns",
-          "unrepresented scope combinations",
-          "failed and reversed casts",
-          "library identity reads"
-        ],
-        "inputs": [
-          "resolved controller-scoped grant",
-          "announced cast origin and spell types",
-          "completed authoritative payment"
-        ],
-        "outputs": [
-          "one live stack keyword instance per grant",
-          "remaining independent uses",
-          "ordinary distinct Cascade triggers"
-        ],
-        "summary": "Attach resolved turn-bound Cascade grants to eligible spells at announcement and consume one-shot uses only when the cast completes."
-      },
-      "blockers": [],
-      "dependencies": [
-        "trigger.keyword.cascade"
-      ],
-      "dependency_fail_closed_rationale": "The compiler result and materialized operation independently require temporary cast grants and the ordinary Cascade owner.",
-      "dependency_fail_closed_status": "passed",
-      "id": "casting.ability.temporary_cascade_grant",
-      "implementation_components": [
-        "quorune.compiler.temporary_player_rule_templates._temporary_cascade_template",
-        "quorune.rules.cast_cascade_grants.cast_cascade_effect_scopes",
-        "quorune.rules.cast_cascade_grants.reserve_cast_cascade_grants",
-        "quorune.rules.cast_cascade_grants.commit_cast_cascade_grants",
-        "quorune.effect_runtime.state_and_permissions._apply_cast_cascade_grant",
-        "quorune.semantic_runtime.battlefield_cascade_grants.stack_cascade_grant_effects"
-      ],
-      "implementation_mutation_rationale": "Withdrawing the typed result producer restores a material original-card residual. Native tests distinguish early triggers, late grants, failed payment and lost multiplicity.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
-        "test_stagecoach_reserves_instant_and_sorcery_independently",
-        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
-      ],
-      "multiplayer_tests": [
-        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
-        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
-      ],
-      "negative_tests": [
-        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
-        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
-        "test_stagecoach_reserves_instant_and_sorcery_independently",
-        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast",
-        "test_temporary_cascade_capability_and_scope_omission_fail_closed"
-      ],
-      "official_rules": [
-        "514.2",
-        "601.2a",
-        "601.2i",
-        "611.2a",
-        "611.2f",
-        "702.85a",
-        "702.85c",
-        "733"
-      ],
-      "positive_tests": [
-        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
-        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
-        "test_stagecoach_reserves_instant_and_sorcery_independently",
-        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
-      ],
-      "privacy_tests": [
-        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell"
-      ],
-      "replay_tests": [
-        "test_apostle_preserves_the_grant_for_the_next_noncreature_spell",
-        "test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
-        "test_stagecoach_reserves_instant_and_sorcery_independently",
-        "test_yidris_damage_steps_stack_two_grants_for_each_hand_cast"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "other players and future turns",
-          "spells already cast and copies that were not cast",
-          "unsupported type or result qualifiers"
-        ],
-        "inputs": [
-          "one resolved controller-scoped result",
-          "selected spell type at announcement",
-          "accepted casting costs"
-        ],
-        "outputs": [
-          "one protected cast incarnation",
-          "remaining scopes after consumption",
-          "ordinary counter targeting and resolution"
-        ],
-        "summary": "Resolve a closed next-cast counter protection and bind its eligible scope through the authoritative cast transaction."
-      },
-      "blockers": [],
-      "dependencies": [],
-      "dependency_fail_closed_rationale": "The original clause and its versioned runtime descriptor independently require the scoped protection capability.",
-      "dependency_fail_closed_status": "passed",
-      "id": "stack.counter.prohibition.next_cast",
-      "implementation_components": [
-        "quorune.compiler.temporary_player_rule_templates._next_cast_protection_template",
-        "quorune.rules.next_cast_counter_protection.next_cast_protection_effect_scope",
-        "quorune.rules.next_cast_counter_protection.reserve_next_cast_protection",
-        "quorune.rules.next_cast_counter_protection.commit_next_cast_protection",
-        "quorune.stack_counter.stack_item_can_be_countered"
-      ],
-      "implementation_mutation_rationale": "Omitting the typed result producer restores the original clause residual. Native casts distinguish eligibility, rollback, and independent draw.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
-        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
-      ],
-      "multiplayer_tests": [
-        "test_village_protects_only_the_cast_announced_after_its_activation",
-        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
-        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
-      ],
-      "negative_tests": [
-        "test_village_protects_only_the_cast_announced_after_its_activation",
-        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable",
-        "test_village_unused_window_expires_during_cleanup",
-        "test_next_cast_protection_dependency_and_compiler_omission_fail_closed"
-      ],
-      "official_rules": [
-        "101.2",
-        "514.2",
-        "601.2a",
-        "608.2b",
-        "608.2c",
-        "611.2a",
-        "611.2f",
-        "701.6a"
-      ],
-      "positive_tests": [
-        "test_village_protects_only_the_cast_announced_after_its_activation",
-        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
-        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable"
-      ],
-      "privacy_tests": [
-        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws"
-      ],
-      "replay_tests": [
-        "test_village_protects_only_the_cast_announced_after_its_activation",
-        "test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws",
-        "test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable",
-        "test_village_unused_window_expires_during_cleanup"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "unsupported paid-result riders",
-          "untethered chosen-type substitutions",
-          "copies of protected spells"
-        ],
-        "inputs": [
-          "closed fixed-output mana ability",
-          "canonical source designation at production",
-          "actual consumed mana and typed spend context"
-        ],
-        "outputs": [
-          "production-bound restriction",
-          "shared funding and payment eligibility",
-          "counter protection on the spell that spends its eligible lot"
-        ],
-        "summary": "Produce a typed mana lot with a chosen creature spending rule or an eligible paid spell counter-protection rider."
-      },
-      "blockers": [],
-      "dependencies": [
-        "mana.activated.restricted_fixed_output"
-      ],
-      "dependency_fail_closed_rationale": "The compiler result and the versioned fixed-output handler both require typed spending authority.",
-      "dependency_fail_closed_status": "passed",
-      "id": "mana.activated.typed_spend_rules",
-      "implementation_components": [
-        "quorune.fixed_mana_spend_templates.fixed_mana_spend_rule_template",
-        "quorune.semantic_runtime.mana_abilities.FixedManaSpendRuleAbilityHandler",
-        "quorune.mana_spend_rules.bind_mana_spend_rule",
-        "quorune.mana_restrictions.mana_restriction_allows",
-        "quorune.mana_provenance.ManaProvenanceHostMixin._apply_mana_spend"
-      ],
-      "implementation_mutation_rationale": "Withdrawing the typed parser restores the original clause residual. Live witnesses distinguish the chosen subtype, card type, ability-source eligibility and consumption rider.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
-        "test_selected_creature_mana_is_offered_for_changeling_casts",
-        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
-        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
-        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
-      ],
-      "multiplayer_tests": [
-        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
-        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
-      ],
-      "negative_tests": [
-        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
-        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
-        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana",
-        "test_typed_spend_rule_and_runtime_authority_fail_closed"
-      ],
-      "official_rules": [
-        "106.6",
-        "601.2h",
-        "605.1a",
-        "605.3b",
-        "701.6a",
-        "707.2"
-      ],
-      "positive_tests": [
-        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
-        "test_selected_creature_mana_is_offered_for_changeling_casts",
-        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
-        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
-        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
-      ],
-      "privacy_tests": [
-        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending"
-      ],
-      "replay_tests": [
-        "test_cavern_locks_the_chosen_type_and_protects_only_restricted_spending",
-        "test_selected_creature_mana_is_offered_for_changeling_casts",
-        "test_secluded_courtyard_pays_for_the_chosen_creature_source_ability",
-        "test_ringhart_crest_preserves_its_independent_legendary_creature_branch",
-        "test_boseiju_protects_only_an_instant_or_sorcery_that_spends_its_mana"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "unpaid mana or unsupported spend predicates",
-          "later incarnations and copiable characteristics"
-        ],
-        "inputs": [
-          "actual consumed mana and typed creature spell facts",
-          "closed haste lifetime"
-        ],
-        "outputs": [
-          "layer-six haste on the cast incarnation",
-          "represented stack-to-battlefield continuity",
-          "canonical turn and departure expiry"
-        ],
-        "summary": "Bind haste to a qualifying cast that spends a represented mana lot, then carry it to the resulting permanent."
-      },
-      "blockers": [],
-      "dependencies": [
-        "mana.activated.typed_spend_rules"
-      ],
-      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
-      "dependency_fail_closed_status": "passed",
-      "id": "mana.spend.creature_haste",
-      "implementation_components": [
-        "quorune.mana_spend_rules.ManaSpendRule.haste_lifetime",
-        "quorune.mana_restrictions.mana_spend_haste_lifetime",
-        "quorune.continuous_effect_state.commit_paid_mana_haste",
-        "quorune.continuous_effect_state.stack_resolution_effects"
-      ],
-      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_hall_paid_haste_survives_resolution_and_cleanup",
-        "test_generator_servant_spends_both_units_and_haste_expires",
-        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
-      ],
-      "multiplayer_tests": [
-        "test_hall_paid_haste_survives_resolution_and_cleanup",
-        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
-      ],
-      "negative_tests": [
-        "test_orb_grants_haste_only_for_the_paid_dragon_cast",
-        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
-      ],
-      "official_rules": [
-        "106.6",
-        "400.7a",
-        "601.2h",
-        "605.1a",
-        "611.2a",
-        "702.10",
-        "707.2"
-      ],
-      "positive_tests": [
-        "test_hall_paid_haste_survives_resolution_and_cleanup",
-        "test_generator_servant_spends_both_units_and_haste_expires",
-        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
-      ],
-      "privacy_tests": [
-        "test_hall_paid_haste_survives_resolution_and_cleanup"
-      ],
-      "replay_tests": [
-        "test_hall_paid_haste_survives_resolution_and_cleanup",
-        "test_generator_servant_spends_both_units_and_haste_expires",
-        "test_orb_grants_haste_only_for_the_paid_dragon_cast"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "different subtypes and unsupported spending contexts"
-        ],
-        "inputs": [
-          "canonical chosen subtype at production",
-          "typed public spell or ability-source subtype facts"
-        ],
-        "outputs": [
-          "shared funding and accepted payment eligibility for the sealed subtype"
-        ],
-        "summary": "Use a production-bound creature subtype for the represented spell and ability-source mana spending rule."
-      },
-      "blockers": [],
-      "dependencies": [
-        "mana.activated.typed_spend_rules"
-      ],
-      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
-      "dependency_fail_closed_status": "passed",
-      "id": "mana.activated.chosen_subtype_spending",
-      "implementation_components": [
-        "quorune.mana_spend_rules.ManaSpendRule.allows",
-        "quorune.mana_spend_rules.bind_mana_spend_rule",
-        "quorune.fixed_mana_spend_templates.fixed_mana_spend_rule_template"
-      ],
-      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "multiplayer_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "negative_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell",
-        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
-      ],
-      "official_rules": [
-        "106.6",
-        "205.3m",
-        "601.2h",
-        "605.1a",
-        "605.3b"
-      ],
-      "positive_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "privacy_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "replay_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "unlisted values and unsupported linked choices"
-        ],
-        "inputs": [
-          "source-spanned canonical creature subtype list",
-          "affected entering incarnation and destination controller"
-        ],
-        "outputs": [
-          "actor-bound replacement choices",
-          "retained designation for the entering incarnation"
-        ],
-        "summary": "Resolve an intrinsic entry designation through a closed printed list of creature subtypes."
-      },
-      "blockers": [],
-      "dependencies": [
-        "zone.entry.public_designation"
-      ],
-      "dependency_fail_closed_rationale": "The compiler result and its exact runtime descriptor independently require the scoped authority.",
-      "dependency_fail_closed_status": "passed",
-      "id": "zone.entry.limited_creature_type_designation",
-      "implementation_components": [
-        "quorune.compiler.entry_designation_templates._listed_creature_type_entry_handler",
-        "quorune.semantic_runtime.entry_designations.LimitedCreatureTypeEntryDesignationHandler"
-      ],
-      "implementation_mutation_rationale": "Withdrawing the typed producer restores an original material residual. Native witnesses distinguish the printed result from the nearest ineligible action.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "multiplayer_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "negative_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell",
-        "test_paid_haste_and_limited_designation_capabilities_fail_closed"
-      ],
-      "official_rules": [
-        "205.3m",
-        "400.7",
-        "614.1c",
-        "614.12",
-        "616.1"
-      ],
-      "positive_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "privacy_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "replay_tests": [
-        "test_eclipsed_realms_limits_entry_choice_and_funds_kindred_spell"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "Live combat roster or power after declaration",
-          "Creatures put onto the battlefield attacking"
-        ],
-        "inputs": [
-          "One normalized source attack with full effective power sealed on each declared participant",
-          "A fixed positive total-power threshold"
-        ],
-        "outputs": [
-          "A typed signed power comparison at occurrence and resolution",
-          "Existing source-bound results and original attacking recipients"
-        ],
-        "summary": "One source attack reads the signed power sum of the declared attackers from the same original occurrence at trigger discovery and resolution."
-      },
-      "blockers": [],
-      "dependencies": [
-        "trigger.event.normalized_self_attack",
-        "trigger.event.qualified_attack_singular"
-      ],
-      "dependency_fail_closed_rationale": "Removing the required authority, the recheck coverage, or the closed source predicate rejects strict runtime binding.",
-      "dependency_fail_closed_status": "passed",
-      "id": "trigger.condition.declared_attacker_total_power",
-      "implementation_components": [
-        "quorune.attack_batch_model.declared_attack_power_condition",
-        "quorune.compiler.public_trigger_conditions.bind_public_intervening_trigger",
-        "quorune.rules.attack_batches.declared_attack_power_total",
-        "quorune.rules.attack_batches.declared_attack_power_recheck",
-        "quorune.rules.event_subscriptions.source_event_intervening_recheck",
-        "quorune.attack_transition_engine_adapter.EngineAttackTransitionQuery.participant"
-      ],
-      "implementation_mutation_rationale": "Clamping negative attack power makes the native five-power declaration qualify. Withdrawing the producer restores the original material residual.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
-        "test_pack_tactics_reads_power_after_a_precombat_pump",
-        "test_pack_tactics_rechecks_original_six_power_across_defenders",
-        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
-        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
-      ],
-      "multiplayer_tests": [
-        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
-        "test_pack_tactics_reads_power_after_a_precombat_pump",
-        "test_pack_tactics_rechecks_original_six_power_across_defenders",
-        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
-        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
-      ],
-      "negative_tests": [
-        "test_pack_tactics_counts_negative_power",
-        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
-        "test_pack_tactics_rechecks_original_six_power_across_defenders",
-        "test_pack_tactics_runtime_requires_the_capability_and_closed_recheck",
-        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice"
-      ],
-      "official_rules": [
-        "107.1b",
-        "207.2c",
-        "508.1",
-        "508.3a",
-        "508.3c",
-        "508.4",
-        "603.4"
-      ],
-      "positive_tests": [
-        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
-        "test_pack_tactics_reads_power_after_a_precombat_pump",
-        "test_pack_tactics_rechecks_original_six_power_across_defenders",
-        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
-        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
-      ],
-      "privacy_tests": [
-        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking"
-      ],
-      "replay_tests": [
-        "test_pack_tactics_counts_negative_power",
-        "test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking",
-        "test_pack_tactics_reads_power_after_a_precombat_pump",
-        "test_pack_tactics_rechecks_original_six_power_across_defenders",
-        "test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice",
-        "test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "Variable repetition and unrepresented recipient bindings"
-        ],
-        "inputs": [
-          "Closed source, creature target, controlled creature set, attack occurrence, or equipped creature",
-          "Effective signed characteristics at resolution"
-        ],
-        "outputs": [
-          "Locked additive layer 7c effects through cleanup",
-          "Independently sampled amounts per current affected incarnation",
-          "Shared effect timestamp for the optional fixed first strike grant"
-        ],
-        "summary": "A fixed power or toughness multiplier samples each current recipient at resolution and locks its signed additive result."
-      },
-      "blockers": [],
-      "dependencies": [
-        "continuous.resolution.fixed_characteristics_until_end_of_turn"
-      ],
-      "dependency_fail_closed_rationale": "Runtime binding independently requires the new capability and validates the typed factor, statistic and recipient.",
-      "dependency_fail_closed_status": "passed",
-      "id": "continuous.resolution.fixed_stat_multiplier",
-      "implementation_components": [
-        "quorune.compiler.fixed_stat_multipliers.fixed_stat_multiplier_effect_template",
-        "quorune.rules.fixed_stat_multipliers.FixedStatMultiplier",
-        "quorune.rules.fixed_stat_multipliers.apply_fixed_stat_multiplier"
-      ],
-      "implementation_mutation_rationale": "Clamping a negative power changes Unleash Fury's native result. Omitting the compiler production leaves the original residual.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
-        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
-        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
-        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
-        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
-        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
-        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
-        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
-        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
-        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
-      ],
-      "multiplayer_tests": [
-        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
-        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
-        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
-        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
-        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
-        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
-        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
-        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
-      ],
-      "negative_tests": [
-        "test_attack_multiplier_ignores_a_new_incarnation",
-        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
-        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
-        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
-        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
-        "test_multiplier_occurrence_owner_withdrawal_and_malformed_grant_fail_closed",
-        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
-        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
-        "test_stat_multiplier_requires_exact_capability_and_kills_the_unsigned_mutation",
-        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
-      ],
-      "official_rules": [
-        "107.1b",
-        "107.2",
-        "208.3",
-        "400.7",
-        "508.3a",
-        "608.2b",
-        "608.2h",
-        "611.2a",
-        "611.2c",
-        "613.4c",
-        "701.10a",
-        "701.10b",
-        "701.10c",
-        "701.11b",
-        "701.11c",
-        "701.14a",
-        "701.14b",
-        "702.7a"
-      ],
-      "positive_tests": [
-        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
-        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
-        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
-        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
-        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
-        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
-        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
-        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
-        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
-        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
-      ],
-      "privacy_tests": [
-        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
-        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
-      ],
-      "replay_tests": [
-        "test_attack_multiplier_ignores_a_new_incarnation",
-        "test_attack_multiplier_samples_later_power_and_ignores_nonmutants",
-        "test_axe_trigger_keeps_its_attacker_after_equipment_departure",
-        "test_battle_attack_qualifies_its_own_source_and_excludes_a_player_attack",
-        "test_dragonclaw_optional_fight_uses_post_multiplier_power_and_original_targets",
-        "test_junk_jet_applies_each_equipped_multiplier_in_resolution_order",
-        "test_legion_multiplies_and_grants_first_strike_with_zero_power",
-        "test_stat_multiplier_activates_on_the_original_targ_nar_incarnation",
-        "test_stat_multiplier_locks_the_current_set_and_reads_each_member_independently",
-        "test_stat_multiplier_reads_switched_power_and_modifies_the_seventh_c_sublayer",
-        "test_stat_multiplier_uses_signed_effective_power_and_keeps_the_fixed_delta"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -91484,7 +91572,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 822,
+  "registry_version": 823,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

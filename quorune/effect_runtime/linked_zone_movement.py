@@ -7,6 +7,7 @@ from typing import Any, Mapping
 from ..errors import GameRuleError
 from ..event_card_return import (
     EVENT_LIBRARY_MOVE_VERSION,
+    available_event_library_components,
     is_event_library_move,
     validate_event_library_move,
 )
@@ -28,14 +29,43 @@ def apply_move_if_in_zone(
     owner = effect["owner"]
     if owner not in host.active_seats:
         return None
+    components = available_event_library_components(host, effect)
+    if components is not None:
+        return _apply_library_component_move(host, effect, components, actor=actor, operation=operation, reason=reason)
     card = next((card for card in host.state.cards.values() if card.ref == effect["card"]), None)
     if card is not None and card.owner != owner:
         raise GameRuleError("The event library owner differs from the departed card owner")
-    movement = {key: value for key, value in effect.items() if key not in {EVENT_LIBRARY_MOVE_VERSION, "owner", "shuffle"}}
+    movement = {key: value for key, value in effect.items()
+                if key not in {EVENT_LIBRARY_MOVE_VERSION, "owner", "shuffle", "composition", "components"}}
     moved = _apply_move_if_in_zone(host, movement, actor=actor, operation=operation, reason=reason)
     if effect["shuffle"]:
         host.shuffle_library(owner, reason=reason)
     return moved
+
+
+def _apply_library_component_move(host, effect, components, *, actor, operation, reason):
+    from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+
+    if effect["shuffle"]:
+        moved = None
+        if components:
+            moved = host.move_objects_simultaneously_intent(MoveObjectsSimultaneouslyIntent(
+                actor=actor, object_refs=tuple(card.ref for card in components),
+                expected_zones=("graveyard", "exile"), destination="library", reason=reason,
+                replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+            ))
+        host.shuffle_library(effect["owner"], reason=reason)
+        return moved
+    if not components:
+        return None
+    if len(components) != 1:
+        raise GameRuleError("Multiple departed cards require their owner's private library order")
+    card, = components
+    return _apply_move_if_in_zone(host, {
+        "card": card.ref, "from": card.zone, "expected_zone_change_counter": card.zone_change_counter,
+        "destination": "library", "position": effect["position"],
+        "_replacement_selections": effect.get("_replacement_selections", ()),
+    }, actor=actor, operation=operation, reason=reason)
 
 
 def _apply_move_if_in_zone(
