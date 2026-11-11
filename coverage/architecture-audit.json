@@ -63719,7 +63719,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 377,
+        "primary_test_count": 378,
         "primary_tests": [
           "test_ability_source_counter_targets",
           "test_ability_word_event_triggers",
@@ -65258,7 +65258,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "f52c46b9d13010a0d749f68df96ae67610fbfcef4dbe794123cd921c7452c6cf",
+      "fingerprint": "982927336dd7877c3a32c19b51d208137699e975af51f455f09a3586bd531312",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

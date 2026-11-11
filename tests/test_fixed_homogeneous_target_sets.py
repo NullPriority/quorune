@@ -1133,18 +1133,35 @@ class EmptyFixedTargetBatchRuntimeTests(unittest.TestCase):
 
     def test_empty_move_intent_mutation_is_killed_by_fresh_native_zero_target_draw(self):
         from quorune.semantic_runtime.fixed_target_set_handlers import MoveFixedTargetSetHandler
+        from quorune.semantic_runtime.zone_replacements import capture_zone_change_replacement_snapshot
+        from quorune.zone_transitions import ZoneTransitionOwner
         original = MoveFixedTargetSetHandler.lower
+        original_move = ZoneTransitionOwner.move_cards_simultaneously
+        empty_intents = []
+        empty_snapshots = []
         def restore_empty_move(handler, effect, context):
             plan = original(handler, effect, context)
             if effect.get('cards') == []:
+                empty_intents.append(handler.operation)
                 from quorune.semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
                 return replace(plan, result_shape='single', intents=(MoveObjectsSimultaneouslyIntent(actor=context.actor,
                     object_refs=(), expected_zones=(handler.expected_zone,), destination=handler.destination,
                     reason=context.default_reason, owned_only=handler.owned_only, replacement_selections=()),))
             return plan
+        def require_empty_snapshot(owner, changes, **options):
+            if not changes:
+                empty_snapshots.append(True)
+                capture_zone_change_replacement_snapshot(owner.host, ())
+            return original_move(owner, changes, **options)
         with patch.object(MoveFixedTargetSetHandler, 'lower', new=restore_empty_move):
             method = 'test_zero_target_zone_instruction_continues_to_independent_private_draw'
-            with self.assertRaises(AssertionError): getattr(type(self)(method), method)()
+            # An explicit empty intent is now a legal no-op at the zone owner.
+            getattr(type(self)(method), method)()
+            self.assertTrue(empty_intents)
+            # Reintroducing the nonempty snapshot requirement changes behavior.
+            with patch.object(ZoneTransitionOwner, 'move_cards_simultaneously', new=require_empty_snapshot):
+                with self.assertRaises(AssertionError): getattr(type(self)(method), method)()
+            self.assertTrue(empty_snapshots)
 
 
 class EmptyFixedTargetBatchModelTests(unittest.TestCase):

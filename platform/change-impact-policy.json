@@ -13199,7 +13199,8 @@
       "patterns": [
         "quorune/zone_transitions.py",
         "quorune/semantics.py",
-        "tests/test_empty_zone_modal_records.py"
+        "tests/test_empty_zone_modal_records.py",
+        "tests/test_fixed_homogeneous_target_sets.py"
       ],
       "test_modules": [
         "test_empty_zone_modal_records",
@@ -13207,7 +13208,8 @@
         "test_zone_replacement_compiler",
         "test_zone_general_rules",
         "test_object_identity",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_fixed_homogeneous_target_sets"
       ]
     }
   ],
