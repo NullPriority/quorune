@@ -10,6 +10,12 @@ concern: "game-record"
 
 # Game Record v3
 
+Semantic registry snapshots retain declaration order inside ordered mode maps
+in both the CardProgram and semantic-program views. Storage preserves that
+runtime order while fingerprint calculation keeps its canonical representation.
+Loading an existing snapshot preserves its stored declarations and all ordinary
+runtime-provenance and accepted-command verification.
+
 Marked ordinary token cleanup uses `created_token_cleanup` version one, with
 explicit action and timing. Replacement-capable intents retain a closed
 `created_token_cleanup_plan` containing the resolving source and its optional
