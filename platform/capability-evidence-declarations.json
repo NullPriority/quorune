@@ -285063,6 +285063,198 @@
     },
     {
       "common": {
+        "applicability_note": "Owner-relative source entry reuses canonical movement, optional payment, typed condition and complete-source admission; old hand markers remain unchanged.",
+        "capability_id": "zone.return.triggered_self_graveyard_battlefield",
+        "official_rule_ids": [
+          "108.4a",
+          "113.6m",
+          "113.8",
+          "400.7",
+          "603.3a",
+          "603.4",
+          "608.2c"
+        ],
+        "supported_profiles": [
+          "traditional",
+          "commander_duel",
+          "commander_review"
+        ]
+      },
+      "references": [
+        [
+          29661,
+          "interaction",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition"
+        ],
+        [
+          29662,
+          "interaction",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_paid_landfall_charges_once_and_decline_keeps_source"
+        ],
+        [
+          29663,
+          "interaction",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw"
+        ],
+        [
+          29664,
+          "interaction",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying"
+        ],
+        [
+          29665,
+          "interaction",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_original_end_step_requires_actual_life_gain_before_tapped_return"
+        ],
+        [
+          29666,
+          "multiplayer",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition"
+        ],
+        [
+          29667,
+          "multiplayer",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_paid_landfall_charges_once_and_decline_keeps_source"
+        ],
+        [
+          29668,
+          "multiplayer",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw"
+        ],
+        [
+          29669,
+          "multiplayer",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying"
+        ],
+        [
+          29670,
+          "multiplayer",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_original_end_step_requires_actual_life_gain_before_tapped_return"
+        ],
+        [
+          29671,
+          "mutation",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldModelTests.test_omitting_complete_source_admission_is_detected"
+        ],
+        [
+          29672,
+          "negative",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldCompilerTests.test_unknown_heads_death_lookback_and_open_result_riders_stay_residual"
+        ],
+        [
+          29673,
+          "negative",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldCompilerTests.test_unknown_sibling_prevents_materialization_through_normal_binding"
+        ],
+        [
+          29674,
+          "negative",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldCompilerTests.test_withdrawn_battlefield_authority_preserves_legacy_hand_and_ordinary_draw"
+        ],
+        [
+          29675,
+          "negative",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldModelTests.test_legacy_optional_return_requires_closed_branches_matching_owner_and_complete_source"
+        ],
+        [
+          29676,
+          "negative",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldModelTests.test_marker_is_closed_and_legacy_hand_keeps_its_original_encoding"
+        ],
+        [
+          29677,
+          "negative",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldModelTests.test_payload_requires_whole_source_certificate_and_graveyard_event"
+        ],
+        [
+          29678,
+          "negative",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldModelTests.test_source_identity_and_tapped_entry_use_existing_movement_owner"
+        ],
+        [
+          29679,
+          "positive",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldCompilerTests.test_existing_heads_preserve_owner_conditions_payment_and_tapped_result"
+        ],
+        [
+          29680,
+          "privacy",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition"
+        ],
+        [
+          29681,
+          "privacy",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_paid_landfall_charges_once_and_decline_keeps_source"
+        ],
+        [
+          29682,
+          "privacy",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw"
+        ],
+        [
+          29683,
+          "privacy",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying"
+        ],
+        [
+          29684,
+          "privacy",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_original_end_step_requires_actual_life_gain_before_tapped_return"
+        ],
+        [
+          29685,
+          "replay",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition"
+        ],
+        [
+          29686,
+          "replay",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_paid_landfall_charges_once_and_decline_keeps_source"
+        ],
+        [
+          29687,
+          "replay",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw"
+        ],
+        [
+          29688,
+          "replay",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying"
+        ],
+        [
+          29689,
+          "replay",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_original_end_step_requires_actual_life_gain_before_tapped_return"
+        ],
+        [
+          29690,
+          "rollback",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition"
+        ],
+        [
+          29691,
+          "rollback",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_actual_paid_landfall_charges_once_and_decline_keeps_source"
+        ],
+        [
+          29692,
+          "rollback",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw"
+        ],
+        [
+          29693,
+          "rollback",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying"
+        ],
+        [
+          29694,
+          "rollback",
+          "tests.test_triggered_graveyard_battlefield.TriggeredGraveyardBattlefieldRuntimeTests.test_original_end_step_requires_actual_life_gain_before_tapped_return"
+        ]
+      ]
+    },
+    {
+      "common": {
         "applicability_note": "A single completing player drives ordinary placement, owner-relative targeting and current source incarnation.",
         "capability_id": "zone.return.triggered_self_graveyard_hand",
         "official_rule_ids": [
@@ -285081,27 +285273,27 @@
       },
       "references": [
         [
-          29661,
+          29695,
           "interaction",
           "tests.test_dungeon_progress.DungeonVentureNativeTests.test_original_completion_observers_return_their_cards_and_create_the_wolf"
         ],
         [
-          29666,
+          29700,
           "multiplayer",
           "tests.test_dungeon_progress.DungeonVentureNativeTests.test_original_completion_observers_return_their_cards_and_create_the_wolf"
         ],
         [
-          29679,
+          29713,
           "positive",
           "tests.test_dungeon_progress.DungeonVentureNativeTests.test_original_completion_observers_return_their_cards_and_create_the_wolf"
         ],
         [
-          29683,
+          29717,
           "replay",
           "tests.test_dungeon_progress.DungeonVentureNativeTests.test_original_completion_observers_return_their_cards_and_create_the_wolf"
         ],
         [
-          29688,
+          29722,
           "rollback",
           "tests.test_dungeon_progress.DungeonVentureNativeTests.test_original_completion_observers_return_their_cards_and_create_the_wolf"
         ]
@@ -285127,112 +285319,112 @@
       },
       "references": [
         [
-          29662,
+          29696,
           "interaction",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_entry_trigger_cannot_return_a_source_exiled_in_response"
         ],
         [
-          29663,
+          29697,
           "interaction",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
         ],
         [
-          29664,
+          29698,
           "interaction",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
         ],
         [
-          29665,
+          29699,
           "interaction",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation"
         ],
         [
-          29667,
+          29701,
           "multiplayer",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_entry_trigger_cannot_return_a_source_exiled_in_response"
         ],
         [
-          29668,
+          29702,
           "multiplayer",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
         ],
         [
-          29669,
+          29703,
           "multiplayer",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
         ],
         [
-          29670,
+          29704,
           "multiplayer",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation"
         ],
         [
-          29672,
+          29706,
           "mutation",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnModelTests.test_omitting_source_incarnation_check_is_killed"
         ],
         [
-          29674,
+          29708,
           "negative",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnCompilerTests.test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract"
         ],
         [
-          29675,
+          29709,
           "negative",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnCompilerTests.test_optional_mana_prefix_is_preserved_and_unknown_prefix_cannot_be_discarded"
         ],
         [
-          29676,
+          29710,
           "negative",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnCompilerTests.test_verified_return_authority_withdrawal_keeps_ordinary_upkeep_draw"
         ],
         [
-          29677,
+          29711,
           "negative",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnModelTests.test_marker_codec_is_closed_and_descriptor_owns_authority"
         ],
         [
-          29678,
+          29712,
           "negative",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnModelTests.test_typed_existing_move_skips_a_new_incarnation"
         ],
         [
-          29680,
+          29714,
           "positive",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnCompilerTests.test_existing_event_heads_keep_owner_relative_predicates_and_graveyard_zone"
         ],
         [
-          29681,
+          29715,
           "positive",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnModelTests.test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust"
         ],
         [
-          29682,
+          29716,
           "privacy",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
         ],
         [
-          29684,
+          29718,
           "replay",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_entry_trigger_cannot_return_a_source_exiled_in_response"
         ],
         [
-          29685,
+          29719,
           "replay",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
         ],
         [
-          29686,
+          29720,
           "replay",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
         ],
         [
-          29687,
+          29721,
           "replay",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation"
         ],
         [
-          29689,
+          29723,
           "rollback",
           "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
         ]
@@ -285258,12 +285450,12 @@
       },
       "references": [
         [
-          29671,
+          29705,
           "mutation",
           "tests.test_dungeon_progress.DungeonProgressTests.test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
         ],
         [
-          29673,
+          29707,
           "negative",
           "tests.test_dungeon_progress.DungeonProgressTests.test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
         ]
@@ -285290,32 +285482,32 @@
       },
       "references": [
         [
-          29690,
+          29724,
           "interaction",
           "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay"
         ],
         [
-          29693,
+          29727,
           "multiplayer",
           "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay"
         ],
         [
-          29696,
+          29730,
           "negative",
           "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay"
         ],
         [
-          29700,
+          29734,
           "positive",
           "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay"
         ],
         [
-          29707,
+          29741,
           "replay",
           "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay"
         ],
         [
-          29710,
+          29744,
           "rollback",
           "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay"
         ]
@@ -285342,7 +285534,7 @@
       },
       "references": [
         [
-          29691,
+          29725,
           "interaction",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_tapped_reanimation_and_aura_return_use_zone_owners"
         ]
@@ -285369,7 +285561,7 @@
       },
       "references": [
         [
-          29692,
+          29726,
           "interaction",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_target_revalidation_and_self_return_coexist_on_one_card"
         ]
@@ -285396,7 +285588,7 @@
       },
       "references": [
         [
-          29694,
+          29728,
           "multiplayer",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_graveyard_to_hand_is_owner_scoped_private_and_replays"
         ]
@@ -285423,7 +285615,7 @@
       },
       "references": [
         [
-          29695,
+          29729,
           "mutation",
           "tests.test_self_zone_move_rules.SelfZoneMoveCompilerTests.test_self_zone_move_dependency_and_compiler_mutations_fail_closed"
         ]
@@ -285450,7 +285642,7 @@
       },
       "references": [
         [
-          29697,
+          29731,
           "negative",
           "tests.test_self_zone_move_rules.SelfZoneMoveCompilerTests.test_unsupported_self_zone_move_shapes_remain_residual"
         ]
@@ -285477,17 +285669,17 @@
       },
       "references": [
         [
-          29698,
+          29732,
           "negative",
           "tests.test_self_zone_move_rules.SelfZoneMoveModelTests.test_restricted_source_return_preserves_existing_typed_timing"
         ],
         [
-          29702,
+          29736,
           "positive",
           "tests.test_self_zone_move_rules.SelfZoneMoveModelTests.test_restricted_source_return_preserves_existing_typed_timing"
         ],
         [
-          29706,
+          29740,
           "property",
           "tests.test_self_zone_move_rules.SelfZoneMoveModelTests.test_restricted_source_return_preserves_existing_typed_timing"
         ]
@@ -285514,7 +285706,7 @@
       },
       "references": [
         [
-          29699,
+          29733,
           "negative",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_partial_reanimation_and_stale_sources_fail_closed"
         ]
@@ -285541,7 +285733,7 @@
       },
       "references": [
         [
-          29701,
+          29735,
           "positive",
           "tests.test_self_zone_move_rules.SelfZoneMoveCompilerTests.test_supported_self_zone_moves_compile_source_spanned_programs"
         ]
@@ -285568,7 +285760,7 @@
       },
       "references": [
         [
-          29703,
+          29737,
           "positive",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_source_self_reanimation_preserves_untapped_result"
         ]
@@ -285595,7 +285787,7 @@
       },
       "references": [
         [
-          29704,
+          29738,
           "positive",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_tapped_reanimation_and_aura_return_use_zone_owners"
         ]
@@ -285622,7 +285814,7 @@
       },
       "references": [
         [
-          29705,
+          29739,
           "privacy",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_graveyard_to_hand_is_owner_scoped_private_and_replays"
         ]
@@ -285649,7 +285841,7 @@
       },
       "references": [
         [
-          29708,
+          29742,
           "replay",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_graveyard_to_hand_is_owner_scoped_private_and_replays"
         ]
@@ -285676,7 +285868,7 @@
       },
       "references": [
         [
-          29709,
+          29743,
           "replay",
           "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_source_self_reanimation_preserves_untapped_result"
         ]
@@ -285705,87 +285897,87 @@
       },
       "references": [
         [
-          29711,
+          29745,
           "interaction",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
         ],
         [
-          29712,
+          29746,
           "interaction",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
         ],
         [
-          29713,
+          29747,
           "interaction",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
         ],
         [
-          29714,
+          29748,
           "multiplayer",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
         ],
         [
-          29715,
+          29749,
           "multiplayer",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
         ],
         [
-          29716,
+          29750,
           "multiplayer",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
         ],
         [
-          29717,
+          29751,
           "mutation",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleCompilerTests.test_omitting_the_terminal_shuffle_compiler_is_detected"
         ],
         [
-          29718,
+          29752,
           "negative",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleCompilerTests.test_terminal_shuffle_closes_only_its_own_final_instruction_and_body"
         ],
         [
-          29719,
+          29753,
           "negative",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
         ],
         [
-          29720,
+          29754,
           "positive",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleCompilerTests.test_terminal_shuffle_closes_only_its_own_final_instruction_and_body"
         ],
         [
-          29721,
+          29755,
           "positive",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
         ],
         [
-          29722,
+          29756,
           "positive",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
         ],
         [
-          29723,
+          29757,
           "privacy",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
         ],
         [
-          29724,
+          29758,
           "replay",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
         ],
         [
-          29725,
+          29759,
           "replay",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
         ],
         [
-          29726,
+          29760,
           "replay",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
         ],
         [
-          29727,
+          29761,
           "rollback",
           "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
         ]
@@ -285815,27 +286007,27 @@
       },
       "references": [
         [
-          29728,
+          29762,
           "interaction",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          29733,
+          29767,
           "multiplayer",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          29742,
+          29776,
           "positive",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          29747,
+          29781,
           "privacy",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          29750,
+          29784,
           "replay",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ]
@@ -285865,7 +286057,7 @@
       },
       "references": [
         [
-          29729,
+          29763,
           "interaction",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_source_attachment_and_choice_lifecycle"
         ]
@@ -285895,27 +286087,27 @@
       },
       "references": [
         [
-          29730,
+          29764,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          29735,
+          29769,
           "multiplayer",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          29749,
+          29783,
           "privacy",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          29752,
+          29786,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          29756,
+          29790,
           "rollback",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ]
@@ -285945,12 +286137,12 @@
       },
       "references": [
         [
-          29731,
+          29765,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_target_revalidates_after_creeper_response"
         ],
         [
-          29753,
+          29787,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_target_revalidates_after_creeper_response"
         ]
@@ -285980,12 +286172,12 @@
       },
       "references": [
         [
-          29732,
+          29766,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_king_crab_returns_borrowed_green_creature_to_owners_library"
         ],
         [
-          29754,
+          29788,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_king_crab_returns_borrowed_green_creature_to_owners_library"
         ]
@@ -286015,7 +286207,7 @@
       },
       "references": [
         [
-          29734,
+          29768,
           "multiplayer",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_zone_move_commander_replacement_and_projection"
         ]
@@ -286045,7 +286237,7 @@
       },
       "references": [
         [
-          29736,
+          29770,
           "mutation",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_move_shapes_and_boundaries"
         ]
@@ -286075,7 +286267,7 @@
       },
       "references": [
         [
-          29737,
+          29771,
           "mutation",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_live_promotion_requires_the_existing_closed_shape"
         ]
@@ -286105,7 +286297,7 @@
       },
       "references": [
         [
-          29738,
+          29772,
           "mutation",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_scope_and_mutants_remain_fail_closed"
         ]
@@ -286135,7 +286327,7 @@
       },
       "references": [
         [
-          29739,
+          29773,
           "negative",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_move_shapes_and_boundaries"
         ]
@@ -286165,12 +286357,12 @@
       },
       "references": [
         [
-          29740,
+          29774,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder"
         ],
         [
-          29744,
+          29778,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder"
         ]
@@ -286200,7 +286392,7 @@
       },
       "references": [
         [
-          29741,
+          29775,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_scope_and_mutants_remain_fail_closed"
         ]
@@ -286230,7 +286422,7 @@
       },
       "references": [
         [
-          29743,
+          29777,
           "positive",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_moves_compile_across_contexts"
         ]
@@ -286260,7 +286452,7 @@
       },
       "references": [
         [
-          29745,
+          29779,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owned_graveyard_library_moves_preserve_origin_owner_type_and_position"
         ]
@@ -286290,7 +286482,7 @@
       },
       "references": [
         [
-          29746,
+          29780,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_qualified_battlefield_library_moves_share_current_permanent_query"
         ]
@@ -286320,7 +286512,7 @@
       },
       "references": [
         [
-          29748,
+          29782,
           "privacy",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_zone_move_commander_replacement_and_projection"
         ]
@@ -286350,7 +286542,7 @@
       },
       "references": [
         [
-          29751,
+          29785,
           "replay",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_library_positions_target_revalidation_and_replay"
         ]
@@ -286380,7 +286572,7 @@
       },
       "references": [
         [
-          29755,
+          29789,
           "rollback",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_library_positions_target_revalidation_and_replay"
         ]
@@ -286408,97 +286600,97 @@
       },
       "references": [
         [
-          29757,
+          29791,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
         ],
         [
-          29758,
+          29792,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
         ],
         [
-          29759,
+          29793,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
         ],
         [
-          29760,
+          29794,
           "multiplayer",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
         ],
         [
-          29761,
+          29795,
           "multiplayer",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
         ],
         [
-          29762,
+          29796,
           "multiplayer",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
         ],
         [
-          29763,
+          29797,
           "mutation",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes"
         ],
         [
-          29764,
+          29798,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes"
         ],
         [
-          29765,
+          29799,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
         ],
         [
-          29766,
+          29800,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
         ],
         [
-          29767,
+          29801,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
         ],
         [
-          29768,
+          29802,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_bounded_graveyard_library_targets_keep_closed_owner_and_option_shapes"
         ],
         [
-          29769,
+          29803,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
         ],
         [
-          29770,
+          29804,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
         ],
         [
-          29771,
+          29805,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
         ],
         [
-          29772,
+          29806,
           "privacy",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
         ],
         [
-          29773,
+          29807,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bauble_draws_with_zero_targets_and_stops_on_all_illegal_targets"
         ],
         [
-          29774,
+          29808,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_bounded_graveyard_library_moves_keep_owner_filter_edge_and_replay"
         ],
         [
-          29775,
+          29809,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_recluse_excludes_its_current_graveyard_object"
         ]
@@ -286525,97 +286717,97 @@
       },
       "references": [
         [
-          29776,
+          29810,
           "interaction",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          29777,
+          29811,
           "interaction",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          29778,
+          29812,
           "interaction",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          29779,
+          29813,
           "multiplayer",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          29780,
+          29814,
           "multiplayer",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          29781,
+          29815,
           "mutation",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_permanent_death_dependency_is_inferred_and_subtype_mutation_is_killed"
         ],
         [
-          29782,
+          29816,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          29783,
+          29817,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          29784,
+          29818,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_legacy_missing_permanent_death_mode_replays_without_new_facts"
         ],
         [
-          29785,
+          29819,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_permanent_death_dependency_is_inferred_and_subtype_mutation_is_killed"
         ],
         [
-          29786,
+          29820,
           "negative",
           "tests.test_permanent_death_amounts.PermanentDeathFactTests.test_qualified_facts_require_exact_mode_shape_and_current_turn"
         ],
         [
-          29787,
+          29821,
           "positive",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          29788,
+          29822,
           "positive",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          29789,
+          29823,
           "positive",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          29790,
+          29824,
           "privacy",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          29791,
+          29825,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_gadrak_counts_deaths_before_entry_and_excludes_spirit_token"
         ],
         [
-          29792,
+          29826,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_standard_bearer_uses_departure_controller_and_its_own_later_death"
         ],
         [
-          29793,
+          29827,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_actual_zuberas_count_later_foreign_token_death_and_exclude_exile"
         ],
         [
-          29794,
+          29828,
           "replay",
           "tests.test_permanent_death_amounts.PermanentDeathAmountNativeTests.test_legacy_missing_permanent_death_mode_replays_without_new_facts"
         ]

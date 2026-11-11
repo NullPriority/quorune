@@ -383,7 +383,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         mechanic: ("casting.lifecycle.fixed_public",)
         for mechanic in _FIXED_CAST_LIFECYCLE_MECHANICS
     },
-    "self-zone-move": ("zone.self_move.activated",), "source-graveyard-hand-return": ("zone.return.triggered_self_graveyard_hand",), "fixed-target-player-effect-sequence": ("resolution.effect.fixed_target_player_sequence",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
+    "self-zone-move": ("zone.self_move.activated",), "source-graveyard-hand-return": ("zone.return.triggered_self_graveyard_hand",),
+    "source-graveyard-battlefield-return": ("zone.return.triggered_self_graveyard_battlefield",),
+    "fixed-target-player-effect-sequence": ("resolution.effect.fixed_target_player_sequence",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
     'public-quantity-mana': ('mana.production.public_quantity',),
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
     'variable-resolution-mana-choice':('mana.production.variable_resolution_choice',),

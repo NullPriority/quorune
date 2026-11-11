@@ -449,8 +449,11 @@ def _node_group_provenance(
     text_variant_requires_complete_source = fuse_source is not None or any(OVERLOAD_BOUNDARY in node.runtime_coverage or CLEAVE_BOUNDARY in node.runtime_coverage for node in nodes)
     from ..preparation_model import PREPARATION_RESULT_MECHANIC
     preparation_requires_complete_source = any(PREPARATION_RESULT_MECHANIC in node.mechanics for node in nodes)
+    from ..rules.graveyard_self_return import GRAVEYARD_SELF_ENTRY_MECHANIC
+    graveyard_entry_requires_complete_source = any(GRAVEYARD_SELF_ENTRY_MECHANIC in node.mechanics for node in nodes)
     requires_declared_source = (face_up_requires_complete_source or copy_requires_complete_source
-                                or text_variant_requires_complete_source or preparation_requires_complete_source)
+                                or text_variant_requires_complete_source or preparation_requires_complete_source
+                                or graveyard_entry_requires_complete_source)
     requires_complete_card_program = requires_declared_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes

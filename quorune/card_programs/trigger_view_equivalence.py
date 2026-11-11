@@ -7,7 +7,9 @@ from dataclasses import replace
 import hashlib,json
 from ..fixed_token_production import historical_unnamed_token_view
 from ..targets import target_plan
-from .trigger_result_equivalence import fixed_trigger_results_equal, fixed_graveyard_exile_views_equal
+from .trigger_result_equivalence import (
+    fixed_trigger_results_equal, fixed_graveyard_exile_views_equal, fixed_graveyard_self_entry_views_equal,
+)
 
 
 def _condition(value,event):
@@ -86,7 +88,8 @@ def shadowed_reviewed_trigger_view_keys(record,generated_programs,reviewed_progr
                     or current.provenance.get('source_oracle_hash')!=oracle_hash
                     or current.provenance.get('source_rulings_hash')!=old.provenance['source_rulings_hash']
                     or any(getattr(current,key)!=getattr(old,key) for key in fields)
-                    or _condition(current.event_condition,current.event)!=_condition(old.event_condition,old.event)
+                    or (_condition(current.event_condition,current.event)!=_condition(old.event_condition,old.event)
+                        and not fixed_graveyard_self_entry_views_equal(current,old))
                     or (_effects(current)!=_effects(old) and not fixed_trigger_results_equal(current,old))
                     or not _targets_equal(current,old)):continue
             if bind_semantic_program_runtime(current,capability_registry=capability_registry,profile=capability_profile)['strict']:

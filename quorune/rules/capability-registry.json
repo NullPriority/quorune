@@ -91113,6 +91113,115 @@
     {
       "applicability": {
         "exclusions": [
+          "new event heads",
+          "death and departure lookback envelopes",
+          "explicit attachment destination",
+          "open result riders",
+          "unknown sibling semantics"
+        ],
+        "inputs": [
+          "graveyard-only source ability",
+          "owner-relative existing event predicates",
+          "pinned physical and logical source identity",
+          "exact whole-source admission certificate"
+        ],
+        "outputs": [
+          "optional or mandatory owner-controlled entry",
+          "fixed optional mana payment when printed",
+          "ordinary canonical entry or stale-source no-op",
+          "tapped entry when printed"
+        ],
+        "summary": "An existing represented graveyard event returns its exact source to the battlefield only with complete-source admission."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.self_move.activated",
+        "attachment.aura.typed_restriction"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing battlefield-return authority rejects that family while preserving legacy hand returns and ordinary draws; payload-derived admission rejects missing or partial certificates.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.return.triggered_self_graveyard_battlefield",
+      "implementation_components": [
+        "quorune.compiler.graveyard_self_return.graveyard_self_return_binding",
+        "quorune.compiler.graveyard_self_return.graveyard_self_return_result",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_dependencies",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_node_capabilities",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_runtime_dependencies",
+        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler.lower",
+        "quorune.self_zone_move.resolve_self_zone_move",
+        "quorune.compiled_ability_fragments.compiled_static_ability_fragments",
+        "quorune.card_programs.trigger_result_equivalence.fixed_graveyard_self_entry_views_equal"
+      ],
+      "implementation_mutation_rationale": "Removing the complete-source admission check makes the missing-certificate witness fail.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition",
+        "test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying",
+        "test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw",
+        "test_actual_paid_landfall_charges_once_and_decline_keeps_source",
+        "test_original_end_step_requires_actual_life_gain_before_tapped_return"
+      ],
+      "multiplayer_tests": [
+        "test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition",
+        "test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying",
+        "test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw",
+        "test_actual_paid_landfall_charges_once_and_decline_keeps_source",
+        "test_original_end_step_requires_actual_life_gain_before_tapped_return"
+      ],
+      "negative_tests": [
+        "test_unknown_heads_death_lookback_and_open_result_riders_stay_residual",
+        "test_withdrawn_battlefield_authority_preserves_legacy_hand_and_ordinary_draw",
+        "test_unknown_sibling_prevents_materialization_through_normal_binding",
+        "test_legacy_optional_return_requires_closed_branches_matching_owner_and_complete_source",
+        "test_source_identity_and_tapped_entry_use_existing_movement_owner",
+        "test_marker_is_closed_and_legacy_hand_keeps_its_original_encoding",
+        "test_payload_requires_whole_source_certificate_and_graveyard_event"
+      ],
+      "official_rules": [
+        "108.4a",
+        "113.6m",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "603.4",
+        "608.2c"
+      ],
+      "positive_tests": [
+        "test_existing_heads_preserve_owner_conditions_payment_and_tapped_result"
+      ],
+      "privacy_tests": [
+        "test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition",
+        "test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying",
+        "test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw",
+        "test_actual_paid_landfall_charges_once_and_decline_keeps_source",
+        "test_original_end_step_requires_actual_life_gain_before_tapped_return"
+      ],
+      "replay_tests": [
+        "test_actual_land_is_owner_relative_and_optional_return_preserves_haste_condition",
+        "test_opponent_dragon_entry_returns_owner_thrall_without_granting_flying",
+        "test_hand_cast_does_not_return_poxwalkers_but_actual_flashback_returns_tapped_before_draw",
+        "test_actual_paid_landfall_charges_once_and_decline_keeps_source",
+        "test_original_end_step_requires_actual_life_gain_before_tapped_return"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "targeted, mass, optional, delayed, transformed, or controller-relative movement",
           "multiple objects or destinations",
           "unsupported source-form predicates",
@@ -91598,7 +91707,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 768,
+  "registry_version": 769,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

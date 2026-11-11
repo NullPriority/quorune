@@ -1089,8 +1089,19 @@ header parser never discards a preceding condition or payment phrase. Unknown
 prefixes stay residual.
 Graveyard current-ability requirements receive trusted printed fragments in
 that zone; off-battlefield ability modifications still fail closed through the
-existing applicability boundary. Aura departure exceptions, aggregate heads,
-new event vocabularies, reanimation and another-card returns remain residual.
+existing applicability boundary.
+The marked battlefield-return form preserves tapped or untapped entry, a
+closed optional mana payment and a represented intervening-if condition. It
+requires its separate battlefield-return capability and complete-source
+admission certificate, including when nested in an optional choice. The same
+source-self movement owner pins the queued graveyard incarnation and delegates
+entry replacements and nonspell Aura choices to their existing owners.
+The shared trigger-view comparator retires a closed reviewed optional
+source-return view only when its branches, owner-relative event condition,
+source hashes and complete typed admission match the current program.
+The historical hand marker retains its exact schema and authority. Aura
+departure exceptions, aggregate heads, new event vocabularies, death/lookback
+envelopes, attached or delayed results and another-card returns remain residual.
 
 `compiler/linked_exile_return_templates.py` lowers a closed battlefield exile
 followed by an immediate return or next-end-step return. It shares direct
