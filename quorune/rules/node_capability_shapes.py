@@ -293,6 +293,17 @@ def fixed_draw_node_capabilities(
         and _positive_int(effect.get("count"))
     ):
         return ("zone.draw.library_to_hand",)
+    if (
+        operation == "draw_each_player"
+        and set(effect) == {"op", "players", "count"}
+        and effect.get("players") == ["$controller", "$target.0"]
+        and _positive_int(effect.get("count"))
+        and dict(target_schema or {}) in _DRAW_TARGET_SCHEMAS
+        and target_schema.get("player_relation") == "opponent"
+        and type(target_schema.get("count")) is int
+        and "cr-115-targets" in mechanics
+    ):
+        return ("target.revalidate_resolution", "zone.draw.library_to_hand")
     if operation not in {"draw", "offer_draw"}:
         return ()
     expected_fields = (

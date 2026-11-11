@@ -919,6 +919,7 @@
       "test_optional_object_action_counters",
       "test_paid_color_entry",
       "test_paid_entry_copy",
+      "test_paired_opponent_draws",
       "test_power_up",
       "test_preflight_v080",
       "test_prepared_creature_power_damage_compiler",

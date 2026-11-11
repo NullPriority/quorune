@@ -201,26 +201,44 @@ def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
             },
             ("cr-121-drawing-a-card", "cr-115-targets"),
         )
+    return _multiplayer_fixed_draw_template(normalized)
+
+
+def _multiplayer_fixed_draw_template(text: str) -> DrawEffectTemplate | None:
     match = re.fullmatch(
-        rf"each player draws (?P<count>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
-        normalized,
+        rf"you and target opponent each draw (?P<count>{FIXED_COUNT_PATTERN}) cards?\.?",
+        text,
         re.IGNORECASE,
     )
-    if match:
+    if match is None:
+        each = re.fullmatch(
+            rf"each player draws (?P<count>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
+            text,
+            re.IGNORECASE,
+        )
+        if each is None:
+            return None
         return (
             "draw-each-player-v1",
-            (
-                {
-                    "op": "draw_each_player",
-                    "count": fixed_number(match.group("count")),
-                },
-            ),
+            ({"op": "draw_each_player", "count": fixed_number(each.group("count"))},),
             None,
-            (
-                "cr-121-drawing-a-card",
-            ),
+            ("cr-121-drawing-a-card",),
         )
-    return None
+    return (
+        "draw-controller-and-target-opponent-v1",
+        ({
+            "op": "draw_each_player",
+            "players": ["$controller", "$target.0"],
+            "count": fixed_number(match.group("count")),
+        },),
+        {
+            "zones": ["player"],
+            "categories": ["player"],
+            "player_relation": "opponent",
+            "count": 1,
+        },
+        ("cr-121-drawing-a-card", "cr-115-targets"),
+    )
 
 
 def static_draw_restriction_handler(

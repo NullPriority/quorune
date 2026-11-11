@@ -14132,6 +14132,20 @@
         "test_targeted_return_to_hand_effect_clauses",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "paired-opponent-fixed-draws",
+      "patterns": [
+        "quorune/compiler/draw_templates.py",
+        "quorune/rules/node_capability_shapes.py",
+        "tests/fixtures/paired-opponent-draw-cards.json",
+        "tests/test_paired_opponent_draws.py"
+      ],
+      "test_modules": [
+        "test_activated_draw_abilities",
+        "test_paired_opponent_draws",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
