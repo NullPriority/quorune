@@ -13775,6 +13775,24 @@
         "test_fixed_damage_source_lki",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "scaled-public-count-source-composition",
+      "patterns": [
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "tests/test_scaled_public_count_composition.py",
+        "tests/fixtures/scaled-public-count-cards.json"
+      ],
+      "test_modules": [
+        "test_scaled_public_count_composition",
+        "test_public_count_result_composition",
+        "test_public_query_effect_amounts",
+        "test_declared_effect_amounts",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

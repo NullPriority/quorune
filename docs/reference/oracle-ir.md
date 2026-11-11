@@ -147,6 +147,9 @@ amount can read the hand after an earlier draw commits.
 Single-instruction amounts written as equal to a public count retain the
 existing public-query representation. Both damage word orders preserve their source and
 target schema; the compiler proves that only the result amount varies.
+Implicit scaled counts retain multipliers already represented by the public
+quantity owner. Source-bound bodies use the same quantity validation after the
+fixed-shape proof, and existing scalar producers keep their own coefficients.
 Variable damage to each opponent uses the existing simultaneous damage batch.
 A declared amount shared by damage and life gain is determined at resolution
 and remains independent of how much damage prevention allows through.

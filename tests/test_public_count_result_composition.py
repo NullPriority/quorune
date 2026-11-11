@@ -57,7 +57,7 @@ class PublicCountResultCompilerTests(unittest.TestCase):
         ))
         for text in (
             "It deals damage equal to the number of secret cards named Fixture to any target.",
-            "It deals damage equal to twice the number of creatures you control to any target.",
+            "It deals damage equal to twice the number of secret cards named Fixture to any target.",
             "It deals damage equal to the number of creatures you control to any target. Draw a card.",
         ):
             with self.subTest(text=text):

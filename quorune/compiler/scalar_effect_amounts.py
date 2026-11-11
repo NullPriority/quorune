@@ -248,7 +248,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
             producer = _characteristic(quantity, source_name=source_name, body=body,
                 schema=fixed[2], event=event, source_event=source_event)
     if producer is None:
-        if quantity and multiplier == 1:
+        if quantity:
             from .public_query_effect_amounts import public_query_effect_amount_template
             return public_query_effect_amount_template(
                 normalized, source_name=source_name, compile_fixed=canonical_fixed,
