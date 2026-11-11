@@ -3204,6 +3204,10 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertEqual("exact", combined.status, combined.material_residuals)
         self.assertEqual("card.discarded", combined.faces[0].nodes[0].event)
         self.assertIn("trigger.event.cycle_or_discard", combined.faces[0].nodes[0].capability_dependencies)
+        direct = self.compile("Whenever you attack a player, draw a card.", type_line="Creature — Advisor")
+        self.assertEqual("exact", direct.status, direct.material_residuals)
+        self.assertEqual("combat.player_attacked", direct.faces[0].nodes[0].event)
+        self.assertIn("trigger.event.direct_player_attack", direct.faces[0].nodes[0].capability_dependencies)
         cases = (
             "Whenever this creature becomes tapped for the first time each turn, draw a card.",
             "Whenever you cycle or discard a card for the first time each turn, draw a card.",
@@ -3211,7 +3215,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever you sacrifice one or more Foods, draw a card.",
             "Whenever one or more creature tokens you control deal combat "
             "damage to a player, draw a card.",
-            "Whenever you attack a player, draw a card.",
+            "Whenever you attack a player with exactly two creatures, draw a card.",
         )
         for text in cases:
             with self.subTest(text=text):
@@ -3935,11 +3939,20 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             targeted_node.capability_dependencies,
         )
 
+        for text in (
+            "When this creature enters, you may return another creature you control to its owner's hand.",
+            "When this creature enters, return another creature you control to its owner's hand, then draw a card.",
+        ):
+            with self.subTest(composed_return=text):
+                ir = self.compile(text, type_line="Creature — Test")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertIn("choice.controller.bounded_return_owner_hand", ir.faces[0].nodes[0].capability_dependencies)
+
         exclusions = (
             "When this creature enters, return each other creature you control to its owner's hand.",
-            "When this creature enters, you may return another creature you control to its owner's hand.",
+            "When this creature enters, you may return another creature you control with power 5 or greater to its owner's hand.",
             "When this creature enters, return X creatures you control to their owner's hand.",
-            "When this creature enters, return another creature you control to its owner's hand, then draw a card.",
+            "When this creature enters, return another creature you control with power 5 or greater to its owner's hand, then draw a card.",
         )
         for text in exclusions:
             with self.subTest(excluded=text):
