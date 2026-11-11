@@ -31,6 +31,10 @@ Source-derived triggers retain their event selectors, intervening conditions,
 target and mode choices, and created-token ability declarations. Those bindings
 remain independent of the stored reviewed descriptors used by older records.
 
+Replacement and attached-ability producers retain their placing-player,
+affected-controller and recipient-creature bindings. Retiring a reviewed view
+keeps those roles and activation conditions with their existing rules owners.
+
 ## Required evidence
 
 1. Record the exact Oracle ID, Oracle text hash, rulings hash, rules snapshot,

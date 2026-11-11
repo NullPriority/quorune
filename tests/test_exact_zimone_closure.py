@@ -926,7 +926,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
             "pilot:B",
             {
                 "action_id": "choose",
-                "choice": "attach",
+                "choice": "apply",
                 "plan": "BUILD_ENGINE",
                 "reason": "Attach the Staff to the entering Shaman.",
             },
