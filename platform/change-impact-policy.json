@@ -12811,6 +12811,7 @@
     {
       "id": "counted-search-dispatch-contract",
       "patterns": [
+        "quorune/semantic_packs/tutor-searches.json",
         "quorune/compiler/library_search_templates.py",
         "tests/test_library_search_dispatch_native.py",
         "tests/fixtures/library-search-dispatch-cards.json"
