@@ -13757,6 +13757,24 @@
         "test_fixed_damage_source_lki",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-event-player-damage",
+      "patterns": [
+        "quorune/compiler/event_player_results.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/rules/event_player_result_shapes.py",
+        "tests/test_source_event_player_damage.py",
+        "tests/fixtures/source-event-player-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_source_event_player_damage",
+        "test_event_player_fixed_damage",
+        "test_bound_source_fixed_damage",
+        "test_vehicle_self_attack_binding",
+        "test_fixed_damage_source_lki",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

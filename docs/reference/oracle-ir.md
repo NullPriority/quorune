@@ -78,6 +78,9 @@ departure. Attached and other event participants keep their separate identities.
 Vehicle self-attack heads retain the same source identity predicate as creature
 self-attack heads; the printed type label does not become an observer of other
 Vehicles attacking.
+For a closed self-attack, fixed event-player damage can bind a source pronoun
+while its recipient stays untargeted. Attacking a planeswalker uses that
+permanent's controller as the defending player.
 
 Fixed sacrifice prices can supply the mana value of the paid permanent to a
 closed draw, life, counter placement, or single-color mana instruction. Scalar

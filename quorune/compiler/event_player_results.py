@@ -159,6 +159,9 @@ def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
             return None
     else:
         compiled = _bound_result_template(binding, normalized, effect_template=effect_template, card_name=card_name)
+    if compiled[0] is None:
+        from .source_self_effect_templates import bound_source_fixed_damage
+        compiled = bound_source_fixed_damage(binding, normalized) or compiled
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'

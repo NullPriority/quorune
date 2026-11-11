@@ -921,6 +921,7 @@
     "tests/fixtures/source-damage-death-cards.json",
     "tests/fixtures/source-damage-scalar-cards.json",
     "tests/fixtures/source-entry-cast-cards.json",
+    "tests/fixtures/source-event-player-damage-cards.json",
     "tests/fixtures/source-explore-cards.json",
     "tests/fixtures/source-fixed-protection-cards.json",
     "tests/fixtures/source-keyword-choice-cards.json",
