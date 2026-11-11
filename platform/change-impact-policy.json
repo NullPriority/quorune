@@ -13827,6 +13827,23 @@
         "test_public_count_result_composition",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "counter-producer-normal-admission",
+      "patterns": [
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/rules/counter_capability_shapes.py",
+        "tests/test_unleash_rules.py",
+        "tests/test_fixed_counter_placement_groups.py",
+        "tests/test_counter_admission_regressions.py",
+        "tests/fixtures/counter-admission-regression-cards.json"
+      ],
+      "test_modules": [
+        "test_unleash_rules",
+        "test_fixed_counter_placement_groups",
+        "test_counter_admission_regressions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

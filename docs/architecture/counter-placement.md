@@ -463,6 +463,11 @@ replacement-aware `PlaceCountersIntent`, so APNAP choice, rollback, privacy,
 and replay reuse the existing counter transaction rather than a second
 mutation path.
 
+The group compiler declares both its multi-subject shape owner and the ordinary
+`counter.producer.fixed_effect` dependency used by every placement request.
+Unavailable producer authority prevents exact whole-card admission before
+target selection or counter mutation.
+
 One optional bounded target-set owner accepts the closed “on up to N target”
 and “on each of up to N target” forms for represented permanent types,
 controller relations, and the typed tapped-creature state predicate. Choosing
@@ -556,7 +561,10 @@ and a battlefield block prohibition that reads the permanent's current public
 counter snapshot. Each printed instance creates its own apply-or-decline
 replacement, the prospective controller chooses before entry mutation, and an
 accepted counter enters the same nested quantity-replacement tree described
-above. The final counter state feeds the shared block-legality adapter used by
+above. Its compiler declaration includes both the optional-entry producer and
+counter quantity-replacement owner, so the whole card passes ordinary strict
+runtime binding before a cast is offered. The final counter state feeds the
+shared block-legality adapter used by
 both projected options and accepted commands. Nonkeyword equivalents and
 granted, copied, lost, or face-down Unleash outside typed ability propagation
 remain explicit residuals; this slice does not broaden aggregate replacement

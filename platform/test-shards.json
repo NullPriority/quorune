@@ -1453,6 +1453,7 @@
       "test_conditional_query_declarations",
       "test_conditional_recipients",
       "test_counted_library_searches",
+      "test_counter_admission_regressions",
       "test_counter_target_predicates",
       "test_damage_prevention_creation",
       "test_delayed_triggers",
