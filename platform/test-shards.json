@@ -1024,6 +1024,7 @@
       "test_devoid_characteristics",
       "test_echo_rules",
       "test_entry_copy_values",
+      "test_event_player_public_counts",
       "test_exact_combat_keywords",
       "test_fixed_affected_player_discards",
       "test_fixed_counter_controller_effect_sequences",

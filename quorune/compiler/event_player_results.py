@@ -75,6 +75,11 @@ def _bound_result_template(binding,text,*,effect_template,card_name):
         scalar=scalar_effect_amount_template(text,source_name=card_name,event='spell.cast',
             compile_fixed=lambda value:effect_template(value,card_name=card_name))
         if scalar is not None:return scalar
+    if compiled[0] is None:
+        from .public_query_effect_amounts import public_query_effect_amount_template
+        query = public_query_effect_amount_template(text, source_name=card_name,
+            compile_fixed=lambda value: effect_template(value, card_name=card_name))
+        if query is not None:return query
     return compiled
 
 

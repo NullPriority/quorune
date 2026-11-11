@@ -603,6 +603,7 @@
     "tests/fixtures/escaped-entry-counter-cards.json",
     "tests/fixtures/event-card-return.json",
     "tests/fixtures/event-player-fixed-damage-cards.json",
+    "tests/fixtures/event-player-public-count-cards.json",
     "tests/fixtures/event-player-sacrifice-cards.json",
     "tests/fixtures/event-player-subject-cards.json",
     "tests/fixtures/event-spell-copy-cards.json",

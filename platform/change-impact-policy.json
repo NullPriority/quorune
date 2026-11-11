@@ -13810,6 +13810,23 @@
         "test_granted_static_characteristics",
         "test_game_record_v3"
       ]
+    },
+    {
+      "id": "event-player-public-count-composition",
+      "patterns": [
+        "quorune/compiler/event_player_results.py",
+        "quorune/event_player_result_values.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "tests/test_event_player_public_counts.py",
+        "tests/fixtures/event-player-public-count-cards.json"
+      ],
+      "test_modules": [
+        "test_event_player_public_counts",
+        "test_half_event_player_results",
+        "test_event_player_fixed_damage",
+        "test_public_count_result_composition",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
