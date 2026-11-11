@@ -4,17 +4,6 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
-        "tests/fixtures/printed-deck-copy-limit-cards.json"
-      ],
-      "oracle_ids": [],
-      "rationale": "The compiler witness binds the pinned printed copy-limit cohort by name.",
-      "source": "tests/test_deck_loader.py",
-      "symbol": "DeckLoaderTests.test_printed_copy_limit_originals_have_trusted_pregame_bindings"
-    },
-    {
-      "card_names": [],
-      "deck_files": [],
-      "fixture_files": [
         "tests/fixtures/attached-characteristic-closure-cards.json"
       ],
       "oracle_ids": [],
@@ -61,6 +50,17 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/printed-deck-copy-limit-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The compiler witness binds the pinned printed copy-limit cohort by name.",
+      "source": "tests/test_deck_loader.py",
+      "symbol": "DeckLoaderTests.test_printed_copy_limit_originals_have_trusted_pregame_bindings"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/counter-replacement-cards.json",
         "tests/fixtures/evolve-cards.json",
         "tests/fixtures/scryfall-exact-lists.json"
@@ -69,6 +69,19 @@
       "rationale": "The repeated-Evolve reader returns its explicitly constructed double-keyword record and delegates remaining source/deck IDs to the finite focused fixture inputs.",
       "source": "tests/test_evolve_counter_placement.py",
       "symbol": "EvolveRuntimeTests.register_evolve"
+    },
+    {
+      "card_names": [
+        "Ashnod's Altar",
+        "Mana Confluence",
+        "Spire of Industry"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The variable whole-card admission lookup covers the three source-derived mana catalogs.",
+      "source": "tests/test_exact_mana_families.py",
+      "symbol": "ExactManaFamilyTests.test_compiled_mana_catalogs_use_offered_actions_and_replay"
     },
     {
       "card_names": [
@@ -167,6 +180,79 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/material-sibling-admission-cards.json"
+      ],
+      "oracle_ids": [
+        "0006faf6-7a61-426c-9034-579f2cfcfa83",
+        "0203e250-d60e-46c6-9c58-d620f0377be0",
+        "022624eb-c9d7-4110-bcc3-465c8d48fcd7",
+        "02393093-e970-40a0-848b-9cd758450cbb",
+        "0396ef40-3774-4684-9971-160aaccf6ac6",
+        "0993c5f1-1e8f-4871-9904-6c5a00405f36",
+        "0a8e5c48-885d-4ea8-9c68-a3e9213d4289",
+        "0ef760f4-bbec-4735-8d60-fc24d973452a",
+        "151388a4-a24b-4089-a323-e7c1d5e6490a",
+        "15af3bd0-022b-472e-b21e-29b925b7692b",
+        "15d5b198-edbe-40f3-87e2-d72f7f0c58ab",
+        "1755b3d4-0e40-40c4-b913-0960d55d411b",
+        "1a8d7714-a566-4195-8605-550929584c61",
+        "230bf3a4-68a8-4553-b8d7-ad340cbd7371",
+        "230e0bf3-3f17-4968-8723-3fb6a0909816",
+        "2346be19-7344-4f11-be2c-a22750cb7e1d",
+        "248e0dfa-0bcb-402c-badf-ca59f02792f7",
+        "264f944b-386b-4378-9764-4a8bde246809",
+        "28fe909b-06e0-424c-9f75-c824a25f5865",
+        "2fd9a37f-151a-4501-9d8e-bc67cc902592",
+        "31d01633-86f8-4a3f-9c28-f6968e056ba3",
+        "34a160bc-5d7e-483c-b24c-ab30b7d313b0",
+        "37b7f044-f57b-4d13-82be-46fd01f1dba6",
+        "38e9ad30-4bbf-4b58-8bb2-47520ce351a3",
+        "3d3fd8a2-78d4-4f52-8fcd-0c6fa93f0043",
+        "3fa11a6a-a760-45db-8341-f83a0f69c17f",
+        "414f1c42-6b0e-49ce-8b44-17a75b996b68",
+        "474f0675-4088-4f77-8081-f9ed7d492837",
+        "494dc919-e429-491b-b19b-5037499e2dd6",
+        "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+        "52eae443-fbe5-479f-a5a4-b5e4401d62d3",
+        "58e0cc31-7f7c-4cea-9453-d377a039da36",
+        "6025ce2f-d527-457c-866c-cb5c119d0bf4",
+        "655ae8e7-372b-4d8d-b33f-4aca46831abb",
+        "6659fae5-09d9-4095-8de3-643afd6ad3be",
+        "6ec7a7fb-0bf9-47fa-af2b-5b13b3af3947",
+        "7b31ecf8-5266-4376-ace0-8b873706c4ea",
+        "830e3e37-a80c-4b0e-b9af-393ad4ca01d7",
+        "8b1e453a-35a6-4dff-bd37-498f34d0470e",
+        "8efbe68c-622c-4986-a375-7e0bf780eb2e",
+        "8f3e6554-eb8a-4096-81a3-2411186d9cb4",
+        "94e8791b-e72f-4aed-b761-826779337168",
+        "9b0b8f00-6367-4dc9-b33e-680470b3a36c",
+        "9cfac390-4638-4654-8b50-65c0f0886b18",
+        "aef6c5b3-824f-4b7d-9671-1ed61d547717",
+        "bc2c02f6-2b6b-4016-b006-12ce0a1a2450",
+        "bcb2f489-9d58-424d-96c1-a124a8d25a14",
+        "bfa21cbc-8a04-4456-bf02-bae6b514d50a",
+        "c02c5547-b9c9-4b2d-9d12-e87bfba8f2d2",
+        "c0d8fef4-65f4-4769-982d-b397d2b7e977",
+        "c551f007-9740-4a2a-8ef5-7be1a7afe14b",
+        "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+        "c7fe1f05-f412-4991-98bd-f6a4b8b62501",
+        "cfb23c6b-6e4a-4fc9-b3bb-a3ddc2ba06b8",
+        "d14c633d-977a-4f78-85c2-88582b3c3670",
+        "d63f4eeb-3fa5-4e65-8414-e3fd3c03c128",
+        "e8e35b49-8cfb-4fb5-89aa-8050f15b11bf",
+        "ee7f698d-55c5-4a7a-803d-304febe6a758",
+        "f62250c6-0832-46c8-a800-806589504f5f",
+        "fb84b94c-dc8c-4182-9b96-abd092b20981",
+        "fcb2a95b-cef0-4b29-8b2b-538f380aff2b"
+      ],
+      "rationale": "The bounded admission cohort loads pinned original candidates and accepted capability controls by Oracle ID from fixture metadata; existing compact fixtures retain overlapping records.",
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/source-reference-closure-cards.json"
       ],
       "oracle_ids": [],
@@ -236,6 +322,17 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/mutate-casting-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The exact34pinnedMutate originals are filtered and iterated by OracleID from this dedicated canonical fixture;the10control records are kept in the same fixture for later native casting witnesses.",
+      "source": "tests/test_mutate_cast_metadata.py",
+      "symbol": "MutateCastMetadataTests.test_every_pinned_mutate_cost_lowers_but_blocked_integration_never_admits_it"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/counter-replacement-cards.json",
         "tests/fixtures/persist-undying-cards.json",
         "tests/fixtures/scryfall-exact-lists.json"
@@ -293,90 +390,6 @@
       "rationale": "The exact five pinned originals and two explicitly constructed cost controls are iterated by fixture Oracle identity; both unsupported original result bodies remain residual.",
       "source": "tests/test_undaunted.py",
       "symbol": "UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies"
-    },
-    {
-      "card_names": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/mutate-casting-cards.json"
-      ],
-      "oracle_ids": [],
-      "rationale": "The exact34pinnedMutate originals are filtered and iterated by OracleID from this dedicated canonical fixture;the10control records are kept in the same fixture for later native casting witnesses.",
-      "source": "tests/test_mutate_cast_metadata.py",
-      "symbol": "MutateCastMetadataTests.test_every_pinned_mutate_cost_lowers_but_blocked_integration_never_admits_it"
-    },
-    {
-      "card_names": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/material-sibling-admission-cards.json"
-      ],
-      "oracle_ids": [
-        "0006faf6-7a61-426c-9034-579f2cfcfa83",
-        "0203e250-d60e-46c6-9c58-d620f0377be0",
-        "022624eb-c9d7-4110-bcc3-465c8d48fcd7",
-        "02393093-e970-40a0-848b-9cd758450cbb",
-        "0396ef40-3774-4684-9971-160aaccf6ac6",
-        "0993c5f1-1e8f-4871-9904-6c5a00405f36",
-        "0a8e5c48-885d-4ea8-9c68-a3e9213d4289",
-        "0ef760f4-bbec-4735-8d60-fc24d973452a",
-        "151388a4-a24b-4089-a323-e7c1d5e6490a",
-        "15af3bd0-022b-472e-b21e-29b925b7692b",
-        "15d5b198-edbe-40f3-87e2-d72f7f0c58ab",
-        "1755b3d4-0e40-40c4-b913-0960d55d411b",
-        "1a8d7714-a566-4195-8605-550929584c61",
-        "230bf3a4-68a8-4553-b8d7-ad340cbd7371",
-        "230e0bf3-3f17-4968-8723-3fb6a0909816",
-        "2346be19-7344-4f11-be2c-a22750cb7e1d",
-        "248e0dfa-0bcb-402c-badf-ca59f02792f7",
-        "264f944b-386b-4378-9764-4a8bde246809",
-        "28fe909b-06e0-424c-9f75-c824a25f5865",
-        "2fd9a37f-151a-4501-9d8e-bc67cc902592",
-        "31d01633-86f8-4a3f-9c28-f6968e056ba3",
-        "34a160bc-5d7e-483c-b24c-ab30b7d313b0",
-        "37b7f044-f57b-4d13-82be-46fd01f1dba6",
-        "38e9ad30-4bbf-4b58-8bb2-47520ce351a3",
-        "3d3fd8a2-78d4-4f52-8fcd-0c6fa93f0043",
-        "3fa11a6a-a760-45db-8341-f83a0f69c17f",
-        "414f1c42-6b0e-49ce-8b44-17a75b996b68",
-        "474f0675-4088-4f77-8081-f9ed7d492837",
-        "494dc919-e429-491b-b19b-5037499e2dd6",
-        "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
-        "52eae443-fbe5-479f-a5a4-b5e4401d62d3",
-        "58e0cc31-7f7c-4cea-9453-d377a039da36",
-        "6025ce2f-d527-457c-866c-cb5c119d0bf4",
-        "655ae8e7-372b-4d8d-b33f-4aca46831abb",
-        "6659fae5-09d9-4095-8de3-643afd6ad3be",
-        "6ec7a7fb-0bf9-47fa-af2b-5b13b3af3947",
-        "7b31ecf8-5266-4376-ace0-8b873706c4ea",
-        "830e3e37-a80c-4b0e-b9af-393ad4ca01d7",
-        "8b1e453a-35a6-4dff-bd37-498f34d0470e",
-        "8efbe68c-622c-4986-a375-7e0bf780eb2e",
-        "8f3e6554-eb8a-4096-81a3-2411186d9cb4",
-        "94e8791b-e72f-4aed-b761-826779337168",
-        "9b0b8f00-6367-4dc9-b33e-680470b3a36c",
-        "9cfac390-4638-4654-8b50-65c0f0886b18",
-        "aef6c5b3-824f-4b7d-9671-1ed61d547717",
-        "bc2c02f6-2b6b-4016-b006-12ce0a1a2450",
-        "bcb2f489-9d58-424d-96c1-a124a8d25a14",
-        "bfa21cbc-8a04-4456-bf02-bae6b514d50a",
-        "c02c5547-b9c9-4b2d-9d12-e87bfba8f2d2",
-        "c0d8fef4-65f4-4769-982d-b397d2b7e977",
-        "c551f007-9740-4a2a-8ef5-7be1a7afe14b",
-        "c6bb4b41-8dae-429a-b928-ae9d39c74711",
-        "c7fe1f05-f412-4991-98bd-f6a4b8b62501",
-        "cfb23c6b-6e4a-4fc9-b3bb-a3ddc2ba06b8",
-        "d14c633d-977a-4f78-85c2-88582b3c3670",
-        "d63f4eeb-3fa5-4e65-8414-e3fd3c03c128",
-        "e8e35b49-8cfb-4fb5-89aa-8050f15b11bf",
-        "ee7f698d-55c5-4a7a-803d-304febe6a758",
-        "f62250c6-0832-46c8-a800-806589504f5f",
-        "fb84b94c-dc8c-4182-9b96-abd092b20981",
-        "fcb2a95b-cef0-4b29-8b2b-538f380aff2b"
-      ],
-      "rationale": "The bounded admission cohort loads pinned original candidates and accepted capability controls by Oracle ID from fixture metadata; existing compact fixtures retain overlapping records.",
-      "source": "tests/test_high_risk_interaction_assurance.py",
-      "symbol": "HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission"
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",
