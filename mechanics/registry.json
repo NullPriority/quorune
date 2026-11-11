@@ -424,7 +424,7 @@
     {
       "mechanic_id": "goad",
       "path": "mechanics/contracts/goad.json",
-      "sha256": "f480bed8181f07721b36c78555dadd3c6fd2dd0f6fa0e504e48ab1ee3592898d",
+      "sha256": "dee94b48d61d7c4036af649c390bbb76e7bc9db643d209df8f52d28b1cd0ef03",
       "version": 1
     },
     {
@@ -6793,18 +6793,18 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/goad.json",
-      "contract_sha256": "f480bed8181f07721b36c78555dadd3c6fd2dd0f6fa0e504e48ab1ee3592898d",
+      "contract_sha256": "dee94b48d61d7c4036af649c390bbb76e7bc9db643d209df8f52d28b1cd0ef03",
       "contract_version": 1,
       "coverage_status": "partial",
       "dependencies": [
         "701"
       ],
-      "implementation_component": "GoadDesignation, typed goad-prohibition runtime component, oracle_ir target-goad template, TurnStepOwner, CommanderEngine.apply_effect/_attack_declaration_problem, and DeclarationProblem",
-      "implementation_version": "goad-v2",
+      "implementation_component": "GoadDesignation, typed goad prohibition and attachment readers, TurnStepOwner, and DeclarationProblem",
+      "implementation_version": "goad-v3",
       "kind": "keyword_action",
       "known_blockers": [
         "remaining open goad selection, linked-result, and duration-qualified Oracle forms lack compiler closure",
-        "continuous effects that state a creature is goaded are not represented by the designation registry",
+        "continuous goad with other subjects, conditions, or durations lacks compiler closure",
         "effects that remove goad designations are not compiled",
         "conditional, alternative affected-set, duration-qualified, and dynamically granted or removed goad-prohibition grammar is not implemented"
       ],
@@ -6829,6 +6829,8 @@
         "test_goad_prohibition_compiler_mutant_is_killed",
         "test_raw_oracle_goad_prohibition_without_typed_metadata_fails_closed",
         "test_typed_goad_prohibition_is_controller_scoped_and_replays",
+        "test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
         "test_oracle_compiler_lowers_only_anchored_target_goad_templates"
       ],
       "trust_level": "untrusted"

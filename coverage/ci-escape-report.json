@@ -2044,6 +2044,40 @@
       "resolution": "Retain the exact mutation evidence identity. Prove an explicit empty move preserves the native zero-target draw, then reintroduce the invalid empty-snapshot requirement and require that the same native witness kills it. Add the homogeneous target-set consumer to the empty-zone impact route; preserve the nonempty snapshot invariant.",
       "run_id": 42972897604,
       "summary": "The legal empty-zone transaction repair made an old lowering mutant behaviorally equivalent: an explicit empty move no longer constructs a nonempty replacement snapshot, so the independent draw correctly continued. The mutation consumer had not been included in the new focused route."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Compiler corpus"
+      ],
+      "head_sha": "b37e5eed2dbf81c8265f0978cc6a9b0df8c572d2",
+      "id": "ci-20261111-pr561-direct-player-target-carrier",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_direct_player_attack_target_body_is_accepted_by_corpus_assurance"
+      ],
+      "resolution": "Add the carrier to the existing canonical trigger catalogue, reconstruct its complete printed event and condition during assurance, retain target/effect and capability checks, and run the regression before any census when binding, catalogue or assurance inputs change.",
+      "run_id": 43048656262,
+      "summary": "The direct-player attack compiler emitted a fixed typed target-effect wrapper that was absent from the shared trigger-template catalogue. The protected compiler census rejected Mirkwood Trapper while independently reconstructing its exact first ability; its second ability remained a material residual."
+    },
+    {
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Verify and bundle"
+      ],
+      "head_sha": "49d2346aa36c947fa78209dd726039e2ce1e27c1",
+      "id": "ci-20261111-pr561-cloud-dependent-owner",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_ci_pipeline.CiPipelineTests.test_cloud_workflow_produces_every_reusable_owner_in_dependency_order",
+        "test_ci_pipeline.CiPipelineTests.test_cloud_workflow_rejects_missing_duplicate_and_unordered_owner_producers",
+        "test_ci_pipeline.CiPipelineTests.test_cloud_owner_schedule_guard_precedes_the_expensive_work"
+      ],
+      "resolution": "Schedule the dependent foundation after capability evidence and before corpus generation with the existing content-keyed cache and artifact path. Validate workflow producer completeness and dependency ordering against the canonical manifest, and enforce the unchanged cloud runner budget before any census. Preserve strict final owner-receipt and output-hash checks.",
+      "run_id": 43058582745,
+      "summary": "The manifest registered a reusable dungeon-room-programs owner depending on capability-evidence, but the cloud workflow omitted its producer. Every scheduled generation owner succeeded; strict final assembly rejected the missing dungeon receipt and no complete bundle was published."
     }
   ],
   "known_flaky_tests": [],
@@ -2104,7 +2138,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "3bcf6b010f54a476118a1cb97c2067835cf2b165ca32e3a83fc3dee862f61b18",
+  "source_fingerprint": "65ea392304782efaaa6071aca98daecb18844e50d9141c675ddbdd79f98af35e",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -2112,15 +2146,15 @@
     "category_counts": {
       "browser_integration": 5,
       "flaky_test": 10,
-      "generated_artifact_drift": 10,
+      "generated_artifact_drift": 11,
       "infrastructure": 1,
-      "missing_affected_test": 50,
+      "missing_affected_test": 51,
       "source_correctness": 32,
       "windows_compatibility": 4
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 103,
-    "escape_count": 112,
+    "deterministic_escape_count": 105,
+    "escape_count": 114,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

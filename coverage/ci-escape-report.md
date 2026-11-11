@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "3bcf6b010f54a476118a1cb97c2067835cf2b165ca32e3a83fc3dee862f61b18"
+verified: "65ea392304782efaaa6071aca98daecb18844e50d9141c675ddbdd79f98af35e"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 112
-- Deterministic escapes: 103
+- Escapes: 114
+- Deterministic escapes: 105
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -141,6 +141,8 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261109-pr557-legacy-cast-placement-fixtures` | [42576199462](https://github.com/NullPriority/quorune/actions/runs/42576199462) | `missing_affected_test` | `not_applicable` | Omit both markers from pre-placement fixtures. Verify the intermediate placement-only format and preserve rejection of a mixed checkpoint. The existing placement impact route selects the repaired module. |
 | `ci-20261109-pr557-cast-target-fact-witness` | [42576199462](https://github.com/NullPriority/quorune/actions/runs/42576199462) | `missing_affected_test` | `not_applicable` | Patch the reader used by the cast completion caller through a literal target covered by the patch-target guard. Assert that the reader was called and the expected Repartee trigger was absent. |
 | `ci-20261111-pr560-equivalent-empty-move-mutant` | [42972897604](https://github.com/NullPriority/quorune/actions/runs/42972897604) | `missing_affected_test` | `added` | Retain the exact mutation evidence identity. Prove an explicit empty move preserves the native zero-target draw, then reintroduce the invalid empty-snapshot requirement and require that the same native witness kills it. Add the homogeneous target-set consumer to the empty-zone impact route; preserve the nonempty snapshot invariant. |
+| `ci-20261111-pr561-direct-player-target-carrier` | [43048656262](https://github.com/NullPriority/quorune/actions/runs/43048656262) | `missing_affected_test` | `added` | Add the carrier to the existing canonical trigger catalogue, reconstruct its complete printed event and condition during assurance, retain target/effect and capability checks, and run the regression before any census when binding, catalogue or assurance inputs change. |
+| `ci-20261111-pr561-cloud-dependent-owner` | [43058582745](https://github.com/NullPriority/quorune/actions/runs/43058582745) | `generated_artifact_drift` | `added` | Schedule the dependent foundation after capability evidence and before corpus generation with the existing content-keyed cache and artifact path. Validate workflow producer completeness and dependency ordering against the canonical manifest, and enforce the unchanged cloud runner budget before any census. Preserve strict final owner-receipt and output-hash checks. |
 
 ## Measurement limitations
 
