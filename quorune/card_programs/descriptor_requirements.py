@@ -81,13 +81,18 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         return (*destruction, *DestructionFollowup.from_dict(value["followup"]).capability_dependencies)
     if destruction:
         return destruction
-    if value.get("op") == "move_public_zone_set" and "followup" in value:
+    if value.get("op") == "move_public_zone_set":
+        from ..rules.public_zone_move_capability_shapes import public_zone_move_set_runtime_dependencies
+
+        dependencies = public_zone_move_set_runtime_dependencies(value)
+        if "followup" not in value:
+            return dependencies
         from ..public_zone_moves import PublicZoneMoveSetSpec
         from ..rules.public_exile_result_model import PublicExileFollowup
 
         followup = PublicExileFollowup.from_dict(value["followup"])
         followup.validate_move(PublicZoneMoveSetSpec.from_dict(value["set"]))
-        return followup.capability_dependencies
+        return (*dependencies, *followup.capability_dependencies)
     from ..rules.revealed_library_top import REVEAL_TOP_OPERATION, RevealedLibraryTopSpec
     if value.get("op") == REVEAL_TOP_OPERATION:
         return RevealedLibraryTopSpec.from_effect(value).capability_dependencies

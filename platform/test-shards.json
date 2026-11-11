@@ -926,6 +926,7 @@
       "test_prepared_creature_power_damage_compiler",
       "test_prevention_immediate_sequencing",
       "test_proliferate_compiler",
+      "test_public_graveyard_entry",
       "test_public_state_optional_result_actions",
       "test_query_scaled_counters",
       "test_resolution_public_conditions",

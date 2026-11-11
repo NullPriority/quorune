@@ -3348,8 +3348,8 @@ flow through the canonical simultaneous zone transaction. Set membership uses
 the same cycle-safe `ObjectQuerySpec` boundary as other affected-set owners and
 is frozen in APNAP order. Closed creature-subtype exception lists are typed
 query data rather than runtime prose. Variable, optional, linked-result,
-delayed-return, open exception, chosen-quality, dynamic-count, numeric-
-characteristic, attachment-dependent entry, and multiple-destination forms
+delayed-return, open exception, chosen-quality, dynamic-count, unrepresented
+numeric predicates, explicit attachment instructions and multiple-destination forms
 remain source-spanned residuals. Commander-profile trust also requires the
 typed CR 903.9 owner choice; the compiler never excludes commanders from an
 otherwise universal Oracle instruction.
@@ -3362,6 +3362,20 @@ since moved. A merged departure seals each physical component's first public
 incarnation. The original trigger moves the surviving cards together, and the
 library owner privately orders a group placed at a fixed position. A fixed scry
 follows through the existing scry owner.
+
+Version-three public graveyard battlefield sets also admit artifacts, enchantments, closed
+creature-subtype qualifications, nonland permanents, and fixed mana-value upper
+bounds. Aura-capable entry requires the existing typed Aura owner. Each future
+controller chooses legal preexisting attachments in APNAP order, without
+targeting; an Aura with no legal attachment remains in the graveyard. An
+immutable per-Aura selection map survives successive choices and save/load,
+and the whole replacement-adjusted group commits only after those choices.
+An Aura cannot attach to another permanent entering in the same group. Variable
+values, chosen qualities, explicit attachment instructions and unclosed riders
+retain their separate residual boundaries.
+Version-one and version-two payloads retain their historical meaning and
+capability requirements; accepting the new grammar does not reinterpret saved
+programs or introduce attachment metadata into older payloads.
 
 One-card graveyard exile also accepts the closed `your graveyard` and
 `an opponent's graveyard` owner relations. They reuse the public-card type

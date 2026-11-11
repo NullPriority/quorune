@@ -48,6 +48,7 @@ _DESIGNATION_QUERY_FIELDS = _NEGATIVE_KEYWORD_QUERY_FIELDS | {"commander"}
 _NUMERIC_QUERY_FIELDS = _DESIGNATION_QUERY_FIELDS | {"numeric_characteristic"}
 _SUPERTYPE_EXCLUSION_QUERY_FIELDS = _NUMERIC_QUERY_FIELDS | {"excluded_supertypes"}
 _COLOR_EXCLUSION_QUERY_FIELDS = _SUPERTYPE_EXCLUSION_QUERY_FIELDS | {"colors_none"}
+_CARD_MANA_VALUE_QUERY_FIELDS = _COLOR_EXCLUSION_QUERY_FIELDS | {"mana_value_max"}
 _RECEIVER_UNION_QUERY_FIELDS = _COLOR_EXCLUSION_QUERY_FIELDS | {"any_of"}
 NEGATIVE_COLOR_QUERY_CAPABILITY = "state_query.permanent.negative_color"
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
@@ -323,6 +324,13 @@ def _normalized_terms(
     return result
 
 
+def _validate_card_mana_value_query(query: Any) -> None:
+    if (type(query.mana_value_max) is not int or not 0 <= query.mana_value_max <= 20
+            or query.zones != ("graveyard",) or query.token is not False
+            or query.any_of or query.state_predicate is not None or query.numeric_characteristic is not None):
+        raise ObjectQueryError("Fixed card mana-value queries require physical graveyard cards and a bound from zero through twenty")
+
+
 @dataclass(frozen=True, slots=True)
 class ObjectQuerySpec:
     zones: tuple[str, ...] = ()
@@ -353,6 +361,7 @@ class ObjectQuerySpec:
     excluded_supertypes: tuple[str, ...] = ()
     colors_none: tuple[str, ...] = ()
     any_of: tuple[ObjectQuerySpec, ...] = ()
+    mana_value_max: int | None = None
     _serialization_version: int = field(
         default=2,
         repr=False,
@@ -361,8 +370,9 @@ class ObjectQuerySpec:
     )
 
     def __post_init__(self) -> None:
-        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9}:
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}:
             raise ObjectQueryError('Object query serialization version is unsupported')
+        card_mana_bound = self.mana_value_max is not None or self._serialization_version == 10
         for field_name in (
             "zones",
             "types_all",
@@ -485,11 +495,11 @@ class ObjectQuerySpec:
             object.__setattr__(self, "_serialization_version", 8)
         if self.colors_none:
             object.__setattr__(self, "_serialization_version", 9)
-        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9}:
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}:
             raise ObjectQueryError(
                 "Object query serialization version is unsupported"
             )
-        if extended and self._serialization_version not in {3, 4, 5, 6, 7, 8, 9}:
+        if extended and self._serialization_version not in {3, 4, 5, 6, 7, 8, 9, 10}:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
@@ -499,6 +509,9 @@ class ObjectQuerySpec:
             object.__setattr__(self, '_serialization_version', 9)
         elif not isinstance(self.any_of, tuple):
             raise ObjectQueryError('Empty receiver union branches must be a tuple')
+        if card_mana_bound:
+            _validate_card_mana_value_query(self)
+            object.__setattr__(self, "_serialization_version", 10)
 
     def canonical_dict(self) -> dict[str, Any]:
         """Return the complete current semantic descriptor."""
@@ -534,7 +547,7 @@ class ObjectQuerySpec:
                     ),
                 }
             )
-        elif self._serialization_version in {4, 5, 6, 7, 8, 9}:
+        elif self._serialization_version in {4, 5, 6, 7, 8, 9, 10}:
             value.update(
                 {
                     "subtypes_any": list(self.subtypes_any),
@@ -551,17 +564,19 @@ class ObjectQuerySpec:
                     "minimum_color_count": self.minimum_color_count,
                 }
             )
-            if self._serialization_version in {5, 6, 7, 8, 9}:
+            if self._serialization_version in {5, 6, 7, 8, 9, 10}:
                 value["keywords_none"] = list(self.keywords_none)
-            if self._serialization_version in {6, 7, 8, 9}:
+            if self._serialization_version in {6, 7, 8, 9, 10}:
                 value["commander"] = self.commander
-            if self._serialization_version in {7, 8, 9}:
+            if self._serialization_version in {7, 8, 9, 10}:
                 value["numeric_characteristic"] = (
                     self.numeric_characteristic.to_dict() if self.numeric_characteristic is not None else None)
-            if self._serialization_version in {8, 9}:
+            if self._serialization_version in {8, 9, 10}:
                 value['excluded_supertypes'] = list(self.excluded_supertypes)
-            if self._serialization_version == 9:
+            if self._serialization_version in {9, 10}:
                 value['colors_none'] = list(self.colors_none)
+            if self._serialization_version == 10:
+                value['mana_value_max'] = self.mana_value_max
         if self.any_of:
             value['any_of'] = [part.to_dict() for part in self.any_of]
         return value
@@ -597,6 +612,7 @@ class ObjectQuerySpec:
             _NUMERIC_QUERY_FIELDS,
             _SUPERTYPE_EXCLUSION_QUERY_FIELDS,
             _COLOR_EXCLUSION_QUERY_FIELDS,
+            _CARD_MANA_VALUE_QUERY_FIELDS,
             _RECEIVER_UNION_QUERY_FIELDS,
         }:
             expected = (
@@ -664,9 +680,12 @@ class ObjectQuerySpec:
             exclude_ref=value["exclude_ref"],
             state_predicate=state_predicate,
             numeric_characteristic=numeric,
+            mana_value_max=value.get("mana_value_max"),
             any_of=tuple(cls.from_dict(part) for part in value['any_of']) if 'any_of' in value else (),
             _serialization_version=(
-                9
+                10
+                if actual == _CARD_MANA_VALUE_QUERY_FIELDS
+                else 9
                 if actual == _COLOR_EXCLUSION_QUERY_FIELDS
                 or actual == _RECEIVER_UNION_QUERY_FIELDS
                 else 8
@@ -760,6 +779,8 @@ def object_query_capabilities(value: Any) -> tuple[str, ...]:
         if frozenset(value) == _COLOR_EXCLUSION_QUERY_FIELDS:
             query = ObjectQuerySpec.from_dict(value)
             own = (NEGATIVE_COLOR_QUERY_CAPABILITY,) if query.colors_none else ()
+        if frozenset(value) == _CARD_MANA_VALUE_QUERY_FIELDS:
+            ObjectQuerySpec.from_dict(value)
         if frozenset(value) == _RECEIVER_UNION_QUERY_FIELDS:
             from .object_query_union import RECEIVER_UNION_CAPABILITY
             query = ObjectQuerySpec.from_dict(value)

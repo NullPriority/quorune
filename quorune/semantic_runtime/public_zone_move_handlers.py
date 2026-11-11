@@ -11,11 +11,8 @@ from ..public_zone_moves import (
 from ..rules.public_exile_result_model import PublicExileFollowup
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
-from .intents import (
-    ExilePublicGraveyardCardIntent,
-    IntentPlan,
-    MovePublicZoneSetIntent,
-)
+from .intents import IntentPlan
+from .zone_move_intent import ExilePublicGraveyardCardIntent, MovePublicZoneSetIntent
 
 
 @dataclass(frozen=True, slots=True)
@@ -94,6 +91,7 @@ class MovePublicZoneSetHandler:
             "followup",
             "reason",
             "_replacement_selections",
+            "_aura_target_refs",
         }
         if set(effect) - allowed or not {"op", "source", "set"}.issubset(effect):
             raise SemanticNodeError(
@@ -130,6 +128,8 @@ class MovePublicZoneSetHandler:
             raise SemanticNodeError(
                 "Public zone-move replacement selections must be an array"
             )
+        if "_aura_target_refs" in effect and not isinstance(effect["_aura_target_refs"], Mapping):
+            raise SemanticNodeError("Public Aura entry selections must be an object")
         try:
             intent = MovePublicZoneSetIntent(
                 actor=context.actor,
@@ -138,6 +138,7 @@ class MovePublicZoneSetHandler:
                 source_ref=source_ref,
                 replacement_selections=tuple(selections),
                 followup=PublicExileFollowup.from_dict(effect["followup"]) if "followup" in effect else None,
+                aura_target_refs=effect.get("_aura_target_refs"),
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

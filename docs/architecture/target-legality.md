@@ -201,6 +201,13 @@ unnamed counter presence, and name or attachment relations remain residual.
 Ability-presence wording remains outside this target grammar and must use the
 shared layer-6 ability-applicability query rather than a family-specific check.
 
+Public graveyard card-set queries use the same current mana-value fact through
+an explicitly versioned `ObjectQuerySpec` upper bound. The closed form selects
+physical cards at fixed bounds from zero through twenty. It does not widen the
+battlefield power/toughness predicate or admit a hidden-zone, variable-value,
+or receiver-union query. Older query wire shapes retain their exact fields;
+only the new card predicate carries `mana_value_max`.
+
 Three positive current-turn damage facts are represented for creature targets:
 the current incarnation was dealt damage, dealt damage to any recipient, or
 dealt damage to the acting player. The canonical damage transaction records

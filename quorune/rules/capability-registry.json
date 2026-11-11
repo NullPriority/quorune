@@ -7168,7 +7168,7 @@
           "hidden origin zones",
           "unrepresented card predicates",
           "unrepresented chained mechanics",
-          "returns to the resolving controller’s hand"
+          "returns to the resolving controller\u2019s hand"
         ],
         "inputs": [
           "one source-spanned mandatory target clause",
@@ -7181,7 +7181,7 @@
           "one owner-hand zone request and replacement-aware destination",
           "new logical object identity and principal-scoped hand projection"
         ],
-        "summary": "Return one legal physical card from any public graveyard to its owner’s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
+        "summary": "Return one legal physical card from any public graveyard to its owner\u2019s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
       },
       "blockers": [],
       "dependencies": [
@@ -32790,7 +32790,7 @@
           "shared combat and activation legality",
           "expiry at the controller-relative turn boundary"
         ],
-        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller’s next turn."
+        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller\u2019s next turn."
       },
       "blockers": [],
       "dependencies": [
@@ -34379,7 +34379,7 @@
         ],
         "outputs": [
           "one locked attack, block, and all-activation prohibition",
-          "expiry at the resolving controller’s next turn"
+          "expiry at the resolving controller\u2019s next turn"
         ],
         "summary": "Bind the printed next-turn attack, block, and activation prohibition to one revalidated creature incarnation."
       },
@@ -39904,7 +39904,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Modularâ€”Sunburst",
+          "Modular\u00e2\u20ac\u201dSunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -41160,7 +41160,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modularâ€”Sunburst variable linkage",
+          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ],
         "inputs": [
@@ -50114,7 +50114,7 @@
           "one optional cast during current resolution",
           "unused cards stay in exile"
         ],
-        "summary": "Exile from the resolving controller’s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
+        "summary": "Exile from the resolving controller\u2019s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
       },
       "blockers": [],
       "dependencies": [
@@ -70532,7 +70532,7 @@
     {
       "applicability": {
         "exclusions": [
-          "another player’s turn for lands",
+          "another player\u2019s turn for lands",
           "extra land plays or new source zones",
           "copies and noncreature lands"
         ],
@@ -70545,7 +70545,7 @@
           "shared instant casting and legal land-play timing",
           "single consumption on the next matching play"
         ],
-        "summary": "Apply the resolving controller’s instant-timing permission to their next physical creature-card play this turn."
+        "summary": "Apply the resolving controller\u2019s instant-timing permission to their next physical creature-card play this turn."
       },
       "blockers": [],
       "dependencies": [
@@ -72748,7 +72748,7 @@
       "applicability": {
         "exclusions": [
           "creatures put onto the battlefield attacking",
-          "other objects’ saddled facts",
+          "other objects\u2019 saddled facts",
           "resolution-time if-saddled clauses"
         ],
         "inputs": [
@@ -88754,7 +88754,7 @@
           "ordinary play of captured exile cards",
           "expiry before priority at the matching step"
         ],
-        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller’s next actual end step."
+        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller\u2019s next actual end step."
       },
       "blockers": [],
       "dependencies": [
@@ -89637,8 +89637,7 @@
     {
       "applicability": {
         "exclusions": [
-          "variable, optional, modal-header-only, conditional, linked-result, delayed-return, random, chosen-color, numeric-characteristic, dynamic-count, named-card, attachment-expanded, and open exception-list clauses",
-          "graveyard-to-battlefield sets that can contain Auras or need attachment choices",
+          "variable, optional, modal-header-only, conditional, linked-result, delayed-return, random, chosen-color, unrepresented numeric-characteristic, dynamic-count, named-card, attachment-expanded, and open exception-list clauses",
           "library, hidden hand, command, and stack set origins",
           "multiple destinations or independently chosen subsets",
           "history-linked, counter-on-entry, and unrepresented target or destination-replacement interactions"
@@ -89649,7 +89648,8 @@
           "any, actor, opponents, or target-player owner/controller relation",
           "fixed battlefield controller and tapped policy when entering",
           "current public object identities",
-          "represented destination-replacement selections"
+          "represented destination-replacement selections",
+          "version-three battlefield set with typed nonspell Aura entry and per-Aura attachment choices"
         ],
         "outputs": [
           "immutable APNAP-ordered public set",
@@ -89657,7 +89657,8 @@
           "new logical object identities",
           "normalized zone events and trigger batch",
           "seat-projected owner-hand knowledge or fixed-controller battlefield entries",
-          "exact replay"
+          "exact replay",
+          "future-controller APNAP Aura choices before simultaneous entry, with no-legal-attachment cards remaining in their graveyards"
         ],
         "summary": "Compile and execute one mandatory fixed public battlefield or graveyard set moving simultaneously toward exile, each object's owner's hand, or the battlefield under one fixed owner/actor controller policy through an immutable APNAP snapshot and the canonical replacement-aware zone-change owner."
       },
@@ -89678,7 +89679,9 @@
         "quorune.rules.public_zone_move_capability_shapes.fixed_public_zone_move_set_node_capabilities",
         "quorune.semantic_runtime.public_zone_move_handlers.MovePublicZoneSetHandler",
         "quorune.semantic_runtime.intents.MovePublicZoneSetIntent",
-        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.aura.decisions.complete_aura_entry_choice",
+        "quorune.rules.public_zone_move_capability_shapes.public_zone_move_set_runtime_dependencies"
       ],
       "implementation_mutation_rationale": "The focused compiler and model mutation test changes affected-set membership, relation, descriptor, or operation and the exact shape assertions reject each survivor.",
       "implementation_mutation_status": "killed",
@@ -89687,11 +89690,14 @@
         "test_mass_zone_moves_use_apnap_replacements_and_replay",
         "test_original_ground_seal_blocks_graveyard_card_targets_but_not_targeted_player_exile",
         "test_public_zone_target_shape_retains_mechanics_across_sibling_probes",
-        "test_target_graveyard_exile_revalidates_and_replays"
+        "test_target_graveyard_exile_revalidates_and_replays",
+        "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
+        "test_original_replenish_keeps_aura_without_preexisting_enchantable_object"
       ],
       "multiplayer_tests": [
         "test_actual_summonings_revalidates_artifact_restriction_then_returns_current_instant_sorcery_union",
-        "test_mass_zone_moves_use_apnap_replacements_and_replay"
+        "test_mass_zone_moves_use_apnap_replacements_and_replay",
+        "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry"
       ],
       "negative_tests": [
         "test_actual_summonings_revalidates_artifact_restriction_then_returns_current_instant_sorcery_union",
@@ -89699,7 +89705,9 @@
         "test_public_zone_move_dependencies_and_shape_mutations_fail_closed",
         "test_public_zone_move_privacy_and_stale_identity_roll_back",
         "test_unsupported_public_zone_move_shapes_remain_residual",
-        "test_verified_owner_withdrawals_preserve_unrelated_draw"
+        "test_verified_owner_withdrawals_preserve_unrelated_draw",
+        "test_public_battlefield_aura_selection_maps_are_frozen_and_strict",
+        "test_original_replenish_keeps_aura_without_preexisting_enchantable_object"
       ],
       "official_rules": [
         "108.3",
@@ -89722,14 +89730,22 @@
         "test_graveyard_public_sets_enter_with_fixed_controller_and_tapped_policy",
         "test_mass_zone_moves_use_apnap_replacements_and_replay",
         "test_new_graveyard_hand_queries_are_unions_and_card_only_without_new_battlefield_forms",
-        "test_public_object_movement_matrix_preserves_meaning_fields"
+        "test_public_object_movement_matrix_preserves_meaning_fields",
+        "test_public_artifact_enchantment_and_qualified_permanent_sets_preserve_their_queries",
+        "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
+        "test_original_replenish_keeps_aura_without_preexisting_enchantable_object",
+        "test_original_raise_the_past_respects_fixed_mana_value_card_set"
       ],
       "privacy_tests": [
-        "test_public_zone_move_privacy_and_stale_identity_roll_back"
+        "test_public_zone_move_privacy_and_stale_identity_roll_back",
+        "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry"
       ],
       "replay_tests": [
         "test_actual_summonings_revalidates_artifact_restriction_then_returns_current_instant_sorcery_union",
-        "test_mass_zone_moves_use_apnap_replacements_and_replay"
+        "test_mass_zone_moves_use_apnap_replacements_and_replay",
+        "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
+        "test_original_replenish_keeps_aura_without_preexisting_enchantable_object",
+        "test_original_raise_the_past_respects_fixed_mana_value_card_set"
       ],
       "required_evidence": [
         "positive",
@@ -91582,7 +91598,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 824,
+  "registry_version": 768,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

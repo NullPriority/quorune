@@ -13,6 +13,49 @@ from quorune.object_query import (
 
 
 class ObjectQueryTests(unittest.TestCase):
+    def test_fixed_public_graveyard_mana_bound_omission_is_killed(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.object_query import object_matches_query
+
+        def omit_bound(row, query):
+            if query.mana_value_max is not None:
+                query = replace(query, mana_value_max=None, _serialization_version=2)
+            return object_matches_query(row, query)
+
+        with patch("quorune.object_query.object_matches_query", side_effect=omit_bound):
+            with self.assertRaises(AssertionError):
+                self.test_fixed_public_graveyard_mana_value_bound_preserves_older_wire_shapes()
+
+    def test_fixed_public_graveyard_mana_value_bound_preserves_older_wire_shapes(self):
+        from dataclasses import replace
+        from quorune.object_query import ObjectQueryResult, query_objects
+
+        old = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
+        before = old.to_dict()
+        self.assertNotIn("mana_value_max", before)
+        bounded = replace(old, mana_value_max=2)
+        wire = bounded.to_dict()
+        self.assertEqual(2, wire["mana_value_max"])
+        self.assertEqual(wire, ObjectQuerySpec.from_dict(wire).to_dict())
+        self.assertEqual(before, ObjectQuerySpec.from_dict(before).to_dict())
+        rows = tuple(ObjectQueryResult(object_id=str(value), logical_object_id=str(value)+":0",
+            ref="mana-"+str(value), printed_name="Public card", owner="A", controller="A",
+            zone="graveyard", types=("creature",), token=False, mana_value=value)
+            for value in (0, 2, 3))
+        self.assertEqual({"mana-0", "mana-2"}, {row.ref for row in query_objects(rows, bounded)})
+        self.assertEqual({"mana-0"}, {row.ref for row in query_objects(rows, replace(old, mana_value_max=0))})
+        for value in (True, False, -1, 21, 2.0, "2"):
+            with self.subTest(bound=value), self.assertRaises(ValueError):
+                replace(old, mana_value_max=value)
+        for fields in ({"zones": ("hand",)}, {"zones": ("battlefield",)}, {"token": None}, {"token": True}):
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                replace(bounded, **fields)
+        for malformed in ({**wire, "mana_value_max": None}, {**wire, "mana_value_max": None, "commander": False},
+                {**wire, "future_field": True}):
+            with self.subTest(wire=malformed), self.assertRaises(ValueError):
+                ObjectQuerySpec.from_dict(malformed)
+
     def test_numeric_public_query_uses_exact_effective_stats_and_preserves_legacy_shapes(self):
         from dataclasses import replace
         from quorune.target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison

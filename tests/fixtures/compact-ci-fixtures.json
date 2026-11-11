@@ -829,6 +829,7 @@
     "tests/fixtures/public-cost-subject-cards.json",
     "tests/fixtures/public-count-result-cards.json",
     "tests/fixtures/public-exile-followup-cards.json",
+    "tests/fixtures/public-graveyard-entry-cards.json",
     "tests/fixtures/public-history-query-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
     "tests/fixtures/public-named-quantity-cards.json",

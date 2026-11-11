@@ -267,6 +267,7 @@ class SemanticChoiceIntentHostMixin:
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                aura_target_refs=thaw_value(intent.aura_target_refs) if intent.aura_target_refs is not None else None,
                 replacement_selections=tuple(
                     thaw_value(value)
                     for value in intent.replacement_selections
