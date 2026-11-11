@@ -2428,6 +2428,13 @@ class TokenCopyRecipeModelTests(unittest.TestCase):
         instruction = {"op":"create_token", "copy_spec":recipe.to_dict()}
         self.assertEqual((recipe,), copy_recipes(({"op":"offer_optional_mana_payment", "effects":[instruction]},)))
         self.assertEqual((), copy_recipes(({"op":"create_token", "characteristics":{"effects":[instruction]}},)))
+        from quorune.resolution_conditions import CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION
+        conditional = {"op": "apply_if_public_condition", "schema_version": CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION,
+                       "effects": [instruction], "otherwise_effects": []}
+        self.assertEqual((recipe,), copy_recipes((conditional,)))
+        for version in (3, 13, True, float(CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION)):
+            self.assertEqual((), copy_recipes(({**conditional, "schema_version": version},)))
+        self.assertEqual((), copy_recipes(({"op": "create_token", "characteristics": {"effects": [conditional]}},)))
 
     def test_copy_references_read_current_then_immediate_lki_not_reentry(self):
         from types import SimpleNamespace

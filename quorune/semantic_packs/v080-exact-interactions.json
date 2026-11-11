@@ -3,30 +3,6 @@
   "name": "v0.8-exact-deck-interactions",
   "programs": [
     {
-      "key": "04b7362d-0490-4cb0-b5d7-2a7732f659ce:trigger:enter",
-      "label": "Bojuka Bog enters",
-      "oracle_id": "04b7362d-0490-4cb0-b5d7-2a7732f659ce",
-      "ability_id": "trigger:enter",
-      "active_zone": "battlefield",
-      "event": "permanent.enter.self",
-      "effects": [{"op": "exile_graveyard", "player": "$target.0"}],
-      "target_schema": {
-        "zones": ["player"],
-        "categories": ["player"],
-        "player_relation": "any",
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["triggered_ability", "enters_trigger", "target_validation", "graveyard_exile"],
-      "tests": ["test_bojuka_bog_targets_and_exiles_one_graveyard"],
-      "provenance": {
-        "source_oracle_hash": "9c5428f8acbd5660566419cfd4cc8fce0d2634bc9fc319fd679a8cd62c44c34c",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "v0.8-interaction-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0:spell:front",
       "label": "Reanimate",
       "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",

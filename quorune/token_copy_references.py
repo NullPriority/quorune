@@ -5,23 +5,10 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Mapping, Sequence
 
-from .token_copy_recipes import TokenCopyRecipeError, TokenCopyRecipeSpec
+from .token_copy_recipes import TokenCopyRecipeError, TokenCopyRecipeSpec, copy_recipes
 
 
 COPY_REFERENCE_CONTEXT = "token_copy_references_v1"
-
-
-def copy_recipes(effects: Sequence[Mapping[str, Any]]) -> tuple[TokenCopyRecipeSpec, ...]:
-    """Visit executable wrappers, never copied future ability metadata."""
-    found = []
-    for effect in effects:
-        if effect.get("op") == "create_token" and "copy_spec" in effect:
-            found.append(TokenCopyRecipeSpec.from_dict(effect["copy_spec"]))
-        for field in ("effects", "then_effects"):
-            children = effect.get(field)
-            if effect.get("op") in {"offer_optional_effect", "offer_optional_mana_payment"} and isinstance(children, (list, tuple)):
-                found.extend(copy_recipes(children))
-    return tuple(found)
 
 
 def _snapshot(host: Any, card: Any) -> dict[str, Any]:

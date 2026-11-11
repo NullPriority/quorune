@@ -16,6 +16,13 @@ runtime order while fingerprint calculation keeps its canonical representation.
 Loading an existing snapshot preserves its stored declarations and all ordinary
 runtime-provenance and accepted-command verification.
 
+Conditional self-replacement copy results use instruction schema 15 to capture
+copy references in their executable branches. Pending source-copy references
+read current copiable values while the same source remains, then its immediate
+departure snapshot. Earlier conditional instruction schemas retain their
+existing reference-capture behavior and accepted-command hashes. Future token
+ability metadata remains outside the executable reference scan.
+
 Marked ordinary token cleanup uses `created_token_cleanup` version one, with
 explicit action and timing. Replacement-capable intents retain a closed
 `created_token_cleanup_plan` containing the resolving source and its optional

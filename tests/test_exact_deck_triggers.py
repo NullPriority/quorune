@@ -149,8 +149,8 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
         )
         self.assertFalse(engine._stabilize())
         self.assertEqual(
-            ["Reckless Fireweaver artifact-enter trigger"],
-            [item.label for item in engine.state.stack],
+            [fireweaver.object_id],
+            [item.source_object_id for item in engine.state.stack],
         )
         self.resolve_top(engine)
         self.assertEqual(life_before["A"], engine.state.players["A"].life)
@@ -566,7 +566,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             if card.controller == "B"
             and card.zone == "battlefield"
             and card.is_token
-            and card.printed_name == "Insect"
+            and card.printed_name == "Insect Token"
         ]
         self.assertEqual(1, len(insects))
 

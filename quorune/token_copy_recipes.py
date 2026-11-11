@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from .characteristic_evaluation import type_parts
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
@@ -205,3 +205,24 @@ def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCop
             raise TokenCopyRecipeError('Defined token copy exceptions must be an array')
         result[DEFINED_TOKEN_COPY_EXCEPTIONS_FIELD] = [*deepcopy(previous), exception.to_dict()]
     return result
+
+
+def copy_recipes(effects: Sequence[Mapping[str, Any]]) -> tuple[TokenCopyRecipeSpec, ...]:
+    """Visit executable wrappers, never copied future ability metadata."""
+    from .resolution_conditions import CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION
+    found = []
+    for effect in effects:
+        if effect.get("op") == "create_token" and "copy_spec" in effect:
+            found.append(TokenCopyRecipeSpec.from_dict(effect["copy_spec"]))
+        for field in ("effects", "then_effects"):
+            children = effect.get(field)
+            if effect.get("op") in {"offer_optional_effect", "offer_optional_mana_payment"} and isinstance(children, (list, tuple)):
+                found.extend(copy_recipes(children))
+        if (effect.get("op") == "apply_if_public_condition"
+                and type(effect.get("schema_version")) is int
+                and effect["schema_version"] == CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION):
+            for field in ("effects", "otherwise_effects"):
+                children = effect.get(field)
+                if isinstance(children, (list, tuple)):
+                    found.extend(copy_recipes(children))
+    return tuple(found)

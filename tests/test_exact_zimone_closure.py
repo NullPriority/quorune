@@ -1412,14 +1412,14 @@ class ExactZimoneClosureTests(unittest.TestCase):
             "target_schema"
         ]
         self.assertEqual(
-            {"tap", "untap", "leave", "scry"},
+            {"mode_1", "mode_2"},
             set(schema["legal_modes"]),
         )
         result = session.act(
             "pilot:B",
             {
                 "action_id": "choose",
-                "modes": ["scry"],
+                "modes": ["mode_2"],
                 "targets": [],
                 "plan": "FILTER_DRAW",
                 "reason": "Use the scry mode.",
@@ -1650,8 +1650,9 @@ class ExactZimoneClosureTests(unittest.TestCase):
             and card.zone == "battlefield"
         )
         moloid.acquired_control_turn_count = -1
-        moloid.annotations["token_characteristics"]["oracle_text"] = ""
-        moloid.annotations["copy_overrides"]["oracle_text"] = ""
+        for field in ("token_characteristics", "copy_overrides"):
+            if field in moloid.annotations:
+                moloid.annotations[field]["oracle_text"] = ""
 
         engine.permissions.invalidate_current()
         engine.state.pending_decision = None
@@ -1673,7 +1674,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
             "pilot:B",
             {
                 "action_id": "choose",
-                "choice": "mill",
+                "choice": "apply",
                 "plan": "FILL_GRAVEYARD",
                 "reason": "Use the optional Moloid mill.",
             },

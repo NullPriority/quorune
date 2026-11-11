@@ -499,6 +499,7 @@
     "tests/fixtures/committed-destruction-followup-cards.json",
     "tests/fixtures/committed-occurrence-history-cards.json",
     "tests/fixtures/compiled-reviewed-spell-cards.json",
+    "tests/fixtures/compiled-reviewed-trigger-cards.json",
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composed-manifest-cards.json",
     "tests/fixtures/composed-spell-text-cards.json",

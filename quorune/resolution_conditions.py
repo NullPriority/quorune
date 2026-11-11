@@ -23,6 +23,7 @@ RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
 RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
 RESOLUTION_ALTERNATIVE_SCHEMA_VERSION = 13
+CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION = 15
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
 SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_same_target_self_replacement'
 PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_same_target_self_replacement'
@@ -188,7 +189,7 @@ def validate_resolution_condition_instruction(
     }
     cast_fact = effect.get('schema_version') in {2,4,5}
     ordinary_alternative = effect.get('schema_version') == RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
-    has_otherwise = effect.get('schema_version') in {3, 4, 5, 8, 9, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION}
+    has_otherwise = effect.get('schema_version') in {3, 4, 5, 8, 9, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION}
     if effect.get('schema_version')==8:expected_fields|={'target_binding'}
     if effect.get('schema_version')==9:expected_fields|={'source_binding'}
     if cast_fact:

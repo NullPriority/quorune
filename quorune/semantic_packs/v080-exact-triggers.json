@@ -131,48 +131,6 @@
       }
     },
     {
-      "key": "180e1a7e-890d-477c-80a5-da8a5f2857b3:spell:front",
-      "label": "Reckless Fireweaver",
-      "oracle_id": "180e1a7e-890d-477c-80a5-da8a5f2857b3",
-      "ability_id": "spell:front",
-      "active_zone": "stack",
-      "event": "resolve",
-      "effects": [],
-      "destination": "battlefield",
-      "trust_level": "trusted",
-      "coverage": ["permanent_characteristics"],
-      "tests": ["test_reckless_fireweaver_damages_each_opponent"],
-      "provenance": {
-        "source_oracle_hash": "6fdfc482de8b4563bcf66f9782f18d705e3e47d32317264519630e4de485f5e1",
-        "source_rulings_hash": "79bc360f1cd14b7456b95fa00bf9a0cc379a68f1c8d8d6d69a52c39c5c932f9c",
-        "authored_by": "v0.8-trigger-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "180e1a7e-890d-477c-80a5-da8a5f2857b3:trigger:artifact-enter",
-      "label": "Reckless Fireweaver artifact-enter trigger",
-      "oracle_id": "180e1a7e-890d-477c-80a5-da8a5f2857b3",
-      "ability_id": "trigger:artifact-enter",
-      "active_zone": "battlefield",
-      "event": "artifact.enter",
-      "event_condition": {
-        "field": "controller",
-        "op": "eq",
-        "value": "$source.controller"
-      },
-      "effects": [{"op": "damage_each_opponent", "amount": 1}],
-      "trust_level": "trusted",
-      "coverage": ["triggered_ability", "artifact_enters_trigger", "multiplayer_damage"],
-      "tests": ["test_reckless_fireweaver_damages_each_opponent"],
-      "provenance": {
-        "source_oracle_hash": "6fdfc482de8b4563bcf66f9782f18d705e3e47d32317264519630e4de485f5e1",
-        "source_rulings_hash": "79bc360f1cd14b7456b95fa00bf9a0cc379a68f1c8d8d6d69a52c39c5c932f9c",
-        "authored_by": "v0.8-trigger-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "02f062f5-8012-4440-ac12-49fc49822106:spell:front",
       "label": "Spine of Ish Sah",
       "oracle_id": "02f062f5-8012-4440-ac12-49fc49822106",
@@ -340,74 +298,6 @@
       }
     },
     {
-      "key": "55eca80c-dcd8-4c2f-aa0f-fb0aec7b80f7:spell:front",
-      "label": "Ophiomancer",
-      "oracle_id": "55eca80c-dcd8-4c2f-aa0f-fb0aec7b80f7",
-      "ability_id": "spell:front",
-      "active_zone": "stack",
-      "event": "resolve",
-      "effects": [],
-      "destination": "battlefield",
-      "trust_level": "trusted",
-      "coverage": ["permanent_characteristics"],
-      "tests": ["test_ophiomancer_checks_each_upkeep_and_existing_snakes"],
-      "provenance": {
-        "source_oracle_hash": "616994ad2c12f6d75dcf3fe2d8eca42c9016783b33c9204aea848154115fcaf1",
-        "source_rulings_hash": "fc510b35c00e39943846d2ac3f7d477c58ded87cb326c148e5277bcef24ddc8c",
-        "authored_by": "v0.8-trigger-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "55eca80c-dcd8-4c2f-aa0f-fb0aec7b80f7:trigger:upkeep",
-      "label": "Ophiomancer upkeep trigger",
-      "oracle_id": "55eca80c-dcd8-4c2f-aa0f-fb0aec7b80f7",
-      "ability_id": "trigger:upkeep",
-      "active_zone": "battlefield",
-      "event": "step.begin",
-      "event_condition": {
-        "all": [
-          {
-            "field": "step",
-            "op": "eq",
-            "value": "upkeep"
-          },
-          {
-            "field": "source_controller_subtype_count",
-            "subtype": "snake",
-            "op": "eq",
-            "value": 0
-          }
-        ]
-      },
-      "effects": [
-        {
-          "op": "create_token_if_no_controlled_subtype",
-          "controller": "$controller",
-          "subtype": "snake",
-          "name": "Snake",
-          "quantity": 1,
-          "characteristics": {
-            "type_line": "Token Creature — Snake",
-            "colors": ["B"],
-            "power": "1",
-            "toughness": "1",
-            "keywords": ["Deathtouch"]
-          },
-          "reason": "Ophiomancer"
-        }
-      ],
-      "trust_level": "trusted",
-      "coverage": ["triggered_ability", "upkeep_trigger", "intervening_if", "token_creation", "deathtouch"],
-      "tests": ["test_ophiomancer_checks_each_upkeep_and_existing_snakes"],
-      "provenance": {
-        "source_oracle_hash": "616994ad2c12f6d75dcf3fe2d8eca42c9016783b33c9204aea848154115fcaf1",
-        "source_rulings_hash": "fc510b35c00e39943846d2ac3f7d477c58ded87cb326c148e5277bcef24ddc8c",
-        "authored_by": "v0.8-trigger-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "ab8d5f5c-1976-4f77-8ed2-8d28ee666741:spell:front",
       "label": "Tireless Provisioner",
       "oracle_id": "ab8d5f5c-1976-4f77-8ed2-8d28ee666741",
@@ -550,67 +440,6 @@
       "provenance": {
         "source_oracle_hash": "e72565744eead53b441fe56d84c43718e8c4fe0ab1c82d8daa527a213a2b512c",
         "source_rulings_hash": "c8db5fe0dd05489bb524712033bb0f5dd065fdf94dd1ee21b9e557fbf43a890b",
-        "authored_by": "v0.8-trigger-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "aa854d50-444c-49d9-bfb1-5476b33c1c0b:spell:front",
-      "label": "Scute Swarm",
-      "oracle_id": "aa854d50-444c-49d9-bfb1-5476b33c1c0b",
-      "ability_id": "spell:front",
-      "active_zone": "stack",
-      "event": "resolve",
-      "effects": [],
-      "destination": "battlefield",
-      "trust_level": "trusted",
-      "coverage": ["permanent_characteristics"],
-      "tests": ["test_scute_swarm_landfall_switches_to_copy_at_six_lands"],
-      "provenance": {
-        "source_oracle_hash": "193540a5fa6d52e1b6a8918450cebd51a57026e3fc161d7cb80b23570931876a",
-        "source_rulings_hash": "916f8ba7df64c205fc2d266926f278865467d918d6d621d4ef4e0409d4ebf125",
-        "authored_by": "v0.8-trigger-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "aa854d50-444c-49d9-bfb1-5476b33c1c0b:trigger:landfall",
-      "label": "Scute Swarm landfall",
-      "oracle_id": "aa854d50-444c-49d9-bfb1-5476b33c1c0b",
-      "ability_id": "trigger:landfall",
-      "active_zone": "battlefield",
-      "event": "land.enter",
-      "event_condition": {
-        "field": "controller",
-        "op": "eq",
-        "value": "$source.controller"
-      },
-      "effects": [
-        {
-          "op": "create_token_copy_if_controlled_count",
-          "controller": "$controller",
-          "copy_of": "$source",
-          "copy_name": "Scute Swarm",
-          "required_type": "land",
-          "threshold": 6,
-          "fallback_token": {
-            "name": "Insect",
-            "characteristics": {
-              "type_line": "Token Creature — Insect",
-              "colors": ["G"],
-              "power": "1",
-              "toughness": "1"
-            }
-          },
-          "reason": "Scute Swarm"
-        }
-      ],
-      "trust_level": "trusted",
-      "coverage": ["triggered_ability", "landfall", "token_creation", "token_copy", "replacement_effect"],
-      "tests": ["test_scute_swarm_landfall_switches_to_copy_at_six_lands"],
-      "provenance": {
-        "source_oracle_hash": "193540a5fa6d52e1b6a8918450cebd51a57026e3fc161d7cb80b23570931876a",
-        "source_rulings_hash": "916f8ba7df64c205fc2d266926f278865467d918d6d621d4ef4e0409d4ebf125",
         "authored_by": "v0.8-trigger-family",
         "review_status": "reviewed"
       }

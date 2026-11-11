@@ -13654,6 +13654,34 @@
         "test_fixed_effect_clause_sequences",
         "test_scalar_effect_amounts"
       ]
+    },
+    {
+      "id": "compiled-reviewed-trigger-source-consumers",
+      "patterns": [
+        "quorune/semantic_packs/v080-exact-interactions.json",
+        "quorune/semantic_packs/v080-exact-triggers.json",
+        "quorune/semantic_packs/zimone-and-dina.json",
+        "quorune/semantic_packs/zzz-v080-exact-deck-closure.json",
+        "tests/test_compiled_reviewed_trigger_consumers.py",
+        "tests/fixtures/compiled-reviewed-trigger-cards.json",
+        "quorune/resolution_conditions.py",
+        "quorune/token_copy_references.py",
+        "quorune/compiler/public_self_replacement_templates.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/token_copy_recipes.py"
+      ],
+      "test_modules": [
+        "test_compiled_reviewed_trigger_consumers",
+        "test_exact_deck_triggers",
+        "test_exact_deck_interactions",
+        "test_exact_mishra_closure",
+        "test_exact_zimone_closure",
+        "test_native_v3_slice",
+        "test_color_set_mana_abilities",
+        "test_card_program_trust",
+        "test_fixed_token_creation_effects",
+        "test_resolution_public_conditions"
+      ]
     }
   ],
   "risk_rules": [

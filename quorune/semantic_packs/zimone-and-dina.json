@@ -179,42 +179,6 @@
         "authored_by": "vertical-slice",
         "review_status": "provisional"
       }
-    },
-    {
-      "key": "76b003e0-15af-4f22-bdf2-1ade5430964a:spell:front",
-      "label": "Zulaport Cutthroat permanent spell",
-      "oracle_id": "76b003e0-15af-4f22-bdf2-1ade5430964a",
-      "effects": [],
-      "destination": "battlefield",
-      "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "dies_trigger"],
-      "tests": ["test_soultrader_loop_shortcut"],
-      "provenance": {
-        "source_oracle_hash": "6f53b8def8027bea15a33e3bf3bbc092054b9ff348cf7ba34e79322d815f5f6b",
-        "source_rulings_hash": "a971521d20aa61df646d56514db3d69893826ddd338589f79b78b665eeba14df",
-        "authored_by": "vertical-slice",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "76b003e0-15af-4f22-bdf2-1ade5430964a:trigger:dies",
-      "label": "Zulaport Cutthroat dies trigger",
-      "oracle_id": "76b003e0-15af-4f22-bdf2-1ade5430964a",
-      "ability_id": "trigger:dies",
-      "active_zone": "battlefield",
-      "event": "creature.dies",
-      "effects": [
-        {"op": "drain_each_opponent", "amount": 1}
-      ],
-      "trust_level": "trusted",
-      "coverage": ["triggered_ability", "dies_trigger", "multiplayer_life_change"],
-      "tests": ["test_zulaport_drains_each_opponent_for_simultaneous_deaths"],
-      "provenance": {
-        "source_oracle_hash": "6f53b8def8027bea15a33e3bf3bbc092054b9ff348cf7ba34e79322d815f5f6b",
-        "source_rulings_hash": "a971521d20aa61df646d56514db3d69893826ddd338589f79b78b665eeba14df",
-        "authored_by": "vertical-slice-v2",
-        "review_status": "reviewed"
-      }
     }
   ]
 }

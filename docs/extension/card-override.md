@@ -27,6 +27,10 @@ not silently relabeled as typed overrides. Alternative casting prices and
 intrinsic draw replacements keep their independent capabilities when the
 printed spell switches producers.
 
+Source-derived triggers retain their event selectors, intervening conditions,
+target and mode choices, and created-token ability declarations. Those bindings
+remain independent of the stored reviewed descriptors used by older records.
+
 ## Required evidence
 
 1. Record the exact Oracle ID, Oracle text hash, rulings hash, rules snapshot,

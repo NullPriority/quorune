@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..resolution_conditions import (
+    CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION,
     RESOLUTION_ALTERNATIVE_SCHEMA_VERSION,
     RESOLUTION_CONDITION_CAPABILITY,
     RESOLUTION_CONDITION_MECHANIC,
@@ -55,6 +56,10 @@ def resolution_condition_node_capabilities(
     wrapper = effects[-1]
     try:
         _condition, conditional = validate_resolution_condition_instruction(wrapper)
+        if wrapper.get('schema_version') == CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION:
+            from ..token_copy_recipes import copy_recipes
+            if not copy_recipes((*conditional, *wrapper.get('otherwise_effects', ()))):
+                return ()
     except (ValueError, TypeError, KeyError):
         return ()
     if wrapper["player"] != "$controller":
@@ -115,7 +120,7 @@ def resolution_condition_node_capabilities(
         dependencies.add(PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY if wrapper.get('schema_version')==8 else SAME_TARGET_SELF_REPLACEMENT_CAPABILITY)
     from ..characteristic_fragments import characteristic_quantity_capabilities
     dependencies.update(characteristic_quantity_capabilities(_condition.to_dict()))
-    if wrapper.get('schema_version') in {3,4,5,7,8,9}:
+    if wrapper.get('schema_version') in {3,4,5,7,8,9,CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION}:
         from ..resolution_conditions import PUBLIC_SELF_REPLACEMENT_CAPABILITY
         dependencies.add(PUBLIC_SELF_REPLACEMENT_CAPABILITY)
     if wrapper.get('schema_version')==9:
