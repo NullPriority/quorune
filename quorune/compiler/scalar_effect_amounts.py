@@ -216,6 +216,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         body = re.sub(r"\bdraw cards X\b", "Draw X cards", body, flags=re.I)
         body = re.sub(r"\b(mills?) cards X\b", r"\1 X cards", body, flags=re.I)
         body = re.sub(r"\b(deals?) damage X\b", r"\1 X damage", body, flags=re.I)
+        body = re.sub(r"\b(deals?) damage to ([^.]+) X\.", r"\1 X damage to \2.", body, flags=re.I)
         body = re.sub(r"\b(gain|gains|lose|loses) life X\b", r"\1 X life", body, flags=re.I)
     def canonical_fixed(text):
         if source_event:
@@ -247,6 +248,11 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
             producer = _characteristic(quantity, source_name=source_name, body=body,
                 schema=fixed[2], event=event, source_event=source_event)
     if producer is None:
+        if quantity and multiplier == 1:
+            from .public_query_effect_amounts import public_query_effect_amount_template
+            return public_query_effect_amount_template(
+                normalized, source_name=source_name, compile_fixed=canonical_fixed,
+            )
         return None
     identity = "scalar:x:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24] if definition else None
     def project(value):

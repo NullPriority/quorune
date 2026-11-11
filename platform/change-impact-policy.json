@@ -13703,6 +13703,24 @@
         "test_token_creation_replacements",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "public-count-result-composition",
+      "patterns": [
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/live_battlefield_quantities.py",
+        "tests/test_public_count_result_composition.py",
+        "tests/fixtures/public-count-result-cards.json"
+      ],
+      "test_modules": [
+        "test_public_count_result_composition",
+        "test_scalar_effect_amounts",
+        "test_declared_effect_amounts",
+        "test_public_query_effect_amounts",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

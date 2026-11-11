@@ -225,12 +225,15 @@ def _parsed_candidate(
     for index, pattern in enumerate(_damage_patterns(source_name)):
         match = pattern.fullmatch(text)
         if match is not None:
+            recipient = match.group("recipient")
+            if index == 1:
+                recipient = "to " + recipient
             return (
                 "damage",
                 match.group("quantity"),
                 _coefficient(match.groupdict().get("coefficient")),
                 f"{match.group('source')} deals 2 damage "
-                f"{match.group('recipient')}.",
+                f"{recipient}.",
                 index < 2,
             )
     for index, pattern in enumerate(_DRAW_PATTERNS):

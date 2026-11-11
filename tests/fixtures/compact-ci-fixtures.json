@@ -819,6 +819,7 @@
     "tests/fixtures/public-condition-self-replacement-cards.json",
     "tests/fixtures/public-condition-surface-cards.json",
     "tests/fixtures/public-cost-subject-cards.json",
+    "tests/fixtures/public-count-result-cards.json",
     "tests/fixtures/public-exile-followup-cards.json",
     "tests/fixtures/public-history-query-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",

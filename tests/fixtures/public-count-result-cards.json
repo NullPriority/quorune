@@ -1,0 +1,2343 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned public count result composition witnesses.",
+  "cards": [
+    {
+      "oracle_id": "08d77e5b-7de1-4b0a-a5a7-75e60d452d27",
+      "name": "Outrage Shaman",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Goblin Shaman",
+      "oracle_text": "Chroma — When this creature enters, it deals damage to target creature equal to the number of red mana symbols in the mana costs of permanents you control.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Chroma"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "name": "Kabira Takedown // Kabira Plateau",
+      "mana_cost": "{1}{W} // ",
+      "cmc": 2.0,
+      "type_line": "Instant // Land",
+      "oracle_text": "Kabira Takedown: Kabira Takedown deals damage equal to the number of creatures you control to target creature or planeswalker.\n//\nKabira Plateau: This land enters tapped.\n{T}: Add {W}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "modal_dfc",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Kabira Takedown",
+          "oracle_text": "Kabira Takedown deals damage equal to the number of creatures you control to target creature or planeswalker.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Kabira Plateau",
+          "oracle_text": "This land enters tapped.\n{T}: Add {W}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Land"
+        }
+      ]
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "1b2993fa-b212-4eaa-b3e8-f79c2f2e4cbe",
+      "name": "Gruesome Scourger",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Creature — Orc Warrior",
+      "oracle_text": "When this creature enters, it deals damage to target opponent or planeswalker equal to the number of creatures you control.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-07-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1b36eb85-0b1e-41fb-8ecd-dda13c4feffc",
+      "name": "Preyseizer Dragon",
+      "mana_cost": "{4}{R}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\nDevour 2 (As this creature enters, you may sacrifice any number of creatures. It enters with twice that many +1/+1 counters on it.)\nWhenever this creature attacks, it deals damage to any target equal to the number of +1/+1 counters on this creature.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Devour"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1b4a07bd-5345-4520-bd05-b5173e08135c",
+      "name": "Eivor, Battle-Ready",
+      "mana_cost": "{3}{R}{W}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Assassin Warrior",
+      "oracle_text": "Vigilance (Attacking doesn't cause this creature to tap.)\nHaste (This creature can attack as soon as it comes under your control.)\nWhenever Eivor attacks, it deals damage equal to the number of Equipment you control to each opponent.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Vigilance",
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-07-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1d6925f3-d132-4fa1-bde0-82d0128c319f",
+      "name": "Murasa Pyromancer",
+      "mana_cost": "{4}{R}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Human Shaman Ally",
+      "oracle_text": "Whenever this creature or another Ally you control enters, you may have this creature deal damage to target creature equal to the number of Allies you control.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "349d8ef9-e07a-416f-a5b1-2c2be6bb322d",
+      "name": "Fire Dragon",
+      "mana_cost": "{6}{R}{R}{R}",
+      "cmc": 9.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\nWhen this creature enters, it deals damage to target creature equal to the number of Mountains you control.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-09-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "349e6b9e-40a8-49bc-9cd3-4a22f5363fa5",
+      "name": "Cat-Gator",
+      "mana_cost": "{6}{B}",
+      "cmc": 7.0,
+      "type_line": "Creature — Fish Crocodile",
+      "oracle_text": "Lifelink\nWhen this creature enters, it deals damage equal to the number of Swamps you control to any target.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "36d8b701-f5dc-42c0-9869-268f8149cbd1",
+      "name": "Cabaretti Charm",
+      "mana_cost": "{R}{G}{W}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Cabaretti Charm deals damage equal to the number of creatures you control to target creature or planeswalker.\n• Creatures you control get +1/+1 and gain trample until end of turn.\n• Create two 1/1 green and white Citizen creature tokens.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3cc4d6f4-79b2-4210-84de-a0febf81eb67",
+      "name": "Slash of Light",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Slash of Light deals damage equal to the number of creatures you control plus the number of Equipment you control to target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "52289774-d292-4028-91fb-8826fa004dc8",
+      "name": "Spawn of Thraxes",
+      "mana_cost": "{5}{R}{R}",
+      "cmc": 7.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\nWhen this creature enters, it deals damage to any target equal to the number of Mountains you control.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5e2c1e0e-0a10-416a-9b50-96ee0cbbc24e",
+      "name": "Hagra Diabolist",
+      "mana_cost": "{4}{B}",
+      "cmc": 5.0,
+      "type_line": "Creature — Ogre Shaman Ally",
+      "oracle_text": "Whenever this creature or another Ally you control enters, you may have target player lose life equal to the number of Allies you control.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5ef498fa-31d5-4eca-873d-6b2b1f7f9a3c",
+      "name": "Tajuru Archer",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Elf Archer Ally",
+      "oracle_text": "Whenever this creature or another Ally you control enters, you may have this creature deal damage to target creature with flying equal to the number of Allies you control.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-08-28",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Skullclamp",
+      "oracle_id": "65986c1b-8e51-4604-b685-d82fa7d1263a",
+      "oracle_text": "Equipped creature gets +1/-1.\nWhenever equipped creature dies, draw two cards.\nEquip {1}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "oracle_id": "6ff39311-565e-4414-b32b-eb24c70b3090",
+      "name": "Coordinated Maneuver",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Coordinated Maneuver deals damage equal to the number of creatures you control to target creature or planeswalker.\n• Destroy target enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "955e4c54-14c4-49bb-94e1-c6cc800c6d91",
+      "name": "Runebound Wolf",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Wolf",
+      "oracle_text": "{3}{R}, {T}: This creature deals damage equal to the number of Wolves and Werewolves you control to target opponent.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "b368b1bd-3273-40a9-8102-27501f4d0e15",
+      "name": "Sentinel Sarah Lyons",
+      "mana_cost": "{3}{R}{W}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Knight",
+      "oracle_text": "Haste\nAs long as an artifact entered the battlefield under your control this turn, creatures you control get +2/+2.\nBattalion — Whenever Sentinel Sarah Lyons and at least two other creatures attack, Sentinel Sarah Lyons deals damage equal to the number of artifacts you control to target player.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Battalion",
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bd532f8d-789f-4ee1-a2f3-ae30e8282c76",
+      "name": "Gempalm Polluter",
+      "mana_cost": "{5}{B}",
+      "cmc": 6.0,
+      "type_line": "Creature — Zombie",
+      "oracle_text": "Cycling {B}{B} ({B}{B}, Discard this card: Draw a card.)\nWhen you cycle this card, you may have target player lose life equal to the number of Zombies on the battlefield.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-02-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bf4268e6-170a-445b-b215-718f7494ae28",
+      "name": "Volley Veteran",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Goblin Warrior",
+      "oracle_text": "When this creature enters, it deals damage to target creature an opponent controls equal to the number of Goblins you control.",
+      "power": "4",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Station"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Warmaker Gunship",
+      "oracle_id": "c947171b-ed9e-4b83-af45-bd595a8d84ee",
+      "oracle_text": "When this Spacecraft enters, it deals damage equal to the number of artifacts you control to target creature an opponent controls.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 6+.)\n6+ | Flying",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": "3",
+      "type_line": "Artifact — Spacecraft"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Lightning Greaves",
+      "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+      "oracle_text": "Equipped creature has haste and shroud. (It can't be the target of spells or abilities.)\nEquip {0}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "oracle_id": "d1c44856-ca53-4b6e-902e-8d9c6fe1f61c",
+      "name": "Foundry Champion",
+      "mana_cost": "{4}{R}{W}",
+      "cmc": 6.0,
+      "type_line": "Creature — Elemental Soldier",
+      "oracle_text": "When this creature enters, it deals damage to any target equal to the number of creatures you control.\n{R}: This creature gets +1/+0 until end of turn.\n{W}: This creature gets +0/+1 until end of turn.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-02-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Roaring Furnace",
+          "oracle_text": "When you unlock this door, this Room deals damage equal to the number of cards in your hand to target creature an opponent controls.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Room"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{U}{U}",
+          "name": "Steaming Sauna",
+          "oracle_text": "You have no maximum hand size.\nAt the beginning of your end step, draw a card.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Room"
+        }
+      ],
+      "cmc": 7.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R} // {3}{U}{U}",
+      "name": "Roaring Furnace // Steaming Sauna",
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "oracle_text": "Roaring Furnace: When you unlock this door, this Room deals damage equal to the number of cards in your hand to target creature an opponent controls.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\n//\nSteaming Sauna: You have no maximum hand size.\nAt the beginning of your end step, draw a card.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Enchantment — Room // Enchantment — Room"
+    },
+    {
+      "oracle_id": "d8cfa20a-343e-4661-9f5a-a8265f6917a8",
+      "name": "Stadium Headliner",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Creature — Goblin Warrior",
+      "oracle_text": "Mobilize 1 (Whenever this creature attacks, create a tapped and attacking 1/1 red Warrior creature token. Sacrifice it at the beginning of the next end step.)\n{1}{R}, Sacrifice this creature: It deals damage equal to the number of creatures you control to target creature.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Mobilize"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "da0042a7-89a1-4500-b689-b0ea7cab5ed8",
+      "name": "Thundering Djinn",
+      "mana_cost": "{3}{U}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Djinn",
+      "oracle_text": "Flying\nWhenever this creature attacks, it deals damage to any target equal to the number of cards you've drawn this turn.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e59c07ab-08fd-4d5b-978e-1594604ba410",
+      "name": "Ultimate Alliance",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Ultimate Alliance deals damage equal to the number of creatures you control to target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "eb812ea7-3301-4774-86a2-64c4ed6766fc",
+      "name": "Thundercloud Shaman",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Giant Shaman",
+      "oracle_text": "When this creature enters, it deals damage equal to the number of Giants you control to each non-Giant creature.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "eedaf405-4aa2-426a-af82-b0f92de7b6c3",
+      "name": "Kessig Malcontents",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "When this creature enters, it deals damage to target player or planeswalker equal to the number of Humans you control.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-05-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f4232466-dd6a-49bf-be6c-95905c3ded17",
+      "name": "Ondu Cleric",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Kor Cleric Ally",
+      "oracle_text": "Whenever this creature or another Ally you control enters, you may gain life equal to the number of Allies you control.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Team Avatar",
+      "oracle_id": "f95f7b0c-2dd6-46e1-ae02-f51d275e7120",
+      "oracle_text": "Whenever a creature you control attacks alone, it gets +X/+X until end of turn, where X is the number of creatures you control.\n{2}{W}, Discard this card: It deals damage equal to the number of creatures you control to target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "name": "Charge of the Mites",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Charge of the Mites deals damage equal to the number of creatures you control to target creature or planeswalker.\n• Create two 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\" (Players dealt combat damage by them also get a poison counter.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-02-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fd5fc69e-1bba-4f39-88c1-5966fa941f32",
+      "name": "Falkenrath Exterminator",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Vampire Archer",
+      "oracle_text": "Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.\n{2}{R}: This creature deals damage to target creature equal to the number of +1/+1 counters on this creature.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ffd34151-457a-4a93-82db-24b18319a06b",
+      "name": "Omnath, Locus of the Roil",
+      "mana_cost": "{1}{G}{U}{R}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Elemental",
+      "oracle_text": "When Omnath enters, it deals damage to any target equal to the number of Elementals you control.\nLandfall — Whenever a land you control enters, put a +1/+1 counter on target Elemental you control. If you control eight or more lands, draw a card.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Landfall"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "08d77e5b-7de1-4b0a-a5a7-75e60d452d27",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "Chroma abilities check only mana costs, which are found in a card’s upper right corner. They don’t count mana symbols that appear in a card’s text box."
+    },
+    {
+      "oracle_id": "08d77e5b-7de1-4b0a-a5a7-75e60d452d27",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "Chroma abilities count hybrid mana symbols of the appropriate color. For example, a card with mana cost {3}{U/R}{U/R} has two red mana symbols in its mana cost."
+    },
+    {
+      "oracle_id": "08d77e5b-7de1-4b0a-a5a7-75e60d452d27",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "The effect counts the mana symbols in this cards mana cost as well."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "A modal double-faced card can't be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \"play\") a specific modal double-faced card, you can't play it as a land."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face's name."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can't be put onto the battlefield, it doesn't enter the battlefield."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that's being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "There is a single triangle icon in the top left corner of the front face. There is a double triangle icon in the top left corner of the back face."
+    },
+    {
+      "oracle_id": "0bb73c07-0220-4ba9-8d85-3c357c223833",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you're playing and ignore the other face's characteristics."
+    },
+    {
+      "oracle_id": "1b2993fa-b212-4eaa-b3e8-f79c2f2e4cbe",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "The number of creatures you control is counted as Gruesome Scourger’s ability resolves. If Gruesome Scourger is still on the battlefield, it will count itself."
+    },
+    {
+      "oracle_id": "1b36eb85-0b1e-41fb-8ecd-dda13c4feffc",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Preyseizer Dragon's ability counts the number of +1/+1 counters on it when the ability resolves. It counts any +1/+1 counters, not just ones put on it due to devour."
+    },
+    {
+      "oracle_id": "1d6925f3-d132-4fa1-bde0-82d0128c319f",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The ability counts the number of Allies you control as it resolves."
+    },
+    {
+      "oracle_id": "1d6925f3-d132-4fa1-bde0-82d0128c319f",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "You target a creature when the ability triggers. You decide whether to have Murasa Pyromancer deal damage to that creature as the ability resolves."
+    },
+    {
+      "oracle_id": "349d8ef9-e07a-416f-a5b1-2c2be6bb322d",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If there are no other creatures on the battlefield, Fire Dragon will have to target itself. The ability is mandatory."
+    },
+    {
+      "oracle_id": "3cc4d6f4-79b2-4210-84de-a0febf81eb67",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Use the number of creatures you control and the number of Equipment you control when Slash of Light resolves to determine how much damage is dealt."
+    },
+    {
+      "oracle_id": "52289774-d292-4028-91fb-8826fa004dc8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Count the number of Mountains you control when the last ability resolves to determine how much damage is dealt. This includes any land with the subtype Mountain, not just those named Mountain."
+    },
+    {
+      "oracle_id": "5e2c1e0e-0a10-416a-9b50-96ee0cbbc24e",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The ability counts the number of Allies you control as it resolves."
+    },
+    {
+      "oracle_id": "5ef498fa-31d5-4eca-873d-6b2b1f7f9a3c",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The ability counts the number of Allies you control as it resolves."
+    },
+    {
+      "oracle_id": "5ef498fa-31d5-4eca-873d-6b2b1f7f9a3c",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "You target a creature when the ability triggers. You decide whether to have Tajuru Archer deal damage to that creature as the ability resolves."
+    },
+    {
+      "oracle_id": "955e4c54-14c4-49bb-94e1-c6cc800c6d91",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If you control a creature that is both a Wolf and a Werewolf, it's counted only once for Runebound Wolf's ability."
+    },
+    {
+      "oracle_id": "955e4c54-14c4-49bb-94e1-c6cc800c6d91",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Runebound Wolf's activated ability counts the number of Wolves and Werewolves you control at the time it resolves, not at the time it was activated."
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it."
+    },
+    {
+      "oracle_id": "b368b1bd-3273-40a9-8102-27501f4d0e15",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Once Sentinel Sarah Lyons’s battalion ability has triggered, it doesn’t matter how many creatures are still attacking when that ability resolves. It also doesn’t matter whether or not Sentinel Sarah Lyons is still attacking or on the battlefield."
+    },
+    {
+      "oracle_id": "b368b1bd-3273-40a9-8102-27501f4d0e15",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Once an artifact enters the battlefield under your control in a given turn, it doesn’t matter what happens to it later. Creatures you control will still get +2/+2 that turn as long as Sentinel Sarah Lyons is on the battlefield under your control."
+    },
+    {
+      "oracle_id": "b368b1bd-3273-40a9-8102-27501f4d0e15",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Sentinel Sarah Lyons doesn’t have to have been on the battlefield at the point in the turn where an artifact entered the battlefield under your control. If an artifact enters the battlefield under your control and then Sentinel Sarah Lyons enters the battlefield under your control later in that turn, creatures you control will still get +2/+2 that turn as long as Sentinel Sarah Lyons remains on the battlefield and under your control."
+    },
+    {
+      "oracle_id": "b368b1bd-3273-40a9-8102-27501f4d0e15",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Sentinel Sarah Lyons’s second ability only cares if one or more artifacts entered the battlefield under your control this turn. Your creatures won’t get more powerful if more than one artifact entered the battlefield under your control this turn."
+    },
+    {
+      "oracle_id": "b368b1bd-3273-40a9-8102-27501f4d0e15",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "The three attacking creatures don’t have to be attacking the same player, planeswalker, or battle."
+    },
+    {
+      "oracle_id": "b368b1bd-3273-40a9-8102-27501f4d0e15",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Use the number of artifacts you control at the time Sentinel Sarah Lyons’s battalion ability resolves to determine how much damage to deal."
+    },
+    {
+      "oracle_id": "bd532f8d-789f-4ee1-a2f3-ae30e8282c76",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "The cycling ability and the triggered ability are separate. If the triggered ability doesn't resolve (because, for example, it has been countered, or all of its targets have become illegal), the cycling ability will still resolve, and you'll draw a card."
+    },
+    {
+      "oracle_id": "bd532f8d-789f-4ee1-a2f3-ae30e8282c76",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "When you cycle this card, first the cycling ability goes on the stack, then the triggered ability goes on the stack on top of it. The triggered ability will resolve before you draw a card from the cycling ability."
+    },
+    {
+      "oracle_id": "bd532f8d-789f-4ee1-a2f3-ae30e8282c76",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "You can cycle this card even if there are no legal targets for the triggered ability."
+    },
+    {
+      "oracle_id": "bf4268e6-170a-445b-b215-718f7494ae28",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The number of Goblins you control is counted only as Volley Veteran's ability resolves. If Volley Veteran is still on the battlefield, it will count itself."
+    },
+    {
+      "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If a creature enters the battlefield under your control and gains haste, but then loses it before attacking, it won't be able to attack that turn. This means that you can't use one Lightning Greaves to allow two new creatures to attack in the same turn."
+    },
+    {
+      "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "You can't simply unequip Equipment from a creature. If Lightning Greaves is attached to the only creature you control, you won't be able to attach other equipment to it (or target it with anything else) until you have another creature to which you can attach Lightning Greaves."
+    },
+    {
+      "oracle_id": "d1c44856-ca53-4b6e-902e-8d9c6fe1f61c",
+      "published_at": "2013-01-24",
+      "source": "wotc",
+      "comment": "The number of creatures you control is counted when Foundry Champion's triggered ability resolves. Foundry Champion will count itself if it's still on the battlefield under your control at that time."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "An ability that triggers \"when you unlock this door\" triggers when that door becomes unlocked. This can happen one of two ways: (1) the door becomes unlocked on the battlefield or (2) the door becomes unlocked as the Room enters the battlefield because you cast the corresponding half. In the latter case, since the door becoming unlocked is what causes the ability to trigger, effects that cause abilities that trigger when a permanent enters to trigger an additional time (such as that of Panharmonicon) won't apply."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "An ability that triggers \"whenever you fully unlock a Room\" triggers when a door becomes unlocked and the other door of that Room is already unlocked, or when both doors of that Room become unlocked simultaneously."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Any time you have priority during a main phase of your turn and the stack is empty, you may pay the mana cost of a locked door (also called its \"unlock cost\"). That door becomes unlocked. This is a special action. It doesn't use the stack and can't be responded to."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Each Room card has two names. If an effect instructs you to choose a card name, you may choose one of those names, but not both."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Each Room card is a single card. For example, if you discard a Room card, you've discarded one card, not two. If an effect counts the number of enchantment cards in your graveyard, Bottomless Pool // Locker Room counts once, not twice."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If a Room enters from any zone other than the stack, it will enter with both halves locked."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If a spell or ability would create a copy of a Room spell on the stack, the copy retains the choice of which door was cast but also retains the full characteristics of the spell. The characteristics of the door that wasn't cast are still ignored while the copy is on the stack, and when the copy resolves, the token it becomes will enter with the appropriate door unlocked."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with certain characteristics, consider only the characteristics of the door you're casting. For example, if an effect allows you to cast a permanent spell with mana value 3 or less from among cards in your graveyard, you could cast Bottomless Pool this way, but not Locker Room."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you unlock Steaming Sauna and then put Null Profusion (an enchantment that says your maximum hand size is two) onto the battlefield, your maximum hand size would be two. However, if Null Profusion entered first and then you unlocked Steaming Sauna, you would have no maximum hand size."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If neither door of a Room is unlocked, it's a Room enchantment with no name and no abilities."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Room cards have two card faces with a shared type line on a single card. The characteristics of the door you didn't cast are ignored while the spell is on the stack."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Some abilities allow you to lock a door of a Room you control. You can't choose to lock a door that's already locked with such an ability. If such an ability requires a target, you can target a Room even if both of its doors are locked, but the ability won't do anything when it resolves."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Some abilities allow you to unlock a door of a Room you control. You can't choose to unlock a door that's already unlocked with such an ability. If such an ability requires a target, you can target a Room even if both of its doors are unlocked, but the ability won't do anything when it resolves."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Some doors have abilities that trigger whenever you unlock that door and require one or more targets. You can unlock that door even if there would be insufficient legal targets for that triggered ability. The triggered ability won't go on the stack."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "To cast a Room spell, choose a half (or \"door\") to cast. There's no way to cast both halves of a Room card. When the Room spell resolves, the corresponding door becomes unlocked as the Room enters."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "While in any zone other than the stack or the battlefield, a Room card's characteristics are a combination of its two doors. For example, Bottomless Pool // Locker Room has a mana value of 6 while it's in your library. If an effect allows you to search your library for a card with mana value 4 or less, you can't find Bottomless Pool // Locker Room."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "While on the battlefield, a Room's characteristics are a combination of the characteristics of its unlocked doors. For example, if Bottomless Pool // Locker Room is on the battlefield with both doors unlocked, its names are Bottomless Pool and Locker Room, its mana value is 6, it's a Room Enchantment, and it has the abilities in each door's text box."
+    },
+    {
+      "oracle_id": "d5f31713-d380-42ba-8052-4b8d9beb3958",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Your maximum hand size is checked only during the cleanup step of your turn. At other times, you may have more cards in hand than your maximum hand size."
+    },
+    {
+      "oracle_id": "d8cfa20a-343e-4661-9f5a-a8265f6917a8",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Although the Warrior tokens enter as attacking creatures, they were never declared as attacking creatures. Abilities that trigger whenever a creature attacks won’t trigger when the tokens enter attacking."
+    },
+    {
+      "oracle_id": "d8cfa20a-343e-4661-9f5a-a8265f6917a8",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "The number of creatures you control is counted at the time the activated ability resolves. This means that an opponent can respond by destroying your creatures to reduce the amount of damage dealt."
+    },
+    {
+      "oracle_id": "d8cfa20a-343e-4661-9f5a-a8265f6917a8",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "You choose the player, planeswalker, or battle each Warrior token is attacking. They don’t all have to attack the same one, and they don’t have to attack the same player, planeswalker, or battle as the creature with mobilize."
+    },
+    {
+      "oracle_id": "da0042a7-89a1-4500-b689-b0ea7cab5ed8",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a spell or ability causes you to put cards into your hand without specifically using the word “draw,” Thundering Djinn’s effect doesn’t count them."
+    },
+    {
+      "oracle_id": "eb812ea7-3301-4774-86a2-64c4ed6766fc",
+      "published_at": "2013-06-07",
+      "source": "wotc",
+      "comment": "The amount of damage dealt to each non-Giant creature is equal to the number of Giants you control when the ability resolves."
+    },
+    {
+      "oracle_id": "eedaf405-4aa2-426a-af82-b0f92de7b6c3",
+      "published_at": "2012-05-01",
+      "source": "wotc",
+      "comment": "The number of Humans you control is counted when the \"enters\" ability resolves."
+    },
+    {
+      "oracle_id": "f4232466-dd6a-49bf-be6c-95905c3ded17",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The ability counts the number of Allies you control as it resolves."
+    },
+    {
+      "oracle_id": "f95f7b0c-2dd6-46e1-ae02-f51d275e7120",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "A creature attacks alone if it's the only creature declared as an attacker during the declare attackers step (including creatures controlled by your teammates, if applicable). For example, Team Avatar's triggered ability won't trigger if you attack with multiple creatures and all but one of them are removed from combat."
+    },
+    {
+      "oracle_id": "f95f7b0c-2dd6-46e1-ae02-f51d275e7120",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Similarly, the damage dealt by Team Avatar's activated ability is calculated during the resolution of the ability."
+    },
+    {
+      "oracle_id": "f95f7b0c-2dd6-46e1-ae02-f51d275e7120",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The value of X is determined only as Team Avatar's triggered ability begins to resolve. It won't change later in the turn if the number of creatures you control changes."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "A player with ten or more poison counters loses the game. This is a state-based action and doesn't use the stack. In other words, it happens immediately and players can't respond to it, just like a player losing the game due to having 0 or less life."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Any other effects of that damage, such as life gain from lifelink, still apply."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Conversely, replacement effects that apply to the number of counters put on a player can modify the counters placed this way. For example, Vorinclex, Monstrous Raider's last two abilities can apply to counters placed this way."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Damage dealt by a creature with toxic grants the same number of counters regardless of how much damage is dealt. Notably, if a replacement effect modifies the damage in some way (such as that of Gratuitous Violence), the number of counters given remains unchanged."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "If a creature with toxic deals combat damage to a creature or planeswalker, or if it deals noncombat damage, toxic has no effect and no player gets poison counters."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Multiple instances of toxic are cumulative. For example, if a creature has toxic 2 and gains toxic 1 due to another effect, combat damage that creature deals to a player will cause that player to get 3 poison counters."
+    },
+    {
+      "oracle_id": "fa47c190-d66a-41b0-aa08-21036cda4223",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Toxic doesn't change the amount of combat damage a creature deals. For example, if a 2/2 creature with toxic 1 deals combat damage to a player, that creature will deal 2 damage. The results of that damage are the player loses 2 life and gets a poison counter."
+    },
+    {
+      "oracle_id": "ffd34151-457a-4a93-82db-24b18319a06b",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "If the target Elemental is an illegal target by the time Omnath's second ability tries to resolve, the ability doesn't resolve. You don't draw a card if you control eight or more lands. If the target is legal but can't have a +1/+1 counter put on it (most likely because an opponent controls Blightbeetle), you do draw a card if you control eight or more lands."
+    },
+    {
+      "oracle_id": "ffd34151-457a-4a93-82db-24b18319a06b",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "The number of Elementals you control is counted as Omnath's first ability resolves. If Omnath is still on the battlefield, it will count itself."
+    },
+    {
+      "oracle_id": "ffd34151-457a-4a93-82db-24b18319a06b",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "You may choose Omnath as the target of its own second ability."
+    }
+  ]
+}
