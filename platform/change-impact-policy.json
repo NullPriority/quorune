@@ -13611,6 +13611,21 @@
         "test_ability_source_counter_targets",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "compiled-counter-reviewed-consumers",
+      "patterns": [
+        "quorune/semantic_packs/zz-interaction-suite.json",
+        "tests/fixtures/ability-source-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_ability_source_counter_targets",
+        "test_interactions_v070",
+        "test_preflight_v080",
+        "test_storm_rules",
+        "test_targeting_v070",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

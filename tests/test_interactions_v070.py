@@ -221,7 +221,7 @@ class InteractionKernelTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.zone == "battlefield"
             and card.controller == "B"
-            and card.printed_name == "Bird"
+            and card.printed_name == "Bird Token"
         )
         self.assertEqual(
             {"Flying"},

@@ -3,38 +3,6 @@
   "name": "exact-list-interaction-suite",
   "programs": [
     {
-      "key": "234a734b-ba28-4f1b-9d01-3c3e7d516590:spell:front",
-      "label": "An Offer You Can't Refuse",
-      "oracle_id": "234a734b-ba28-4f1b-9d01-3c3e7d516590",
-      "effects": [
-        {"op": "counter_stack", "stack": "$target.0"},
-        {"op": "create_treasure", "controller": "$target.controller.0"},
-        {"op": "create_treasure", "controller": "$target.controller.0"}
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "groups": [
-          {
-            "id": "spell",
-            "zones": ["stack"],
-            "categories": ["spell"],
-            "creature": false,
-            "source_exclusion": true,
-            "count": 1
-          }
-        ]
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "counter", "token_creation"],
-      "tests": ["test_an_offer_empty_stack_and_treasure_resolution"],
-      "provenance": {
-        "source_oracle_hash": "c0bdfd6dc825e93cb90d8b39767a3ac42a96292e18134d508d013af907f0f223",
-        "source_rulings_hash": "e28547ab577f54b0a96fdeceeaeec079a9fd9fa16a5779bbf9b46a71c7d7cc6b",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "74d3277a-38e5-4732-afed-084a56148f20:spell:front",
       "label": "Mana Drain",
       "oracle_id": "74d3277a-38e5-4732-afed-084a56148f20",
@@ -61,43 +29,6 @@
       "provenance": {
         "source_oracle_hash": "89e9be05b9bf509438f52b909acc1c04d8c68bbf1a2b6fe17def84d2ddeacd73",
         "source_rulings_hash": "4750e8abde2ddc652a7d578d46e3536a707974dfed5368f47a8e5f36b0e2c0c4",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "8ddfc283-c9b4-41a5-af88-cf0068e986cc:spell:front",
-      "label": "Swan Song",
-      "oracle_id": "8ddfc283-c9b4-41a5-af88-cf0068e986cc",
-      "effects": [
-        {"op": "counter_stack", "stack": "$target.0"},
-        {
-          "op": "create_token",
-          "controller": "$target.controller.0",
-          "name": "Bird",
-          "characteristics": {
-            "type_line": "Token Creature — Bird",
-            "power": "2",
-            "toughness": "2",
-            "colors": ["U"],
-            "keywords": ["Flying"]
-          }
-        }
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["stack"],
-        "categories": ["spell"],
-        "types_any": ["enchantment", "instant", "sorcery"],
-        "source_exclusion": true,
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "counter", "token_creation"],
-      "tests": ["test_swan_song_target_filter_and_bird"],
-      "provenance": {
-        "source_oracle_hash": "4b60ea4fa89aa23092bce7a6ddc9813d2bf40dd4e8cce63791ac5adb222865bf",
-        "source_rulings_hash": "282539d071bd09f9498ede130f693c68a079a88b69e37b4cab65c367fab39b47",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }
@@ -659,36 +590,6 @@
       "provenance": {
         "source_oracle_hash": "af7fa45b4559e63a7274eeec2e10398085abc2cc114a4a9377a4c884af7b723a",
         "source_rulings_hash": "8d3d229ef905e13a98f374c7751203847a98e80180f40b481f74c560747425b5",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "86bf58f2-7f25-4e10-b797-25e0e8e67769:spell:front",
-      "label": "Flusterstorm",
-      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
-      "effects": [
-        {
-          "op": "counter_unless_pay",
-          "stack": "$target.0",
-          "player": "$target.controller.0",
-          "cost": {"GENERIC": 1}
-        }
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["stack"],
-        "categories": ["spell"],
-        "types_any": ["instant", "sorcery"],
-        "source_exclusion": true,
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "counter", "storm"],
-      "tests": ["test_flusterstorm_storm_and_target_reassignment"],
-      "provenance": {
-        "source_oracle_hash": "46234390c2969f697a3dd9f5fdcaae6502bcfe9ce0150abbf67ede6cf6b21c9e",
-        "source_rulings_hash": "ef4932e259ce8c636f7c79d0763a1fc24c2991c6db7f86fdb9a52ff2a05c1670",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }

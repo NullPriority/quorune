@@ -20,8 +20,9 @@ reviewed pack input. Game Records store their own semantic registry, retaining
 the reviewed descriptors after a redundant live program is retired. Replay
 continues to verify the record's declared runtime provenance. The source-derived
 activation catalog carries its printed zone, target restrictions, costs and
-current activation conditions. `simctl card overrides` lists only programs with explicit
-override metadata; ordinary reviewed semantic packs are not silently relabeled
+current activation conditions. Source-derived spell programs retain their target,
+recipient and intrinsic-trigger capabilities. `simctl card overrides` lists only
+programs with explicit override metadata; ordinary reviewed semantic packs are not silently relabeled
 as typed overrides.
 
 ## Required evidence

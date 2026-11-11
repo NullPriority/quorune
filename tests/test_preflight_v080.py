@@ -120,6 +120,13 @@ class SemanticPreflightV2Tests(unittest.TestCase):
     def test_trusted_program_is_invalidated_by_source_hash_drift(self):
         registry = SemanticRegistry()
         record = self.db.lookup("An Offer You Can't Refuse")
+        register_generated_programs(
+            self.db, registry, (record,),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review", promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
         program = registry.get(f"{record.oracle_id}:spell:front")
         self.assertIsNotNone(program)
         program.provenance["source_oracle_hash"] = "0" * 64
