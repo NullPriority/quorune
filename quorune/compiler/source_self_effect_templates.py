@@ -18,6 +18,17 @@ from .endure_templates import source_endure_trigger_result
 from .declared_effect_amounts import declared_effect_amount_template
 
 
+def bound_source_fixed_damage(binding, body):
+    events = {
+        'source_public_tap_state_transition': {'permanent.tap', 'permanent.untap'},
+        'source_enters_or_leaves_the_battlefield': {'permanent.enter', 'permanent.leave'},
+    }
+    if binding.active_zone != 'battlefield' or binding.event.value not in events.get(binding.variant, ()):
+        return None
+    damage = source_pronoun_damage_effect_template(body)
+    return damage.compiled() if damage is not None else None
+
+
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
     from .scalar_effect_amounts import source_scalar_effect_amount_template
     from ..source_entry_cast_information import (source_entry_cast_condition,SOURCE_ENTRY_CAST_MECHANIC,
@@ -155,7 +166,7 @@ def source_self_contextual_effect_template(
     )
     fixed_damage = (
         source_pronoun_damage_effect_template(text)
-        if event_phrase in {"enters", "dies"}
+        if event_phrase in {"enters", "dies", "leaves the battlefield"}
         else None
     )
     compiled = explored or creature_power or fixed_damage

@@ -72,6 +72,10 @@ A returning incarnation never substitutes. Missing snapshots fail closed,
 while a known empty counter map yields zero. Version-one scalar descriptors
 retain their original field set and serialization.
 
+Fixed damage can bind a source pronoun after a closed source-self tap, untap,
+entry, or departure event. The original source remains the damage source after
+departure. Attached and other event participants keep their separate identities.
+
 Fixed sacrifice prices can supply the mana value of the paid permanent to a
 closed draw, life, counter placement, or single-color mana instruction. Scalar
 schema version twelve reads the sealed battlefield incarnation and its

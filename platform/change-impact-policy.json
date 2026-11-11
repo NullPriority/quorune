@@ -8602,7 +8602,8 @@
         "test_zone_trigger_events",
         "test_targeted_tap_state_effect_clauses",
         "test_card_program_trust",
-        "test_destruction_rules"
+        "test_destruction_rules",
+        "test_fixed_damage_source_lki"
       ]
     },
     {
@@ -13719,6 +13720,23 @@
         "test_scalar_effect_amounts",
         "test_declared_effect_amounts",
         "test_public_query_effect_amounts",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "bound-source-fixed-damage",
+      "patterns": [
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "tests/test_bound_source_fixed_damage.py",
+        "tests/fixtures/bound-source-fixed-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_bound_source_fixed_damage",
+        "test_fixed_damage_effect_clauses",
+        "test_fixed_damage_source_lki",
+        "test_fixed_counter_event_triggers",
+        "test_declared_effect_amounts",
         "test_card_program_trust"
       ]
     }

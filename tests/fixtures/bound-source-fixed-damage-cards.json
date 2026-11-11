@@ -1,0 +1,392 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned source-bound fixed damage trigger witnesses.",
+  "cards": [
+    {
+      "oracle_id": "457bee4c-2332-440c-9336-36f6a69614f9",
+      "name": "Goblin Medics",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Goblin Shaman",
+      "oracle_text": "Whenever this creature becomes tapped, it deals 1 damage to any target.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7ac09735-f05c-4e28-83d6-262cddc9eeb3",
+      "name": "Firemaw Kavu",
+      "mana_cost": "{5}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Kavu",
+      "oracle_text": "Echo {5}{R} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)\nWhen this creature enters, it deals 2 damage to target creature.\nWhen this creature leaves the battlefield, it deals 4 damage to target creature.",
+      "power": "4",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Echo"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Fervor",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "oracle_text": "Creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "oracle_id": "e05b850f-24cd-42b9-bc4f-0f05f9aea679",
+      "name": "Keldon Marauders",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "Vanishing 2 (This creature enters with two time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)\nWhen this creature enters or leaves the battlefield, it deals 1 damage to target player or planeswalker.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Vanishing"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fee18f57-4ae5-4df8-af3b-f82ed2157ac3",
+      "name": "Spitebellows",
+      "mana_cost": "{5}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "When this creature leaves the battlefield, it deals 6 damage to target creature.\nEvoke {1}{R}{R} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "power": "6",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Evoke"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "457bee4c-2332-440c-9336-36f6a69614f9",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The ability does trigger when it taps to attack."
+    },
+    {
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "If an attacking creature loses haste, perhaps because Fervor leaves the battlefield after attackers have been declared, it won't be removed from combat."
+    },
+    {
+      "oracle_id": "fee18f57-4ae5-4df8-af3b-f82ed2157ac3",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "Effects that cause you to pay more or less to cast a spell will cause you to pay that much more or less while casting it for its evoke cost, too. That's because they affect the total cost of the spell, not its mana cost."
+    },
+    {
+      "oracle_id": "fee18f57-4ae5-4df8-af3b-f82ed2157ac3",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "Evoke doesn't change the timing of when you can cast the creature that has it. If you could cast that creature spell only when you could cast a sorcery, the same is true for cast it with evoke."
+    },
+    {
+      "oracle_id": "fee18f57-4ae5-4df8-af3b-f82ed2157ac3",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "If a creature spell cast with evoke changes controllers before it enters, it will still be sacrificed when it enters. Similarly, if a creature cast with evoke changes controllers after it enters but before its sacrifice ability resolves, it will still be sacrificed. In both cases, the controller of the creature at the time it left the battlefield will control its leaves-the-battlefield ability."
+    },
+    {
+      "oracle_id": "fee18f57-4ae5-4df8-af3b-f82ed2157ac3",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "If you're casting a spell \"without paying its mana cost,\" you can't use its evoke ability."
+    },
+    {
+      "oracle_id": "fee18f57-4ae5-4df8-af3b-f82ed2157ac3",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "When you cast a spell by paying its evoke cost, its mana cost doesn't change. You just pay the evoke cost instead."
+    },
+    {
+      "oracle_id": "fee18f57-4ae5-4df8-af3b-f82ed2157ac3",
+      "published_at": "2008-04-01",
+      "source": "wotc",
+      "comment": "Whether evoke's sacrifice ability triggers when the creature enters depends on whether the spell's controller chose to pay the evoke cost, not whether they actually paid it (if it was reduced or otherwise altered by another ability, for example)."
+    }
+  ]
+}
