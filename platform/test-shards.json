@@ -903,6 +903,7 @@
       "test_exact_artifact_engines",
       "test_explore_rules",
       "test_fabricate_compiler",
+      "test_firebending_tokens",
       "test_fixed_counter_additional_costs",
       "test_fixed_disturb",
       "test_forecast_results",

@@ -624,6 +624,7 @@
     "tests/fixtures/filtered-prevention-cards.json",
     "tests/fixtures/finality-counter-cards.json",
     "tests/fixtures/finite-prevention-recipient-cards.json",
+    "tests/fixtures/firebending-token-cards.json",
     "tests/fixtures/fixed-basic-type-setting-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",
     "tests/fixtures/fixed-characteristic-enchant-cards.json",

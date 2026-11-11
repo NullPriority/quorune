@@ -45,12 +45,32 @@ _CREATURE_TOKEN_WITHOUT_STATS = re.compile(
 )
 
 
+def _fixed_token_keyword_shell(text: str) -> tuple[str, tuple[str, ...]] | None:
+    """Retain one intrinsic Firebending instance through the typed child owner."""
+    from .keyword_event_effect_nodes import fixed_keyword_event_effect_spec
+
+    match = re.search(
+        r"(?P<separator>\bwith|\band|,)\s+(?P<keyword>[A-Za-z]+ [1-9]\d*)\.?$",
+        text, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    spec = fixed_keyword_event_effect_spec(match["keyword"])
+    prefix = text[:match.start()].rstrip(", ")
+    if (spec is None or spec.keyword != "firebending"
+            or re.search(r"\bcreate\b.+\btokens?\b", prefix, re.IGNORECASE) is None):
+        return None
+    return prefix + ".", (match["keyword"],)
+
+
 def _token_ability_shell(text: str) -> tuple[str, tuple[str, ...]] | None:
-    """Remove only explicit quoted abilities attached to a created token."""
+    """Separate explicit token abilities from a completely represented shell."""
 
     normalized = text.strip()
     matches = tuple(_QUOTED.finditer(normalized))
-    if not matches or len(matches) > 2:
+    if not matches:
+        return _fixed_token_keyword_shell(normalized)
+    if len(matches) > 2:
         return None
     prefix = normalized[: matches[0].start()]
     if (
@@ -292,21 +312,29 @@ def _inner_node(
         if copy_recipe else None)
     if cleanup is not None:
         return cleanup, compiled_text
-    node = compile_inner(
-        node_id=node_id,
-        line=compiled_text,
-        material_line=compiled_text,
-        span=span,
-        card_name="Created Token",
-        type_line=token_type_line,
-        keywords=token_keywords,
-        trusted_mechanics=trusted_mechanics,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-        residuals=residuals,
-        effect_template=effect_template,
-        trigger_effect_template=trigger_effect_template,
-    )
+    from .keyword_event_effect_nodes import fixed_keyword_event_effect_spec
+    from .granted_keyword_event_nodes import _keyword_inner_node
+    keyword = fixed_keyword_event_effect_spec(compiled_text)
+    node = (_keyword_inner_node(keyword, node_id=node_id, line=compiled_text,
+        material_line=compiled_text, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+        if keyword is not None and keyword.keyword == "firebending" else None)
+    if node is None:
+        node = compile_inner(
+            node_id=node_id,
+            line=compiled_text,
+            material_line=compiled_text,
+            span=span,
+            card_name="Created Token",
+            type_line=token_type_line,
+            keywords=token_keywords,
+            trusted_mechanics=trusted_mechanics,
+            capability_registry=capability_registry,
+            capability_profile=capability_profile,
+            residuals=residuals,
+            effect_template=effect_template,
+            trigger_effect_template=trigger_effect_template,
+        )
     if node is None:
         node = trigger_node(
             node_id=node_id,

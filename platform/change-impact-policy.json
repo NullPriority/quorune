@@ -14146,6 +14146,25 @@
         "test_paired_opponent_draws",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "intrinsic-token-firebending-composition",
+      "patterns": [
+        "quorune/compiler/typed_token_ability_nodes.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/compiler/keyword_event_effect_nodes.py",
+        "quorune/compiler/granted_keyword_event_nodes.py",
+        "tests/fixtures/firebending-token-cards.json",
+        "tests/test_firebending_tokens.py"
+      ],
+      "test_modules": [
+        "test_fixed_token_creation_effects",
+        "test_fixed_keyword_event_effects",
+        "test_granted_keyword_events",
+        "test_firebending_tokens",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

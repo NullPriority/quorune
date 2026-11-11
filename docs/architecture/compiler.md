@@ -2369,6 +2369,14 @@ attachment, counter, tapped/combat, chosen, named-card, distinct-value,
 total-power, source-relative, historical, compound, and unsupported timing
 forms remain source-spanned residuals.
 
+`compiler/typed_token_ability_nodes.py` also lowers one final fixed Firebending
+keyword on an otherwise closed token definition through the existing keyword
+event compiler. The resulting child is intrinsic to each created token and
+cannot become an ability of its creator. The ordinary triggered-mana owner
+retains the red mana through combat and clears it when combat ends. Unclosed
+creation shells, other unquoted event keywords, multiple event keywords and
+unsupported counts remain residual.
+
 Predefined Role definitions compile into separate granted-only static and
 triggered child programs. Enchant and child references are explicit token
 fragments pinned to the creating card program. These child programs cannot
