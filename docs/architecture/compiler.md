@@ -1494,6 +1494,9 @@ own-graveyard returns reuse fixed card types, type intersections and unions,
 subtypes, supertypes, colors, color cardinality, and fixed mana-value upper
 bounds from zero through twenty. The numeric clause preserves the complete
 card predicate and passes through shared offer and resolution target checks.
+Colored instant and sorcery descriptions compile directly to the existing
+owned-card query, including a closed two-color or instant-or-sorcery union.
+These spell-card predicates retain the same target and incarnation checks.
 Qualified permanent-card
 predicates retain that explicit card domain when the battlefield parser's
 permanent zone would otherwise make it implicit. The owner adds only one

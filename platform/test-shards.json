@@ -893,6 +893,7 @@
       "test_casting_activation_metadata",
       "test_characteristic_query_unions",
       "test_codex_cli_runner",
+      "test_colored_spell_graveyard_returns",
       "test_conditional_exile",
       "test_convoke_rules",
       "test_creature_power_multiples_compiler",

@@ -14117,6 +14117,21 @@
         "test_game_record_v3",
         "test_command_resolution_provenance"
       ]
+    },
+    {
+      "id": "colored-spell-own-graveyard-returns",
+      "patterns": [
+        "quorune/compiler/return_to_hand_templates.py",
+        "quorune/rules/graveyard_card_targets.py",
+        "tests/fixtures/colored-spell-graveyard-return-cards.json",
+        "tests/test_colored_spell_graveyard_returns.py"
+      ],
+      "test_modules": [
+        "test_colored_spell_graveyard_returns",
+        "test_targeted_graveyard_return_effect_clauses",
+        "test_targeted_return_to_hand_effect_clauses",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

@@ -193,6 +193,43 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
         )
 
+    def test_colored_spell_card_targets_use_the_existing_owned_query(self):
+        for color, symbol in (("white", "W"), ("blue", "U"), ("black", "B"), ("red", "R"), ("green", "G")):
+            for description in ("instant", "sorcery", "instant or sorcery"):
+                with self.subTest(color=color, description=description):
+                    text = f"Return target {color} {description} card from your graveyard to your hand."
+                    template = targeted_own_graveyard_return_to_hand_effect_template(text)
+                    self.assertIsNotNone(template)
+                    self.assertEqual([symbol], template.target_schema["colors_any"])
+                    self.assertEqual(description.split(" or "), list(template.target_schema["types_any"]))
+                    self.assertEqual(("you", ["graveyard"], 1),
+                        (template.target_schema["owner_relation"], template.target_schema["zones"], template.target_schema["count"]))
+                    ir = self.compile(text)
+                    self.assertEqual("exact", ir.status, ir.material_residuals)
+        union = targeted_own_graveyard_return_to_hand_effect_template(
+            "Return target red or blue instant or sorcery card from your graveyard to your hand.")
+        self.assertEqual(["R", "U"], list(union.target_schema["colors_any"]))
+        for description in ("red or red instant", "red blue instant", "purple sorcery", "red instant or creature"):
+            self.assertIsNone(targeted_own_graveyard_return_to_hand_effect_template(
+                f"Return target {description} card from your graveyard to your hand."))
+
+    def test_two_optional_colored_returns_keep_independent_target_roles(self):
+        text = ("When this creature enters, you may return target red sorcery card from your graveyard to your hand.\n"
+                "When this creature enters, you may return target blue instant card from your graveyard to your hand.")
+        ir = self.compile(text, type_line="Creature — Beast")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        nodes = ir.faces[0].nodes
+        self.assertEqual(2, len(nodes))
+        self.assertEqual([(["R"], ["sorcery"]), (["U"], ["instant"])],
+            [(list(node.target_schema["colors_any"]), list(node.target_schema["types_any"])) for node in nodes])
+        for node in nodes:
+            self.assertEqual("permanent.enter.self", node.event)
+            self.assertEqual("offer_optional_effect", node.effects[0]["op"])
+            self.assertEqual(node.text, text[node.span.start:node.span.end])
+        for bad in (text.replace("your graveyard", "their graveyard"),
+                    text.replace("red sorcery card", "red sorcery card discarded this turn")):
+            self.assertNotEqual("exact", self.compile(bad, type_line="Creature — Beast").status)
+
     def test_parser_accepts_only_the_closed_own_graveyard_family(self):
         for kind in GraveyardCardTargetKind:
             with self.subTest(kind=kind):

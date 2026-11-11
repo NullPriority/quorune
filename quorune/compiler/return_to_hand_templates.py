@@ -312,6 +312,18 @@ def _own_graveyard_characteristic_target(
     """Reuse the closed direct characteristic grammar for an owned card."""
 
     normalized = " ".join(description.casefold().split())
+    colored_spell = re.fullmatch(
+        r"(?P<first>white|blue|black|red|green)(?: or (?P<second>white|blue|black|red|green))? "
+        r"(?P<types>instant or sorcery|instant|sorcery)", normalized,
+    )
+    if colored_spell is not None:
+        symbols = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
+        colors = tuple(symbols[value] for value in (colored_spell["first"], colored_spell["second"]) if value)
+        try:
+            return OwnGraveyardCardTargetSpec(None,
+                types_any=tuple(colored_spell["types"].split(" or ")), colors_any=colors)
+        except (TypeError, ValueError):
+            return None
     special: dict[str, dict[str, Any]] = {
         "green": {"colors_any": ("G",)},
         "multicolored": {"color_count_min": 2},
