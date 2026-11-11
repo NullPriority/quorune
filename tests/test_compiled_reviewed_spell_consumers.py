@@ -151,6 +151,48 @@ class CompiledReviewedSpellConsumerTests(unittest.TestCase):
         self.reject(own_turn, {"action_id": "cast:" + source.ref, "cost_option": pitch["id"],
                                "exile_cards": [green.ref], "targets": [], "pay": "auto"})
 
+    def test_scripted_pilot_completes_offered_pitch_payment_and_skips_empty_targets(self):
+        from quorune.cli import _scripted_choice
+        from quorune.pilot import PilotMemory
+
+        for has_target in (False, True):
+            with self.subTest(has_target=has_target):
+                session = self.session(964_080 + int(has_target))
+                source = self.add(session.engine, "Force of Vigor", zone="hand")
+                green = self.add(session.engine, "Grizzly Bears", zone="hand")
+                artifact = self.add(session.engine, "Sol Ring", seat="B") if has_target else None
+                self.prepare(session, active="B", mana={})
+                self.checkpoint(session)
+                packet = session.packet("pilot:A", full=True)
+                actions = self.actions(session)
+                offered = next(row for row in actions if row.get("card") == source.ref)
+                pitch = next(option for option in offered["cost_options"]
+                             if option["choice_schema"].get("exile_cards"))
+                decision = {"kind": session.state.pending_decision.kind,
+                            "ctx": packet["decision"]["ctx"], "legal_actions": actions}
+                command = _scripted_choice(packet, decision, PilotMemory())
+                self.assertNotIn(green.ref, str(session.packet("pilot:B", full=True)))
+                if artifact is None:
+                    self.assertEqual("pass", command["action_id"])
+                else:
+                    self.assertEqual(offered["id"], command["action_id"])
+                    self.assertEqual(pitch["id"], command.get("cost_option"))
+                    self.assertEqual([green.ref], command.get("exile_cards"))
+                    self.assertEqual([artifact.ref], command.get("targets"))
+                    self.reject(session, {**command, "exile_cards": []})
+                self.reject(session, command, seat="D")
+                result = session.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("stack" if has_target else "hand", session.state.cards[source.object_id].zone)
+                self.assertEqual("exile" if has_target else "hand", session.state.cards[green.object_id].zone)
+                session = self.replay(session, load=True)
+                if artifact is not None:
+                    self.assertIsNone(self.settle(session))
+                    self.assertEqual("graveyard", session.state.cards[artifact.object_id].zone)
+                    self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                    self.assertEqual("exile", session.state.cards[green.object_id].zone)
+                    self.replay(session, load=True)
+
     def test_compiled_toxic_deluge_pays_life_before_resolution_without_a_refund(self):
         for countered in (False, True):
             with self.subTest(countered=countered):

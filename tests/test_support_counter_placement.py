@@ -466,8 +466,12 @@ class SupportCounterPlacementRuntimeTests(unittest.TestCase):
     def test_support_partial_target_revalidation_and_quantity_replacement_replay(
         self,
     ):
+        from common import register_current_fixture_programs
         session = self.session(7014103)
         engine = session.engine
+        register_current_fixture_programs(self.db, engine.semantics, (
+            self.db.lookup("Doubling Season"), self.db.lookup("Doc Samson, Super Psychiatrist"),
+        ))
         source = self.add_permanent(
             engine, seat="A", name="Scute Swarm", ref="support-source"
         )

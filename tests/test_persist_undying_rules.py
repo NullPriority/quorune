@@ -430,6 +430,10 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
         engine._stabilize()
 
     def stage_competing_counter_sources(self, engine, *, seat: str):
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (
+            self.db.lookup("Doubling Season"), self.db.lookup("Doc Samson, Super Psychiatrist"),
+        ), capability_registry=self.capabilities)
         return (
             self.add_card(
                 engine,
@@ -446,8 +450,11 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
         )
 
     def test_persist_returns_under_owner_with_replacement_aware_counter(self):
+        from common import register_current_fixture_programs
         session = self.session(7027901)
         engine = session.engine
+        register_current_fixture_programs(self.db, engine.semantics, (self.db.lookup("Doubling Season"),),
+                                          capability_registry=self.capabilities)
         source = self.add_card(
             engine, seat="A", name="Protean Hulk", ref="persist-source"
         )

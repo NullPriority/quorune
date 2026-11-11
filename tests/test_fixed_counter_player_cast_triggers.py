@@ -190,6 +190,9 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         is_token: bool = False,
     ) -> CardInstance:
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         current_controller = controller or seat
         public = zone == "battlefield"
         card = CardInstance(

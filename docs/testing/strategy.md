@@ -70,6 +70,28 @@ A new session or loaded registry is a separate scope. Existing reviewed programs
 do not replace that registration. All action, privacy, save/load and replay
 assertions remain.
 
+Fixtures that seed original replacement controls outside the deck setup use
+`tests.common.register_current_fixture_programs` to register their current
+source through normal compiler admission. A reviewed compatibility view does
+not replace this registration or establish strict whole-card support. Keep
+quantity, provenance, rollback and replay assertions active after a promotion;
+preserve the distinction between current capability closure and a remaining
+reviewed compatibility path.
+
+Deterministic pilot fixtures submit the selected offered price and its current
+payment selectors. Fixed exile collections use the exported cardinality and
+legal references; they do not depend on a card label or a legacy price kind.
+The conservative pilot skips an exile payment when all optional target groups
+are empty and chooses a nonempty legal target group when making that payment.
+Kernel validation remains authoritative for every submitted choice.
+
+Historical harvest receipts retain separate trusted-card and capability-closed
+card gains. Reviewed and mixed compatibility views contribute to the historical
+trusted-card total. Current delivery measurements and the card floor use net
+distinct capability-closed cards; compare the matching receipt field without
+rewriting either historical metric. Calibration and forecast corrections use
+the recorded probe's gain basis; older probes retain their trusted-card basis.
+
 Tests that reuse another test module's methods import that module and reference
 its class through the module. Importing a helper `TestCase` class into a module
 global makes unittest collect it again. Shard validation rejects that duplicate

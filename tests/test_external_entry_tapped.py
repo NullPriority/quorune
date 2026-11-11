@@ -153,7 +153,9 @@ class ExternalEntryTappedRuntimeTests(unittest.TestCase):
                 program=compile_best_available_card_program(self.db,self.db.lookup(row['name']),semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry,capability_profile='commander_review')
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
-                self.assertEqual(row['name'] in CLOSED,binding['strict_capability_ready'],binding['blockers'])
+                # These two originals close through the independent entry-copy owner.
+                expected_closed = row['name'] in CLOSED or row['name'] in {'Echoing Deeps', 'Vesuva'}
+                self.assertEqual(expected_closed,binding['strict_capability_ready'],binding['blockers'])
 
     def test_dauntless_dismantler_unrepresented_target_domain_blocks_complete_admission(self):
         from high_risk_interaction_support import _observed_piece_ids

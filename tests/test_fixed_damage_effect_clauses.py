@@ -302,8 +302,11 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
         raw=json.loads((Path(__file__).parents[1]/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(row for row in raw['capabilities'] if row['id']=='damage.amount.positive').update(status='blocked',blockers=['bound damage leaf withdrawn'])
         self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(raw)).status)
-        with patch('quorune.compiler.damage_templates.source_pronoun_damage_effect_template',return_value=None):
+        with patch('quorune.compiler.damage_templates._fixed_damage_instruction_template',return_value=None) as omitted:
             self.assertNotEqual('exact',self.compile(text,type_line='Creature — Dinosaur').status)
+            self.assertEqual('exact',self.compile('When this creature enters, draw a card.',
+                                                type_line='Creature — Dinosaur').status)
+        self.assertTrue(omitted.called)
 
     def test_source_entry_return_declares_registered_bounce_dependency(self):
         from quorune.card_programs import bind_card_program_runtime
@@ -585,9 +588,10 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
         self.assertIsNone(unsupported.faces[0].nodes[0].template_id)
 
     def test_source_trigger_pronoun_rejects_unbounded_contexts_and_grammar(self):
+        promoted = self.compile('When this creature leaves the battlefield, it deals 1 damage to any target.',
+                                type_line='Creature — Goblin')
+        self.assertEqual('exact', promoted.status, promoted.material_residuals)
         variants = (
-            "When this creature leaves the battlefield, it deals 1 damage "
-            "to any target.",
             "When this creature enters, it deals X damage to any target.",
             "When this creature dies, it deals 2 damage divided as you choose "
             "among two targets.",

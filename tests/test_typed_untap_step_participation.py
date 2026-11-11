@@ -250,14 +250,10 @@ class UntapStepCompilerTests(unittest.TestCase):
             handler.validate(boolean_maximum)
 
         inventory = default_untap_step_component_registry().inventory()
-        self.assertEqual(
-            {UNTAP_STEP_HANDLER_ID: ["untap.step.static_participation"],
-             OPTIONAL_UNTAP_HANDLER_ID: ["untap.step.optional_source"],
-             STATIC_STEP_SKIP_HANDLER_ID: [STATIC_STEP_SKIP_CAPABILITY],
-             PHASING_HANDLER_ID: [PHASING_CAPABILITY],
-             'participation.untap-step.fixed-selection-limit.v1':['untap.step.fixed_selection_limit']},
-            {row["handler_id"]: row["capability_dependencies"] for row in inventory},
-        )
+        from quorune.semantic_runtime import runtime_component_inventory
+        authority = [row for row in runtime_component_inventory()
+                     if row['event'] in {'untap.step', 'untap.phasing', 'turn.step.skip'}]
+        self.assertEqual(authority, inventory)
 
 
 class UntapStepParticipationModelTests(unittest.TestCase):

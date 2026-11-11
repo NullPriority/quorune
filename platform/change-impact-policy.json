@@ -13896,6 +13896,139 @@
         "test_generated_artifacts",
         "test_generated_owner_cache"
       ]
+    },
+    {
+      "id": "retired-reviewed-view-current-consumers",
+      "patterns": [
+        "quorune/semantic_packs/counter-quantity-replacements.json",
+        "quorune/semantic_packs/damage-replacement-components.json",
+        "quorune/semantic_packs/mishra-eminent-one.json",
+        "quorune/semantic_packs/tutor-searches.json",
+        "quorune/semantic_packs/v080-exact-artifact-engines.json",
+        "quorune/semantic_packs/v080-exact-interactions.json",
+        "quorune/semantic_packs/v080-exact-keywords.json",
+        "quorune/semantic_packs/v080-exact-lands.json",
+        "quorune/semantic_packs/v080-exact-mana.json",
+        "quorune/semantic_packs/v080-exact-triggers.json",
+        "quorune/semantic_packs/zimone-and-dina.json",
+        "quorune/semantic_packs/zz-interaction-suite.json",
+        "quorune/semantic_packs/zzz-v080-exact-deck-closure.json",
+        "quorune/compiler/program_generation.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "tests/common.py",
+        "tests/fixtures/historical-thornbite-provider-views.json"
+      ],
+      "test_modules": [
+        "test_activated_abilities",
+        "test_amass_rules",
+        "test_attached_counter_placement",
+        "test_attack_counter_triggers",
+        "test_blight",
+        "test_bloodthirst_rules",
+        "test_bolster_rules",
+        "test_capability_implementation_mutations",
+        "test_card_program_v2",
+        "test_compiled_reviewed_spell_consumers",
+        "test_composite_quoted_grants",
+        "test_controlled_return_choices",
+        "test_counter_placement_replacements",
+        "test_cumulative_upkeep_counter_placement",
+        "test_endure",
+        "test_evolve_counter_placement",
+        "test_explore_rules",
+        "test_external_entry_tapped",
+        "test_fixed_counter_additional_costs",
+        "test_fixed_counter_placement_effects",
+        "test_fixed_counter_placement_groups",
+        "test_fixed_counter_placement_sets",
+        "test_fixed_counter_placement_target_sets",
+        "test_fixed_counter_player_cast_triggers",
+        "test_fixed_counter_zone_triggers",
+        "test_fixed_damage_effect_clauses",
+        "test_fixed_keyword_entry_counters",
+        "test_fixed_mana_abilities",
+        "test_fixed_multikind_counter_batches",
+        "test_fixed_source_characteristic_effects",
+        "test_fixed_target_effect_sequences",
+        "test_graveyard_self_return_triggers",
+        "test_high_risk_interaction_assurance",
+        "test_intrinsic_entry_counters",
+        "test_keyword_counter_composition",
+        "test_live_modifier_quantities",
+        "test_loyalty_counter_cost_replacements",
+        "test_mentor_rules",
+        "test_oracle_ir",
+        "test_persist_undying_rules",
+        "test_power_toughness_switch",
+        "test_preflight_v080",
+        "test_proliferate_rules",
+        "test_public_query_effect_amounts",
+        "test_public_state_condition_runtime",
+        "test_qualified_characteristic_quantities",
+        "test_riot_rules",
+        "test_rules_scheduler",
+        "test_saga_counter_progression",
+        "test_seed_20260730_regression",
+        "test_semantic_counter_replacement_continuations",
+        "test_semantic_searches",
+        "test_sunburst_rules",
+        "test_support_counter_placement",
+        "test_typed_untap_step_participation",
+        "test_unleash_rules"
+      ]
+    },
+    {
+      "id": "promoted-source-integration-expectations",
+      "patterns": [
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/target_effect_corpus_assurance.py",
+        "tests/high_risk_interaction_support.py"
+      ],
+      "test_modules": [
+        "test_card_program_v2",
+        "test_composite_quoted_grants",
+        "test_controlled_return_choices",
+        "test_external_entry_tapped",
+        "test_fixed_damage_effect_clauses",
+        "test_fixed_mana_abilities",
+        "test_fixed_source_characteristic_effects",
+        "test_high_risk_interaction_assurance",
+        "test_live_modifier_quantities",
+        "test_oracle_ir",
+        "test_power_toughness_switch",
+        "test_public_query_effect_amounts",
+        "test_public_state_condition_runtime",
+        "test_qualified_characteristic_quantities",
+        "test_typed_untap_step_participation"
+      ]
+    },
+    {
+      "id": "scripted-current-cast-payment-schema",
+      "patterns": [
+        "quorune/cli.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/base_cost_options.py",
+        "tests/test_compiled_reviewed_spell_consumers.py"
+      ],
+      "test_modules": [
+        "test_compiled_reviewed_spell_consumers",
+        "test_seed_20260730_regression"
+      ]
+    },
+    {
+      "id": "harvest-measurement-gain-basis",
+      "patterns": [
+        "quorune/work_selection_common.py",
+        "quorune/work_selection_evidence.py",
+        "scripts/harvest_outcome_history.py",
+        "scripts/update_work_selection_cohort_measurements.py",
+        "platform/rules-subsystems.json"
+      ],
+      "test_modules": [
+        "test_rules_scheduler"
+      ]
     }
   ],
   "risk_rules": [

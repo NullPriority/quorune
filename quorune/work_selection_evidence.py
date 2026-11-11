@@ -10,6 +10,7 @@ from .work_selection_common import (
     WorkSelectionError,
     mapping,
     nonnegative_int,
+    observed_harvest_card_gain,
     stable_hash,
     transition_measurement_matches_policy,
 )
@@ -286,7 +287,7 @@ def validate_harvest_forecast_correction(
         or correction["original_expected_complete_card_gain"]
         != outcome.get("expected_complete_card_gain")
         or type(outcome.get("actual_complete_card_gain")) is not int
-        or outcome["actual_complete_card_gain"]
+        or observed_harvest_card_gain(outcome)
         < correction["certified_complete_card_lower_bound"]
         or type(outcome.get("actual_exact_ability_gain")) is not int
         or outcome["actual_exact_ability_gain"]
@@ -927,19 +928,19 @@ def _validate_non_harvest_history(rows: list[Any]) -> None:
 def _history_summary(history: list[Any], minimum_gain: int) -> dict[str, Any]:
     consecutive_subthreshold = 0
     for row in reversed(history):
-        if int(row["actual_complete_card_gain"]) >= minimum_gain:
+        if observed_harvest_card_gain(row) >= minimum_gain:
             break
         consecutive_subthreshold += 1
     return {
         "harvest_outcome_history": history,
         "consecutive_subthreshold_harvests": consecutive_subthreshold,
         "subthreshold_harvests": sum(
-            int(row["actual_complete_card_gain"]) < minimum_gain for row in history
+            observed_harvest_card_gain(row) < minimum_gain for row in history
         ),
         "card_gain_absolute_error": sum(
             abs(
                 int(row["expected_complete_card_gain"])
-                - int(row["actual_complete_card_gain"])
+                - observed_harvest_card_gain(row)
             )
             for row in history
             if row["expected_complete_card_gain"] is not None

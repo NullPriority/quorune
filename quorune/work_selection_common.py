@@ -10,6 +10,17 @@ class WorkSelectionError(ValueError):
     pass
 
 
+def observed_harvest_card_gain(row: Mapping[str, Any]) -> int:
+    """Compare a forecast with the metric defined by its recorded probe."""
+    field = ("actual_capability_closed_card_gain"
+             if row.get("measurement_probe_id") == "batched-card-support-current-census-v2"
+             else "actual_complete_card_gain")
+    value = row.get(field)
+    if type(value) is not int:
+        raise WorkSelectionError(f"Harvest measurement requires an integer {field}")
+    return value
+
+
 def stable_hash(value: Any) -> str:
     return hashlib.sha256(stable_json(value).encode("utf-8")).hexdigest()
 

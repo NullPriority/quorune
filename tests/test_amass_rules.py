@@ -33,7 +33,7 @@ from quorune.rules.node_capability_shapes import (
     fixed_amass_node_capabilities,
 )
 from quorune.semantics import SemanticProgram
-from tests.common import DB_PATH, keep_all, load_assets, make_session
+from tests.common import DB_PATH, keep_all, load_assets, make_session, register_current_fixture_programs
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -595,10 +595,16 @@ class AmassRuntimeTests(unittest.TestCase):
             ref="amass-source",
         )
         self.install_generated_tippy_toe(engine)
+        # Distinct legendary Food sources coexist. Use a counter-only doubler
+        # so the token stage still has exactly the two Food replacements.
+        register_current_fixture_programs(self.database, engine.semantics, (
+            self.database.lookup("Peregrin Took"), self.database.lookup("Vorinclex, Monstrous Raider"),
+            self.database.lookup("Doc Samson, Super Psychiatrist"),
+        ))
         for name, ref in (
             ("Tippy-Toe, Terrific Partner", "additional-food-one"),
-            ("Tippy-Toe, Terrific Partner", "additional-food-two"),
-            ("Doubling Season", "double-counters"),
+            ("Peregrin Took", "additional-food-two"),
+            ("Vorinclex, Monstrous Raider", "double-counters"),
             ("Doc Samson, Super Psychiatrist", "add-counters"),
         ):
             self.add_permanent(engine, owner="A", name=name, ref=ref)

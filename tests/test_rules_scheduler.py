@@ -129,6 +129,34 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SupportDeliveryPolicyTests(unittest.TestCase):
+    def test_harvest_calibration_uses_each_probe_metric_and_preserves_raw_history(self):
+        from quorune.work_selection_common import observed_harvest_card_gain
+        from quorune.work_selection_evidence import _history_summary
+        from unittest.mock import patch
+
+        legacy = {'actual_complete_card_gain': 1, 'actual_capability_closed_card_gain': 5,
+                  'expected_complete_card_gain': 1}
+        current = {**legacy, 'measurement_probe_id': 'batched-card-support-current-census-v2',
+                   'expected_complete_card_gain': 5}
+        history = [legacy, current]
+        before = deepcopy(history)
+        def assert_calibrated():
+            summary = _history_summary(history, 4)
+            self.assertEqual(0, summary['card_gain_absolute_error'])
+            self.assertEqual(1, summary['subthreshold_harvests'])
+            self.assertEqual(0, summary['consecutive_subthreshold_harvests'])
+        assert_calibrated()
+        with patch('quorune.work_selection_evidence.observed_harvest_card_gain',
+                   side_effect=lambda row: row['actual_complete_card_gain']):
+            with self.assertRaises(AssertionError):assert_calibrated()
+        self.assertEqual(before, history)
+        self.assertEqual(-1, observed_harvest_card_gain({**current, 'actual_capability_closed_card_gain': -1}))
+        for value in (None, True, '5'):
+            with self.subTest(value=value), self.assertRaises(WorkSelectionError):
+                observed_harvest_card_gain({**current, 'actual_capability_closed_card_gain': value})
+        with self.assertRaises(WorkSelectionError):
+            observed_harvest_card_gain({k:v for k,v in current.items() if k != 'actual_capability_closed_card_gain'})
+
     def test_legacy_measurement_upgrade_preserves_every_semantic_identity_field(self):
         from scripts.harvest_outcome_history import _declaration_upgrades_legacy_measurement
         identity = {'transition_id': 'fixture-legacy-upgrade', 'bundle_id': 'bundle:fixture-legacy-upgrade',
@@ -1808,21 +1836,25 @@ class RulesSchedulerTests(unittest.TestCase):
         minimum_gain = self.catalog["work_selection"]["coverage_family"][
             "minimum_complete_card_gain"
         ]
+        def expected_observed_gain(row):
+            if row.get('measurement_probe_id') == 'batched-card-support-current-census-v2':
+                return row['actual_capability_closed_card_gain']
+            return row['actual_complete_card_gain']
         expected_subthreshold = sum(
-            row["actual_complete_card_gain"] < minimum_gain
+            expected_observed_gain(row) < minimum_gain
             for row in history
         )
         expected_error = sum(
             abs(
                 row["expected_complete_card_gain"]
-                - row["actual_complete_card_gain"]
+                - expected_observed_gain(row)
             )
             for row in history
             if row["expected_complete_card_gain"] is not None
         )
         expected_consecutive = 0
         for row in reversed(history):
-            if row["actual_complete_card_gain"] >= minimum_gain:
+            if expected_observed_gain(row) >= minimum_gain:
                 break
             expected_consecutive += 1
 
@@ -1957,9 +1989,17 @@ class RulesSchedulerTests(unittest.TestCase):
             if current_correction is not None
             else measurement["exact_ability_gain"]
         )
-        self.assertGreaterEqual(
-            current["actual_complete_card_gain"], complete_lower_bound
+        # Historical complete-card totals include reviewed compatibility views;
+        # the current delivery measurement counts capability-closed cards.
+        self.assertEqual(
+            current["head_receipt"]["trusted_programs"] - current["base_receipt"]["trusted_programs"],
+            current["actual_complete_card_gain"],
         )
+        self.assertEqual(
+            current["head_receipt"]["capability_closed_programs"] - current["base_receipt"]["capability_closed_programs"],
+            current["actual_capability_closed_card_gain"],
+        )
+        self.assertGreaterEqual(current["actual_capability_closed_card_gain"], complete_lower_bound)
         self.assertGreaterEqual(
             current["actual_exact_ability_gain"], exact_ability_lower_bound
         )

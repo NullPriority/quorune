@@ -641,6 +641,13 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         )
         self.assertFalse(engine._stabilize())
         engine._prepare_stack_resolution()
+        self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        self.assertEqual(["B"], engine.state.pending_decision.actors)
+        before = authoritative_state_hash(engine.state)
+        choice = {"action_id": "choose", "choice": "apply"}
+        self.assertFalse(session.act("pilot:A", choice).ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.assertTrue(session.act("pilot:B", choice).ok)
         packet = session.packet("pilot:B", full=True)
         candidates = {
             row["id"]

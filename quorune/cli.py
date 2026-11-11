@@ -89,6 +89,26 @@ def _scripted_rules_order_choice(kind,context,actions):
         'plan':'DEVELOP_ENGINE','reason':'Make the deterministic required rules choice.'}
 
 
+def _scripted_cast_option(action: dict[str, Any]) -> dict[str, Any] | None:
+    options = list(action.get("cost_options") or [])
+    return next((option for option in options if option.get("id") == "normal"), None) or (
+        options[0] if options else None
+    )
+
+
+def _scripted_cast_payment(option: dict[str, Any]) -> dict[str, Any]:
+    schema = dict(option.get("choice_schema") or {})
+    choices: dict[str, Any] = {"cost_option": option["id"]}
+    if schema.get("exile_card", {}).get("legal_refs"):
+        choices["exile_card"] = schema["exile_card"]["legal_refs"][0]
+    if schema.get("exile_cards", {}).get("legal_refs"):
+        selector = schema["exile_cards"]
+        choices["exile_cards"] = list(selector["legal_refs"])[:int(selector["count"])]
+    if schema.get("x"):
+        choices["x"] = int(schema["x"].get("minimum", 0))
+    return choices
+
+
 def _scripted_choice(
     observation: dict[str, Any],
     decision: dict[str, Any],
@@ -241,18 +261,9 @@ def _scripted_choice(
             "reason": "Make the available land drop and preserve life unless tempo requires otherwise.",
         }
     def useful_cast(item: dict[str, Any]) -> bool:
-        options = list(item.get("cost_options") or [])
-        candidate_options = (
-            [
-                option
-                for option in options
-                if option.get("id") == "normal"
-            ]
-            or options
-        )
-        if not candidate_options:
+        option = _scripted_cast_option(item)
+        if option is None:
             return True
-        option = candidate_options[0]
         schema = dict(
             option.get("target_schema")
             or item.get("target_schema")
@@ -260,7 +271,8 @@ def _scripted_choice(
         )
         groups = list(schema.get("groups") or [])
         if (
-            option.get("kind") == "alternate_exile"
+            (option.get("kind") == "alternate_exile"
+             or any(key in option.get("choice_schema", {}) for key in ("exile_card", "exile_cards")))
             and groups
             and all(int(group.get("min", 0)) == 0 for group in groups)
             and not any(group.get("legal_refs") for group in groups)
@@ -277,32 +289,8 @@ def _scripted_choice(
         None,
     )
     if cast:
-        choices = {}
-        cost_options = list(cast.get("cost_options") or [])
-        selected_cost = (
-            next(
-                (
-                    option
-                    for option in cost_options
-                    if option.get("id") == "normal"
-                ),
-                None,
-            )
-            or (cost_options[0] if cost_options else None)
-        )
-        if selected_cost:
-            choices["cost_option"] = selected_cost["id"]
-            choice_schema = dict(
-                selected_cost.get("choice_schema") or {}
-            )
-            if choice_schema.get("exile_card", {}).get("legal_refs"):
-                choices["exile_card"] = choice_schema["exile_card"][
-                    "legal_refs"
-                ][0]
-            if choice_schema.get("x"):
-                choices["x"] = int(
-                    choice_schema["x"].get("minimum", 0)
-                )
+        selected_cost = _scripted_cast_option(cast)
+        choices = _scripted_cast_payment(selected_cost) if selected_cost is not None else {}
         target_schema = dict(
             (selected_cost or {}).get("target_schema")
             or cast.get("target_schema")
@@ -324,7 +312,9 @@ def _scripted_choice(
                 ref
                 for group in groups
                 for ref in list(group.get("legal_refs") or [])[
-                    : int(group.get("min", 0))
+                    : max(int(group.get("min", 0)),
+                          min(1, int(group.get("max", 1))) if any(
+                              key in choices for key in ("exile_card", "exile_cards")) else 0)
                 ]
             ]
         return {

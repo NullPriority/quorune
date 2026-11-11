@@ -27,7 +27,7 @@ from quorune.work_selection_bundles import (
     prerequisite_fanout_identity,
 )
 from quorune.work_selection_common import transition_measurement_matches_policy
-from quorune.work_selection_common import stable_hash
+from quorune.work_selection_common import stable_hash, observed_harvest_card_gain
 from quorune.work_selection_evidence import (
     ADMISSION_RECOVERY_IDS,
     validate_harvest_history,
@@ -555,7 +555,7 @@ def _transition_coverage(coverage: dict, *, transition_id: str) -> dict:
     for row in reversed(history["harvest_outcome_history"]):
         if row.get("transition_id") == transition_id:
             continue
-        if int(row["actual_complete_card_gain"]) >= int(
+        if observed_harvest_card_gain(row) >= int(
             coverage["minimum_complete_card_gain"]
         ):
             break

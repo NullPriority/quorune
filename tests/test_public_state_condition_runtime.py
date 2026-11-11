@@ -8,6 +8,7 @@ from unittest import mock
 from common import ROOT, advance_fixture_turn, keep_all, make_session
 from quorune.ability_fragments import StaticComponentSpec, ability_fragment_to_dict
 from quorune.card_programs import bind_card_program_runtime, compile_card_program
+from quorune.carddb import CardRecord
 from quorune.compiler.continuous_templates import fixed_public_state_characteristics_handler
 from quorune.compiler.public_state_fact_queries import fixed_public_fact_condition
 from quorune.continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateFact, FixedPublicStateConditionSpec
@@ -159,8 +160,13 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         seat: str = "A",
         zone: str = "battlefield",
     ) -> CardInstance:
-        engine = session.engine
         record = self.db.lookup(name)
+        return self.add_source_record(session, record, ref=ref, seat=seat, zone=zone)
+
+    def add_source_record(
+        self, session, record: CardRecord, *, ref: str, seat: str = "A", zone: str = "battlefield",
+    ) -> CardInstance:
+        engine = session.engine
         registration = register_generated_programs(
             self.db,
             engine.semantics,
@@ -1466,9 +1472,21 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         )
 
     def test_public_state_characteristics_execute_while_replacement_siblings_fail_closed(self):
+        from dataclasses import replace
+        from quorune.card_programs.adapters import compile_best_available_card_program
         session = self.session(118_220_003)
         engine = session.engine
-        record = self.db.lookup("Angel of Vitality")
+        original = self.db.lookup("Angel of Vitality")
+        complete = compile_best_available_card_program(self.db, original, semantic_registry=engine.semantics,
+            capability_registry=self.capabilities, capability_profile="commander_review")
+        self.assertTrue(bind_card_program_runtime(complete, capability_registry=self.capabilities,
+                                                  profile="commander_review")["strict_capability_ready"])
+        record = replace(original, oracle_id="00000000-0000-4000-8000-000011822003",
+            name="Generic Public Condition Replacement Boundary", raw={}, faces=(),
+            oracle_text='Flying\nIf you would gain life, instead search your library for a card with mana value equal to the amount of life you would gain, reveal it, put it into your hand, then shuffle.\nThis creature gets +2/+2 as long as you have 25 or more life.')
+        by_id = self.db.by_oracle_id
+        self.enterContext(mock.patch.object(self.db, 'by_oracle_id', side_effect=lambda identity:
+            record if identity == record.oracle_id else by_id(identity)))
         program = compile_card_program(
             self.db,
             record,
@@ -1496,10 +1514,10 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         self.assertFalse(binding["strict_capability_ready"])
         self.assertFalse(binding["compatible_ready"])
 
-        angel = self.add_source(
+        angel = self.add_source_record(
             session,
-            name="Angel of Vitality",
-            ref="ANGEL-OF-VITALITY",
+            record,
+            ref="PUBLIC-CONDITION-REPLACEMENT-BOUNDARY",
         )
         engine.state.players["A"].life = 25
         active = engine._effective_card_data(angel)
@@ -1508,7 +1526,7 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         self.assertIn("Flying", active["keywords"])
         self.assertFalse(
             any(
-                "replacement" in runtime_program.event
+                "life.gain.replacement.static_addition" in runtime_program.capability_dependencies
                 and engine.semantic_program_is_current_trusted(runtime_program)
                 for runtime_program in engine.semantics.programs_for_oracle(
                     angel.oracle_id

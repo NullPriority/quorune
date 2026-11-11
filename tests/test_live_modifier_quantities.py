@@ -322,7 +322,7 @@ class LiveModifierQuantityRuntimeTests(unittest.TestCase):
         for path,value,method in (
                 ('quorune.rules.live_modifier_quantities.current_modifier_quantity',lambda *a,**k:0,
                     'test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier'),
-                ('quorune.compiler.live_modifier_quantities.quantified_public_modifier_handler',lambda *a:None,
+                ('quorune.compiler.live_modifier_quantities.quantified_public_modifier_handler',lambda *a,**k:None,
                     'test_actual_meishin_cast_draw_and_hand_privacy_are_live'),
                 ('quorune.rules.live_modifier_quantities.current_modifier_quantity',wrong_recipient,
                     'test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients'),

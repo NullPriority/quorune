@@ -23,6 +23,20 @@ DB_PATH = Path(os.environ.get("MTG_CARD_DB", ROOT / "data" / "scryfall-20260728-
 NODE_CHOICE_VALIDATION_TIMEOUT_SECONDS = 60
 
 
+def register_current_fixture_programs(db, semantics, records, *, capability_registry=None, profile="commander_review"):
+    """Use normal source admission for original cards seeded outside deck setup."""
+    from quorune.oracle_ir import register_generated_programs
+    from quorune.rules.capabilities import load_default_capability_registry
+
+    registry = capability_registry if capability_registry is not None else load_default_capability_registry()
+    return register_generated_programs(
+        db, semantics, tuple(records), capability_registry=registry,
+        capability_profile=profile, promote_exact_runtime_handlers=True,
+        promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+        promote_exact_capability_declarations=True,
+    )
+
+
 @contextmanager
 def without_direct_resolution_compiler(name: str):
     """Remove a live leaf route, not an alias captured before patching."""

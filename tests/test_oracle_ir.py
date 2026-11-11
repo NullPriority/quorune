@@ -1667,7 +1667,7 @@ class OracleIRTests(unittest.TestCase):
             for program in registry.programs_for_oracle(furnace.oracle_id)
             if program.handlers
         ]
-        self.assertEqual(1, len(existing_handlers))
+        self.assertEqual([], existing_handlers)
         generation = register_generated_programs(
             self.db,
             registry,
@@ -1677,9 +1677,9 @@ class OracleIRTests(unittest.TestCase):
             capability_profile="commander_review",
             promote_exact_runtime_handlers=True,
         )
-        self.assertEqual(0, generation["programs_generated"])
-        self.assertEqual(1, generation["programs_skipped_existing"])
-        self.assertEqual(0, generation["runtime_handlers_promoted"])
+        self.assertEqual(1, generation["programs_generated"])
+        self.assertEqual(0, generation["programs_skipped_existing"])
+        self.assertEqual(1, generation["runtime_handlers_promoted"])
         self.assertEqual(
             1,
             len(
@@ -1692,6 +1692,14 @@ class OracleIRTests(unittest.TestCase):
                 ]
             ),
         )
+        repeated = register_generated_programs(
+            self.db, registry, (furnace,), trust_level="provisional",
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review", promote_exact_runtime_handlers=True,
+        )
+        self.assertEqual(0, repeated["programs_generated"])
+        self.assertEqual(1, repeated["programs_skipped_existing"])
+        self.assertEqual(0, repeated["runtime_handlers_promoted"])
 
     def test_trusted_dependency_set_promotes_only_the_matching_template(self):
         bolt = compile_oracle_card(

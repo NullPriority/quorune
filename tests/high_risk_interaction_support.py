@@ -285,15 +285,14 @@ _WITNESSES = {
         "{4}",
         ("Equip",),
     ),
-    "junk-jet": _Witness(
-        "Junk Jet",
+    "equip-open-ability-duration-boundary": _Witness(
+        "Generic Equip Unrepresented Ability Duration Boundary Fixture",
         "Artifact — Equipment",
-        "When this Equipment enters, create a Junk token.\n"
-        "{3}, Sacrifice another artifact: Double equipped creature's power "
+        "{3}, Sacrifice another artifact: Equipped creature gains all activated abilities of target creature "
         "until end of turn.\n"
         "Equip {1}",
         "{1}{R}",
-        ("Equip", "Double"),
+        ("Equip",),
     ),
     "soratami-cloud-chariot": _Witness(
         "Soratami Cloud Chariot",
@@ -1562,7 +1561,7 @@ _bind(
 )
 _bind("starforged-sword", ATTACHMENT_AND_CONTINUOUS_PAIRS[6])
 _bind("stoneforge-masterwork", ATTACHMENT_AND_CONTINUOUS_PAIRS[7])
-_bind("junk-jet", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
+_bind("equip-open-ability-duration-boundary", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
 _bind(
     "restricted-equip-continuous-boundary",
     *FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS,

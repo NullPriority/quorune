@@ -78,7 +78,7 @@ class CompositeQuotedGrantCompilerTests(unittest.TestCase):
     def test_pure_attached_provider_retirement_checks_complete_child_behavior(self):
         from common import DB_PATH
         from quorune.oracle_ir import generated_programs, register_generated_programs
-        from quorune.semantics import SemanticRegistry
+        from quorune.semantics import SemanticProgram, SemanticRegistry
         from quorune.card_programs.attached_grant_equivalence import shadowed_reviewed_attached_grant_keys
 
         database = CardDatabase(DB_PATH)
@@ -86,6 +86,11 @@ class CompositeQuotedGrantCompilerTests(unittest.TestCase):
             record = database.lookup('Thornbite Staff')
             capabilities = load_default_capability_registry()
             registry = SemanticRegistry()
+            # Keep the historical transport explicit after its builtin views
+            # retire; current registry contents do not define compatibility.
+            historical = json.loads((ROOT / 'tests/fixtures/historical-thornbite-provider-views.json').read_text(encoding='utf-8'))
+            for row in historical['programs']:
+                registry.put(SemanticProgram.from_dict(row))
             reviewed = tuple(registry.programs_for_oracle(record.oracle_id))
             old_parent, = [program for program in reviewed if any(
                 handler.get('handler_id') == 'continuous.attached.fixed-characteristics.v1'
@@ -107,6 +112,8 @@ class CompositeQuotedGrantCompilerTests(unittest.TestCase):
                 if program.key == old_parent.key else program for program in reviewed)
             self.assertFalse(shadowed_reviewed_attached_grant_keys(record, candidates, drift))
             partial_registry = SemanticRegistry()
+            for program in reviewed:
+                partial_registry.put(SemanticProgram.from_dict(program.to_dict()))
             register_generated_programs(database, partial_registry, (record,), capability_registry=capabilities,
                 capability_profile='commander_review', promote_exact_runtime_handlers=True)
             self.assertIsNotNone(partial_registry.get(old_parent.key))

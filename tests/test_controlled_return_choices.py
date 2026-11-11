@@ -63,10 +63,15 @@ class ControlledReturnCompilerTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 witness()
 
-        for unsupported in (
+        for promoted in (
             UPKEEP.replace("return a", "you may return a"),
             UPKEEP.replace("return a green creature", "return another green creature"),
             UPKEEP.replace("return a green creature", "return up to two green creatures"),
+        ):
+            with self.subTest(promoted=promoted):
+                ir = compile_oracle_card(record(promoted, "Creature"), capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+        for unsupported in (
             UPKEEP.replace("you control", "an opponent controls"),
             UPKEEP + " Rewrite history.",
         ):

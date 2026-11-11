@@ -494,7 +494,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                     self.assertEqual(2,ability.target_schema['up_to'])
                     self.assertEqual(6,ability.effects[0]['schema_version'])
                     self.assertEqual('$targets',ability.effects[0]['cards'])
-                    self.assertEqual(ability.effects[0]['power']['binding_id'],ability.effects[0]['toughness']['binding_id'])
+                    self.assertEqual(ability.effects[0]['power'],ability.effects[0]['toughness'])
                 elif count==1:self.assertEqual(1,ability.target_schema['count'])
                 else:self.assertIsNone(ability.target_schema)
 
