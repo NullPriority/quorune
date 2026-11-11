@@ -246,30 +246,6 @@
       }
     },
     {
-      "key": "e9b6a394-691c-425a-9307-76d8edc7375e:ability:ab2",
-      "label": "Otawara, Soaring City — Channel",
-      "oracle_id": "e9b6a394-691c-425a-9307-76d8edc7375e",
-      "ability_id": "ability:ab2",
-      "active_zone": "hand",
-      "event": "activate",
-      "effects": [{"op": "bounce", "card": "$target.0"}],
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["artifact", "creature", "enchantment", "planeswalker"],
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["activated_ability", "target_validation", "bounce", "legend_discount"],
-      "tests": ["test_otawara_target_filter"],
-      "provenance": {
-        "source_oracle_hash": "f607b7add939569c1d04a6f463c497157d9fca13d7702d873c93029109f632cf",
-        "source_rulings_hash": "29f01855b0b9b48aa09dd85a343c5517e4e72dd93ace516b3c9ea2314f9c25e4",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a:spell:front",
       "label": "Abrade",
       "oracle_id": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a",

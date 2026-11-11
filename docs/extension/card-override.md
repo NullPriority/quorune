@@ -18,7 +18,9 @@ An override is a CardProgram V2 producer, not a parallel runtime format. It
 must emit the same typed ability fields and exact fingerprints as generated or
 reviewed pack input. Game Records store their own semantic registry, retaining
 the reviewed descriptors after a redundant live program is retired. Replay
-continues to verify the record's declared runtime provenance. `simctl card overrides` lists only programs with explicit
+continues to verify the record's declared runtime provenance. The source-derived
+activation catalog carries its printed zone, target restrictions, costs and
+current activation conditions. `simctl card overrides` lists only programs with explicit
 override metadata; ordinary reviewed semantic packs are not silently relabeled
 as typed overrides.
 

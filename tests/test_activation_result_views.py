@@ -57,6 +57,96 @@ class ActivationResultViewTests(unittest.TestCase):
         cls.db.close()
         cls.temp.cleanup()
 
+    def test_promoted_targeted_land_catalogs_pay_before_their_result(self):
+        cases = (
+            ("Minamo, School at Water's Edge", {"U": 1}, "untap"),
+            ("Academy Ruins", {"C": 1, "U": 1}, "library"),
+            ("Buried Ruin", {"C": 2}, "hand"),
+            ("Otawara, Soaring City", {"C": 2, "U": 1}, "channel"),
+        )
+        for index, (name, mana, result_kind) in enumerate(cases):
+            with self.subTest(card=name):
+                session = self.session(602_400_962 + index)
+                engine = session.engine
+                source = self.add(engine, name, zone="hand" if result_kind == "channel" else "battlefield")
+                if result_kind in ("library", "hand"):
+                    target = self.add(engine, "Sol Ring", zone="graveyard", ref="catalog-owned-grave-target")
+                    wrong = self.add(engine, "Sol Ring", seat="B", zone="graveyard", ref="catalog-other-grave-target")
+                elif result_kind == "untap":
+                    target = self.add(engine, "Isamaru, Hound of Konda", seat="B", ref="catalog-legend-target")
+                    engine.change_control(target.object_id, "C")
+                    target.tapped = True
+                    wrong = self.add(engine, "Generic Bound Body", seat="C", ref="catalog-nonlegend-target")
+                else:
+                    target = self.add(engine, "Generic Bound Body", seat="B", ref="catalog-return-target")
+                    engine.change_control(target.object_id, "C")
+                    wrong = self.add(engine, "Generic Bound Plains", seat="C", ref="catalog-land-target")
+                    self.add(engine, "Isamaru, Hound of Konda", ref="catalog-discount-legend")
+                self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+                self.prepare(session, mana=mana)
+                self.checkpoint(session)
+                rows = self.actions(session)
+                offer, = (row for row in rows if row["id"] == f"activate:{source.ref}:ab2")
+                command = {"action_id": offer["id"], "targets": [wrong.ref], "pay": "auto"}
+                self.reject(session, command)
+                command["targets"] = [target.ref]
+                self.reject(session, command, seat="D")
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertTrue(session.state.stack)
+                for color in mana:
+                    self.assertEqual(0, session.state.players["A"].mana_pool.get(color, 0))
+                expected_source_zone = "graveyard" if result_kind in ("hand", "channel") else "battlefield"
+                self.assertEqual(expected_source_zone, session.state.cards[source.object_id].zone)
+                if result_kind == "untap":
+                    self.assertTrue(session.state.cards[target.object_id].tapped)
+                elif result_kind in ("hand", "library"):
+                    self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[target.object_id]
+                if result_kind == "untap":
+                    self.assertFalse(current.tapped)
+                    self.assertEqual(("B", "C"), (current.owner, current.controller))
+                elif result_kind == "library":
+                    self.assertEqual("library", current.zone)
+                    self.assertEqual(target.object_id, session.state.players["A"].zones["library"][-1])
+                elif result_kind == "hand":
+                    self.assertIn(target.object_id, session.state.players["A"].zones["hand"])
+                else:
+                    self.assertIn(target.object_id, session.state.players["B"].zones["hand"])
+                    self.assertNotIn(target.object_id, session.state.players["A"].zones["hand"])
+                self.replay(session)
+
+    def test_promoted_triome_cycling_discards_before_private_draw(self):
+        for index, name in enumerate(("Xander's Lounge", "Zagoth Triome")):
+            with self.subTest(card=name):
+                session = self.session(702_290_962 + index)
+                source = self.add(session.engine, name, zone="hand")
+                self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+                self.prepare(session, mana={"C": 3})
+                self.checkpoint(session)
+                before = set(session.state.players["A"].zones["hand"])
+                offer, = (row for row in self.actions(session) if row["id"].startswith("activate:" + source.ref + ":"))
+                command = {"action_id": offer["id"], "pay": "auto"}
+                self.reject(session, command, seat="B")
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                self.assertEqual(before - {source.object_id}, set(session.state.players["A"].zones["hand"]))
+                self.assertTrue(session.state.stack)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                drawn = set(session.state.players["A"].zones["hand"]) - (before - {source.object_id})
+                self.assertEqual(1, len(drawn))
+                card = session.state.cards[next(iter(drawn))]
+                for observer in "BCD":
+                    self.assertNotIn(card.ref, json.dumps(session.packet("pilot:" + observer, full=True)))
+                self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+                self.assertFalse(any(row["id"].startswith("activate:" + source.ref + ":") for row in self.actions(session)))
+                self.reject(session, command)
+                self.replay(session)
+
     def test_four_originals_bind_complete_results_and_preserve_all_prices(self):
         from quorune.card_programs.activation_view_equivalence import shadowed_reviewed_activation_view_keys as shadow
         counts = dict(zip(NAMES, (1, 1, 1, 2)))
