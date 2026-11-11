@@ -403,6 +403,14 @@ transition parser rather than a separate permissive metadata check. The workflow
 is not subscribed to `ready_for_review`, so moving an unchanged draft into review does
 not restart cloud generation.
 
+Before any census, the cloud and local pre-corpus paths compare the workflow's
+owner producers with the generated-artifact manifest. Every reusable owner has
+one producer, and every generated dependency completes before its consumer.
+Independent foundations run in parallel; dependent source components wait for
+their foundations and complete before the corpus job. The same check derives
+the workflow's maximum parallel runner demand and enforces its checked budget.
+The final bundle still requires each exact-source owner receipt and output hash.
+
 Each reusable owner is keyed by its Git-clean implementation and direct-source
 closure, dependency-output fingerprints, canonical manifest row, and governed
 pinned-database identity where applicable. The key deliberately excludes the

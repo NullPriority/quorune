@@ -1885,6 +1885,24 @@
         "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_direct_player_attack_target_body_is_accepted_by_corpus_assurance"
       ],
       "resolution": "Add the carrier to the existing canonical trigger catalogue, reconstruct its complete printed event and condition during assurance, retain target/effect and capability checks, and run the regression before any census when binding, catalogue or assurance inputs change."
+    },
+    {
+      "id": "ci-20261111-pr561-cloud-dependent-owner",
+      "run_id": 43058582745,
+      "head_sha": "49d2346aa36c947fa78209dd726039e2ce1e27c1",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "summary": "The manifest registered a reusable dungeon-room-programs owner depending on capability-evidence, but the cloud workflow omitted its producer. Every scheduled generation owner succeeded; strict final assembly rejected the missing dungeon receipt and no complete bundle was published.",
+      "failed_surfaces": [
+        "Generated cloud / Verify and bundle"
+      ],
+      "regressions": [
+        "test_ci_pipeline.CiPipelineTests.test_cloud_workflow_produces_every_reusable_owner_in_dependency_order",
+        "test_ci_pipeline.CiPipelineTests.test_cloud_workflow_rejects_missing_duplicate_and_unordered_owner_producers",
+        "test_ci_pipeline.CiPipelineTests.test_cloud_owner_schedule_guard_precedes_the_expensive_work"
+      ],
+      "resolution": "Schedule the dependent foundation after capability evidence and before corpus generation with the existing content-keyed cache and artifact path. Validate workflow producer completeness and dependency ordering against the canonical manifest, and enforce the unchanged cloud runner budget before any census. Preserve strict final owner-receipt and output-hash checks."
     }
   ],
   "recent_pull_requests": [

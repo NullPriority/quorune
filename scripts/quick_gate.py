@@ -106,6 +106,10 @@ def build_plan(
                     (python, "-c", "from scripts.update_card_unlock_frontier import _contracts; _contracts()"),
                 ),
                 QuickStep(
+                    "cloud-owner-schedule",
+                    (python, "scripts/validate_cloud_generation.py", "--check"),
+                ),
+                QuickStep(
                     "generated-owner-plan",
                     (
                         python,

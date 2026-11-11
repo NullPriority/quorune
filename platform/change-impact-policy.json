@@ -13881,6 +13881,21 @@
         "test_ci_pipeline",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "cloud-generated-owner-schedule-completeness",
+      "patterns": [
+        ".github/workflows/generated-artifacts.yml",
+        "platform/generated-artifacts.json",
+        "scripts/validate_cloud_generation.py",
+        "scripts/quick_gate.py",
+        "tests/test_ci_pipeline.py"
+      ],
+      "test_modules": [
+        "test_ci_pipeline",
+        "test_generated_artifacts",
+        "test_generated_owner_cache"
+      ]
     }
   ],
   "risk_rules": [
