@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "14ef5f7a47af49a7501b5239b655dd8b3a5df7ef2c03079999aeaa67cf5dd0d4"
+verified: "3bcf6b010f54a476118a1cb97c2067835cf2b165ca32e3a83fc3dee862f61b18"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 111
-- Deterministic escapes: 102
+- Escapes: 112
+- Deterministic escapes: 103
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -140,6 +140,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261108-pr556-admission-recovery-policy` | [42427426053](https://github.com/NullPriority/quorune/actions/runs/42427426053) | `source_correctness` | `added` | Verify the declared recovery IDs against the exact pinned base and head in both gates. Require unchanged ability carriers and no additional card-state, residual or failure changes. Preserve conservative history and the five-hundred-card floor for feature delivery. A recovery row requires a fresh cohort frontier. |
 | `ci-20261109-pr557-legacy-cast-placement-fixtures` | [42576199462](https://github.com/NullPriority/quorune/actions/runs/42576199462) | `missing_affected_test` | `not_applicable` | Omit both markers from pre-placement fixtures. Verify the intermediate placement-only format and preserve rejection of a mixed checkpoint. The existing placement impact route selects the repaired module. |
 | `ci-20261109-pr557-cast-target-fact-witness` | [42576199462](https://github.com/NullPriority/quorune/actions/runs/42576199462) | `missing_affected_test` | `not_applicable` | Patch the reader used by the cast completion caller through a literal target covered by the patch-target guard. Assert that the reader was called and the expected Repartee trigger was absent. |
+| `ci-20261111-pr560-equivalent-empty-move-mutant` | [42972897604](https://github.com/NullPriority/quorune/actions/runs/42972897604) | `missing_affected_test` | `added` | Retain the exact mutation evidence identity. Prove an explicit empty move preserves the native zero-target draw, then reintroduce the invalid empty-snapshot requirement and require that the same native witness kills it. Add the homogeneous target-set consumer to the empty-zone impact route; preserve the nonempty snapshot invariant. |
 
 ## Measurement limitations
 

@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+The simultaneous zone-transition owner accepts a validated empty change set
+without constructing a replacement snapshot or publishing zone movements.
+Independent destruction damage clears still apply. Per-object replacement
+inputs without affected objects reject; nonempty snapshots retain their unique
+subject requirement.
+
 `declared_cost_reductions.py` defines a closed, immutable generic discount
 qualified by an announced source-local optional cost. Its cast component uses
 the existing registry and complete-card admission. The shared total-cost

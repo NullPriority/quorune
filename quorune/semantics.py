@@ -659,7 +659,10 @@ class SemanticRegistry:
             },
         }
         temporary = self.path.with_suffix(self.path.suffix + ".tmp")
-        temporary.write_text(stable_json(payload), encoding="utf-8")
+        # Mode maps carry printed order; fingerprint canonicalization is separate.
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8",
+        )
         temporary.replace(self.path)
 
     def get(self, key: str | None) -> SemanticProgram | None:

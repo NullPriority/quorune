@@ -811,6 +811,7 @@
       "test_departure_trigger_limits",
       "test_distinct_target_costs",
       "test_draw_transaction_commit",
+      "test_empty_zone_modal_records",
       "test_event_card_return",
       "test_exact_zimone_closure",
       "test_explore_compiler",

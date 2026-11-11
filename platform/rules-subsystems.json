@@ -8788,14 +8788,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v909-consolidated-rules-defect-repair",
-      "compiler_version": "oracle-ir-v909",
+      "transition_id": "oracle-ir-v910-empty-zone-and-ordered-modal-record-repair",
+      "compiler_version": "oracle-ir-v910",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Repair entry-return source identity and unavailable return choices, same-color mana selection, effective numeric attack facts, and player or planeswalker attack filters. Preserve existing card support and historical replay."
+      "non_harvest_reason": "Repair legal empty zone transactions and preserve printed modal declaration order in stored registries. Retain existing card support classifications and exact replay for valid records."
     },
     "forecast_corrections": [
       {

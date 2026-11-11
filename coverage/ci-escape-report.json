@@ -2027,6 +2027,23 @@
       "resolution": "Patch the reader used by the cast completion caller through a literal target covered by the patch-target guard. Assert that the reader was called and the expected Repartee trigger was absent.",
       "run_id": 42576199462,
       "summary": "The cast-target omission witness mocked the old reader name after it moved into the spell-cast event owner. The Windows shard failed before exercising the mutation, and Windows certification reported the failed shard dependency."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / impact-functional-07"
+      ],
+      "head_sha": "b5eede0e6ea941ff5a7c9b3790452d74d31a3b88",
+      "id": "ci-20261111-pr560-equivalent-empty-move-mutant",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_empty_move_intent_mutation_is_killed_by_fresh_native_zero_target_draw",
+        "test_empty_zone_modal_records.EmptyZoneModalRecordTests.test_empty_zone_batch_keeps_damage_clear_and_rejects_invalid_metadata"
+      ],
+      "resolution": "Retain the exact mutation evidence identity. Prove an explicit empty move preserves the native zero-target draw, then reintroduce the invalid empty-snapshot requirement and require that the same native witness kills it. Add the homogeneous target-set consumer to the empty-zone impact route; preserve the nonempty snapshot invariant.",
+      "run_id": 42972897604,
+      "summary": "The legal empty-zone transaction repair made an old lowering mutant behaviorally equivalent: an explicit empty move no longer constructs a nonempty replacement snapshot, so the independent draw correctly continued. The mutation consumer had not been included in the new focused route."
     }
   ],
   "known_flaky_tests": [],
@@ -2087,7 +2104,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "14ef5f7a47af49a7501b5239b655dd8b3a5df7ef2c03079999aeaa67cf5dd0d4",
+  "source_fingerprint": "3bcf6b010f54a476118a1cb97c2067835cf2b165ca32e3a83fc3dee862f61b18",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -2097,13 +2114,13 @@
       "flaky_test": 10,
       "generated_artifact_drift": 10,
       "infrastructure": 1,
-      "missing_affected_test": 49,
+      "missing_affected_test": 50,
       "source_correctness": 32,
       "windows_compatibility": 4
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 102,
-    "escape_count": 111,
+    "deterministic_escape_count": 103,
+    "escape_count": 112,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

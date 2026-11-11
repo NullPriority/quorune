@@ -1852,6 +1852,23 @@
         "test_capability_implementation_mutations.PatchTargetIntegrityTests.test_literal_patch_targets_resolve_before_mutation_execution"
       ],
       "resolution": "Patch the reader used by the cast completion caller through a literal target covered by the patch-target guard. Assert that the reader was called and the expected Repartee trigger was absent."
+    },
+    {
+      "id": "ci-20261111-pr560-equivalent-empty-move-mutant",
+      "run_id": 42972897604,
+      "head_sha": "b5eede0e6ea941ff5a7c9b3790452d74d31a3b88",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "summary": "The legal empty-zone transaction repair made an old lowering mutant behaviorally equivalent: an explicit empty move no longer constructs a nonempty replacement snapshot, so the independent draw correctly continued. The mutation consumer had not been included in the new focused route.",
+      "failed_surfaces": [
+        "PR / Python / impact-functional-07"
+      ],
+      "regressions": [
+        "test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_empty_move_intent_mutation_is_killed_by_fresh_native_zero_target_draw",
+        "test_empty_zone_modal_records.EmptyZoneModalRecordTests.test_empty_zone_batch_keeps_damage_clear_and_rejects_invalid_metadata"
+      ],
+      "resolution": "Retain the exact mutation evidence identity. Prove an explicit empty move preserves the native zero-target draw, then reintroduce the invalid empty-snapshot requirement and require that the same native witness kills it. Add the homogeneous target-set consumer to the empty-zone impact route; preserve the nonempty snapshot invariant."
     }
   ],
   "recent_pull_requests": [

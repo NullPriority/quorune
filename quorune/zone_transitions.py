@@ -1126,9 +1126,12 @@ class ZoneTransitionOwner:
         faces=dict(entry_faces or {})
         if type(publish_events) is not bool or set(faces)-{oid for oid,_ in changes}:raise GameRuleError('Simultaneous entry options changed')
         self._validate_simultaneous_controllers(changes,controllers,aura_targets)
-        changes,prepared,kinds,source_snapshot=self._prepare_simultaneous_zone_batch(changes,controllers,aura_targets,faces,
-            tapped=tapped,effect_entry_counters=effect_entry_counters,replacement_selections=replacement_selections,
-            kinds=kinds,prepared_replacements=prepared_replacements,log=log)
+        if not changes and (effect_entry_counters or prepared_replacements or replacement_selections):
+            raise GameRuleError('Empty zone transactions cannot carry per-object replacement inputs')
+        if changes:
+            changes,prepared,kinds,source_snapshot=self._prepare_simultaneous_zone_batch(changes,controllers,aura_targets,faces,
+                tapped=tapped,effect_entry_counters=effect_entry_counters,replacement_selections=replacement_selections,
+                kinds=kinds,prepared_replacements=prepared_replacements,log=log)
         if damage_clears:
             from .damage_results import clear_damage_for_permanents
 
