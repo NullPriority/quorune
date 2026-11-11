@@ -83,22 +83,23 @@ class CounterAdmissionRuntimeTests(unittest.TestCase):
                 session = self.session(974_000 + index)
                 source = self.add(session.engine, "Dead Reveler", zone="hand")
                 doubler = self.add(session.engine, "Doubling Season")
-                attacker = self.add(session.engine, "Generic Bound Body", seat="B")
+                self.add(session.engine, "Generic Bound Body", ref="unleash-legal-blocker")
+                attacker = self.add(session.engine, "Generic Bound Body", seat="B", ref="unleash-attacker")
                 self.ready(session, {"C": 5, "B": 1})
                 self.assertTrue(self.binding(session, doubler)["strict_capability_ready"])
                 self.cast(session, source)
-                self.assertEqual("replacement.order", self.settle(session).kind)
+                self.advance(session, lambda s: getattr(s.state.pending_decision, "kind", None) == "replacement.order")
                 session = self.replay(session, load=True)
                 options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
                 selected = next(row["id"] for row in options if row["id"].startswith("decline:") != apply_counter)
-                self.choose(session, choices={"replacement": selected})
+                self.choose(session, replacement=selected)
                 for _ in range(6):
                     decision = self.settle(session)
                     if decision is None:
                         break
                     self.assertEqual("replacement.order", decision.kind)
                     options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
-                    self.choose(session, choices={"replacement": options[0]["id"]})
+                    self.choose(session, replacement=options[0]["id"])
                 else:
                     self.fail("Entry replacement did not complete")
                 self.assertEqual(2 if apply_counter else 0,
@@ -130,14 +131,19 @@ class CounterAdmissionRuntimeTests(unittest.TestCase):
                 session = self.session(974_010 + index)
                 name = "Stand Together" if mode == "distinct" else "River Heralds' Boon"
                 source = self.add(session.engine, name, zone="hand")
-                own = self.add(session.engine, "Generic Bound Body" if mode == "distinct" else "Merfolk of the Pearl Trident")
-                other = self.add(session.engine, "Generic Bound Body", seat="B")
+                own = self.add(session.engine, "Generic Bound Body" if mode == "distinct" else "Merfolk of the Pearl Trident",
+                    ref="counter-own-" + mode)
+                other = self.add(session.engine, "Generic Bound Body", seat="B", ref="counter-other-" + mode)
                 self.add(session.engine, "Doubling Season")
                 self.ready(session, {"C": 5, "G": 2})
                 row = next(row for row in self.actions(session) if row.get("card") == source.ref)
                 if mode == "distinct":
-                    self.reject(session, {"action_id": row["id"], "targets": [own.ref, own.ref], "pay": "auto"})
-                targets = [own.ref, other.ref] if mode == "distinct" else [own.ref, own.ref] if mode == "reused" else [own.ref]
+                    self.reject(session, {"action_id": row["id"], "targets": [
+                        {"group": "target_0", "ref": own.ref}, {"group": "target_1", "ref": own.ref},
+                    ], "pay": "auto"})
+                targets = [{"group": "target_0", "ref": own.ref}]
+                if mode != "omitted":
+                    targets.append({"group": "target_1", "ref": other.ref if mode == "distinct" else own.ref})
                 self.cast(session, source, targets)
                 session = self.replay(session, load=True)
                 self.assertIsNone(self.settle(session))

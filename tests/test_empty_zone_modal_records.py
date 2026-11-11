@@ -139,7 +139,15 @@ class EmptyZoneModalRecordTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("semantic.target", self.settle(session).kind)
         session = self.replay(session, load=True)
-        command = {"action_id": "choose", "modes": ["untap"], "targets": [body.ref]}
+        command = {"action_id": "choose", "modes": ["mode_1"], "targets": [body.ref]}
+        self.reject(session, command, seat="D")
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.settle(session).kind)
+        for seat in "BCD":
+            self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+        session = self.replay(session, load=True)
+        command = {"action_id": "choose", "choice": "untap"}
         self.reject(session, command, seat="D")
         result = session.act("pilot:A", command)
         self.assertTrue(result.ok, result.summary)

@@ -390,17 +390,6 @@
       "rationale": "The exact five pinned originals and two explicitly constructed cost controls are iterated by fixture Oracle identity; both unsupported original result bodies remain residual.",
       "source": "tests/test_undaunted.py",
       "symbol": "UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies"
-    },
-    {
-      "card_names": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/counter-admission-regression-cards.json"
-      ],
-      "oracle_ids": [],
-      "rationale": "The curated Unleash and fixed counter-group cohort is iterated from its bounded pinned fixture to verify whole-card strict runtime binding.",
-      "source": "tests/test_counter_admission_regressions.py",
-      "symbol": "CounterAdmissionCompilerTests.test_original_cohort_has_normal_whole_card_runtime_binding"
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",

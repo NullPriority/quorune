@@ -13844,6 +13844,28 @@
         "test_counter_admission_regressions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "compiled-modal-record-consumer",
+      "patterns": [
+        "quorune/compiler/public_self_replacement_templates.py",
+        "quorune/resolution_conditions.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/semantic_packs/v080-exact-interactions.json",
+        "quorune/semantic_packs/v080-exact-triggers.json",
+        "quorune/semantic_packs/zimone-and-dina.json",
+        "quorune/semantic_packs/zzz-v080-exact-deck-closure.json",
+        "quorune/token_copy_recipes.py",
+        "quorune/token_copy_references.py",
+        "tests/fixtures/compiled-reviewed-trigger-cards.json",
+        "tests/test_compiled_reviewed_trigger_consumers.py",
+        "tests/test_empty_zone_modal_records.py"
+      ],
+      "test_modules": [
+        "test_empty_zone_modal_records",
+        "test_compiled_reviewed_trigger_consumers",
+        "test_game_record_v3"
+      ]
     }
   ],
   "risk_rules": [
