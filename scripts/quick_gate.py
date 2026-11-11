@@ -198,6 +198,16 @@ def build_plan(
                  "-p", "test_fixed_counter_event_triggers.py", "-k",
                  "test_public_action_event_suffixes_remain_fail_closed"),
             ))
+        if {'quorune/compiler/fixed_public_action_event_bindings.py',
+                'quorune/compiler/fixed_counter_trigger_nodes.py',
+                'quorune/compiler/target_effect_corpus_assurance.py',
+                'tests/test_fixed_counter_event_triggers.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "direct-player-target-corpus-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_counter_event_triggers.py", "-k",
+                 "test_direct_player_attack_target_body_is_accepted_by_corpus_assurance"),
+            ))
         if {'quorune/morph.py', 'scripts/work_selection_cohort_measurements.py'}.intersection(paths):
             steps.append(QuickStep(
                 "hybrid-face-down-probe-contract",

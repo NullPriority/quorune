@@ -520,6 +520,56 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         )
         TargetEffectCorpusCollector().observe(record, ir)
 
+    def test_direct_player_attack_target_body_is_accepted_by_corpus_assurance(self):
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectAssuranceError
+        from test_qualified_zone_event_queries import query_record
+
+        capabilities = load_default_capability_registry()
+        body = "target attacking creature gets -2/-0 until end of turn."
+        for prefix in (
+            "Whenever you attack a player, ",
+            "Whenever you attack the player who has the initiative, ",
+            "Whenever a player attacks you, ",
+            "Whenever an opponent attacks you with two or more creatures, ",
+        ):
+            with self.subTest(prefix=prefix):
+                record = replace(query_record(prefix + body), type_line="Creature — Scout")
+                ir = compile_oracle_card(record, capability_registry=capabilities, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertIn(node.template_id, FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS)
+                self.assertEqual("combat.player_attacked", node.event)
+                TargetEffectCorpusCollector().observe(record, ir)
+
+        mutants = (
+            {"event": "creature.attacks"},
+            {"event_condition": None},
+            {"active_zone": "graveyard"},
+            {"cost": {"mana": "{1}"}},
+            {"template_id": "fixed-typed-effect-controller-spell-cast-trigger-v1"},
+            {"event": "spell.cast", "template_id": "fixed-typed-effect-controller-spell-cast-trigger-v1"},
+            {"mechanics": tuple(value for value in node.mechanics if value != "fixed-typed-event-effect-trigger")},
+            {"capability_dependencies": tuple(value for value in node.capability_dependencies
+                if value != "trigger.event.direct_player_attack")},
+            {"capability_dependencies": tuple(value for value in node.capability_dependencies
+                if value != "trigger.placement.apnap")},
+            {"effects": ({**node.effects[0], "power": -3},)},
+            {"target_schema": {**node.target_schema, "count": 2}},
+        )
+        for changes in mutants:
+            with self.subTest(changes=changes):
+                altered = replace(ir, faces=(replace(ir.faces[0], nodes=(replace(node, **changes),)),))
+                with self.assertRaises(TargetEffectAssuranceError):
+                    TargetEffectCorpusCollector().observe(record, altered)
+
+        sibling = "Whenever a player attacks, if they aren't attacking you, that player chooses an attacking creature. It gets +2/+0 until end of turn."
+        record = replace(query_record("Whenever a player attacks you, " + body + "\n" + sibling),
+            type_line="Creature — Scout")
+        partial = compile_oracle_card(record, capability_registry=capabilities, capability_profile="commander_review")
+        self.assertEqual("partial", partial.status)
+        self.assertTrue(any(residual.text == sibling for residual in partial.material_residuals))
+        TargetEffectCorpusCollector().observe(record, partial)
+
     def test_tap_state_version_codec_and_record_provenance_are_explicit(self):
         from quorune.record_state_provenance import format_state_versions, validate_state_versions
         state = GameState(

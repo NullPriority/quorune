@@ -3753,6 +3753,10 @@ corpus includes the fixed source Exploit result as a composing carrier; its
 inner target effect retains the same independent grammar and shape checks.
 Transform event wrappers also reconstruct their printed event binding, including
 the paired entry or death event when present.
+Direct-player attack wrappers use the same canonical trigger-template catalogue
+as other binding consumers. Assurance checks their printed event, active zone,
+controller condition and trigger mechanics before accepting the inner target
+effect. The source gate exercises this carrier before a compiler census.
 For paired Overload and Cleave sources, the audit reconstructs each resolution
 body from the retained printed source and checks the fixed price, program role,
 body fingerprint, and alternative-cost capability before the ordinary target

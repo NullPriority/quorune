@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v16"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v17"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -528,6 +528,7 @@ def grammar_source_fingerprint() -> str:
         activation_x_symbols,
         _required_capabilities,
         _composing_event_capabilities,
+        _direct_player_attack_composition_capabilities,
         _transform_composition_capabilities,
         _exert_composition_capabilities,
         exert_attack_nodes,
@@ -537,6 +538,7 @@ def grammar_source_fingerprint() -> str:
         "keywords": sorted(FIXED_TARGET_CHARACTERISTIC_KEYWORDS),
         "amount_mechanic_capabilities": AMOUNT_MECHANIC_CAPABILITIES,
         "distinct_clause_target_coverage": DISTINCT_CLAUSE_TARGET_COVERAGE,
+        "composing_templates": sorted(COMPOSING_TEMPLATE_IDS),
         "transform_composing_templates": sorted(TRANSFORM_COMPOSING_TEMPLATE_IDS),
         "sources": [inspect.getsource(value) for value in values],
     }
@@ -847,8 +849,39 @@ def _transform_composition_capabilities(node: OracleNode, *, source_name: str) -
         *(cap for owner in mechanics for cap in MECHANIC_CAPABILITY_DEPENDENCIES.get(owner, ()))}))
 
 
+def _direct_player_attack_composition_capabilities(node: OracleNode, *, source_name: str) -> tuple[str, ...]:
+    from .fixed_counter_trigger_nodes import (
+        FIXED_COUNTER_EVENT_TRIGGER_MECHANIC, FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC,
+        fixed_counter_trigger_binding,
+    )
+    from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
+    from ..rules.capabilities import MECHANIC_CAPABILITY_DEPENDENCIES
+
+    binding = fixed_counter_trigger_binding(_without_parenthetical_reminder(node.text), card_name=source_name)
+    if (binding is None or node.kind not in {"triggered_ability", GRANTED_TRIGGERED_ABILITY_KIND}
+            or node.event != DIRECT_PLAYER_ATTACK_EVENT or node.event != binding.event.value
+            or node.active_zone != binding.active_zone or node.cost is not None
+            or node.template_id not in {binding.template_id, binding.typed_effect_template_id}
+            or stable_json(node.event_condition) != stable_json(binding.event_condition)):
+        raise TargetEffectAssuranceError("Composed direct-player target effect lost its printed event binding")
+    mechanic = (FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC
+                if node.template_id == binding.typed_effect_template_id else FIXED_COUNTER_EVENT_TRIGGER_MECHANIC)
+    mechanics = ("cr-603-handling-triggered-abilities", mechanic, *binding.event_mechanics)
+    if not set(mechanics).issubset(node.mechanics):
+        raise TargetEffectAssuranceError("Composed direct-player target effect lost its trigger mechanics")
+    return tuple(sorted({*binding.explicit_capabilities, "trigger.placement.apnap",
+        *(cap for owner in mechanics for cap in MECHANIC_CAPABILITY_DEPENDENCIES.get(owner, ()))}))
+
+
 def _composing_event_capabilities(node: OracleNode, *, record, face_id, face_index, face_name) -> tuple[str, ...]:
     """Known wrappers must preserve their complete printed event binding."""
+    from .fixed_public_action_event_bindings import direct_player_attack_binding_spec
+
+    direct_player = node.template_id in {"fixed-counter-direct-player-attack-v1", "fixed-typed-effect-direct-player-attack-v1"}
+    if not direct_player and node.kind in {"triggered_ability", GRANTED_TRIGGERED_ABILITY_KIND}:
+        direct_player = direct_player_attack_binding_spec(_without_parenthetical_reminder(node.text)) is not None
+    if direct_player:
+        return _direct_player_attack_composition_capabilities(node, source_name=face_name or record.name)
     if node.template_id in TRANSFORM_COMPOSING_TEMPLATE_IDS:
         return _transform_composition_capabilities(node, source_name=face_name or record.name)
     if node.template_id=='linked-attack-exert-result-v1':

@@ -13866,6 +13866,21 @@
         "test_compiled_reviewed_trigger_consumers",
         "test_game_record_v3"
       ]
+    },
+    {
+      "id": "direct-player-target-assurance-carrier",
+      "patterns": [
+        "quorune/compiler/fixed_public_action_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/target_effect_corpus_assurance.py",
+        "scripts/quick_gate.py"
+      ],
+      "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_dungeon_progress",
+        "test_ci_pipeline",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

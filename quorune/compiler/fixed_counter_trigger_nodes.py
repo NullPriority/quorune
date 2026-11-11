@@ -79,6 +79,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-spell-cast-trigger-v1",
         "fixed-counter-spell-cast-characteristic-trigger-v1",
         "fixed-counter-source-attacks-trigger-v1",
+        "fixed-counter-direct-player-attack-v1",
         "fixed-counter-controller-life-gain-trigger-v1",
         "fixed-counter-controller-card-draw-trigger-v1",
         "fixed-counter-controller-second-draw-trigger-v1",
