@@ -210,6 +210,102 @@ class AbilitySourceCounterRuntimeTests(unittest.TestCase):
         self.reject(s,command,seat='D')
         result=s.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
 
+    def _cast_checked_face(self, session, card, face=None, *, seat="A", targets=()):
+        self.priority(session, seat)
+        rows = [row for row in self.actions(session, seat) if row.get("card") == card.ref
+                and (row.get("face") == face if face is not None else row["id"] == "cast:" + card.ref)]
+        self.assertTrue(rows, self.actions(session, seat))
+        row = rows[0]
+        self.assertTrue(self.binding(session, card)["strict_capability_ready"])
+        command = {"action_id": row["id"], "targets": list(targets), "pay": "auto"}
+        if face is not None:
+            command["face"] = face
+        if row.get("cost_options"):
+            command["cost_option"] = row["cost_options"][0]["id"]
+        self.reject(session, command, seat="D" if seat != "D" else "C")
+        result = session.act("pilot:" + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_token_adventure_creates_printed_tokens_then_casts_its_normal_face(self):
+        cases = (
+            ("Flaxen Intruder // Welcome Home", "Welcome Home", "Flaxen Intruder", 3, 2, 2, "G", False, None),
+            ("Altar of Bhaal // Bone Offering", "Bone Offering", "Altar of Bhaal", 1, 4, 1, "B", True, "menace"),
+        )
+        for index, (name, face, normal, count, power, toughness, color, tapped, keyword) in enumerate(cases):
+            with self.subTest(card=name):
+                session = self.session(715_111_600 + index)
+                source = self.add(session.engine, name, zone="hand")
+                self.prepare(session, mana={"C": 10, "G": 5, "B": 5})
+                self.checkpoint(session)
+                before = set(session.state.cards)
+                self._cast_checked_face(session, source, face)
+                self.assertIsNone(self.settle(session))
+                tokens = [card for oid, card in session.state.cards.items()
+                          if oid not in before and card.is_token and card.zone == "battlefield"]
+                self.assertEqual(count, len(tokens))
+                for token in tokens:
+                    self.assertEqual("A", token.controller)
+                    self.assertEqual(tapped, token.tapped)
+                    self.assertEqual(power, session.engine._numeric_stat(token.object_id, "power"))
+                    self.assertEqual(toughness, session.engine._numeric_stat(token.object_id, "toughness"))
+                    self.assertEqual({color}, set(session.engine._effective_card_data(token).get("colors", ())))
+                    if keyword is not None:
+                        self.assertIn(keyword, session.engine._combat_keywords(token))
+                self.assertEqual("exile", session.state.cards[source.object_id].zone)
+                session = self.resume(session)
+                self._cast_checked_face(session, session.state.cards[source.object_id], normal)
+                self.assertIsNone(self.settle(session))
+                self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_countered_token_adventure_creates_no_tokens_or_exile_permission(self):
+        session = self.session(715_111_602)
+        source = self.add(session.engine, "Flaxen Intruder // Welcome Home", zone="hand")
+        response = self.add(session.engine, "Counterspell", seat="B", zone="hand")
+        self.prepare(session, mana={"C": 5, "G": 2})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        before = set(session.state.cards)
+        self._cast_checked_face(session, source, "Welcome Home")
+        original = session.state.stack[-1]
+        self._cast_checked_face(session, response, seat="B", targets=(original.ref,))
+        self.assertIsNone(self.settle(session))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertFalse(any(card.is_token and card.zone == "battlefield"
+                             for oid, card in session.state.cards.items() if oid not in before))
+        self.assertNotIn("adventure_cast_permission", session.state.cards[source.object_id].annotations)
+        self.replay(session, load=True)
+
+    def test_copied_token_adventure_uses_each_spell_controller_and_one_card_permission(self):
+        session = self.session(715_111_603)
+        source = self.add(session.engine, "Young Red Dragon // Bathe in Gold", zone="hand")
+        response = self.add(session.engine, "Twincast", seat="B", zone="hand")
+        self.prepare(session, mana={"C": 1, "R": 1})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        before = set(session.state.cards)
+        self._cast_checked_face(session, source, "Bathe in Gold")
+        original = session.state.stack[-1]
+        self._cast_checked_face(session, response, seat="B", targets=(original.ref,))
+        decision = self.settle(session)
+        if decision is not None:
+            self.assertEqual(("semantic.choice", ["B"]), (decision.kind, decision.actors))
+            command = {"action_id": "choose", "targets": []}
+            self.reject(session, command, seat="A")
+            result = session.act("pilot:B", command)
+            self.assertTrue(result.ok, result.summary)
+            self.assertIsNone(self.settle(session))
+        tokens = [card for oid, card in session.state.cards.items()
+                  if oid not in before and card.is_token and card.zone == "battlefield"]
+        self.assertEqual(["A", "B"], sorted(card.controller for card in tokens))
+        for token in tokens:
+            self.assertIn("treasure", type_parts(session.engine._effective_card_data(token)["type_line"])[1])
+        current = session.state.cards[source.object_id]
+        self.assertEqual("exile", current.zone)
+        self.assertEqual("A", current.annotations["adventure_cast_permission"]["player"])
+        self.assertEqual(1, sum("adventure_cast_permission" in card.annotations for card in session.state.cards.values()))
+        self.replay(session, load=True)
+
     def test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw(self):
         s,spell,private=self.fixture(113700300)
         source=self.add(s.engine,'Mind Stone',seat='B')

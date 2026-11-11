@@ -226,7 +226,8 @@ CardProgram residual; the physical card still has two faces.
 `compiler/adventure_faces.py` binds each Adventure alternative's existing
 source-spanned nodes to `casting.lifecycle.adventure`. Runtime requirements
 retain that intrinsic authority even if a program omits its explicit
-dependency. Ordinary whole-card admission still rejects unsupported bodies or
+dependency. Fixed token definitions compose with this lifecycle through their
+existing token capability and normal creation owner. Ordinary whole-card admission still rejects unsupported bodies or
 normal-face siblings. Current versioned casting offers the alternative using
 its own characteristics and price. The `adventure.py` owner carries its sealed
 face binding through ordinary resolution, substitutes exile for the resolving

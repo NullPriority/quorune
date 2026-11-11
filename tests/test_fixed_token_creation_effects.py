@@ -280,6 +280,52 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_adventure_token_shape_keeps_independent_intrinsic_authority(self):
+        from quorune.adventure import ADVENTURE_CAPABILITY, ADVENTURE_COVERAGE
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+        from quorune.semantics import SemanticProgram
+
+        template = fixed_token_creation_effect_template("Create three 2/2 green Bear creature tokens.")
+        self.assertIsNotNone(template)
+        effect = dict(template.effect)
+        mechanics = {*template.mechanics, ADVENTURE_COVERAGE}
+        required = fixed_token_creation_node_capabilities(
+            effects=(effect,), target_schema=None, mechanic_ids=mechanics,
+        )
+        self.assertIn("token.creation.fixed_definition", required)
+        for changed in ({**effect, "quantity": True}, {**effect, "unrepresented_result": True}):
+            self.assertFalse(fixed_token_creation_node_capabilities(
+                effects=(changed,), target_schema=None, mechanic_ids=mechanics,
+            ))
+        self.assertFalse(fixed_token_creation_node_capabilities(
+            effects=(effect,), target_schema=None,
+            mechanic_ids=mechanics | {"intrinsic_unowned_resolution_required"},
+        ))
+        dependencies = tuple(sorted({*required, ADVENTURE_CAPABILITY}))
+        program = SemanticProgram(
+            key="token-adventure:spell", oracle_id="00000000-0000-4000-8000-000000009611",
+            ability_id="spell:token-adventure", label="Token Adventure", event="resolve", active_zone="stack",
+            effects=[effect], coverage=sorted(mechanics), trust_level="trusted", requires_arbiter=False,
+            tests=["test_adventure_token_shape_keeps_independent_intrinsic_authority"],
+            provenance={"authored_by": "token-shape-witness", "review_status": "reviewed",
+                        "source_oracle_hash": "0" * 64, "source_rulings_hash": "1" * 64},
+            capability_dependencies=dependencies,
+            capability_closure=self.capabilities.closure(dependencies, profile="commander_review").to_dict(),
+        )
+        self.assertTrue(bind_semantic_program_runtime(
+            program, capability_registry=self.capabilities, profile="commander_review",
+        )["strict"])
+        for withdrawn in (ADVENTURE_CAPABILITY, "token.creation.fixed_definition"):
+            reduced = tuple(capability for capability in dependencies if capability != withdrawn)
+            missing = replace(
+                program, capability_dependencies=reduced,
+                capability_closure=self.capabilities.closure(reduced, profile="commander_review").to_dict(),
+            )
+            binding = bind_semantic_program_runtime(missing, capability_registry=self.capabilities, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertTrue(any(withdrawn in blocker for blocker in binding["blockers"]), binding["blockers"])
+
     def test_query_defined_token_stats_require_complete_intrinsic_definitions(self):
         from quorune.ability_fragments import canonical_ability_fragments
         from quorune.characteristic_fragments import QueryPowerToughnessDefinitionSpec

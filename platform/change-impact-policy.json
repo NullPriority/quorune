@@ -13598,6 +13598,19 @@
         "test_card_program_trust",
         "test_fixed_homogeneous_target_sets"
       ]
+    },
+    {
+      "id": "intrinsic-adventure-fixed-token-consumer",
+      "patterns": [
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/compiler/adventure_faces.py",
+        "tests/fixtures/ability-source-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_token_creation_effects",
+        "test_ability_source_counter_targets",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
