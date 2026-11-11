@@ -25,6 +25,7 @@ from .scalar_effect_amounts import scalar_amount_shape_context
 from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN
 from .optional_effect_templates import OPTIONAL_EFFECT_OPERATION
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY
+from ..scalar_effect_amount_model import ScalarAmountOrigin, scalar_amount_specs
 from ..scalar_effect_amount_model import (
     PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
     PAID_SACRIFICE_STAT_CAPABILITY, PAID_SACRIFICE_STAT_MECHANIC,
@@ -702,6 +703,12 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         or not required.issubset(program.capability_dependencies)
     ):
         return False
+    scalar_specs = scalar_amount_specs(program.effects)
+    target_mana_value_sequence = (
+        len(scalar_specs) == 1
+        and scalar_specs[0].origin is ScalarAmountOrigin.TARGET
+        and scalar_specs[0].characteristic == "mana_value"
+    )
     return any(
         bool(dependencies:=resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics))
         and set(dependencies).issubset(program.capability_dependencies)
@@ -722,7 +729,8 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_player_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
-              if {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
+              if target_mana_value_sequence or
+              {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
             *((fixed_controller_effect_sequence_node_capabilities,)
               if {MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC}
               .intersection(program.coverage) else ()),

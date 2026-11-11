@@ -22,8 +22,10 @@ continues to verify the record's declared runtime provenance. The source-derived
 activation catalog carries its printed zone, target restrictions, costs and
 current activation conditions. Source-derived spell programs retain their target,
 recipient and intrinsic-trigger capabilities. `simctl card overrides` lists only
-programs with explicit override metadata; ordinary reviewed semantic packs are not silently relabeled
-as typed overrides.
+programs with explicit override metadata; ordinary reviewed semantic packs are
+not silently relabeled as typed overrides. Alternative casting prices and
+intrinsic draw replacements keep their independent capabilities when the
+printed spell switches producers.
 
 ## Required evidence
 

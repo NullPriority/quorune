@@ -240,7 +240,7 @@ class HexproofTargetingIntegrationTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [opposing.ref],
                 "pay": "manual",
                 "payment": {"R": 1},
@@ -253,7 +253,7 @@ class HexproofTargetingIntegrationTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [controlled.ref],
                 "pay": "manual",
                 "payment": {"R": 1},
@@ -293,7 +293,7 @@ class HexproofTargetingIntegrationTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [target.ref],
                 "pay": "manual",
                 "payment": {"R": 1},

@@ -1275,7 +1275,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [source.ref],
                 "pay": "manual",
                 "payment": {"R": 1},

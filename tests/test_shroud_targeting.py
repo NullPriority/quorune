@@ -283,7 +283,7 @@ class ShroudTargetingIntegrationTests(unittest.TestCase):
                 "pilot:A",
                 {
                     "action_id": action["id"],
-                    "modes": ["destroy"],
+                    "modes": ["mode_2"],
                     "targets": [illegal_ref],
                     "pay": "manual",
                     "payment": {"R": 1},
@@ -296,7 +296,7 @@ class ShroudTargetingIntegrationTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [legal_target.ref],
                 "pay": "manual",
                 "payment": {"R": 1},
@@ -334,7 +334,7 @@ class ShroudTargetingIntegrationTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [target.ref],
                 "pay": "manual",
                 "payment": {"R": 1},

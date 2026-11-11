@@ -712,7 +712,7 @@ class KeywordCounterCompositionTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [opposing.ref],
                 "pay": "manual",
                 "payment": {"R": 1},
@@ -724,7 +724,7 @@ class KeywordCounterCompositionTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [later_protected.ref],
                 "pay": "manual",
                 "payment": {"R": 1},

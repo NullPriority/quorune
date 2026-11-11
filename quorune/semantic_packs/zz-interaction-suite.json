@@ -105,42 +105,6 @@
       }
     },
     {
-      "key": "bb329a5c-b9f9-4973-a53f-090024146325:spell:front",
-      "label": "Red Elemental Blast",
-      "oracle_id": "bb329a5c-b9f9-4973-a53f-090024146325",
-      "effects": [],
-      "destination": "graveyard",
-      "target_schema": {
-        "mode_count": 1,
-        "modes": {
-          "counter": {
-            "zones": ["stack"],
-            "categories": ["spell"],
-            "colors_any": ["U"],
-            "source_exclusion": true,
-            "count": 1,
-            "effects": [{"op": "counter_or_destroy_blue", "target": "$target.0"}]
-          },
-          "destroy": {
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
-            "colors_any": ["U"],
-            "count": 1,
-            "effects": [{"op": "counter_or_destroy_blue", "target": "$target.0"}]
-          }
-        }
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "mode_selection", "target_validation", "counter", "destroy"],
-      "tests": ["test_reb_mode_specific_blue_targets"],
-      "provenance": {
-        "source_oracle_hash": "baca93ae5aa10651b17803aed248264090f0ffbb80b899881b96c68abb294806",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "ecc435e2-deb1-420a-a79f-01dd08747314:spell:front",
       "label": "Pyroblast",
       "oracle_id": "ecc435e2-deb1-420a-a79f-01dd08747314",
@@ -177,41 +141,6 @@
       }
     },
     {
-      "key": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a:spell:front",
-      "label": "Abrade",
-      "oracle_id": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a",
-      "effects": [],
-      "destination": "graveyard",
-      "target_schema": {
-        "mode_count": 1,
-        "modes": {
-          "damage": {
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
-            "creature": true,
-            "count": 1,
-            "effects": [{"op": "damage", "target": "$target.0", "amount": 3}]
-          },
-          "destroy": {
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
-            "artifact": true,
-            "count": 1,
-            "effects": [{"op": "destroy", "card": "$target.0"}]
-          }
-        }
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "mode_selection", "target_validation", "damage", "destroy"],
-      "tests": ["test_abrade_mode_targets_and_resolution"],
-      "provenance": {
-        "source_oracle_hash": "ad1cf89df23f42a639a4bef3e6003cf7270eebc01cfb9742898df13429b01ec1",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8:spell:front",
       "label": "Chaos Warp",
       "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
@@ -231,32 +160,6 @@
       "provenance": {
         "source_oracle_hash": "d3cbf33eeb6f65ae0f1ad69eb19a1a987728e589673535a6162b8226b3b1d213",
         "source_rulings_hash": "458dd7284c71459b4b48fed47492e4e5c65dc248ef67419983f8017482359c06",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "5825997b-10d7-4a36-972c-a80ddd90b8ed:spell:front",
-      "label": "Feed the Swarm",
-      "oracle_id": "5825997b-10d7-4a36-972c-a80ddd90b8ed",
-      "effects": [
-        {"op": "destroy", "card": "$target.0"},
-        {"op": "lose_life", "player": "$controller", "amount": "$target.mana_value.0"}
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["creature", "enchantment"],
-        "controller": "opponent",
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "destroy", "life"],
-      "tests": ["test_feed_the_swarm_target_and_life_loss"],
-      "provenance": {
-        "source_oracle_hash": "0e9611cd2c4262c08d56bfe50d1cd7362f8587938c00004ae47fd954665c0516",
-        "source_rulings_hash": "3e4044ec9aa7810d53f96be2caab9893f85eb59d8442f123cbe6b0d8ccef04ae",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }
@@ -296,72 +199,6 @@
       "provenance": {
         "source_oracle_hash": "f3230d1df4aad5746295ea5c7029c4d0c426d7c76487a0c8a70d14c6ccaf8a82",
         "source_rulings_hash": "e9f7f0bc9c7b79f082adf8293b23aff0b535a576e09dd229338685b55f193170",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "5f627e45-deee-4a4f-8128-57b0d8ebc553:spell:front",
-      "label": "Force of Vigor",
-      "oracle_id": "5f627e45-deee-4a4f-8128-57b0d8ebc553",
-      "effects": [{"op": "destroy_selected", "cards": "$targets"}],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["artifact", "enchantment"],
-        "up_to": 2,
-        "distinct": true
-      },
-      "cost_schema": {
-        "alternate_costs": [
-          {
-            "id": "pitch",
-            "kind": "alternate_exile",
-            "label": "Exile another green card rather than pay mana",
-            "requirements": {},
-            "condition": {"not_your_turn": true},
-            "exile_from_hand": {
-              "colors_any": ["G"],
-              "exclude_source": true,
-              "count": 1
-            }
-          }
-        ]
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "destroy", "alternate_cost"],
-      "tests": ["test_force_of_vigor_zero_one_two_targets_and_pitch"],
-      "provenance": {
-        "source_oracle_hash": "5396ea0f8fdc0e374f947733be4dee32775590ab8313d3efa3cfb6f3480cbdbf",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "afaef788-34d1-460b-b884-9d7ae6ddeb18:spell:front",
-      "label": "Toxic Deluge",
-      "oracle_id": "afaef788-34d1-460b-b884-9d7ae6ddeb18",
-      "effects": [{
-        "op": "modify_all_matching_permanents_until_end_of_turn",
-        "required_type": "creature",
-        "amount": "$x",
-        "scale": -1,
-        "event_code": "effect.toxic_deluge"
-      }],
-      "destination": "graveyard",
-      "cost_schema": {
-        "additional_costs": [
-          {"id": "life_x", "kind": "life_x", "minimum": 0}
-        ]
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "life_cost", "continuous_effect", "state_based_actions"],
-      "tests": ["test_toxic_deluge_authoritative_x_life_cost"],
-      "provenance": {
-        "source_oracle_hash": "cd099260b7e7c5755a6bc1e829901385c0f97d081cae7ae862567352ec5c336a",
-        "source_rulings_hash": "b232f79b2d92ab565a6c79f7cefd13fc3db8ac7c62ce9fde0e06cdc0ada5d389",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }

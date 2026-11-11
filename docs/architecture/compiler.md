@@ -5210,6 +5210,11 @@ cannot share a cached value. Ordinary negative result amounts use zero before
 the printed result sign, while known zero and unavailable information remain
 different outcomes. Doubling/base-setting exceptions are outside this grammar.
 
+An ordered fixed-clause sequence can read one selected permanent's mana value
+in a later result. Native promotion validates the scalar, sequence shape,
+target and their independent capabilities. The scalar reference owner supplies
+current or departure information after earlier instructions.
+
 `compiler/target_hand_amount_templates.py` adds an explicit version-4 scalar
 origin for the current hand size of one directly selected player. The source
 and runtime shape owners require the complete one-player target schema and a
