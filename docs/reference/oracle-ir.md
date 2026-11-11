@@ -75,6 +75,9 @@ retain their original field set and serialization.
 Fixed damage can bind a source pronoun after a closed source-self tap, untap,
 entry, or departure event. The original source remains the damage source after
 departure. Attached and other event participants keep their separate identities.
+Vehicle self-attack heads retain the same source identity predicate as creature
+self-attack heads; the printed type label does not become an observer of other
+Vehicles attacking.
 
 Fixed sacrifice prices can supply the mana value of the paid permanent to a
 closed draw, life, counter placement, or single-color mana instruction. Scalar

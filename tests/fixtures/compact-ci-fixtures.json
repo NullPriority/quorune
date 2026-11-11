@@ -1017,6 +1017,7 @@
     "tests/fixtures/variable-library-count-cards.json",
     "tests/fixtures/variable-library-selection-cards.json",
     "tests/fixtures/variable-resolution-mana-cards.json",
+    "tests/fixtures/vehicle-self-attack-cards.json",
     "tests/fixtures/venture-dungeon-cards.json",
     "tests/fixtures/venture-followup-cards.json",
     "tests/fixtures/waterbend-cards.json",

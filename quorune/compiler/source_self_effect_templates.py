@@ -19,11 +19,16 @@ from .declared_effect_amounts import declared_effect_amount_template
 
 
 def bound_source_fixed_damage(binding, body):
+    from ..rules.event_player_result_shapes import _source_combat_player_scope
+
     events = {
         'source_public_tap_state_transition': {'permanent.tap', 'permanent.untap'},
         'source_enters_or_leaves_the_battlefield': {'permanent.enter', 'permanent.leave'},
     }
-    if binding.active_zone != 'battlefield' or binding.event.value not in events.get(binding.variant, ()):
+    source_attack = binding.event.value == 'creature.attacks' and _source_combat_player_scope(binding.event_condition)
+    if binding.active_zone != 'battlefield' or not (
+        source_attack or binding.event.value in events.get(binding.variant, ())
+    ):
         return None
     damage = source_pronoun_damage_effect_template(body)
     return damage.compiled() if damage is not None else None

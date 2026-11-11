@@ -218,7 +218,8 @@
       "test_targeted_tap_state_effect_clauses",
       "test_temporary_cast_restrictions",
       "test_turn_count_self_costs",
-      "test_unleash_rules"
+      "test_unleash_rules",
+      "test_vehicle_self_attack_binding"
     ],
     "core-domain": [
       "test_battlefield_rules",
@@ -870,6 +871,7 @@
       "test_turn_cast_grants",
       "test_typecycling",
       "test_typed_untap_step_participation",
+      "test_vehicle_self_attack_binding",
       "test_waterbend"
     ],
     "functional-05": [

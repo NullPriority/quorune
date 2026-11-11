@@ -13739,6 +13739,24 @@
         "test_declared_effect_amounts",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "vehicle-self-attack-binding",
+      "patterns": [
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "tests/test_vehicle_self_attack_binding.py",
+        "tests/fixtures/vehicle-self-attack-cards.json",
+        "quorune/rules/event_player_result_shapes.py"
+      ],
+      "test_modules": [
+        "test_vehicle_self_attack_binding",
+        "test_source_explore_composition",
+        "test_ordinary_crew",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_damage_source_lki",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
