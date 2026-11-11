@@ -89,13 +89,14 @@ class TypedTriggerParticipationOwnerTests(unittest.TestCase):
             ('If a Wizard you control entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.','entering_subtype','wizard'),
             ("Creatures entering or dying don't cause abilities to trigger.",'prevent_creature_enters_dies',None),
             ('As long as Generic Source is equipped, if a triggered ability of Generic Source or an Equipment attached to it triggers, that ability triggers an additional time.','equipped_source_or_attached_equipment',None),
+            ('Room abilities of dungeons you own trigger an additional time.','owned_dungeon_room',None),
         ):
             value=static_trigger_multiplier_handler(text,source_name='Generic Source')
             self.assertIsNotNone(value)
             fragment=ability_fragment_from_dict(value[1]['fragment']);self.assertEqual((rule,subtype),(fragment.rule,fragment.subtype))
         base='If a triggered ability of an Ally you control triggers, that ability triggers an additional time.'
         for text in (base+' Draw a card.',base.replace('an Ally','a Madeup'),base.replace('an additional time','two additional times'),
-                'Room abilities of dungeons you own trigger an additional time.'):
+                'Room abilities of dungeons your opponents own trigger an additional time.'):
             self.assertIsNone(static_trigger_multiplier_handler(text,source_name='Generic Source'))
 
     def test_event_time_sources_and_ability_removal_drive_participation_without_mutating_lki(self):

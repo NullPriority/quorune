@@ -699,6 +699,7 @@
       "test_restricted_mana_grants",
       "test_reveal_until_library_selection",
       "test_scheduled_event_pairs",
+      "test_semantic_event_interest",
       "test_static_attached_control",
       "test_static_characteristic_settings",
       "test_support_counter_placement",

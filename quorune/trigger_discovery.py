@@ -1411,6 +1411,18 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
     )
 
 
+def _source_may_observe_event(source, event, programs):
+    """Reject only sources with neither a subscription nor a shared keyword path."""
+    if (event == 'spell.cast' or source.annotations.get('evoked') is True
+            or source.annotations.get('fixed_blitz_designation') is not None):
+        return True
+    return any(
+        program.trust_level == 'unresolved' or program.event_condition is not None
+        or not isinstance(program.event, str) or program.event.removesuffix('.self') == event
+        for program in programs
+    )
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1431,6 +1443,8 @@ def dispatch_semantic_event(
     for source in candidates:
         active_zone, characteristics, programs = _event_programs_for_source(
             host,source,event,source_zones=source_zones,source_characteristics=source_characteristics)
+        if not _source_may_observe_event(source, event, programs):
+            continue
         from .rules.trigger_participation_runtime import typed_trigger_participations
         _extra,prevented=typed_trigger_participations(host,source=source,controller=source.controller,event=event,context=context,
             sources=participation_sources,source_characteristics=source_characteristics,

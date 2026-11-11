@@ -2030,6 +2030,13 @@ claim complete CR 601.2f or CR 601.2h payment ordering.
 
 ## Extension and event participation
 
+Trigger discovery gathers current source characteristics before applying its
+conservative event-interest gate. Unconditional sources with no subscription
+to the current event skip trigger-participation scans. Spell-cast events,
+conditional subscriptions, uncertain program metadata, and Evoke or Blitz
+designations retain the ordinary checks. The gate caches no game state and
+preserves the existing matching, prevention, quota and trigger-copy owners.
+
 Reusable mechanics belong in focused rules modules and typed semantic
 operations. The current tap-state owner commits only the represented single
 permanent and all-effective-creature operations; it preserves stun replacement
