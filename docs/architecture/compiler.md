@@ -3465,9 +3465,12 @@ literal card name and fixed mana-value predicates. Its version-two instruction
 supports one through ten hand results or one battlefield, graveyard or library
 top result. When the scalar production cannot close a quality, dispatch tries
 this complete counted production; a reveal reference cannot absorb and discard
-the numeric predicate. Optional searches retain an apply-or-decline choice:
-declining does not shuffle, while searching and finding nothing still follows
-the printed shuffle instruction.
+the numeric predicate. Optional searches give the searching player an
+apply-or-decline choice before opening the library. Declining preserves library
+order. A completed search follows the printed shuffle instruction even when it
+finds zero cards. Removal spells and abilities use the target's current or
+departure controller for that choice. In a mixed permanent target, a nonbasic
+land branch excludes the basic supertype from that branch alone.
 Dynamic or chosen quantities, different-name relations, other search zones or
 players, attachments, linked results and unrepresented compound tails remain
 residual. Search restrictions, replacements and search- or shuffle-trigger

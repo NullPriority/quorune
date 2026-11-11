@@ -21,7 +21,7 @@ from ..target_numeric import (
 )
 from .creature_subtypes import canonical_creature_subtype
 from ..target_forms import TargetCharacteristicForm, EVENT_PLAYER_TARGET_REFERENCES
-from .mixed_target_forms import canonicalize_mixed_direct_forms,mixed_permanent_target_fields
+from .mixed_target_forms import canonicalize_mixed_direct_forms, mixed_permanent_target_fields, mixed_target_form_slug
 
 
 CompiledDirectTarget = tuple[
@@ -739,7 +739,7 @@ class DirectPermanentTargetSpec:
         """Return the canonical characteristic-only predicate identity."""
 
         if self.characteristic_forms_any:
-            predicate='-or-'.join((form.types_all or form.subtypes_any)[0] for form in self.characteristic_forms_any)
+            predicate = "-or-".join(mixed_target_form_slug(form) for form in self.characteristic_forms_any)
         elif self.types_none == ("land",) and not (
             self.types_any or self.types_all
         ):

@@ -9842,6 +9842,7 @@
     {
       "id": "mixed-permanent-target-alternatives",
       "patterns": [
+        "quorune/target_forms.py",
         "quorune/compiler/direct_target.py",
         "quorune/compiler/mixed_target_forms.py",
         "tests/test_mixed_permanent_targets.py",
@@ -9849,6 +9850,7 @@
       ],
       "test_modules": [
         "test_mixed_permanent_targets",
+        "test_library_search_dispatch_native",
         "test_fixed_direct_target_predicates",
         "test_targeted_destruction_effect_clauses",
         "test_targeted_exile_effect_clauses",

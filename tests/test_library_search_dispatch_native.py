@@ -90,6 +90,79 @@ class LibrarySearchDispatchNativeTests(InheritedNativeFixture,unittest.TestCase)
         before=authoritative_state_hash(s.state);result=s.act('pilot:'+seat,command)
         self.assertFalse(result.ok,result.summary);self.assertEqual(before,authoritative_state_hash(s.state))
 
+    def test_migrated_removal_searches_preserve_decline_and_distinct_land_qualities(self):
+        cases = (
+            ("Assassin's Trophy", "Sol Ring", "decline"),
+            ("Assassin's Trophy", "Darksteel Citadel", "empty"),
+            ("Boseiju, Who Endures", "Darksteel Citadel", "select"),
+        )
+        for index, (name, target_name, outcome) in enumerate(cases):
+            with self.subTest(card=name, outcome=outcome):
+                session = self.session(701_230_958 + index)
+                engine = session.engine
+                source = self.add(engine, name, zone="hand")
+                target = self.add(engine, target_name, seat="B")
+                engine.change_control(target.object_id, "C")
+                wastes = self.add(engine, "Wastes", seat="C", zone="library", ref="removal-search-basic")
+                dual = self.add(engine, "Volcanic Island", seat="C", zone="library", ref="removal-search-dual")
+                channel = name.startswith("Boseiju")
+                if channel:
+                    basic_target = self.add(engine, "Mountain", seat="C", ref="ineligible-basic-permanent")
+                    self.add(engine, "Isamaru, Hound of Konda", ref="channel-legend")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"G": 1} if channel else {"B": 1, "G": 1})
+                self.checkpoint(session)
+                before_order = tuple(session.state.players["C"].zones["library"])
+                shuffle_counts = {seat: session.state.players[seat].stats.get("shuffle_count", 0) for seat in "ABCD"}
+                if channel:
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    offer, = (row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+                    activation = {"action_id": offer["id"], "targets": [basic_target.ref], "pay": "auto"}
+                    self.reject(session, "A", activation)
+                    activated = session.act("pilot:A", {**activation, "targets": [target.ref]})
+                    self.assertTrue(activated.ok, activated.summary)
+                    self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                else:
+                    self.cast_for(session, "A", source, [target.ref])
+                decision = self.resolve(session)
+                self.assertEqual(("semantic.choice", ["C"]), (decision.kind, decision.actors))
+                self.assertEqual("graveyard" if target_name == "Sol Ring" else "battlefield",
+                                 session.state.cards[target.object_id].zone)
+                choose = {"action_id": "choose", "choice": "decline" if outcome == "decline" else "apply"}
+                self.reject(session, "A", choose)
+                self.reject(session, "B", choose)
+                accepted = session.act("pilot:C", choose)
+                self.assertTrue(accepted.ok, accepted.summary)
+                if outcome == "decline":
+                    self.assertEqual(before_order, tuple(session.state.players["C"].zones["library"]))
+                else:
+                    self.assertEqual("semantic.search", session.state.pending_decision.kind)
+                    selected, rejected = (dual, wastes) if channel else (wastes, dual)
+                    schema = session.packet("pilot:C", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+                    self.assertIn(selected.ref, schema["legal_refs"])
+                    self.assertNotIn(rejected.ref, schema["legal_refs"])
+                    self.assertTrue(schema["rules_may_fail_to_find"])
+                    for observer in "ABD":
+                        visible = json.dumps(session.packet("pilot:" + observer, full=True))
+                        self.assertNotIn(wastes.ref, visible)
+                        self.assertNotIn(dual.ref, visible)
+                    self.reject(session, "C", {"action_id": "choose", "search_cards": [rejected.ref]})
+                    self.reject(session, "A", {"action_id": "choose", "search_cards": [selected.ref]})
+                    if outcome == "select":
+                        session = self.replay(session, load=True)
+                    found = session.act("pilot:C", {
+                        "action_id": "choose", "search_cards": [selected.ref] if outcome == "select" else [],
+                    })
+                    self.assertTrue(found.ok, found.summary)
+                    if outcome == "select":
+                        land = session.state.cards[selected.object_id]
+                        self.assertEqual(("battlefield", "C", False), (land.zone, land.controller, land.tapped))
+                self.assertIsNone(self.resolve(session))
+                for seat in "ABCD":
+                    expected = shuffle_counts[seat] + int(seat == "C" and outcome != "decline")
+                    self.assertEqual(expected, session.state.players[seat].stats.get("shuffle_count", 0))
+                self.replay(session, load=True)
+
     def test_original_removal_offers_only_its_affected_controller_the_optional_search(self):
         cases = (
             ("Path to Exile", "Generic Bound Body", "exile", "select"),

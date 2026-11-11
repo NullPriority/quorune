@@ -246,45 +246,6 @@
       }
     },
     {
-      "key": "bf1341dd-41a3-49f6-87ec-63170dde4324:ability:ab2",
-      "label": "Boseiju, Who Endures — Channel",
-      "oracle_id": "bf1341dd-41a3-49f6-87ec-63170dde4324",
-      "ability_id": "ability:ab2",
-      "active_zone": "hand",
-      "event": "activate",
-      "effects": [
-        {"op": "destroy", "card": "$target.0"},
-        {
-          "op": "search",
-          "searching_player": "$target.controller.0",
-          "zone": "library",
-          "selector": {"predicate": "land_with_basic_land_type"},
-          "count": {"minimum": 0, "maximum": 1},
-          "destination": "battlefield",
-          "reveal": true,
-          "shuffle_after": true,
-          "optional": true,
-          "instruction": "You may find a land card with a basic land type."
-        }
-      ],
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "controller": "opponent",
-        "predicate": "artifact_or_enchantment_or_nonbasic_land",
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["activated_ability", "target_validation", "destroy", "private_search", "legend_discount"],
-      "tests": ["test_boseiju_target_and_search"],
-      "provenance": {
-        "source_oracle_hash": "80e3f8726a6fcfee87b81d0ed8685deac80263a199a25c05ee3505e70e94196c",
-        "source_rulings_hash": "7f8a0e0608ac777ad766f78d5561f3f3eb3fbb8c52ec61383355ae9f28bf945f",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "e9b6a394-691c-425a-9307-76d8edc7375e:ability:ab2",
       "label": "Otawara, Soaring City — Channel",
       "oracle_id": "e9b6a394-691c-425a-9307-76d8edc7375e",
@@ -304,41 +265,6 @@
       "provenance": {
         "source_oracle_hash": "f607b7add939569c1d04a6f463c497157d9fca13d7702d873c93029109f632cf",
         "source_rulings_hash": "29f01855b0b9b48aa09dd85a343c5517e4e72dd93ace516b3c9ea2314f9c25e4",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "ac10d218-f9a6-4058-9cda-a15ca1b0b7b5:spell:front",
-      "label": "Assassin's Trophy",
-      "oracle_id": "ac10d218-f9a6-4058-9cda-a15ca1b0b7b5",
-      "effects": [
-        {"op": "destroy", "card": "$target.0"},
-        {
-          "op": "search",
-          "searching_player": "$target.controller.0",
-          "zone": "library",
-          "selector": {"types": ["land"], "supertypes": ["basic"]},
-          "count": {"minimum": 0, "maximum": 1},
-          "destination": "battlefield",
-          "reveal": true,
-          "shuffle_after": true,
-          "optional": true
-        }
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "controller": "opponent",
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "destroy", "private_search"],
-      "tests": ["test_assassins_trophy_target_and_basic_search"],
-      "provenance": {
-        "source_oracle_hash": "b1860dd781b00616fdfd3d45cdc3778b0b39000bfab2ef6b173c984a720afb90",
-        "source_rulings_hash": "47e35e4dbb86f086553d47277d75621644bfbc516d161c53602b75b13323f90b",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }

@@ -42,6 +42,26 @@ class MixedPermanentTargetModelTests(unittest.TestCase):
                     facts=TargetCharacteristicSnapshot.from_effective_data({'type_line':type_line})
                     self.assertEqual(type_line in allowed,facts.matches(group))
 
+    def test_nonbasic_exclusion_belongs_to_the_land_alternative(self):
+        subject = "target artifact, enchantment, or nonbasic land an opponent controls"
+        spec = direct_permanent_target_spec(subject)
+        self.assertIsNotNone(spec)
+        schema = spec.to_target_schema()
+        self.assertEqual("opponent", schema["controller_relation"])
+        self.assertEqual(spec, DirectPermanentTargetSpec.from_target_schema(schema))
+        land, = (form for form in schema["characteristic_forms_any"] if form["types_all"] == ["land"])
+        self.assertEqual(["basic"], land["supertypes_none"])
+        group = TargetGroup.from_mapping(schema)
+        for type_line, legal in (
+            ("Basic Land — Mountain", False), ("Basic Artifact Land — Mountain", True),
+            ("Land — Forest Island", True), ("Artifact", True), ("Enchantment", True), ("Creature", False),
+        ):
+            with self.subTest(type_line=type_line):
+                facts = TargetCharacteristicSnapshot.from_effective_data({"type_line": type_line})
+                self.assertEqual(legal, facts.matches(group))
+        with self.assertRaises(ValueError):
+            TargetCharacteristicForm.from_mapping({**land, "supertypes_none": ["legendary"]})
+
     def test_shared_scope_and_canonical_alternatives_do_not_change_branch_meaning(self):
         spec=direct_permanent_target_spec('another target creature or Vehicle you control')
         self.assertIsNotNone(spec)

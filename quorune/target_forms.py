@@ -31,14 +31,20 @@ class TargetCharacteristicForm:
     types_all: tuple[str, ...] = ()
     subtypes_any: tuple[str, ...] = ()
     supertypes_any: tuple[str, ...] = ()
+    supertypes_none: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        for field_name in ("types_all", "subtypes_any", "supertypes_any"):
+        for field_name in ("types_all", "subtypes_any", "supertypes_any", "supertypes_none"):
             object.__setattr__(
                 self,
                 field_name,
                 _values(getattr(self, field_name), field_name=field_name),
             )
+        if self.supertypes_none and (
+            self.supertypes_none != ("basic",) or self.types_all != ("land",)
+            or self.subtypes_any or self.supertypes_any
+        ):
+            raise ValueError("The excluded-supertype alternative must be a nonbasic land")
         if not (self.types_all or self.subtypes_any or self.supertypes_any):
             raise ValueError(
                 "Target characteristic forms must constrain a subject"
@@ -61,6 +67,7 @@ class TargetCharacteristicForm:
                 not self.supertypes_any
                 or set(self.supertypes_any).intersection(supertypes)
             )
+            and not set(self.supertypes_none).intersection(supertypes)
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -68,6 +75,7 @@ class TargetCharacteristicForm:
             "types_all": list(self.types_all),
             "subtypes_any": list(self.subtypes_any),
             "supertypes_any": list(self.supertypes_any),
+            **({"supertypes_none": list(self.supertypes_none)} if self.supertypes_none else {}),
         }
 
     @classmethod
@@ -76,10 +84,13 @@ class TargetCharacteristicForm:
         value: Mapping[str, Any],
     ) -> "TargetCharacteristicForm":
         expected = {"types_all", "subtypes_any", "supertypes_any"}
-        if not isinstance(value, Mapping) or set(value) != expected:
+        if not isinstance(value, Mapping) or set(value) not in (expected, expected | {"supertypes_none"}):
             raise ValueError(
                 "Target characteristic forms require exact typed fields"
             )
+        excluded = _values(value.get("supertypes_none", ()), field_name="supertypes_none")
+        if "supertypes_none" in value and not excluded:
+            raise ValueError("An excluded-supertype alternative must name the excluded supertype")
         return cls(
             types_all=_values(value["types_all"], field_name="types_all"),
             subtypes_any=_values(
@@ -88,6 +99,7 @@ class TargetCharacteristicForm:
             supertypes_any=_values(
                 value["supertypes_any"], field_name="supertypes_any"
             ),
+            supertypes_none=excluded,
         )
 
 
