@@ -1,0 +1,377 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Centaur Courser",
+      "oracle_id": "2f5bf099-2e01-4e1c-9ebf-0ce0ac66939e",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Centaur Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Fervor",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "oracle_text": "Creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Infernal Grasp",
+      "oracle_id": "94f0a572-e91c-4b56-a5d1-6cbbeabd210d",
+      "oracle_text": "Destroy target creature. You lose 2 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Battle Cry",
+        "Heroic"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Rosnakht, Heir of Rohgahh",
+      "oracle_id": "86f7d513-1f5f-4551-83e6-56d24da5ab39",
+      "oracle_text": "Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)\nHeroic \u2014 Whenever you cast a spell that targets Rosnakht, create a 0/1 red Kobold creature token named Kobolds of Kher Keep.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "1",
+      "type_line": "Legendary Creature \u2014 Kobold Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Training"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{W}",
+      "name": "Torens, Fist of the Angels",
+      "oracle_id": "2cb96408-9195-4e41-ad9a-f8c74fbad083",
+      "oracle_text": "Training (Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature.)\nWhenever you cast a creature spell, create a 1/1 green and white Human Soldier creature token with training.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Human Cleric"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Tuktuk the Explorer",
+      "oracle_id": "754e227b-ff31-4b5c-b612-2221c2b44246",
+      "oracle_text": "Haste\nWhen Tuktuk the Explorer dies, create Tuktuk the Returned, a legendary 5/5 colorless Goblin Golem artifact creature token.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": "1",
+      "type_line": "Legendary Creature \u2014 Goblin"
+    }
+  ],
+  "fixture_kind": "pinned_original_intrinsic_token_compositions",
+  "rulings": [
+    {
+      "comment": "If an attacking creature loses haste, perhaps because Fervor leaves the battlefield after attackers have been declared, it won't be removed from combat.",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature's training ability has triggered, destroying the other attacking creature or reducing its power won't stop the creature with training from getting a +1/+1 counter.",
+      "oracle_id": "2cb96408-9195-4e41-ad9a-f8c74fbad083",
+      "published_at": "2021-11-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature's training ability triggers only when both that creature and a creature with greater power are declared as attackers. Increasing a creature's power after attackers are declared won't cause a training ability to trigger.",
+      "oracle_id": "2cb96408-9195-4e41-ad9a-f8c74fbad083",
+      "published_at": "2021-11-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both Tuktuk the Explorer and Tuktuk the Returned are legendary creatures. However, since they have different names, one of each may coexist without being affected by the \u201clegend rule.\u201d",
+      "oracle_id": "754e227b-ff31-4b5c-b612-2221c2b44246",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rosnakht, Heir of Rohgahh's last ability goes on the stack above the spell that caused it to trigger and resolves first. It resolves even if that spell is countered or otherwise left the stack.",
+      "oracle_id": "86f7d513-1f5f-4551-83e6-56d24da5ab39",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "pinned local Commander Oracle snapshot"
+}

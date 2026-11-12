@@ -22,6 +22,7 @@ from ..ability_fragments import (
 )
 from ..adventure import ADVENTURE_COVERAGE
 from ..cast_face_offers import OMEN_COVERAGE
+from ..keyword_abilities import triggered_keyword_grant
 from ..compiler.token_templates import (
     FIXED_TOKEN_DEFINITION_BATCH_MECHANIC,
     fixed_token_creation_effect_template,
@@ -333,7 +334,7 @@ def _fixed_creature_effect_closure(
         return None
     name = effect.get("name")
     if not isinstance(name, str) or re.fullmatch(
-        r"[A-Z][A-Za-z']*(?:[ -][A-Z][A-Za-z']*)*", name
+        r"[A-Z][A-Za-z']*(?:[ -](?:[A-Z][A-Za-z']*|the|of|and|to|a|an|in|on|at|for))*", name
     ) is None:
         return None
     type_line = str(characteristics.get("type_line") or "")
@@ -348,7 +349,7 @@ def _fixed_creature_effect_closure(
         not isinstance(keywords, list)
         or any(
             not isinstance(keyword, str)
-            or (keyword not in _CREATURE_KEYWORDS and re.fullmatch(r"Toxic [1-9]\d*", keyword) is None)
+            or (keyword not in _CREATURE_KEYWORDS and re.fullmatch(r"Toxic [1-9]\d*", keyword) is None and triggered_keyword_grant(keyword) is None)
             for keyword in keywords
         )
         or len(keywords) != len(set(keywords))
@@ -357,7 +358,7 @@ def _fixed_creature_effect_closure(
     capabilities = {"token.creation.fixed_definition"}
     mechanics = {
         _TOKEN_MECHANIC,
-        *("toxic" if keyword.startswith("Toxic ") else keyword.casefold() for keyword in keywords),
+        *(keyword.split()[0].casefold() if keyword.startswith(("Toxic ","Bushido ")) else keyword.casefold() for keyword in keywords),
     }
     subtype_text = type_line.split(" — ", 1)[1]
     default_name = fixed_ordinary_token_name(subtype_text) if name_version is not None else subtype_text
@@ -378,8 +379,8 @@ def _fixed_creature_effect_closure(
         capabilities.update(query_defined_token_stat_dependencies(characteristics))
     except (AbilityFragmentError, TypeError, ValueError):
         return None
-    from .token_prowess_requirements import token_prowess_definition_dependencies
-    try:capabilities.update(token_prowess_definition_dependencies(characteristics))
+    from .token_prowess_requirements import token_triggered_keyword_definition_dependencies, token_combat_fragment_is_declared
+    try:capabilities.update(token_triggered_keyword_definition_dependencies(characteristics))
     except (TypeError,ValueError):return None
     typed_ability_definition = False
     typed_ability_fragment = False
@@ -396,7 +397,7 @@ def _fixed_creature_effect_closure(
                 return None
             capabilities.add('trigger.keyword.prowess')
         elif isinstance(fragment, CombatKeywordTriggerSpec):
-            if fragment != decayed_trigger:
+            if fragment != decayed_trigger and not token_combat_fragment_is_declared(fragment,keywords):
                 return None
         elif isinstance(fragment, DeclarationRestrictionTemplate):
             if "Decayed" in keywords and fragment == decayed_restriction:

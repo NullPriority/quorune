@@ -14365,6 +14365,26 @@
         "test_spell_history_transformations",
         "test_transforming_saga_returns"
       ]
+    },
+    {
+      "id": "intrinsic-token-keyword-and-legendary-type-composition",
+      "patterns": [
+        "quorune/compiler/token_templates.py",
+        "quorune/compiler/fixed_token_production_templates.py",
+        "quorune/rules/token_prowess_requirements.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "tests/test_intrinsic_token_compositions.py",
+        "tests/fixtures/intrinsic-token-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_intrinsic_token_compositions",
+        "test_fixed_token_creation_effects",
+        "test_attack_keyword_triggers",
+        "test_attack_counter_triggers",
+        "test_token_copy_values",
+        "test_firebending_tokens",
+        "test_fixed_prowess_tokens"
+      ]
     }
   ],
   "risk_rules": [

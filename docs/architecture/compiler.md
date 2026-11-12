@@ -19,6 +19,15 @@ or ability text remains residual.
 A name-first legendary creature token may carry a fixed keyword list. The
 ordinary creature-token production validates that entire list before the named
 production adds the printed name and legendary supertype.
+Artifact and enchantment creature types survive that composition. The literal
+name validator admits closed lowercase name particles while unconsumed effect
+text remains residual.
+
+Fixed creature-token definitions can carry the already represented combat
+trigger keywords, including a positive Bushido parameter. The compiler emits
+their canonical intrinsic fragments, and the token definition minimum requires
+one matching instance for every printed keyword. Their existing combat owners
+execute the abilities; the token producer introduces no additional scheduler.
 
 Fixed characteristic changes and ordinary declaration prohibitions may carry
 controller-relative next-turn timing. The compiler consumes the literal

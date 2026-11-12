@@ -325,11 +325,9 @@ def _fixed_named_token_template(
             return None
         characteristics = dict(inner.effect.get("characteristics") or {})
         type_line = str(characteristics.get("type_line") or "")
-        if not type_line.startswith("Token Creature"):
+        if re.fullmatch(r"Token (?:Artifact )?Creature(?: Enchantment)? — .+", type_line) is None:
             return None
-        characteristics["type_line"] = type_line.replace(
-            "Token Creature", "Token Legendary Creature", 1
-        )
+        characteristics["type_line"] = "Token Legendary " + type_line.removeprefix("Token ")
         return _copy_template(
             inner,
             template_id="create-fixed-named-legendary-creature-token-v1",

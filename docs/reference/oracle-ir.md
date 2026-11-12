@@ -289,6 +289,10 @@ Any-number controller subset instructions use their own closed schema three,
 `hand_size` bound and zero-or-one `draw_offset`. The exact clause "It becomes
 day/night" carries a separate designation capability and delegates to the
 existing world owner; compound instructions still require every leaf to close.
+Fixed token characteristics retain their printed artifact/enchantment creature
+types independently from legendary. Supported intrinsic combat keywords carry
+matching typed fragments and their existing capability dependencies; omitted or
+mismatched instances do not produce a closed token definition.
 An exact same-zone two-event clause serializes its ordered subscriptions inside
 the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime

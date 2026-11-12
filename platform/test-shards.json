@@ -913,6 +913,7 @@
       "test_goad_rules",
       "test_increment",
       "test_intrinsic_basic_land_mana",
+      "test_intrinsic_token_compositions",
       "test_job_select",
       "test_kicked_spell_conditions",
       "test_kicked_target_groups",

@@ -20,6 +20,7 @@ from ..fixed_token_production import (
     predefined_token_identity,
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from ..keyword_abilities import triggered_keyword_grant
 from .fixed_token_production_templates import (
     extended_fixed_token_creation_effect_template,
 )
@@ -220,6 +221,7 @@ def _fixed_keyword_list(value: str | None) -> tuple[str, ...] | None:
         or any(
             keyword not in _CREATURE_TOKEN_KEYWORDS
             and re.fullmatch(r"toxic [1-9]\d*", keyword) is None
+            and triggered_keyword_grant(keyword) is None
             for keyword in keywords
         )
     ):
@@ -358,6 +360,9 @@ def _single_fixed_token_creation_effect_template(
             for fragment in decayed_ability_fragments()
         )
     for keyword in keywords:
+        triggered = triggered_keyword_grant(keyword)
+        if triggered is not None and keyword != 'prowess':
+            characteristics.setdefault('ability_fragments', []).append(triggered[1])
         toxic = re.fullmatch(r"toxic (?P<value>[1-9]\d*)", keyword)
         if toxic is not None:
             characteristics.setdefault("ability_fragments", []).append(
@@ -375,7 +380,7 @@ def _single_fixed_token_creation_effect_template(
         },
         mechanics=tuple(dict.fromkeys((
             "cr-111-tokens",
-            *("toxic" if keyword.startswith("toxic ") else keyword for keyword in keywords),
+            *(keyword.split()[0] if keyword.startswith(("toxic ","bushido ")) else keyword for keyword in keywords),
         ))),
     )
 

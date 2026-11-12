@@ -1041,7 +1041,8 @@
     "tests/fixtures/worldwagon-cards.json",
     "tests/fixtures/colored-spell-graveyard-return-cards.json",
     "tests/fixtures/fixed-subset-discard-draw-cards.json",
-    "tests/fixtures/variable-subset-discard-draw-cards.json"
+    "tests/fixtures/variable-subset-discard-draw-cards.json",
+    "tests/fixtures/intrinsic-token-composition-cards.json"
   ],
   "full_database_only": [],
   "schema_version": 2
