@@ -77,6 +77,9 @@ current programs. Do not replace normal registered views with manually put
 copies to select a subset. Repeated registration is idempotent; preserve the
 existing views and verify their binding and accepted actions rather than
 requiring another positive generation count.
+Use a vanilla synthetic body for incidental attackers unless their own printed
+triggers are part of the witness; normally registered abilities also affect
+trigger-order choices before watchers reach the stack.
 
 Fixtures that seed original replacement controls outside the deck setup use
 `tests.common.register_current_fixture_programs` to register their current

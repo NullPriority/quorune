@@ -2181,6 +2181,27 @@
       "run_id": 43130981500,
       "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
       "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-incidental-attacker-abilities",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "Normally registering an incidental self-attack-life fixture activated its printed trigger. Five watcher tests then stopped at a legitimate trigger-order decision before the asserted watcher stack existed.",
+      "failed_surfaces": [
+        "PR / Python / functional-04",
+        "PR / Windows / functional-04"
+      ],
+      "regressions": [
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attachment_attack_binding_uses_current_relation_and_ability",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_equipped_attack_mill_composes_with_attachment_and_zone_owner",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners"
+      ],
+      "resolution": "Use the existing vanilla synthetic Goblin as the incidental attacking body, retain the dedicated self-attack trigger witness, and select normally registered trusted views through one shared fixture helper. Preserve watcher attachment, batch, APNAP, zone-owner, actual consequences and replay assertions; route normal fixture registration changes to these consumers.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
     }
   ],
   "recent_pull_requests": [

@@ -235,26 +235,12 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         engine.semantics.put(programs[0])
         return programs[0]
 
-    def register_typed_event_trigger(
-        self,
-        engine,
-        source: CardInstance,
-    ):
-        programs = [
-            program
-            for program in generated_programs(
-                self.db,
-                self.db.by_oracle_id(source.oracle_id),
-                trust_level="trusted",
-                capability_registry=self.capabilities,
-                capability_profile="commander_review",
-            )
-            if program.provenance.get("template_id")
-            in FIXED_TYPED_EVENT_TEMPLATE_IDS
-        ]
-        self.assertEqual(1, len(programs))
-        engine.semantics.put(programs[0])
-        return programs[0]
+    def register_typed_event_trigger(self, engine, source: CardInstance):
+        from common import current_fixture_program_for_templates
+
+        return current_fixture_program_for_templates(
+            self, engine, source, FIXED_TYPED_EVENT_TEMPLATE_IDS,
+        )
 
     @staticmethod
     def _event_condition_fields(condition: Mapping | None) -> set[str]:

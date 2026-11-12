@@ -37,6 +37,17 @@ def register_current_fixture_programs(db, semantics, records, *, capability_regi
     )
 
 
+def current_fixture_program_for_templates(test_case, engine, source, template_ids):
+    """Select a normally registered current view without replacing its graph."""
+    programs = [
+        program for program in engine.semantics.programs_for_oracle(source.oracle_id)
+        if program.provenance.get("template_id") in template_ids
+    ]
+    test_case.assertEqual(1, len(programs))
+    test_case.assertTrue(engine.semantic_program_is_current_trusted(programs[0]))
+    return programs[0]
+
+
 @contextmanager
 def without_direct_resolution_compiler(name: str):
     """Remove a live leaf route, not an alias captured before patching."""

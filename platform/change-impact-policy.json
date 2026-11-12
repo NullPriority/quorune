@@ -14072,11 +14072,13 @@
       "id": "normal-subtype-and-activation-fixture-consumers",
       "patterns": [
         "tests/common.py",
+        "tests/test_fixed_counter_player_cast_triggers.py",
         "tests/test_fixed_counter_zone_triggers.py",
         "tests/test_fixed_target_effect_sequences.py",
         "tests/fixtures/fixed-typed-event-trigger-cards.json"
       ],
       "test_modules": [
+        "test_fixed_counter_player_cast_triggers",
         "test_fixed_counter_zone_triggers",
         "test_fixed_target_effect_sequences"
       ]
