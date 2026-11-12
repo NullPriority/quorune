@@ -2202,6 +2202,24 @@
       "run_id": 43130981500,
       "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
       "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-copy-provenance-rejection-stage",
+      "category": "missing_affected_test",
+      "impact_edge_status": "not_applicable",
+      "summary": "The copied-spell provenance omission mutant expected a later oracle-ID mismatch. Current runtime-trust schema two correctly rejects its missing physical-source record at the earlier resolved-provenance structural guard.",
+      "failed_surfaces": [
+        "PR / Python / functional-05"
+      ],
+      "regressions": [
+        "test_paid_color_entry.PaidColorEntryTests.test_fresh_copy_provenance_omission_is_killed",
+        "test_paid_color_entry.PaidColorEntryTests.test_legacy_generic_permanent_copy_records_its_exact_resolution_provenance",
+        "test_paid_color_entry.PaidColorEntryTests.test_copy_provenance_retains_the_historical_no_runtime_trust_mode"
+      ],
+      "resolution": "Retain the fresh native copied-permanent journey, assert that the copy reaches the omitted physical-source hook, and require the specific current malformed-resolved-provenance rejection. Preserve the unchanged positive copy and historical no-runtime controls; retain the already-present resolution-provenance route to the paid-color entry consumer. No runtime validation is relaxed.",
+      "run_id": 43174128758,
+      "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
+      "deterministic": true
     }
   ],
   "recent_pull_requests": [
