@@ -187,6 +187,20 @@ def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, 
     return tuple(sorted(required))
 
 
+def _token_creation_payload_dependencies(value, mechanics):
+    """Collect creation-specific counter, attachment, incubate and definition authority."""
+    from ..created_token_counter_model import created_token_counter_payload_dependencies
+    from ..rules.attachment_actions import created_token_attachment_payload_dependencies
+    from ..incubate_model import incubate_payload_dependencies
+    from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
+    return tuple(sorted({cap for owners in (
+        created_token_counter_payload_dependencies(value),
+        created_token_attachment_payload_dependencies(value),
+        incubate_payload_dependencies(value),
+        token_definition_payload_dependencies(value,mechanics),
+    ) for cap in owners}))
+
+
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
@@ -277,12 +291,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *resolution_mana_choice_dependencies(value))
         from ..rules.commander_keyword_grants import commander_permanent_query_dependencies
         own = (*own, *commander_permanent_query_dependencies(value))
-        from ..created_token_counter_model import created_token_counter_payload_dependencies
-        own = (*own, *created_token_counter_payload_dependencies(value))
-        from ..rules.attachment_actions import created_token_attachment_payload_dependencies
-        own = (*own, *created_token_attachment_payload_dependencies(value))
-        from ..incubate_model import incubate_payload_dependencies
-        own = (*own,*incubate_payload_dependencies(value))
+        own = (*own, *_token_creation_payload_dependencies(value,mechanics))
         from ..discover_model import discover_payload_dependencies
         own = (*own,*discover_payload_dependencies(value))
         own = (*own, *_zone_choice_payload_dependencies(value))
@@ -300,8 +309,6 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *ability_source_filter_dependencies(value))
         from ..designation_prevention import designation_predicate_dependencies
         own = (*own, *designation_predicate_dependencies(value))
-        from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
-        own = (*own, *token_definition_payload_dependencies(value,mechanics))
         from ..rules.attacking_token_results import attacking_token_payload_dependencies
         own = (*own, *attacking_token_payload_dependencies(value))
         from ..rules.created_token_cleanup_shapes import created_token_cleanup_payload_dependencies

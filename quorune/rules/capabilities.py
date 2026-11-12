@@ -5,22 +5,13 @@ from .casting_additional_cost_groups import fixed_additional_cost_node_capabilit
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import control_covered_mechanics, fixed_control_node_capabilities
-from .city_blessing_shapes import ascend_spell_node_capabilities
-from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
-from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .fixed_rule_action_coverage import FIXED_RULE_ACTION_CAPABILITIES
 from .destruction_regeneration_capability_shapes import regeneration_covered_mechanics as _regeneration_covered_mechanics
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities, DISCARD_FAMILY_CAPABILITIES, DISCARD_FAMILY_SHAPE_GATED_MECHANICS
-from .connive_capability_shapes import fixed_connive_node_capabilities
 from .endure_model import ENDURE_CAPABILITY, ENDURE_MECHANIC
 from .blight_model import BLIGHT_CAPABILITY, BLIGHT_MECHANIC
-from .goad_capability_shapes import fixed_goad_node_capabilities
-from .exploit_capability_shapes import exploit_instruction_node_capabilities
-from .source_keyword_choice_shapes import source_keyword_choice_capabilities
 from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS,QUALIFIED_HEXPROOF_CAPABILITY
 from ..face_up_effect_model import FACE_UP_EFFECT_CAPABILITY,FACE_UP_EFFECT_MECHANIC
-from .source_protection_choice_shapes import source_protection_choice_capabilities
-from .source_fixed_protection_shapes import source_fixed_protection_capabilities
 from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
@@ -48,16 +39,11 @@ from .attachment_action_capability_shapes import (
     attachment_action_covered_mechanics,
     fixed_attachment_action_node_capabilities,
 )
-from .counter_capability_shapes import fixed_counter_placement_group_node_capabilities
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_covered_mechanics, fixed_creature_power_damage_node_capabilities
 from .prepared_creature_power_damage_shapes import PREPARED_POWER_DAMAGE_CAPABILITY, PREPARED_POWER_DAMAGE_MECHANIC
 from ..preparation_model import PREPARATION_RESULT_CAPABILITY, PREPARATION_RESULT_MECHANIC
-from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from .crew_capability_shapes import ordinary_crew_node_capabilities, ordinary_saddle_node_capabilities
 from .station_capability_shapes import ordinary_station_node_capabilities
-from .graveyard_card_targets import (
-    targeted_own_graveyard_return_node_capabilities,
-)
 from .public_zone_move_capability_shapes import (
     TRIGGERED_SOURCE_EXILE_MECHANIC,
     fixed_owner_zone_move_covered_mechanics, fixed_owner_zone_move_node_capabilities,
@@ -72,15 +58,6 @@ from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
 )
-from .affected_player_sacrifice_capability_shapes import (
-    fixed_affected_player_sacrifice_node_capabilities,
-)
-from .affected_player_discard_capability_shapes import (
-    fixed_affected_player_discard_node_capabilities,
-    fixed_controller_discard_node_capabilities,
-    fixed_context_player_discard_node_capabilities,
-)
-from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
 from .entry_permanent_results import (
     ENTRY_PERMANENT_RESULT_CAPABILITY,
     ENTRY_PERMANENT_RESULT_MECHANIC,
@@ -121,11 +98,6 @@ from .token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from .event_player_result_shapes import fixed_mill_node_capabilities,fixed_event_player_result_node_capabilities,fixed_event_player_result_covered_mechanics
-from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
-from .scheduled_player_shapes import scheduled_player_node_capabilities
-from .impulse_access_capability_shapes import (
-    fixed_impulse_access_node_capabilities,
-)
 from .monarch_capability_shapes import (
     MONARCH_DESIGNATION_CAPABILITY,
     fixed_monarch_node_capabilities,
@@ -134,41 +106,16 @@ from .transform_capability_shapes import (
     TRIGGERED_SOURCE_TRANSFORM_MECHANIC,
     source_transform_node_capabilities,
 )
-from .class_level_capability_shapes import class_level_node_capabilities
 from .library_search_capability_shapes import (
     PARTNER_WITH_SEARCH_MECHANIC_ID,
     fixed_library_search_covered_mechanics, fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
-)
-from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
-from .hand_inspection_capability_shapes import FIXED_HAND_INSPECTION_CAPABILITY, FIXED_HAND_INSPECTION_MECHANIC, fixed_hand_inspection_node_capabilities
-from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
-from .surveil_capability_shapes import fixed_surveil_node_capabilities
-from .self_return_capability_shapes import fixed_self_return_node_capabilities
-from .fixed_resolution_characteristic_shapes import (
-    fixed_resolution_characteristic_set_node_capabilities,
-)
-from .optional_counter_capability_shapes import (
-    optional_fixed_counter_event_trigger_node_capabilities,
-)
-from .graft_capability_shapes import graft_node_capabilities
-from .soulbond_capability_shapes import soulbond_node_capabilities
-from .enlist_shapes import enlist_reflexive_capabilities
-from .fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
-from .fixed_controller_effect_shapes import (
-    fixed_counter_controller_effect_sequence_node_capabilities,
-    fixed_controller_effect_sequence_node_capabilities,
-    fixed_life_node_capabilities,
 )
 from .fixed_effect_clause_shapes import (
     FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
     fixed_effect_clause_sequence_node_capabilities,
     fixed_optional_mana_payment_node_capabilities,
     fixed_optional_effect_node_capabilities,
-)
-from .fixed_homogeneous_target_set_capability_shapes import (
-    fixed_homogeneous_target_set_node_capabilities,
-    announced_target_set_node_capabilities,
 )
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
@@ -185,10 +132,6 @@ from ..compiler.fixed_library_selection_templates import (
 )
 from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC, closed_effect_program_node_capabilities
 from .modal_node_capabilities import fixed_modal_capability_dependencies as _fixed_modal_capability_dependencies
-from .modal_capability_shapes import (
-    fixed_choose_one_modal_branches,
-    fixed_nonrepeating_modal_branches,
-)
 from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_CAPABILITY,
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,

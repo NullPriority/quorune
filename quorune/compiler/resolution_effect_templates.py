@@ -303,6 +303,39 @@ def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate
     return fixed_affected_player_hand_exile_effect_template(text)
 
 
+def _temporary_characteristic_resolution_template(
+    text: str, *, card_name: str, source_is_permanent: bool | None, source_card_types: Sequence[str],
+) -> CompiledEffectTemplate | None:
+    """Retain ordered source protection, keyword and source/target characteristic leaves."""
+    protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if protection_choice is not None:
+        return protection_choice
+    fixed_protection = source_fixed_protection_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if fixed_protection is not None:
+        return fixed_protection
+    source_choice = source_keyword_choice_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if source_choice is not None:
+        return source_choice.compiled()
+    fixed_source_characteristics = (
+        fixed_source_characteristics_effect_template(
+            text,
+            source_is_permanent=source_is_permanent,
+            source_card_types=tuple(source_card_types), source_name=card_name,
+        )
+    )
+    if fixed_source_characteristics is not None:
+        return fixed_source_characteristics.compiled()
+    fixed_target_characteristics = (
+        fixed_target_characteristics_effect_template(text)
+    )
+    if fixed_target_characteristics is not None:
+        return fixed_target_characteristics.compiled()
+    return None
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -397,32 +430,9 @@ def typed_resolution_effect_template(
     fixed_counter_removal = fixed_counter_removal_effect_template(text)
     if fixed_counter_removal is not None:
         return fixed_counter_removal.compiled()
-    protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
-        source_card_types=tuple(source_card_types), source_name=card_name)
-    if protection_choice is not None:
-        return protection_choice
-    fixed_protection = source_fixed_protection_template(text, source_is_permanent=source_is_permanent,
-        source_card_types=tuple(source_card_types), source_name=card_name)
-    if fixed_protection is not None:
-        return fixed_protection
-    source_choice = source_keyword_choice_template(text, source_is_permanent=source_is_permanent,
-        source_card_types=tuple(source_card_types), source_name=card_name)
-    if source_choice is not None:
-        return source_choice.compiled()
-    fixed_source_characteristics = (
-        fixed_source_characteristics_effect_template(
-            text,
-            source_is_permanent=source_is_permanent,
-            source_card_types=tuple(source_card_types), source_name=card_name,
-        )
-    )
-    if fixed_source_characteristics is not None:
-        return fixed_source_characteristics.compiled()
-    fixed_target_characteristics = (
-        fixed_target_characteristics_effect_template(text)
-    )
-    if fixed_target_characteristics is not None:
-        return fixed_target_characteristics.compiled()
+    characteristic = _temporary_characteristic_resolution_template(text,card_name=card_name,
+        source_is_permanent=source_is_permanent,source_card_types=source_card_types)
+    if characteristic is not None:return characteristic
     temporary_declaration_restriction = (
         temporary_declaration_restriction_effect_template(
             text,
