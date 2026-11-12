@@ -978,6 +978,7 @@
       "test_fixed_public_alternative_costs",
       "test_fixed_stack_spell_copy",
       "test_fixed_type_aura_protection",
+      "test_hand_results_and_counter_payments",
       "test_hand_size_adjustments",
       "test_indestructible_rules",
       "test_kicked_self_replacements",
