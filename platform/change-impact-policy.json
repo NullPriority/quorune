@@ -14052,6 +14052,7 @@
     {
       "id": "command-resolution-provenance-capture",
       "patterns": [
+        "schemas/game-record-v3-manifest.schema.json",
         "quorune/stack_resolution_inputs.py",
         "quorune/stack_resolution.py",
         "quorune/record_trust.py",

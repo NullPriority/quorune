@@ -2220,6 +2220,24 @@
       "run_id": 43174128758,
       "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
       "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-runtime-trust-manifest-schema",
+      "category": "source_correctness",
+      "impact_edge_status": "added",
+      "summary": "The current record writer emits runtime-trust schema two, but the Game Record v3 manifest schema still permitted only schema one. The Windows functional04 native save/replay witness rejected its own current manifest during structural validation.",
+      "failed_surfaces": [
+        "PR / Windows / functional-04",
+        "PR / Python / functional-04"
+      ],
+      "regressions": [
+        "test_game_record_v3.RuntimeTrustManifestSchemaTests.test_current_and_known_historical_schema_versions_keep_exact_replay_identity",
+        "test_game_record_v3.GameRecordV3Tests.test_v3_save_omits_raw_capabilities_and_replays"
+      ],
+      "resolution": "Admit the two known declared structural versions with an integer-only closed enumeration. Add a fast current-producer/schema contract proving that declared historical identity still fails exact replay validation, absent runtime trust retains its historical path, and booleans, unknown versions, missing fingerprints and extra fields reject. Route the manifest schema through the existing command-resolution provenance consumer edge. Runtime replay validation remains unchanged.",
+      "run_id": 43174128758,
+      "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
+      "deterministic": true
     }
   ],
   "recent_pull_requests": [

@@ -19,6 +19,10 @@ Declared older runtime identities retain their existing rejection; records
 without the additive runtime-trust section keep the historical compatibility
 path.
 
+The manifest schema admits declared runtime-trust versions `1` and `2`. Replay
+checks the exact current version and fingerprints whenever that section is
+present.
+
 Semantic registry snapshots retain declaration order inside ordered mode maps
 in both the CardProgram and semantic-program views. Storage preserves that
 runtime order while fingerprint calculation keeps its canonical representation.

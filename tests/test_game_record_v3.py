@@ -91,6 +91,29 @@ class AuthoritativeCheckpointSerializationTests(unittest.TestCase):
                 self.assertEqual(authoritative_state_hash(expected), authoritative_state_hash(state))
 
 
+class RuntimeTrustManifestSchemaTests(unittest.TestCase):
+    def test_current_and_known_historical_schema_versions_keep_exact_replay_identity(self):
+        from quorune.record_trust import runtime_trust_provenance, _validate_runtime_trust_provenance
+
+        schema=json.loads((Path(__file__).resolve().parents[1]/'schemas/game-record-v3-manifest.schema.json').read_text(encoding='utf-8'))
+        validator=jsonschema.Draft202012Validator(schema['properties']['runtime_trust'])
+        current=runtime_trust_provenance()
+        validator.validate(current)
+        _validate_runtime_trust_provenance(current,context='current schema witness')
+        historical={**copy.deepcopy(current),'schema_version':1}
+        validator.validate(historical)
+        with self.assertRaisesRegex(ValueError,'Runtime trust provenance mismatch'):
+            _validate_runtime_trust_provenance(historical,context='historical declared version')
+        _validate_runtime_trust_provenance(None,context='historical absent section')
+        for bad in (True,False,0,3,'2',None):
+            with self.subTest(version=bad),self.assertRaises(jsonschema.ValidationError):
+                validator.validate({**current,'schema_version':bad})
+        missing=copy.deepcopy(current);missing.pop('capability_evidence_fingerprint')
+        for malformed in (missing,{**current,'skip_verification':True}):
+            with self.subTest(malformed=tuple(malformed)),self.assertRaises(jsonschema.ValidationError):
+                validator.validate(malformed)
+
+
 class GameRecordV3Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
