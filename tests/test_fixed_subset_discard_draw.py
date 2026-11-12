@@ -168,3 +168,26 @@ class FixedSubsetDiscardDrawNativeTests(InheritedNativeFixture,unittest.TestCase
         with patch.object(DiscardDrawChoiceHandler,'complete',short_draw):
             with self.assertRaisesRegex(AssertionError,'draw count must equal'):self.augur_witness(987300)
         self.assertTrue(observed)
+
+    def test_actual_cathartic_modal_subset_uses_only_selected_mode_and_replays(self):
+        session=self.session(987500)
+        source=self.add(session.engine,'Cathartic Pyre',zone='hand')
+        discard=self.add(session.engine,'Shock',zone='hand')
+        private=self.add(session.engine,'Counterspell',seat='C',zone='hand',ref='modal-subset-private')
+        self.assert_closed(session,source)
+        self.prepare(session,mana={'C':1,'R':1});self.checkpoint(session)
+        offered=self.action(session,'A',source)
+        command={'action_id':offered['id'],'modes':['mode_2'],'pay':'auto'}
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B',command).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        result=session.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
+        self.assertEqual('semantic.choice',self.resolve(session).kind)
+        hand=len(session.state.players['A'].zones['hand'])
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        session=self.choose(session,[discard.ref],private)
+        self.assertEqual(hand,len(session.state.players['A'].zones['hand']))
+        self.assertEqual(life,{seat:session.state.players[seat].life for seat in 'ABCD'})
+        self.assertEqual('graveyard',session.state.cards[discard.object_id].zone)
+        self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+        self.replay(session,load=True)
