@@ -14463,6 +14463,21 @@
         "test_damage_replacement_integration",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-characteristic-tap-pronoun-composition",
+      "patterns": [
+        "quorune/compiler/fixed_effect_clause_sequences.py",
+        "tests/test_source_characteristic_tap_sequence.py",
+        "tests/fixtures/source-characteristic-tap-cards.json"
+      ],
+      "test_modules": [
+        "test_source_characteristic_tap_sequence",
+        "test_fixed_effect_clause_sequences",
+        "test_fixed_source_characteristic_effects",
+        "test_targeted_tap_state_effect_clauses",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

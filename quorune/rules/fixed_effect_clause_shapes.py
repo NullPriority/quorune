@@ -470,6 +470,23 @@ def fixed_effect_clause_sequence_node_capabilities(
     return tuple(sorted(dependencies))
 
 
+def source_characteristic_tap_runtime_dependencies(program):
+    """Version only the new source/tap producer; retain historical source v1 binding."""
+    from ..compiler.fixed_effect_clause_sequences import SOURCE_CHARACTERISTIC_TAP_TEMPLATE
+    if program.provenance.get('template_id')!=SOURCE_CHARACTERISTIC_TAP_TEMPLATE:return ()
+    if (program.target_schema is not None or len(program.effects)!=2
+            or program.effects[0].get('op')!='apply_source_characteristics_until_end_of_turn'
+            or program.effects[1].get('op') not in {'tap','untap'}
+            or any(effect.get('card')!='$source.zone_object' for effect in program.effects)):
+        raise ValueError('Source characteristic/tap production lost its source and ordered result scope')
+    required = fixed_effect_clause_sequence_node_capabilities(effects=program.effects,
+        target_schema=None,mechanic_ids=program.coverage)
+    if not required:raise ValueError('Source characteristic/tap production lacks complete leaf closure')
+    from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+    return tuple(sorted({*required,*(cap for keyword in program.effects[0].get('keywords',())
+        for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
+
+
 __all__ = [
     "FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY",
     "FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC",

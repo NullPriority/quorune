@@ -64264,7 +64264,8 @@
         "quorune.compiler.fixed_effect_clause_sequences.FixedEffectClauseSequenceTemplate",
         "quorune.compiler.fixed_effect_clause_sequences.fixed_effect_clause_sequence_template",
         "quorune.rules.fixed_effect_clause_shapes.fixed_effect_clause_sequence_node_capabilities",
-        "CommanderEngine._continue_resolution"
+        "CommanderEngine._continue_resolution",
+        "quorune.rules.fixed_effect_clause_shapes.source_characteristic_tap_runtime_dependencies"
       ],
       "implementation_mutation_rationale": "test_sequence_compiler_mutation_is_killed removes the sequence production and proves an otherwise closed two-sentence ability returns to a material residual. New executable separator-omission and elided-player-loss mutants distinguish exact parsing from correctly scoped composition.",
       "implementation_mutation_status": "killed",
@@ -64282,7 +64283,10 @@
         "test_actual_global_deathtouch_precedes_fight_and_target_legality_preserves_scope",
         "test_actual_each_player_draws_before_all_random_discards_in_continuing_order",
         "test_actual_return_then_discard_uses_returned_hand_and_zero_target_distinction",
-        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies"
+        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
+        "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
+        "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
       ],
       "multiplayer_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -64290,7 +64294,10 @@
         "test_actual_global_deathtouch_precedes_fight_and_target_legality_preserves_scope",
         "test_actual_each_player_draws_before_all_random_discards_in_continuing_order",
         "test_actual_return_then_discard_uses_returned_hand_and_zero_target_distinction",
-        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies"
+        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
+        "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
+        "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
       ],
       "negative_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -64307,7 +64314,10 @@
         "test_actual_global_deathtouch_precedes_fight_and_target_legality_preserves_scope",
         "test_actual_each_player_draws_before_all_random_discards_in_continuing_order",
         "test_actual_return_then_discard_uses_returned_hand_and_zero_target_distinction",
-        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies"
+        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
+        "test_target_implicit_subject_unknown_body_and_unrepresented_siblings_remain_material",
+        "test_verified_composition_source_and_tap_withdrawal_retain_independent_draw",
+        "test_normal_binding_cannot_omit_source_characteristic_or_tap_authority"
       ],
       "official_rules": [
         "608.2b",
@@ -64331,14 +64341,18 @@
         "test_actual_global_deathtouch_precedes_fight_and_target_legality_preserves_scope",
         "test_actual_each_player_draws_before_all_random_discards_in_continuing_order",
         "test_actual_return_then_discard_uses_returned_hand_and_zero_target_distinction",
-        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies"
+        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
+        "test_explicit_source_antecedent_uses_two_existing_closed_leaf_owners"
       ],
       "privacy_tests": [
         "test_private_scry_follows_token_creation_in_four_players",
         "test_actual_global_deathtouch_precedes_fight_and_target_legality_preserves_scope",
         "test_actual_each_player_draws_before_all_random_discards_in_continuing_order",
         "test_actual_return_then_discard_uses_returned_hand_and_zero_target_distinction",
-        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies"
+        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
+        "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
+        "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
       ],
       "replay_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -64349,7 +64363,10 @@
         "test_actual_global_deathtouch_precedes_fight_and_target_legality_preserves_scope",
         "test_actual_each_player_draws_before_all_random_discards_in_continuing_order",
         "test_actual_return_then_discard_uses_returned_hand_and_zero_target_distinction",
-        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies"
+        "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
+        "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
+        "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
       ],
       "required_evidence": [
         "positive",
@@ -92590,7 +92607,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 781,
+  "registry_version": 782,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

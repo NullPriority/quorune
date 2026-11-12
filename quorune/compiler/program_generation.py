@@ -527,9 +527,9 @@ def _is_closed_fixed_effect_clause_sequence_program(
 ) -> bool:
     """Recognize two independently closed effects in printed order."""
 
-    if program.provenance.get("template_id") != (
-        "fixed-effect-clause-sequence-v1"
-    ):
+    if program.provenance.get("template_id") not in {
+        "fixed-effect-clause-sequence-v1", 'fixed-source-characteristic-tap-sequence-v1',
+    }:
         return False
     required = set(
         fixed_effect_clause_sequence_node_capabilities(

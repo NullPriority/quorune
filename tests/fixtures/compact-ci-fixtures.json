@@ -930,6 +930,7 @@
     "tests/fixtures/soulbond-cards.json",
     "tests/fixtures/source-attack-alone-cards.json",
     "tests/fixtures/source-block-pair-cards.json",
+    "tests/fixtures/source-characteristic-tap-cards.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-counter-anthem-cards.json",
     "tests/fixtures/source-counter-pronoun-cards.json",

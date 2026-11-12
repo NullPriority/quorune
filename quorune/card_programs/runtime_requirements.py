@@ -360,6 +360,8 @@ def _value_runtime_requirements(program):
     except (ValueError, TypeError) as exc:
         blockers.add(f"runtime_typed_result_amount:invalid:{exc}")
     try:
+        from ..rules.fixed_effect_clause_shapes import source_characteristic_tap_runtime_dependencies
+        required.update(source_characteristic_tap_runtime_dependencies(program))
         required.update(fixed_resolution_characteristics_runtime_dependencies(program))
         required.update(temporary_creature_type_runtime_dependencies(program))
     except (ValueError, TypeError) as exc:

@@ -1011,6 +1011,7 @@
       "test_seed_20260730_regression",
       "test_server_persistence",
       "test_singular_token_entry_native",
+      "test_source_characteristic_tap_sequence",
       "test_source_counter_amounts",
       "test_source_keyword_choices",
       "test_splice",

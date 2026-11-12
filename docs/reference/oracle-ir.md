@@ -10,6 +10,12 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+`fixed-source-characteristic-tap-sequence-v1` binds a closed source
+characteristic clause and a tap or untap instruction to `$source.zone_object`.
+Runtime admission requires the ordered pair's leaf and keyword capabilities.
+Historical source and generic clause production identities retain their
+existing binding contract.
+
 `damage_fixed_set` can carry a version-one `fixed_target_controller_damage`
 descriptor with positive `target_amount` and `controller_amount`. Resolution
 binds one revalidated target and the ability controller to the existing typed

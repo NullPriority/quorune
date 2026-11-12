@@ -9,6 +9,17 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+An explicit source characteristic clause can be followed by `Tap it` or
+`Untap it`. The compiler binds that pronoun to the same source incarnation,
+then delegates both complete clauses to their existing characteristic and
+tap-state owners. Tap remains a resolution instruction; already-tapped sources
+retain any otherwise legal activation. The ordinary ordered-clause capability
+and both leaf capabilities govern admission.
+New source characteristic/tap programs carry a dedicated production identity
+whose runtime binding checks the complete ordered pair and its keyword
+consumers. Historical source instructions retain their existing admission and
+replay contract.
+
 Fixed targeted damage with an additional fixed amount to its controller lowers
 to one damage-set instruction. The existing single-target grammar owns target
 legality; the resolving controller is an untargeted recipient. The compiler
