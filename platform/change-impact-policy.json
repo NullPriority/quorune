@@ -14239,6 +14239,27 @@
         "test_oracle_ir",
         "test_card_program_v2"
       ]
+    },
+    {
+      "id": "granted-death-return-keyword-composition",
+      "patterns": [
+        "quorune/compiler/granted_keyword_event_nodes.py",
+        "quorune/compiler/temporary_quoted_ability_nodes.py",
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/death_return.py",
+        "tests/fixtures/granted-death-return-cards.json"
+      ],
+      "test_modules": [
+        "test_granted_death_return",
+        "test_granted_keyword_events",
+        "test_typed_grant_carriers",
+        "test_persist_undying_rules",
+        "test_fixed_query_quoted_ability_grants",
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_oracle_ir",
+        "test_high_risk_interaction_assurance"
+      ]
     }
   ],
   "risk_rules": [

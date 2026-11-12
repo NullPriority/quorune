@@ -1,0 +1,466 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Lightning Bolt",
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "One with the Stars",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "oracle_text": "Enchant creature or enchantment\nEnchanted permanent is an enchantment and loses all other card types. (It still has its abilities, but it's no longer a creature.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}",
+      "name": "Rattleblaze Scarecrow",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "oracle_text": "This creature has persist as long as you control a black creature. (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)\nThis creature has haste as long as you control a red creature.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2008-05-02",
+      "toughness": "3",
+      "type_line": "Artifact Creature — Scarecrow"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Tormented Soul",
+      "oracle_id": "ee334bd7-d344-4684-85c8-d0464bbaf2b4",
+      "oracle_text": "This creature can't block and can't be blocked.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2016-11-25",
+      "toughness": "1",
+      "type_line": "Creature — Spirit"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Undying Evil",
+      "oracle_id": "3ceaeb1b-8b25-453d-ac09-e466cfdd9c77",
+      "oracle_text": "Target creature gains undying until end of turn. (When it dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-02-03",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Wingrattle Scarecrow",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "oracle_text": "This creature has flying as long as you control a blue creature.\nThis creature has persist as long as you control a black creature. (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2008-05-02",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Scarecrow"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a creature with persist stops being a creature, persist will still work.",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with persist that has +1/+1 counters on it receives enough -1/-1 counters to cause it to be destroyed by lethal damage or put into its owner's graveyard for having 0 or less toughness, persist won't trigger and the card won't return to the battlefield. That's because persist checks the creature's existence just before it leaves the battlefield, and it still has all those counters on it at that point.",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent has multiple instances of persist, they'll each trigger separately, but the redundant instances will have no effect. If one instance returns the card to the battlefield, the next to resolve will do nothing.",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token with no -1/-1 counters on it has persist, the ability will trigger when the token is put into the graveyard. However, the token will cease to exist and can't return to the battlefield.",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple creatures with persist are put into the graveyard at the same time (due to combat damage or a spell that destroys all creatures, for example), the active player (the player whose turn it is) puts all of their persist triggers on the stack in any order, then each other player in turn order does the same. The last trigger put on the stack is the first one that resolves. That means that in a two-player game, the nonactive player's persist creatures will return to the battlefield first, then the active player's persist creatures do the same. The creatures return to the battlefield one at a time.",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The persist ability triggers when the permanent is put into a graveyard. Its last known information (that is, how the creature last existed on the battlefield) is used to determine whether it had a -1/-1 counter on it.",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a permanent with persist returns to the battlefield, it's a new object with no memory of or connection to its previous existence.",
+      "oracle_id": "034264da-a404-4037-b215-b095bba77490",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If One with the Stars enchants an enchantment that has no other card types, the enchanted permanent won’t be affected.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "One with the Stars may enchant a permanent that is only temporarily a creature, such as a Vehicle. If this happens, One with the Stars’s effect causes the enchanted permanent to remain an enchantment even after the temporary effect expires.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The enchanted permanent keeps its abilities but has no power or toughness. If one of its abilities refers to them, it uses 0.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The enchanted permanent loses any subtypes associated with the card types it lost. It keeps any supertypes, such as legendary.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with persist stops being a creature, persist will still work.",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with persist that has +1/+1 counters on it receives enough -1/-1 counters to cause it to be destroyed by lethal damage or put into its owner's graveyard for having 0 or less toughness, persist won't trigger and the card won't return to the battlefield. That's because persist checks the creature's existence just before it leaves the battlefield, and it still has all those counters on it at that point.",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent has multiple instances of persist, they'll each trigger separately, but the redundant instances will have no effect. If one instance returns the card to the battlefield, the next to resolve will do nothing.",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token with no -1/-1 counters on it has persist, the ability will trigger when the token is put into the graveyard. However, the token will cease to exist and can't return to the battlefield.",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple creatures with persist are put into the graveyard at the same time (due to combat damage or a spell that destroys all creatures, for example), the active player (the player whose turn it is) puts all of their persist triggers on the stack in any order, then each other player in turn order does the same. The last trigger put on the stack is the first one that resolves. That means that in a two-player game, the nonactive player's persist creatures will return to the battlefield first, then the active player's persist creatures do the same. The creatures return to the battlefield one at a time.",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The persist ability triggers when the permanent is put into a graveyard. Its last known information (that is, how the creature last existed on the battlefield) is used to determine whether it had a -1/-1 counter on it.",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a permanent with persist returns to the battlefield, it's a new object with no memory of or connection to its previous existence.",
+      "oracle_id": "313130ab-13db-4d0a-b3f3-b60e060b303c",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

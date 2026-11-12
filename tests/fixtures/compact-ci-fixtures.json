@@ -681,6 +681,7 @@
     "tests/fixtures/global-alternative-cost-cards.json",
     "tests/fixtures/global-plural-characteristic-sets.json",
     "tests/fixtures/graft-cards.json",
+    "tests/fixtures/granted-death-return-cards.json",
     "tests/fixtures/granted-keyword-event-cards.json",
     "tests/fixtures/granted-skulk-cards.json",
     "tests/fixtures/granted-static-characteristic-cards.json",

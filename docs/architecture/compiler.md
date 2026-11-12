@@ -1994,6 +1994,18 @@ instances, and a pending ability retains its receiver source and trigger
 controller after the grant ends. Multiple fixed event keywords in one grant
 line and independently unsupported shells or parameters remain residual.
 
+Persist and Undying grants reuse their canonical departure-counter conditions
+and owner-return transaction through the same granted-program path. Their
+granted trigger observes a permanent's battlefield-to-graveyard departure,
+including a recipient without the creature type. Discovery reads the grant
+and counters immediately before departure; pending abilities retain the
+recipient and trigger controller after the grant ends. The return uses the
+card owner's control and the keyword's entry counter. An instant or sorcery
+may also give one directly targeted creature or a closed public battlefield
+set either keyword until end of turn through the existing temporary
+ability-bundle owner. Unrepresented paired
+query modifiers, keyword parameters and whole-card siblings remain residual.
+
 Registration preserves each granted-only child's exact semantic key alongside
 reviewed source programs. The typed receiver fragment resolves that dependency
 directly. Source-pinned pure attached providers retire when their complete

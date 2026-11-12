@@ -753,6 +753,7 @@
       "test_fixed_self_cost_surfaces",
       "test_global_plural_characteristic_sets",
       "test_granted_combat_compositions",
+      "test_granted_death_return",
       "test_granted_keyword_events",
       "test_graveyard_copy_cast",
       "test_history_entry_counters",

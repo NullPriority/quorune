@@ -26958,7 +26958,7 @@
           "one ordinary granted-only triggered program",
           "one current typed grant fragment with canonical source span"
         ],
-        "summary": "Compile one already supported fixed event-effect keyword inside an existing attachment, live query or public-condition grant shell. Reuse its complete ordinary event/effects and canonical GrantedTriggeredAbilitySpec; current grant fragments control discovery and pending abilities survive grant removal."
+        "summary": "Compile one already supported fixed event-effect keyword inside an existing attachment, live query or public-condition grant shell. Reuse its complete ordinary event/effects and canonical GrantedTriggeredAbilitySpec; current grant fragments control discovery and pending abilities survive grant removal. Canonical Persist and Undying grants retain the recipient departure counters, permanent graveyard event, locked trigger controller and owner return; one fixed end-of-turn spell grant uses the existing temporary quoted-ability owner."
       },
       "blockers": [],
       "dependencies": [],
@@ -26969,25 +26969,31 @@
         "quorune.compiler.granted_keyword_event_nodes.compile_granted_keyword_event_nodes",
         "quorune.compiler.keyword_event_effect_nodes.fixed_keyword_event_effect_node",
         "quorune.compiler.attached_granted_ability_nodes._compile_granted_ability_pair",
-        "quorune.rules.keyword_runtime_requirements.keyword_runtime_dependencies"
+        "quorune.rules.keyword_runtime_requirements.keyword_runtime_dependencies",
+        "quorune.compiler.granted_keyword_event_nodes._keyword_inner_node",
+        "quorune.compiler.temporary_quoted_ability_nodes.temporary_quoted_ability_nodes"
       ],
       "implementation_mutation_rationale": "tests.test_granted_keyword_events.GrantedKeywordEventCompilerTests.test_grant_lowering_omission_is_killed",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_annihilator_grant_keeps_defender_after_provider_removal",
         "test_conditional_grant_reads_current_state_before_the_event",
-        "test_two_equipment_grants_add_instances_and_survive_source_departure"
+        "test_two_equipment_grants_add_instances_and_survive_source_departure",
+        "test_actual_scarecrow_condition_uses_departing_controller_then_owner_return_and_counter"
       ],
       "multiplayer_tests": [
         "test_two_equipment_grants_add_instances_and_survive_source_departure",
-        "test_annihilator_grant_keeps_defender_after_provider_removal"
+        "test_annihilator_grant_keeps_defender_after_provider_removal",
+        "test_actual_scarecrow_condition_uses_departing_controller_then_owner_return_and_counter"
       ],
       "negative_tests": [
         "test_conditional_grant_reads_current_state_before_the_event",
         "test_dependency_fail_closed_uses_verified_evidence_and_an_unrelated_control",
-        "test_one_keyword_reuses_the_existing_complete_inner_event_program"
+        "test_one_keyword_reuses_the_existing_complete_inner_event_program",
+        "test_parameters_unknown_siblings_and_two_keywords_do_not_gain_support"
       ],
       "official_rules": [
+        "113.7a",
         "400.7",
         "506.4",
         "508.5",
@@ -26996,8 +27002,10 @@
         "509.1c",
         "603",
         "603.10",
+        "603.10a",
         "603.3",
         "603.3a",
+        "603.6c",
         "608.2b",
         "611.3b",
         "613.1f",
@@ -27013,24 +27021,29 @@
         "702.39a",
         "702.39b",
         "702.46",
+        "702.79a",
         "702.86",
         "702.86a",
-        "702.86b"
+        "702.86b",
+        "702.93a"
       ],
       "positive_tests": [
         "test_annihilator_grant_keeps_defender_after_provider_removal",
         "test_conditional_grant_reads_current_state_before_the_event",
         "test_query_self_grant_creates_exactly_one_instance",
-        "test_two_equipment_grants_add_instances_and_survive_source_departure"
+        "test_two_equipment_grants_add_instances_and_survive_source_departure",
+        "test_static_and_conditional_grants_use_permanent_departure_and_exact_counter"
       ],
       "privacy_tests": [
         "test_two_equipment_grants_add_instances_and_survive_source_departure",
-        "test_annihilator_grant_keeps_defender_after_provider_removal"
+        "test_annihilator_grant_keeps_defender_after_provider_removal",
+        "test_actual_scarecrow_condition_uses_departing_controller_then_owner_return_and_counter"
       ],
       "replay_tests": [
         "test_annihilator_grant_keeps_defender_after_provider_removal",
         "test_conditional_grant_reads_current_state_before_the_event",
-        "test_two_equipment_grants_add_instances_and_survive_source_departure"
+        "test_two_equipment_grants_add_instances_and_survive_source_departure",
+        "test_actual_scarecrow_condition_uses_departing_controller_then_owner_return_and_counter"
       ],
       "required_evidence": [
         "positive",
@@ -27046,7 +27059,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -28459,7 +28472,7 @@
           "cleanup expiry",
           "coupled layers-six and-seven components share one timestamp"
         ],
-        "summary": "Grant one independently compiled quoted activated, fixed-output mana or triggered ability to one revalidated creature or a closed public battlefield set until end of turn through the canonical continuous ability bundle owner."
+        "summary": "Grant one independently compiled quoted activated, fixed-output mana or triggered ability to one revalidated creature or a closed public battlefield set until end of turn through the canonical continuous ability bundle owner. Canonical Persist and Undying grants retain the recipient departure counters, permanent graveyard event, locked trigger controller and owner return; one fixed end-of-turn spell grant uses the existing temporary quoted-ability owner."
       },
       "blockers": [],
       "dependencies": [],
@@ -28471,7 +28484,8 @@
         "quorune.rules.temporary_ability_grant.temporary_quoted_grant_node_capabilities",
         "quorune.effect_runtime.temporary_ability_bundle.apply_temporary_ability_bundle",
         "quorune.compiler.resolution_characteristic_program_closure.is_closed_resolution_characteristic_program",
-        "quorune.trigger_discovery._event_programs_for_source"
+        "quorune.trigger_discovery._event_programs_for_source",
+        "quorune.compiler.granted_keyword_event_nodes._keyword_inner_node"
       ],
       "implementation_mutation_rationale": "The focused omission mutant removes this compiler carrier and is detected by the exact source-bound compiler witness.",
       "implementation_mutation_status": "killed",
@@ -28481,13 +28495,15 @@
         "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
         "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
         "test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays",
-        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay"
+        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+        "test_actual_undying_evil_returns_a_noncreature_recipient_after_pending_reload"
       ],
       "multiplayer_tests": [
         "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
         "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
         "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
-        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay"
+        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+        "test_actual_undying_evil_returns_a_noncreature_recipient_after_pending_reload"
       ],
       "negative_tests": [
         "test_temporary_quote_rejects_open_child_and_duration_and_shape",
@@ -28497,14 +28513,20 @@
         "test_temporary_trigger_child_omission_mutant_is_killed",
         "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
         "test_coupled_stat_quote_rejects_boolean_stats_unknown_fields_and_omission",
-        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay"
+        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+        "test_parameters_unknown_siblings_and_two_keywords_do_not_gain_support"
       ],
       "official_rules": [
+        "113.7",
+        "113.7a",
+        "400.7",
+        "603.10a",
+        "603.6c",
         "611.2a",
         "611.2c",
         "613.1f",
-        "113.7",
-        "400.7"
+        "702.79a",
+        "702.93a"
       ],
       "positive_tests": [
         "test_temporary_quoted_activation_retains_independent_child_and_duration",
@@ -28515,12 +28537,14 @@
         "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
         "test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays",
         "test_fixed_stats_and_quoted_trigger_keep_one_recipient_timestamp",
-        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay"
+        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+        "test_fixed_temporary_spell_grant_keeps_target_and_duration"
       ],
       "privacy_tests": [
         "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
         "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
-        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay"
+        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+        "test_actual_undying_evil_returns_a_noncreature_recipient_after_pending_reload"
       ],
       "replay_tests": [
         "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
@@ -28528,7 +28552,8 @@
         "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
         "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
         "test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays",
-        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay"
+        "test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+        "test_actual_undying_evil_returns_a_noncreature_recipient_after_pending_reload"
       ],
       "required_evidence": [
         "positive",
@@ -28544,7 +28569,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -91787,7 +91812,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 770,
+  "registry_version": 771,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

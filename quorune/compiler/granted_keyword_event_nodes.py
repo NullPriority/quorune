@@ -5,6 +5,7 @@ from dataclasses import replace
 import re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..death_return import DeathReturnSpec
 from .conditional_granted_ability_templates import (
     conditional_quoted_ability_handler, conditional_quoted_ability_text,
 )
@@ -17,7 +18,7 @@ from .keyword_event_effect_nodes import fixed_keyword_event_effect_node, fixed_k
 
 GRANTED_KEYWORD_EVENT_CAPABILITY = 'continuous.ability.fixed_keyword_event_grant'
 _KEYWORD = re.compile(r'\b(?:Afflict|Annihilator|Firebending|Mobilize|Soulshift) [1-9]\d*\b'
-                      r'|\b(?:Ingest|Exploit|Provoke)\b', re.I)
+                      r'|\b(?:Ingest|Exploit|Provoke|Persist|Undying)\b', re.I)
 
 
 def _grant_shell(material_line, source_name):
@@ -30,7 +31,8 @@ def _grant_shell(material_line, source_name):
     if re.search(r'\b(?:has|have)\b', material_line[:match.start()], re.I) is None:
         return None
     keyword = match.group()
-    spec = fixed_keyword_event_effect_spec(keyword)
+    spec = (DeathReturnSpec.for_keyword(keyword) if keyword.casefold() in {'persist', 'undying'}
+            else fixed_keyword_event_effect_spec(keyword))
     if spec is None:
         return None
     synthetic = material_line[:match.start()] + '"' + keyword + '"' + material_line[match.end():]
@@ -49,6 +51,16 @@ def _grant_shell(material_line, source_name):
 
 
 def _keyword_inner_node(spec, **values):
+    if isinstance(spec, DeathReturnSpec):
+        from .dependency_gate import explicit_capabilities_gate
+        from .keyword_nodes import death_return_keyword_node
+        gate = explicit_capabilities_gate((spec.capability_id,),
+            capability_registry=values['capability_registry'], capability_profile=values['capability_profile'])
+        node = death_return_keyword_node(node_id=values['node_id'], line=values['line'],
+            material_line=values['material_line'], span=values['span'], mechanics=(spec.keyword,),
+            gate=gate, residual_ids=())
+        # These keyword definitions observe every permanent's graveyard arrival.
+        return replace(node, event='permanent.graveyard.self') if node is not None else None
     node = fixed_keyword_event_effect_node(node_id=values['node_id'], line=values['line'],
         material_line=values['material_line'], span=values['span'], mechanics=(spec.keyword,),
         capability_registry=values['capability_registry'], capability_profile=values['capability_profile'],
