@@ -14543,6 +14543,22 @@
         "test_fixed_player_counter_placement_effects",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "target-recipient-additional-compositions",
+      "patterns": [
+        "tests/test_target_recipient_additional_compositions.py",
+        "tests/fixtures/target-recipient-additional-composition-cards.json",
+        "quorune/compiler/target_recipient_results.py",
+        "quorune/rules/target_recipient_results.py",
+        "quorune/compiler/public_query_effect_amounts.py"
+      ],
+      "test_modules": [
+        "test_target_recipient_additional_compositions",
+        "test_target_recipient_results",
+        "test_mutate_cast_native",
+        "test_fixed_library_selection"
+      ]
     }
   ],
   "risk_rules": [
