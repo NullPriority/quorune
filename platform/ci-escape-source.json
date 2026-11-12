@@ -2238,6 +2238,27 @@
       "run_id": 43174128758,
       "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
       "deterministic": true
+    },
+    {
+      "id": "ci-20261112-nightly-fuse-private-reference-token-collision",
+      "run_id": 43174408319,
+      "head_sha": "16dd169b3352739e9e2afd75ae26184caeb205b3",
+      "category": "flaky_test",
+      "deterministic": false,
+      "summary": "The Toil/Trouble privacy witness searched serialized packets for short hidden references. B04 occurred only inside the authorized decision.cap token; the opposing hand was absent. The Ubuntu nightly shard and dependent certification failed.",
+      "failed_surfaces": [
+        "Nightly / Python / ubuntu / functional-11 (job 131035684612)",
+        "Nightly / Certification (dependent job 131285130692)"
+      ],
+      "regressions": [
+        "test_packet_privacy_assertions.PacketPrivacyAssertionTests.test_opaque_capability_collision_does_not_report_a_card_reference_leak",
+        "test_packet_privacy_assertions.PacketPrivacyAssertionTests.test_state_context_and_nested_cap_fields_still_expose_injected_reference_leaks",
+        "test_packet_privacy_assertions.PacketPrivacyAssertionTests.test_missing_or_null_decisions_preserve_the_complete_packet",
+        "test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+        "test_fuse_rules.FuseTests.test_actual_down_discard_resumes_before_dirty_returns_own_card"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Use one shared nonmutating full-packet normalizer that excludes only decision.cap from reference substring assertions. Fuse scans and the runtime replay helper preserve raw authorization presence and nonacting-principal exclusion checks, all semantic fields, owner visibility and private-reference exclusion. Deterministic collision and injected semantic-leak controls establish the boundary. Production projection and gameplay remain unchanged."
     }
   ],
   "recent_pull_requests": [

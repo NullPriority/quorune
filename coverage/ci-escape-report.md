@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "85c71372142f92928bc080f631e91a2723ab6b8181d812cc4f87aa19ffab841c"
+verified: "cbd36993069d57ca7579f4df027e498d9a26e4255964706b4e858c286cde79ed"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,7 +15,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 124
+- Escapes: 125
 - Deterministic escapes: 115
 - Current missing impact edges: 0
 - Known flaky tests: 0
@@ -153,6 +153,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261112-pr561-incidental-attacker-abilities` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `missing_affected_test` | `added` | Use the existing vanilla synthetic Goblin as the incidental attacking body, retain the dedicated self-attack trigger witness, and select normally registered trusted views through one shared fixture helper. Preserve watcher attachment, batch, APNAP, zone-owner, actual consequences and replay assertions; route normal fixture registration changes to these consumers. |
 | `ci-20261112-pr561-copy-provenance-rejection-stage` | [43174128758](https://github.com/NullPriority/quorune/actions/runs/43174128758) | `missing_affected_test` | `not_applicable` | Retain the fresh native copied-permanent journey, assert that the copy reaches the omitted physical-source hook, and require the specific current malformed-resolved-provenance rejection. Preserve the unchanged positive copy and historical no-runtime controls; retain the already-present resolution-provenance route to the paid-color entry consumer. No runtime validation is relaxed. |
 | `ci-20261112-pr561-runtime-trust-manifest-schema` | [43174128758](https://github.com/NullPriority/quorune/actions/runs/43174128758) | `source_correctness` | `added` | Admit the two known declared structural versions with an integer-only closed enumeration. Add a fast current-producer/schema contract proving that declared historical identity still fails exact replay validation, absent runtime trust retains its historical path, and booleans, unknown versions, missing fingerprints and extra fields reject. Route the manifest schema through the existing command-resolution provenance consumer edge. Runtime replay validation remains unchanged. |
+| `ci-20261112-nightly-fuse-private-reference-token-collision` | [43174408319](https://github.com/NullPriority/quorune/actions/runs/43174408319) | `flaky_test` | `added` | Use one shared nonmutating full-packet normalizer that excludes only decision.cap from reference substring assertions. Fuse scans and the runtime replay helper preserve raw authorization presence and nonacting-principal exclusion checks, all semantic fields, owner visibility and private-reference exclusion. Deterministic collision and injected semantic-leak controls establish the boundary. Production projection and gameplay remain unchanged. |
 
 ## Measurement limitations
 

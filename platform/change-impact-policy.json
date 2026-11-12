@@ -14083,6 +14083,20 @@
         "test_fixed_counter_zone_triggers",
         "test_fixed_target_effect_sequences"
       ]
+    },
+    {
+      "id": "semantic-packet-privacy-assertions",
+      "patterns": [
+        "tests/common.py",
+        "tests/test_fuse_rules.py",
+        "tests/test_announced_x_additional_costs.py",
+        "tests/test_packet_privacy_assertions.py"
+      ],
+      "test_modules": [
+        "test_packet_privacy_assertions",
+        "test_fuse_rules",
+        "test_announced_x_additional_costs"
+      ]
     }
   ],
   "risk_rules": [

@@ -1417,6 +1417,7 @@
       "test_mixed_stack_counter_targets",
       "test_multisentence_effect_components",
       "test_opponent_keyword_prohibition",
+      "test_packet_privacy_assertions",
       "test_permissions_projection",
       "test_player_target_protection",
       "test_predefined_token_view_equivalence",

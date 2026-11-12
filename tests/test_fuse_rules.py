@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT
+from common import ROOT, packet_without_decision_capability
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
@@ -157,9 +157,12 @@ class FuseTests(unittest.TestCase):
         self.assertEqual(40 - 2 - (before + 2), session.state.players['B'].life)
         b_cards=[session.state.cards[oid] for oid in session.state.players['B'].zones['hand']]
         for seat in 'ACD':
-            packet=json.dumps(session.packet('pilot:'+seat,full=True))
+            raw=session.packet('pilot:'+seat,full=True)
+            if 'pilot:'+seat in session.pending_principals():self.assertIsInstance(raw['decision']['cap'],str)
+            else:self.assertNotIn('cap',raw.get('decision') or {})
+            packet=json.dumps(packet_without_decision_capability(raw))
             for card in b_cards:self.assertNotIn(card.ref,packet)
-        own_packet=json.dumps(session.packet('pilot:B',full=True))
+        own_packet=json.dumps(packet_without_decision_capability(session.packet('pilot:B',full=True)))
         for card in b_cards:self.assertIn(card.ref,own_packet)
         self.private_replay(session, private)
 
@@ -220,7 +223,10 @@ class FuseTests(unittest.TestCase):
         self.assertEqual('graveyard', session.state.cards[returned.object_id].zone)
         self.assertEqual(['pilot:B'], session.pending_principals())
         for seat in 'ACD':
-            packet=json.dumps(session.packet('pilot:'+seat,full=True))
+            raw=session.packet('pilot:'+seat,full=True)
+            if 'pilot:'+seat in session.pending_principals():self.assertIsInstance(raw['decision']['cap'],str)
+            else:self.assertNotIn('cap',raw.get('decision') or {})
+            packet=json.dumps(packet_without_decision_capability(raw))
             for card in (first,second):self.assertNotIn(card.ref,packet)
         self.reject(session, {'action_id': 'choose', 'cards': [first.ref, second.ref]})
         session = self.replay(session, load=True)
