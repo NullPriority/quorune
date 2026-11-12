@@ -1429,3 +1429,12 @@ checks. An occurrence-power child also retains its event card
 reference, logical identity, and `occurrence_power_damage_lki` snapshot. The
 child's own target declaration and any resolution-time count remain deferred
 to its stack frame. Version one reads the legacy child schema.
+
+Next-spell reductions add a schema-one journal record with
+`effect_kind: resolution_next_spell_cost_reduction`. It retains the effect and
+source identities, timestamp, resolving controller, public `spell_query`,
+nonnegative resolved `amount` and end-of-turn duration. The amount is not
+recomputed at casting. Accepted matching casts consume these records atomically;
+previews, failed commands and nonmatching casts preserve them. Source departure
+does not expire them, and ordinary cleanup removes unused records. Historical
+states without a duration journal retain that omission.

@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Next-eligible-spell reductions lower the complete printed spell qualifier to
+the existing public spell predicate. Their amount is fixed or comes from an
+independently closed public quantity or source-stat producer. Resolution locks
+the amount in the duration journal; later casting uses that literal value.
+Unknown qualifiers, causal amounts and other next-spell grants remain material.
+
 Fixed named-token productions recognize grammatical verb casing independently
 from captured name data. `Create` and `create` yield the same definition while
 proper-name spelling and apostrophes remain exact. Entering-attacking and

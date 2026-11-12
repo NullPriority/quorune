@@ -12576,6 +12576,111 @@
     {
       "applicability": {
         "exclusions": [
+          "other durations",
+          "unrepresented spell qualifiers",
+          "unrepresented causal result amounts",
+          "granting affinity or cascade",
+          "arbitrary runtime Oracle interpretation"
+        ],
+        "inputs": [
+          "locked resolving controller and public spell predicate",
+          "nonnegative generic amount fixed or evaluated at resolution",
+          "existing source-information and public-quantity owners",
+          "canonical duration journal and atomic casting lifecycle"
+        ],
+        "outputs": [
+          "source-independent pending reduction through cleanup",
+          "generic-only total-cost adjustment shared by offers and acceptance",
+          "stacked matching reductions consumed once, including zero-benefit casts",
+          "nonmatching and other-player casts retain pending rules",
+          "journal save/load and exact replay"
+        ],
+        "summary": "Resolve a fixed or represented public amount into an end-of-turn next-eligible-spell reduction in the shared duration journal, with common offered/accepted total-cost queries and consumption only upon actual matching casting."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.cost.modifier.fixed_query"
+      ],
+      "dependency_fail_closed_rationale": "Verified withdrawal of either this owner or its existing fixed-query total-cost dependency blocks next-spell reductions; independent draw remains available, and withdrawal of only this owner retains ordinary static reductions.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.cost.next_eligible_spell_reduction",
+      "implementation_components": [
+        "quorune.compiler.next_spell_cost_templates.next_spell_cost_reduction_template",
+        "quorune.next_spell_cost_model.validate_next_spell_cost_instruction",
+        "quorune.next_spell_cost_model.ResolvedNextSpellCostReduction",
+        "quorune.next_spell_costs.apply_next_spell_cost_reduction",
+        "quorune.next_spell_costs.matching_next_spell_cost_reductions",
+        "quorune.next_spell_costs.active_next_spell_cost_reductions",
+        "quorune.next_spell_costs.consume_next_spell_rules",
+        "quorune.continuous_effect_state.consume_continuous_effects",
+        "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects",
+        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions",
+        "quorune.rules.temporary_cast_restrictions.temporary_cast_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "A fresh actual borrowed Hardened Berserker attack, other-caster removal, shared legal cast and accepted payment kills omission of canonical journal consumption at that first matching cast.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_hardened_reduction_survives_source_and_other_caster_then_is_used_once",
+        "test_actual_colored_only_cast_consumes_a_zero_benefit_discount",
+        "test_actual_kaza_locks_wizard_count_and_retains_it_across_a_nonmatching_cast",
+        "test_actual_maelstrom_locks_last_known_pumped_power_before_the_discount",
+        "test_actual_peerless_uses_another_controlled_warrior_attacking_alone",
+        "test_actual_unused_discount_expires_through_real_turn_cleanup"
+      ],
+      "multiplayer_tests": [
+        "test_actual_hardened_reduction_survives_source_and_other_caster_then_is_used_once",
+        "test_actual_colored_only_cast_consumes_a_zero_benefit_discount",
+        "test_actual_kaza_locks_wizard_count_and_retains_it_across_a_nonmatching_cast",
+        "test_actual_maelstrom_locks_last_known_pumped_power_before_the_discount",
+        "test_actual_peerless_uses_another_controlled_warrior_attacking_alone"
+      ],
+      "negative_tests": [
+        "test_journal_codec_and_stale_consumption_reject_without_partial_mutation",
+        "test_verified_owner_withdrawal_retains_ordinary_draw_and_static_reducers",
+        "test_preview_preparation_and_committed_cast_consume_only_matching_controller_rules"
+      ],
+      "official_rules": [
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "608.2h",
+        "611.2a",
+        "514.2"
+      ],
+      "positive_tests": [
+        "test_closed_fixed_and_resolution_locked_amount_grammar"
+      ],
+      "privacy_tests": [
+        "test_actual_hardened_reduction_survives_source_and_other_caster_then_is_used_once"
+      ],
+      "replay_tests": [
+        "test_actual_hardened_reduction_survives_source_and_other_caster_then_is_used_once",
+        "test_actual_colored_only_cast_consumes_a_zero_benefit_discount",
+        "test_actual_kaza_locks_wizard_count_and_retains_it_across_a_nonmatching_cast",
+        "test_actual_maelstrom_locks_last_known_pumped_power_before_the_discount",
+        "test_actual_peerless_uses_another_controlled_warrior_attacking_alone",
+        "test_actual_unused_discount_expires_through_real_turn_cleanup"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "nonpermanent and nonmatching spells",
           "generic or other-color reduction",
           "unrepresented life amounts or selectors"
@@ -92199,7 +92304,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 777,
+  "registry_version": 778,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Next-spell cost reductions use the existing duration journal and public total-
+cost provider. A pending rule retains its resolving controller, spell predicate
+and resolved generic amount independently from its source's later state. Cost
+previews and preparatory mana choices do not consume it. Successful casting
+consumes every matching rule, including a rule that reduces no generic mana;
+other casters and nonmatching spells leave it pending. The canonical journal
+owner handles consumption and cleanup expiry. Historical next-spell flags keep
+their existing prepare-versus-commit behavior through the casting lifecycle.
+
 Closed two-clause effects also accept top-level comma-then and period-Then
 wording. The compiler retains each independently owned instruction and the
 complete target schema. Quoted and parenthetical rules stay nested; linked

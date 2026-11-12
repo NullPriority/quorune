@@ -178,8 +178,8 @@
       "quorune/linked_ability_exile_state.py": "typed CR607 ability-pair records on actual exile incarnations and explicit linked returns through the existing zone-return owner",
       "quorune/mana_activation.py": "activated mana ability and reversible activation transaction owner",
       "quorune/mana_provenance.py": "typed snow-source and spending-restriction mana provenance mutation owner",
+      "quorune/next_spell_costs.py": "resolution-created next-eligible-spell cost journal rules and atomic consumption of next-spell permissions at successful casting",
       "quorune/optional_untap.py": "retained physical untap choice and controller continuation owner",
-      "quorune/rules/room_unlock.py": "typed shared type line door unlock and occurrence owner using canonical mana payment and priority",
       "quorune/permanent_designations.py": "typed identity-pinned noncopiable permanent-designation mutation owner",
       "quorune/permanent_exile.py": "typed identity-pinned permanent-exile transaction delegating mutation to the canonical zone-change owner",
       "quorune/permanent_transform.py": "typed CR 701.27 active-face/transform-count owner with versioned timestamp assignment through the canonical zone clock",
@@ -197,6 +197,7 @@
       "quorune/rules/event_spell_copy.py": "typed exact-spell current/LKI reference owner; pins live occurrence contexts and delegates immutable batch replacement to trigger_processing",
       "quorune/rules/land_play_permissions.py": "typed ordinary land-play quota selection, source-incarnation slot consumption, and turn-reset mutation owner",
       "quorune/rules/player_speed_state.py": "canonical typed persistent player speed and inherent once-per-own-turn trigger usage owner behind state-based stabilization and committed life transactions",
+      "quorune/rules/room_unlock.py": "typed shared type line door unlock and occurrence owner using canonical mana payment and priority",
       "quorune/selection/exile_cast.py": "typed one-shot public exile-cast choice, continuation validation, and authoritative resolution cleanup owner",
       "quorune/selection/public_choice.py": "typed represented public nontarget choice projection, continuation validation, and authoritative result coordination",
       "quorune/selection/searching.py": "typed hidden-zone search projection, continuation validation, result binding, and canonical zone-transition coordination",
@@ -248,6 +249,7 @@
       "quorune/damage_prevention_aftermath.py": "typed prevention-aftermath planner delegating mutation to canonical life and counter owners",
       "quorune/decision_completion.py": "existing decision-kind routing extracted from engine with delegation to the same owners; no state mutation or second registry",
       "quorune/defined_token_faces.py": "immutable closed schema-one fixed definitions or schema-two complete compiled copiable face values with distinct physical orientation; no state, trust or activation authority",
+      "quorune/delayed_object_actions.py": "Read-only retained-source and recipient incarnation checks; scheduling and gameplay mutation delegate to existing trigger processing and canonical effect owners.",
       "quorune/discover_casting.py": "revalidates one resolving Discover permission and current exile incarnations; delegates offered/accepted casting to canonical cast owners",
       "quorune/discover_cleanup.py": "delegates random exile-to-bottom movement and completion events to canonical zone and trigger owners; no local state writes",
       "quorune/discover_model.py": "immutable inclusive eligibility, public exile progress and closed cast/cleanup intents; no mutation authority",
@@ -389,8 +391,7 @@
       "quorune/zone_devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/zone_transition_model.py": "typed read-only zone-transition host protocol, plan, and departure snapshot definitions",
       "quorune/zone_trigger_events.py": "immutable normalized CR 603.6 zone-change occurrence and event derivation",
-      "quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners",
-      "quorune/delayed_object_actions.py": "Read-only retained-source and recipient incarnation checks; scheduling and gameplay mutation delegate to existing trigger processing and canonical effect owners."
+      "quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners"
     }
   },
   "module_classifications": "platform/module-classifications.json",

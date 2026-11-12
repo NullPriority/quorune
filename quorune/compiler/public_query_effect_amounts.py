@@ -315,6 +315,7 @@ def _query_characteristic_candidate(
 
 
 _AMOUNT_FIELDS = {
+    "grant_next_spell_cost_reduction": "amount",
     "drain_opponent": "amount",
     "drain_each_opponent": "amount",
     "life_loss_then_gain_actual": "amount",

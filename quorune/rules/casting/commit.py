@@ -963,14 +963,8 @@ def _create_spell_item(
         rebound=rebound,
     )
     ref = existing_item.ref if existing_item is not None else host._next_ref("S")
-    from ..next_spell_payment import capture_next_spell_payments
-    used_improvise, next_payments = capture_next_spell_payments(
-        host.state.players[proposal.seat].stats, host.state.turn_sequence, preparing=preparing)
-    used_uncounterable = bool(
-        (host.state.players[proposal.seat].stats.get if preparing else host.state.players[proposal.seat].stats.pop)(
-            "next_spell_uncounterable", False
-        )
-    )
+    from ...next_spell_costs import consume_next_spell_rules
+    used_improvise,used_uncounterable,next_payments=consume_next_spell_rules(host,proposal,card,preparing=preparing)
     intrinsic_uncounterable = oracle_has_intrinsic_counter_prohibition(
         host.semantics,
         record.oracle_id,

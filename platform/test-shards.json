@@ -1353,6 +1353,7 @@
       "test_mayhem_rules",
       "test_mixed_permanent_targets",
       "test_multikicker_result_amounts",
+      "test_next_spell_cost_reductions",
       "test_nonmana_kicker",
       "test_owner_relative_graveyard_exile",
       "test_provoke_rules",

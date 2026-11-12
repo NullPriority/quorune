@@ -253,6 +253,12 @@ caster relation, current origin/turn context, and only the represented public
 metric; it never retains Oracle prose as runtime authority. Unsupported target-
 relative, private, characteristic-cycle-sensitive, capped, or open-arithmetic
 forms remain source-spanned residuals.
+The closed `grant_next_spell_cost_reduction` instruction carries schema one,
+one public `spell_query` and an integer or independently typed `amount` producer.
+Its actor is the resolving controller. Public counts and current-or-last-known
+source stats resolve before the literal reduction enters the duration journal.
+The next eligible cast consumes that rule through the same cost provider used
+to advertise the action; the instruction does not grant a casting permission.
 Closed public trigger bindings serialize only a normalized event identity and
 typed predicates over sealed public facts. Current equipped relations,
 last-known attached-object death, prior controller, owner-relative graveyard

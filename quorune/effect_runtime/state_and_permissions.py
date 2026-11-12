@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..next_spell_costs import apply_next_spell_cost_reduction
 
 from typing import Any, Mapping
 
@@ -505,6 +506,7 @@ def _apply_set_day_night(host, effect, *, actor, operation, reason):
 
 
 HANDLERS = {
+    'grant_next_spell_cost_reduction': apply_next_spell_cost_reduction,
     'set_day_night': _apply_set_day_night,
     'increase_speed': apply_speed_increase,
     'add_counter_selected': _apply_add_counter_selected,
