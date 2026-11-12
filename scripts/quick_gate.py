@@ -287,6 +287,14 @@ def build_plan(
                  "-p", "test_rules_scheduler.py", "-k",
                  "test_revised_unmerged_batch_inherits_only_its_verified_receipt_base"),
             ))
+        if {"quorune/work_selection_common.py", "quorune/work_selection_evidence.py",
+                "quorune/work_selection.py", "scripts/update_work_selection_cohort_measurements.py"}.intersection(paths):
+            steps.append(QuickStep(
+                "harvest-prerequisite-budget-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_rules_scheduler.py", "-k",
+                 "test_prerequisite_exception_requires_measured_fanout_and_open_budget"),
+            ))
         if "scripts/harvest_outcome_history.py" in paths:
             steps.append(QuickStep(
                 "unmerged-harvest-revision-identity-contract",

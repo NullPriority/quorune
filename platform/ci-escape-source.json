@@ -2124,6 +2124,23 @@
       "run_id": 43086636766,
       "head_sha": "d792b784bf9091e90149ef4af1ab439e7e1815e0",
       "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-prerequisite-budget-fixture",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "The prerequisite-budget fixture zeroed only historical complete-card gain after the current census probe correctly moved its observed basis to capability-closed gain. The supposedly subthreshold fixture remained above threshold, then passed a zero exception budget to the strict policy validator.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_prerequisite_exception_requires_measured_fanout_and_open_budget"
+      ],
+      "resolution": "Construct a subthreshold fixture across both recorded gain bases, use the canonical observed-gain reader for the fixture budget, and assert a positive subthreshold run before the exhaustion control. Select this same test in pre-corpus validation whenever the harvest metric readers change. Preserve production thresholds, probe-specific metric selection and immutable raw history.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
     }
   ],
   "recent_pull_requests": [

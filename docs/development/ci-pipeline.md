@@ -142,6 +142,11 @@ rationale. A new compiler identity can declare a new
 transition before its corpus exists. This check reads the existing history;
 it does not generate the census or rules queue.
 
+Changes to harvest metric readers also run the prerequisite-budget witness
+before corpus generation. Its synthetic history uses each probe's recorded
+gain basis, so eligibility and exhausted-budget controls exercise the same
+contract as production.
+
 Architecture capsule generation reads and parses the current test import
 inventory once per report, then applies each subsystem's unchanged import
 matching rule to that snapshot. Later reports reread the files, so edits and

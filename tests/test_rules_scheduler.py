@@ -1536,10 +1536,12 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(snapshot, isolated)
 
     def test_prerequisite_exception_requires_measured_fanout_and_open_budget(self):
+        from quorune.work_selection_common import observed_harvest_card_gain
         inputs = _with_large_ability_compiler_harvest(self.work_inputs)
         history = inputs["harvest_outcome_history"]
         latest_outcome = history["entries"][-1]
         latest_outcome["actual_complete_card_gain"] = 0
+        latest_outcome["actual_capability_closed_card_gain"] = 0
         if "forecast_correction" in latest_outcome:
             latest_outcome["forecast_correction"][
                 "certified_complete_card_lower_bound"
@@ -1563,7 +1565,7 @@ class RulesSchedulerTests(unittest.TestCase):
         ]
         open_budget = 1
         for outcome in reversed(history["entries"]):
-            if outcome["actual_complete_card_gain"] >= minimum_gain:
+            if observed_harvest_card_gain(outcome) >= minimum_gain:
                 break
             open_budget += 1
         policy["coverage_family"][
@@ -1600,6 +1602,7 @@ class RulesSchedulerTests(unittest.TestCase):
         consecutive_subthreshold = work["selection_policy"][
             "consecutive_subthreshold_harvests"
         ]
+        self.assertGreaterEqual(consecutive_subthreshold, 1)
         policy["coverage_family"][
             "maximum_consecutive_prerequisite_exceptions"
         ] = consecutive_subthreshold
