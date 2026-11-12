@@ -86,7 +86,7 @@ class SingularPublicSetCompilerTests(unittest.TestCase):
             for text in texts:
                 with self.subTest(source=text): self.assertIsNone(compiler(text))
         for record in (self.record("Destroy target artifact you don't control.",cost='Overload {X}{R}'),
-                self.record('Target creature you control gets +0/+1 and gains hexproof until end of turn.'),
+                self.record('Target creature you control gains protection from each color until end of turn.'),
                 replace(self.record("Destroy target artifact you don't control."),
                     oracle_text="Destroy target artifact you don't control. Invent an unrepresented sibling.\nOverload {4}{R}")):
             self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=self.registry,

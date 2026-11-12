@@ -109,7 +109,9 @@ class FixedOverloadModelCompilerTests(unittest.TestCase):
         for change in ({'oracle_text': record.oracle_text + '\nInvent an unrepresented sibling.'},
                 {'mana_cost': '{X}{R}'}, {'layout': 'split'}):
             self.assertNotEqual('exact', self.compile(self.record(**change)).status)
-        unclosed_each = self.record(body='Target creature you control gets +0/+1 and gains hexproof until end of turn.')
+        combined_each = self.record(body='Target creature you control gets +0/+1 and gains hexproof until end of turn.')
+        self.assertEqual('exact', self.compile(combined_each).status)
+        unclosed_each = self.record(body='Target creature you control gains protection from each color until end of turn.')
         normal_only = replace(unclosed_each, oracle_text=unclosed_each.oracle_text.splitlines()[0], keywords=())
         self.assertEqual('exact', self.compile(normal_only).status)
         self.assertNotEqual('exact', self.compile(unclosed_each).status)

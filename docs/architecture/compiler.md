@@ -1698,7 +1698,11 @@ resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking
 creatures. Both grammars feed one closed query validator and accept the
 complete combined keyword and signed power/toughness result in either
-printed order. The existing declared-amount composition also accepts that
+printed order. Singular coordinated `gains` uses the same complete result
+validator, and `each` subjects with `you don't control` retain the existing
+opponent-relative query. Typed protection fragments still require their own
+represented resolution codec and remain residual here.
+The existing declared-amount composition also accepts that
 result with a typed public count or scalar quantity; promotion independently
 validates the projected fixed result and every required quantity owner.
 Resolution evaluates only cycle-safe current type, subtype, color, supertype, token, controller, and

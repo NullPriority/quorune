@@ -633,6 +633,7 @@
       "test_ring_temptation_state",
       "test_scalar_mill_wording",
       "test_semantic_searches",
+      "test_singular_characteristic_sets",
       "test_singular_public_permanent_sets",
       "test_source_block_pair",
       "test_static_action_permissions",

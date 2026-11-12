@@ -14507,6 +14507,21 @@
         "test_fixed_public_zone_moves",
         "test_targeted_tap_state_effect_clauses"
       ]
+    },
+    {
+      "id": "singular-characteristic-resolution-set-composition",
+      "patterns": [
+        "quorune/compiler/fixed_public_characteristic_sets.py",
+        "tests/test_singular_characteristic_sets.py",
+        "tests/fixtures/singular-characteristic-set-cards.json"
+      ],
+      "test_modules": [
+        "test_singular_characteristic_sets",
+        "test_fixed_overload",
+        "test_singular_public_permanent_sets",
+        "test_fixed_query_keyword_grants",
+        "test_gain_and_get_sets"
+      ]
     }
   ],
   "risk_rules": [

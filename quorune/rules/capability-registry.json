@@ -11806,7 +11806,10 @@
         "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry"
       ],
       "multiplayer_tests": [
         "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
@@ -11853,14 +11856,20 @@
         "test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints",
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry"
       ],
       "privacy_tests": [
         "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
         "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry"
       ],
       "replay_tests": [
         "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
@@ -11872,7 +11881,10 @@
         "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry"
       ],
       "required_evidence": [
         "positive",
@@ -33120,7 +33132,11 @@
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry",
+        "test_actual_kodama_cast_trigger_excludes_source_and_spell_then_locks_each_grant"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -33251,7 +33267,11 @@
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
         "test_temporary_homogeneous_tribe_union_preserves_its_existing_bodies",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry",
+        "test_actual_kodama_cast_trigger_excludes_source_and_spell_then_locks_each_grant"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -33295,7 +33315,11 @@
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry",
+        "test_actual_kodama_cast_trigger_excludes_source_and_spell_then_locks_each_grant"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -33339,7 +33363,11 @@
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
-        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+        "test_actual_mizzium_variants_protect_only_the_resolved_controlled_set_until_cleanup",
+        "test_actual_weapon_surge_variants_lock_stats_and_keyword_together_then_expire",
+        "test_actual_downsize_variants_select_other_controllers_and_include_later_entry",
+        "test_actual_kodama_cast_trigger_excludes_source_and_spell_then_locks_each_grant"
       ],
       "required_evidence": [
         "positive",
@@ -92668,7 +92696,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 827,
+  "registry_version": 828,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

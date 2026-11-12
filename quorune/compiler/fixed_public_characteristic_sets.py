@@ -54,6 +54,10 @@ def _public_query(
     subject: str,
 ) -> tuple[ObjectQuerySpec, Mapping[str, Any] | None] | None:
     normalized = " ".join(subject.casefold().split())
+    each = re.fullmatch(r"each (?P<subject>.+?) you don't control", normalized)
+    if each is not None:
+        subject = 'each ' + each['subject'] + ' your opponents control'
+        normalized = subject
     if normalized == "creatures target player controls":
         return (
             ObjectQuerySpec(
@@ -140,8 +144,12 @@ def fixed_public_characteristic_set_effect_template(
         if match.group("verb").casefold() in {"get", "gets"}
         else "gain"
     )
+    result = match.group('result')
+    combined = re.fullmatch(r'(?P<stats>[+-]\d+/[+-]\d+) and gains (?P<keywords>.+)', result, re.I)
+    if combined is not None:
+        result = combined['stats'] + ' and gain ' + combined['keywords']
     represented = controlled_characteristic_until_end_of_turn_effect(
-        f"Creatures you control {verb} {match.group('result')} until end of turn."
+        f"Creatures you control {verb} {result} until end of turn."
     )
     if represented is None:
         return None
