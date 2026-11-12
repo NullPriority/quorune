@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from common import ROOT
+from common import ROOT, packet_without_decision_capability
 from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
@@ -25,7 +25,10 @@ class SourceCompositionClosureNativeTests(InheritedNativeFixture,unittest.TestCa
         cls.deck=DeckDefinition('Source composition closures',[DeckEntry('Sliver Hivelord',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Sliver Hivelord'])
 
     def finish(self,session,private):
-        for viewer in 'ABD':self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+viewer,full=True)))
+        for viewer in 'ABCD':
+            packet=packet_without_decision_capability(session.packet('pilot:'+viewer,full=True))
+            if viewer=='C':self.assertIn(private.ref,json.dumps(packet))
+            else:self.assertNotIn(private.ref,json.dumps(packet))
         self.replay(session,load=True)
 
     def activation(self,session,source):

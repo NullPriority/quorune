@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import ROOT
+from common import ROOT, packet_without_decision_capability
 from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.card_programs.adapters import compile_best_available_card_program
@@ -126,7 +126,10 @@ class SingularPublicSetNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertEqual(list(targets),session.state.stack[-1].targets)
 
     def finish(self,session,private):
-        for viewer in 'ABD': self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+viewer,full=True)))
+        for viewer in 'ABCD':
+            packet=packet_without_decision_capability(session.packet('pilot:'+viewer,full=True))
+            if viewer=='C':self.assertIn(private.ref,json.dumps(packet))
+            else:self.assertNotIn(private.ref,json.dumps(packet))
         self.replay(session,load=True)
 
     def test_vandalblast_retains_its_reviewed_admission_boundary(self):
