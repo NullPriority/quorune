@@ -199,7 +199,7 @@ class PersistUndyingCompilerTests(unittest.TestCase):
                 self.assertEqual(2, len({node.node_id for node in nodes}))
                 self.assertEqual(2, len({(node.span.start, node.span.end) for node in nodes}))
                 for node in nodes:
-                    self.assertEqual("creature.dies.self", node.event)
+                    self.assertEqual("permanent.graveyard.self", node.event)
                     self.assertEqual(
                         {
                             "field": "death_return_departed_without_counter",
@@ -394,7 +394,7 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
         source.oracle_id = identity
         source.printed_name = record.name
         for program in tuple(engine.semantics.programs_for_oracle(source.oracle_id)):
-            if program.event == "creature.dies.self":
+            if program.event in {"creature.dies.self", "permanent.graveyard.self"}:
                 engine.semantics.remove(program.key)
         programs = [
             program

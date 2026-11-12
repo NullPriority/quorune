@@ -1,0 +1,207 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "One with the Stars",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "oracle_text": "Enchant creature or enchantment\nEnchanted permanent is an enchantment and loses all other card types. (It still has its abilities, but it's no longer a creature.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Persist"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Putrid Goblin",
+      "oracle_id": "27faa94b-c7a7-45e7-8630-80126fab74ba",
+      "oracle_text": "Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": "2",
+      "type_line": "Creature — Zombie Goblin"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Undying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Young Wolf",
+      "oracle_id": "8b492764-10b6-4506-be11-22daa9220a91",
+      "oracle_text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": "1",
+      "type_line": "Creature — Wolf"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If One with the Stars enchants an enchantment that has no other card types, the enchanted permanent won’t be affected.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "One with the Stars may enchant a permanent that is only temporarily a creature, such as a Vehicle. If this happens, One with the Stars’s effect causes the enchanted permanent to remain an enchantment even after the temporary effect expires.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The enchanted permanent keeps its abilities but has no power or toughness. If one of its abilities refers to them, it uses 0.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The enchanted permanent loses any subtypes associated with the card types it lost. It keeps any supertypes, such as legendary.",
+      "oracle_id": "0ab43fc3-53ec-4686-873d-8dbeee2634f4",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with persist is removed from the graveyard after it dies but before the ability trigger resolves, it won’t be returned to the battlefield.",
+      "oracle_id": "27faa94b-c7a7-45e7-8630-80126fab74ba",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature has +1/+1 counters and -1/-1 counters on it, state-based actions remove the same number of each so that it has only one kind of those counters on it. Putrid Goblin’s persist ability can bring it back again if its -1/-1 counters are removed this way.",
+      "oracle_id": "27faa94b-c7a7-45e7-8630-80126fab74ba",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with persist that has +1/+1 counters on it receives enough -1/-1 counters to cause it to be destroyed by lethal damage or put into its owner’s graveyard for having 0 or less toughness, persist won’t trigger and the card won’t return to the battlefield. That’s because persist checks the creature as it last existed on the battlefield, and it still had -1/-1 counters on it at that point.",
+      "oracle_id": "27faa94b-c7a7-45e7-8630-80126fab74ba",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once persist returns the creature, it’s considered a new object with no relation to the object that it was. Auras that were attached to it won’t return to the battlefield. Equipment that was attached to it will remain unattached. Any counters that were on it won’t be put on the new creature.",
+      "oracle_id": "27faa94b-c7a7-45e7-8630-80126fab74ba",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

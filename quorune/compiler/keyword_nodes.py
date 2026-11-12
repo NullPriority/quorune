@@ -990,7 +990,7 @@ def death_return_keyword_node(
         text=line,
         span=span,
         active_zone="battlefield",
-        event="creature.dies.self",
+        event="permanent.graveyard.self",
         lowerable=True,
         exact=not gate.blockers,
         template_id=f"{mechanic}-death-return-counter-v1",

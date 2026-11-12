@@ -14029,6 +14029,25 @@
       "test_modules": [
         "test_rules_scheduler"
       ]
+    },
+    {
+      "id": "intrinsic-permanent-death-return-event",
+      "patterns": [
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/death_return.py",
+        "quorune/zone_trigger_events.py",
+        "tests/fixtures/intrinsic-permanent-death-return-cards.json"
+      ],
+      "test_modules": [
+        "test_intrinsic_death_return_permanents",
+        "test_persist_undying_rules",
+        "test_typed_grant_carriers",
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_oracle_ir",
+        "test_high_risk_interaction_assurance",
+        "test_game_record_v3"
+      ]
     }
   ],
   "risk_rules": [

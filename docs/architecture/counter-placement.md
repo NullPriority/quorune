@@ -539,8 +539,10 @@ mutation.
 
 Printed Persist and Undying harvest that generic boundary. The compiler emits
 one source-spanned triggered CardProgram per
-printed keyword instance. Trigger discovery evaluates the relevant counter
-from the departed creature's last-known public snapshot, preserves the
+printed keyword instance. The trigger observes the permanent's battlefield-to-
+graveyard departure even if it no longer has the creature type. Trigger
+discovery evaluates the relevant counter from the departed permanent's
+last-known public snapshot, preserves the
 graveyard incarnation and trigger controller, and places simultaneous triggers
 in the existing APNAP batch. Resolution returns only that same graveyard
 incarnation under its owner, then applies the required -1/-1 or +1/+1 counter

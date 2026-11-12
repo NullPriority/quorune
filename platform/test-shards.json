@@ -675,6 +675,7 @@
       "test_graveyard_return_rules",
       "test_hand_rules",
       "test_history_entry_characteristics",
+      "test_intrinsic_death_return_permanents",
       "test_kicked_damage_replacements",
       "test_library_selection_knowledge",
       "test_mill_rules",

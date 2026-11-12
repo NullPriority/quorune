@@ -707,6 +707,7 @@
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/intrinsic-empty-spell-resolution-cards.json",
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",
+    "tests/fixtures/intrinsic-permanent-death-return-cards.json",
     "tests/fixtures/job-select-cards.json",
     "tests/fixtures/kicked-damage-replacement-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",
