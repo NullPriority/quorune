@@ -12,6 +12,34 @@ TARGET_CONTROLLER_INFORMATION_KIND='target_controller_information'
 TARGET_CONTROLLER_INFORMATION_CAPABILITY='resolution.target_controller_information'
 TARGET_CONTROLLER_INFORMATION_MECHANIC='fixed-target-controller-information'
 _LKI_FIELD='target_controller_information_lki'
+TARGET_OWNER_INFORMATION_KIND='target_owner_information'
+TARGET_OWNER_INFORMATION_CAPABILITY='resolution.target_owner_information'
+TARGET_OWNER_INFORMATION_MECHANIC='fixed-target-owner-information'
+
+
+def target_owner_reference(index=0):
+    return {'kind':TARGET_OWNER_INFORMATION_KIND,'schema_version':1,'index':index}
+
+
+def owner_reference_index(value):
+    if (not isinstance(value,Mapping) or set(value)!={'kind','schema_version','index'}
+            or value['kind']!=TARGET_OWNER_INFORMATION_KIND or type(value['schema_version']) is not int
+            or value['schema_version']!=1 or type(value['index']) is not int or value['index']<0):
+        raise ValueError('Target owner information requires one closed target index')
+    return value['index']
+
+
+def resolve_target_owner_information(host,value,item):
+    """A physical object's ownership survives its zone/incarnation changes."""
+    index=owner_reference_index(value)
+    if index>=len(item.targets):raise ValueError('Target owner reference exceeds its announced targets')
+    snapshot=_snapshot(item,index)
+    if snapshot is None:return None
+    owner=snapshot.get('owner');card=host.state.cards.get(snapshot['object_id'])
+    if (type(owner) is not str or owner not in host.state.players or card is None or card.owner!=owner
+            or not 0<=snapshot['zone_change_counter']<=card.zone_change_counter):
+        raise ValueError('Target owner information disagrees with its physical object')
+    return owner
 
 
 def target_controller_reference(index=0):

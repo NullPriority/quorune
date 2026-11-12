@@ -1315,6 +1315,8 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'trigger.event.normalized_counter_placement': 'trigger-event-normalized-counter-placement',
         **CAST_FACT_CONDITION_MECHANICS,
         'resolution.target_controller_information': 'fixed-target-controller-information',
+        'resolution.target_owner_information': 'fixed-target-owner-information',
+        'resolution.effect_program.target_recipient_result': 'fixed-target-recipient-result',
         'trigger.keyword.provoke.fixed': 'provoke',
         'choice.controller.bounded_return_owner_hand': 'bounded-controlled-return',
         'zone.return.fixed_event_card': 'fixed-event-card-return',

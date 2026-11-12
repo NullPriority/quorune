@@ -82,6 +82,9 @@ def closed_effect_program_node_capabilities(
 
 def closed_effect_program_runtime_dependencies(program):
     """Keep the persisted ordered-program kind bound to its mutation owner."""
+    from .target_recipient_results import target_recipient_result_runtime_dependencies
+    recipient=target_recipient_result_runtime_dependencies(program)
+    if recipient:return recipient
     schema=getattr(program,'target_schema',None)
     if isinstance(schema,Mapping) and isinstance(schema.get('modes'),Mapping):
         definitions=tuple(schema['modes'].values())

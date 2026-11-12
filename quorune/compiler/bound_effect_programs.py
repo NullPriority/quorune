@@ -371,6 +371,10 @@ def bound_effect_program_template(
                 fixed_result = _target_controller_fixed_result_program(clauses, compile_component)
                 if fixed_result is not None:
                     return fixed_result
+        from .target_recipient_results import target_recipient_result_template
+        recipient_result = target_recipient_result_template(normalized,compile_component=compile_component)
+        if recipient_result is not None:
+            return recipient_result
     if _UNSAFE_LINKAGE.search(linkage_text):
         clauses = _sentence_partition(normalized)
         if (

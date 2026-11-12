@@ -640,6 +640,7 @@
       "test_static_characteristic_labels",
       "test_storm_rules",
       "test_tap_controller_information",
+      "test_target_recipient_results",
       "test_unleash_rules",
       "test_untap_selection_limits",
       "test_worldwagon_composition"

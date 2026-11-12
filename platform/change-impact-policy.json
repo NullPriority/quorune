@@ -14522,6 +14522,27 @@
         "test_fixed_query_keyword_grants",
         "test_gain_and_get_sets"
       ]
+    },
+    {
+      "id": "fixed-target-recipient-results",
+      "patterns": [
+        "quorune/compiler/target_recipient_results.py",
+        "quorune/rules/target_recipient_results.py",
+        "quorune/target_controller_information.py",
+        "quorune/compiler/bound_effect_programs.py",
+        "quorune/rules/bound_effect_program_shapes.py",
+        "tests/test_target_recipient_results.py",
+        "tests/fixtures/target-recipient-result-cards.json"
+      ],
+      "test_modules": [
+        "test_target_recipient_results",
+        "test_bound_effect_programs",
+        "test_tap_controller_information",
+        "test_fixed_token_creation_effects",
+        "test_fixed_affected_player_discards",
+        "test_fixed_player_counter_placement_effects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

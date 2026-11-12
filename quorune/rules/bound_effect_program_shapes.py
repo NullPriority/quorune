@@ -30,6 +30,8 @@ def _target_zero_only(value: Any) -> bool:
 
 
 def has_target_controller_recipient(effect: Mapping[str, Any]) -> bool:
+    from .target_recipient_results import contains_target_recipient_information
+    if contains_target_recipient_information(effect):return True
     if not isinstance(effect, Mapping):
         return False
     fields = ("target",) if effect.get("op") == OPTIONAL_EFFECT_OPERATION else ("target", "player")
@@ -139,6 +141,10 @@ def bound_effect_program_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     mechanics = set(mechanic_ids)
+    from .target_recipient_results import target_recipient_result_node_capabilities
+    from ..compiler.target_recipient_results import TARGET_RECIPIENT_RESULT_MECHANIC
+    if TARGET_RECIPIENT_RESULT_MECHANIC in mechanics:
+        return target_recipient_result_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     if (BOUND_EFFECT_PROGRAM_MECHANIC not in mechanics or not 2 <= len(effects) <= 8
         or any(not isinstance(effect, Mapping) for effect in effects)):
         return ()

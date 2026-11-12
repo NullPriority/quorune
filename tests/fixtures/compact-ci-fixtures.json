@@ -996,6 +996,7 @@
     "tests/fixtures/target-dependent-activation-cards.json",
     "tests/fixtures/target-player-hand-count-cards.json",
     "tests/fixtures/target-player-sequence-cards.json",
+    "tests/fixtures/target-recipient-result-cards.json",
     "tests/fixtures/target-restriction-cards.json",
     "tests/fixtures/target-set-result-sequence-cards.json",
     "tests/fixtures/targeted-graveyard-cast-cards.json",

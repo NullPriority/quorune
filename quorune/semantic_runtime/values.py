@@ -247,14 +247,9 @@ def resolve_semantic_value(
         from ..rules.paid_mana_resolution import resolve_cast_mana_units
         try:return resolve_cast_mana_units(host,value,item)
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get('kind')=='target_controller_information':
-        from ..target_controller_information import resolve_target_controller_information
-        try:return resolve_target_controller_information(host,value,item)
-        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get('kind')=='occurrence_controller_information':
-        from ..target_controller_information import resolve_occurrence_controller_information
-        try:return resolve_occurrence_controller_information(host,value,item)
-        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind') in {
+            'target_controller_information','target_owner_information','occurrence_controller_information'}:
+        return _resolve_target_information_value(host,value,item)
     if isinstance(value, Mapping) and value.get('kind') == 'reflexive_trigger_program':
         from ..reflexive_trigger_model import ReflexiveTriggerProgram
         try:
@@ -374,3 +369,15 @@ def resolve_semantic_value(
 
 
 __all__ = ["SemanticValueHost", "resolve_semantic_value"]
+
+
+def _resolve_target_information_value(host,value,item):
+    """Keep the related current, departure and physical-owner value codecs together."""
+    from ..target_controller_information import (
+        resolve_target_controller_information,resolve_target_owner_information,resolve_occurrence_controller_information,
+    )
+    reader={'target_controller_information':resolve_target_controller_information,
+        'target_owner_information':resolve_target_owner_information,
+        'occurrence_controller_information':resolve_occurrence_controller_information}[value['kind']]
+    try:return reader(host,value,item)
+    except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc

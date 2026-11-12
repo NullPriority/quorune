@@ -47319,6 +47319,78 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented conditional, chosen or variable designation grammar",
+          "shared team turns"
+        ],
+        "inputs": [
+          "closed designation enum",
+          "current world designation and applicable trusted bound faces"
+        ],
+        "outputs": [
+          "changed designation event exactly once",
+          "canonical bound-face synchronization before later instructions"
+        ],
+        "summary": "Resolve the exact untargeted It becomes day/night instruction through the existing designation and batch-transform owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "card_form.day_night"
+      ],
+      "dependency_fail_closed_rationale": "Designation capability withdrawal leaves the explicit instruction untrusted; existing world and physical face owners remain independent dependencies.",
+      "dependency_fail_closed_status": "passed",
+      "id": "game.day_night.fixed_designation",
+      "implementation_components": [
+        "quorune.compiler.day_night_nodes.fixed_day_night_designation_template",
+        "quorune.day_night_model.validate_day_night_designation",
+        "quorune.day_night.set_day_night_designation",
+        "quorune.day_night.synchronize_day_night",
+        "quorune.effect_runtime.state_and_permissions._apply_set_day_night",
+        "quorune.rules.fixed_rule_action_coverage.fixed_day_night_designation_capabilities"
+      ],
+      "implementation_mutation_rationale": "The actual Into the Night composition requires the designation and applicable physical back face before the subset draw; malformed and unchanged-designation controls distinguish the owner boundary.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "multiplayer_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "negative_tests": [
+        "test_explicit_day_night_designations_are_closed_and_use_the_existing_world_owner"
+      ],
+      "official_rules": [
+        "731.1",
+        "731.1a",
+        "702.145"
+      ],
+      "positive_tests": [
+        "test_explicit_day_night_designations_are_closed_and_use_the_existing_world_owner"
+      ],
+      "privacy_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "replay_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "revealed-hand and mulligan-time abilities",
           "paid or conditional opening clauses",
           "unrepresented sibling semantics"
@@ -63931,7 +64003,16 @@
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_target_revalidation_precedes_but_does_not_repeat_between_effects",
         "test_trusted_player_subject_draw_loss_and_discard",
-        "test_trusted_qualified_target_binding_and_stale_rollback"
+        "test_trusted_qualified_target_binding_and_stale_rollback",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "multiplayer_tests": [
         "test_original_certain_death_separates_indestructible_from_an_illegal_target",
@@ -63941,7 +64022,16 @@
         "test_original_removal_offers_only_its_affected_controller_the_optional_search",
         "test_original_zone_results_follow_departure_controller_and_effective_power",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
-        "test_trusted_player_subject_draw_loss_and_discard"
+        "test_trusted_player_subject_draw_loss_and_discard",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "negative_tests": [
         "test_bound_effect_dependency_and_compiler_mutants",
@@ -63985,14 +64075,32 @@
         "test_target_controller_life_and_draw_keep_one_closed_zone_target",
         "test_target_modifier_and_fixed_prevention_share_one_bound_target_program",
         "test_trusted_player_subject_draw_loss_and_discard",
-        "test_trusted_qualified_target_binding_and_stale_rollback"
+        "test_trusted_qualified_target_binding_and_stale_rollback",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "privacy_tests": [
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
         "test_original_removal_offers_only_its_affected_controller_the_optional_search",
         "test_original_zone_results_follow_departure_controller_and_effective_power",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
-        "test_trusted_player_subject_draw_loss_and_discard"
+        "test_trusted_player_subject_draw_loss_and_discard",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "replay_tests": [
         "test_cindervines_resolves_after_sacrificing_the_source",
@@ -64008,7 +64116,16 @@
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_target_revalidation_precedes_but_does_not_repeat_between_effects",
         "test_trusted_player_subject_draw_loss_and_discard",
-        "test_trusted_qualified_target_binding_and_stale_rollback"
+        "test_trusted_qualified_target_binding_and_stale_rollback",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "required_evidence": [
         "positive",
@@ -64291,6 +64408,128 @@
         "commander_review"
       ],
       "version": 11
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "ambiguous antecedents",
+          "optional or multiple targets",
+          "unknown siblings or token definitions",
+          "unrepresented dynamic or conditional results"
+        ],
+        "inputs": [
+          "one mandatory source-pinned public target",
+          "validated target incarnation and physical owner or current/departure controller",
+          "one independently closed fixed result"
+        ],
+        "outputs": [
+          "printed-order complete typed removal and recipient result without another target announcement"
+        ],
+        "summary": "Compose one independently closed mandatory public target removal with one fixed token, life, draw, hand-choice or player-counter result addressed through that target's validated controller or owner information."
+      },
+      "blockers": [],
+      "dependencies": [
+        "resolution.effect_program.bound_references"
+      ],
+      "dependency_fail_closed_rationale": "Malformed reference kinds/indices, missing information or result owners, detached target schemas and reordered instructions reject before admission or roll back the whole resolution.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.effect_program.target_recipient_result",
+      "implementation_components": [
+        "quorune.compiler.target_recipient_results.target_recipient_result_template",
+        "quorune.rules.target_recipient_results.target_recipient_result_node_capabilities",
+        "quorune.rules.target_recipient_results.target_recipient_result_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "Omitting the compiler or redirecting the actual owner value dispatch to the caster fails independent positive contracts; native four-seat consequences distinguish all recipients.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
+      ],
+      "multiplayer_tests": [
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
+      ],
+      "negative_tests": [
+        "test_unknown_siblings_optional_targets_dynamic_results_and_wrong_antecedents_stay_residual",
+        "test_actual_recipient_shapes_infer_required_owners_and_fail_closed_when_tampered",
+        "test_owner_value_uses_the_physical_owner_and_rejects_corrupt_reference_or_snapshot",
+        "test_owner_reader_omission_is_detected_through_the_actual_value_dispatch",
+        "test_recipient_compiler_omission_cannot_satisfy_the_original_positive_contract",
+        "test_new_producer_requires_its_recipient_recipe_even_without_annotations"
+      ],
+      "official_rules": [
+        "108.3",
+        "111.2",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3",
+        "704.4"
+      ],
+      "positive_tests": [
+        "test_fixed_recipient_results_compile_in_spell_trigger_and_activation_contexts",
+        "test_owner_value_uses_the_physical_owner_and_rejects_corrupt_reference_or_snapshot",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
+      ],
+      "privacy_tests": [
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
+      ],
+      "replay_tests": [
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
@@ -65698,7 +65937,12 @@
         "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
-        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation"
+        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "multiplayer_tests": [
         "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
@@ -65715,7 +65959,12 @@
         "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
-        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation"
+        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "negative_tests": [
         "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
@@ -65763,7 +66012,12 @@
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_target_controller_damage_requires_one_typed_public_antecedent",
         "test_target_controller_life_and_draw_keep_one_closed_zone_target",
-        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation"
+        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "privacy_tests": [
         "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
@@ -65775,7 +66029,12 @@
         "test_original_zone_results_follow_departure_controller_and_effective_power",
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
-        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation"
+        "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "replay_tests": [
         "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
@@ -65794,7 +66053,12 @@
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
         "test_structural_distortion_uses_departure_controller_after_a_real_response",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
-        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw"
+        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw",
+        "test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement",
+        "test_actual_indestructible_still_gets_a_token_but_an_illegal_sole_target_gets_none",
+        "test_actual_discard_commits_movement_then_only_the_affected_player_can_choose",
+        "test_actual_pistus_poison_and_pongify_regeneration_prohibition_keep_their_owner_results",
+        "test_actual_get_lost_maps_activate_for_the_recipient_and_explore_into_that_players_hand"
       ],
       "required_evidence": [
         "positive",
@@ -65811,6 +66075,99 @@
         "commander_review"
       ],
       "version": 5
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "ambiguous antecedents",
+          "optional or multiple targets",
+          "unknown siblings or token definitions",
+          "unrepresented dynamic or conditional results"
+        ],
+        "inputs": [
+          "one mandatory source-pinned public target",
+          "validated target incarnation and physical owner or current/departure controller",
+          "one independently closed fixed result"
+        ],
+        "outputs": [
+          "printed-order complete typed removal and recipient result without another target announcement"
+        ],
+        "summary": "Read the immutable physical owner of the same announced public target, preserving the distinction from the spell controller and current or departure controller."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Malformed reference kinds/indices, missing information or result owners, detached target schemas and reordered instructions reject before admission or roll back the whole resolution.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.target_owner_information",
+      "implementation_components": [
+        "quorune.target_controller_information.resolve_target_owner_information",
+        "quorune.target_controller_information.owner_reference_index"
+      ],
+      "implementation_mutation_rationale": "Omitting the compiler or redirecting the actual owner value dispatch to the caster fails independent positive contracts; native four-seat consequences distinguish all recipients.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card"
+      ],
+      "multiplayer_tests": [
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card"
+      ],
+      "negative_tests": [
+        "test_unknown_siblings_optional_targets_dynamic_results_and_wrong_antecedents_stay_residual",
+        "test_actual_recipient_shapes_infer_required_owners_and_fail_closed_when_tampered",
+        "test_owner_value_uses_the_physical_owner_and_rejects_corrupt_reference_or_snapshot",
+        "test_owner_reader_omission_is_detected_through_the_actual_value_dispatch",
+        "test_recipient_compiler_omission_cannot_satisfy_the_original_positive_contract",
+        "test_new_producer_requires_its_recipient_recipe_even_without_annotations"
+      ],
+      "official_rules": [
+        "108.3",
+        "111.2",
+        "608.2b",
+        "608.2h"
+      ],
+      "positive_tests": [
+        "test_fixed_recipient_results_compile_in_spell_trigger_and_activation_contexts",
+        "test_owner_value_uses_the_physical_owner_and_rejects_corrupt_reference_or_snapshot",
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card"
+      ],
+      "privacy_tests": [
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card"
+      ],
+      "replay_tests": [
+        "test_actual_owner_life_is_distinct_from_caster_original_and_current_controller",
+        "test_actual_pharika_exiles_a_graveyard_card_and_gives_its_owner_the_complete_token",
+        "test_actual_destroyed_token_owner_result_finishes_before_quiescent_token_removal",
+        "test_actual_recoil_returns_to_owner_then_only_that_owner_can_discard_the_returned_card"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
@@ -86436,6 +86793,95 @@
     {
       "applicability": {
         "exclusions": [
+          "other-player or all-player selection",
+          "random or quality-qualified discards",
+          "unrepresented result riders or replacement interactions",
+          "offsets outside zero or one"
+        ],
+        "inputs": [
+          "closed schema-three controller instruction",
+          "hand_size bound materialized from the current private hand",
+          "integer draw offset zero or one",
+          "canonical current hand references and locked resolving controller"
+        ],
+        "outputs": [
+          "zero-to-entire-hand private selection without an artificial fixed ceiling",
+          "simultaneous typed discard before ordinary draws",
+          "printed extra draw even for zero selection or empty hand",
+          "authority, private projection and pending/final replay"
+        ],
+        "summary": "Choose any controller-owned hand subset through the existing private discard/draw owner, discard the selection simultaneously, then draw its count with the independently printed zero-or-one offset."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.discard.typed_cause",
+        "zone.draw.library_to_hand"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing this variable-hand owner blocks its complete instruction while fixed-subset and independent draw producers retain their existing owners.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.discard.variable_subset_draw",
+      "implementation_components": [
+        "quorune.compiler.discard_result_templates.discard_result_draw_template",
+        "quorune.discard_result_model.validate_variable_subset_discard_draw",
+        "quorune.rules.discard_result_shapes.discard_result_node_capabilities",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.prepare",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.complete",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent"
+      ],
+      "implementation_mutation_rationale": "A fresh actual borrowed Colossus death-trigger and three-card choice kills omission of the printed extra card through resulting hand and library counts.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "multiplayer_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "negative_tests": [
+        "test_modern_hand_selection_has_no_fixed_ceiling_and_empty_offset_survives",
+        "test_verified_variable_owner_withdrawal_retains_fixed_subset_and_plain_draw"
+      ],
+      "official_rules": [
+        "121.1",
+        "121.2",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "701.9a",
+        "701.9c"
+      ],
+      "positive_tests": [
+        "test_variable_hand_bound_and_offset_are_closed_across_source_contexts"
+      ],
+      "privacy_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "replay_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Optional/team/filtered hands",
           "Linked hand-size counts until separately represented",
           "Unrepresented cost/event/sibling clauses"
@@ -89724,6 +90170,103 @@
     {
       "applicability": {
         "exclusions": [
+          "targeted transformed returns",
+          "delayed, source-departure or separately linked transformed returns",
+          "tapped, added-counter, temporary-keyword or face-down riders",
+          "unrepresented attachment entry",
+          "unrepresented replacement interactions",
+          "material chapter or back-face siblings outside their independent owners"
+        ],
+        "inputs": [
+          "paired source-spanned exile and return instructions with one identity binding",
+          "closed schema-four immediate actor-controlled transformed-entry spec",
+          "captured source battlefield incarnation and actual committed exile incarnation",
+          "physical double-faced card metadata and a represented permanent back face"
+        ],
+        "outputs": [
+          "canonical source exile",
+          "identity-pinned immediate back-face entry under the resolving controller",
+          "normal prospective entry, counter, ability and APNAP processing"
+        ],
+        "summary": "Resolve the closed immediate source exile/return-transformed instruction through the existing linked zone owner, preserving the captured source incarnation and resolving controller, physical double-faced eligibility and prospective back-face entry."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.linked_exile_return.fixed"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the transformed-return capability retains a material terminal-chapter residual while the independent ordinary blink owner remains available.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.linked_exile_return.transformed_source",
+      "implementation_components": [
+        "quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template",
+        "quorune.compiler.oracle_source_text.material_source_lines",
+        "quorune.linked_exile_return_model.LinkedExileReturnSpec",
+        "quorune.linked_exile_return.transformed_return_face",
+        "quorune.linked_exile_return.return_linked_exiled_objects",
+        "quorune.linked_exile_return.resolve_linked_exile_return",
+        "quorune.rules.linked_exile_return_shapes.linked_exile_return_node_capabilities",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Fresh actual Proliferate and terminal-chapter witnesses reject front-face entry and owner-controlled return; source blink distinguishes a new incarnation from the captured old one.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "negative_tests": [
+        "test_terminal_pair_is_closed_and_adjacent_open_variants_remain_unrepresented",
+        "test_verified_transformed_dependency_withdrawal_preserves_ordinary_blink",
+        "test_transformed_spec_preserves_legacy_descriptors_and_rejects_mixed_modes",
+        "test_return_face_uses_physical_layout_and_permanent_eligibility"
+      ],
+      "official_rules": [
+        "111.8",
+        "201.5",
+        "400.7",
+        "400.7j",
+        "608.2c",
+        "712.14",
+        "712.14a",
+        "712.14b",
+        "714.2b",
+        "714.3a",
+        "714.3c",
+        "714.4"
+      ],
+      "positive_tests": [
+        "test_original_two_face_candidates_are_strictly_bound_without_reminder_residuals"
+      ],
+      "privacy_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "replay_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrestricteddamage recipient",
           "globalattack defender ambiguity",
           "newobject/linked/partial result",
@@ -91743,107 +92286,6 @@
     {
       "applicability": {
         "exclusions": [
-          "unrepresented event heads",
-          "Aura enchanted-object departure exception",
-          "battlefield return",
-          "another card",
-          "unsupported intervening-if"
-        ],
-        "inputs": [
-          "graveyard-only source ability",
-          "owner-relative existing event predicates",
-          "pinned physical and logical source identity"
-        ],
-        "outputs": [
-          "principal-correct optional choice",
-          "ordinary canonical source zone movement or stale-source no-op"
-        ],
-        "summary": "An existing represented event may offer its owner return of the same source card from graveyard to hand."
-      },
-      "blockers": [],
-      "dependencies": [
-        "zone.self_move.activated",
-        "effect.choice.optional_fixed"
-      ],
-      "dependency_fail_closed_rationale": "Verified return-owner withdrawal rejects source return and retains ordinary upkeep draw; descriptor infers authority independently of annotations.",
-      "dependency_fail_closed_status": "passed",
-      "id": "zone.return.triggered_self_graveyard_hand",
-      "implementation_components": [
-        "quorune.compiler.graveyard_self_return.graveyard_self_return_binding",
-        "quorune.compiler.graveyard_self_return.graveyard_self_return_result",
-        "quorune.rules.graveyard_self_return.graveyard_self_return_dependencies",
-        "quorune.rules.graveyard_self_return.graveyard_self_return_node_capabilities",
-        "quorune.rules.graveyard_self_return.graveyard_self_return_runtime_dependencies",
-        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler.lower",
-        "quorune.self_zone_move.resolve_self_zone_move",
-        "quorune.compiled_ability_fragments.compiled_static_ability_fragments"
-      ],
-      "implementation_mutation_rationale": "Substituting the current logical identity for the pinned source causes the new-incarnation model witness to fail by assertion.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
-        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
-        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
-        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
-        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
-      ],
-      "multiplayer_tests": [
-        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
-        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
-        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
-        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
-        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
-      ],
-      "negative_tests": [
-        "test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract",
-        "test_verified_return_authority_withdrawal_keeps_ordinary_upkeep_draw",
-        "test_marker_codec_is_closed_and_descriptor_owns_authority",
-        "test_typed_existing_move_skips_a_new_incarnation",
-        "test_optional_mana_prefix_is_preserved_and_unknown_prefix_cannot_be_discarded",
-        "test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
-      ],
-      "official_rules": [
-        "108.4a",
-        "113.6m",
-        "113.8",
-        "400.7",
-        "603.3a",
-        "608.2c"
-      ],
-      "positive_tests": [
-        "test_existing_event_heads_keep_owner_relative_predicates_and_graveyard_zone",
-        "test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust",
-        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
-      ],
-      "privacy_tests": [
-        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
-      ],
-      "replay_tests": [
-        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
-        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
-        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
-        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
-        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 2
-    },
-    {
-      "applicability": {
-        "exclusions": [
           "new event heads",
           "death and departure lookback envelopes",
           "explicit attachment destination",
@@ -91949,6 +92391,107 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "unrepresented event heads",
+          "Aura enchanted-object departure exception",
+          "battlefield return",
+          "another card",
+          "unsupported intervening-if"
+        ],
+        "inputs": [
+          "graveyard-only source ability",
+          "owner-relative existing event predicates",
+          "pinned physical and logical source identity"
+        ],
+        "outputs": [
+          "principal-correct optional choice",
+          "ordinary canonical source zone movement or stale-source no-op"
+        ],
+        "summary": "An existing represented event may offer its owner return of the same source card from graveyard to hand."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.self_move.activated",
+        "effect.choice.optional_fixed"
+      ],
+      "dependency_fail_closed_rationale": "Verified return-owner withdrawal rejects source return and retains ordinary upkeep draw; descriptor infers authority independently of annotations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.return.triggered_self_graveyard_hand",
+      "implementation_components": [
+        "quorune.compiler.graveyard_self_return.graveyard_self_return_binding",
+        "quorune.compiler.graveyard_self_return.graveyard_self_return_result",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_dependencies",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_node_capabilities",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_runtime_dependencies",
+        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler.lower",
+        "quorune.self_zone_move.resolve_self_zone_move",
+        "quorune.compiled_ability_fragments.compiled_static_ability_fragments"
+      ],
+      "implementation_mutation_rationale": "Substituting the current logical identity for the pinned source causes the new-incarnation model witness to fail by assertion.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
+        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
+        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
+      ],
+      "multiplayer_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
+        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
+        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
+      ],
+      "negative_tests": [
+        "test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract",
+        "test_verified_return_authority_withdrawal_keeps_ordinary_upkeep_draw",
+        "test_marker_codec_is_closed_and_descriptor_owns_authority",
+        "test_typed_existing_move_skips_a_new_incarnation",
+        "test_optional_mana_prefix_is_preserved_and_unknown_prefix_cannot_be_discarded",
+        "test_dungeon_completion_subscription_and_graveyard_quota_keep_closed_scope"
+      ],
+      "official_rules": [
+        "108.4a",
+        "113.6m",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "608.2c"
+      ],
+      "positive_tests": [
+        "test_existing_event_heads_keep_owner_relative_predicates_and_graveyard_zone",
+        "test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
+      ],
+      "privacy_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
+      ],
+      "replay_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
+        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
+        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw",
+        "test_original_completion_observers_return_their_cards_and_create_the_wolf"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 2
     },
     {
       "applicability": {
@@ -92430,264 +92973,6 @@
         "commander_review"
       ],
       "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "targeted transformed returns",
-          "delayed, source-departure or separately linked transformed returns",
-          "tapped, added-counter, temporary-keyword or face-down riders",
-          "unrepresented attachment entry",
-          "unrepresented replacement interactions",
-          "material chapter or back-face siblings outside their independent owners"
-        ],
-        "inputs": [
-          "paired source-spanned exile and return instructions with one identity binding",
-          "closed schema-four immediate actor-controlled transformed-entry spec",
-          "captured source battlefield incarnation and actual committed exile incarnation",
-          "physical double-faced card metadata and a represented permanent back face"
-        ],
-        "outputs": [
-          "canonical source exile",
-          "identity-pinned immediate back-face entry under the resolving controller",
-          "normal prospective entry, counter, ability and APNAP processing"
-        ],
-        "summary": "Resolve the closed immediate source exile/return-transformed instruction through the existing linked zone owner, preserving the captured source incarnation and resolving controller, physical double-faced eligibility and prospective back-face entry."
-      },
-      "blockers": [],
-      "dependencies": [
-        "zone.linked_exile_return.fixed"
-      ],
-      "dependency_fail_closed_rationale": "Withdrawing the transformed-return capability retains a material terminal-chapter residual while the independent ordinary blink owner remains available.",
-      "dependency_fail_closed_status": "passed",
-      "id": "zone.linked_exile_return.transformed_source",
-      "implementation_components": [
-        "quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template",
-        "quorune.compiler.oracle_source_text.material_source_lines",
-        "quorune.linked_exile_return_model.LinkedExileReturnSpec",
-        "quorune.linked_exile_return.transformed_return_face",
-        "quorune.linked_exile_return.return_linked_exiled_objects",
-        "quorune.linked_exile_return.resolve_linked_exile_return",
-        "quorune.rules.linked_exile_return_shapes.linked_exile_return_node_capabilities",
-        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
-      ],
-      "implementation_mutation_rationale": "Fresh actual Proliferate and terminal-chapter witnesses reject front-face entry and owner-controlled return; source blink distinguishes a new incarnation from the captured old one.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
-        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
-      ],
-      "multiplayer_tests": [
-        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
-        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
-      ],
-      "negative_tests": [
-        "test_terminal_pair_is_closed_and_adjacent_open_variants_remain_unrepresented",
-        "test_verified_transformed_dependency_withdrawal_preserves_ordinary_blink",
-        "test_transformed_spec_preserves_legacy_descriptors_and_rejects_mixed_modes",
-        "test_return_face_uses_physical_layout_and_permanent_eligibility"
-      ],
-      "official_rules": [
-        "111.8",
-        "201.5",
-        "400.7",
-        "400.7j",
-        "608.2c",
-        "712.14",
-        "712.14a",
-        "712.14b",
-        "714.2b",
-        "714.3a",
-        "714.3c",
-        "714.4"
-      ],
-      "positive_tests": [
-        "test_original_two_face_candidates_are_strictly_bound_without_reminder_residuals"
-      ],
-      "privacy_tests": [
-        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
-        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
-      ],
-      "replay_tests": [
-        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
-        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "unrepresented conditional, chosen or variable designation grammar",
-          "shared team turns"
-        ],
-        "inputs": [
-          "closed designation enum",
-          "current world designation and applicable trusted bound faces"
-        ],
-        "outputs": [
-          "changed designation event exactly once",
-          "canonical bound-face synchronization before later instructions"
-        ],
-        "summary": "Resolve the exact untargeted It becomes day/night instruction through the existing designation and batch-transform owner."
-      },
-      "blockers": [],
-      "dependencies": [
-        "card_form.day_night"
-      ],
-      "dependency_fail_closed_rationale": "Designation capability withdrawal leaves the explicit instruction untrusted; existing world and physical face owners remain independent dependencies.",
-      "dependency_fail_closed_status": "passed",
-      "id": "game.day_night.fixed_designation",
-      "implementation_components": [
-        "quorune.compiler.day_night_nodes.fixed_day_night_designation_template",
-        "quorune.day_night_model.validate_day_night_designation",
-        "quorune.day_night.set_day_night_designation",
-        "quorune.day_night.synchronize_day_night",
-        "quorune.effect_runtime.state_and_permissions._apply_set_day_night",
-        "quorune.rules.fixed_rule_action_coverage.fixed_day_night_designation_capabilities"
-      ],
-      "implementation_mutation_rationale": "The actual Into the Night composition requires the designation and applicable physical back face before the subset draw; malformed and unchanged-designation controls distinguish the owner boundary.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "multiplayer_tests": [
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "negative_tests": [
-        "test_explicit_day_night_designations_are_closed_and_use_the_existing_world_owner"
-      ],
-      "official_rules": [
-        "731.1",
-        "731.1a",
-        "702.145"
-      ],
-      "positive_tests": [
-        "test_explicit_day_night_designations_are_closed_and_use_the_existing_world_owner"
-      ],
-      "privacy_tests": [
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "replay_tests": [
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
-    },
-    {
-      "applicability": {
-        "exclusions": [
-          "other-player or all-player selection",
-          "random or quality-qualified discards",
-          "unrepresented result riders or replacement interactions",
-          "offsets outside zero or one"
-        ],
-        "inputs": [
-          "closed schema-three controller instruction",
-          "hand_size bound materialized from the current private hand",
-          "integer draw offset zero or one",
-          "canonical current hand references and locked resolving controller"
-        ],
-        "outputs": [
-          "zero-to-entire-hand private selection without an artificial fixed ceiling",
-          "simultaneous typed discard before ordinary draws",
-          "printed extra draw even for zero selection or empty hand",
-          "authority, private projection and pending/final replay"
-        ],
-        "summary": "Choose any controller-owned hand subset through the existing private discard/draw owner, discard the selection simultaneously, then draw its count with the independently printed zero-or-one offset."
-      },
-      "blockers": [],
-      "dependencies": [
-        "zone.discard.typed_cause",
-        "zone.draw.library_to_hand"
-      ],
-      "dependency_fail_closed_rationale": "Withdrawing this variable-hand owner blocks its complete instruction while fixed-subset and independent draw producers retain their existing owners.",
-      "dependency_fail_closed_status": "passed",
-      "id": "zone.discard.variable_subset_draw",
-      "implementation_components": [
-        "quorune.compiler.discard_result_templates.discard_result_draw_template",
-        "quorune.discard_result_model.validate_variable_subset_discard_draw",
-        "quorune.rules.discard_result_shapes.discard_result_node_capabilities",
-        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler",
-        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.prepare",
-        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.complete",
-        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent"
-      ],
-      "implementation_mutation_rationale": "A fresh actual borrowed Colossus death-trigger and three-card choice kills omission of the printed extra card through resulting hand and library counts.",
-      "implementation_mutation_status": "killed",
-      "interaction_tests": [
-        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "multiplayer_tests": [
-        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "negative_tests": [
-        "test_modern_hand_selection_has_no_fixed_ceiling_and_empty_offset_survives",
-        "test_verified_variable_owner_withdrawal_retains_fixed_subset_and_plain_draw"
-      ],
-      "official_rules": [
-        "121.1",
-        "121.2",
-        "400.7",
-        "608.2c",
-        "608.2d",
-        "701.9a",
-        "701.9c"
-      ],
-      "positive_tests": [
-        "test_variable_hand_bound_and_offset_are_closed_across_source_contexts"
-      ],
-      "privacy_tests": [
-        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "replay_tests": [
-        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
-        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "status": "trusted",
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -92696,7 +92981,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 828,
+  "registry_version": 829,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -2630,6 +2630,22 @@ the controller at the time the counter would be placed. A final fixed stat
 rider can read that creature's current subtype. One effect that adds a subtype
 and grants keywords shares a timestamp across its type and ability layers.
 
+`compiler/target_recipient_results.py` composes one closed mandatory removal
+with a fixed token, life, draw, player-counter or private discard result for
+the same target's controller or owner. Regeneration prohibition remains part
+of the complete removal prefix. Controller reads reuse current or exact
+departure information; owner reads retain the physical object's immutable
+ownership. A graveyard card supports an owner result and no controller result.
+An owner-hand return can also bind a following "that player" result to that
+owner; a removal without this explicit player antecedent cannot use that form.
+Every child is validated through its existing owner before its recipient is
+bound, and the new composition has its own capability and template identity.
+The existing token factory, replacements and affected-player choice owners
+perform the result without another target announcement. Illegal sole targets
+cancel the entire resolution; failed destruction of an indestructible target
+does not cancel an unconditional result. Unknown siblings and unrepresented
+dynamic or conditional results remain residual.
+
 Suspect can use one announced creature, the entering source, or the current
 enchanted creature. The fixed removal action clears currently suspected
 creatures. The designation carries a timestamp on the permanent's current
