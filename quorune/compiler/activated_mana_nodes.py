@@ -333,6 +333,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     'create_token_then_counters',
     'discard_hands_then_draw',
     'discard_draw_up_to',
+    'set_day_night',
     'prohibit_casting_until_end_of_turn',
     'return_random_graveyard_cards',
     "copy_stack_item",

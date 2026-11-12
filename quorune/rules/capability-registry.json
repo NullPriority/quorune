@@ -92030,6 +92030,167 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "unrepresented conditional, chosen or variable designation grammar",
+          "shared team turns"
+        ],
+        "inputs": [
+          "closed designation enum",
+          "current world designation and applicable trusted bound faces"
+        ],
+        "outputs": [
+          "changed designation event exactly once",
+          "canonical bound-face synchronization before later instructions"
+        ],
+        "summary": "Resolve the exact untargeted It becomes day/night instruction through the existing designation and batch-transform owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "card_form.day_night"
+      ],
+      "dependency_fail_closed_rationale": "Designation capability withdrawal leaves the explicit instruction untrusted; existing world and physical face owners remain independent dependencies.",
+      "dependency_fail_closed_status": "passed",
+      "id": "game.day_night.fixed_designation",
+      "implementation_components": [
+        "quorune.compiler.day_night_nodes.fixed_day_night_designation_template",
+        "quorune.day_night_model.validate_day_night_designation",
+        "quorune.day_night.set_day_night_designation",
+        "quorune.day_night.synchronize_day_night",
+        "quorune.effect_runtime.state_and_permissions._apply_set_day_night",
+        "quorune.rules.fixed_rule_action_coverage.fixed_day_night_designation_capabilities"
+      ],
+      "implementation_mutation_rationale": "The actual Into the Night composition requires the designation and applicable physical back face before the subset draw; malformed and unchanged-designation controls distinguish the owner boundary.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "multiplayer_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "negative_tests": [
+        "test_explicit_day_night_designations_are_closed_and_use_the_existing_world_owner"
+      ],
+      "official_rules": [
+        "731.1",
+        "731.1a",
+        "702.145"
+      ],
+      "positive_tests": [
+        "test_explicit_day_night_designations_are_closed_and_use_the_existing_world_owner"
+      ],
+      "privacy_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "replay_tests": [
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "other-player or all-player selection",
+          "random or quality-qualified discards",
+          "unrepresented result riders or replacement interactions",
+          "offsets outside zero or one"
+        ],
+        "inputs": [
+          "closed schema-three controller instruction",
+          "hand_size bound materialized from the current private hand",
+          "integer draw offset zero or one",
+          "canonical current hand references and locked resolving controller"
+        ],
+        "outputs": [
+          "zero-to-entire-hand private selection without an artificial fixed ceiling",
+          "simultaneous typed discard before ordinary draws",
+          "printed extra draw even for zero selection or empty hand",
+          "authority, private projection and pending/final replay"
+        ],
+        "summary": "Choose any controller-owned hand subset through the existing private discard/draw owner, discard the selection simultaneously, then draw its count with the independently printed zero-or-one offset."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.discard.typed_cause",
+        "zone.draw.library_to_hand"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing this variable-hand owner blocks its complete instruction while fixed-subset and independent draw producers retain their existing owners.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.discard.variable_subset_draw",
+      "implementation_components": [
+        "quorune.compiler.discard_result_templates.discard_result_draw_template",
+        "quorune.discard_result_model.validate_variable_subset_discard_draw",
+        "quorune.rules.discard_result_shapes.discard_result_node_capabilities",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.prepare",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.complete",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent"
+      ],
+      "implementation_mutation_rationale": "A fresh actual borrowed Colossus death-trigger and three-card choice kills omission of the printed extra card through resulting hand and library counts.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "multiplayer_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "negative_tests": [
+        "test_modern_hand_selection_has_no_fixed_ceiling_and_empty_offset_survives",
+        "test_verified_variable_owner_withdrawal_retains_fixed_subset_and_plain_draw"
+      ],
+      "official_rules": [
+        "121.1",
+        "121.2",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "701.9a",
+        "701.9c"
+      ],
+      "positive_tests": [
+        "test_variable_hand_bound_and_offset_are_closed_across_source_contexts"
+      ],
+      "privacy_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "replay_tests": [
+        "test_actual_borrowed_colossus_death_discards_more_than_two_then_draws_extra",
+        "test_actual_into_night_zero_and_empty_hand_both_draw_the_extra_card"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -92038,7 +92199,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 775,
+  "registry_version": 777,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

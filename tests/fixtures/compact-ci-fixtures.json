@@ -1040,7 +1040,8 @@
     "tests/fixtures/whole-hand-discard-cards.json",
     "tests/fixtures/worldwagon-cards.json",
     "tests/fixtures/colored-spell-graveyard-return-cards.json",
-    "tests/fixtures/fixed-subset-discard-draw-cards.json"
+    "tests/fixtures/fixed-subset-discard-draw-cards.json",
+    "tests/fixtures/variable-subset-discard-draw-cards.json"
   ],
   "full_database_only": [],
   "schema_version": 2

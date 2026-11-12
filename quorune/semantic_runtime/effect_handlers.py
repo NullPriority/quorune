@@ -38,6 +38,7 @@ class DomainEffectHandler:
 
     @property
     def rule_references(self) -> tuple[str, ...]:
+        if self.operation=='set_day_night':return ('731.1','731.1a','702.145')
         if self.operation == DETAIN_OPERATION:
             return DETAIN_RULES
         if self.operation == DIRECT_PROHIBITION_OPERATION:
@@ -124,6 +125,10 @@ class DomainEffectHandler:
                 validate_linked_instruction(effect)
             except ValueError as exc:
                 raise SemanticNodeError(str(exc)) from exc
+        if operation == 'set_day_night':
+            from ..day_night_model import validate_day_night_designation
+            try:validate_day_night_designation(effect)
+            except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
         if context.source is not None:
             runtime_effect["_runtime_source"] = context.source.to_dict()
             if SOURCE_TAP_EFFECT_FIELD in effect:
@@ -147,6 +152,9 @@ class DomainEffectHandler:
 
 
 def _domain_capabilities(operation):
+    if operation=='set_day_night':
+        from ..day_night_model import DAY_NIGHT_DESIGNATION_CAPABILITY
+        return (DAY_NIGHT_DESIGNATION_CAPABILITY,)
     if operation == DETAIN_OPERATION:
         return (DETAIN_CAPABILITY,)
     if operation == DIRECT_PROHIBITION_OPERATION:

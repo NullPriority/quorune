@@ -31,6 +31,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "goad",
                 "gain_class_level",
                 "increase_speed",
+                "set_day_night",
                 "mana",
                 "grant_next_spell_payment",
                 "grant_cast_cascade",

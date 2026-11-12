@@ -563,8 +563,19 @@ The fixed controller subset-and-draw compiler route uses the existing private
 schema-two instruction carries a positive fixed maximum and canonicalizes the
 private hand reference order before recording the pending choice. Marker-free
 legacy instructions retain their existing payload and ordering. Selecting zero,
-including an empty hand, draws zero; variable bounds and other-player variants
-remain material until independently represented.
+including an empty hand, draws zero. Other-player selections and unrepresented
+result riders remain material.
+
+Schema three separately represents an any-number controller hand subset with a
+printed zero-or-one draw offset. Its bound is the materialized current hand,
+not a fixed ceiling; a zero selection or empty hand still receives the printed
+extra card. It reuses the same selection, discard and draw ports and keeps
+schema two and marker-free behavior unchanged.
+
+Exact resolving day/night instructions enter the existing designation and
+batch-transform owner. The designation and applicable bound faces settle before
+the next printed instruction. An unchanged designation creates no new change
+event. This direct instruction does not replace the ordinary untap-step rule.
 
 Departure relevance is determined from object identity, expected incarnation,
 and public zone before a pending characteristic is evaluated. Empty departure

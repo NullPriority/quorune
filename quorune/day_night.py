@@ -96,6 +96,14 @@ def _commit_designation(
     )
 
 
+def set_day_night_designation(host: DayNightHost, designation: str, *, reason: str):
+    """Resolve CR 731.1 through the same designation and face owners."""
+    if type(designation) is not str or designation not in {'day','night'} or type(reason) is not str or not reason:
+        raise DayNightError('Explicit day/night designation is invalid')
+    _commit_designation(host, designation, reason=reason)
+    return synchronize_day_night(host, reason=reason)
+
+
 def synchronize_day_night(
     host: DayNightHost,
     *,

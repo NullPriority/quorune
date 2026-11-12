@@ -382,6 +382,7 @@ class DiscardDrawChoiceHandler:
     continuation_fields: tuple[str, ...] = (
         "maximum",
         "schema_version",
+        "draw_offset",
         "_choice_actor",
         "_legal_refs",
         "_maximum",
@@ -407,18 +408,21 @@ class DiscardDrawChoiceHandler:
     ) -> SemanticChoicePreparation:
         modern = 'schema_version' in effect
         if modern:
-            from ..discard_result_model import validate_fixed_subset_discard_draw
-            try:validate_fixed_subset_discard_draw(effect)
+            from ..discard_result_model import validate_fixed_subset_discard_draw, validate_variable_subset_discard_draw
+            validate = validate_variable_subset_discard_draw if effect.get('schema_version')==3 else validate_fixed_subset_discard_draw
+            try:validate(effect)
             except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
-        maximum = max(0, int(effect.get("maximum", 2)))
         rows = context.query.objects(zones=("hand",), owner=context.actor)
         if modern:
             rows = tuple(sorted(rows, key=lambda row: row.ref))
+        maximum = len(rows) if effect.get('schema_version')==3 else max(0, int(effect.get("maximum", 2)))
+        offset = effect.get('draw_offset',0) if effect.get('schema_version')==3 else 0
         if not rows or maximum == 0:
             return SemanticChoicePreparation(
                 request=None,
                 continuation_effect=FrozenMap(effect),
-                auto_continue=AutoContinue(reason="no discard is possible"),
+                auto_continue=AutoContinue(reason="no discard is possible", prepend_effects=(FrozenMap({
+                    'op':'draw','player':context.actor,'count':offset,'private':True,'reason':context.stack_label}),) if offset else ()),
             )
         maximum = min(maximum, len(rows))
         refs = tuple(row.ref for row in rows)
@@ -426,7 +430,7 @@ class DiscardDrawChoiceHandler:
             request=SemanticChoiceRequest(
                 prompt=(
                     f"Discard up to {maximum} card(s), then draw that "
-                    "many cards."
+                    + ("many cards plus one." if offset else "many cards.")
                 ),
                 choice=ObjectChoice(
                     field_name="cards",
@@ -464,6 +468,9 @@ class DiscardDrawChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        offset = effect.get('draw_offset',0) if effect.get('schema_version')==3 else 0
+        if type(offset) is not int or offset not in (0,1):
+            raise SemanticChoiceError('Discard/draw continuation offset changed')
         selected = tuple(str(value) for value in response.get("cards", ()))
         legal = {str(value) for value in effect.get("_legal_refs", ())}
         maximum = int(effect.get("_maximum", 0))
@@ -495,7 +502,7 @@ class DiscardDrawChoiceHandler:
                 event_code="daretti.discard_draw",
                 message=(
                     f"{actor} discarded {len(selected)} card(s) and will "
-                    "draw that many."
+                    + (f"draw {len(selected)+offset} card(s)." if offset else "draw that many.")
                 ),
                 details=FrozenMap(
                     {"count": len(selected), "objects": selected}
@@ -512,13 +519,13 @@ class DiscardDrawChoiceHandler:
                     {
                         "op": "draw",
                         "player": actor,
-                        "count": len(selected),
+                        "count": len(selected)+offset,
                         "private": True,
                         "reason": str(effect["_stack_label"]),
                     }
                 ),
             )
-            if selected
+            if selected or offset
             else (),
         )
 

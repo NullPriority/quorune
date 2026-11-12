@@ -7,6 +7,7 @@ from .extra_turn_templates import fixed_extra_turn_effect_template
 from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
+from .day_night_nodes import fixed_day_night_designation_template
 from .hand_entry_templates import fixed_draw_then_hand_entry_template, fixed_private_hand_entry_followup_template
 from .attacking_card_entry_templates import fixed_attacking_card_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
@@ -210,6 +211,8 @@ def _source_context_resolution_template(
     hand_entry=(fixed_attacking_card_entry_template(text) or fixed_private_hand_entry_followup_template(text)
         or fixed_draw_then_hand_entry_template(text))
     if hand_entry is not None:return hand_entry
+    designation = fixed_day_night_designation_template(text)
+    if designation is not None:return designation
     discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard

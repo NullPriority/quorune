@@ -136,6 +136,7 @@ class TransformingSagaNativeTests(TransformingSagaFixture, InheritedNativeFixtur
         session = self.session(seed)
         source = self.add(session.engine, SAGA, ref='borrowed-terminal-saga')
         source.owner = 'B'
+        source.active_face = self.db.by_oracle_id(source.oracle_id).faces[0]['name']
         source.counters['lore'] = 2
         plan = self.add(session.engine, 'Contentious Plan', zone='hand')
         blink = self.add(session.engine, 'Flicker of Fate', zone='hand')

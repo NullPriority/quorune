@@ -946,6 +946,7 @@
       "test_token_creation_replacements",
       "test_transforming_saga_returns",
       "test_triggered_graveyard_battlefield",
+      "test_variable_subset_discard_draw",
       "test_whole_hand_discard"
     ],
     "functional-06": [

@@ -285,6 +285,10 @@ instruction and a positive `maximum`, under their own fine capability. The
 existing private choice and typed discard/draw owners execute it; canonical
 hand-reference ordering keeps pending choices stable across replay. Unknown
 quantities, recipient fields and result riders do not widen this shape.
+Any-number controller subset instructions use their own closed schema three,
+`hand_size` bound and zero-or-one `draw_offset`. The exact clause "It becomes
+day/night" carries a separate designation capability and delegates to the
+existing world owner; compound instructions still require every leaf to close.
 An exact same-zone two-event clause serializes its ordered subscriptions inside
 the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime

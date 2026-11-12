@@ -20,6 +20,8 @@ from .affected_player_sacrifice_capability_shapes import (
     fixed_affected_player_sacrifice_node_capabilities,
 )
 from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
+from .discard_result_shapes import discard_result_node_capabilities
+from .fixed_rule_action_coverage import fixed_day_night_designation_capabilities
 from ..random_discard import random_discard_node_capabilities
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
@@ -141,6 +143,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_day_night_designation_capabilities,
     preparation_result_node_capabilities,
     graveyard_return_choice_node_capabilities,
     fixed_land_untap_choice_capabilities,
@@ -168,6 +171,7 @@ _COMPONENT_RESOLVERS = (
     suspect_node_capabilities,
     fixed_resolution_characteristic_capabilities,
     whole_hand_discard_node_capabilities,
+    discard_result_node_capabilities,
     random_discard_node_capabilities,
     fixed_control_node_capabilities,
     fixed_attachment_action_node_capabilities,

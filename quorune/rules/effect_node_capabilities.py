@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Canonical dispatch to independently owned typed effect capability shapes."""
+
+from __future__ import annotations
 
 from typing import Any,Mapping,Sequence
 from ..attachment_references import AttachmentReferenceError, attachment_information_capabilities
@@ -58,7 +58,7 @@ from .monarch_capability_shapes import fixed_monarch_node_capabilities
 from ..initiative_model import dungeon_choice_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .champion_capability_shapes import champion_node_capabilities
-from .transform_capability_shapes import source_transform_node_capabilities
+from .fixed_rule_action_coverage import transform_rule_action_capabilities
 from .class_level_capability_shapes import class_level_node_capabilities
 from .library_search_capability_shapes import fixed_library_search_node_capabilities, fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities
 from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
@@ -185,7 +185,7 @@ def effect_node_capabilities(
         dungeon_choice_node_capabilities,
         ring_temptation_node_capabilities,
         champion_node_capabilities,
-        source_transform_node_capabilities,
+        transform_rule_action_capabilities,
         preparation_result_node_capabilities,
         class_level_node_capabilities,
         fixed_library_search_node_capabilities,

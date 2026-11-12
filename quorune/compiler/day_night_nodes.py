@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed paired-face lowering for Daybound and Nightbound."""
 
 from typing import Any
+import re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..day_night_model import (
@@ -10,11 +11,19 @@ from ..day_night_model import (
     DAY_NIGHT_MECHANIC_ID,
     DayNightBoundMode,
     DayNightBoundSpec,
+    DAY_NIGHT_DESIGNATION_OPERATION, DAY_NIGHT_DESIGNATION_MECHANIC,
 )
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import explicit_capability_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .oracle_source_text import material_source_lines
+
+
+def fixed_day_night_designation_template(text):
+    match=re.fullmatch(r'It becomes (?P<designation>day|night)\.',text.strip(),re.I)
+    if match is None:return None
+    designation=match['designation'].casefold()
+    return 'fixed-day-night-designation-v1', ({'op':DAY_NIGHT_DESIGNATION_OPERATION,'designation':designation},), None, (DAY_NIGHT_DESIGNATION_MECHANIC,)
 
 
 def _face_keyword_lines(face: Any) -> tuple[str, ...]:

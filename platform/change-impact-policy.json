@@ -14333,6 +14333,38 @@
         "test_exact_mishra_closure",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "variable-subset-discard-and-offset-draw",
+      "patterns": [
+        "quorune/compiler/discard_result_templates.py",
+        "quorune/discard_result_model.py",
+        "quorune/rules/discard_result_shapes.py",
+        "quorune/rules/whole_hand_discard_shapes.py",
+        "quorune/semantic_choices/library_and_hand.py",
+        "tests/test_variable_subset_discard_draw.py",
+        "tests/fixtures/variable-subset-discard-draw-cards.json",
+        "quorune/day_night.py",
+        "quorune/day_night_model.py",
+        "quorune/compiler/day_night_nodes.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/rules/fixed_rule_action_coverage.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/effect_contracts.py",
+        "quorune/effect_runtime/state_and_permissions.py",
+        "quorune/semantic_runtime/effect_handlers.py"
+      ],
+      "test_modules": [
+        "test_variable_subset_discard_draw",
+        "test_fixed_subset_discard_draw",
+        "test_discard_results",
+        "test_discard_result_native",
+        "test_exact_mishra_closure",
+        "test_card_program_trust",
+        "test_spell_history_transformations",
+        "test_transforming_saga_returns"
+      ]
     }
   ],
   "risk_rules": [

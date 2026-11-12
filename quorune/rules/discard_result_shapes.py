@@ -2,9 +2,14 @@
 from ..discard_result_model import DISCARD_RESULT_CAPABILITY, DISCARD_RESULT_MECHANIC, validate_discard_draw
 from ..discard_result_model import FIXED_SUBSET_DISCARD_DRAW_CAPABILITY, FIXED_SUBSET_DISCARD_DRAW_MECHANIC
 from ..discard_result_model import validate_fixed_subset_discard_draw
+from ..discard_result_model import VARIABLE_SUBSET_DISCARD_DRAW_CAPABILITY, VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC, validate_variable_subset_discard_draw
 
 
 def discard_result_node_capabilities(*, effects, target_schema, mechanic_ids, **kwargs):
+    if VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC in mechanic_ids and target_schema is None and len(effects)==1:
+        try:validate_variable_subset_discard_draw(effects[0])
+        except (TypeError,ValueError):return ()
+        return (VARIABLE_SUBSET_DISCARD_DRAW_CAPABILITY,)
     if FIXED_SUBSET_DISCARD_DRAW_MECHANIC in mechanic_ids and target_schema is None and len(effects)==1:
         try:validate_fixed_subset_discard_draw(effects[0])
         except (TypeError,ValueError):return ()

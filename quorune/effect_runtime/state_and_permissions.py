@@ -497,7 +497,15 @@ def _apply_delayed_pact_payment(
     ).ref
 
 
+def _apply_set_day_night(host, effect, *, actor, operation, reason):
+    from ..day_night_model import validate_day_night_designation
+    from ..day_night import set_day_night_designation
+    validate_day_night_designation({key:value for key,value in effect.items() if key!='_runtime_source'})
+    return set_day_night_designation(host,effect['designation'],reason=reason)
+
+
 HANDLERS = {
+    'set_day_night': _apply_set_day_night,
     'increase_speed': apply_speed_increase,
     'add_counter_selected': _apply_add_counter_selected,
     'delayed_mana': _apply_delayed_mana,

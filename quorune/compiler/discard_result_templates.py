@@ -2,11 +2,16 @@
 import re
 from ..discard_result_model import DISCARD_RESULT_MECHANIC, DISCARD_RESULT_OPERATION
 from ..discard_result_model import FIXED_SUBSET_DISCARD_DRAW_MECHANIC
+from ..discard_result_model import VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
 def discard_result_draw_template(text):
     body = ' '.join(text.strip().split())
+    variable = re.fullmatch(r'(?:You )?discard any number of cards, then draw that many cards(?P<extra> plus one)?\.', body, re.I)
+    if variable is not None:
+        return 'variable-subset-discard-draw-v3', ({'op':'discard_draw_up_to','schema_version':3,
+            'maximum':'hand_size','draw_offset':int(bool(variable['extra']))},), None, (VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC,)
     subset = re.fullmatch(rf'(?:You )?discard up to (?P<maximum>{FIXED_COUNT_PATTERN}) cards?, then draw that many cards\.', body, re.I)
     if subset is not None:
         maximum = fixed_number(subset['maximum'])
