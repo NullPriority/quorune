@@ -138,6 +138,45 @@ class IntrinsicTokenNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertEqual(['R'],data['colors'])
         self.replay(session,load=True)
 
+    def test_actual_kher_keep_activation_pays_taps_and_preserves_the_token_name(self):
+        session=self.session(989400);source=self.add(session.engine,'Kher Keep')
+        self.assert_closed(session,source);self.prepare(session,mana={'C':1,'R':1});self.checkpoint(session)
+        ability=next(a for a in session.engine._activated_abilities(source) if not a.mana_ability)
+        action_id=f'activate:{source.ref}:{ability.ability_id}'
+        offered=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertIn(action_id,{a['id'] for a in offered})
+        command={'action_id':action_id,'pay':'auto'};before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B',command).ok);self.assertEqual(before,authoritative_state_hash(session.state))
+        result=session.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual(0,session.state.players['A'].mana_pool.get('C',0))
+        self.assertEqual(0,session.state.players['A'].mana_pool.get('R',0))
+        session=self.replay(session,load=True);self.assertIsNone(self.resolve(session))
+        tokens=[c for c in session.state.cards.values() if c.is_token and c.zone=='battlefield']
+        self.assertEqual(1,len(tokens));data=session.engine._effective_card_data(tokens[0])
+        self.assertEqual(('A','A'),(tokens[0].owner,tokens[0].controller))
+        self.assertEqual('Kobolds of Kher Keep',tokens[0].printed_name)
+        self.assertEqual(('0','1'),(str(data['power']),str(data['toughness'])))
+        self.assertNotIn('Legendary',data['type_line']);self.replay(session,load=True)
+
+    def test_actual_rohgahh_creates_before_dragon_resolution_and_buffs_its_kobold(self):
+        session=self.session(989500);source=self.add(session.engine,'Rohgahh, Kher Keep Overlord');source.owner='B'
+        dragon=self.add(session.engine,'Shivan Dragon',zone='hand')
+        centaur=self.add(session.engine,'Centaur Courser',zone='hand')
+        self.assert_closed(session,source);self.prepare(session,mana={'C':6,'R':2,'G':1});self.checkpoint(session)
+        self.cast(session,'A',dragon)
+        session=self.replay(session,load=True);self.resolve_top(session)
+        self.assertEqual('stack',session.state.cards[dragon.object_id].zone)
+        tokens=[c for c in session.state.cards.values() if c.is_token and c.zone=='battlefield']
+        self.assertEqual(1,len(tokens));token=tokens[0]
+        self.assertEqual(('A','A'),(token.owner,token.controller))
+        self.assertEqual('Kobolds of Kher Keep',token.printed_name)
+        self.assertEqual((2,3),tuple(session.engine._numeric_stat(token.object_id,stat) for stat in ('power','toughness')))
+        self.assertIsNone(self.resolve(session));self.cast(session,'A',centaur)
+        self.assertEqual(0,self.trigger_count(session,source));self.assertIsNone(self.resolve(session))
+        self.assertEqual([token.object_id],[c.object_id for c in session.state.cards.values() if c.is_token and c.zone=='battlefield'])
+        self.replay(session,load=True)
+
     def test_fresh_omitted_legendary_mutant_is_killed(self):
         import quorune.engine as owner
         original=owner.create_tokens;observed=[]

@@ -189,6 +189,102 @@
       "type_line": "Instant"
     },
     {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Kher Keep",
+      "oracle_id": "79638767-fbc7-451a-b29f-d93f2ac6f102",
+      "oracle_text": "{T}: Add {C}.\n{1}{R}, {T}: Create a 0/1 red Kobold creature token named Kobolds of Kher Keep.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2024-02-09",
+      "toughness": null,
+      "type_line": "Legendary Land"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{R}",
+      "name": "Rohgahh, Kher Keep Overlord",
+      "oracle_id": "a14c692e-dce6-4121-84ec-7fa28ffe4d6b",
+      "oracle_text": "Other Kobolds you control get +2/+2.\nWhenever you cast a Kobold spell, you may pay {2}. If you do, create a 4/4 red Dragon creature token with flying.\nWhenever you cast a Dragon spell, create a 0/1 red Kobold creature token named Kobolds of Kher Keep.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "4",
+      "type_line": "Legendary Creature \u2014 Kobold Warrior"
+    },
+    {
       "cmc": 1.0,
       "color_identity": [
         "R"
@@ -237,6 +333,55 @@
       "released_at": "2022-09-09",
       "toughness": "1",
       "type_line": "Legendary Creature \u2014 Kobold Warrior"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Shivan Dragon",
+      "oracle_id": "711eea87-0fa3-46e0-a42b-fa5a86455f04",
+      "oracle_text": "Flying\n{R}: This creature gets +1/+0 until end of turn.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "5",
+      "type_line": "Creature \u2014 Dragon"
     },
     {
       "cmc": 3.0,
@@ -368,6 +513,12 @@
     {
       "comment": "Rosnakht, Heir of Rohgahh's last ability goes on the stack above the spell that caused it to trigger and resolves first. It resolves even if that spell is countered or otherwise left the stack.",
       "oracle_id": "86f7d513-1f5f-4551-83e6-56d24da5ab39",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each of Rohgahh, Kher Keep Overlord\u2019s last two abilities goes on the stack above the spell that caused it to trigger and resolves first. It resolves even if that spell is countered or otherwise left the stack.",
+      "oracle_id": "a14c692e-dce6-4121-84ec-7fa28ffe4d6b",
       "published_at": "2022-09-09",
       "source": "wotc"
     }
