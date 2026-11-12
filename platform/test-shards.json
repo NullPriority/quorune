@@ -756,6 +756,7 @@
       "test_granted_death_return",
       "test_granted_keyword_events",
       "test_graveyard_copy_cast",
+      "test_graveyard_mixed_target_forms",
       "test_history_entry_counters",
       "test_incubate_rules",
       "test_kicked_target_replacements",

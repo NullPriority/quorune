@@ -311,6 +311,10 @@ def _own_graveyard_characteristic_target(
 ) -> OwnGraveyardCardTargetSpec | None:
     """Reuse the closed direct characteristic grammar for an owned card."""
 
+    from ..graveyard_target_unions import mixed_graveyard_target
+    union=mixed_graveyard_target(description)
+    if union is not None:return union
+
     normalized = " ".join(description.casefold().split())
     colored_spell = re.fullmatch(
         r"(?P<first>white|blue|black|red|green)(?: or (?P<second>white|blue|black|red|green))? "

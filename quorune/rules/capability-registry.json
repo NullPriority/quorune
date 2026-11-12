@@ -68728,6 +68728,99 @@
     {
       "applicability": {
         "exclusions": [
+          "nested or negated alternatives",
+          "extra unowned positive or color predicates",
+          "other zones or owner relations",
+          "unrepresented result or price riders"
+        ],
+        "inputs": [
+          "two through four distinct unqualified type, subtype or supertype leaves",
+          "at least two positive quality families",
+          "owned public graveyard card and ordinary target identity",
+          "optional common mana-value maximum"
+        ],
+        "outputs": [
+          "OR semantics across mixed quality alternatives",
+          "shared offers, accepted targets and resolution revalidation",
+          "ordinary new hand incarnation and replay"
+        ],
+        "summary": "Use existing typed TargetCharacteristicForm disjunctions for physical cards in the resolving controller's graveyard, retaining shared target count, ownership and mana-value constraints."
+      },
+      "blockers": [],
+      "dependencies": [
+        "card.return.own_graveyard_to_owner_hand",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Verified mixed-owner withdrawal rejects new mixed targets while ordinary homogeneous graveyard return and independent draw keep their existing owners.",
+      "dependency_fail_closed_status": "passed",
+      "id": "target.card.own_graveyard_mixed_forms",
+      "implementation_components": [
+        "quorune.graveyard_target_unions.MixedOwnGraveyardTargetSpec",
+        "quorune.graveyard_target_unions.mixed_graveyard_target",
+        "quorune.graveyard_target_unions.mixed_graveyard_target_from_schema",
+        "quorune.graveyard_target_unions.mixed_graveyard_target_dependencies",
+        "quorune.compiler.return_to_hand_templates.targeted_own_graveyard_return_to_hand_effect_template",
+        "quorune.rules.graveyard_card_targets.OwnGraveyardCardTargetSpec.from_target_schema",
+        "quorune.rules.graveyard_card_targets.public_graveyard_return_runtime_dependencies",
+        "quorune.targets.TargetGroup.matches_type_characteristics",
+        "quorune.target_forms.TargetCharacteristicForm.matches"
+      ],
+      "implementation_mutation_rationale": "Fresh actual Returned Pastcaller entry and Spirit targeting kills omission of the subtype alternative through loss of its supported legal target.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_pastcaller_returns_each_alternative_and_rejects_wrong_owner_or_quality",
+        "test_actual_adventure_can_return_a_legendary_creature_without_artifact_or_enchantment",
+        "test_actual_crewed_recovery_unit_applies_mana_bound_to_creature_or_vehicle",
+        "test_actual_raptor_can_select_food_or_select_zero"
+      ],
+      "multiplayer_tests": [
+        "test_actual_pastcaller_returns_each_alternative_and_rejects_wrong_owner_or_quality"
+      ],
+      "negative_tests": [
+        "test_verified_mixed_owner_withdrawal_keeps_ordinary_return_and_draw",
+        "test_malformed_duplicate_nested_and_unowned_qualifiers_reject",
+        "test_homogeneous_old_payload_retains_its_existing_owner"
+      ],
+      "official_rules": [
+        "109.2",
+        "205.1a",
+        "205.3",
+        "400.7",
+        "601.2c",
+        "608.2b"
+      ],
+      "positive_tests": [
+        "test_qualities_are_alternatives_and_preserve_the_common_graveyard_header",
+        "test_mana_value_bound_wraps_the_whole_disjunction"
+      ],
+      "privacy_tests": [
+        "test_actual_pastcaller_returns_each_alternative_and_rejects_wrong_owner_or_quality"
+      ],
+      "replay_tests": [
+        "test_actual_pastcaller_returns_each_alternative_and_rejects_wrong_owner_or_quality",
+        "test_actual_adventure_can_return_a_legendary_creature_without_artifact_or_enchantment",
+        "test_actual_crewed_recovery_unit_applies_mana_bound_to_creature_or_vehicle",
+        "test_actual_raptor_can_select_food_or_select_zero"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unsupported distributed amounts, result siblings and variable prices"
         ],
         "inputs": [
@@ -92304,7 +92397,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 778,
+  "registry_version": 779,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

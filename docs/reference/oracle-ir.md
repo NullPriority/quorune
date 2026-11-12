@@ -10,6 +10,13 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+Mixed own-graveyard card targets serialize canonical
+`characteristic_forms_any` leaves under the ordinary graveyard-card target
+header. Each leaf constrains one known card type, subtype or supertype, and at
+least two such quality families are represented. Common owner, zone, count and
+mana-value constraints apply outside the disjunction. The mixed-form capability
+is required independently from ordinary return and target-revalidation owners.
+
 `oracle-ir-v680` accompanies the completed characteristic-query correctness
 transition. Existing type/color settings and conditional grant grammar remain
 unchanged. Runtime reads use the independent `characteristic_query_boundary_version`

@@ -9,6 +9,11 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Own-graveyard return targets can mix unqualified card types, subtypes and
+supertypes through the existing typed target-form disjunction. Graveyard, owner,
+cardinality and any mana-value maximum remain common constraints around those
+alternatives. Homogeneous target schemas retain their existing representation.
+
 Next-eligible-spell reductions lower the complete printed spell qualifier to
 the existing public spell predicate. Their amount is fixed or comes from an
 independently closed public quantity or source-stat producer. Resolution locks

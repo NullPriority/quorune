@@ -47,6 +47,7 @@ def _hash(value: Any) -> str:
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative == 'quorune/stack_resolution_inputs.py':return 'domain'
+    if relative=='quorune/graveyard_target_unions.py':return 'rules'
     if relative == 'quorune/next_spell_cost_model.py':return 'domain'
     if relative == 'quorune/next_spell_costs.py':return 'rules'
     if relative == "quorune/announced_damage.py":
@@ -611,6 +612,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative=='quorune/graveyard_target_unions.py':return 'graveyard_actions'
     if relative in {'quorune/next_spell_cost_model.py','quorune/next_spell_costs.py'}:
         return 'casting_activation_and_costs'
     if relative == "quorune/targeted_graveyard_cast_model.py":
@@ -1285,6 +1287,7 @@ def build_classifications() -> dict[str, Any]:
                             "cast_cost_modifiers.py",
                             "next_spell_cost_model.py",
                             "next_spell_costs.py",
+                            "graveyard_target_unions.py",
                             "cast_lifecycles.py",
                             "compiled_cast_lifecycles.py",
                             "card_programs/",

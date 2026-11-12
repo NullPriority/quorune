@@ -14409,6 +14409,22 @@
         "test_scalar_effect_amounts",
         "test_public_query_effect_amounts"
       ]
+    },
+    {
+      "id": "own-graveyard-mixed-characteristic-forms",
+      "patterns": [
+        "quorune/graveyard_target_unions.py",
+        "quorune/rules/graveyard_card_targets.py",
+        "quorune/compiler/return_to_hand_templates.py",
+        "tests/test_graveyard_mixed_target_forms.py",
+        "tests/fixtures/graveyard-mixed-target-cards.json"
+      ],
+      "test_modules": [
+        "test_graveyard_mixed_target_forms",
+        "test_targeted_graveyard_return_effect_clauses",
+        "test_graveyard_return_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
