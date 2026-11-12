@@ -271,6 +271,10 @@ owners. A free optional counter remains a distinct effect. Source results retain
 their bound zone incarnation; an independent draw instruction still executes
 when the original source has left. Unsupported costs and result siblings remain
 material residuals.
+Fixed opponent draw instructions lower to the existing draw-each-player owner
+with a closed controller-relative recipient scope. A shared controller-and-
+opponents instruction additionally carries a positive fixed controller count;
+both counts execute in APNAP order rather than as separate player batches.
 An exact same-zone two-event clause serializes its ordered subscriptions inside
 the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime

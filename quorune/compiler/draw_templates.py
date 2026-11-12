@@ -205,6 +205,34 @@ def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
 
 
 def _multiplayer_fixed_draw_template(text: str) -> DrawEffectTemplate | None:
+    shared = re.fullmatch(
+        rf"you draw (?P<controller>{FIXED_COUNT_PATTERN}|twenty) cards? and "
+        rf"each opponent draws (?P<opponents>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
+        text,
+        re.IGNORECASE,
+    )
+    if shared is not None:
+        return (
+            "draw-controller-and-opponents-v1",
+            ({"op": "draw_each_player", "scope": "controller_and_opponents",
+              "count": fixed_number(shared.group("opponents")),
+              "controller_count": fixed_number(shared.group("controller"))},),
+            None,
+            ("cr-121-drawing-a-card",),
+        )
+    opponents = re.fullmatch(
+        rf"each opponent draws (?P<count>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
+        text,
+        re.IGNORECASE,
+    )
+    if opponents is not None:
+        return (
+            "draw-each-opponent-v1",
+            ({"op": "draw_each_player", "scope": "controller_opponents",
+              "count": fixed_number(opponents.group("count"))},),
+            None,
+            ("cr-121-drawing-a-card",),
+        )
     match = re.fullmatch(
         rf"you and target opponent each draw (?P<count>{FIXED_COUNT_PATTERN}) cards?\.?",
         text,

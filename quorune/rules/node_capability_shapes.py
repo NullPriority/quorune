@@ -289,6 +289,23 @@ def fixed_draw_node_capabilities(
     if (
         target_schema is None
         and operation == "draw_each_player"
+        and set(effect) == {"op", "count", "scope", "controller_count"}
+        and effect.get("scope") == "controller_and_opponents"
+        and _positive_int(effect.get("controller_count"))
+        and _positive_int(effect.get("count"))
+    ):
+        return ("zone.draw.library_to_hand",)
+    if (
+        target_schema is None
+        and operation == "draw_each_player"
+        and set(effect) == {"op", "count", "scope"}
+        and effect.get("scope") == "controller_opponents"
+        and _positive_int(effect.get("count"))
+    ):
+        return ("zone.draw.library_to_hand",)
+    if (
+        target_schema is None
+        and operation == "draw_each_player"
         and set(effect) == {"op", "count"}
         and _positive_int(effect.get("count"))
     ):

@@ -120,6 +120,13 @@ The closed “you and target opponent each draw” family retains one opposing
 target and sends both recipients through the existing APNAP draw batch. It
 does not impose controller-first order. If the sole target becomes illegal,
 the whole spell or ability fails to resolve, including the controller's draw.
+Untargeted fixed draws for each opponent retain the resolving controller and
+filter the existing surviving APNAP order. A single instruction giving the
+controller and its opponents different fixed counts uses one shared draw batch
+with a separate controller count. It never draws for the controller early just
+because that count appears first in the sentence. A replacement pause retains
+the remaining ordered recipients through save/load and replay. Source ownership
+does not select those recipients.
 Fixed "additional card" wording preserves the stated count as an ordinary draw
 instruction. Draw-step triggers remain separate from the turn-based draw under
 CR 504.1: the active player draws normally before those triggers are placed,

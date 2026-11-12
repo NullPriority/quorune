@@ -14276,6 +14276,24 @@
         "test_fixed_counter_event_triggers",
         "test_another_sacrifice_payments"
       ]
+    },
+    {
+      "id": "untargeted-opponent-and-shared-draw-instructions",
+      "patterns": [
+        "quorune/compiler/draw_templates.py",
+        "quorune/semantic_runtime/generic.py",
+        "quorune/rules/node_capability_shapes.py",
+        "tests/test_opponent_draws.py",
+        "tests/fixtures/opponent-draw-cards.json"
+      ],
+      "test_modules": [
+        "test_opponent_draws",
+        "test_activated_draw_abilities",
+        "test_semantic_handlers",
+        "test_draw_result_ordering",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
     }
   ],
   "risk_rules": [

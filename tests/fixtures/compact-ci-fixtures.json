@@ -777,6 +777,7 @@
     "tests/fixtures/omen-resolution-cards.json",
     "tests/fixtures/opening-hand-battlefield-cards.json",
     "tests/fixtures/opening-hand-reveal-cards.json",
+    "tests/fixtures/opponent-draw-cards.json",
     "tests/fixtures/opponent-keyword-prohibition-cards.json",
     "tests/fixtures/optional-counter-payment-cards.json",
     "tests/fixtures/optional-draw-discard-sequences.json",

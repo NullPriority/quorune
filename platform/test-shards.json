@@ -918,6 +918,7 @@
       "test_linked_exile_return",
       "test_maximum_counter_state_action",
       "test_opening_hand_reveal",
+      "test_opponent_draws",
       "test_optional_object_action_counters",
       "test_paid_color_entry",
       "test_paid_entry_copy",
