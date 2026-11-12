@@ -9276,7 +9276,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v972-batched-commander-source-composition",
-      "compiler_version": "oracle-ir-v976",
+      "compiler_version": "oracle-ir-v977",
       "bundle_id": "bundle:batched-commander-exact-support-v972",
       "candidate_ids": [
         "bundle:batched-commander-exact-support-v972"
