@@ -1250,6 +1250,7 @@ class FixedTargetEffectSequenceRuntimeTests(unittest.TestCase):
             ref="trusted-qualified-nonelf",
         )
         record = self.db.lookup("Qualified Elf Mentor Fixture")
+        before_registration = [program.to_dict() for program in engine.semantics.programs_for_oracle(record.oracle_id)]
         registration = register_generated_programs(
             self.db,
             engine.semantics,
@@ -1262,8 +1263,9 @@ class FixedTargetEffectSequenceRuntimeTests(unittest.TestCase):
             promote_exact_effect_programs=True,
             promote_exact_capability_declarations=True,
         )
-        self.assertGreaterEqual(registration["programs_generated"], 1)
+        self.assertEqual(0, registration["programs_generated"])
         programs = engine.semantics.programs_for_oracle(record.oracle_id)
+        self.assertEqual(before_registration, [program.to_dict() for program in programs])
         self.assertTrue(programs)
         self.assertTrue(
             all(

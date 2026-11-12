@@ -2141,6 +2141,46 @@
       "run_id": 43130981500,
       "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
       "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-command-born-resolution-provenance",
+      "category": "source_correctness",
+      "impact_edge_status": "added",
+      "summary": "Resolution provenance captured only stack objects present before submission. Elves of Deep Shadow could be cast and auto-resolve within one command, so the record omitted its real implicit permanent-spell binding even though casting and gameplay succeeded.",
+      "failed_surfaces": [
+        "PR / Windows / functional-06"
+      ],
+      "regressions": [
+        "test_seed_20260730_regression.Seed20260730RegressionTests.test_exact_opening_state_and_corrected_main_phase_delivery",
+        "test_command_resolution_provenance.ResolutionCaptureRuntimeTests.test_original_generic_and_registered_resolutions_record_actual_sources_and_replay",
+        "test_command_resolution_provenance.ResolutionCaptureRuntimeTests.test_resolution_observation_omission_is_killed"
+      ],
+      "resolution": "Observe actual completion through the existing stack owner and retain actual physical sources in an engine-specific command capture. Preserve the original stack snapshot used for ordered plans. Under runtime-trust schema two, replay checks ordered completion occurrences and source bindings, rejects missing or extra evidence, and preserves the historical-absence and exact declared-runtime contracts. Retain the original seed assertion and prove both immediate and ordinary actual casts, privacy, rollback, replay and an omitted-observer mutant.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-normal-fixture-registration-consumers",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "Normal fixture registration activates every printed supported ability. Subtype-dispatch fixtures selected only part of a five-ability source and manually re-put selected views, while a qualified-activation witness incorrectly expected repeated normal registration to generate another program.",
+      "failed_surfaces": [
+        "PR / Python / functional-07",
+        "PR / Windows / functional-09"
+      ],
+      "regressions": [
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_creature_subtype_dispatches_death_and_graveyard_wordings",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_noncreature_kindred_subtype_only_dispatches_graveyard_wording",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_another_and_nontoken_filters_use_lki",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_control_and_owner_filters_use_lki",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_triggers_preserve_apnap_and_exact_replay",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays"
+      ],
+      "resolution": "Use narrow complete synthetic Oracle records for each selected dispatcher contract, retain the existing five-ability source for compiler consumers, and select normally registered current views without manually replacing them. Assert repeated activation registration generates nothing and preserves every existing view, then retain actual costs, target authority, LKI, APNAP, privacy and replay controls. Route fixture-registration changes to these consumers.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
     }
   ],
   "recent_pull_requests": [

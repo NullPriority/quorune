@@ -216,6 +216,8 @@ def _printed_library_position(host, item, destination):
 
 def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackItem,
         destination: str | None,prepared_replacement: PreparedZoneChange | None) -> None:
+    from .stack_resolution_inputs import observe_stack_resolution
+    observe_stack_resolution(host, item, host.state.cards.get(item.card_object_id))
     from .rules.entry_cast_information import resolving_entry_cast_information
     from .rules.ravenous import resolving_ravenous_entry
     shuffle_owner = _printed_shuffle_owner(host, item, destination)

@@ -70,6 +70,14 @@ A new session or loaded registry is a separate scope. Existing reviewed programs
 do not replace that registration. All action, privacy, save/load and replay
 assertions remain.
 
+A normal gameplay fixture contains exactly the printed abilities its witness
+expects to execute. When a dispatcher test selects one or two related clauses,
+use a correspondingly narrow synthetic source and select its already registered
+current programs. Do not replace normal registered views with manually put
+copies to select a subset. Repeated registration is idempotent; preserve the
+existing views and verify their binding and accepted actions rather than
+requiring another positive generation count.
+
 Fixtures that seed original replacement controls outside the deck setup use
 `tests.common.register_current_fixture_programs` to register their current
 source through normal compiler admission. A reviewed compatibility view does

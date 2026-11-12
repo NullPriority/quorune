@@ -14048,6 +14048,38 @@
         "test_high_risk_interaction_assurance",
         "test_game_record_v3"
       ]
+    },
+    {
+      "id": "command-resolution-provenance-capture",
+      "patterns": [
+        "quorune/stack_resolution_inputs.py",
+        "quorune/stack_resolution.py",
+        "quorune/record_trust.py",
+        "quorune/record.py",
+        "quorune/session.py",
+        "tests/fixtures/command-resolution-provenance-cards.json"
+      ],
+      "test_modules": [
+        "test_command_resolution_provenance",
+        "test_seed_20260730_regression",
+        "test_mutate_cast_metadata",
+        "test_paid_color_entry",
+        "test_game_record_v3",
+        "test_server_app"
+      ]
+    },
+    {
+      "id": "normal-subtype-and-activation-fixture-consumers",
+      "patterns": [
+        "tests/common.py",
+        "tests/test_fixed_counter_zone_triggers.py",
+        "tests/test_fixed_target_effect_sequences.py",
+        "tests/fixtures/fixed-typed-event-trigger-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_counter_zone_triggers",
+        "test_fixed_target_effect_sequences"
+      ]
     }
   ],
   "risk_rules": [

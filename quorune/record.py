@@ -15,6 +15,7 @@ from .model import Event, GameState
 from . import record_state_provenance
 from .record_decks import deck_fingerprints, deck_list_fingerprints
 from .record_trust import (
+    capture_stack_resolution_inputs,
     card_program_trust_provenance,
     implicit_semantic_execution_provenance,
     rebase_command_semantics_provenance,
@@ -22,6 +23,9 @@ from .record_trust import (
     verified_replay_inputs,
     validate_manifest_runtime_provenance,
     validate_programs_used_provenance,
+    validate_resolution_provenance,
+    validate_command_card_programs_used,
+    submit_with_resolution_capture,
 )
 from .semantics import SemanticRegistry
 from .rules.evidence import _capability_validation_snapshot
@@ -1030,31 +1034,9 @@ def _apply_replay_commands(
             raise ValueError(
                 f"Semantic registry mismatch at command {command.get('sequence')}"
             )
-        recorded_programs = command_semantics.get("card_programs_used")
-        if verify and recorded_programs is not None:
-            if not isinstance(recorded_programs, Mapping):
-                raise ValueError(
-                    f"Malformed CardProgram provenance at command "
-                    f"{command.get('sequence')}"
-                )
-            semantic_keys = [
-                str(value.get("key"))
-                for value in command_semantics.get("programs_used", [])
-                if isinstance(value, Mapping) and value.get("key")
-            ]
-            current_programs = (
-                semantics.card_program_fingerprints_for_keys(semantic_keys)
-            )
-            normalized_programs = {
-                str(key): str(value)
-                for key, value in recorded_programs.items()
-            }
-            if normalized_programs != current_programs:
-                raise ValueError(
-                    f"CardProgram fingerprint mismatch at command "
-                    f"{command.get('sequence')}"
-                )
         if verify:
+            validate_command_card_programs_used(command_semantics, semantics, sequence=command.get('sequence'))
+        if verify and not require_runtime_provenance:
             validate_programs_used_provenance(
                 command_semantics.get("programs_used", []),
                 semantics,
@@ -1075,7 +1057,8 @@ def _apply_replay_commands(
         capability = engine.permissions.capability_for(principal)
         if capability is None:
             raise ValueError(f"No replay capability for {principal} at command {command.get('sequence')}")
-        result = engine.try_submit(
+        before_events = engine.state.event_sequence
+        result, resolution_inputs = submit_with_resolution_capture(engine, capture_stack_resolution_inputs(engine.state),
             token=capability.token,
             principal=principal,
             action=str(command["action"]),
@@ -1083,6 +1066,11 @@ def _apply_replay_commands(
         )
         if not result.ok:
             raise ValueError(f"Replay command {command.get('sequence')} rejected: {result.summary}")
+        if verify and require_runtime_provenance:
+            validate_resolution_provenance(command_semantics.get('programs_used', []), semantics,
+                engine=engine, events=engine.state.events, before_event_sequence=before_events,
+                captured=resolution_inputs, profile=capability_profile,
+                sequence=command.get('sequence'))
         after = authoritative_state_hash(engine.state)
         if verify and after != command.get("after_state_hash"):
             raise ValueError(

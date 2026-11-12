@@ -1945,6 +1945,131 @@
       "layout": "normal",
       "released_at": "2026-09-28",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "db87de9e-df70-58ca-b203-53441b2f226e",
+      "name": "Typed Dual Subtype Graveyard Trigger Fixture",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "Whenever another Goblin dies, draw a card.\nWhenever another Goblin is put into a graveyard from the battlefield, draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-30",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "f9410dea-e9ef-5eda-aa42-ee001736205d",
+      "name": "Typed Another Subtype Graveyard Trigger Fixture",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "Whenever another Goblin is put into a graveyard from the battlefield, draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-30",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "2b8f1f6d-b0c8-5861-b6c0-018bbb0cf518",
+      "name": "Typed Nontoken Subtype Graveyard Trigger Fixture",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "Whenever a nontoken Goblin is put into a graveyard from the battlefield, draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-30",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "0a8f92ca-1fc9-55ba-95e0-16916a11d0f2",
+      "name": "Typed Controlled Subtype Graveyard Trigger Fixture",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "Whenever a Goblin you control is put into a graveyard from the battlefield, draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-30",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "cd28c2f0-76f6-5ff0-8deb-a2eac8aad139",
+      "name": "Typed Owned Subtype Graveyard Trigger Fixture",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "Whenever a Goblin is put into your graveyard from the battlefield, draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-30",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ]
 }

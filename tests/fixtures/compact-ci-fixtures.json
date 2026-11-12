@@ -495,6 +495,7 @@
     "tests/fixtures/combat-goad-prohibition-cards.json",
     "tests/fixtures/combat-removal-cards.json",
     "tests/fixtures/combined-tap-activation-costs.json",
+    "tests/fixtures/command-resolution-provenance-cards.json",
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/commander-learn-cards.json",
     "tests/fixtures/committed-destruction-followup-cards.json",

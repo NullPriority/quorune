@@ -947,6 +947,7 @@
       "test_bound_effect_programs",
       "test_cleanup_step_rules",
       "test_combat_evasion_restrictions",
+      "test_command_resolution_provenance",
       "test_commander_damage_identity",
       "test_commander_match_readiness",
       "test_composed_spell_text",

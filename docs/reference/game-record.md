@@ -10,6 +10,15 @@ concern: "game-record"
 
 # Game Record v3
 
+Current `runtime_trust.schema_version` is `2`. It binds command provenance to
+actual completed stack objects, including spells created and resolved by one
+command. Replay checks completion order and multiplicity, then validates each
+registered or implicit source binding. Missing, extra and unobserved entries
+reject. The command capture is transient and does not enter public events.
+Declared older runtime identities retain their existing rejection; records
+without the additive runtime-trust section keep the historical compatibility
+path.
+
 Semantic registry snapshots retain declaration order inside ordered mode maps
 in both the CardProgram and semantic-program views. Storage preserves that
 runtime order while fingerprint calculation keeps its canonical representation.

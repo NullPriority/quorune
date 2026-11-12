@@ -35,7 +35,7 @@ from .record import (
     utc_now,
     write_record,
 )
-from .record_trust import capture_stack_resolution_inputs,resolved_semantic_execution_provenance_rows
+from .record_trust import capture_stack_resolution_inputs,resolved_semantic_execution_provenance_rows,submit_with_resolution_capture
 from .review_artifacts import write_review_artifacts
 from .semantics import SemanticRegistry
 
@@ -695,7 +695,7 @@ class CommanderSession:
         actor_context = copy.deepcopy(
             decision.payload_by_actor.get(actor, {}) if decision else {}
         )
-        result = self.engine.try_submit(
+        result, resolution_inputs = submit_with_resolution_capture(self.engine, before_stack_items,
             token=capability.token,
             principal=principal,
             action=action,
@@ -708,7 +708,7 @@ class CommanderSession:
         }
         programs_used = resolved_semantic_execution_provenance_rows(
             self.engine, events=self.state.events, before_event_sequence=before_event_sequence,
-            before_stack_items=before_stack_items, capability_profile=self.state.config.review_profile,
+            before_stack_items=resolution_inputs, capability_profile=self.state.config.review_profile,
         )
         card_programs_used = (
             self.engine.semantics.card_program_fingerprints_for_keys(
