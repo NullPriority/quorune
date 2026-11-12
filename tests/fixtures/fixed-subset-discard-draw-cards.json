@@ -1,0 +1,599 @@
+{
+  "cards": [
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "3",
+      "mana_cost": "{3}{R}",
+      "name": "Daretti, Scrap Savant",
+      "oracle_id": "ea9f4de3-fc35-435a-8dff-a5657d14a9bd",
+      "oracle_text": "+2: Discard up to two cards, then draw that many cards.\n−2: Sacrifice an artifact. If you do, return target artifact card from your graveyard to the battlefield.\n−10: You get an emblem with \"Whenever an artifact is put into your graveyard from the battlefield, return that card to the battlefield at the beginning of the next end step.\"\nDaretti, Scrap Savant can be your commander.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Daretti"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Exhaust"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Greasewrench Goblin",
+      "oracle_id": "952300de-766e-4ceb-bd36-e0b721bebc17",
+      "oracle_text": "Exhaust — {2}{R}: Discard up to two cards, then draw that many cards. Put a +1/+1 counter on this creature. (Activate each exhaust ability only once.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "1",
+      "type_line": "Creature — Goblin Artificer"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Kinetic Augur",
+      "oracle_id": "98e0b1a8-902d-4285-b13c-e63f2e1692f1",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)\nKinetic Augur's power is equal to the number of instant and sorcery cards in your graveyard.\nWhen this creature enters, discard up to two cards, then draw that many cards.",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "4",
+      "type_line": "Creature — Human Shaman"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Thopter"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Ponder",
+      "oracle_id": "02090581-61aa-4348-ad57-451be8ee91c2",
+      "oracle_text": "Look at the top three cards of your library, then put them back in any order. You may shuffle.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Shock",
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Sliver"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{R}",
+      "name": "Sokka, Bold Boomeranger",
+      "oracle_id": "bdbec6d5-0f10-4114-b709-4402a44debdf",
+      "oracle_text": "When Sokka enters, discard up to two cards, then draw that many cards.\nWhenever you cast an artifact or Lesson spell, put a +1/+1 counter on Sokka.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": "1",
+      "type_line": "Legendary Creature — Human Warrior Ally"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If you choose to shuffle your library, that includes the three cards you just looked at and put back on top of it.",
+      "oracle_id": "02090581-61aa-4348-ad57-451be8ee91c2",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Exhaust abilities can be activated any time you could normally activate an ability.",
+      "oracle_id": "952300de-766e-4ceb-bd36-e0b721bebc17",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an ability triggers whenever you activate an exhaust ability, that ability resolves before the exhaust ability resolves.",
+      "oracle_id": "952300de-766e-4ceb-bd36-e0b721bebc17",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exhaust ability of a permanent is activated, and then that permanent leaves the battlefield and returns to the battlefield, it becomes a new object so its exhaust ability can be activated again.",
+      "oracle_id": "952300de-766e-4ceb-bd36-e0b721bebc17",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may activate this creature’s exhaust ability without discarding cards if you just want to put a +1/+1 counter on it.",
+      "oracle_id": "952300de-766e-4ceb-bd36-e0b721bebc17",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "As Kinetic Augur's triggered ability resolves, you choose whether to discard zero, one, or two cards, discard them, and draw that many. You can't discard one card, draw a card, then choose to discard again.",
+      "oracle_id": "98e0b1a8-902d-4285-b13c-e63f2e1692f1",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability that defines Kinetic Augur's power works in all zones, not just on the battlefield.",
+      "oracle_id": "98e0b1a8-902d-4285-b13c-e63f2e1692f1",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability of Daretti’s emblem will return the artifact card only if it’s still in your graveyard when the delayed triggered ability resolves at the beginning of the next end step. If the artifact card left your graveyard before that point (even if it was put back into your graveyard), the ability won’t return it to the battlefield.",
+      "oracle_id": "ea9f4de3-fc35-435a-8dff-a5657d14a9bd",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose which artifact to sacrifice as the second ability resolves. You must sacrifice an artifact if you control at least one at that time. For example, if you control two artifacts when you activate the second ability, but the artifact you intended to sacrifice is destroyed in response, you must sacrifice the other artifact as the ability resolves.",
+      "oracle_id": "ea9f4de3-fc35-435a-8dff-a5657d14a9bd",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may choose to discard zero cards as the first ability resolves. In that case, you won’t draw any cards.",
+      "oracle_id": "ea9f4de3-fc35-435a-8dff-a5657d14a9bd",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

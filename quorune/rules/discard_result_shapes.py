@@ -1,8 +1,14 @@
 """Fail-closed compiler ownership for the represented discard-result draws."""
 from ..discard_result_model import DISCARD_RESULT_CAPABILITY, DISCARD_RESULT_MECHANIC, validate_discard_draw
+from ..discard_result_model import FIXED_SUBSET_DISCARD_DRAW_CAPABILITY, FIXED_SUBSET_DISCARD_DRAW_MECHANIC
+from ..discard_result_model import validate_fixed_subset_discard_draw
 
 
 def discard_result_node_capabilities(*, effects, target_schema, mechanic_ids, **kwargs):
+    if FIXED_SUBSET_DISCARD_DRAW_MECHANIC in mechanic_ids and target_schema is None and len(effects)==1:
+        try:validate_fixed_subset_discard_draw(effects[0])
+        except (TypeError,ValueError):return ()
+        return (FIXED_SUBSET_DISCARD_DRAW_CAPABILITY,)
     if DISCARD_RESULT_MECHANIC not in mechanic_ids or target_schema is not None or len(effects) != 1:return ()
     try:validate_discard_draw(effects[0])
     except (ValueError, TypeError):return ()

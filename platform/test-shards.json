@@ -907,6 +907,7 @@
       "test_firebending_tokens",
       "test_fixed_counter_additional_costs",
       "test_fixed_disturb",
+      "test_fixed_subset_discard_draw",
       "test_forecast_results",
       "test_fractional_player_results",
       "test_goad_rules",

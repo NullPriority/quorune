@@ -14314,6 +14314,25 @@
         "test_activated_self_transform",
         "test_game_record_v3"
       ]
+    },
+    {
+      "id": "fixed-subset-discard-result-draw",
+      "patterns": [
+        "quorune/compiler/discard_result_templates.py",
+        "quorune/discard_result_model.py",
+        "quorune/rules/discard_result_shapes.py",
+        "quorune/semantic_choices/library_and_hand.py",
+        "tests/test_fixed_subset_discard_draw.py",
+        "tests/fixtures/fixed-subset-discard-draw-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_subset_discard_draw",
+        "test_discard_results",
+        "test_discard_result_native",
+        "test_semantic_choices",
+        "test_exact_mishra_closure",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

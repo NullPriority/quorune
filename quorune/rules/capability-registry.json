@@ -85774,6 +85774,94 @@
     {
       "applicability": {
         "exclusions": [
+          "any-number bounds",
+          "other-player or all-player selections",
+          "random, qualified, payment or unknown result riders",
+          "unrepresented discard replacement interactions"
+        ],
+        "inputs": [
+          "one complete controller instruction with positive fixed upper bound",
+          "current controller-owned hand references",
+          "schema-two discard_draw_up_to payload with canonical hand order and existing private choice continuation"
+        ],
+        "outputs": [
+          "zero-to-bound private selection",
+          "authoritative simultaneous discard before same-count draw",
+          "normal discard triggers, draw replacement and exact replay"
+        ],
+        "summary": "Choose a private controller-owned hand subset up to one positive fixed maximum, discard it through the existing simultaneous discard owner, then draw the selected count through ordinary drawing."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.discard.typed_cause",
+        "zone.draw.library_to_hand"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the exact subset owner prevents complete subset programs while an independent ordinary draw remains available.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.discard.fixed_subset_draw",
+      "implementation_components": [
+        "quorune.compiler.discard_result_templates.discard_result_draw_template",
+        "quorune.rules.discard_result_shapes.discard_result_node_capabilities",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.prepare",
+        "quorune.semantic_choices.library_and_hand.DiscardDrawChoiceHandler.complete",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent",
+        "quorune.discard_result_model.validate_fixed_subset_discard_draw"
+      ],
+      "implementation_mutation_rationale": "A fresh actual Kinetic Augur cast and accepted two-card choice detects a short subsequent draw from the resulting hand and library counts.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_augur_discards_before_same_count_draw_and_empty_hand_stays_empty",
+        "test_actual_borrowed_sokka_choice_and_artifact_counter_use_its_controller"
+      ],
+      "multiplayer_tests": [
+        "test_actual_augur_discards_before_same_count_draw_and_empty_hand_stays_empty",
+        "test_actual_borrowed_sokka_choice_and_artifact_counter_use_its_controller"
+      ],
+      "negative_tests": [
+        "test_closed_subset_shape_does_not_admit_malformed_bounds_or_recipient_fields",
+        "test_schema_two_choice_canonicalizes_hand_order_while_absent_marker_keeps_legacy",
+        "test_verified_subset_owner_withdrawal_preserves_independent_controller_draw"
+      ],
+      "official_rules": [
+        "121.1",
+        "121.2",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "701.9a",
+        "701.9c"
+      ],
+      "positive_tests": [
+        "test_fixed_subset_route_is_versioned_and_rejects_adjacent_variants"
+      ],
+      "privacy_tests": [
+        "test_actual_augur_discards_before_same_count_draw_and_empty_hand_stays_empty",
+        "test_actual_borrowed_sokka_choice_and_artifact_counter_use_its_controller"
+      ],
+      "replay_tests": [
+        "test_actual_augur_discards_before_same_count_draw_and_empty_hand_stays_empty",
+        "test_actual_borrowed_sokka_choice_and_artifact_counter_use_its_controller"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "ordinary hand-to-graveyard moves that are not discards",
           "cards moved from zones other than a hand",
           "requested destinations other than a graveyard before replacement",
@@ -91950,7 +92038,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 774,
+  "registry_version": 775,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

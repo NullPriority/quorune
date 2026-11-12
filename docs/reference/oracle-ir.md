@@ -280,6 +280,11 @@ sacrifice sentence. A terminal source exile/return-transformed clause lowers to
 one linked pair with a closed schema-four spec and its own fine capability.
 The compiler still requires every other chapter and the back-face abilities to
 close independently; unsupported siblings keep the whole original unready.
+Fixed controller subset discards carry a schema-two `discard_draw_up_to`
+instruction and a positive `maximum`, under their own fine capability. The
+existing private choice and typed discard/draw owners execute it; canonical
+hand-reference ordering keeps pending choices stable across replay. Unknown
+quantities, recipient fields and result riders do not widen this shape.
 An exact same-zone two-event clause serializes its ordered subscriptions inside
 the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime

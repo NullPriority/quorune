@@ -558,6 +558,14 @@ Only complete represented discard-and-draw bodies gain the committed-count
 binding; token, characteristic-dependent and selected-subset results require
 their own contracts.
 
+The fixed controller subset-and-draw compiler route uses the existing private
+`discard_draw_up_to` handler and simultaneous discard/draw ports. Its closed
+schema-two instruction carries a positive fixed maximum and canonicalizes the
+private hand reference order before recording the pending choice. Marker-free
+legacy instructions retain their existing payload and ordering. Selecting zero,
+including an empty hand, draws zero; variable bounds and other-player variants
+remain material until independently represented.
+
 Departure relevance is determined from object identity, expected incarnation,
 and public zone before a pending characteristic is evaluated. Empty departure
 groups and unrelated references neither read values nor initialize continuation

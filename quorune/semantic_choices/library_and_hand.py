@@ -381,6 +381,7 @@ class DiscardDrawChoiceHandler:
     capability_dependencies: tuple[str, ...] = ()
     continuation_fields: tuple[str, ...] = (
         "maximum",
+        "schema_version",
         "_choice_actor",
         "_legal_refs",
         "_maximum",
@@ -404,8 +405,15 @@ class DiscardDrawChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        modern = 'schema_version' in effect
+        if modern:
+            from ..discard_result_model import validate_fixed_subset_discard_draw
+            try:validate_fixed_subset_discard_draw(effect)
+            except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
         maximum = max(0, int(effect.get("maximum", 2)))
         rows = context.query.objects(zones=("hand",), owner=context.actor)
+        if modern:
+            rows = tuple(sorted(rows, key=lambda row: row.ref))
         if not rows or maximum == 0:
             return SemanticChoicePreparation(
                 request=None,

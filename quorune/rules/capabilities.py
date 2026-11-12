@@ -10,7 +10,7 @@ from .public_event_counter_set_shapes import public_event_counter_set_node_capab
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .fixed_rule_action_coverage import FIXED_RULE_ACTION_CAPABILITIES
 from .destruction_regeneration_capability_shapes import regeneration_covered_mechanics as _regeneration_covered_mechanics
-from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
+from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities, DISCARD_FAMILY_CAPABILITIES, DISCARD_FAMILY_SHAPE_GATED_MECHANICS
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .endure_model import ENDURE_CAPABILITY, ENDURE_MECHANIC
 from .blight_model import BLIGHT_CAPABILITY, BLIGHT_MECHANIC
@@ -407,8 +407,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'reveal-until-library-selection':('library.select.reveal_until_controller',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     **FIXED_RULE_ACTION_CAPABILITIES,
-    'whole-hand-discard': ('zone.discard.whole_hand',),
-    'whole-hand-discard-result': ('zone.discard.whole_hand_result',),
+    **DISCARD_FAMILY_CAPABILITIES,
     'declared-cast-cost-fact': ('casting.additional_cost.declared_instance',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
@@ -578,7 +577,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-controller-shuffle',
         'fixed-public-state-trigger',
         'created-token-counter-followup',
-        'whole-hand-discard-result',
+        *DISCARD_FAMILY_SHAPE_GATED_MECHANICS,
         'temporary-cast-prohibition',
         'temporary-library-search-prohibition',
         'random-own-graveyard-return',
