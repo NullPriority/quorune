@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "54b82b16df252a8863acf4c3dfa9a09e6c8134ce40055f4dc09b79ef1ced2004"
+verified: "85c71372142f92928bc080f631e91a2723ab6b8181d812cc4f87aa19ffab841c"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 122
-- Deterministic escapes: 113
+- Escapes: 124
+- Deterministic escapes: 115
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -151,6 +151,8 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261112-pr561-command-born-resolution-provenance` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `source_correctness` | `added` | Observe actual completion through the existing stack owner and retain actual physical sources in an engine-specific command capture. Preserve the original stack snapshot used for ordered plans. Under runtime-trust schema two, replay checks ordered completion occurrences and source bindings, rejects missing or extra evidence, and preserves the historical-absence and exact declared-runtime contracts. Retain the original seed assertion and prove both immediate and ordinary actual casts, privacy, rollback, replay and an omitted-observer mutant. |
 | `ci-20261112-pr561-normal-fixture-registration-consumers` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `missing_affected_test` | `added` | Use narrow complete synthetic Oracle records for each selected dispatcher contract, retain the existing five-ability source for compiler consumers, and select normally registered current views without manually replacing them. Assert repeated activation registration generates nothing and preserves every existing view, then retain actual costs, target authority, LKI, APNAP, privacy and replay controls. Route fixture-registration changes to these consumers. |
 | `ci-20261112-pr561-incidental-attacker-abilities` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `missing_affected_test` | `added` | Use the existing vanilla synthetic Goblin as the incidental attacking body, retain the dedicated self-attack trigger witness, and select normally registered trusted views through one shared fixture helper. Preserve watcher attachment, batch, APNAP, zone-owner, actual consequences and replay assertions; route normal fixture registration changes to these consumers. |
+| `ci-20261112-pr561-copy-provenance-rejection-stage` | [43174128758](https://github.com/NullPriority/quorune/actions/runs/43174128758) | `missing_affected_test` | `not_applicable` | Retain the fresh native copied-permanent journey, assert that the copy reaches the omitted physical-source hook, and require the specific current malformed-resolved-provenance rejection. Preserve the unchanged positive copy and historical no-runtime controls; retain the already-present resolution-provenance route to the paid-color entry consumer. No runtime validation is relaxed. |
+| `ci-20261112-pr561-runtime-trust-manifest-schema` | [43174128758](https://github.com/NullPriority/quorune/actions/runs/43174128758) | `source_correctness` | `added` | Admit the two known declared structural versions with an integer-only closed enumeration. Add a fast current-producer/schema contract proving that declared historical identity still fails exact replay validation, absent runtime trust retains its historical path, and booleans, unknown versions, missing fingerprints and extra fields reject. Route the manifest schema through the existing command-resolution provenance consumer edge. Runtime replay validation remains unchanged. |
 
 ## Measurement limitations
 

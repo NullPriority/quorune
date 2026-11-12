@@ -2377,6 +2377,42 @@
       "resolution": "Use the existing vanilla synthetic Goblin as the incidental attacking body, retain the dedicated self-attack trigger witness, and select normally registered trusted views through one shared fixture helper. Preserve watcher attachment, batch, APNAP, zone-owner, actual consequences and replay assertions; route normal fixture registration changes to these consumers.",
       "run_id": 43130981500,
       "summary": "Normally registering an incidental self-attack-life fixture activated its printed trigger. Five watcher tests then stopped at a legitimate trigger-order decision before the asserted watcher stack existed."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-05"
+      ],
+      "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
+      "id": "ci-20261112-pr561-copy-provenance-rejection-stage",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_paid_color_entry.PaidColorEntryTests.test_fresh_copy_provenance_omission_is_killed",
+        "test_paid_color_entry.PaidColorEntryTests.test_legacy_generic_permanent_copy_records_its_exact_resolution_provenance",
+        "test_paid_color_entry.PaidColorEntryTests.test_copy_provenance_retains_the_historical_no_runtime_trust_mode"
+      ],
+      "resolution": "Retain the fresh native copied-permanent journey, assert that the copy reaches the omitted physical-source hook, and require the specific current malformed-resolved-provenance rejection. Preserve the unchanged positive copy and historical no-runtime controls; retain the already-present resolution-provenance route to the paid-color entry consumer. No runtime validation is relaxed.",
+      "run_id": 43174128758,
+      "summary": "The copied-spell provenance omission mutant expected a later oracle-ID mismatch. Current runtime-trust schema two correctly rejects its missing physical-source record at the earlier resolved-provenance structural guard."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Windows / functional-04",
+        "PR / Python / functional-04"
+      ],
+      "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
+      "id": "ci-20261112-pr561-runtime-trust-manifest-schema",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_game_record_v3.RuntimeTrustManifestSchemaTests.test_current_and_known_historical_schema_versions_keep_exact_replay_identity",
+        "test_game_record_v3.GameRecordV3Tests.test_v3_save_omits_raw_capabilities_and_replays"
+      ],
+      "resolution": "Admit the two known declared structural versions with an integer-only closed enumeration. Add a fast current-producer/schema contract proving that declared historical identity still fails exact replay validation, absent runtime trust retains its historical path, and booleans, unknown versions, missing fingerprints and extra fields reject. Route the manifest schema through the existing command-resolution provenance consumer edge. Runtime replay validation remains unchanged.",
+      "run_id": 43174128758,
+      "summary": "The current record writer emits runtime-trust schema two, but the Game Record v3 manifest schema still permitted only schema one. The Windows functional04 native save/replay witness rejected its own current manifest during structural validation."
     }
   ],
   "known_flaky_tests": [],
@@ -2437,7 +2473,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "54b82b16df252a8863acf4c3dfa9a09e6c8134ce40055f4dc09b79ef1ced2004",
+  "source_fingerprint": "85c71372142f92928bc080f631e91a2723ab6b8181d812cc4f87aa19ffab841c",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -2447,13 +2483,13 @@
       "flaky_test": 10,
       "generated_artifact_drift": 11,
       "infrastructure": 1,
-      "missing_affected_test": 56,
-      "source_correctness": 35,
+      "missing_affected_test": 57,
+      "source_correctness": 36,
       "windows_compatibility": 4
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 113,
-    "escape_count": 122,
+    "deterministic_escape_count": 115,
+    "escape_count": 124,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,
