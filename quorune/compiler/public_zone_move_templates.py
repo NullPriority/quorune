@@ -169,6 +169,12 @@ def _relation(
             None,
             None,
         ),
+        " you don't control": (
+            PublicZoneRelationAxis.CONTROLLER,
+            PublicZoneSeatRelation.OPPONENTS,
+            None,
+            None,
+        ),
         " target player controls": (
             PublicZoneRelationAxis.CONTROLLER,
             PublicZoneSeatRelation.TARGET_PLAYER,
@@ -270,12 +276,12 @@ def _battlefield_set_template(
     destination: PublicZoneDestination,
 ) -> PublicZoneMoveSetTemplate | None:
     match = re.fullmatch(
-        rf"{action} (?:all|each) (?P<subject>.+?)"
+        rf"{action} (?P<quantifier>all|each) (?P<subject>.+?)"
         r"(?P<relation> target opponent controls| target player controls|"
         r" target opponent owns| target player owns| you control| you own|"
-        r" your opponents control| your opponents own)?"
+        r" you don't control| your opponents control| your opponents own)?"
         + (
-            r" to (?:their owners['’] hands|their owner['’]s hand|their hand)"
+            r" to (?:their owners['’] hands|their owner['’]s hand|their hand|its owner['’]s hand)"
             if destination is PublicZoneDestination.OWNER_HAND
             else ""
         )
@@ -285,7 +291,8 @@ def _battlefield_set_template(
     )
     if match is None:
         return None
-    parsed = fixed_affected_permanent_query(match.group("subject"))
+    parsed = fixed_affected_permanent_query(match.group("subject"),
+        singular=match['quantifier'].casefold() == 'each')
     relation = _relation(match.group("relation") or "")
     if parsed is None or relation is None:
         return None

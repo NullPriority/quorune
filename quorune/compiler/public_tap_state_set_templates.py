@@ -81,15 +81,16 @@ def fixed_public_tap_state_set_effect_template(
     text: str,
 ) -> FixedPublicTapStateSetTemplate | None:
     match = re.fullmatch(
-        r"(?P<action>Tap|Untap) (?:all|each) (?P<subject>.+?)"
+        r"(?P<action>Tap|Untap) (?P<quantifier>all|each) (?P<subject>.+?)"
         r"(?P<relation> target opponent controls| target player controls|"
-        r" you control| your opponents control)?\.?",
+        r" you control| you don't control| your opponents control)?\.?",
         " ".join(text.strip().split()),
         re.IGNORECASE,
     )
     if match is None:
         return None
-    parsed = fixed_affected_permanent_query(match.group("subject"))
+    parsed = fixed_affected_permanent_query(match.group("subject"),
+        singular=match['quantifier'].casefold() == 'each')
     if parsed is None:
         return None
     query, exclude_source = parsed
@@ -99,7 +100,7 @@ def fixed_public_tap_state_set_effect_template(
     target_schema = None
     if relation_text == " you control":
         relation = PermanentControllerRelation.ACTOR
-    elif relation_text == " your opponents control":
+    elif relation_text in {" your opponents control", " you don't control"}:
         relation = PermanentControllerRelation.OPPONENTS
     elif relation_text in {
         " target player controls",

@@ -503,6 +503,15 @@ Generated-program lowering preserves their distinct identities; the adapter
 requires the derived program instead of silently admitting only the normal
 body. A declined pair keeps the keyword residual.
 
+Singular `each` permanent-set clauses reuse the same closed public queries as
+their plural `all` forms for destruction, tap-state changes, exile and return
+to owners' hands. Controller-relative selection remains separate from owner
+destinations. The complete regeneration prohibition also applies to each
+destroyed creature. These clauses produce the existing typed set operations;
+they add no runtime text interpretation or new choice authority. Overload
+still requires both independently closed bodies, and unrepresented qualities
+and result siblings remain residual.
+
 Current source-pinned, trusted historical Overload programs retain their
 reviewed declared alternatives through the existing cost owner. This
 compatibility path requires the original reviewed program and target-free

@@ -11803,7 +11803,10 @@
         "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
         "test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
         "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
-        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable"
+        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "multiplayer_tests": [
         "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
@@ -11847,11 +11850,17 @@
         "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
         "test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration",
         "test_overload_binds_distinct_nonmodal_programs_and_rejects_unclosed_variants",
-        "test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints"
+        "test_overload_spec_is_immutable_and_has_two_distinct_closed_body_fingerprints",
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "privacy_tests": [
         "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
-        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player"
+        "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "replay_tests": [
         "test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature",
@@ -11860,7 +11869,10 @@
         "test_cheaper_mind_rake_alternative_keeps_private_apnap_discard_for_each_player",
         "test_counterspell_counters_target_free_overloaded_spell_without_applying_each_body",
         "test_free_base_cannot_make_overloaded_body_free_or_change_normal_targeted_body",
-        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable"
+        "test_only_overloaded_option_is_offered_when_all_opposing_creatures_are_untargetable",
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "required_evidence": [
         "positive",
@@ -56144,7 +56156,8 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_mass_destruction_apnap_shield_indestructible_and_replay",
-        "test_mass_destruction_uses_typed_query_and_source_exclusion"
+        "test_mass_destruction_uses_typed_query_and_source_exclusion",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "multiplayer_tests": [
         "test_mass_destruction_apnap_shield_indestructible_and_replay"
@@ -56164,13 +56177,16 @@
       ],
       "positive_tests": [
         "test_spell_trigger_and_activated_contexts_share_mass_destruction_lowering",
-        "test_mass_destruction_apnap_shield_indestructible_and_replay"
+        "test_mass_destruction_apnap_shield_indestructible_and_replay",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "privacy_tests": [
-        "test_mass_destruction_apnap_shield_indestructible_and_replay"
+        "test_mass_destruction_apnap_shield_indestructible_and_replay",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "replay_tests": [
-        "test_mass_destruction_apnap_shield_indestructible_and_replay"
+        "test_mass_destruction_apnap_shield_indestructible_and_replay",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "required_evidence": [
         "positive",
@@ -56316,7 +56332,8 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
-        "test_regeneration_prohibition_preserves_other_destruction_protections"
+        "test_regeneration_prohibition_preserves_other_destruction_protections",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "multiplayer_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
@@ -56343,15 +56360,18 @@
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
         "test_exact_fixed_regeneration_and_prohibition_grammar_compiles",
         "test_receiver_destroy_heads_keep_no_targets_and_per_child_subscriptions",
-        "test_regeneration_prohibition_preserves_other_destruction_protections"
+        "test_regeneration_prohibition_preserves_other_destruction_protections",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "privacy_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
-        "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays"
+        "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "replay_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
-        "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays"
+        "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
       ],
       "required_evidence": [
         "positive",
@@ -57470,7 +57490,10 @@
       "implementation_mutation_rationale": "Focused shape and runtime tests alter the operation, set relation, tap direction, source exclusion, or current membership and reject or expose the mutation.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_public_tap_state_set_uses_current_query_stun_and_replays"
+        "test_public_tap_state_set_uses_current_query_stun_and_replays",
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
       ],
       "multiplayer_tests": [
         "test_public_tap_state_set_uses_current_query_stun_and_replays"
@@ -57486,11 +57509,21 @@
         "701.26b"
       ],
       "positive_tests": [
-        "test_public_tap_state_set_matrix_compiles_through_shared_query"
+        "test_public_tap_state_set_matrix_compiles_through_shared_query",
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
       ],
-      "privacy_tests": [],
+      "privacy_tests": [
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
+      ],
       "replay_tests": [
-        "test_public_tap_state_set_uses_current_query_stun_and_replays"
+        "test_public_tap_state_set_uses_current_query_stun_and_replays",
+        "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
+        "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
       ],
       "required_evidence": [
         "positive",
@@ -90354,7 +90387,9 @@
         "test_public_zone_target_shape_retains_mechanics_across_sibling_probes",
         "test_target_graveyard_exile_revalidates_and_replays",
         "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
-        "test_original_replenish_keeps_aura_without_preexisting_enchantable_object"
+        "test_original_replenish_keeps_aura_without_preexisting_enchantable_object",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_denizen_keeps_itself_and_returns_other_controlled_creatures_to_their_owners"
       ],
       "multiplayer_tests": [
         "test_actual_summonings_revalidates_artifact_restriction_then_returns_current_instant_sorcery_union",
@@ -90396,18 +90431,24 @@
         "test_public_artifact_enchantment_and_qualified_permanent_sets_preserve_their_queries",
         "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
         "test_original_replenish_keeps_aura_without_preexisting_enchantable_object",
-        "test_original_raise_the_past_respects_fixed_mana_value_card_set"
+        "test_original_raise_the_past_respects_fixed_mana_value_card_set",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_denizen_keeps_itself_and_returns_other_controlled_creatures_to_their_owners"
       ],
       "privacy_tests": [
         "test_public_zone_move_privacy_and_stale_identity_roll_back",
-        "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry"
+        "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_denizen_keeps_itself_and_returns_other_controlled_creatures_to_their_owners"
       ],
       "replay_tests": [
         "test_actual_summonings_revalidates_artifact_restriction_then_returns_current_instant_sorcery_union",
         "test_mass_zone_moves_use_apnap_replacements_and_replay",
         "test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
         "test_original_replenish_keeps_aura_without_preexisting_enchantable_object",
-        "test_original_raise_the_past_respects_fixed_mana_value_card_set"
+        "test_original_raise_the_past_respects_fixed_mana_value_card_set",
+        "test_actual_rift_uses_current_control_for_selection_and_owner_for_destination",
+        "test_actual_denizen_keeps_itself_and_returns_other_controlled_creatures_to_their_owners"
       ],
       "required_evidence": [
         "positive",
@@ -92627,7 +92668,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 826,
+  "registry_version": 827,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

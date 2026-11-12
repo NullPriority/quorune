@@ -14490,6 +14490,23 @@
         "test_source_characteristic_tap_sequence",
         "test_fixed_target_controller_damage"
       ]
+    },
+    {
+      "id": "singular-public-permanent-set-composition",
+      "patterns": [
+        "quorune/compiler/destruction_templates.py",
+        "quorune/compiler/public_tap_state_set_templates.py",
+        "quorune/compiler/public_zone_move_templates.py",
+        "tests/test_singular_public_permanent_sets.py",
+        "tests/fixtures/singular-public-permanent-set-cards.json"
+      ],
+      "test_modules": [
+        "test_singular_public_permanent_sets",
+        "test_fixed_overload",
+        "test_mass_destruction_effect_clauses",
+        "test_fixed_public_zone_moves",
+        "test_targeted_tap_state_effect_clauses"
+      ]
     }
   ],
   "risk_rules": [
