@@ -8,7 +8,7 @@ import unittest
 from dataclasses import replace
 from unittest.mock import patch
 
-from common import ROOT
+from common import ROOT, packet_without_decision_capability
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.object_predicate import ObjectQuerySpec
@@ -100,8 +100,13 @@ class AnnouncedAdditionalXRuntimeTests(unittest.TestCase):
     def action(self,session,source):return next(r for r in self.actions(session) if r['id']=='cast:'+source.ref)
 
     def private_replay(self,session,private):
-        for seat in 'ABD':self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+seat,full=True)))
-        self.assertIn(private.ref,json.dumps(session.packet('pilot:C',full=True)))
+        for seat in 'ABCD':
+            raw=session.packet('pilot:'+seat,full=True)
+            if 'pilot:'+seat in session.pending_principals():self.assertIsInstance(raw['decision']['cap'],str)
+            else:self.assertNotIn('cap',raw.get('decision') or {})
+            packet=json.dumps(packet_without_decision_capability(raw))
+            if seat=='C':self.assertIn(private.ref,packet)
+            else:self.assertNotIn(private.ref,packet)
         return self.replay(session,load=True)
 
     def test_original_hatred_pays_declared_life_before_resolution_and_uses_same_x(self):

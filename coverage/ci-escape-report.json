@@ -2413,6 +2413,27 @@
       "resolution": "Admit the two known declared structural versions with an integer-only closed enumeration. Add a fast current-producer/schema contract proving that declared historical identity still fails exact replay validation, absent runtime trust retains its historical path, and booleans, unknown versions, missing fingerprints and extra fields reject. Route the manifest schema through the existing command-resolution provenance consumer edge. Runtime replay validation remains unchanged.",
       "run_id": 43174128758,
       "summary": "The current record writer emits runtime-trust schema two, but the Game Record v3 manifest schema still permitted only schema one. The Windows functional04 native save/replay witness rejected its own current manifest during structural validation."
+    },
+    {
+      "category": "flaky_test",
+      "deterministic": false,
+      "failed_surfaces": [
+        "Nightly / Python / ubuntu / functional-11 (job 131035684612)",
+        "Nightly / Certification (dependent job 131285130692)"
+      ],
+      "head_sha": "16dd169b3352739e9e2afd75ae26184caeb205b3",
+      "id": "ci-20261112-nightly-fuse-private-reference-token-collision",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_packet_privacy_assertions.PacketPrivacyAssertionTests.test_opaque_capability_collision_does_not_report_a_card_reference_leak",
+        "test_packet_privacy_assertions.PacketPrivacyAssertionTests.test_state_context_and_nested_cap_fields_still_expose_injected_reference_leaks",
+        "test_packet_privacy_assertions.PacketPrivacyAssertionTests.test_missing_or_null_decisions_preserve_the_complete_packet",
+        "test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+        "test_fuse_rules.FuseTests.test_actual_down_discard_resumes_before_dirty_returns_own_card"
+      ],
+      "resolution": "Use one shared nonmutating full-packet normalizer that excludes only decision.cap from reference substring assertions. Fuse scans and the runtime replay helper preserve raw authorization presence and nonacting-principal exclusion checks, all semantic fields, owner visibility and private-reference exclusion. Deterministic collision and injected semantic-leak controls establish the boundary. Production projection and gameplay remain unchanged.",
+      "run_id": 43174408319,
+      "summary": "The Toil/Trouble privacy witness searched serialized packets for short hidden references. B04 occurred only inside the authorized decision.cap token; the opposing hand was absent. The Ubuntu nightly shard and dependent certification failed."
     }
   ],
   "known_flaky_tests": [],
@@ -2473,14 +2494,14 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "85c71372142f92928bc080f631e91a2723ab6b8181d812cc4f87aa19ffab841c",
+  "source_fingerprint": "cbd36993069d57ca7579f4df027e498d9a26e4255964706b4e858c286cde79ed",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
     "average_slot_b_inactive_seconds": null,
     "category_counts": {
       "browser_integration": 5,
-      "flaky_test": 10,
+      "flaky_test": 11,
       "generated_artifact_drift": 11,
       "infrastructure": 1,
       "missing_affected_test": 57,
@@ -2489,7 +2510,7 @@
     },
     "current_missing_impact_edges": [],
     "deterministic_escape_count": 115,
-    "escape_count": 124,
+    "escape_count": 125,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

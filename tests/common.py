@@ -23,6 +23,14 @@ DB_PATH = Path(os.environ.get("MTG_CARD_DB", ROOT / "data" / "scryfall-20260728-
 NODE_CHOICE_VALIDATION_TIMEOUT_SECONDS = 60
 
 
+def packet_without_decision_capability(packet):
+    """Copy a full packet, omitting only its opaque decision authorization token."""
+    result = dict(packet)
+    if isinstance(packet.get('decision'), dict):
+        result['decision'] = {key:value for key,value in packet['decision'].items() if key!='cap'}
+    return result
+
+
 def register_current_fixture_programs(db, semantics, records, *, capability_registry=None, profile="commander_review"):
     """Use normal source admission for original cards seeded outside deck setup."""
     from quorune.oracle_ir import register_generated_programs

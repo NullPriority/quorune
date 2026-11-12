@@ -27,9 +27,10 @@ only parsed UI state. Any new state field is private by default until its
 visibility contract and negative tests are explicit.
 
 An acting seat's decision `cap` is an authorized opaque token, not card data.
-Copy the projected decision and remove only that top-level field before scanning
-serialized card-data content for hidden reference substrings; random token bytes
-can coincidentally contain short references. Keep capability presence and
+Use `tests/common.py`'s `packet_without_decision_capability` for full-packet
+substring assertions. It copies the packet and decision, omitting only
+`decision.cap`; state, context and nested fields named `cap` remain intact.
+Random token bytes can coincidentally contain short references. Keep capability presence and
 nonacting-seat exclusion assertions, and prove that an injected private
 reference in a real projection field still fails. Do not omit other fields or
 ignore capability exposure to unauthorized principals.
