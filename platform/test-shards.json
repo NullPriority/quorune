@@ -943,6 +943,7 @@
       "test_targeted_return_to_hand_effect_clauses",
       "test_temporary_keyword_removal",
       "test_token_creation_replacements",
+      "test_transforming_saga_returns",
       "test_triggered_graveyard_battlefield",
       "test_whole_hand_discard"
     ],

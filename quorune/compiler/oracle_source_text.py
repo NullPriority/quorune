@@ -7,8 +7,8 @@ from .ir_model import SourceSpan
 
 
 _ORDINARY_SAGA_RULES_REMINDER = re.compile(
-    r"\(As this Saga enters and after your draw step, add a lore counter\. "
-    r"Sacrifice after [IVXLCDM]+\.\)",
+    r"\(As this Saga enters and after your draw step, add a lore counter\."
+    r"(?: Sacrifice after [IVXLCDM]+\.)?\)",
     re.IGNORECASE,
 )
 _TRANSFORM_REMINDER = re.compile(

@@ -1,0 +1,1393 @@
+{
+  "cards": [
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{W}",
+          "name": "Befriending the Moths",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — Target creature you control gets +1/+1 and gains flying until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Imperial Moth",
+          "oracle_text": "Flying",
+          "power": "2",
+          "toughness": "4",
+          "type_line": "Enchantment Creature — Insect"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W} // ",
+      "name": "Befriending the Moths // Imperial Moth",
+      "oracle_id": "2ee5f5ad-2f16-40d9-831a-2aefece31b36",
+      "oracle_text": "Befriending the Moths: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Target creature you control gets +1/+1 and gains flying until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nImperial Moth: Flying",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Insect"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{G}",
+          "name": "Boseiju Reaches Skyward",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Search your library for up to two basic Forest cards, reveal them, put them into your hand, then shuffle.\nII — Put up to one target land card from your graveyard on top of your library.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Branch of Boseiju",
+          "oracle_text": "Reach\nThis creature gets +1/+1 for each land you control.",
+          "power": "0",
+          "toughness": "0",
+          "type_line": "Enchantment Creature — Plant"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Reach",
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G} // ",
+      "name": "Boseiju Reaches Skyward // Branch of Boseiju",
+      "oracle_id": "ec08aeb3-bba7-4982-9160-68d25bd411d6",
+      "oracle_text": "Boseiju Reaches Skyward: (As this Saga enters and after your draw step, add a lore counter.)\nI — Search your library for up to two basic Forest cards, reveal them, put them into your hand, then shuffle.\nII — Put up to one target land card from your graveyard on top of your library.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nBranch of Boseiju: Reach\nThis creature gets +1/+1 for each land you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Plant"
+    },
+    {
+      "card_faces": [],
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Proliferate"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Contentious Plan",
+      "oracle_id": "2fc6de19-9d04-422b-90bc-eee2f9f8c84c",
+      "oracle_text": "Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Era of Enlightenment",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Scry 2.\nII — You gain 2 life.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Hand of Enlightenment",
+          "oracle_text": "First strike",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Enchantment Creature — Human Monk"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "First strike",
+        "Scry"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W} // ",
+      "name": "Era of Enlightenment // Hand of Enlightenment",
+      "oracle_id": "a6d646e8-0d84-489b-a46a-3bd5b1141864",
+      "oracle_text": "Era of Enlightenment: (As this Saga enters and after your draw step, add a lore counter.)\nI — Scry 2.\nII — You gain 2 life.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nHand of Enlightenment: First strike",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Human Monk"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Flicker of Fate",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "oracle_text": "Exile target creature or enchantment, then return it to the battlefield under its owner's control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Michiko's Reign of Truth",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — Target creature gets +1/+1 until end of turn for each artifact and/or enchantment you control.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Portrait of Michiko",
+          "oracle_text": "This creature gets +1/+1 for each artifact and/or enchantment you control.",
+          "power": "0",
+          "toughness": "0",
+          "type_line": "Enchantment Creature — Human Noble"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W} // ",
+      "name": "Michiko's Reign of Truth // Portrait of Michiko",
+      "oracle_id": "94794f7c-62e7-43c8-ba7f-ac5c0bc9a712",
+      "oracle_text": "Michiko's Reign of Truth: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Target creature gets +1/+1 until end of turn for each artifact and/or enchantment you control.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nPortrait of Michiko: This creature gets +1/+1 for each artifact and/or enchantment you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Human Noble"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{B}",
+          "name": "Okiba Reckoner Raid",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — Each opponent loses 1 life and you gain 1 life.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Nezumi Road Captain",
+          "oracle_text": "Menace\nVehicles you control have menace. (They can't be blocked except by two or more creatures.)",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Enchantment Creature — Rat Rogue"
+        }
+      ],
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Menace"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B} // ",
+      "name": "Okiba Reckoner Raid // Nezumi Road Captain",
+      "oracle_id": "54257132-c67a-4c19-bada-08e7025c2929",
+      "oracle_text": "Okiba Reckoner Raid: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Each opponent loses 1 life and you gain 1 life.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nNezumi Road Captain: Menace\nVehicles you control have menace. (They can't be blocked except by two or more creatures.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Rat Rogue"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Sliver"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{G}",
+          "name": "Tales of Master Seshiro",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — Put a +1/+1 counter on target creature or Vehicle you control. It gains vigilance until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Seshiro's Living Legacy",
+          "oracle_text": "Vigilance, haste",
+          "power": "5",
+          "toughness": "5",
+          "type_line": "Enchantment Creature — Snake Warrior"
+        }
+      ],
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Transform",
+        "Haste"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G} // ",
+      "name": "Tales of Master Seshiro // Seshiro's Living Legacy",
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "oracle_text": "Tales of Master Seshiro: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Put a +1/+1 counter on target creature or Vehicle you control. It gains vigilance until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nSeshiro's Living Legacy: Vigilance, haste",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Snake Warrior"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}{R}",
+          "name": "The Legend of Roku",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Exile the top three cards of your library. Until the end of your next turn, you may play those cards.\nII — Add one mana of any color.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Avatar Roku",
+          "oracle_text": "Firebending 4 (Whenever this creature attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)\n{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Legendary Creature — Avatar"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Firebending"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R} // ",
+      "name": "The Legend of Roku // Avatar Roku",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "oracle_text": "The Legend of Roku: (As this Saga enters and after your draw step, add a lore counter.)\nI — Exile the top three cards of your library. Until the end of your next turn, you may play those cards.\nII — Add one mana of any color.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nAvatar Roku: Firebending 4 (Whenever this creature attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)\n{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Legendary Creature — Avatar"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "The Modern Age",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — Draw a card, then discard a card.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Vector Glider",
+          "oracle_text": "Flying",
+          "power": "2",
+          "toughness": "3",
+          "type_line": "Enchantment Creature — Spirit"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U} // ",
+      "name": "The Modern Age // Vector Glider",
+      "oracle_id": "a8995df6-99a7-41a7-bd3e-f34643b27947",
+      "oracle_text": "The Modern Age: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Draw a card, then discard a card.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nVector Glider: Flying",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Spirit"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}",
+          "name": "The Restoration of Eiganjo",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Search your library for a basic Plains card, reveal it, put it into your hand, then shuffle.\nII — You may discard a card. When you do, return target permanent card with mana value 2 or less from your graveyard to the battlefield tapped.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Architect of Restoration",
+          "oracle_text": "Vigilance\nWhenever this creature attacks or blocks, create a 1/1 colorless Spirit creature token.",
+          "power": "3",
+          "toughness": "4",
+          "type_line": "Enchantment Creature — Fox Monk"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W} // ",
+      "name": "The Restoration of Eiganjo // Architect of Restoration",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "oracle_text": "The Restoration of Eiganjo: (As this Saga enters and after your draw step, add a lore counter.)\nI — Search your library for a basic Plains card, reveal it, put it into your hand, then shuffle.\nII — You may discard a card. When you do, return target permanent card with mana value 2 or less from your graveyard to the battlefield tapped.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nArchitect of Restoration: Vigilance\nWhenever this creature attacks or blocks, create a 1/1 colorless Spirit creature token.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Fox Monk"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{R}",
+          "name": "The Shattered States Era",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Gain control of target creature until end of turn. Untap it. It gains haste until end of turn.\nII — Creatures you control get +1/+0 until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Nameless Conqueror",
+          "oracle_text": "Trample, haste",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Enchantment Creature — Human Samurai"
+        }
+      ],
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Haste",
+        "Trample"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R} // ",
+      "name": "The Shattered States Era // Nameless Conqueror",
+      "oracle_id": "99473461-3c6f-4f7f-8ba2-d6c090ddb567",
+      "oracle_text": "The Shattered States Era: (As this Saga enters and after your draw step, add a lore counter.)\nI — Gain control of target creature until end of turn. Untap it. It gains haste until end of turn.\nII — Creatures you control get +1/+0 until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nNameless Conqueror: Trample, haste",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Human Samurai"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "2ee5f5ad-2f16-40d9-831a-2aefece31b36",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "2ee5f5ad-2f16-40d9-831a-2aefece31b36",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "2ee5f5ad-2f16-40d9-831a-2aefece31b36",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "2ee5f5ad-2f16-40d9-831a-2aefece31b36",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "2ee5f5ad-2f16-40d9-831a-2aefece31b36",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "2ee5f5ad-2f16-40d9-831a-2aefece31b36",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A nonmodal double-faced card enters with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a nonmodal double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a nonmodal double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each nonmodal double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of The Legend of Roku, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a nonmodal double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You pay all costs and follow all timing rules for cards played from exile using The Legend of Roku's first chapter ability. For example, if one of the exiled cards is a land card, you may play it only during your main phase while the stack is empty. You may play those exiled cards even if you no longer control The Legend of Roku.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers \"Whenever you proliferate\" triggers even if you chose no permanents or players while doing so.",
+      "oracle_id": "2fc6de19-9d04-422b-90bc-eee2f9f8c84c",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent ever has both +1/+1 counters and -1/-1 counters on it at the same time, they're removed in pairs as a state-based action so that the permanent has only one of those kinds of counters on it.",
+      "oracle_id": "2fc6de19-9d04-422b-90bc-eee2f9f8c84c",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player or permanent has more than one kind of counter on it, and you choose for it to get additional counters, it must get one of each kind of counter it already has. You can't have it get just one kind of counter it already has and not the others.",
+      "oracle_id": "2fc6de19-9d04-422b-90bc-eee2f9f8c84c",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can respond to a spell or ability whose effect includes proliferating. Once that spell or ability starts to resolve, however, and its controller chooses which permanents and players will get new counters, it's too late for anyone to respond.",
+      "oracle_id": "2fc6de19-9d04-422b-90bc-eee2f9f8c84c",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "To proliferate, you can choose any permanent that has a counter, including ones controlled by opponents. You can choose any player who has a counter, including opponents. You can't choose cards in any zone other than the battlefield, even if they have counters on them.",
+      "oracle_id": "2fc6de19-9d04-422b-90bc-eee2f9f8c84c",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't have to choose every permanent or player that has a counter, only the ones you want to add another counter to. Since \"any number\" includes zero, you don't have to choose any permanents at all, and you don't have to choose any players at all.",
+      "oracle_id": "2fc6de19-9d04-422b-90bc-eee2f9f8c84c",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "54257132-c67a-4c19-bada-08e7025c2929",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "54257132-c67a-4c19-bada-08e7025c2929",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "54257132-c67a-4c19-bada-08e7025c2929",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "54257132-c67a-4c19-bada-08e7025c2929",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "54257132-c67a-4c19-bada-08e7025c2929",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "54257132-c67a-4c19-bada-08e7025c2929",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "94794f7c-62e7-43c8-ba7f-ac5c0bc9a712",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "94794f7c-62e7-43c8-ba7f-ac5c0bc9a712",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "94794f7c-62e7-43c8-ba7f-ac5c0bc9a712",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "94794f7c-62e7-43c8-ba7f-ac5c0bc9a712",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "94794f7c-62e7-43c8-ba7f-ac5c0bc9a712",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "94794f7c-62e7-43c8-ba7f-ac5c0bc9a712",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "99473461-3c6f-4f7f-8ba2-d6c090ddb567",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "99473461-3c6f-4f7f-8ba2-d6c090ddb567",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "99473461-3c6f-4f7f-8ba2-d6c090ddb567",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "99473461-3c6f-4f7f-8ba2-d6c090ddb567",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "99473461-3c6f-4f7f-8ba2-d6c090ddb567",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "99473461-3c6f-4f7f-8ba2-d6c090ddb567",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose to discard a card as The Restoration of Eiganjo's second chapter ability resolves, a second triggered ability goes on the stack and you choose a target for it. Notably, this means you may target the card you discarded if it is a permanent card with mana value 2 or less.",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "9d9b52b2-2edc-4f7f-a8d9-e024b1398847",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "a6d646e8-0d84-489b-a46a-3bd5b1141864",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "a6d646e8-0d84-489b-a46a-3bd5b1141864",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "a6d646e8-0d84-489b-a46a-3bd5b1141864",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "a6d646e8-0d84-489b-a46a-3bd5b1141864",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "a6d646e8-0d84-489b-a46a-3bd5b1141864",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "a6d646e8-0d84-489b-a46a-3bd5b1141864",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "a8995df6-99a7-41a7-bd3e-f34643b27947",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "a8995df6-99a7-41a7-bd3e-f34643b27947",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "a8995df6-99a7-41a7-bd3e-f34643b27947",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "a8995df6-99a7-41a7-bd3e-f34643b27947",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "a8995df6-99a7-41a7-bd3e-f34643b27947",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "a8995df6-99a7-41a7-bd3e-f34643b27947",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won’t return to the battlefield.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an Aura is put onto the battlefield without being cast, the Aura’s controller-to-be chooses what it will enchant as it comes back onto the battlefield. An Aura put onto the battlefield this way doesn’t target anything (so it could be attached to an opponent’s permanent with hexproof, for example), but the Aura’s enchant ability restricts what it can be attached to. If the Aura can’t legally be attached to anything, it remains in its current zone.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it’s considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners’ graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "ec08aeb3-bba7-4982-9160-68d25bd411d6",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "ec08aeb3-bba7-4982-9160-68d25bd411d6",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "ec08aeb3-bba7-4982-9160-68d25bd411d6",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "ec08aeb3-bba7-4982-9160-68d25bd411d6",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color.",
+      "oracle_id": "ec08aeb3-bba7-4982-9160-68d25bd411d6",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "ec08aeb3-bba7-4982-9160-68d25bd411d6",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

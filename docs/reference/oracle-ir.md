@@ -275,6 +275,11 @@ Fixed opponent draw instructions lower to the existing draw-each-player owner
 with a closed controller-relative recipient scope. A shared controller-and-
 opponents instruction additionally carries a positive fixed controller count;
 both counts execute in APNAP order rather than as separate player batches.
+The known standalone Saga reminder is nonexecuting with or without the final
+sacrifice sentence. A terminal source exile/return-transformed clause lowers to
+one linked pair with a closed schema-four spec and its own fine capability.
+The compiler still requires every other chapter and the back-face abilities to
+close independently; unsupported siblings keep the whole original unready.
 An exact same-zone two-event clause serializes its ordered subscriptions inside
 the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime

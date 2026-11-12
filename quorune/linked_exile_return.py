@@ -10,6 +10,8 @@ from .continuous_effect_state import (
     resolution_effect_source,
 )
 from .entry_counter_model import EffectEntryCounter
+from .characteristic_evaluation import type_parts
+from .external_entry_state_model import PERMANENT_CARD_TYPES
 from .errors import GameRuleError
 from .linked_exile_return_model import (
     ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_ABILITY_TIMING, LINKED_RETURN_OPERATION, validate_linked_instruction,
@@ -21,6 +23,8 @@ from .zone_transitions import ZoneTransitionOwner
 class LinkedExileReturnHost(Protocol):
     state: Any
     active_seats: Sequence[str]
+
+    def card_record(self, card: Any) -> Any: ...
 
     def _resolve_object(
         self, actor: str, ref: str, *, zones: set[str]
@@ -63,6 +67,19 @@ def _eligible_exiled(host: LinkedExileReturnHost, objects: Any) -> tuple[Any, ..
     return tuple(result)
 
 
+def transformed_return_face(record: Any) -> str | None:
+    """Resolve physical face eligibility for CR 712.14a/b, not copy text."""
+    if record is None or record.layout not in {"transform", "modal_dfc"} or len(record.faces) != 2:
+        return None
+    front, back = record.faces
+    if record.layout == "modal_dfc" and not type_parts(str(front.get("type_line") or ""))[0] & PERMANENT_CARD_TYPES:
+        return None
+    if not type_parts(str(back.get("type_line") or ""))[0] & PERMANENT_CARD_TYPES:
+        return None
+    name = back.get("name")
+    return name if type(name) is str and name else None
+
+
 def return_linked_exiled_objects(
     host: LinkedExileReturnHost,
     effect: Mapping[str, Any],
@@ -74,6 +91,11 @@ def return_linked_exiled_objects(
         raise GameRuleError("Linked return has an invalid shape")
     spec = _spec(effect)
     cards = _eligible_exiled(host, effect["objects"])
+    entry_faces = {}
+    if spec.transformed:
+        entry_faces = {card.object_id: face for card in cards
+                       if (face := transformed_return_face(host.card_record(card))) is not None}
+        cards = tuple(card for card in cards if card.object_id in entry_faces)
     if not cards:
         return []
     source = resolution_effect_source(host, effect)
@@ -98,6 +120,7 @@ def return_linked_exiled_objects(
         effect_entry_counters=counters,
         replacement_selections=tuple(effect.get("_replacement_selections") or ()),
         aura_target_refs=effect.get('_aura_target_refs'),
+        entry_faces=entry_faces,
     )
     returned = tuple(card for card in moved if card.zone == "battlefield")
     if spec.keywords and returned:

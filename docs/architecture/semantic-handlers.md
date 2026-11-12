@@ -361,6 +361,14 @@ Commander exile-to-command choice happens after immediate blink finishes, but
 may remove a delayed-return card from exile. Old records retain their pinned
 trust provenance; this new grammar does not reinterpret historical records.
 
+Schema four adds the separately gated immediate transformed-source return.
+The linked owner derives an eligible back face from the physical card and gives
+that face to the zone owner before entry processing. It retains the resolving
+controller, clears the old zone object's counters, and does not enter a front-
+face Saga before transforming it. Single-faced copies and tokens cannot use
+copied Saga text to acquire a returnable physical back face. Schemas one through
+three retain their exact descriptor fields and timing policies.
+
 Linked target cardinality is independent of source exclusion. The compiler
 captures an up-to bound and an other-object qualifier before canonicalizing
 the subject. Selecting zero targets remains legal with or without eligible

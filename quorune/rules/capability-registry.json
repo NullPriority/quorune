@@ -89046,7 +89046,7 @@
       "applicability": {
         "exclusions": [
           "linked source-departure banishment",
-          "transformed or face-down return",
+          "face-down return; transformed return without its separate fine capability",
           "conditional, optional-return or payment riders",
           "unrepresented attachment entry",
           "unrepresented replacement interactions"
@@ -89062,7 +89062,7 @@
           "identity-pinned immediate or delayed return",
           "canonical prospective entry and APNAP events"
         ],
-        "summary": "Exile a fixed legal battlefield target set or the same source incarnation, then return the committed exiled card incarnations immediately or through one controller-locked next-end-step trigger."
+        "summary": "Exile a fixed legal battlefield target set or the same source incarnation, then return the committed exiled card incarnations immediately or through one controller-locked next-end-step trigger. Transformed source entry requires its separate closed fine capability; schemas one through three keep their existing payloads."
       },
       "blockers": [],
       "dependencies": [
@@ -89142,7 +89142,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -91845,6 +91845,103 @@
         "commander_review"
       ],
       "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "targeted transformed returns",
+          "delayed, source-departure or separately linked transformed returns",
+          "tapped, added-counter, temporary-keyword or face-down riders",
+          "unrepresented attachment entry",
+          "unrepresented replacement interactions",
+          "material chapter or back-face siblings outside their independent owners"
+        ],
+        "inputs": [
+          "paired source-spanned exile and return instructions with one identity binding",
+          "closed schema-four immediate actor-controlled transformed-entry spec",
+          "captured source battlefield incarnation and actual committed exile incarnation",
+          "physical double-faced card metadata and a represented permanent back face"
+        ],
+        "outputs": [
+          "canonical source exile",
+          "identity-pinned immediate back-face entry under the resolving controller",
+          "normal prospective entry, counter, ability and APNAP processing"
+        ],
+        "summary": "Resolve the closed immediate source exile/return-transformed instruction through the existing linked zone owner, preserving the captured source incarnation and resolving controller, physical double-faced eligibility and prospective back-face entry."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.linked_exile_return.fixed"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the transformed-return capability retains a material terminal-chapter residual while the independent ordinary blink owner remains available.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.linked_exile_return.transformed_source",
+      "implementation_components": [
+        "quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template",
+        "quorune.compiler.oracle_source_text.material_source_lines",
+        "quorune.linked_exile_return_model.LinkedExileReturnSpec",
+        "quorune.linked_exile_return.transformed_return_face",
+        "quorune.linked_exile_return.return_linked_exiled_objects",
+        "quorune.linked_exile_return.resolve_linked_exile_return",
+        "quorune.rules.linked_exile_return_shapes.linked_exile_return_node_capabilities",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Fresh actual Proliferate and terminal-chapter witnesses reject front-face entry and owner-controlled return; source blink distinguishes a new incarnation from the captured old one.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "negative_tests": [
+        "test_terminal_pair_is_closed_and_adjacent_open_variants_remain_unrepresented",
+        "test_verified_transformed_dependency_withdrawal_preserves_ordinary_blink",
+        "test_transformed_spec_preserves_legacy_descriptors_and_rejects_mixed_modes",
+        "test_return_face_uses_physical_layout_and_permanent_eligibility"
+      ],
+      "official_rules": [
+        "111.8",
+        "201.5",
+        "400.7",
+        "400.7j",
+        "608.2c",
+        "712.14",
+        "712.14a",
+        "712.14b",
+        "714.2b",
+        "714.3a",
+        "714.3c",
+        "714.4"
+      ],
+      "positive_tests": [
+        "test_original_two_face_candidates_are_strictly_bound_without_reminder_residuals"
+      ],
+      "privacy_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "replay_tests": [
+        "test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance",
+        "test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     }
   ],
   "effective_date": "2026-08-07",
@@ -91853,7 +91950,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 773,
+  "registry_version": 774,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
