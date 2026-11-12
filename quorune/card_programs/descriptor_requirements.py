@@ -100,6 +100,9 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
 
 
 def _damage_payload_dependencies(value, mechanics):
+    from ..rules.fixed_dual_damage import fixed_dual_damage_payload_dependencies
+    if 'fixed_target_controller_damage' in value:
+        return fixed_dual_damage_payload_dependencies(value,mechanics=mechanics)
     from ..announced_damage import (
         ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_EFFECT_FIELD, VariableDamageAllocationSpec,
         validate_announced_damage_effect,

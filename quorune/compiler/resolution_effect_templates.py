@@ -347,6 +347,9 @@ def typed_resolution_effect_template(
     controlled_return = controlled_return_template(text, source_is_permanent=source_is_permanent)
     if controlled_return is not None:
         return controlled_return
+    from .fixed_dual_damage_templates import fixed_dual_damage_template
+    dual_damage = fixed_dual_damage_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
+    if dual_damage is not None:return dual_damage.compiled()
     fixed_damage = fixed_damage_effect_template(text, card_name=card_name)
     if fixed_damage is not None:
         return fixed_damage.compiled()

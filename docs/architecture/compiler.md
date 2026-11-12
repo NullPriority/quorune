@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Fixed targeted damage with an additional fixed amount to its controller lowers
+to one damage-set instruction. The existing single-target grammar owns target
+legality; the resolving controller is an untargeted recipient. The compiler
+retains both amounts, and resolution combines them when the controller is also
+the target. Replacement choices and damage commit use the ordinary batch owner.
+An illegal sole target prevents the complete spell or ability from resolving.
+
 Fixed predefined-token alternatives lower to the existing resolution option
 choice. Each branch carries the ordinary canonical token definition and its
 capability dependencies. The resolving controller chooses exactly one branch;

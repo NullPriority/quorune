@@ -23,6 +23,7 @@ _FIELDS = frozenset(
         "amount",
         "groups",
         ANNOUNCED_DAMAGE_EFFECT_FIELD,
+        'fixed_target_controller_damage',
         _REASON_FIELD,
         "_replacement_selections",
         "_replacement_event_ids",
@@ -80,7 +81,15 @@ class FixedDamageSetHandler:
             )
         spec = None
         allocated_recipients = None
-        if ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
+        if 'fixed_target_controller_damage' in effect:
+            from ..rules.fixed_dual_damage import bound_fixed_dual_damage_recipients
+            if any(field in effect for field in ('groups',ANNOUNCED_DAMAGE_EFFECT_FIELD,DAMAGE_DEATH_EXILE_FIELD)):
+                raise SemanticNodeError('Fixed target/controller damage cannot mix recipient encodings')
+            try:
+                allocated_recipients = bound_fixed_dual_damage_recipients(
+                    effect['fixed_target_controller_damage'],actor=context.actor,amount=amount)
+            except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+        elif ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
             recipients = effect[ANNOUNCED_DAMAGE_EFFECT_FIELD]
             if "groups" in effect or not isinstance(recipients, (list, tuple)):
                 raise SemanticNodeError("Announced damage requires bound allocated recipients")

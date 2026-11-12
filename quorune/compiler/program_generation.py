@@ -341,7 +341,7 @@ def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value.startswith("cr-") or value == DAMAGE_DEATH_EXILE_MECHANIC
+                if value.startswith("cr-") or value in {DAMAGE_DEATH_EXILE_MECHANIC,'fixed-target-controller-damage'}
             ),
         )
     )

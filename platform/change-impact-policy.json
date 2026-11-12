@@ -14445,6 +14445,24 @@
         "test_card_program_trust",
         "test_exact_deck_triggers"
       ]
+    },
+    {
+      "id": "fixed-target-controller-damage",
+      "patterns": [
+        "quorune/fixed_dual_damage_model.py",
+        "quorune/compiler/fixed_dual_damage_templates.py",
+        "quorune/rules/fixed_dual_damage.py",
+        "quorune/semantic_runtime/fixed_damage_set_handlers.py",
+        "tests/test_fixed_target_controller_damage.py",
+        "tests/fixtures/fixed-target-controller-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_target_controller_damage",
+        "test_fixed_damage_effect_clauses",
+        "test_compound_damage_recipients",
+        "test_damage_replacement_integration",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

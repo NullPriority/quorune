@@ -666,6 +666,7 @@
     "tests/fixtures/fixed-stat-multiplier-composition-cards.json",
     "tests/fixtures/fixed-tap-additional-cost-cards.json",
     "tests/fixtures/fixed-tap-payment-cards.json",
+    "tests/fixtures/fixed-target-controller-damage-cards.json",
     "tests/fixtures/fixed-token-choice-cards.json",
     "tests/fixtures/fixed-token-creation-cards.json",
     "tests/fixtures/fixed-token-production-cards.json",

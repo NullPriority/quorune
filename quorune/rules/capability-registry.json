@@ -42800,6 +42800,108 @@
     },
     {
       "applicability": {
+        "exclusions": [
+          "client-assigned or variable damage amounts",
+          "additional target slots or untargeted opponent groups",
+          "unrepresented damage riders",
+          "mixed group and allocation encodings"
+        ],
+        "inputs": [
+          "one existing fixed damage target schema",
+          "positive literal target and controller amounts",
+          "resolved controller and stack source identity",
+          "revalidated target incarnation"
+        ],
+        "outputs": [
+          "one atomic simultaneous damage batch",
+          "one merged event when the caster is its own target",
+          "existing replacement continuation and source LKI"
+        ],
+        "summary": "Resolve one fixed damage instruction to one legal target and its resolving controller as one existing damage batch; equal recipients combine before replacement."
+      },
+      "blockers": [],
+      "dependencies": [
+        "damage.batch.fixed_set",
+        "damage.result.player_life",
+        "damage.source.stack_current_or_lki"
+      ],
+      "dependency_fail_closed_rationale": "Verified dual-owner withdrawal preserves ordinary damage, while normal runtime binding requires the new producer, target authority, batch, source/LKI and controller-result capabilities.",
+      "dependency_fail_closed_status": "passed",
+      "id": "damage.batch.fixed_target_and_controller",
+      "implementation_components": [
+        "quorune.fixed_dual_damage_model.FixedTargetControllerDamageSpec",
+        "quorune.compiler.fixed_dual_damage_templates.FixedDualDamageTemplate",
+        "quorune.compiler.fixed_dual_damage_templates.fixed_dual_damage_template",
+        "quorune.rules.fixed_dual_damage.fixed_dual_damage_node_capabilities",
+        "quorune.rules.fixed_dual_damage.fixed_dual_damage_payload_dependencies",
+        "quorune.rules.fixed_dual_damage.fixed_dual_damage_runtime_dependencies",
+        "quorune.rules.fixed_dual_damage.bind_fixed_dual_damage",
+        "quorune.semantic_runtime.fixed_damage_set_handlers.FixedDamageSetHandler",
+        "quorune.fixed_damage_set.resolve_fixed_damage_set",
+        "quorune.rules.fixed_dual_damage.bound_fixed_dual_damage_recipients"
+      ],
+      "implementation_mutation_rationale": "A fresh observed common damage-commit omission leaves the borrowed activation controller unharmed; the actual activated ability witness kills it after normal binding and source bounce.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_char_self_target_is_one_six_damage_event_and_illegal_target_prevents_self_damage",
+        "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
+        "test_actual_cannonade_deals_both_amounts_then_draws_once",
+        "test_actual_pizza_entry_target_choice_deals_to_target_and_controller",
+        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients"
+      ],
+      "multiplayer_tests": [
+        "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
+        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients"
+      ],
+      "negative_tests": [
+        "test_unbound_source_variable_amounts_unknown_riders_and_malformed_descriptors_reject",
+        "test_verified_dual_owner_withdrawal_keeps_plain_damage_available",
+        "test_normal_binding_cannot_omit_dual_batch_controller_or_target_authority"
+      ],
+      "official_rules": [
+        "109.5",
+        "113.7a",
+        "120.4",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "positive_tests": [
+        "test_single_instruction_composes_existing_target_authority_and_fixed_amounts",
+        "test_bound_controller_collision_is_one_combined_damage_event"
+      ],
+      "privacy_tests": [
+        "test_actual_char_self_target_is_one_six_damage_event_and_illegal_target_prevents_self_damage",
+        "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
+        "test_actual_cannonade_deals_both_amounts_then_draws_once",
+        "test_actual_pizza_entry_target_choice_deals_to_target_and_controller",
+        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients"
+      ],
+      "replay_tests": [
+        "test_actual_char_self_target_is_one_six_damage_event_and_illegal_target_prevents_self_damage",
+        "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
+        "test_actual_cannonade_deals_both_amounts_then_draws_once",
+        "test_actual_pizza_entry_target_choice_deals_to_target_and_controller",
+        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
         "exclusions": [],
         "inputs": [
           "combat assignment",
@@ -92488,7 +92590,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 780,
+  "registry_version": 781,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

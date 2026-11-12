@@ -193,6 +193,9 @@ def _resolve_effect_mapping(host, value, item):
     from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
+        if 'fixed_target_controller_damage' in value:
+            from ..rules.fixed_dual_damage import bind_fixed_dual_damage
+            value = {**value,'fixed_target_controller_damage':bind_fixed_dual_damage(host,value,item)}
         if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
             total, recipients = bind_announced_damage_recipients(host, value, item)
             value = {**value, "amount": total, ANNOUNCED_DAMAGE_EFFECT_FIELD: recipients}

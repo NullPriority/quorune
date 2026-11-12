@@ -10,6 +10,13 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+`damage_fixed_set` can carry a version-one `fixed_target_controller_damage`
+descriptor with positive `target_amount` and `controller_amount`. Resolution
+binds one revalidated target and the ability controller to the existing typed
+per-recipient damage intent. Equal recipients combine before replacement.
+The descriptor has independent capability closure and cannot mix with group or
+announced-allocation encodings. Existing damage encodings retain their forms.
+
 Fixed predefined-token alternatives use `choose_option` with one canonical
 `create_token` instruction per branch. `fixed-token-definition-choice` requires
 its own capability together with every child definition dependency. Choice

@@ -47,6 +47,7 @@ def _hash(value: Any) -> str:
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative == 'quorune/stack_resolution_inputs.py':return 'domain'
+    if relative=='quorune/fixed_dual_damage_model.py':return 'domain'
     if relative=='quorune/graveyard_target_unions.py':return 'rules'
     if relative == 'quorune/next_spell_cost_model.py':return 'domain'
     if relative == 'quorune/next_spell_costs.py':return 'rules'
@@ -612,6 +613,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative=='quorune/fixed_dual_damage_model.py':return 'damage'
     if relative=='quorune/graveyard_target_unions.py':return 'graveyard_actions'
     if relative in {'quorune/next_spell_cost_model.py','quorune/next_spell_costs.py'}:
         return 'casting_activation_and_costs'

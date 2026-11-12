@@ -1387,6 +1387,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
         "continuous.resolution.source_keyword_choice": "temporary-source-keyword-choice",
+        'damage.batch.fixed_target_and_controller': 'fixed-target-controller-damage',
         "continuous.resolution.source_protection_choice": "temporary-source-protection-choice",
         "continuous.resolution.source_fixed_protection": "temporary-source-fixed-protection",
         "resolution.effect_program.bound_references": "bound-effect-program",

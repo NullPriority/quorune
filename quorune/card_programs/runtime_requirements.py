@@ -300,6 +300,11 @@ def _value_runtime_requirements(program):
         required.update(stack_counter_followup_runtime_dependencies(program))
     except (TypeError, ValueError) as exc:
         blockers.add(f"runtime_stack_counter_followup:invalid:{exc}")
+    from ..rules.fixed_dual_damage import fixed_dual_damage_runtime_dependencies
+    try:
+        required.update(fixed_dual_damage_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_fixed_target_controller_damage:invalid:{exc}')
     try:
         required.update(next_turn_effect_dependencies(program.effects))
     except ValueError as exc:
