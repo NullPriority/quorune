@@ -42847,7 +42847,8 @@
         "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
         "test_actual_cannonade_deals_both_amounts_then_draws_once",
         "test_actual_pizza_entry_target_choice_deals_to_target_and_controller",
-        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients"
+        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients",
+        "test_actual_forge_devil_mandatory_self_target_deals_controller_damage_before_death"
       ],
       "multiplayer_tests": [
         "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
@@ -42868,21 +42869,24 @@
       ],
       "positive_tests": [
         "test_single_instruction_composes_existing_target_authority_and_fixed_amounts",
-        "test_bound_controller_collision_is_one_combined_damage_event"
+        "test_bound_controller_collision_is_one_combined_damage_event",
+        "test_actual_forge_devil_mandatory_self_target_deals_controller_damage_before_death"
       ],
       "privacy_tests": [
         "test_actual_char_self_target_is_one_six_damage_event_and_illegal_target_prevents_self_damage",
         "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
         "test_actual_cannonade_deals_both_amounts_then_draws_once",
         "test_actual_pizza_entry_target_choice_deals_to_target_and_controller",
-        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients"
+        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients",
+        "test_actual_forge_devil_mandatory_self_target_deals_controller_damage_before_death"
       ],
       "replay_tests": [
         "test_actual_char_self_target_is_one_six_damage_event_and_illegal_target_prevents_self_damage",
         "test_actual_borrowed_artillery_damage_uses_ability_controller_after_source_bounce",
         "test_actual_cannonade_deals_both_amounts_then_draws_once",
         "test_actual_pizza_entry_target_choice_deals_to_target_and_controller",
-        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients"
+        "test_actual_competing_replacements_remain_precommit_and_replay_for_both_recipients",
+        "test_actual_forge_devil_mandatory_self_target_deals_controller_damage_before_death"
       ],
       "required_evidence": [
         "positive",
@@ -64286,7 +64290,11 @@
         "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
         "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
         "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
-        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not",
+        "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
+        "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
+        "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
       ],
       "multiplayer_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -64342,7 +64350,11 @@
         "test_actual_each_player_draws_before_all_random_discards_in_continuing_order",
         "test_actual_return_then_discard_uses_returned_hand_and_zero_target_distinction",
         "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
-        "test_explicit_source_antecedent_uses_two_existing_closed_leaf_owners"
+        "test_explicit_source_antecedent_uses_two_existing_closed_leaf_owners",
+        "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
+        "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
+        "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
       ],
       "privacy_tests": [
         "test_private_scry_follows_token_creation_in_four_players",
@@ -64352,7 +64364,11 @@
         "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
         "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
         "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
-        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not",
+        "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
+        "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
+        "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
       ],
       "replay_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -64366,7 +64382,11 @@
         "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
         "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
         "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
-        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not",
+        "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
+        "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
+        "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
       ],
       "required_evidence": [
         "positive",
@@ -92607,7 +92627,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 825,
+  "registry_version": 826,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

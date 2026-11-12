@@ -14478,6 +14478,18 @@
         "test_targeted_tap_state_effect_clauses",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-composition-additional-closures",
+      "patterns": [
+        "tests/test_source_composition_closures.py",
+        "tests/fixtures/source-composition-closure-cards.json"
+      ],
+      "test_modules": [
+        "test_source_composition_closures",
+        "test_source_characteristic_tap_sequence",
+        "test_fixed_target_controller_damage"
+      ]
     }
   ],
   "risk_rules": [
