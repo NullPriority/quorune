@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "92446b0d627d7d25c6d49356c15f26d577fec14920b91b2b0110e54f4cb4f47b"
+verified: "54b82b16df252a8863acf4c3dfa9a09e6c8134ce40055f4dc09b79ef1ced2004"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 118
-- Deterministic escapes: 109
+- Escapes: 122
+- Deterministic escapes: 113
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -147,6 +147,10 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261111-pr561-promoted-integration-contracts` | [43086636766](https://github.com/NullPriority/quorune/actions/runs/43086636766) | `missing_affected_test` | `added` | Keep supported originals positive; use explicit unrepresented siblings and duration modifiers for negative boundaries. Preserve historical attached-provider transport in a pinned fixture, validate the live damage instruction owner, exercise Spellseeker owner choice, and prove Channel payment through accepted commands rather than a retired metadata field. Derive handler inventories from actual declared programs and canonical registry definitions, preserve keyword callback arguments in fresh mutation probes, and retain genuine open mana restrictions after chosen-type syntax becomes supported. |
 | `ci-20261111-pr561-scripted-compiled-exile-price` | [43086636766](https://github.com/NullPriority/quorune/actions/runs/43086636766) | `source_correctness` | `added` | Consume the offered fixed exile collection and count, preserve legacy scalar inputs, skip empty optional-target exile casts, and select a nonempty legal target when paying that price. Prove wrong-principal and missing-payment rollback, actual exile and resolution, private projection, save/load and replay without changing kernel legality. |
 | `ci-20261111-pr561-harvest-gain-basis` | [43086636766](https://github.com/NullPriority/quorune/actions/runs/43086636766) | `source_correctness` | `added` | Choose the observed gain defined by the recorded probe for calibration, transition coverage and correction validation. Preserve all raw immutable trusted, exact and capability-closed deltas, retain the old basis for old probes, reject missing current-basis provenance, and kill the prior mixed-metric behavior in a focused model witness. |
+| `ci-20261112-pr561-prerequisite-budget-fixture` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `missing_affected_test` | `added` | Construct a subthreshold fixture across both recorded gain bases, use the canonical observed-gain reader for the fixture budget, and assert a positive subthreshold run before the exhaustion control. Select this same test in pre-corpus validation whenever the harvest metric readers change. Preserve production thresholds, probe-specific metric selection and immutable raw history. |
+| `ci-20261112-pr561-command-born-resolution-provenance` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `source_correctness` | `added` | Observe actual completion through the existing stack owner and retain actual physical sources in an engine-specific command capture. Preserve the original stack snapshot used for ordered plans. Under runtime-trust schema two, replay checks ordered completion occurrences and source bindings, rejects missing or extra evidence, and preserves the historical-absence and exact declared-runtime contracts. Retain the original seed assertion and prove both immediate and ordinary actual casts, privacy, rollback, replay and an omitted-observer mutant. |
+| `ci-20261112-pr561-normal-fixture-registration-consumers` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `missing_affected_test` | `added` | Use narrow complete synthetic Oracle records for each selected dispatcher contract, retain the existing five-ability source for compiler consumers, and select normally registered current views without manually replacing them. Assert repeated activation registration generates nothing and preserves every existing view, then retain actual costs, target authority, LKI, APNAP, privacy and replay controls. Route fixture-registration changes to these consumers. |
+| `ci-20261112-pr561-incidental-attacker-abilities` | [43130981500](https://github.com/NullPriority/quorune/actions/runs/43130981500) | `missing_affected_test` | `added` | Use the existing vanilla synthetic Goblin as the incidental attacking body, retain the dedicated self-attack trigger witness, and select normally registered trusted views through one shared fixture helper. Preserve watcher attachment, batch, APNAP, zone-owner, actual consequences and replay assertions; route normal fixture registration changes to these consumers. |
 
 ## Measurement limitations
 

@@ -2,7 +2,7 @@
 title: "Reusable rules piece delta"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-delta.json"
-verified: "5db7143b41b4ed88d89965ea495ae16375e3014a1aaec13e42a78e742de2e31d"
+verified: "2e8edc08bfd745286c2de46d82c222f31cfbfc76de736830ed8024e3404eb23e"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---

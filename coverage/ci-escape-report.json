@@ -2299,6 +2299,84 @@
       "resolution": "Choose the observed gain defined by the recorded probe for calibration, transition coverage and correction validation. Preserve all raw immutable trusted, exact and capability-closed deltas, retain the old basis for old probes, reject missing current-basis provenance, and kill the prior mixed-metric behavior in a focused model witness.",
       "run_id": 43086636766,
       "summary": "The current census probe forecasts capability-closed gains, while historical complete-card deltas include reviewed compatibility views. A test and calibration readers compared the different metrics, producing a false shortfall and forecast error despite matching immutable receipts."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "id": "ci-20261112-pr561-prerequisite-budget-fixture",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_prerequisite_exception_requires_measured_fanout_and_open_budget"
+      ],
+      "resolution": "Construct a subthreshold fixture across both recorded gain bases, use the canonical observed-gain reader for the fixture budget, and assert a positive subthreshold run before the exhaustion control. Select this same test in pre-corpus validation whenever the harvest metric readers change. Preserve production thresholds, probe-specific metric selection and immutable raw history.",
+      "run_id": 43130981500,
+      "summary": "The prerequisite-budget fixture zeroed only historical complete-card gain after the current census probe correctly moved its observed basis to capability-closed gain. The supposedly subthreshold fixture remained above threshold, then passed a zero exception budget to the strict policy validator."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Windows / functional-06"
+      ],
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "id": "ci-20261112-pr561-command-born-resolution-provenance",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_seed_20260730_regression.Seed20260730RegressionTests.test_exact_opening_state_and_corrected_main_phase_delivery",
+        "test_command_resolution_provenance.ResolutionCaptureRuntimeTests.test_original_generic_and_registered_resolutions_record_actual_sources_and_replay",
+        "test_command_resolution_provenance.ResolutionCaptureRuntimeTests.test_resolution_observation_omission_is_killed"
+      ],
+      "resolution": "Observe actual completion through the existing stack owner and retain actual physical sources in an engine-specific command capture. Preserve the original stack snapshot used for ordered plans. Under runtime-trust schema two, replay checks ordered completion occurrences and source bindings, rejects missing or extra evidence, and preserves the historical-absence and exact declared-runtime contracts. Retain the original seed assertion and prove both immediate and ordinary actual casts, privacy, rollback, replay and an omitted-observer mutant.",
+      "run_id": 43130981500,
+      "summary": "Resolution provenance captured only stack objects present before submission. Elves of Deep Shadow could be cast and auto-resolve within one command, so the record omitted its real implicit permanent-spell binding even though casting and gameplay succeeded."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-07",
+        "PR / Windows / functional-09"
+      ],
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "id": "ci-20261112-pr561-normal-fixture-registration-consumers",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_creature_subtype_dispatches_death_and_graveyard_wordings",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_noncreature_kindred_subtype_only_dispatches_graveyard_wording",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_another_and_nontoken_filters_use_lki",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_control_and_owner_filters_use_lki",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_triggers_preserve_apnap_and_exact_replay",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays"
+      ],
+      "resolution": "Use narrow complete synthetic Oracle records for each selected dispatcher contract, retain the existing five-ability source for compiler consumers, and select normally registered current views without manually replacing them. Assert repeated activation registration generates nothing and preserves every existing view, then retain actual costs, target authority, LKI, APNAP, privacy and replay controls. Route fixture-registration changes to these consumers.",
+      "run_id": 43130981500,
+      "summary": "Normal fixture registration activates every printed supported ability. Subtype-dispatch fixtures selected only part of a five-ability source and manually re-put selected views, while a qualified-activation witness incorrectly expected repeated normal registration to generate another program."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-04",
+        "PR / Windows / functional-04"
+      ],
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "id": "ci-20261112-pr561-incidental-attacker-abilities",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attachment_attack_binding_uses_current_relation_and_ability",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_equipped_attack_mill_composes_with_attachment_and_zone_owner",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners"
+      ],
+      "resolution": "Use the existing vanilla synthetic Goblin as the incidental attacking body, retain the dedicated self-attack trigger witness, and select normally registered trusted views through one shared fixture helper. Preserve watcher attachment, batch, APNAP, zone-owner, actual consequences and replay assertions; route normal fixture registration changes to these consumers.",
+      "run_id": 43130981500,
+      "summary": "Normally registering an incidental self-attack-life fixture activated its printed trigger. Five watcher tests then stopped at a legitimate trigger-order decision before the asserted watcher stack existed."
     }
   ],
   "known_flaky_tests": [],
@@ -2359,7 +2437,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "92446b0d627d7d25c6d49356c15f26d577fec14920b91b2b0110e54f4cb4f47b",
+  "source_fingerprint": "54b82b16df252a8863acf4c3dfa9a09e6c8134ce40055f4dc09b79ef1ced2004",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -2369,13 +2447,13 @@
       "flaky_test": 10,
       "generated_artifact_drift": 11,
       "infrastructure": 1,
-      "missing_affected_test": 53,
-      "source_correctness": 34,
+      "missing_affected_test": 56,
+      "source_correctness": 35,
       "windows_compatibility": 4
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 109,
-    "escape_count": 118,
+    "deterministic_escape_count": 113,
+    "escape_count": 122,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

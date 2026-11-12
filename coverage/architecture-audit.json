@@ -6188,12 +6188,12 @@
           "classification": "rules_value",
           "file": "quorune/record.py",
           "flow_id": "card-identity-flow:2b9ca94455c9b8841714",
-          "line": 1656,
+          "line": 1644,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1656,
+          "source_line": 1644,
           "symbol": "inspect_game"
         },
         {
@@ -6224,144 +6224,144 @@
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:550f2987e0274b0877fe",
-          "line": 89,
+          "line": 102,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 89,
+          "source_line": 102,
           "symbol": "card_program_trust_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:5c8a52c75a5dbe679645",
-          "line": 144,
+          "line": 157,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 144,
+          "source_line": 157,
           "symbol": "implicit_semantic_execution_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:6c2b7d6d21c8dee4efc0",
-          "line": 151,
+          "line": 164,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 151,
+          "source_line": 164,
           "symbol": "implicit_semantic_execution_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:40c0efee58b0c336a3b3",
-          "line": 173,
+          "line": 186,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 173,
+          "source_line": 186,
           "symbol": "semantic_execution_provenance_row"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:18f8931feebd8350f72e",
-          "line": 174,
+          "line": 187,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 174,
+          "source_line": 187,
           "symbol": "semantic_execution_provenance_row"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:d630321d2098978cb986",
-          "line": 179,
+          "line": 192,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 179,
+          "source_line": 192,
           "symbol": "semantic_execution_provenance_row"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:015e08ec7c628bf4feed",
-          "line": 341,
+          "line": 378,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 341,
+          "source_line": 378,
           "symbol": "validate_programs_used_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:d936842c5207e122e184",
-          "line": 342,
+          "line": 379,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 342,
+          "source_line": 379,
           "symbol": "validate_programs_used_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:827b780c0cbccc3e8fdd",
-          "line": 346,
+          "line": 383,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 346,
+          "source_line": 383,
           "symbol": "validate_programs_used_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:9791dba2f9c83857da0a",
-          "line": 400,
+          "line": 437,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 400,
+          "source_line": 437,
           "symbol": "rebase_command_semantics_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:844967c656c3de220310",
-          "line": 401,
+          "line": 438,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 401,
+          "source_line": 438,
           "symbol": "rebase_command_semantics_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:80f42bf53ec17ff61208",
-          "line": 406,
+          "line": 443,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 406,
+          "source_line": 443,
           "symbol": "rebase_command_semantics_provenance"
         },
         {
@@ -9332,12 +9332,12 @@
           "classification": "rules_value",
           "file": "quorune/stack_resolution.py",
           "flow_id": "card-identity-flow:2272a91e1cb933d500cd",
-          "line": 264,
+          "line": 266,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 264,
+          "source_line": 266,
           "symbol": "_complete_stack_resolution"
         },
         {
@@ -10544,7 +10544,7 @@
           "expression": "state = GameState.from_dict(checkpoint[\"state\"])",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 944,
+          "line": 948,
           "state_path": "<state-root>",
           "symbol": "load_record_state"
         },
@@ -10553,7 +10553,7 @@
           "expression": "state.events = [ event_from_record(row) for row in _read_jsonl(directory / \"events.jsonl\") ]",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 945,
+          "line": 949,
           "state_path": "events",
           "symbol": "load_record_state"
         },
@@ -10562,7 +10562,7 @@
           "expression": "state = GameState.from_dict(initial[\"state\"])",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 981,
+          "line": 985,
           "state_path": "<state-root>",
           "symbol": "replay_record"
         },
@@ -10571,7 +10571,7 @@
           "expression": "state = GameState.from_dict(state_payload)",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 1136,
+          "line": 1124,
           "state_path": "<state-root>",
           "symbol": "verify_record_suffix"
         },
@@ -10580,7 +10580,7 @@
           "expression": "state = GameState.from_dict(checkpoint[\"state\"])",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 1374,
+          "line": 1362,
           "state_path": "<state-root>",
           "symbol": "finalize_record"
         },
@@ -10589,7 +10589,7 @@
           "expression": "state = GameState.from_dict(checkpoint[\"state\"])",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 1399,
+          "line": 1387,
           "state_path": "<state-root>",
           "symbol": "verify_record_integrity"
         },
@@ -10598,7 +10598,7 @@
           "expression": "state = GameState.load(game_json)",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 1507,
+          "line": 1495,
           "state_path": "<state-root>",
           "symbol": "migrate_v2_game"
         },
@@ -10607,7 +10607,7 @@
           "expression": "state.config.trace_level = trace_level",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 1508,
+          "line": 1496,
           "state_path": "config.trace_level",
           "symbol": "migrate_v2_game"
         },
@@ -10616,7 +10616,7 @@
           "expression": "state.config.profile = state.config.effective_profile(len(state.turn_order))",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 1509,
+          "line": 1497,
           "state_path": "config.profile",
           "symbol": "migrate_v2_game"
         },
@@ -10625,7 +10625,7 @@
           "expression": "state.annotations.append( { \"kind\": \"migration_uncertainty\", \"scope\": \"eliminated-player hidden zones\", \"objects_restricted\": restricted, \"note\": ( \"V2 did not retain enough history to reconstruct exact \" \"knowledge; identities were kept pr",
           "file": "quorune/record.py",
           "kind": "mutating_call:append",
-          "line": 1552,
+          "line": 1540,
           "state_path": "annotations",
           "symbol": "migrate_v2_game"
         },
@@ -10634,7 +10634,7 @@
           "expression": "state = GameState.load(game_json)",
           "file": "quorune/record.py",
           "kind": "assignment",
-          "line": 1647,
+          "line": 1635,
           "state_path": "<state-root>",
           "symbol": "inspect_game"
         },
@@ -11827,7 +11827,7 @@
             "symbol": "finalize_record"
           },
           "kind": "assignment",
-          "line": 1374,
+          "line": 1362,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -11848,7 +11848,7 @@
             "symbol": "inspect_game"
           },
           "kind": "assignment",
-          "line": 1647,
+          "line": 1635,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -11869,7 +11869,7 @@
             "symbol": "load_record_state"
           },
           "kind": "assignment",
-          "line": 944,
+          "line": 948,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -11890,7 +11890,7 @@
             "symbol": "load_record_state"
           },
           "kind": "assignment",
-          "line": 945,
+          "line": 949,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "events",
           "subsystems": [
@@ -11911,7 +11911,7 @@
             "symbol": "migrate_v2_game"
           },
           "kind": "assignment",
-          "line": 1507,
+          "line": 1495,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -11932,7 +11932,7 @@
             "symbol": "migrate_v2_game"
           },
           "kind": "assignment",
-          "line": 1509,
+          "line": 1497,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "config.profile",
           "subsystems": [
@@ -11953,7 +11953,7 @@
             "symbol": "migrate_v2_game"
           },
           "kind": "assignment",
-          "line": 1508,
+          "line": 1496,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "config.trace_level",
           "subsystems": [
@@ -11974,7 +11974,7 @@
             "symbol": "migrate_v2_game"
           },
           "kind": "mutating_call:append",
-          "line": 1552,
+          "line": 1540,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "annotations",
           "subsystems": [
@@ -11995,7 +11995,7 @@
             "symbol": "replay_record"
           },
           "kind": "assignment",
-          "line": 981,
+          "line": 985,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -12016,7 +12016,7 @@
             "symbol": "verify_record_integrity"
           },
           "kind": "assignment",
-          "line": 1399,
+          "line": 1387,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -12037,7 +12037,7 @@
             "symbol": "verify_record_suffix"
           },
           "kind": "assignment",
-          "line": 1136,
+          "line": 1124,
           "owner_rationale": "Versioned record hydration or compatibility owns this write.",
           "state_path": "<state-root>",
           "subsystems": [
@@ -12661,7 +12661,7 @@
           "module": "quorune.semantic_choices.defaults"
         }
       ],
-      "internal_edges": 11460,
+      "internal_edges": 11462,
       "modules": [
         {
           "fan_in": 2,
@@ -17690,7 +17690,7 @@
         },
         {
           "fan_in": 2,
-          "fan_out": 5,
+          "fan_out": 6,
           "module": "quorune.record_trust"
         },
         {
@@ -21595,13 +21595,18 @@
         },
         {
           "fan_in": 6,
-          "fan_out": 23,
+          "fan_out": 24,
           "module": "quorune.stack_resolution"
         },
         {
           "fan_in": 6,
           "fan_out": 0,
           "module": "quorune.stack_resolution_authority_model"
+        },
+        {
+          "fan_in": 2,
+          "fan_out": 0,
+          "module": "quorune.stack_resolution_inputs"
         },
         {
           "fan_in": 3,
@@ -22147,7 +22152,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1941,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "cf96312c085fb00819d0577e55598d14399c95f40ddbb0cf0f38cd67bf040f6f",
+      "source_fingerprint": "57247c6b61857bf0d26ff5a5e6a3a9a18a00f42c1a24dadec11c3010a95b71d0",
       "uncovered_high_risk_pairs": 78
     },
     "migration_queue": [],
@@ -22203,7 +22208,7 @@
       ]
     },
     "production": {
-      "file_count": 1911,
+      "file_count": 1912,
       "largest_functions_and_methods": [
         {
           "end_line": 1912,
@@ -22316,10 +22321,10 @@
           "visibility": "private"
         },
         {
-          "end_line": 604,
+          "end_line": 608,
           "file": "quorune/record.py",
           "kind": "function",
-          "line": 371,
+          "line": 375,
           "logical_lines": 234,
           "name": "derive_codex_arena_metadata",
           "physical_lines": 234,
@@ -22536,12 +22541,12 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 337355,
+      "logical_lines": 337414,
       "methods": {
         "dunder": 990,
         "private": 1097,
-        "public": 3590,
-        "total": 5677
+        "public": 3591,
+        "total": 5678
       },
       "modules": [
         {
@@ -22576,8 +22581,8 @@
           "file": "quorune/record.py",
           "functions_and_methods": 32,
           "language": "python",
-          "logical_lines": 1589,
-          "physical_lines": 1690
+          "logical_lines": 1577,
+          "physical_lines": 1678
         },
         {
           "file": "quorune/oracle_ir.py",
@@ -23959,6 +23964,13 @@
           "physical_lines": 460
         },
         {
+          "file": "quorune/record_trust.py",
+          "functions_and_methods": 18,
+          "language": "python",
+          "logical_lines": 421,
+          "physical_lines": 468
+        },
+        {
           "file": "quorune/declaration_costs.py",
           "functions_and_methods": 8,
           "language": "python",
@@ -24076,13 +24088,6 @@
           "language": "python",
           "logical_lines": 391,
           "physical_lines": 423
-        },
-        {
-          "file": "quorune/record_trust.py",
-          "functions_and_methods": 16,
-          "language": "python",
-          "logical_lines": 389,
-          "physical_lines": 431
         },
         {
           "file": "quorune/convoke.py",
@@ -24498,6 +24503,13 @@
           "physical_lines": 336
         },
         {
+          "file": "quorune/stack_resolution.py",
+          "functions_and_methods": 15,
+          "language": "python",
+          "logical_lines": 306,
+          "physical_lines": 349
+        },
+        {
           "file": "quorune/granted_activation_model.py",
           "functions_and_methods": 13,
           "language": "python",
@@ -24510,13 +24522,6 @@
           "language": "python",
           "logical_lines": 304,
           "physical_lines": 333
-        },
-        {
-          "file": "quorune/stack_resolution.py",
-          "functions_and_methods": 15,
-          "language": "python",
-          "logical_lines": 304,
-          "physical_lines": 347
         },
         {
           "file": "quorune/rules/casting/assist_payment.py",
@@ -32569,6 +32574,13 @@
           "physical_lines": 45
         },
         {
+          "file": "quorune/stack_resolution_inputs.py",
+          "functions_and_methods": 6,
+          "language": "python",
+          "logical_lines": 37,
+          "physical_lines": 50
+        },
+        {
           "file": "quorune/toughness_assignment_rule.py",
           "functions_and_methods": 5,
           "language": "python",
@@ -36035,10 +36047,10 @@
           "visibility": "private"
         },
         {
-          "end_line": 604,
+          "end_line": 608,
           "file": "quorune/record.py",
           "kind": "function",
-          "line": 371,
+          "line": 375,
           "logical_lines": 234,
           "name": "derive_codex_arena_metadata",
           "physical_lines": 234,
@@ -36234,12 +36246,12 @@
           "file": "quorune/record.py",
           "functions_and_methods": 32,
           "language": "python",
-          "logical_lines": 1589,
-          "physical_lines": 1690
+          "logical_lines": 1577,
+          "physical_lines": 1678
         }
       ],
-      "physical_lines": 374888,
-      "python_file_count": 1895,
+      "physical_lines": 374965,
+      "python_file_count": 1896,
       "review_thresholds": {
         "function_logical_lines_review": 150,
         "module_logical_lines_review": 1500
@@ -36256,7 +36268,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 7534,
+      "top_level_functions": 7541,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -60192,7 +60204,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 77,
+        "primary_test_count": 78,
         "primary_tests": [
           "test_aftermath_rules",
           "test_ante_rules",
@@ -60201,6 +60213,7 @@
           "test_cast_creature_targets",
           "test_codex_arena",
           "test_codex_cli_runner",
+          "test_command_resolution_provenance",
           "test_command_zone_rules",
           "test_commander_characteristic_grants",
           "test_commander_pairing",
@@ -60460,10 +60473,10 @@
         "oversized_symbol_count": 1,
         "oversized_symbols": [
           {
-            "end_line": 604,
+            "end_line": 608,
             "file": "quorune/record.py",
             "kind": "function",
-            "line": 371,
+            "line": 375,
             "logical_lines": 234,
             "name": "derive_codex_arena_metadata",
             "physical_lines": 234,
@@ -60471,7 +60484,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 771,
+        "primary_test_count": 772,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_source_counter_targets",
@@ -63441,10 +63454,10 @@
         "oversized_symbol_count": 1,
         "oversized_symbols": [
           {
-            "end_line": 604,
+            "end_line": 608,
             "file": "quorune/record.py",
             "kind": "function",
-            "line": 371,
+            "line": 375,
             "logical_lines": 234,
             "name": "derive_codex_arena_metadata",
             "physical_lines": 234,
@@ -63452,7 +63465,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 671,
+        "primary_test_count": 672,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_word_event_triggers",
@@ -66768,7 +66781,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1500,
     "compiler_module_physical_lines": 1568,
-    "compiler_version": "oracle-ir-v976",
+    "compiler_version": "oracle-ir-v977",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -67088,22 +67101,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 5177,
-          "multiplayer": 3739,
+          "interaction": 5179,
+          "multiplayer": 3741,
           "mutation": 1722,
-          "negative": 5109,
-          "positive": 5825,
-          "privacy": 2879,
+          "negative": 5111,
+          "positive": 5827,
+          "privacy": 2881,
           "property": 180,
-          "replay": 4608,
+          "replay": 4610,
           "rollback": 531
         },
-        "declaration_count": 29770,
-        "declaration_source_fingerprint": "7660ac56ef24591fa2d08a0dcd7195e39c28797d1d59aa6d8d727e02f10ff906",
-        "fingerprint": "8f66c1bdff1e1b9baa5b8234e2c5216ef6193a64adb41ffbe8cadd15c086c981",
-        "registry_fingerprint": "6692e807eb0f07bc5e3727ef897e1b7b48a2cc8998ae4414d714b8017590a610"
+        "declaration_count": 29782,
+        "declaration_source_fingerprint": "8521e92d5866a23797c510584b9a4ed5092bdbc201b2d664407256fde60aef24",
+        "fingerprint": "dcc25c87da56fb2763cc509f36b8b36fa4b49f685213e6d45ed662366cd1b570",
+        "registry_fingerprint": "f54cdc2072a48330e3d1912a9dd29c2bfbd5dae8bcad2868fe7bf5257290fda1"
       },
-      "fingerprint": "6692e807eb0f07bc5e3727ef897e1b7b48a2cc8998ae4414d714b8017590a610",
+      "fingerprint": "f54cdc2072a48330e3d1912a9dd29c2bfbd5dae8bcad2868fe7bf5257290fda1",
       "implementation_mutation_status_counts": {
         "killed": 825,
         "not_run": 4
@@ -67113,7 +67126,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 823,
+      "registry_version": 824,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -67512,7 +67525,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 897,
         "exact_nodes": 1015,
-        "fingerprint": "bbcb417a6140f2006db1a22319f7dc7e55e5946376bdda36df8deb441461c716",
+        "fingerprint": "51b121cc9e05079789d63295d58b0d3d8e5b4d530188010b6d70527fdcb50a2b",
         "grammar_source_fingerprint": "3a2122fcb405fad00b1045ee31a08dd7ce7e64f2b50204cdba7c7276bcad6382",
         "identity_fingerprint": "8a0173badec9eb5c96fe9e87231fc9414a8d14efab1b1d7c2e0f5f9658935c76",
         "present": true,
@@ -67524,7 +67537,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 922,
         "exact_nodes": 1053,
-        "fingerprint": "9f74060b07a86e3912ad03f1691c8451787247933d57c59e4b7f093eba4670b4",
+        "fingerprint": "3495c34e6e6ae5fbe9fe476263794fa6c3ac3e858e19f0d90388941ff3e3299d",
         "grammar_source_fingerprint": "3a2122fcb405fad00b1045ee31a08dd7ce7e64f2b50204cdba7c7276bcad6382",
         "identity_fingerprint": "22cc278c5eef35bc90029d47178f2f587d1ec44f8ea8a8d44cf2ecf691b83a12",
         "present": true,
@@ -67543,7 +67556,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "2f23a7e3d813e51af5eb1269b017dfb53b1ac00f2060dfed7485eca8fe208ed1",
+      "fingerprint": "6a7dad1b9b2663d2ef87762ead020cd4965d6774e80fafd06b68f8a29398780a",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -68087,7 +68100,7 @@
       "generic-search-v1": 7,
       "generic-search-v2": 7,
       "interaction-kernel": 14,
-      "oracle-ir-v976": 30,
+      "oracle-ir-v977": 30,
       "replacement-choice-nested-events": 1,
       "reviewed-predefined-token-name-correction": 1,
       "v0.8-artifact-engine-family": 22,
@@ -68404,18 +68417,18 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 12489,
-      "discovered_total": 15798,
+      "conventional_ast_cases": 12498,
+      "discovered_total": 15807,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 363,
         "fuzz_named": 1,
         "privacy_or_projection_named": 140,
-        "replay_named": 823,
+        "replay_named": 826,
         "server_named": 94
       },
       "reconciles": true,
-      "test_files": 948
+      "test_files": 950
     }
   }
 }
