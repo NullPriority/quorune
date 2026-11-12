@@ -38265,7 +38265,7 @@
           "attack triggers for another object, attack-recipient predicates, attacks-alone or aggregate attack events outside exact Battalion, and objects put onto the battlefield attacking",
           "multi-subtype, multiword-subtype, characteristic-qualified, one-or-more aggregated, alternate-zone, and combined zone-change events",
           "draw triggers that inspect hidden card identity",
-          "intervening-if, reflexive, conditional, variable, linked, modal, repeated, delayed, and state triggers",
+          "intervening-if, reflexive, variable, linked, modal, repeated, delayed, and state triggers; conditional bodies outside already represented fixed resolution payments",
           "counter movement, removal, prevention, and prohibition",
           "granted, copied, or removed abilities outside the shared typed ability-presence boundary",
           "unsupported event or effect-body grammar",
@@ -38286,7 +38286,7 @@
           "replacement-aware counter placement",
           "exact continuation replay"
         ],
-        "summary": "Compile and resolve one mandatory exact counter-producing effect triggered by a represented beginning-of-step, fixed public permanent-entry or creature-death subject, single-subtype permanent entry, controlled-land-entry, closed spell-cast subject, source-self attack, Heroic, Magecraft, Constellation, Battalion, controller-life-gain, controller-card-draw, controller-second-draw, repeatable public sacrifice, or typed discard event through ordinary APNAP trigger placement and the canonical resumable counter transaction. A separate fine producer admits a mandatory fixed source-counter result over an already closed public subscription with observer incarnation pinning. A separate fine producer also admits one mandatory fixed direct-target counter with its unchanged target schema and revalidation."
+        "summary": "Compile and resolve one exact counter-producing effect, including a paid counter result inside an independently represented fixed resolution payment, triggered by a represented beginning-of-step, fixed public permanent-entry or creature-death subject, single-subtype permanent entry, controlled-land-entry, closed spell-cast subject, source-self attack, Heroic, Magecraft, Constellation, Battalion, controller-life-gain, controller-card-draw, controller-second-draw, repeatable public sacrifice, or typed discard event through ordinary APNAP trigger placement and the canonical resumable counter transaction. A separate fine producer admits a mandatory fixed source-counter result over an already closed public subscription with observer incarnation pinning. A separate fine producer also admits one mandatory fixed direct-target counter with its unchanged target schema and revalidation."
       },
       "blockers": [],
       "dependencies": [
@@ -38296,23 +38296,26 @@
       "dependency_fail_closed_status": "passed",
       "id": "counter.producer.fixed_event_trigger",
       "implementation_components": [
+        "quorune.attack_transition_engine_adapter.attack_transition_stack_items",
         "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
         "quorune.compiler.fixed_counter_trigger_nodes.FixedSpellCastSubject",
         "quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_event_trigger_node",
-        "quorune.rules.casting.commit._dispatch_cast_events",
-        "quorune.attack_transition_engine_adapter.attack_transition_stack_items",
-        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.compiler.fixed_effect_payment_templates.is_optional_resolution_payment",
+        "quorune.counter_placement.place_counters_on_refs",
         "quorune.player_result_events.dispatch_card_draw_event",
         "quorune.player_result_events.dispatch_life_gain_event",
-        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.rules.casting.commit._dispatch_cast_events",
         "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler",
-        "quorune.counter_placement.place_counters_on_refs"
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence"
       ],
       "implementation_mutation_rationale": "Focused compiler mutations remove the shared normalized-event lowering or the single-subtype entry grammar and prove every represented trigger in those families loses exact trust.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
@@ -38335,8 +38338,10 @@
         "test_zone_entry_counter_triggers_apply_typed_subject_relations"
       ],
       "multiplayer_tests": [
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
@@ -38357,12 +38362,15 @@
         "test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
         "test_public_source_counter_current_ability_diagnostic_stops_later_occurrences",
         "test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed",
+        "test_restoring_optional_result_misclassification_is_killed",
         "test_singular_and_batch_token_entry_keep_identical_predicates_but_distinct_coalescing",
         "test_singular_token_entry_batch_variant_mutant_is_killed",
         "test_singular_token_entry_retains_unrepresented_qualifiers_and_unknown_results",
         "test_singular_token_entry_verified_zone_owner_withdrawal_preserves_unrelated_draw",
         "test_stale_counter_target_rolls_back_trigger_resolution",
-        "test_subtype_entry_counter_trigger_dependencies_fail_closed"
+        "test_subtype_entry_counter_trigger_dependencies_fail_closed",
+        "test_unknown_costs_results_and_siblings_remain_residual",
+        "test_verified_cost_and_counter_withdrawal_preserve_unrelated_results"
       ],
       "official_rules": [
         "115.1",
@@ -38386,6 +38394,7 @@
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_closed_cast_and_source_attack_bindings_compile_exactly",
         "test_closed_event_bindings_compile_exact_counter_effect_bodies",
+        "test_cost_clause_stays_whole_and_ordinary_optional_counter_keeps_legacy_shape",
         "test_four_strict_ability_word_bindings_compile_through_shared_owner",
         "test_new_receiving_subscriptions_bind_grouped_all_or_combat_transport",
         "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
@@ -38401,8 +38410,10 @@
         "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly"
       ],
       "privacy_tests": [
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_death_counter_replacement_is_private_and_replays_exactly",
@@ -38410,8 +38421,10 @@
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
       ],
       "replay_tests": [
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
@@ -38434,7 +38447,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 12
+      "version": 13
     },
     {
       "applicability": {
@@ -46107,7 +46120,7 @@
           "mandatory prefix remains outside conditional scope",
           "exact continuation replay"
         ],
-        "summary": "Resolve a complete fixed mana, energy, life, owned-card discard or controlled-permanent sacrifice payment with independently typed consequences through the existing optional-payment choice, preserving v1 payloads and explicit mandatory-prefix scope. Fixed legacy library searches use the same independent battlefield/hand leaf shape validators before optional or paid execution."
+        "summary": "Resolve a complete fixed mana, energy, life, owned-card discard or controlled-permanent sacrifice payment with independently typed consequences through the existing optional-payment choice, preserving v1 payloads and explicit mandatory-prefix scope. Fixed legacy library searches use the same independent battlefield/hand leaf shape validators before optional or paid execution. Resolve cost-and-if-paid grammar before optional-result interpretation, so sacrifice or discard costs are neither stripped nor wrapped as free optional effects."
       },
       "blockers": [],
       "dependencies": [],
@@ -46117,6 +46130,7 @@
       "implementation_components": [
         "CommanderEngine._continue_resolution",
         "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
+        "quorune.compiler.fixed_effect_payment_templates.is_optional_resolution_payment",
         "quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate",
         "quorune.compiler.optional_payment_templates.binding_aware_optional_mana_payment_template",
         "quorune.compiler.trigger_result_templates.binding_effect_template",
@@ -46124,26 +46138,30 @@
         "quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities",
         "quorune.rules.fixed_effect_clause_shapes.fixed_optional_mana_payment_node_capabilities",
         "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities",
+        "quorune.rules.fixed_effect_payment_shapes.fixed_payment_event_player_runtime_dependencies",
         "quorune.semantic_choices.counter_coordination.continue_semantic_completion",
         "quorune.semantic_choices.fixed_effect_payment.complete_fixed_effect_payment",
         "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_effect_payment",
         "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent",
         "quorune.semantic_choices.optional_effect._represented_effect",
+        "quorune.semantic_choices.optional_effect._represented_payment_player_selection",
         "quorune.semantic_choices.payments.FixedEffectOptionalPaymentHandler",
         "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent",
         "quorune.semantic_runtime.intents.PayLifeIntent",
-        "quorune.semantic_runtime.intents.PayManaCostIntent",
-        "quorune.rules.fixed_effect_payment_shapes.fixed_payment_event_player_runtime_dependencies",
-        "quorune.semantic_choices.optional_effect._represented_payment_player_selection"
+        "quorune.semantic_runtime.intents.PayManaCostIntent"
       ],
       "implementation_mutation_rationale": "Focused compiler, capability-shape, and payment-handler mutations remove the wrapper, weaken cost or chooser validation, alter payment-before-body ordering, or admit an unrepresented nested instruction and are rejected before trusted promotion or mutation.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage",
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
         "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
         "test_actual_obligator_requires_colorless_and_optional_control_untap_haste_expires",
         "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
         "test_optional_control_validation_requires_and_preserves_immutable_resolving_provenance",
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
         "test_original_mirrorworks_copies_departed_entering_object_information",
@@ -46152,22 +46170,22 @@
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
         "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope",
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope"
       ],
       "multiplayer_tests": [
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
         "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
         "test_actual_obligator_requires_colorless_and_optional_control_untap_haste_expires",
         "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
         "test_optional_control_validation_requires_and_preserves_immutable_resolving_provenance",
         "test_original_cricket_payment_is_private_affordable_and_replays",
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations"
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"
       ],
       "negative_tests": [
         "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
@@ -46183,12 +46201,15 @@
         "test_original_cricket_unaffordable_payment_rejects_without_result",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_paid_copy_component_retains_exact_source_cost_and_target_boundaries",
+        "test_paid_event_player_result_retains_independent_occurrence_scope",
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
         "test_paid_runtime_copy_owner_is_inferred_without_annotations",
-        "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting",
-        "test_verified_copy_or_payment_withdrawal_keeps_unrelated_draw",
+        "test_restoring_optional_result_misclassification_is_killed",
         "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player",
-        "test_paid_event_player_result_retains_independent_occurrence_scope"
+        "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting",
+        "test_unknown_costs_results_and_siblings_remain_residual",
+        "test_verified_copy_or_payment_withdrawal_keeps_unrelated_draw",
+        "test_verified_cost_and_counter_withdrawal_preserve_unrelated_results"
       ],
       "official_rules": [
         "109.5",
@@ -46202,11 +46223,14 @@
         "609.1"
       ],
       "positive_tests": [
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage",
         "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
         "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
         "test_actual_obligator_requires_colorless_and_optional_control_untap_haste_expires",
         "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
+        "test_cost_clause_stays_whole_and_ordinary_optional_counter_keeps_legacy_shape",
         "test_fixed_payment_can_wrap_sealed_entering_object_copy_recipe",
         "test_fixed_payment_composes_across_normalized_trigger_families",
         "test_fixed_payment_preserves_bound_source_result_incarnation",
@@ -46217,25 +46241,29 @@
         "test_paid_copy_component_retains_exact_source_cost_and_target_boundaries",
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
         "test_pay_decline_unpayable_and_stale_affordability_are_atomic",
-        "test_two_card_payment_published_form_and_command_cardinalities_agree",
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+        "test_two_card_payment_published_form_and_command_cardinalities_agree"
       ],
       "privacy_tests": [
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
         "test_actual_obligator_requires_colorless_and_optional_control_untap_haste_expires",
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
         "test_optional_control_validation_requires_and_preserves_immutable_resolving_provenance",
         "test_original_cricket_payment_is_private_affordable_and_replays",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations"
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"
       ],
       "replay_tests": [
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage",
+        "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
         "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_merchants_draw_survives_blink_and_another_uses_source_incarnation",
         "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
         "test_actual_obligator_requires_colorless_and_optional_control_untap_haste_expires",
         "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
         "test_optional_control_validation_requires_and_preserves_immutable_resolving_provenance",
         "test_original_cricket_payment_is_private_affordable_and_replays",
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
@@ -46243,9 +46271,7 @@
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"
       ],
       "required_evidence": [
         "positive",
@@ -46261,7 +46287,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 10
+      "version": 11
     },
     {
       "applicability": {
@@ -91812,7 +91838,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 771,
+  "registry_version": 772,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -5,6 +5,9 @@ from .optional_effect_templates import fixed_optional_effect_template
 
 
 def binding_aware_optional_result(body: str, *, compile_child):
+    from .fixed_effect_payment_templates import is_optional_resolution_payment
+    if is_optional_resolution_payment(body):
+        return None
     if not re.match(r'you may\b', body, re.I) or re.match(r'you may pay\b', body, re.I):
         return None
     current = False

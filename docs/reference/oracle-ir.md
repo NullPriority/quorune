@@ -264,6 +264,13 @@ damage, token-entry, and graveyard-departure subscriptions use the same event
 and condition fields. Unsupported attachment, tap-state, first-time,
 once-per-turn, ambiguous, linked, chosen, or dynamic event forms remain
 residual.
+Fixed resolution payments retain their complete cost and if-paid clause before
+optional-result interpretation. A represented sacrifice, discard or mana cost
+with a paid source-counter result uses the existing typed payment and counter
+owners. A free optional counter remains a distinct effect. Source results retain
+their bound zone incarnation; an independent draw instruction still executes
+when the original source has left. Unsupported costs and result siblings remain
+material residuals.
 An exact same-zone two-event clause serializes its ordered subscriptions inside
 the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime

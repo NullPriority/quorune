@@ -14260,6 +14260,22 @@
         "test_oracle_ir",
         "test_high_risk_interaction_assurance"
       ]
+    },
+    {
+      "id": "optional-counter-result-payment-routing",
+      "patterns": [
+        "quorune/compiler/fixed_effect_payment_templates.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/binding_optional_results.py",
+        "tests/test_optional_counter_payments.py",
+        "tests/fixtures/optional-counter-payment-cards.json"
+      ],
+      "test_modules": [
+        "test_optional_counter_payments",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_fixed_counter_event_triggers",
+        "test_another_sacrifice_payments"
+      ]
     }
   ],
   "risk_rules": [

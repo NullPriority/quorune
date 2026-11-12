@@ -1241,7 +1241,8 @@ def fixed_counter_event_trigger_node(
     binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
-    optional_match = re.fullmatch(
+    from .fixed_effect_payment_templates import is_optional_resolution_payment
+    optional_match = None if is_optional_resolution_payment(binding.body) else re.fullmatch(
         r"you may (?P<body>(?!pay\b).+)",
         binding.body,
         re.IGNORECASE,

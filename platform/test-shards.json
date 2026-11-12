@@ -983,6 +983,7 @@
       "test_mulligan_and_turns",
       "test_myrel_composition",
       "test_myriad_keyword_composition",
+      "test_optional_counter_payments",
       "test_ordered_quantity_results",
       "test_power_toughness_switch",
       "test_prepared_creature_power_damage_native",

@@ -31,6 +31,11 @@ _OPEN = re.compile(r"\b(?:if|unless|may|when|where|random|repeat|this way|that m
 Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]]
 
 
+def is_optional_resolution_payment(text: str) -> bool:
+    """Keep cost/if-paid clauses whole before optional-result interpretation."""
+    return _PAYMENT.fullmatch(text.strip()) is not None or _DECLINED_PAYMENT.fullmatch(text.strip()) is not None
+
+
 def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False,
                               allow_hybrid_mana: bool = False) -> FixedEffectPaymentSpec | None:
     value=text.strip()
