@@ -111,4 +111,44 @@ def _optional_graveyard_search_views_equal(current, old):
 def fixed_trigger_results_equal(current, old):
     return (fixed_graveyard_exile_views_equal(current, old)
         or _optional_graveyard_search_views_equal(current, old)
-        or fixed_graveyard_self_entry_views_equal(current, old))
+        or fixed_graveyard_self_entry_views_equal(current, old)
+        or fixed_token_choice_results_equal(current,old))
+
+
+def _fixed_token_choice_results(program):
+    from copy import deepcopy
+    from ..fixed_token_production import historical_unnamed_token_view
+    from ..rules.token_creation_capability_shapes import _fixed_token_effect_closure
+    if program.target_schema is not None or len(program.effects)!=1:return None
+    choice = program.effects[0]
+    if (not isinstance(choice,Mapping) or set(choice)!={'op','player','prompt','options','then_by_choice'}
+            or choice['op']!='choose_option' or choice['player']!='$controller'
+            or type(choice['prompt']) is not str or not choice['prompt']):return None
+    options,branches = choice['options'],choice['then_by_choice']
+    if not isinstance(options,(list,tuple)) or not 2<=len(options)<=4 or not isinstance(branches,Mapping):return None
+    result,ids = {},set()
+    for option in options:
+        if (not isinstance(option,Mapping) or set(option)!={'id','label'}
+                or any(type(option[k]) is not str or not option[k] for k in option)
+                or option['id'].casefold()!=option['label'].casefold()
+                or option['id'] in ids or option['label'].casefold() in result):return None
+        ids.add(option['id']);branch = branches.get(option['id'])
+        if not isinstance(branch,(list,tuple)) or len(branch)!=1 or not isinstance(branch[0],Mapping):return None
+        token = deepcopy(dict(branch[0]));reason = token.pop('reason','')
+        if (type(reason) is not str or token.get('quantity')!=1 or type(token.get('quantity')) is not int
+                or 'tapped' in token or _fixed_token_effect_closure(token) is None):return None
+        former = historical_unnamed_token_view(token['name'],token['characteristics'])
+        if former is not None:token['name'],token['characteristics'] = former
+        if token['name'].casefold()!=option['label'].casefold():return None
+        result[option['label'].casefold()] = token
+    return result if ids==set(branches) else None
+
+
+def fixed_token_choice_results_equal(current,old):
+    """Normalize presentation IDs only after complete typed branch comparison."""
+    from ..rules.fixed_token_choices import fixed_token_choice_node_capabilities
+    required = fixed_token_choice_node_capabilities(effects=current.effects,
+        target_schema=current.target_schema,mechanic_ids=current.coverage)
+    if not required or not set(required)<=set(current.capability_dependencies):return False
+    current_results,old_results = (_fixed_token_choice_results(program) for program in (current,old))
+    return current_results is not None and current_results==old_results

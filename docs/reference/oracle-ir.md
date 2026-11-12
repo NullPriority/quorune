@@ -10,6 +10,15 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+Fixed predefined-token alternatives use `choose_option` with one canonical
+`create_token` instruction per branch. `fixed-token-definition-choice` requires
+its own capability together with every child definition dependency. Choice
+occurs during resolution and preserves the resolving controller after source
+departure. Ordinary single-token and simultaneous batch encodings are retained.
+Source-pinned reviewed trigger views retire only when complete branch definitions,
+chooser, targets and trigger contracts agree with the normally admitted current
+program. Presentation IDs and prompts may differ; result instructions may not.
+
 Mixed own-graveyard card targets serialize canonical
 `characteristic_forms_any` leaves under the ordinary graveyard-card target
 header. Each leaf constrains one known card type, subtype or supertype, and at

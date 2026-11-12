@@ -14425,6 +14425,26 @@
         "test_graveyard_return_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-predefined-token-resolution-choices",
+      "patterns": [
+        "quorune/compiler/fixed_token_choices.py",
+        "quorune/rules/fixed_token_choices.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "tests/test_fixed_token_choices.py",
+        "tests/fixtures/fixed-token-choice-cards.json",
+        "quorune/card_programs/trigger_result_equivalence.py"
+      ],
+      "test_modules": [
+        "test_fixed_token_choices",
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_semantic_choice_characterization",
+        "test_card_program_trust",
+        "test_exact_deck_triggers"
+      ]
     }
   ],
   "risk_rules": [

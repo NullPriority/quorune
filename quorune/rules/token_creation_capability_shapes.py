@@ -105,6 +105,9 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
     Copy recipes keep their separate owner. Legacy token references without an
     explicit definition retain their existing compatibility path.
     """
+    if isinstance(value, Mapping) and value.get('op')=='choose_option':
+        from .fixed_token_choices import fixed_token_choice_payload_dependencies
+        return fixed_token_choice_payload_dependencies(value,mechanics)
     if isinstance(value, Mapping) and value.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
         return distributed_token_creation_payload_dependencies(value)
     targeted = (
@@ -725,6 +728,9 @@ def fixed_token_creation_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: set[str],
 ) -> tuple[str, ...]:
+    if 'fixed-token-definition-choice' in mechanic_ids:
+        from .fixed_token_choices import fixed_token_choice_node_capabilities
+        return fixed_token_choice_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if {'paid-entry-copy-offspring', 'paid-entry-copy-squad'} & set(mechanic_ids):
         from .paid_entry_copy_shapes import paid_entry_copy_node_capabilities
         return paid_entry_copy_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
@@ -828,6 +834,8 @@ def fixed_token_creation_covered_mechanics(
     """Return mechanics owned by the closed token-production capabilities."""
 
     covered: set[str] = set()
+    if 'token.creation.fixed_definition_choice' in capability_ids:
+        covered.add('fixed-token-definition-choice')
     if 'token.creation.defined_transforming' in capability_ids:
         covered.add('cr-111-tokens')
     if "token.creation.fixed_definition" in capability_ids:

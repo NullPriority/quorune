@@ -72187,6 +72187,97 @@
     {
       "applicability": {
         "exclusions": [
+          "unknown token definitions",
+          "dynamic or multiple quantities",
+          "private or targeted choices",
+          "optional choice and unknown sibling instructions"
+        ],
+        "inputs": [
+          "compiled immutable fixed token branches",
+          "resolving controller",
+          "canonical single-token definitions and their dependencies"
+        ],
+        "outputs": [
+          "one selected branch",
+          "ordinary token creation and replacement",
+          "principal-correct pending continuation and exact replay"
+        ],
+        "summary": "Resolve one mandatory public choice among two through four closed fixed predefined token definitions using the existing scalar option continuation and ordinary token transaction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "token.creation.fixed_definition"
+      ],
+      "dependency_fail_closed_rationale": "Verified choice-owner withdrawal rejects alternatives while ordinary token creation remains available. Payload minima require the choice owner and every represented token definition.",
+      "dependency_fail_closed_status": "passed",
+      "id": "token.creation.fixed_definition_choice",
+      "implementation_components": [
+        "quorune.compiler.fixed_token_choices.fixed_token_choice_template",
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.rules.fixed_token_choices.fixed_token_choice_node_capabilities",
+        "quorune.rules.fixed_token_choices.fixed_token_choice_payload_dependencies",
+        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities",
+        "quorune.rules.token_creation_capability_shapes.token_definition_payload_dependencies",
+        "quorune.semantic_choices.scalar.ChooseOptionHandler",
+        "quorune.card_programs.trigger_result_equivalence.fixed_token_choice_results_equal"
+      ],
+      "implementation_mutation_rationale": "A fresh observed all-branches continuation mutant is killed by an original Doctor cast that must create exactly its chosen Clue.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_doctor_chooses_one_clue_then_uses_its_draw_ability",
+        "test_actual_ant_army_chooses_food_then_pays_its_real_gain_life_ability",
+        "test_actual_provisioner_ignores_foreign_land_and_choice_survives_borrowed_source_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_provisioner_ignores_foreign_land_and_choice_survives_borrowed_source_departure"
+      ],
+      "negative_tests": [
+        "test_unknown_optional_targeted_duplicate_and_extra_grammar_stays_residual",
+        "test_runtime_minimum_requires_complete_choice_and_each_definition",
+        "test_verified_choice_withdrawal_keeps_ordinary_token_creation",
+        "test_reviewed_choice_retirement_requires_every_complete_branch_and_current_authority",
+        "test_normal_binding_cannot_omit_choice_or_child_definition_authority"
+      ],
+      "official_rules": [
+        "109.5",
+        "111.3",
+        "111.4",
+        "113.7a",
+        "608.2c",
+        "608.2d"
+      ],
+      "positive_tests": [
+        "test_choices_delegate_to_existing_definitions_and_use_resolution_options"
+      ],
+      "privacy_tests": [
+        "test_actual_doctor_chooses_one_clue_then_uses_its_draw_ability",
+        "test_actual_ant_army_chooses_food_then_pays_its_real_gain_life_ability",
+        "test_actual_provisioner_ignores_foreign_land_and_choice_survives_borrowed_source_departure"
+      ],
+      "replay_tests": [
+        "test_actual_doctor_chooses_one_clue_then_uses_its_draw_ability",
+        "test_actual_ant_army_chooses_food_then_pays_its_real_gain_life_ability",
+        "test_actual_provisioner_ignores_foreign_land_and_choice_survives_borrowed_source_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "new copy recipes",
           "conditional cleanup",
           "unrepresented postcreation ability grants",
@@ -92397,7 +92488,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 779,
+  "registry_version": 780,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

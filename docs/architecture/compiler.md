@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Fixed predefined-token alternatives lower to the existing resolution option
+choice. Each branch carries the ordinary canonical token definition and its
+capability dependencies. The resolving controller chooses exactly one branch;
+token creation and replacements use their existing owners. Unsupported kinds,
+quantities, recipients and sibling instructions remain material.
+
 Own-graveyard return targets can mix unqualified card types, subtypes and
 supertypes through the existing typed target-form disjunction. Graveyard, owner,
 cardinality and any mana-value maximum remain common constraints around those

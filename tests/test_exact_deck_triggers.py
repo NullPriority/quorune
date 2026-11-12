@@ -360,6 +360,9 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
         session = self.make_session(826, players=2)
         engine = session.engine
         provisioner = self.card(engine, "B", "Tireless Provisioner")
+        program, = [program for program in engine.semantics.programs_for_oracle(provisioner.oracle_id)
+            if program.event == 'land.enter' and any(effect.get('op') == 'choose_option' for effect in program.effects)]
+        self.assertTrue(program.provenance.get('authored_by', '').startswith('oracle-ir-v'))
         engine.move_card(
             provisioner.object_id,
             "battlefield",
@@ -367,8 +370,8 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
         )
 
         for land_name, choice in (
-            ("Island", "treasure"),
-            ("Bayou", "food"),
+            ("Island", "Treasure"),
+            ("Bayou", "Food"),
         ):
             land = self.card(engine, "B", land_name)
             engine.move_card(
@@ -379,11 +382,11 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
                 reason="Provisioner landfall scenario",
             )
             self.assertFalse(engine._stabilize())
-            self.assertEqual(f'{provisioner.oracle_id}:trigger:landfall', engine.state.stack[-1].semantic_key)
+            self.assertEqual(program.key, engine.state.stack[-1].semantic_key)
             self.resolve_top(engine)
             packet = session.packet("pilot:B", full=True)
             self.assertEqual(
-                {"food", "treasure"},
+                {"Food", "Treasure"},
                 {
                     option["id"]
                     for option in packet["decision"]["ctx"]["options"]
@@ -424,17 +427,27 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
 
         historical = SemanticRegistry(include_builtin_packs=False,
             pack_paths=[ROOT / "quorune/semantic_packs/v080-exact-triggers.json"])
-        for legacy, choice in ((False, "food"), (True, "treasure")):
+        for legacy, choice in ((False, "Food"), (True, "treasure")):
             with self.subTest(legacy=legacy), TemporaryDirectory() as directory:
                 session = self.make_session(1114011 + legacy)
                 engine = session.engine
                 source = self.card(engine, "B", "Tireless Provisioner")
                 land = self.card(engine, "B", "Island")
-                key = f"{source.oracle_id}:trigger:landfall"
                 if legacy:
-                    engine.semantics.put(historical.get(key))
-                expected_version = 1 if legacy else 2
-                self.assertEqual(expected_version, engine.semantics.get(key).version)
+                    # A pinned historical producer uses its whole saved source
+                    # catalog, without retaining a superseding current trigger.
+                    for program in engine.semantics.programs_for_oracle(source.oracle_id):
+                        engine.semantics.remove(program.key)
+                    for program in historical.programs_for_oracle(source.oracle_id):
+                        engine.semantics.put(program)
+                program, = [program for program in engine.semantics.programs_for_oracle(source.oracle_id)
+                    if program.event == 'land.enter' and any(effect.get('op') == 'choose_option' for effect in program.effects)]
+                key, expected_version = program.key, program.version
+                if legacy:
+                    self.assertEqual(1, expected_version)
+                    self.assertEqual(historical.get(key).to_dict(), program.to_dict())
+                else:
+                    self.assertTrue(program.provenance.get('authored_by', '').startswith('oracle-ir-v'))
                 engine.move_card(source.object_id, "battlefield", controller="B", log=False)
                 engine.move_card(land.object_id, "hand", log=False)
                 engine.state.active_player = engine.state.last_normal_turn_player = "B"
@@ -458,7 +471,8 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
                     self.assertTrue(result.ok, result.summary)
                 self.assertEqual("semantic.choice", session.state.pending_decision.kind)
                 self.assertFalse(any(card.is_token for card in session.state.cards.values()))
-                self.assertEqual({"food", "treasure"}, {row["id"] for row in
+                expected_options = {"food", "treasure"} if legacy else {"Food", "Treasure"}
+                self.assertEqual(expected_options, {row["id"] for row in
                     session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]})
 
                 path = Path(directory) / "provisioner-choice"
