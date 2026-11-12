@@ -272,6 +272,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *fixed_payment_payload_dependencies(value))
         from ..resolution_mana_model import resolution_mana_choice_dependencies
         own = (*own, *resolution_mana_choice_dependencies(value))
+        from ..rules.commander_keyword_grants import commander_permanent_query_dependencies
+        own = (*own, *commander_permanent_query_dependencies(value))
         from ..created_token_counter_model import created_token_counter_payload_dependencies
         own = (*own, *created_token_counter_payload_dependencies(value))
         from ..rules.attachment_actions import created_token_attachment_payload_dependencies

@@ -387,6 +387,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.fixed_query_ability_grant",
                 "continuous.fixed_query_characteristic_grant",
                 "continuous.fixed_query_keyword_grant",
+                "continuous.ability.commander_permanent_keywords",
                 "continuous.opponent_keyword_prohibition",
                 "continuous.attached.fixed_characteristics",
                 "continuous.attached.source_chosen_color_protection",

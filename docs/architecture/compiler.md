@@ -5092,6 +5092,17 @@ query and require `state_query.commander.designation`. Prior query versions keep
 their exact serialized shapes; unrepresented quantity and cost grammars reject
 the new designation qualifier.
 
+Bare `Commanders you control/own have` keyword grants use the separately gated
+`state_query.commander.permanent_designation` receiver. Its closed version-one
+handler retains physical designation without imposing a creature type, so a
+noncreature commander can receive the same supported keywords and typed
+protection fragments. Explicit `Commander creatures` queries keep their
+existing capability and descriptor meaning. The receiver follows the granting
+source's current controller, preserves source exclusion and any independently
+closed turn condition, and delegates modifier validation and layer application
+to the existing continuous owners. Copies do not inherit designation; unknown
+quoted abilities and unrelated sibling clauses remain residual.
+
 Split second lowers to a trusted stack-local static descriptor in the existing
 cast-rule registry. The shared casting and activation availability owners read
 current spell declarations for every player; they block spells and nonmana

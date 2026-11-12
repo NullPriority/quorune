@@ -67359,6 +67359,86 @@
     {
       "applicability": {
         "exclusions": [
+          "command-zone objects",
+          "ordinary copies without designation",
+          "unknown recipient qualifiers",
+          "unrepresented keyword or quoted ability bodies",
+          "unsupported whole-card siblings"
+        ],
+        "inputs": [
+          "typed battlefield ObjectQuerySpec with commander true and no type constraint",
+          "authoritative physical commander designation",
+          "source controller and recipient owner/controller"
+        ],
+        "outputs": [
+          "source-bound layer-six keyword grant to current designated battlefield permanents"
+        ],
+        "summary": "Read physical commander designation for bare battlefield keyword-grant receivers without a creature restriction. Current source control determines the own/control relation; copies do not inherit designation. Existing keyword, condition and continuous layer owners retain their independent contracts."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "This designation reader has no capability dependencies; every producer independently requires its keyword, conditional and layer consumers.",
+      "dependency_fail_closed_status": "not_applicable",
+      "id": "state_query.commander.permanent_designation",
+      "implementation_components": [
+        "quorune.rules.commander_keyword_grants.commander_permanent_query_dependencies",
+        "quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler",
+        "quorune.semantic_runtime.commander_keyword_grants.CommanderKeywordGrantHandler",
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies",
+        "quorune.semantic_runtime.continuous_components._fixed_query_effect_predicate",
+        "quorune.object_query.object_matches_query"
+      ],
+      "implementation_mutation_rationale": "Omitting restoration of the checked noncreature commander predicate makes the receiver model witness fail.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_guardian_covers_noncreature_and_foreign_commanders_but_not_a_copy",
+        "test_actual_anara_turn_condition_follows_current_provider_control"
+      ],
+      "multiplayer_tests": [
+        "test_actual_guardian_covers_noncreature_and_foreign_commanders_but_not_a_copy",
+        "test_actual_anara_turn_condition_follows_current_provider_control"
+      ],
+      "negative_tests": [
+        "test_closed_receiver_envelope_rejects_unknown_and_changed_scope",
+        "test_creature_only_contract_and_unknown_siblings_keep_their_boundaries"
+      ],
+      "official_rules": [
+        "109.5",
+        "903.3",
+        "903.3d",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "positive_tests": [
+        "test_new_receiver_restores_the_exact_noncreature_predicate_after_modifier_validation",
+        "test_bare_commanders_preserve_each_keyword_and_owner_or_controller_relation"
+      ],
+      "privacy_tests": [
+        "test_actual_guardian_covers_noncreature_and_foreign_commanders_but_not_a_copy"
+      ],
+      "replay_tests": [
+        "test_actual_guardian_covers_noncreature_and_foreign_commanders_but_not_a_copy",
+        "test_actual_anara_turn_condition_follows_current_provider_control"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented devotion modifiers",
           "unsupported mana symbols",
           "unsupported consumer or siblings"
@@ -91707,7 +91787,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 769,
+  "registry_version": 770,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

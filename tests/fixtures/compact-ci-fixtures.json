@@ -498,6 +498,7 @@
     "tests/fixtures/command-resolution-provenance-cards.json",
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/commander-learn-cards.json",
+    "tests/fixtures/commander-permanent-keyword-cards.json",
     "tests/fixtures/committed-destruction-followup-cards.json",
     "tests/fixtures/committed-occurrence-history-cards.json",
     "tests/fixtures/compiled-reviewed-spell-cards.json",

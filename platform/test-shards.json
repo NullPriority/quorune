@@ -1388,6 +1388,7 @@
       "test_combined_tap_activation_costs",
       "test_commander_characteristic_grants",
       "test_commander_learn",
+      "test_commander_permanent_keyword_grants",
       "test_composite_quoted_grants",
       "test_conditional_flash",
       "test_conditional_free_casts",
