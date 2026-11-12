@@ -1916,12 +1916,12 @@
           "classification": "rules_value",
           "file": "quorune/cli.py",
           "flow_id": "card-identity-flow:bd1d952d7c4223b734e8",
-          "line": 169,
+          "line": 189,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "card_name",
           "source_kind": "mapping_subscript",
-          "source_line": 169,
+          "source_line": 189,
           "symbol": "_scripted_choice"
         },
         {
@@ -22239,10 +22239,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 1492,
+          "end_line": 1482,
           "file": "quorune/cli.py",
           "kind": "function",
-          "line": 900,
+          "line": 890,
           "logical_lines": 583,
           "name": "main",
           "physical_lines": 593,
@@ -22261,26 +22261,15 @@
           "visibility": "public"
         },
         {
-          "end_line": 893,
+          "end_line": 883,
           "file": "quorune/cli.py",
           "kind": "function",
-          "line": 533,
+          "line": 523,
           "logical_lines": 337,
           "name": "build_parser",
           "physical_lines": 361,
           "symbol": "build_parser",
           "visibility": "public"
-        },
-        {
-          "end_line": 356,
-          "file": "quorune/cli.py",
-          "kind": "function",
-          "line": 92,
-          "logical_lines": 263,
-          "name": "_scripted_choice",
-          "physical_lines": 265,
-          "symbol": "_scripted_choice",
-          "visibility": "private"
         },
         {
           "end_line": 830,
@@ -22336,6 +22325,17 @@
           "physical_lines": 234,
           "symbol": "derive_codex_arena_metadata",
           "visibility": "public"
+        },
+        {
+          "end_line": 346,
+          "file": "quorune/cli.py",
+          "kind": "function",
+          "line": 112,
+          "logical_lines": 233,
+          "name": "_scripted_choice",
+          "physical_lines": 235,
+          "symbol": "_scripted_choice",
+          "visibility": "private"
         },
         {
           "end_line": 501,
@@ -22536,7 +22536,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 337359,
+      "logical_lines": 337355,
       "methods": {
         "dunder": 990,
         "private": 1097,
@@ -22706,13 +22706,6 @@
           "physical_lines": 1561
         },
         {
-          "file": "quorune/cli.py",
-          "functions_and_methods": 14,
-          "language": "python",
-          "logical_lines": 1427,
-          "physical_lines": 1496
-        },
-        {
           "file": "quorune/damage.py",
           "functions_and_methods": 43,
           "language": "python",
@@ -22725,6 +22718,13 @@
           "language": "python",
           "logical_lines": 1417,
           "physical_lines": 1565
+        },
+        {
+          "file": "quorune/cli.py",
+          "functions_and_methods": 16,
+          "language": "python",
+          "logical_lines": 1413,
+          "physical_lines": 1486
         },
         {
           "file": "quorune/compiler/counter_placement_templates.py",
@@ -22926,8 +22926,8 @@
           "file": "quorune/work_selection_evidence.py",
           "functions_and_methods": 20,
           "language": "python",
-          "logical_lines": 984,
-          "physical_lines": 1032
+          "logical_lines": 985,
+          "physical_lines": 1033
         },
         {
           "file": "quorune/preflight.py",
@@ -27032,6 +27032,13 @@
           "physical_lines": 137
         },
         {
+          "file": "quorune/work_selection_common.py",
+          "functions_and_methods": 9,
+          "language": "python",
+          "logical_lines": 123,
+          "physical_lines": 146
+        },
+        {
           "file": "quorune/compiler/fixed_controller_effect_sequences.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -27317,13 +27324,6 @@
           "language": "python",
           "logical_lines": 114,
           "physical_lines": 126
-        },
-        {
-          "file": "quorune/work_selection_common.py",
-          "functions_and_methods": 8,
-          "language": "python",
-          "logical_lines": 114,
-          "physical_lines": 135
         },
         {
           "file": "quorune/compiler/public_history_conditions.py",
@@ -35958,10 +35958,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 1492,
+          "end_line": 1482,
           "file": "quorune/cli.py",
           "kind": "function",
-          "line": 900,
+          "line": 890,
           "logical_lines": 583,
           "name": "main",
           "physical_lines": 593,
@@ -35980,26 +35980,15 @@
           "visibility": "public"
         },
         {
-          "end_line": 893,
+          "end_line": 883,
           "file": "quorune/cli.py",
           "kind": "function",
-          "line": 533,
+          "line": 523,
           "logical_lines": 337,
           "name": "build_parser",
           "physical_lines": 361,
           "symbol": "build_parser",
           "visibility": "public"
-        },
-        {
-          "end_line": 356,
-          "file": "quorune/cli.py",
-          "kind": "function",
-          "line": 92,
-          "logical_lines": 263,
-          "name": "_scripted_choice",
-          "physical_lines": 265,
-          "symbol": "_scripted_choice",
-          "visibility": "private"
         },
         {
           "end_line": 830,
@@ -36055,6 +36044,17 @@
           "physical_lines": 234,
           "symbol": "derive_codex_arena_metadata",
           "visibility": "public"
+        },
+        {
+          "end_line": 346,
+          "file": "quorune/cli.py",
+          "kind": "function",
+          "line": 112,
+          "logical_lines": 233,
+          "name": "_scripted_choice",
+          "physical_lines": 235,
+          "symbol": "_scripted_choice",
+          "visibility": "private"
         },
         {
           "end_line": 501,
@@ -36238,7 +36238,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 374886,
+      "physical_lines": 374888,
       "python_file_count": 1895,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -36256,7 +36256,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 7531,
+      "top_level_functions": 7534,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -46096,7 +46096,7 @@
         {
           "condition": "context.get(\"operation\") == \"choose_mana\"",
           "file": "quorune/cli.py",
-          "line": 166,
+          "line": 186,
           "string_literals": [
             "choose_mana",
             "operation"
@@ -46106,7 +46106,7 @@
         {
           "condition": "context.get(\"operation\") == \"choose_card_name\"",
           "file": "quorune/cli.py",
-          "line": 168,
+          "line": 188,
           "string_literals": [
             "choose_card_name",
             "operation"
@@ -46116,7 +46116,7 @@
         {
           "condition": "context.get(\"operation\") in { \"counter_unless_pay\", \"ward_counter_unless_pay\", \"pay_or_lose\", }",
           "file": "quorune/cli.py",
-          "line": 170,
+          "line": 190,
           "string_literals": [
             "counter_unless_pay",
             "operation",
@@ -46128,7 +46128,7 @@
         {
           "condition": "context.get(\"operation\") == \"proliferate\"",
           "file": "quorune/cli.py",
-          "line": 175,
+          "line": 195,
           "string_literals": [
             "operation",
             "proliferate"
@@ -46138,7 +46138,7 @@
         {
           "condition": "operation == \"pieces\"",
           "file": "quorune/cli.py",
-          "line": 434,
+          "line": 424,
           "string_literals": [
             "pieces"
           ],
@@ -46147,7 +46147,7 @@
         {
           "condition": "operation in { \"compile\", \"explain\", \"audit\", \"diff\", \"trust-closure\", }",
           "file": "quorune/cli.py",
-          "line": 438,
+          "line": 428,
           "string_literals": [
             "audit",
             "compile",
@@ -46160,7 +46160,7 @@
         {
           "condition": "operation == \"diff\"",
           "file": "quorune/cli.py",
-          "line": 455,
+          "line": 445,
           "string_literals": [
             "diff"
           ],
@@ -46169,7 +46169,7 @@
         {
           "condition": "operation == \"coverage\"",
           "file": "quorune/cli.py",
-          "line": 457,
+          "line": 447,
           "string_literals": [
             "coverage"
           ],
@@ -46178,7 +46178,7 @@
         {
           "condition": "operation in {\"show\", \"cards\", \"blockers\", \"interactions\"}",
           "file": "quorune/cli.py",
-          "line": 481,
+          "line": 471,
           "string_literals": [
             "blockers",
             "cards",
@@ -46190,7 +46190,7 @@
         {
           "condition": "operation == \"diff\"",
           "file": "quorune/cli.py",
-          "line": 483,
+          "line": 473,
           "string_literals": [
             "diff"
           ],
@@ -46199,7 +46199,7 @@
         {
           "condition": "args.operation == \"get-task\"",
           "file": "quorune/cli.py",
-          "line": 956,
+          "line": 946,
           "string_literals": [
             "get-task"
           ],
@@ -46208,7 +46208,7 @@
         {
           "condition": "args.operation == \"submit-action\"",
           "file": "quorune/cli.py",
-          "line": 958,
+          "line": 948,
           "string_literals": [
             "submit-action"
           ],
@@ -46217,7 +46217,7 @@
         {
           "condition": "args.operation == \"get-rules\"",
           "file": "quorune/cli.py",
-          "line": 969,
+          "line": 959,
           "string_literals": [
             "get-rules"
           ],
@@ -46226,7 +46226,7 @@
         {
           "condition": "args.operation == \"get-profile\"",
           "file": "quorune/cli.py",
-          "line": 971,
+          "line": 961,
           "string_literals": [
             "get-profile"
           ],
@@ -46235,7 +46235,7 @@
         {
           "condition": "args.operation == \"get-memory\"",
           "file": "quorune/cli.py",
-          "line": 973,
+          "line": 963,
           "string_literals": [
             "get-memory"
           ],
@@ -46244,7 +46244,7 @@
         {
           "condition": "args.operation == \"status\"",
           "file": "quorune/cli.py",
-          "line": 1138,
+          "line": 1128,
           "string_literals": [
             "status"
           ],
@@ -46253,7 +46253,7 @@
         {
           "condition": "args.operation == \"get-arbiter-task\"",
           "file": "quorune/cli.py",
-          "line": 1142,
+          "line": 1132,
           "string_literals": [
             "get-arbiter-task"
           ],
@@ -64723,7 +64723,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 301,
+        "primary_test_count": 302,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_activation_cost_modifiers",
@@ -64754,6 +64754,7 @@
           "test_bloodthirst_rules",
           "test_capability_implementation_mutations",
           "test_card_program_trust",
+          "test_card_program_v2",
           "test_cascade_rules",
           "test_cast_creature_targets",
           "test_casting_activation_metadata",
@@ -64823,8 +64824,7 @@
           "test_expanded_basic_type_setting",
           "test_explore_event_triggers",
           "test_explore_rules",
-          "test_external_entry_counters",
-          "test_external_entry_tapped"
+          "test_external_entry_counters"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -67543,7 +67543,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "1f4b182da7eb5b975a313dfd5e0769829a01e5858845ae744590c804e1e5870a",
+      "fingerprint": "2f23a7e3d813e51af5eb1269b017dfb53b1ac00f2060dfed7485eca8fe208ed1",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -68404,8 +68404,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 12487,
-      "discovered_total": 15796,
+      "conventional_ast_cases": 12489,
+      "discovered_total": 15798,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 363,

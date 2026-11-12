@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "65ea392304782efaaa6071aca98daecb18844e50d9141c675ddbdd79f98af35e"
+verified: "92446b0d627d7d25c6d49356c15f26d577fec14920b91b2b0110e54f4cb4f47b"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 114
-- Deterministic escapes: 105
+- Escapes: 118
+- Deterministic escapes: 109
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -143,6 +143,10 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261111-pr560-equivalent-empty-move-mutant` | [42972897604](https://github.com/NullPriority/quorune/actions/runs/42972897604) | `missing_affected_test` | `added` | Retain the exact mutation evidence identity. Prove an explicit empty move preserves the native zero-target draw, then reintroduce the invalid empty-snapshot requirement and require that the same native witness kills it. Add the homogeneous target-set consumer to the empty-zone impact route; preserve the nonempty snapshot invariant. |
 | `ci-20261111-pr561-direct-player-target-carrier` | [43048656262](https://github.com/NullPriority/quorune/actions/runs/43048656262) | `missing_affected_test` | `added` | Add the carrier to the existing canonical trigger catalogue, reconstruct its complete printed event and condition during assurance, retain target/effect and capability checks, and run the regression before any census when binding, catalogue or assurance inputs change. |
 | `ci-20261111-pr561-cloud-dependent-owner` | [43058582745](https://github.com/NullPriority/quorune/actions/runs/43058582745) | `generated_artifact_drift` | `added` | Schedule the dependent foundation after capability evidence and before corpus generation with the existing content-keyed cache and artifact path. Validate workflow producer completeness and dependency ordering against the canonical manifest, and enforce the unchanged cloud runner budget before any census. Preserve strict final owner-receipt and output-hash checks. |
+| `ci-20261111-pr561-retired-counter-view-fixtures` | [43086636766](https://github.com/NullPriority/quorune/actions/runs/43086636766) | `missing_affected_test` | `added` | Register original seeded controls through one ordinary generated-program fixture helper, retain payment provenance, rollback, projection, restart and replay checks, and assert the actual current strict binding. Use distinct legendary Food controls and a counter-only doubler where the fixture isolates token and counter stages. |
+| `ci-20261111-pr561-promoted-integration-contracts` | [43086636766](https://github.com/NullPriority/quorune/actions/runs/43086636766) | `missing_affected_test` | `added` | Keep supported originals positive; use explicit unrepresented siblings and duration modifiers for negative boundaries. Preserve historical attached-provider transport in a pinned fixture, validate the live damage instruction owner, exercise Spellseeker owner choice, and prove Channel payment through accepted commands rather than a retired metadata field. Derive handler inventories from actual declared programs and canonical registry definitions, preserve keyword callback arguments in fresh mutation probes, and retain genuine open mana restrictions after chosen-type syntax becomes supported. |
+| `ci-20261111-pr561-scripted-compiled-exile-price` | [43086636766](https://github.com/NullPriority/quorune/actions/runs/43086636766) | `source_correctness` | `added` | Consume the offered fixed exile collection and count, preserve legacy scalar inputs, skip empty optional-target exile casts, and select a nonempty legal target when paying that price. Prove wrong-principal and missing-payment rollback, actual exile and resolution, private projection, save/load and replay without changing kernel legality. |
+| `ci-20261111-pr561-harvest-gain-basis` | [43086636766](https://github.com/NullPriority/quorune/actions/runs/43086636766) | `source_correctness` | `added` | Choose the observed gain defined by the recorded probe for calibration, transition coverage and correction validation. Preserve all raw immutable trusted, exact and capability-closed deltas, retain the old basis for old probes, reject missing current-basis provenance, and kill the prior mixed-metric behavior in a focused model witness. |
 
 ## Measurement limitations
 
