@@ -224,6 +224,9 @@ class CounterPlacementReplacementTests(unittest.TestCase):
         owner: str | None = None,
     ) -> CardInstance:
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         owner = owner or seat
         card = CardInstance(
             object_id=f"fixture:{ref}",

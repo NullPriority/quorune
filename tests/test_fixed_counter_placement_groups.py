@@ -261,6 +261,7 @@ class FixedCounterPlacementGroupCompilerTests(unittest.TestCase):
         assert template is not None
         expected = {
             "counter.producer.fixed_permanent_group_effect",
+            "counter.producer.fixed_effect",
             "target.revalidate_resolution",
         }
         self.assertEqual(
@@ -353,6 +354,29 @@ class FixedCounterPlacementGroupCompilerTests(unittest.TestCase):
             "cr-122-counters",
             capability_covered_mechanics(program.capability_dependencies),
         )
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        card_program = compile_best_available_card_program(self.db, record,
+            semantic_registry=SemanticRegistry(include_builtin_packs=False),
+            capability_registry=self.capabilities, capability_profile="commander_review")
+        binding = bind_card_program_runtime(card_program, capability_registry=self.capabilities, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+    def test_fixed_effect_producer_withdrawal_prevents_exact_group_admission(self):
+        from test_qualified_zone_event_queries import query_record
+
+        value = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        next(row for row in value["capabilities"] if row["id"] == "counter.producer.fixed_effect").update(
+            status="blocked", blockers=["ordinary counter producer withdrawn"])
+        record = replace(query_record(
+            "Put two +1/+1 counters on target creature and two +1/+1 counters on another target creature."),
+            type_line="Sorcery")
+        ir = compile_oracle_card(record, capability_registry=CapabilityRegistry(value), capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+        self.assertTrue(any("counter.producer.fixed_effect" in blocker
+            for residual in ir.material_residuals for blocker in residual.blockers))
 
     def test_fixed_counter_group_compiler_template_mutant_is_killed(self):
         text = (
@@ -450,6 +474,9 @@ class FixedCounterPlacementGroupRuntimeTests(unittest.TestCase):
 
     def add_permanent(self, engine, *, seat: str, name: str, ref: str):
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         card = CardInstance(
             object_id=f"fixture:{ref}",
             ref=ref,

@@ -353,3 +353,162 @@ class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
         self.assertEqual(identity, current.logical_object_id)
         self.assertEqual(1, current.transform_count)
         self.replay(session, load=True)
+
+
+    def _seed_private_order_hand(self, session, seat, names):
+        for object_id in tuple(session.state.players[seat].zones["hand"]):
+            session.engine.move_card(object_id, "library", log=False)
+        return [self.add(session.engine, name, seat=seat, zone="hand", ref=f"affected-top-{seat}-{index}")
+                for index, name in enumerate(names)]
+
+    def _assert_private_order_choice(self, session, seat, refs):
+        self.assertEqual("choice.apnap", session.state.pending_decision.kind)
+        self.assertEqual([f"pilot:{seat}"], list(session.pending_principals()))
+        packet = session.packet(f"pilot:{seat}", full=True)["decision"]
+        field, = packet["legal_actions"][0]["form"]["fields"]
+        self.assertTrue(field["ordered"])
+        self.assertEqual(set(refs), {option["value"] for option in field["options"]})
+        for other in set("ABCD") - {seat}:
+            view = session.packet(f"pilot:{other}", full=True)
+            self.assertIsNone(view["decision"])
+            for ref in refs:
+                self.assertNotIn(json.dumps(ref), json.dumps(view))
+
+    def _order_hand_top_refs(self, session, seat, count):
+        ids = session.state.players[seat].zones["library"]
+        return [session.state.cards[object_id].ref for object_id in reversed(ids[-count:])]
+
+    def test_actual_rats_and_imp_bind_the_announced_opponent_hand(self):
+        for index, name in enumerate(("Chittering Rats", "Chimney Imp")):
+            with self.subTest(name=name):
+                session = self.session(401_830_020 + index)
+                hand = self._seed_private_order_hand(session, "B", ("Shock", "Memnite"))
+                source = self.add(session.engine, name, zone="battlefield" if index else "hand")
+                spell = self.add(session.engine, "Murder", zone="hand") if index else source
+                for card in (source, spell):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 1, "B": 2})
+                self.checkpoint(session)
+                self.cast(session, "A", spell, [source.ref] if index else ())
+                self.until(session, lambda game: game.state.pending_decision is not None
+                           and game.state.pending_decision.kind == "semantic.target")
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", {"action_id": "choose", "targets": ["A"]}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                self.target(session, "A", ["B"])
+                self.assertEqual("choice.apnap", self.resolve(session).kind)
+                self._assert_private_order_choice(session, "B", [card.ref for card in hand])
+                result = session.act("pilot:B", {"action_id": "choose", "cards": [hand[1].ref]})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual([hand[1].ref], self._order_hand_top_refs(session, "B", 1))
+                self.assertEqual("hand", session.state.cards[hand[0].object_id].zone)
+                self.replay(session, load=True)
+
+    def test_actual_prying_questions_loses_life_before_the_private_choice_and_accepts_empty_hand(self):
+        for count in (0, 1):
+            with self.subTest(hand_size=count):
+                session = self.session(401_830_024 + count)
+                hand = self._seed_private_order_hand(session, "B", ("Shock",)[:count])
+                source = self.add(session.engine, "Prying Questions", zone="hand")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 2, "B": 1})
+                self.checkpoint(session)
+                original = list(session.state.players["B"].zones["library"])
+                self.cast(session, "A", source, ["B"])
+                pending = self.resolve(session)
+                self.assertEqual(37, session.state.players["B"].life)
+                if not count:
+                    self.assertIsNone(pending)
+                    self.assertEqual(original, session.state.players["B"].zones["library"])
+                else:
+                    self._assert_private_order_choice(session, "B", [hand[0].ref])
+                    choice = {"action_id": "choose", "cards": [hand[0].ref]}
+                    before = authoritative_state_hash(session.state)
+                    self.assertFalse(session.act("pilot:A", choice).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    accepted = session.act("pilot:B", choice)
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertEqual([hand[0].ref], self._order_hand_top_refs(session, "B", 1))
+                self.replay(session, load=True)
+
+    def test_actual_stunted_growth_orders_a_short_hand_and_resumes_a_destination_replacement(self):
+        for replacement in (False, True):
+            with self.subTest(commander_replacement=replacement):
+                session = self.session(401_830_030 + replacement)
+                hand = self._seed_private_order_hand(session, "B", ("Shock",) if replacement else ("Shock", "Memnite"))
+                if replacement:
+                    player = session.state.players["B"]
+                    commander_id = player.zones["command"].pop()
+                    commander = session.state.cards[commander_id]
+                    commander.zone = "hand"
+                    commander.known_to = ["B"]
+                    commander.revealed_to = []
+                    player.zones["hand"].append(commander_id)
+                    hand.append(commander)
+                source = self.add(session.engine, "Stunted Growth", zone="hand")
+                foreign = self.add(session.engine, "Forest", seat="D", zone="hand", ref="foreign-order-control")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 3, "G": 2})
+                self.checkpoint(session)
+                self.cast(session, "A", source, ["B"])
+                self.assertEqual("choice.apnap", self.resolve(session).kind)
+                refs = [hand[1].ref, hand[0].ref]
+                self._assert_private_order_choice(session, "B", refs)
+                before = authoritative_state_hash(session.state)
+                for invalid in ([refs[0]], [refs[0], refs[0]], [refs[0], foreign.ref]):
+                    denied = session.act("pilot:B", {"action_id": "choose", "cards": invalid})
+                    self.assertFalse(denied.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                accepted = session.act("pilot:B", {"action_id": "choose", "cards": refs})
+                self.assertTrue(accepted.ok, accepted.summary)
+                if replacement:
+                    self.assertEqual("replacement.order", session.state.pending_decision.kind)
+                    self.assertEqual(["pilot:B"], list(session.pending_principals()))
+                    self.assertTrue(all(session.state.cards[card.object_id].zone == "hand" for card in hand))
+                    session = self.replay(session, load=True)
+                    options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+                    option = next(row for row in options if not row.get("decline"))
+                    result = session.act("pilot:B", {"action_id": "choose", "replacement": option["id"]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("command", session.state.cards[commander_id].zone)
+                    refs = refs[1:]
+                self.settle(session)
+                self.assertEqual(refs, self._order_hand_top_refs(session, "B", len(refs)))
+                for viewer in "ACD":
+                    self.assertNotIn(json.dumps(hand[0].ref), json.dumps(session.packet(f"pilot:{viewer}", full=True)))
+                self.replay(session, load=True)
+
+    def test_actual_augermage_collects_private_apnap_choices_before_any_library_move(self):
+        session = self.session(401_830_035)
+        hands = {seat: self._seed_private_order_hand(session, seat, ("Shock",) if seat != "B" else ())
+                 for seat in "ABCD"}
+        source = self.add(session.engine, "Sadistic Augermage", seat="C")
+        removal = self.add(session.engine, "Murder", zone="hand")
+        for card in (source, removal):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 1, "B": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", removal, [source.ref])
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        for seat in "ACD":
+            selected = hands[seat][0]
+            self._assert_private_order_choice(session, seat, [selected.ref])
+            ctx = session.packet(f"pilot:{seat}", full=True)["decision"]["ctx"]
+            self.assertEqual({}, ctx["prior_public_choices"])
+            for prior in set("ACD") - {seat}:
+                self.assertNotIn(hands[prior][0].ref, json.dumps(ctx))
+            self.assertTrue(all(session.state.cards[hand[0].object_id].zone == "hand"
+                                for hand in hands.values() if hand))
+            if seat == "C":
+                session = self.replay(session, load=True)
+            result = session.act(f"pilot:{seat}", {"action_id": "choose", "cards": [selected.ref]})
+            self.assertTrue(result.ok, result.summary)
+        self.settle(session)
+        for seat in "ACD":
+            ref = hands[seat][0].ref
+            self.assertEqual([ref], self._order_hand_top_refs(session, seat, 1))
+            for viewer in set("ABCD") - {seat}:
+                self.assertNotIn(json.dumps(ref), json.dumps(session.packet(f"pilot:{viewer}", full=True)))
+        self.replay(session, load=True)

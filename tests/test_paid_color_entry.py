@@ -175,11 +175,17 @@ class PaidColorEntryTests(unittest.TestCase):
     def test_fresh_copy_provenance_omission_is_killed(self):
         import quorune.record_trust as owner
         original=owner.physical_stack_record
-        def without_copies(host,item,**kwargs):return None if item.kind=='spell_copy' else original(host,item,**kwargs)
+        observed=[]
+        def without_copies(host,item,**kwargs):
+            if item.kind=='spell_copy':
+                observed.append(item.ref)
+                return None
+            return original(host,item,**kwargs)
         method='test_legacy_generic_permanent_copy_records_its_exact_resolution_provenance'
         with patch.object(owner,'physical_stack_record',side_effect=without_copies):
-            with self.assertRaisesRegex(ValueError,'provenance mismatch for oracle_id'):
+            with self.assertRaisesRegex(ValueError,'Malformed resolved semantic provenance at command'):
                 getattr(type(self)(method),method)()
+        self.assertTrue(observed, 'The fresh native copy must reach the omitted physical-source hook')
 
     def test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability(self):
         session=self.session(747220);source=self.add(session.engine,'Ardenvale Paladin')

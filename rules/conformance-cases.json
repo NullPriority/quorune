@@ -50016,16 +50016,21 @@
         "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_source_aura_attachment_separates_target_and_enchant_legality",
         "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_equipment_entry_trigger_attaches_and_revalidates_target",
         "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality",
-        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_uses_current_source_controller"
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_uses_current_source_controller",
+        "tests.test_fixed_attachment_actions.PrintedSourceAttachmentNativeTests.test_actual_plating_uses_priority_and_revalidates_the_controlled_target",
+        "tests.test_fixed_attachment_actions.PrintedSourceAttachmentNativeTests.test_actual_bloodthirsty_blade_moves_the_live_goad_at_sorcery_speed",
+        "tests.test_fixed_attachment_actions.PrintedSourceAttachmentNativeTests.test_actual_mantle_attaches_on_second_draw_and_ignores_later_draws",
+        "tests.test_fixed_attachment_actions.PrintedSourceAttachmentNativeTests.test_actual_forebear_and_hylderblade_use_the_departure_at_their_own_times"
       ],
       "implementation_components": [
         "quorune.compiler.fixed_attachment_templates.fixed_source_attachment_effect_template",
+        "quorune.rules.attachment_action_capability_shapes.is_closed_fixed_source_equipment_activation_program",
         "quorune.effect_runtime.zones_and_attachments._apply_attach",
         "quorune.aura.runtime.legal_aura_target_refs",
         "quorune.attachments.attach_objects"
       ],
       "notes": [
-        "The closed family resolves one source-pinned Aura or Equipment instruction through the existing reciprocal relation owner."
+        "The closed family resolves one source-pinned Aura or Equipment instruction through the existing reciprocal relation owner. Printed Equipment activations preserve their own price, timing, and creature target relation."
       ],
       "required_scenarios": [
         "positive",
@@ -51681,7 +51686,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "continuous_effects_that_designate_creatures_as_goaded_are_not_generic"
+        "unrepresented_continuous_goad_subjects_conditions_and_durations"
       ],
       "case_id": "cr-701.15b",
       "case_version": 1,
@@ -51701,18 +51706,21 @@
         "tests.test_goad_rules.GoadRuleTests.test_single_goad_requires_another_player_when_available_and_replays",
         "tests.test_goad_rules.GoadRuleTests.test_goad_in_duel_still_requires_attacking_the_goader",
         "tests.test_goad_rules.GoadRuleTests.test_zone_change_removes_the_noncopiable_designation",
-        "tests.test_goad_rules.GoadRuleTests.test_typed_goad_prohibition_is_controller_scoped_and_replays"
+        "tests.test_goad_rules.GoadRuleTests.test_typed_goad_prohibition_is_controller_scoped_and_replays",
+        "tests.test_goad_rules.AttachedGoadNativeTests.test_actual_shiny_impetus_and_same_goader_instruction_follow_attachment_lifetime",
+        "tests.test_goad_rules.AttachedGoadNativeTests.test_actual_predatory_impetus_requires_a_block_from_the_defending_player",
+        "tests.test_goad_rules.AttachedGoadCompilerTests.test_attached_goad_rejects_open_grammar_and_malformed_descriptors"
       ],
       "implementation_components": [
         "GoadDesignation",
         "GoadProhibitionHandler",
-        "CommanderEngine._goad_prohibition_source",
-        "CommanderEngine._attack_declaration_problem",
+        "AttachedGoadSpec",
+        "active_goading_players",
         "DeclarationProblem",
         "StateProjector"
       ],
       "notes": [
-        "Represented designations are public, noncopiable, removed on zone change, and produce the two independently maximized attack requirements. Continuous 'is goaded' effects remain outside this slice."
+        "Goad is public and noncopiable. Timed designations end on zone change. A current Aura or Equipment contributes its controller through the live attachment. The shared solver applies one pair of requirements per goading player. Other continuous goad subjects, conditions, and durations remain outside this slice."
       ],
       "required_scenarios": [
         "positive",

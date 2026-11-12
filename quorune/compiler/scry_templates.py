@@ -44,7 +44,7 @@ def fixed_scry_effect_template(
     """Lower one positive fixed controller Scry instruction."""
 
     match = re.fullmatch(
-        rf"scry (?P<count>{FIXED_COUNT_PATTERN})\.?",
+        rf"(?:you )?scry (?P<count>{FIXED_COUNT_PATTERN})\.?",
         " ".join(text.strip().split()),
         re.IGNORECASE,
     )

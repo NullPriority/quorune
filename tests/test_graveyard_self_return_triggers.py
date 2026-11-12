@@ -50,8 +50,13 @@ class GraveyardSelfReturnCompilerTests(unittest.TestCase):
                 self.assertIn('offer_optional_effect',str(node.effects))
 
     def test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract(self):
-        for text in ('Whenever you complete a dungeon, you may return this card from your graveyard to your hand.',
-                'When enchanted land is put into a graveyard, you may return this card from your graveyard to your hand.',
+        dungeon = compile_oracle_card(query_record('Whenever you complete a dungeon, you may return this card from your graveyard to your hand.'),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact', dungeon.status, dungeon.material_residuals)
+        node = dungeon.faces[0].nodes[0]
+        self.assertEqual(('graveyard','dungeon.completed'), (node.active_zone,node.event))
+        self.assertEqual({'field':'player','op':'eq','value':'$source.owner'}, node.event_condition)
+        for text in ('When enchanted land is put into a graveyard, you may return this card from your graveyard to your hand.',
                 'At the beginning of your upkeep, you may return this card from your graveyard to the battlefield.',
                 'Whenever one or more artifacts you control enter, you may return this card from your graveyard to your hand.',
                 'At the beginning of your upkeep, you may return another card from your graveyard to your hand.'):

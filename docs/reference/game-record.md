@@ -10,11 +10,31 @@ concern: "game-record"
 
 # Game Record v3
 
+Current `runtime_trust.schema_version` is `2`. It binds command provenance to
+actual completed stack objects, including spells created and resolved by one
+command. Replay checks completion order and multiplicity, then validates each
+registered or implicit source binding. Missing, extra and unobserved entries
+reject. The command capture is transient and does not enter public events.
+Declared older runtime identities retain their existing rejection; records
+without the additive runtime-trust section keep the historical compatibility
+path.
+
+The manifest schema admits declared runtime-trust versions `1` and `2`. Replay
+checks the exact current version and fingerprints whenever that section is
+present.
+
 Semantic registry snapshots retain declaration order inside ordered mode maps
 in both the CardProgram and semantic-program views. Storage preserves that
 runtime order while fingerprint calculation keeps its canonical representation.
 Loading an existing snapshot preserves its stored declarations and all ordinary
 runtime-provenance and accepted-command verification.
+
+Conditional self-replacement copy results use instruction schema 15 to capture
+copy references in their executable branches. Pending source-copy references
+read current copiable values while the same source remains, then its immediate
+departure snapshot. Earlier conditional instruction schemas retain their
+existing reference-capture behavior and accepted-command hashes. Future token
+ability metadata remains outside the executable reference scan.
 
 Marked ordinary token cleanup uses `created_token_cleanup` version one, with
 explicit action and timing. Replacement-capable intents retain a closed
@@ -861,6 +881,12 @@ reference, caster and value. The reader requires existing complete cast-event
 facts and adds no checkpoint or event fields. Scalar schemas one through seven
 retain their exact payloads.
 
+The `paid_sacrifice_mana_value` stack context holds the version-one
+incarnation and effective mana value recorded for a fixed sacrifice at cast
+commit. The original spell verifies the incarnation against its paid-cost
+objects. A spell copy carries the sealed context without a second payment.
+Earlier scalar and paid-cost encodings keep their existing fields.
+
 Activation-condition schema two contains a closed `fixed_public_state` kind
 and its existing typed condition payload. Source names participate only in
 compilation; replay uses the pinned predicate rather than reparsing Oracle.
@@ -1107,6 +1133,11 @@ determine their applicability. They add no GameState journal or record marker;
 ordinary trusted program registration reproduces step and direct-cost checks.
 The existing untap-step descriptor does not admit the new internal any-turn
 participation relation.
+
+Fresh games set `turn_history.venture_history_version` to one and bind it in
+the record manifest. A successful room entry records the first Venture by
+that player in the current actual turn. Rollover clears those facts and
+preserves the marker. An absent marker preserves older journal bytes.
 
 Player-attached characteristic contexts contain a derived enchanted-player
 identity read from the current reciprocal attachment. The fixed descriptor

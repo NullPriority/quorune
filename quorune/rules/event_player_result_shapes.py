@@ -23,14 +23,20 @@ def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic
         'life':('delta',{'op','player','delta'},'life.change.effect'),
         'lose_life':('amount',{'op','player','amount'},'life.change.effect')}
     capabilities={EVENT_PLAYER_RESULT_CAPABILITY}
-    for effect in effects:
+    for index, effect in enumerate(effects):
         if effect.get('op') not in layouts:return ()
         field,fields,capability=layouts[effect['op']]
         extra=event_result_value_capabilities(effect['op'],field,effect.get(field))
         player = effect.get('player')
         occurrence = is_occurrence_controller_reference(player)
-        if occurrence and (len(effects) != 1 or effect['op'] != 'lose_life' or type(effect.get(field)) is not int):
-            return ()
+        if occurrence:
+            if index != 0 or effect['op'] != 'lose_life' or type(effect.get(field)) is not int:
+                return ()
+            if len(effects) == 2:
+                gain = effects[1]
+                if (gain.get('op') != 'life' or gain.get('player') != '$controller'
+                        or type(gain.get('delta')) is not int or gain['delta'] <= 0):
+                    return ()
         if (set(effect)!=fields or not occurrence and player not in ('$controller','$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller')
                 or extra is None or HALF_LIFE_CAPABILITY in extra and HALF_LIFE_MECHANIC not in set(mechanic_ids)
                 or effect['op']=='draw' and effect['private'] is not True):return ()
@@ -78,6 +84,34 @@ def _blocking_controller_event_is_closed(program):
             and 'one_or_more_event_batch' not in program.coverage)
 
 
+def _attached_combat_controller_event_is_closed(program):
+    if (program.event != 'creature.attacks' or program.active_zone != 'battlefield'
+            or program.target_schema is not None or 'one_or_more_event_batch' in program.coverage):
+        return False
+    from .event_subscriptions import FixedEventSubscriptionSet
+
+    attachment = {'field': 'source_attachment_target_ref', 'op': 'eq', 'value': '$context.card'}
+    subscriptions = FixedEventSubscriptionSet.from_condition(program.event_condition)
+    if subscriptions is None:
+        return program.event_condition == attachment
+    return tuple((row.event, row.condition) for row in subscriptions.subscriptions) == (
+        ('creature.attacks', attachment), ('creature.blocks', attachment),
+    )
+
+
+def attached_combat_controller_runtime_dependencies(program):
+    if (not _attached_combat_controller_event_is_closed(program) or not program.effects
+            or not is_occurrence_controller_reference(program.effects[0].get('player'))):
+        return ()
+    required = fixed_event_player_result_node_capabilities(
+        effects=program.effects, target_schema=None, mechanic_ids={EVENT_PLAYER_RESULT_MECHANIC},
+    )
+    if not required:
+        return ()
+    subscription = ('trigger.subscription.fixed_multi_event',) if 'event_subscriptions' in program.event_condition else ()
+    return (*required, 'trigger.event.normalized_public_action', 'attachment.reference.current_or_lki', *subscription)
+
+
 def blocking_controller_runtime_dependencies(program):
     if not _blocking_controller_event_is_closed(program) or len(program.effects) != 1:
         return ()
@@ -121,6 +155,8 @@ def _event_player_reference_is_closed(program,player,*,amount=None):
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
     except (TypeError,ValueError):return False
     if is_occurrence_controller_reference(player):
+        if program.event == 'creature.attacks':
+            return bool(attached_combat_controller_runtime_dependencies(program))
         return (subscriptions is None and program.active_zone == 'battlefield' and program.target_schema is None
                 and 'one_or_more_event_batch' not in program.coverage
                 and (program.event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS if type(amount) is int

@@ -56,6 +56,29 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    if operation == "move_if_in_zone":
+        from ..event_card_return import is_event_library_move, validate_event_library_move
+
+        if is_event_library_move(effect):
+            try:
+                validate_event_library_move(effect, resolved=True)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return
+    if operation == "attach":
+        from ..rules.attachment_actions import (
+            ENTRY_ATTACHMENT_VERSION, TARGETED_EQUIPMENT_VERSION,
+            validate_entry_equipment_attachment, validate_targeted_equipment_attachment,
+        )
+
+        if TARGETED_EQUIPMENT_VERSION in effect or ENTRY_ATTACHMENT_VERSION in effect:
+            validate = (validate_targeted_equipment_attachment if TARGETED_EQUIPMENT_VERSION in effect
+                        else validate_entry_equipment_attachment)
+            try:
+                validate(effect, resolved=True)
+            except ValueError as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return
     if operation == "discard_random_cards":
         from ..random_discard import random_discard_node_capabilities
         restored = {**effect, "actor": "$controller", "players": ["$controller"]}
@@ -82,6 +105,10 @@ def _represented_effect(
         return
     if operation == 'search':
         from ..rules.library_search_capability_shapes import fixed_library_search_node_capabilities, fixed_type_to_hand_search_node_capabilities
+        if "searching_player" in effect:
+            if effect["searching_player"] != actor:
+                raise SemanticChoiceError("Optional search must use the chooser's library")
+            effect = {key: value for key, value in effect.items() if key != "searching_player"}
         mechanics=('fixed-library-search-to-battlefield','fixed-library-search-to-hand')
         if not any(resolver(effects=(effect,),target_schema=None,mechanic_ids=mechanics)
                 for resolver in (fixed_library_search_node_capabilities,fixed_type_to_hand_search_node_capabilities)):

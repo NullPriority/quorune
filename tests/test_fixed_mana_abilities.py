@@ -272,6 +272,9 @@ class FixedManaModelTests(unittest.TestCase):
 
 class FixedManaCompilerTests(unittest.TestCase):
     def test_legacy_restriction_prefix_requires_complete_suffix(self):
+        chosen_type = "{T}: Add {G}. Spend this mana only to cast a creature spell of the chosen type."
+        chosen_ability = parse_activated_abilities(card_name="Complete Restriction Fixture", oracle_text=chosen_type)[0]
+        self.assertIsNotNone(compile_fixed_activated_mana_ability(chosen_ability))
         unsupported = (
             (
                 "{T}: Add {G}. Spend this mana only to cast a creature "
@@ -283,7 +286,7 @@ class FixedManaCompilerTests(unittest.TestCase):
             ),
             (
                 "{T}: Add {G}. Spend this mana only to cast a creature "
-                "spell of the chosen type."
+                "spell of a type chosen by an opponent this turn."
             ),
             (
                 "{T}: Add {G}. Spend this mana only to cast a creature "
@@ -1766,7 +1769,7 @@ class FixedManaRuntimeTests(unittest.TestCase):
         engine = session.engine
         leaky_record = record(
             "{T}: Add {G}. Spend this mana only to cast a creature spell "
-            "of the chosen type.",
+            "of a type chosen by an opponent this turn.",
             name="Unsupported Restriction Source",
         )
         registration = register_generated_programs(

@@ -190,6 +190,9 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         is_token: bool = False,
     ) -> CardInstance:
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         current_controller = controller or seat
         public = zone == "battlefield"
         card = CardInstance(
@@ -233,26 +236,12 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         engine.semantics.put(programs[0])
         return programs[0]
 
-    def register_typed_event_trigger(
-        self,
-        engine,
-        source: CardInstance,
-    ):
-        programs = [
-            program
-            for program in generated_programs(
-                self.db,
-                self.db.by_oracle_id(source.oracle_id),
-                trust_level="trusted",
-                capability_registry=self.capabilities,
-                capability_profile="commander_review",
-            )
-            if program.provenance.get("template_id")
-            in FIXED_TYPED_EVENT_TEMPLATE_IDS
-        ]
-        self.assertEqual(1, len(programs))
-        engine.semantics.put(programs[0])
-        return programs[0]
+    def register_typed_event_trigger(self, engine, source: CardInstance):
+        from common import current_fixture_program_for_templates
+
+        return current_fixture_program_for_templates(
+            self, engine, source, FIXED_TYPED_EVENT_TEMPLATE_IDS,
+        )
 
     @staticmethod
     def _event_condition_fields(condition: Mapping | None) -> set[str]:
@@ -1275,7 +1264,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [source.ref],
                 "pay": "manual",
                 "payment": {"R": 1},
@@ -1400,7 +1389,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         attacker = self.add_card(
             attack_engine,
             seat="A",
-            name="Typed Self Attack Life Trigger Fixture",
+            name="Generic Creature Goblin Fixture",
             ref="public-attacker",
             zone="battlefield",
         )
@@ -1911,7 +1900,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         attacker = self.add_card(
             engine,
             seat="A",
-            name="Typed Self Attack Life Trigger Fixture",
+            name="Generic Creature Goblin Fixture",
             ref="public-replay-attacker",
             zone="battlefield",
         )
@@ -1946,7 +1935,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         attacker = self.add_card(
             engine,
             seat="A",
-            name="Typed Self Attack Life Trigger Fixture",
+            name="Generic Creature Goblin Fixture",
             ref="attachment-attack-witness",
             zone="battlefield",
         )
@@ -2062,7 +2051,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         attacker = self.add_card(
             engine,
             seat="A",
-            name="Typed Self Attack Life Trigger Fixture",
+            name="Generic Creature Goblin Fixture",
             ref="attachment-mill-attacker",
             zone="battlefield",
         )
@@ -2472,7 +2461,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
             self.add_card(
                 engine,
                 seat="A",
-                name="Typed Self Attack Life Trigger Fixture",
+                name="Generic Creature Goblin Fixture",
                 ref=f"attack-batch-attacker-{index}",
                 zone="battlefield",
             )
@@ -2541,7 +2530,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         attacker = self.add_card(
             negative_engine,
             seat="A",
-            name="Typed Self Attack Life Trigger Fixture",
+            name="Generic Creature Goblin Fixture",
             ref="attack-batch-negative-attacker",
             zone="battlefield",
         )

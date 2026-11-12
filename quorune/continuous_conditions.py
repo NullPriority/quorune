@@ -94,6 +94,9 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    CONTROLLER_COMPLETED_A_DUNGEON = "controller_completed_a_dungeon"
+    CONTROLLER_HAS_NOT_COMPLETED_NAMED_DUNGEON = "controller_has_not_completed_named_dungeon"
+    CONTROLLER_HAS_THE_INITIATIVE = "controller_has_the_initiative"
     SOURCE_RENOWNED = 'source_renowned'
     CONTROLLER_LANDS_ENTERED_THIS_TURN='controller_lands_entered_this_turn'
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
@@ -297,6 +300,13 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
+    from .initiative_model import DUNGEON_STATUS_FACTS, validate_dungeon_status_fact
+    if fact.value in DUNGEON_STATUS_FACTS:
+        try:
+            validate_dungeon_status_fact(fact.value, amount=amount, parameter=parameter, schema_version=schema_version)
+        except ValueError as exc:
+            raise FixedPublicStateConditionError(str(exc)) from exc
+        return
     from .public_zone_condition_model import PUBLIC_ZONE_FACTS, validate_public_zone_fact
     if fact.value in PUBLIC_ZONE_FACTS:
         validate_public_zone_fact(fact.value, amount=amount, parameter=parameter, schema_version=schema_version)

@@ -2,20 +2,54 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 from ..suspect_model import SUSPECT_OPERATION
+from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, DERIVED_CHARACTERISTIC_CAPABILITY, DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
-    INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, fixed_resolution_characteristic_instruction,
+    INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, TARGET_CARD_TYPE_ADDITION_VERSION, fixed_resolution_characteristic_instruction,
 )
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    from ..rules.cast_cascade_grants import CAST_CASCADE_OPERATION, cast_cascade_payload_dependencies
+    from ..rules.next_cast_counter_protection import (
+        is_versioned_next_cast_protection, next_cast_protection_payload_dependencies,
+    )
+    from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_OPERATION, next_spell_payment_payload_dependencies
+    from ..rules.impulse_access_capability_shapes import declared_impulse_access_dependencies, next_end_step_impulse_dependencies
+    from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD, NEXT_CAST_COPY_CAPABILITY, next_cast_copy_payload
+    from ..rules.temporary_cast_timing import TEMPORARY_CAST_TIMING_FIELD, temporary_cast_timing_payload_dependencies
+    if impulse := declared_impulse_access_dependencies(value) or next_end_step_impulse_dependencies(value):
+        return impulse
+    from ..rules.distinct_sacrifices import distinct_sacrifice_payload_dependencies
+    from ..drawing.captured_hand import captured_draw_cast_payload_dependencies
+    from ..dungeon_progress import venture_payload_dependencies
+    from ..initiative_model import initiative_payload_dependencies
+    from ..rules.manifest_shapes import manifest_result_payload_dependencies
+    from ..rules.event_counter_threshold import event_counter_threshold_payload_dependencies
+    if owned_choice := (distinct_sacrifice_payload_dependencies(value) or captured_draw_cast_payload_dependencies(value)
+                        or venture_payload_dependencies(value) or initiative_payload_dependencies(value)
+                        or manifest_result_payload_dependencies(value) or event_counter_threshold_payload_dependencies(value)):
+        return owned_choice
+    if CHOSEN_IMPULSE_GRANT_FIELD in value:
+        raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
+    if TEMPORARY_CAST_TIMING_FIELD in value:
+        return temporary_cast_timing_payload_dependencies(value)
+    if NEXT_CAST_COPY_FIELD in value:
+        next_cast_copy_payload(value)
+        return (NEXT_CAST_COPY_CAPABILITY,)
+    if is_versioned_next_cast_protection(value):
+        return next_cast_protection_payload_dependencies(value)
+    if value.get("op") == CAST_CASCADE_OPERATION:
+        return cast_cascade_payload_dependencies(value)
+    if value.get("op") == NEXT_SPELL_PAYMENT_OPERATION:
+        return next_spell_payment_payload_dependencies(value)
     version = value.get("schema_version")
     if value.get("op") == "return_graveyard_card_to_owner_hand":
         from ..rules.graveyard_card_targets import public_graveyard_return_payload_dependencies
 
         return public_graveyard_return_payload_dependencies(value)
     if (value.get("op") == CHARACTERISTIC_OPERATION and type(version) is int
-            and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS):
+            and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS | {TARGET_CARD_TYPE_ADDITION_VERSION}):
         spec, _selection = fixed_resolution_characteristic_instruction(value)
         return spec.capability_dependencies
     if value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION:
@@ -111,6 +145,10 @@ def _affected_quantity_payload_dependencies(
             and value.get("then") == "exile" and value.get("predicate") is not None):
         from ..rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies
         return fixed_hand_exile_payload_dependencies(value)
+    from ..library_order_model import is_affected_hand_top_choice
+    if is_affected_hand_top_choice(value):
+        from ..rules.affected_player_discard_capability_shapes import fixed_hand_top_apnap_payload_dependencies
+        return fixed_hand_top_apnap_payload_dependencies(value)
     if value.get("op") == "mill" and isinstance(value.get("count"), Mapping):
         from ..rules.mill_capability_shapes import half_mill_payload_dependencies
         return half_mill_payload_dependencies(value) or None
@@ -122,13 +160,15 @@ def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, 
     from ..query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
     from ..reflexive_trigger_model import SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY
     from ..scalar_effect_amount_model import (
-        PAID_SACRIFICE_STAT_CAPABILITY, SCALAR_AMOUNT_CAPABILITY, ScalarAmountOrigin, ScalarEffectAmountSpec,
+        PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_STAT_CAPABILITY,
+        SCALAR_AMOUNT_CAPABILITY, ScalarAmountOrigin, ScalarEffectAmountSpec,
     )
 
     spec = ScalarEffectAmountSpec.from_dict(value)
     origin_capabilities = {
         ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE: SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
         ScalarAmountOrigin.PAID_SACRIFICE_CREATURE: PAID_SACRIFICE_STAT_CAPABILITY,
+        ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE: PAID_SACRIFICE_MANA_VALUE_CAPABILITY,
         ScalarAmountOrigin.CAST_SPELL_MANA_VALUE: CAST_MANA_VALUE_CAPABILITY,
     }
     required = {SCALAR_AMOUNT_CAPABILITY, *spec.history_count_capabilities}
@@ -262,6 +302,11 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *conditional_recipient_capabilities(value))
         from ..public_zone_condition_model import public_zone_condition_capabilities
         own = (*own, *public_zone_condition_capabilities(value))
+        from ..untap_step import CONDITIONAL_UNTAP_HANDLER_ID
+        if value.get("handler_id") == CONDITIONAL_UNTAP_HANDLER_ID:
+            condition = value.get("public_condition")
+            if isinstance(condition, Mapping) and condition.get("scope") == "subject_controller_not_monarch":
+                own = (*own, "variant.monarch.designate")
         from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
         own = (*own, *conditional_free_cast_capabilities(value))
         from ..land_entry_condition_model import land_entry_condition_capabilities

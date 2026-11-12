@@ -1506,6 +1506,52 @@
         "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_mobilize_token_multiplier_expands_independent_destination_choices",
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0064",
+      "adr": "docs/adr/0164-next-spell-payment-grants.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "7d49252975df8e1d9374accd2f203df1d9923ece541896e5888d34c77eedf0e6",
+      "exact_allowance": "One additional registered operation grant_next_spell_payment.",
+      "rationale": "The closed turn window joins resolving ability grants to the existing spell cost, cast completion, and cleanup owners.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "One controller-bound next spell payment result. Existing structural ceilings and identity allowances stay fixed.",
+      "removal_condition": "Replace the operation after a successor preserves typed duration, successful cast consumption, and older Improvise replay.",
+      "target_milestone": "Exact next spell payment grants across activation and trigger sources.",
+      "replay_implications": "The new turn window is serialized only for its typed result. Historical Improvise flags use the original consumption path.",
+      "privacy_implications": "The result addresses the resolving controller and reuses existing payer-scoped choices.",
+      "security_implications": "The typed result validates schema, controller, and payment kind before the existing mutation owner commits.",
+      "tests": [
+        "tests.test_casting_payment_keywords.BattlefieldSpellPaymentGrantTests.test_actual_wand_and_archway_compose_disjoint_tap_payment_resources",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_next_spell_payment_shape_and_window_are_closed",
+        "tests.test_casting_payment_keywords.BattlefieldSpellPaymentGrantTests.test_actual_wand_grant_is_redundant_and_consumed_with_or_without_convoke",
+        "tests.test_casting_payment_keywords.BattlefieldSpellPaymentGrantTests.test_actual_flockchaser_grant_survives_the_attacking_source_departure",
+        "tests.test_casting_payment_keywords.BattlefieldSpellPaymentGrantTests.test_actual_archway_grant_pays_with_an_artifact_and_expires_at_cleanup"
+      ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0065",
+      "adr": "docs/adr/0165-temporary-cast-cascade-grants.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "d478d642b2277f53e8bd9e602db8dee6cbaace0b0514b8ff3a323dc94ed59780",
+      "exact_allowance": "One additional registered operation grant_cast_cascade.",
+      "rationale": "The controller result connects resolved turn windows to existing cast placement, consumption, cleanup and Cascade owners.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "One closed temporary Cascade result with the existing structural ceilings and mutation ownership.",
+      "removal_condition": "Replace the operation after a successor preserves announcement, consumption, distinct instances, expiry and replay.",
+      "target_milestone": "Exact temporary Cascade across represented activation and trigger sources.",
+      "replay_implications": "Typed windows and bindings are serialized when the result is used. Rejected casts restore their prior state through the action transaction.",
+      "privacy_implications": "The window uses public cast facts. The existing optional Cascade choice retains principal projection.",
+      "security_implications": "The effect and cast transaction validate the controller, closed scopes, turn sequence and reserved instances.",
+      "tests": [
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint",
+        "tests.test_cascade_rules.TemporaryCastCascadeGrantTests.test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment",
+        "tests.test_cascade_rules.TemporaryCastCascadeGrantTests.test_stagecoach_reserves_instant_and_sorcery_independently",
+        "tests.test_cascade_rules.TemporaryCastCascadeGrantTests.test_yidris_damage_steps_stack_two_grants_for_each_hand_cast",
+        "tests.test_cascade_rules.TemporaryCastCascadeGrantTests.test_temporary_cascade_capability_and_scope_omission_fail_closed",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"
+      ]
     }
   ]
 }

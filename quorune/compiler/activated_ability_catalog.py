@@ -50,6 +50,7 @@ from ..semantic_runtime.mana_abilities import (
     fixed_mana_specs_from_descriptors,
 )
 from ..semantics import SemanticProgram
+from ..target_controller_information import TARGET_CONTROLLER_INFORMATION_MECHANIC
 from .activated_costs import parse_compiled_activated_abilities
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
@@ -333,6 +334,10 @@ def _catalog_ability_for_program(
             else (program.active_zone,)
         ),
         target_schema=target_schema,
+        library_search_types=(
+            () if TARGET_CONTROLLER_INFORMATION_MECHANIC in program.coverage
+            else ability.library_search_types
+        ),
         builtin_semantic_key=(
             ability.builtin_semantic_key or program.key
         ),

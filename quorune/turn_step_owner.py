@@ -15,11 +15,12 @@ from .continuous_effect_state import (
 )
 from .control_effects import synchronize_control_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
-from .impulse_access import expire_temporary_play_permissions
+from .impulse_access import expire_next_end_step_play_permissions, expire_temporary_play_permissions
 from .turn_skip_model import ScheduledTurnSkip, TurnBoundary, TurnSkipScope, TurnSkipSpec
 from .rules.land_play_permissions import (
     reset_additional_land_play_permissions,
 )
+from .rules.next_spell_payment import expire_temporary_cast_ability_grants
 from .model import (
     CombatState,
     GameState,
@@ -31,6 +32,7 @@ from .turn_history import roll_turn_history
 from .turn_priority_model import apnap_participants
 from .trigger_processing import (
     clear_pending_trigger_batches,
+    expire_next_cast_copy_triggers,
     matching_delayed_triggers,
 )
 from .util import unique_preserving_order
@@ -347,6 +349,7 @@ class TurnStepOwner:
         self.state.active_player = entry.player
         expire_next_turn_continuous_effects(self.state, entry.player)
         self.state.turn_sequence += 1
+        expire_next_cast_copy_triggers(self._host)
         self._bind_turn_skips(entry.player)
         if self.state.turn_history is not None:
             self.state.turn_history = roll_turn_history(
@@ -443,6 +446,8 @@ class TurnStepOwner:
 
         self.state.phase = phase
         self.state.step = step
+        if step == "end_step":
+            expire_next_end_step_play_permissions(self.state, active_player=active)
         from .forecast import synchronize_forecast_reveals
         synchronize_forecast_reveals(self._host)
         self.state.priority_player = None
@@ -649,7 +654,7 @@ class TurnStepOwner:
                 )
             card.annotations.pop("until_end_of_turn", None)
         for player in self.state.players.values():
-            player.stats.pop("next_spell_improvise", None)
+            expire_temporary_cast_ability_grants(player.stats)
             player.stats.pop("next_spell_uncounterable", None)
             player.stats.pop(
                 "spells_cant_be_countered_until_end",

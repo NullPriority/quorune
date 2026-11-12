@@ -538,6 +538,15 @@ permissions cause one untap attempt. An own-step-only prohibition does not
 block that additional untap. General prohibitions and stun replacement still
 apply, and resulting triggers wait for upkeep and ordinary APNAP placement.
 
+A conditional untap prohibition evaluates the current source ability and
+public facts before the simultaneous step. A count for an opponent is tested
+for each opponent separately. An attached monarchy exception reads the
+attached object's controller. A source controller's count can exclude the
+source itself and uses current effective characteristics. The prohibition
+applies only to the affected object's controller's untap step. An ordinary
+effect may still untap it, subject to the existing absolute prohibitions and
+replacement rules.
+
 Fixed untargeted land untap instructions use a controller-issued public choice
 at resolution. The new continuation pins current physical and logical land
 identities, orders eligible references canonically across replay loads,
@@ -642,7 +651,53 @@ legal destinations from the graph and checks the retained choices against it.
 Last-room completion uses the outstanding room abilities of the current
 incarnation. A venture from the last room completes that dungeon before the
 next entry choice. Entry allocates a new incarnation even when the player
-chooses the same dungeon again.
+chooses the same dungeon again. Completion increments both the total and the
+count for that dungeon. A count gap between the total and the named history
+identifies older aggregate entries whose dungeon identities are unavailable.
+
+Venture choices use the existing resolving controller's semantic choice.
+`dungeon_runtime.py` commits the visit and creates or reuses its nontraditional
+command-zone source. The room's source-bound program enters the regular APNAP
+trigger batch. Applicable static abilities add separate occurrences for a room
+of a dungeon their controller owns. Each occurrence announces its own targets
+and counts toward keeping the last room outstanding. Target announcement uses
+the actual dungeon source and keeps its captured characteristics available
+after departure. The state-based
+execution owner retires completed visits with the other prepared state changes
+and publishes the resulting completion events after the moves. The player
+projection includes the public journey after the first venture.
+
+Completion triggers observe the completing player through their current
+battlefield controller or graveyard owner. Targeted returns choose a creature
+card during trigger placement, and self-returns keep the source's original
+graveyard incarnation. A once-per-turn Venture trigger on a group of creature
+cards reaching its controller's graveyard uses the first eligible committed
+arrival and consumes its use before going on the stack.
+
+Venture permission reads current effective opponent restrictions and the
+player's first successful Venture in the actual turn. Both entry modes use
+that fact. A prohibited Venture leaves the journey and any outstanding room
+intact, then resolution continues.
+
+`initiative_runtime.py` owns the public designation and materializes its
+three inherent triggered abilities. Taking the initiative again still queues
+a Venture trigger. Combat-damage occurrences group by the damaging creatures'
+controller for each simultaneous batch. A transfer trigger keeps the
+previous holder as its controller and the attacker as its affected player.
+The existing APNAP queue handles those triggers and upkeep occurrences.
+
+Declared attacks publish one occurrence per directly attacked player. The
+occurrence records the declaring player, the number of creatures declared at
+that player, and whether that player holds the initiative at declaration.
+
+Public-state conditions read the current controller's completed dungeon
+history or initiative designation. A named completion condition uses the
+recorded dungeon identity. When only an aggregate completion count is
+available, an unknown named result stays unavailable.
+
+The ordered effect compiler composes a closed Venture or initiative action
+with independently validated instructions. The ordinary target revalidation
+owner determines whether the spell resolves before any of its instructions run.
 
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
@@ -669,6 +724,23 @@ Commit checks the current ability and cost option, spends the exact declared
 input, then taps the source and produces mana. A manual plan provides the
 same ordered steps. Other separately priced forms use explicit activation.
 See [ADR 0163](../adr/0163-ordered-hybrid-mana-payments.md).
+
+A chosen-type mana ability binds the source's creature subtype when it
+produces the mana. The resulting lot carries its own spell or creature-source
+ability restriction. Spending checks both the relevant card type and the
+bound subtype. A separate legendary creature option checks the spell's type
+and supertype. A counter-protection rider applies to the eligible spell that
+actually spends its lot. An unrestricted lot can also pay ordinary costs.
+The production, funding, and commit paths share these typed rules.
+
+A paid haste rider checks the spell type and any printed subtype when its
+mana is spent. The continuous-effect journal binds haste to that spell's
+incarnation and carries it to the permanent the spell becomes. Cleanup
+expires grants with a current-turn duration. A persistent grant lasts for
+that incarnation. Spell copies use the copiable characteristics of the
+original. An entry designation with a printed list offers that list through
+the same replacement choice owner. Its mana can check the bound subtype
+independently of card type when the printed restriction uses that scope.
 
 Fixed triggered mana observes a completed activation that paid its own tap
 symbol and produced mana. Current layer-six abilities select attached lands,
@@ -1929,7 +2001,18 @@ selected creature is excluded from the mana-source plan, then revalidated for
 current physical/logical identity, controller, Creature type, color, tap state,
 and phasing before the canonical mana and tap owners mutate state. Hybrid,
 Phyrexian, snow, broader cost ordering or restriction, payment replacement,
-granted or removed Convoke, and rules-text equivalents fail closed.
+unrepresented grant or removal forms, and rules-text equivalents fail closed.
+
+A current typed battlefield source can grant Convoke, Improvise, or Delve to
+the caster's qualifying spell. The shared cost query checks the prospective
+spell face and origin. Redundant grants share a single payment choice, and
+revalidation after mana abilities protects the atomic cast if a grant is lost.
+
+A resolving next-spell grant keeps its payment kinds on the controller's
+current turn window. The next successful cast consumes the whole window even
+if the caster pays entirely with mana. Cleanup clears an unused window. When
+Convoke and Improvise apply through a typed grant, the cast query allocates
+both sets together and validates each selected permanent before committing.
 
 Source-pinned self and battlefield static spell-cost modifiers enter that same
 total-cost stage. The selected face or current layer-6 source supplies one
@@ -1946,6 +2029,13 @@ and unjournaled history remain unsupported. This bounded pipeline does not
 claim complete CR 601.2f or CR 601.2h payment ordering.
 
 ## Extension and event participation
+
+Trigger discovery gathers current source characteristics before applying its
+conservative event-interest gate. Unconditional sources with no subscription
+to the current event skip trigger-participation scans. Spell-cast events,
+conditional subscriptions, uncertain program metadata, and Evoke or Blitz
+designations retain the ordinary checks. The gate caches no game state and
+preserves the existing matching, prevention, quota and trigger-copy owners.
 
 Reusable mechanics belong in focused rules modules and typed semantic
 operations. The current tap-state owner commits only the represented single
@@ -2015,6 +2105,14 @@ damage, prevention, and entry participation remain blocked. New rules work must
 identify event/replacement participation and use capability IDs from the
 versioned registry.
 
+Resolved next-cast counter protection keeps a turn-bound scope for the next
+spell, creature spell, or instant or sorcery spell. The cast announcement
+binds the scope using the selected spell type. Cast completion consumes the
+reserved scope after payment. Cleanup expires unused scopes. Target selection
+uses the counter effect's normal predicate, and independent resolution
+instructions continue after the counter attempt. Legacy next-spell flags
+retain their original recorded execution path.
+
 Every committed move of a physical nontoken card into a graveyard from another
 zone also emits `card.enter_graveyard`. This after-transition occurrence seals
 the destination characteristics, current logical incarnation and graveyard
@@ -2049,6 +2147,26 @@ also consume those same occurrences. Their one-or-more variants deduplicate
 only inside the producer's canonical simultaneous batch, and public damage or
 zone predicates read sealed committed or last-known facts rather than live
 Oracle text.
+
+A fixed total-power condition on a source attack reads the signed power of
+every creature in the original declaration across all defending recipients.
+Trigger discovery and resolution validate the same sealed attacker identities
+and power snapshots. A creature put onto the battlefield attacking never joins
+that declaration. Later movement or power changes leave the historical
+comparison intact.
+
+Fixed power and toughness multipliers read each recipient's signed effective
+characteristics at resolution. A controlled creature set takes all of its
+measurements before applying any modifier. The continuous-effect journal locks
+the additive layer 7c results to those incarnations until cleanup. Existing
+layer 7d switches still apply after the recorded additions.
+
+An attack trigger can multiply the original attacker's stats after the
+equipment or observer leaves. A source attacking a battle matches the
+declared recipient kind. An activated equipped-creature multiplier instead
+uses the shared attachment reference at resolution. A targeted multiplier
+can share its timestamp with first strike or precede a fight on the original
+target plan. The fight requires both targets to remain legal.
 
 Named-counter zone predicates consume version-two occurrence counter maps.
 The zone owner captures departure counters before any reset, including for all

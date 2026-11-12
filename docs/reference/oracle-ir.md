@@ -72,6 +72,23 @@ A returning incarnation never substitutes. Missing snapshots fail closed,
 while a known empty counter map yields zero. Version-one scalar descriptors
 retain their original field set and serialization.
 
+Fixed damage can bind a source pronoun after a closed source-self tap, untap,
+entry, or departure event. The original source remains the damage source after
+departure. Attached and other event participants keep their separate identities.
+Vehicle self-attack heads retain the same source identity predicate as creature
+self-attack heads; the printed type label does not become an observer of other
+Vehicles attacking.
+For a closed self-attack, fixed event-player damage can bind a source pronoun
+while its recipient stays untargeted. Attacking a planeswalker uses that
+permanent's controller as the defending player.
+
+Fixed sacrifice prices can supply the mana value of the paid permanent to a
+closed draw, life, counter placement, or single-color mana instruction. Scalar
+schema version twelve reads the sealed battlefield incarnation and its
+effective mana value from the committed cast. A spell copy carries the same
+fact. Each instruction keeps its existing result owner, including target
+revalidation and private draws.
+
 A destruction instruction with a committed-result quantity retains its fixed
 battlefield set and following instruction in one source-spanned node. The
 result uses the type, token status, and controller recorded before movement.
@@ -127,6 +144,12 @@ Qualified battlefield counts read current effective power, toughness, or
 represented modifications at the instruction that uses the count. A granted
 draw may read its own independent count. In an ordered spell, a later declared
 amount can read the hand after an earlier draw commits.
+Single-instruction amounts written as equal to a public count retain the
+existing public-query representation. Both damage word orders preserve their source and
+target schema; the compiler proves that only the result amount varies.
+Implicit scaled counts retain multipliers already represented by the public
+quantity owner. Source-bound bodies use the same quantity validation after the
+fixed-shape proof, and existing scalar producers keep their own coefficients.
 Variable damage to each opponent uses the existing simultaneous damage batch.
 A declared amount shared by damage and life gain is determined at resolution
 and remains independent of how much damage prevention allows through.

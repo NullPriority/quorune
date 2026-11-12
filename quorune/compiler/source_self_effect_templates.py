@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Any
 import re
-from ..rules.source_references import SourceReferenceSpec, CYCLED_SOURCE_DAMAGE_COVERAGE
+from ..rules.source_references import CYCLED_SOURCE_DAMAGE_COVERAGE, SourceReferenceSpec, source_self_permanent_type
 
 from .announced_damage_templates import fixed_announced_damage_template
 from .creature_power_damage_templates import (
@@ -18,6 +18,22 @@ from .endure_templates import source_endure_trigger_result
 from .declared_effect_amounts import declared_effect_amount_template
 
 
+def bound_source_fixed_damage(binding, body):
+    from ..rules.event_player_result_shapes import _source_combat_player_scope
+
+    events = {
+        'source_public_tap_state_transition': {'permanent.tap', 'permanent.untap'},
+        'source_enters_or_leaves_the_battlefield': {'permanent.enter', 'permanent.leave'},
+    }
+    source_attack = binding.event.value == 'creature.attacks' and _source_combat_player_scope(binding.event_condition)
+    if binding.active_zone != 'battlefield' or not (
+        source_attack or binding.event.value in events.get(binding.variant, ())
+    ):
+        return None
+    damage = source_pronoun_damage_effect_template(body)
+    return damage.compiled() if damage is not None else None
+
+
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
     from .scalar_effect_amounts import source_scalar_effect_amount_template
     from ..source_entry_cast_information import (source_entry_cast_condition,SOURCE_ENTRY_CAST_MECHANIC,
@@ -26,6 +42,10 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     guard=re.fullmatch(r'if you cast it(?P<origin> from your hand)?, (?P<body>.+)',body.strip(),re.I) if event_phrase=='enters' else None
     if guard is not None:body=guard['body'];condition=source_entry_cast_condition(origin='hand' if guard['origin'] else None)
     if event_phrase == 'enters':
+        from .manifest_templates import manifest_equipment_entry_template
+
+        if condition is None and (attachment := manifest_equipment_entry_template(body)) is not None:
+            return (*attachment, None)
         from .suspect_templates import normalize_entering_source_suspect
         body = normalize_entering_source_suspect(body)
     compiled = fixed_announced_damage_template(body, card_name=card_name, allow_source_pronoun=True)
@@ -151,7 +171,7 @@ def source_self_contextual_effect_template(
     )
     fixed_damage = (
         source_pronoun_damage_effect_template(text)
-        if event_phrase in {"enters", "dies"}
+        if event_phrase in {"enters", "dies", "leaves the battlefield"}
         else None
     )
     compiled = explored or creature_power or fixed_damage
@@ -237,21 +257,64 @@ def pin_source_result_incarnation(compiled):
     return template,pinned,schema,mechanics
 
 
-def source_characteristics_declaration_sequence(body, *, card_name, compile_effect):
-    """Compose the existing source characteristic and declaration leaves."""
-    from ..rules.source_references import SourceReferenceSpec
-    match = re.fullmatch(r"(?P<subject>.+?) gets (?P<stats>[+-]\d+/[+-]\d+) "
-        r"until end of turn and can't be blocked this turn\.", body, re.I)
-    if match is None or not (match['subject'].casefold() == 'this creature'
-            or SourceReferenceSpec(card_name).matches(match['subject'])):
+_BLOCK_RESTRICTION = r"can't be blocked (?:this turn(?: except by .+?)?|by .+? this turn)"
+_SOURCE_DECLARATION_FOLLOWUP = re.compile(
+    rf"(?P<subject>.+?) (?P<change>(?:gets|gains|becomes) .+?) until end of turn and (?P<rule>{_BLOCK_RESTRICTION})\.",
+    re.I,
+)
+_SOURCE_DECLARATION_SCRY = re.compile(
+    rf"(?P<subject>.+?) (?P<rule>{_BLOCK_RESTRICTION}) and (?:you )?(?P<scry>scry [1-9]\d*)\.",
+    re.I,
+)
+_SOURCE_DECLARATION_SENTENCE = re.compile(rf"(?P<subject>.+?) (?P<rule>{_BLOCK_RESTRICTION})\.", re.I)
+_DECLARATION_OPERATION = 'grant_declaration_restriction_until_end_of_turn'
+
+
+def _source_declaration_clauses(body, *, card_name, allow_pronoun):
+    from .closed_effect_programs import _sentence_partition
+
+    def refers_to_source(subject):
+        return (source_self_permanent_type(subject) is not None
+                or bool(card_name) and SourceReferenceSpec(card_name).matches(subject))
+
+    for pattern in (_SOURCE_DECLARATION_FOLLOWUP, _SOURCE_DECLARATION_SCRY):
+        match = pattern.fullmatch(body)
+        if match is None:
+            continue
+        subject = match['subject']
+        if not refers_to_source(subject):
+            if not allow_pronoun or subject.casefold() not in {'it', 'him', 'her'}:
+                return None
+            subject = 'This creature'
+        rule = f"This creature {match['rule']}."
+        if pattern is _SOURCE_DECLARATION_SCRY:
+            return rule, match['scry'].capitalize() + '.', True
+        return f"{subject} {match['change']} until end of turn.", rule, False
+    if (parts := _sentence_partition(body)) is not None:
+        match = _SOURCE_DECLARATION_SENTENCE.fullmatch(parts[-1])
+        if match is not None and match['subject'].casefold() in {'it', 'him', 'her'}:
+            return ' '.join(parts[:-1]), f"This creature {match['rule']}.", False
+    return None
+
+
+def source_declaration_sequence(body, *, card_name, compile_effect, allow_pronoun=False):
+    """Keep a source blocker rule and its independently closed companion in order."""
+    if "can't be blocked" not in body.casefold():
         return None
-    subject = match['subject']
-    compiled = compile_effect(f"{subject} gets {match['stats']} until end of turn. "
-        f"{subject} can't be blocked this turn.", card_name=card_name)
-    if (compiled[0] is None or compiled[2] is not None or len(compiled[1]) != 2
-            or tuple(effect.get('op') for effect in compiled[1]) != (
-                'apply_source_characteristics_until_end_of_turn', 'grant_declaration_restriction_until_end_of_turn')
-            or any(effect.get('card') not in {'$source', '$source.zone_object'} for effect in compiled[1])):
+    if (clauses := _source_declaration_clauses(body, card_name=card_name, allow_pronoun=allow_pronoun)) is None:
+        return None
+    first, last, scry = clauses
+    compiled = compile_effect(f"{first} {last}", card_name=card_name)
+    if compiled[0] is None or compiled[2] is not None or len(compiled[1]) != 2:
+        return None
+    declaration, companion = compiled[1] if scry else reversed(compiled[1])
+    if declaration.get('op') != _DECLARATION_OPERATION or declaration.get('card') not in {'$source', '$source.zone_object'}:
+        return None
+    if scry:
+        if companion.get('op') != 'scry' or companion.get('player') != '$controller':
+            return None
+    elif (companion.get('op') not in {'apply_source_characteristics_until_end_of_turn', 'place_counters'}
+          or companion.get('card') not in {'$source', '$source.zone_object'}):
         return None
     return pin_source_result_incarnation(compiled)
 

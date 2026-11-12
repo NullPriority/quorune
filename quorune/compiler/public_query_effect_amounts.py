@@ -11,6 +11,7 @@ from ..query_effect_amount_model import (
     PublicQueryAmountSpec,
 )
 from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
+from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..rules.source_references import SourceReferenceSpec
 from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
 from .live_battlefield_quantities import resolution_quantity
@@ -22,8 +23,13 @@ from .declared_effect_amounts import (
 )
 from .scalar_effect_amounts import scalar_amount_shape_context
 from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN
+from .optional_effect_templates import OPTIONAL_EFFECT_OPERATION
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY
-from ..scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, PAID_SACRIFICE_STAT_MECHANIC
+from ..scalar_effect_amount_model import ScalarAmountOrigin, scalar_amount_specs
+from ..scalar_effect_amount_model import (
+    PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
+    PAID_SACRIFICE_STAT_CAPABILITY, PAID_SACRIFICE_STAT_MECHANIC,
+)
 from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC,TARGET_HAND_COUNT_CAPABILITY
 from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC, MULTIKICKER_AMOUNT_CAPABILITY
 from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_CAPABILITY
@@ -34,6 +40,7 @@ PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
 AMOUNT_MECHANIC_CAPABILITIES = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (PUBLIC_QUERY_AMOUNT_CAPABILITY,),
                                SCALAR_AMOUNT_MECHANIC: (SCALAR_AMOUNT_CAPABILITY,),
                                PAID_SACRIFICE_STAT_MECHANIC: (PAID_SACRIFICE_STAT_CAPABILITY,),
+                               PAID_SACRIFICE_MANA_VALUE_MECHANIC: (PAID_SACRIFICE_MANA_VALUE_CAPABILITY,),
                                TARGET_HAND_COUNT_MECHANIC:(TARGET_HAND_COUNT_CAPABILITY,),
                                MULTIKICKER_AMOUNT_MECHANIC:(MULTIKICKER_AMOUNT_CAPABILITY,'casting.multikicker.fixed_mana'),
                                MANA_COLOR_AMOUNT_MECHANIC:(MANA_COLOR_AMOUNT_CAPABILITY,)}
@@ -218,12 +225,15 @@ def _parsed_candidate(
     for index, pattern in enumerate(_damage_patterns(source_name)):
         match = pattern.fullmatch(text)
         if match is not None:
+            recipient = match.group("recipient")
+            if index == 1:
+                recipient = "to " + recipient
             return (
                 "damage",
                 match.group("quantity"),
                 _coefficient(match.groupdict().get("coefficient")),
                 f"{match.group('source')} deals 2 damage "
-                f"{match.group('recipient')}.",
+                f"{recipient}.",
                 index < 2,
             )
     for index, pattern in enumerate(_DRAW_PATTERNS):
@@ -381,6 +391,8 @@ def public_query_effect_amount_template(
         quantity = resolution_quantity(quantity_text, source_name=source_name)
         if quantity is None:
             return None
+        if isinstance(quantity, CharacteristicQuantitySpec) and quantity.schema_version == 7 and quantity.exclude_source:
+            return None
         try:
             amounts = {
                 field: (
@@ -471,6 +483,8 @@ def public_query_effect_amount_template(
         return None
     effect = deepcopy(dict(effects[0]))
     operation = str(effect.get("op") or "")
+    if amount.uses_source_relative_count and (operation != "create_token" or target_schema is not None):
+        return None
     field = _AMOUNT_FIELDS.get(operation)
     if field is None or type(effect.get(field)) is not int:
         return None
@@ -533,6 +547,20 @@ def _fixed_shape_effects(
 ) -> tuple[Mapping[str, Any], ...] | None:
     """Project query-derived scalars to positive fixed values for shape checks."""
 
+    wrapper = None
+    if len(effects) == 1 and effects[0].get("op") == OPTIONAL_EFFECT_OPERATION:
+        wrapper = effects[0]
+        children = wrapper.get("effects")
+        if (
+            set(wrapper) != {"op", "player", "effects"}
+            or wrapper.get("player") != "$controller"
+            or not isinstance(children, (list, tuple))
+            or len(children) != 1
+            or not isinstance(children[0], Mapping)
+        ):
+            return None
+        effects = children
+
     projected = [deepcopy(dict(effect)) for effect in effects]
     if any(effect.get("op") == "modify_all_matching_permanents_until_end_of_turn"
            for effect in projected) and len(projected) != 1:
@@ -591,7 +619,10 @@ def _fixed_shape_effects(
                 continue
             try:
                 spec = PublicQueryAmountSpec.from_dict(value)
-                if spec.schema_version != 1:
+                attack_relative = (spec.schema_version == 3
+                    and operation == "apply_source_characteristics_until_end_of_turn"
+                    and effect.get("card") == "$event.permanent_object")
+                if spec.schema_version != 1 and not attack_relative:
                     return None
             except PublicQueryAmountError:
                 return None
@@ -609,7 +640,7 @@ def _fixed_shape_effects(
         contains_public_query_effect_amount(effect) for effect in projected
     ):
         return None
-    return tuple(projected)
+    return ({**wrapper, "effects": projected},) if wrapper is not None else tuple(projected)
 
 
 def _composed_query_shape_context(effects, mechanics):
@@ -632,6 +663,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.node_capability_shapes import (
         fixed_damage_node_capabilities, fixed_draw_node_capabilities,
         fixed_scry_node_capabilities,
+        fixed_counter_placement_target_set_node_capabilities,
         fixed_player_counter_placement_node_capabilities,
         fixed_source_characteristics_node_capabilities,
         fixed_target_characteristics_node_capabilities,
@@ -646,11 +678,15 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.fixed_controller_effect_shapes import fixed_controller_effect_sequence_node_capabilities
     from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
     from ..rules.attack_event_results import attack_event_characteristic_capabilities
-    from ..rules.casting_additional_costs import fixed_creature_sacrifice_price
+    from ..rules.casting_additional_costs import fixed_creature_sacrifice_price, fixed_single_sacrifice_price
+    from ..rules.fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
     if PAID_SACRIFICE_STAT_MECHANIC in program.coverage and not fixed_creature_sacrifice_price(program.cost_schema):
+        return False
+    paid_mana_value = PAID_SACRIFICE_MANA_VALUE_MECHANIC in program.coverage
+    if paid_mana_value and fixed_single_sacrifice_price(program.cost_schema) is None:
         return False
     context = public_query_amount_shape_context(program.effects, set(program.coverage),target_schema=program.target_schema)
     if context is None:
@@ -670,6 +706,12 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         or not required.issubset(program.capability_dependencies)
     ):
         return False
+    scalar_specs = scalar_amount_specs(program.effects)
+    target_mana_value_sequence = (
+        len(scalar_specs) == 1
+        and scalar_specs[0].origin is ScalarAmountOrigin.TARGET
+        and scalar_specs[0].characteristic == "mana_value"
+    )
     return any(
         bool(dependencies:=resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics))
         and set(dependencies).issubset(program.capability_dependencies)
@@ -686,12 +728,16 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             attack_event_characteristic_capabilities,
             fixed_resolution_characteristic_set_node_capabilities,
             fixed_counter_placement_node_capabilities,
+            fixed_counter_placement_target_set_node_capabilities,
             fixed_player_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
-              if {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
+              if target_mana_value_sequence or
+              {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
             *((fixed_controller_effect_sequence_node_capabilities,)
-              if {MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
+              if {MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC}
+              .intersection(program.coverage) else ()),
+            *((fixed_resolution_mana_capabilities,) if paid_mana_value else ()),
         )
     )
 
@@ -725,6 +771,9 @@ def public_query_amount_shape_context(
     if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics:
         return declared_amount_shape_context(effects, mechanics, target_schema=target_schema)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
+        return tuple(effects), set(mechanics)
+    if len(effects) == 1 and effects[0].get("op") == "resolve_stack_counter_followup":
+        # The stack owner validates the nested quantity without projecting it as a standalone amount.
         return tuple(effects), set(mechanics)
     if len(effects) > 1 and (composed := _composed_query_shape_context(effects, mechanics)) is not None:
         return composed

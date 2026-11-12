@@ -1,13 +1,26 @@
 """Read sealed declaration snapshots; commit no game state or trigger batches."""
 
+from collections import Counter
 from collections.abc import Mapping
 from dataclasses import replace
 
 from ..attack_batch_model import (ATTACK_BATCH_CONTEXT,QualifiedAttackBatchSpec,
     QUALIFIED_ATTACK_BATCH_CAPABILITY,attack_batch_conditions)
+from ..attack_batch_model import (
+    DECLARED_ATTACK_POWER_CAPABILITY,
+    DECLARED_ATTACK_POWER_COVERAGE,
+    DECLARED_ATTACK_POWER_FIELD,
+    DIRECT_PLAYER_ATTACK_CAPABILITY,
+    DIRECT_PLAYER_ATTACK_EVENT,
+    DIRECT_PLAYER_ATTACK_VARIANTS,
+    declared_attack_power_condition,
+    direct_player_attack_condition,
+)
+from ..attack_transition_model import AttackRecipientKind, AttackTransitionEvent
+from ..initiative_model import TAKE_INITIATIVE_CAPABILITY
 from ..qualified_attack_model import ATTACK_FACT_PREFIX,ATTACK_FACT_COLLECTIONS,ATTACK_FACT_BOOLEANS,ATTACK_FACT_NUMBERS
 from ..object_query import ObjectQueryResult,object_matches_query
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
 
 
 def seal_attack_declaration(event,characteristic_contexts):
@@ -19,6 +32,15 @@ def seal_attack_declaration(event,characteristic_contexts):
         'recipient_logical_object_id':a.recipient.logical_object_id,
         'defending_player':a.recipient.defending_player,
         'characteristics':dict(characteristic_contexts[a.attacker_object_id])}) for a in event.assignments)
+
+
+def direct_player_attack_facts(event: AttackTransitionEvent, initiative_holder: str | None) -> tuple[FrozenMap, ...]:
+    counts = Counter(assignment.recipient.reference for assignment in event.assignments
+                     if assignment.recipient.kind is AttackRecipientKind.PLAYER)
+    return tuple(FrozenMap({
+        "player": event.active_player, "defender": defender, "attacker_count": count,
+        "defender_has_initiative": defender == initiative_holder,
+    }) for defender, count in sorted(counts.items()))
 
 
 def _sealed_rows(context):
@@ -110,8 +132,86 @@ def attack_batch_aggregation_scope(program,context):
     return {'attacked_recipient_kind':kind,'attacked_recipient':reference,'attacked_recipient_logical_object_id':row['recipient_logical_object_id']}
 
 
+def declared_attack_power_total(context, *, source_object_id, source_logical_object_id, controller):
+    """Read the signed power sum of the original declaration, across all defenders."""
+    event = AttackTransitionEvent.from_dict(context.get("attack_transition"))
+    participants = {row.object_id: row for row in event.participants}
+    source = participants.get(source_object_id)
+    assignment = next((row for row in event.assignments if row.attacker_object_id == source_object_id), None)
+    if (
+        context.get("event_id") != event.transition_id
+        or context.get("controller") != controller
+        or event.active_player != controller
+        or source is None
+        or source.logical_object_id != source_logical_object_id
+        or source.reference != context.get("card")
+        or assignment is None
+        or assignment.recipient.reference != context.get("defender")
+        or assignment.recipient.defending_player != context.get("defending_player")
+        or assignment.recipient.kind.value != context.get("attacked_recipient_kind")
+    ):
+        raise ValueError("Declared attack power lost the source's original declaration")
+
+    powers = tuple(participants[row.attacker_object_id].power for row in event.assignments)
+    if any(power is None for power in powers):
+        raise ValueError("Declared attack power requires resolved power for each attacker")
+    return sum(powers)
+
+
+def _declared_attack_power_minimum(condition):
+    condition = thaw_value(condition)
+    try:
+        minimum = condition["all"][1]["value"]
+    except (TypeError, IndexError, KeyError) as exc:
+        raise ValueError("Declared attack power requires its closed source condition") from exc
+    if condition != declared_attack_power_condition(minimum):
+        raise ValueError("Declared attack power requires its closed source condition")
+    return minimum
+
+
+def declared_attack_power_recheck(program, context, *, source_object_id, controller):
+    minimum = _declared_attack_power_minimum(program.event_condition)
+    return declared_attack_power_total(
+        context, source_object_id=source_object_id,
+        source_logical_object_id=context.get("source_logical_object_id"), controller=controller,
+    ) >= minimum
+
+
+def _mentions_declared_attack_power(value):
+    if isinstance(value, Mapping):
+        return value.get("field") == DECLARED_ATTACK_POWER_FIELD or any(
+            _mentions_declared_attack_power(child) for child in value.values()
+        )
+    return isinstance(value, (list, tuple)) and any(_mentions_declared_attack_power(child) for child in value)
+
+
 def qualified_attack_batch_runtime_dependencies(program):
-    specs=attack_batch_conditions(program.event_condition)
+    from .event_subscriptions import EVENT_SUBSCRIPTIONS_FIELD, FixedEventSubscriptionSet
+
+    condition = program.event_condition
+    if isinstance(condition, Mapping) and EVENT_SUBSCRIPTIONS_FIELD in condition:
+        subscriptions = FixedEventSubscriptionSet.from_condition(condition)
+        if subscriptions is not None and any(
+            child.event.removesuffix(".self") == DIRECT_PLAYER_ATTACK_EVENT for child in subscriptions.subscriptions
+        ):
+            raise ValueError("Direct player attack requires a single event subscription")
+    if program.event.removesuffix(".self") == DIRECT_PLAYER_ATTACK_EVENT:
+        for variant in DIRECT_PLAYER_ATTACK_VARIANTS:
+            if (program.event == DIRECT_PLAYER_ATTACK_EVENT and program.active_zone == "battlefield"
+                    and condition == direct_player_attack_condition(variant)):
+                return ((DIRECT_PLAYER_ATTACK_CAPABILITY, TAKE_INITIATIVE_CAPABILITY)
+                        if variant == "controller_attacks_initiative_holder" else (DIRECT_PLAYER_ATTACK_CAPABILITY,))
+        raise ValueError("Direct player attack requires a closed battlefield subscription")
+    specs=attack_batch_conditions(condition)
     if specs and (program.event!='creature.attacks' or 'one_or_more_event_batch' not in program.coverage):
         raise ValueError('Qualified attack batches require declared-attack coalescing')
+    if DECLARED_ATTACK_POWER_COVERAGE in program.coverage or _mentions_declared_attack_power(program.event_condition):
+        if (
+            program.event != "creature.attacks" or program.active_zone != "battlefield"
+            or not {"intervening_condition", DECLARED_ATTACK_POWER_COVERAGE} <= set(program.coverage)
+            or "one_or_more_event_batch" in program.coverage
+        ):
+            raise ValueError("Declared attack power requires one source attack with a resolution recheck")
+        _declared_attack_power_minimum(program.event_condition)
+        return (DECLARED_ATTACK_POWER_CAPABILITY,)
     return (QUALIFIED_ATTACK_BATCH_CAPABILITY,) if specs else ()

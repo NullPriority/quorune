@@ -8,7 +8,10 @@ from typing import Any, Mapping
 from ..entry_designations import (
     ENTRY_DESIGNATION_CAPABILITY,
     ENTRY_DESIGNATION_HANDLER_ID,
+    LIMITED_CREATURE_TYPE_ENTRY_CAPABILITY,
+    LIMITED_CREATURE_TYPE_ENTRY_HANDLER_ID,
     EntryDesignationKind,
+    validate_designation,
 )
 from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
 from .component_registry import exact_fields
@@ -88,3 +91,31 @@ class EntryDesignationHandler:
             )
             for value in self._designation_values(descriptor, kind)
         )
+
+
+@dataclass(frozen=True, slots=True)
+class LimitedCreatureTypeEntryDesignationHandler(EntryDesignationHandler):
+    handler_id: str = LIMITED_CREATURE_TYPE_ENTRY_HANDLER_ID
+    schema_version: int = 3
+    capability_dependencies: tuple[str, ...] = (ENTRY_DESIGNATION_CAPABILITY, LIMITED_CREATURE_TYPE_ENTRY_CAPABILITY)
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id", "schema_version", "event", "designation", "options"},
+                     field="limited creature-type entry designation")
+        if (descriptor["handler_id"] != self.handler_id or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != self.schema_version or descriptor["event"] != self.event
+                or descriptor["designation"] != "creature_type"):
+            raise SemanticNodeError("Limited creature-type entry designation identity changed")
+        options = descriptor["options"]
+        if not isinstance(options, (list, tuple)) or len(options) < 2:
+            raise SemanticNodeError("A limited creature-type choice requires a closed list")
+        try:
+            chosen = tuple(validate_designation(EntryDesignationKind.CREATURE_TYPE, value) for value in options)
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        if chosen != tuple(sorted(set(chosen))):
+            raise SemanticNodeError("Limited creature-type choices must be ordered and unique")
+        return EntryDesignationKind.CREATURE_TYPE
+
+    def _designation_values(self, descriptor, kind):
+        return tuple(descriptor["options"])

@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..resolution_characteristic_model import FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS, FIXED_TARGET_COLOR_VERSION
 from ..defender_permission import is_temporary_defender_permission
 from ..rules.power_toughness_switch import is_power_toughness_switch
+from ..rules.fixed_stat_multipliers import is_fixed_stat_multiplier
 
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
@@ -15,6 +16,9 @@ def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     if is_power_toughness_switch(effect):
         from ..continuous_effect_state import apply_power_toughness_switch
         return True, apply_power_toughness_switch(host, effect, actor=actor, reason=reason)
+    if is_fixed_stat_multiplier(effect):
+        from ..rules.fixed_stat_multipliers import apply_fixed_stat_multiplier
+        return True, apply_fixed_stat_multiplier(host, effect, actor=actor, reason=reason)
     if version==11:
         from ..rules.temporary_keyword_removal import apply_temporary_keyword_removal
         return True,apply_temporary_keyword_removal(host,effect,actor=actor,reason=reason)

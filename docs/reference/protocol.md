@@ -152,6 +152,10 @@ with a full packet, so cursor state is an optimization rather than replay or
 correctness authority. The Python `ProjectedClientView` implements the same
 rules for in-process clients.
 
+Public battlefield objects with goad include `goad`, the sorted goading seats.
+Timed designations and currently applicable Aura or Equipment abilities both
+contribute to that list.
+
 Public battlefield objects include compact `regen` only while one or more
 regeneration shields exist. The omitted value means zero. It is projection of
 authoritative logical-object state, not a client-side effect prediction.

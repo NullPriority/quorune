@@ -10,13 +10,16 @@ from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
+from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
+from ..dungeon_progress import VentureProgressIntent
+from ..initiative_model import TakeInitiativeIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
-from ..library_order_model import LibraryArrivalOrder
+from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
@@ -37,11 +40,11 @@ from ..rules.destruction_result_model import DestructionFollowup
 from ..rules.public_exile_result_model import PublicExileFollowup
 from ..rules.revealed_library_top import RevealedLibraryTopSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
-from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
+from ..drawing.model import DrawCardsIntent
 from ..announced_damage import AllocatedDamageRecipient
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..damage_death_exile_model import DamageDeathExileScope
-from ..impulse_access_model import ImpulseAccessDuration
+from ..impulse_access_model import ImpulseAccessDuration, impulse_access_count_is_legal
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_scry import ScryArrangement
@@ -58,33 +61,13 @@ from .context import SemanticSourceContext
 from .madness_intent import MadnessChoiceIntent
 from .miracle_intent import MiracleCastChoiceIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
+from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 
 
 _EXPLORE_LABEL = "Explore"
 _REASON_FIELD = "reason"
-
-
-@dataclass(frozen=True, slots=True)
-class DrawCardsIntent:
-    player: str
-    count: int
-    reason: str
-    private: bool = False
-    post_draw_actions: tuple[DrawnCardAction, ...] = ()
-
-    def __post_init__(self) -> None:
-        actions = tuple(self.post_draw_actions)
-        if any(
-            not isinstance(
-                action,
-                (RevealDrawnCard, DiscardDrawnCardUnlessType),
-            )
-            for action in actions
-        ):
-            raise TypeError("Draw intents require typed post-draw actions")
-        object.__setattr__(self, "post_draw_actions", actions)
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,6 +107,7 @@ class ImpulseAccessIntent:
     count: int
     duration: ImpulseAccessDuration
     reason: str
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         if any(
@@ -133,10 +117,8 @@ class ImpulseAccessIntent:
             raise ValueError(
                 "Impulse-access intents require an actor, player, and reason"
             )
-        if type(self.count) is not int or not 1 <= self.count <= 10:
-            raise ValueError(
-                "Impulse-access intents require a count from one to ten"
-            )
+        if not impulse_access_count_is_legal(self.count, self.schema_version):
+            raise ValueError("Impulse-access intent count is invalid for its version")
         if not isinstance(self.duration, ImpulseAccessDuration):
             raise ValueError(
                 "Impulse-access intents require a typed duration"
@@ -724,9 +706,9 @@ class MoveObjectsSimultaneouslyIntent:
             raise ValueError("Simultaneous object-move intent is malformed")
         if self.library_order is not None and (
             not isinstance(self.library_order, LibraryArrivalOrder)
-            or self.library_order.chooser != self.actor
+            or not isinstance(self.library_order, DepartedLibraryArrivalOrder) and self.library_order.chooser != self.actor
             or self.destination != "library"
-            or tuple(self.expected_zones) != ("graveyard",)
+            or tuple(self.expected_zones) != self.library_order.origin_zones
             or self.transition_kind is not ZoneTransitionKind.ORDINARY
             or self.controlled_only
             or set(self.library_order.members) != set(self.object_refs)
@@ -1560,6 +1542,8 @@ SemanticIntent: TypeAlias = (
     | QueueReflexiveTriggerIntent
     | MillCardsIntent
     | BecomeMonarchIntent
+    | VentureProgressIntent
+    | TakeInitiativeIntent
     | SetPermanentTappedIntent
     | ProhibitNextUntapIntent
     | SetPermanentsTappedIntent
@@ -1594,6 +1578,9 @@ SemanticIntent: TypeAlias = (
     | MadnessChoiceIntent
     | MiracleCastChoiceIntent
     | DiscoverCastIntent
+    | ResolvingExileLandPlayIntent
+    | RevealCapturedDrawsIntent
+    | ResolveCapturedDrawCastIntent
     | GraveyardCastIntent
     | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent

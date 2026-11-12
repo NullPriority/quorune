@@ -36,6 +36,8 @@ class CounterTarget(str, Enum):
     ARTIFACT_SPELL = "artifact spell"
     CREATURE_OR_ENCHANTMENT_SPELL = "creature or enchantment spell"
     ARTIFACT_OR_CREATURE_SPELL = "artifact or creature spell"
+    ARTIFACT_CREATURE_OR_PLANESWALKER_SPELL = "artifact, creature, or planeswalker spell"
+    ENCHANTMENT_INSTANT_OR_SORCERY_SPELL = "enchantment, instant, or sorcery spell"
     BLUE_SPELL = "blue spell"
     RED_SPELL = "red spell"
     GREEN_SPELL = "green spell"
@@ -73,6 +75,8 @@ _TYPE_DOMAINS: dict[CounterTarget, tuple[str, ...]] = {
         "enchantment",
     ),
     CounterTarget.ARTIFACT_OR_CREATURE_SPELL: ("artifact", "creature"),
+    CounterTarget.ARTIFACT_CREATURE_OR_PLANESWALKER_SPELL: ("artifact", "creature", "planeswalker"),
+    CounterTarget.ENCHANTMENT_INSTANT_OR_SORCERY_SPELL: ("enchantment", "instant", "sorcery"),
 }
 _COLOR_DOMAINS: dict[CounterTarget, tuple[str, ...]] = {
     CounterTarget.BLUE_SPELL: ("U",),
@@ -230,7 +234,8 @@ def targeted_counter_effect_template(
         r"creature or planeswalker spell|instant or sorcery spell|"
         r"sorcery spell|instant spell|artifact or enchantment spell|"
         r"artifact spell|creature or enchantment spell|"
-        r"artifact or creature spell|blue spell|red spell|green spell|"
+        r"artifact or creature spell|artifact, creature, or planeswalker spell|"
+        r"enchantment, instant, or sorcery spell|blue spell|red spell|green spell|"
         r"red or green spell|nonblue spell|colorless spell|"
         r"activated ability|triggered ability|"
         r"activated or triggered ability|"

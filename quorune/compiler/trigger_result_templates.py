@@ -10,18 +10,38 @@ from .tap_state_event_bindings import tap_state_bound_result
 from .scalar_effect_amounts import trigger_scalar_effect_amount_template
 from .token_copy_templates import token_copy_recipe_template
 from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
-from .fixed_entry_return_requirements import fixed_entry_return_effect_template
+from .fixed_entry_return_requirements import (
+    fixed_controller_return_choice_template,
+    fixed_entry_return_effect_template,
+)
 from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .event_counter_results import event_counter_threshold_result
+
+    threshold = event_counter_threshold_result(binding, body, effect_template=effect_template, card_name=card_name)
+    if threshold is not None:
+        return threshold
+    from .source_self_effect_templates import bound_source_fixed_damage
+    source_damage = bound_source_fixed_damage(binding, body)
+    if source_damage is not None:
+        return source_damage, False
     if binding.variant in {"source_attacks", "your end step"} and body == binding.body:
         from .reanimation_templates import relative_target_reanimation_template
         event = "attack" if binding.variant == "source_attacks" else "end_step"
         returned = relative_target_reanimation_template(body, card_name=card_name, event=event)
         if returned is not None:
             return returned, False
+    if binding.variant in {"your upkeep", "your end step"} and body == binding.body:
+        return_choice = fixed_controller_return_choice_template(body)
+        if return_choice is not None:
+            return return_choice.compiled(), False
     if binding.variant == "source_attacks" and body == binding.body:
+        from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
+        conditional_return = conditional_reanimation_entry_counter_template(body, card_name=card_name)
+        if conditional_return is not None:
+            return conditional_return, False
         from .graveyard_copy_cast_templates import relative_graveyard_copy_template
         from .targeted_graveyard_cast_templates import relative_graveyard_cast_template
         relative = relative_graveyard_copy_template(body, card_name=card_name, event="attack") or relative_graveyard_cast_template(
@@ -29,6 +49,11 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         )
         if relative is not None:
             return relative, False
+    if body == binding.body and body.casefold().startswith('you may return '):
+        from .controlled_return_templates import controlled_return_template
+        selected = controlled_return_template(body, source_is_permanent=binding.active_zone == 'battlefield')
+        if selected is not None:
+            return selected, False
     from .exile_templates import triggered_source_exile_template
     source_exile = triggered_source_exile_template(binding, body)
     if source_exile is not None:
@@ -38,8 +63,10 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     if exile_cast is not None:
         return exile_cast, False
     if _allow_payment and _allow_optional and body == binding.body:
-        from .occurrence_object_results import entry_permanent_result
-        entry = entry_permanent_result(binding, body)
+        from .occurrence_object_results import entry_equipment_attachment_result, entry_permanent_result
+        entry = entry_permanent_result(binding, body) or entry_equipment_attachment_result(
+            binding, body, card_name=card_name, effect_template=effect_template,
+        )
         if entry is not None:
             return entry
     if binding.active_zone == "battlefield":
@@ -136,7 +163,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     source_counter = public_event_source_counter_result(
         binding, body, effect_template=effect_template, card_name=card_name,
         accepted_variants=source_counter_variants,
-        allow_source_pronoun=source_pronoun,
+        allow_source_pronoun=source_pronoun or binding.variant == 'source_attacks_or_blocks',
     )
     if source_counter is not None:return source_counter
     from .event_counter_results import public_event_target_counter_result
@@ -165,7 +192,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .mill_templates import event_recipient_mill_result
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
     if mill is not None:return mill
-    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked', 'source_dealt_damage', 'source_received_combat_damage'}:
+    if source_pronoun or binding.variant in {'source_turned_face_up', 'source_enters_or_attacks'}:
         from .explore_templates import single_explore_effect_template
         explored = single_explore_effect_template(body, allow_source_pronoun=True)
         if explored is not None:return explored.compiled(), False
@@ -180,6 +207,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
         from .optional_payment_templates import binding_aware_optional_mana_payment_template
         payment = binding_aware_optional_mana_payment_template(
             body,
+            source_is_permanent=binding.active_zone == "battlefield",
             compile_result=lambda text: binding_effect_template(
                 binding, text, card_name=card_name,
                 effect_template=effect_template, _allow_payment=False,
@@ -200,7 +228,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
         return random_discard
     specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
     if specialized[0] is not None:return specialized,True
-    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage'}:
+    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage','source_turned_face_up'}:
         from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation, _source_self_counter_payment
         payment=_source_self_counter_payment(body,card_name=card_name,compile_effect=effect_template)
         if payment is not None:return payment,True
@@ -212,7 +240,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     scheduled=scheduled_player_result(binding,body,effect_template=effect_template,card_name=card_name)
     if scheduled is not None:return scheduled
     from .event_card_return_templates import event_card_return_template
-    returned = event_card_return_template(binding, body, card_name=card_name)
+    returned = event_card_return_template(binding, body, card_name=card_name, effect_template=effect_template)
     if returned is not None:
         return returned, False
     sacrifice = target_announcement_bound_result(binding, body, card_name=card_name)

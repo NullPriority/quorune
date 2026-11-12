@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from .characteristic_evaluation import type_parts
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
@@ -59,9 +59,12 @@ class TokenCopyExceptionSpec:
             for value in (self.power, self.toughness)
         ):
             raise TokenCopyRecipeError("Copy base stats require two nonnegative fixed integers")
+        allowed_subtypes = CREATURE_SUBTYPES | {"food", "equipment", "vehicle"}
+        if self.schema_version == 3:
+            allowed_subtypes = allowed_subtypes | {"cave"}
         for field_name, allowed in (
             ("add_card_types", frozenset({"artifact", "creature", "enchantment"})),
-            ("add_subtypes", CREATURE_SUBTYPES | {"food", "equipment", "vehicle"}),
+            ("add_subtypes", allowed_subtypes),
             ("add_keywords", FIXED_CHARACTERISTIC_KEYWORDS),
         ):
             object.__setattr__(self, field_name, _unique_words(getattr(self, field_name), allowed=allowed, label=field_name))
@@ -164,7 +167,7 @@ def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCop
     if exception.creature_subtypes is not None:
         subtypes.difference_update(CREATURE_SUBTYPES)
         subtypes.update(exception.creature_subtypes)
-    subtypes.update(exception.add_subtypes)
+    subtypes.update(value for value in exception.add_subtypes if value != "cave" or "land" in card_types)
     if exception.card_types is not None or exception.remove_legendary or exception.add_card_types or exception.add_subtypes or exception.creature_subtypes is not None:
         ordered_types = [value for value in ("kindred", "artifact", "battle", "creature", "enchantment", "land", "planeswalker") if value in card_types]
         left = " ".join(value.title() for value in (*sorted(supertypes), *ordered_types))
@@ -202,3 +205,24 @@ def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCop
             raise TokenCopyRecipeError('Defined token copy exceptions must be an array')
         result[DEFINED_TOKEN_COPY_EXCEPTIONS_FIELD] = [*deepcopy(previous), exception.to_dict()]
     return result
+
+
+def copy_recipes(effects: Sequence[Mapping[str, Any]]) -> tuple[TokenCopyRecipeSpec, ...]:
+    """Visit executable wrappers, never copied future ability metadata."""
+    from .resolution_conditions import CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION
+    found = []
+    for effect in effects:
+        if effect.get("op") == "create_token" and "copy_spec" in effect:
+            found.append(TokenCopyRecipeSpec.from_dict(effect["copy_spec"]))
+        for field in ("effects", "then_effects"):
+            children = effect.get(field)
+            if effect.get("op") in {"offer_optional_effect", "offer_optional_mana_payment"} and isinstance(children, (list, tuple)):
+                found.extend(copy_recipes(children))
+        if (effect.get("op") == "apply_if_public_condition"
+                and type(effect.get("schema_version")) is int
+                and effect["schema_version"] == CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION):
+            for field in ("effects", "otherwise_effects"):
+                children = effect.get(field)
+                if isinstance(children, (list, tuple)):
+                    found.extend(copy_recipes(children))
+    return tuple(found)

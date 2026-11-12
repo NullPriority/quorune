@@ -120,12 +120,20 @@ program promotion. One or two complete
 fixed leaves preserve printed order and require an explicit subject per clause;
 `that player` addresses the occurrence's player, while `you` retains the locked
 trigger controller, including after a change of control of its source.
+Closed independent public-query amounts compose with these result layouts.
+The affected-player reference selects only the recipient; the quantity retains
+the stack object's controller and reads the current count when the instruction
+is applied. Source departure does not remove that count, and zero produces no
+life change. Both the event-player and public-query amount owners are required.
+This composition accepts positive schema-1 amounts; declared quantities and
+committed received-damage amounts retain their separate scopes.
 `That creature's controller` is an object-information request under CR 608.2h.
 Only a death occurrence supplies that departed incarnation's controller through
 `previous_controller`; re-entry creates a new object and does not replace it.
 Other events keep this subject residual because the family does not represent
-the required current or last-known object-controller reference. Optional, variable and linked
-results remain outside this family. Fixed affected-player
+the required current or last-known object-controller reference. Optional
+results use their separate wrapper owner; unrepresented variable and linked
+quantities remain residual. Fixed affected-player
 discard registration separately verifies its closed choice shape and declared
 dependencies before promoting a generated program.
 

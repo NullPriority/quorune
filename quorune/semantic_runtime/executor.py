@@ -5,6 +5,10 @@ from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
+from ..fixed_top_exile import ResolvingExileLandPlayIntent
+from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
+from ..dungeon_progress import VentureProgressIntent
+from ..initiative_model import TakeInitiativeIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
@@ -665,12 +669,14 @@ PlayerIntent = (
     | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
     | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent
+    | VentureProgressIntent | TakeInitiativeIntent
 )
 PLAYER_INTENT_TYPES = (
     BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
     DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
     TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent,
     EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent,
+    VentureProgressIntent, TakeInitiativeIntent,
 )
 TapStateIntent = (
     SetPermanentTappedIntent
@@ -690,6 +696,14 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, TakeInitiativeIntent):
+        from ..initiative_runtime import commit_take_initiative
+
+        return intent.player, commit_take_initiative(sink, intent)
+    if isinstance(intent, VentureProgressIntent):
+        from ..dungeon_runtime import commit_venture_progress
+
+        return intent.offer.owner, commit_venture_progress(sink, intent)
     if isinstance(intent, EarthbendIntent):
         from ..earthbend import animate_earthbend_land
         return intent.actor, animate_earthbend_land(sink, intent)
@@ -734,6 +748,7 @@ def _execute_player_intent(
                 count=intent.count,
                 duration=intent.duration,
                 reason=intent.reason,
+                schema_version=intent.schema_version,
             ),
         )
         return intent.player, result.exiled_refs
@@ -818,6 +833,15 @@ def _execute_tap_state_intent(
 
 
 def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent, RevealCapturedDrawsIntent):
+        from ..drawing.captured_hand_casting import commit_captured_draw_reveal
+        return intent.actor, commit_captured_draw_reveal(sink, intent)
+    if isinstance(intent, ResolveCapturedDrawCastIntent):
+        from ..drawing.captured_hand_casting import execute_captured_draw_cast
+        return intent.actor, execute_captured_draw_cast(sink, intent)
+    if isinstance(intent, ResolvingExileLandPlayIntent):
+        sink._play_land(intent.actor, {}, resolving=intent)
+        return intent.actor, None
     if isinstance(intent, ExileGraveyardCopiesIntent):
         from ..semantic_choices.graveyard_copy_cast import execute_exile_graveyard_copies
         return intent.actor, execute_exile_graveyard_copies(sink, intent)
@@ -871,6 +895,7 @@ def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool
 def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -> dict[str, Any] | None:
     """Resolve one available instruction without changing its position in the program."""
     from ..card_overrides import normalize_game_record_v3_effect
+    from ..event_card_return import prepare_event_library_order
     from ..rules.casting.spell_text import cast_text_instruction_has_no_target, scoped_cast_text_instruction
     from ..rules.entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION_FIELD, bind_checked_entry_return_payment
     from ..scheduled_player import scheduled_player_instruction_is_impossible
@@ -904,8 +929,18 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         effect = bind_checked_entry_return_payment(host, scoped_item, raw_effect, effect)
     if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
         return None
-    if raw_effect.get('op') == 'offer_optional_effect' and unavailable_optional_combat_removal(host, raw_effect, effect):
-        return None
+    if raw_effect.get('op') == 'offer_optional_effect':
+        from ..event_card_return import unavailable_optional_event_library_move
+        from ..rules.attachment_actions import unavailable_optional_equipment_attachment
+
+        if unavailable_optional_combat_removal(host, raw_effect, effect):
+            return None
+        try:
+            if (unavailable_optional_equipment_attachment(host, raw_effect, effect)
+                or unavailable_optional_event_library_move(host, raw_effect, effect)):
+                return None
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if raw_effect.get("players") == "$targets":
         if effect.get("players") == []:
             return None
@@ -915,6 +950,13 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
             from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
             if amount.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
                 return None
+    if effect.get("op") == "place_counters_on_targets" and type(effect.get("amount")) is int and effect["amount"] == 0:
+        from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin
+
+        raw_amount = raw_effect.get("amount")
+        if (isinstance(raw_amount, Mapping) and raw_amount.get("kind") == SCALAR_AMOUNT_KIND
+            and raw_amount.get("origin") == ScalarAmountOrigin.CAST_SPELL_MANA_VALUE.value):
+            return None
     if effect.get("op") == "mill":
         from ..milling import event_mill_recipient_has_left
         if event_mill_recipient_has_left(host, raw_effect, effect):
@@ -928,7 +970,7 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
             importance=1,
         )
         return None
-    return effect
+    return prepare_event_library_order(host, effect)
 
 
 def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
@@ -1013,7 +1055,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             results.append((intent.actor, result))
             continue
         if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
-                               GraveyardCastIntent,ExileGraveyardCopiesIntent)):
+                               GraveyardCastIntent,ExileGraveyardCopiesIntent,ResolvingExileLandPlayIntent,
+                               RevealCapturedDrawsIntent,ResolveCapturedDrawCastIntent)):
             results.append(_execute_resolving_cast_choice(sink,intent))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):

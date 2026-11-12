@@ -14,10 +14,7 @@ from .model import (
     DrawError,
     DrawEventRequest,
     DrawnCardAction,
-    DiscardDrawnCardUnlessType,
     QueuedDraw,
-    RevealDrawnCard,
-    RevealDrawnCardBySource,
     drawn_card_action_from_dict,
 )
 
@@ -257,17 +254,7 @@ class DrawDecisionContinuation:
             )
         if self.schema_version == 1 and self.excluded_effect_ids:
             raise DrawError("Legacy draw continuations cannot carry exclusions")
-        if any(
-            not isinstance(
-                action,
-                (
-                    RevealDrawnCard,
-                    RevealDrawnCardBySource,
-                    DiscardDrawnCardUnlessType,
-                ),
-            )
-            for action in self.post_draw_actions
-        ):
+        if any(not isinstance(action, DrawnCardAction) for action in self.post_draw_actions):
             raise DrawError(
                 "Draw continuation post-actions must be typed"
             )
@@ -531,17 +518,7 @@ class DrawRevealDecisionContinuation:
             raise DrawError(
                 "Draw reveal continuation exclusions must be canonical"
             )
-        if any(
-            not isinstance(
-                action,
-                (
-                    RevealDrawnCard,
-                    RevealDrawnCardBySource,
-                    DiscardDrawnCardUnlessType,
-                ),
-            )
-            for action in self.post_draw_actions
-        ):
+        if any(not isinstance(action, DrawnCardAction) for action in self.post_draw_actions):
             raise DrawError(
                 "Draw reveal continuation post-actions must be typed"
             )

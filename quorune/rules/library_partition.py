@@ -106,11 +106,17 @@ def commit_ordered_library_arrivals(
     ordered = tuple(member for member in order.members if member in arrivals)
     if not ordered:
         return
-    commit_ordered_library_partition(
-        library,
-        top_top_first=ordered if order.position == "top" else (),
-        bottom_bottom_first=ordered if order.position == "bottom" else (),
-    )
+    if type(order.position) is int:
+        selected = set(ordered)
+        previous = [object_id for object_id in library if object_id not in selected]
+        insertion = max(0, len(previous) - order.position + 1)
+        library[:] = [*previous[:insertion], *reversed(ordered), *previous[insertion:]]
+    else:
+        commit_ordered_library_partition(
+            library,
+            top_top_first=ordered if order.position == "top" else (),
+            bottom_bottom_first=ordered if order.position == "bottom" else (),
+        )
     if len(ordered) > 1:
         for member in ordered:
             arrivals[member].known_to = [order.chooser]

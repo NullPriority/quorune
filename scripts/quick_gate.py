@@ -106,6 +106,10 @@ def build_plan(
                     (python, "-c", "from scripts.update_card_unlock_frontier import _contracts; _contracts()"),
                 ),
                 QuickStep(
+                    "cloud-owner-schedule",
+                    (python, "scripts/validate_cloud_generation.py", "--check"),
+                ),
+                QuickStep(
                     "generated-owner-plan",
                     (
                         python,
@@ -198,6 +202,16 @@ def build_plan(
                  "-p", "test_fixed_counter_event_triggers.py", "-k",
                  "test_public_action_event_suffixes_remain_fail_closed"),
             ))
+        if {'quorune/compiler/fixed_public_action_event_bindings.py',
+                'quorune/compiler/fixed_counter_trigger_nodes.py',
+                'quorune/compiler/target_effect_corpus_assurance.py',
+                'tests/test_fixed_counter_event_triggers.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "direct-player-target-corpus-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_counter_event_triggers.py", "-k",
+                 "test_direct_player_attack_target_body_is_accepted_by_corpus_assurance"),
+            ))
         if {'quorune/morph.py', 'scripts/work_selection_cohort_measurements.py'}.intersection(paths):
             steps.append(QuickStep(
                 "hybrid-face-down-probe-contract",
@@ -272,6 +286,14 @@ def build_plan(
                 (python, "-m", "unittest", "discover", "-s", "tests",
                  "-p", "test_rules_scheduler.py", "-k",
                  "test_revised_unmerged_batch_inherits_only_its_verified_receipt_base"),
+            ))
+        if {"quorune/work_selection_common.py", "quorune/work_selection_evidence.py",
+                "quorune/work_selection.py", "scripts/update_work_selection_cohort_measurements.py"}.intersection(paths):
+            steps.append(QuickStep(
+                "harvest-prerequisite-budget-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_rules_scheduler.py", "-k",
+                 "test_prerequisite_exception_requires_measured_fanout_and_open_budget"),
             ))
         if "scripts/harvest_outcome_history.py" in paths:
             steps.append(QuickStep(

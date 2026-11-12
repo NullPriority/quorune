@@ -653,6 +653,589 @@
       "released_at": "2024-09-27",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "name": "Flaxen Intruder // Welcome Home",
+      "mana_cost": "{G} // {5}{G}{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Human Berserker // Sorcery — Adventure",
+      "oracle_text": "Flaxen Intruder: Whenever this creature deals combat damage to a player, you may sacrifice it. When you do, destroy target artifact or enchantment.\n//\nWelcome Home: Create three 2/2 green Bear creature tokens. (Then exile this card. You may cast the creature later from exile.)",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "adventure",
+      "released_at": "2019-10-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{G}",
+          "name": "Flaxen Intruder",
+          "oracle_text": "Whenever this creature deals combat damage to a player, you may sacrifice it. When you do, destroy target artifact or enchantment.",
+          "power": "1",
+          "toughness": "2",
+          "type_line": "Creature — Human Berserker"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{5}{G}{G}",
+          "name": "Welcome Home",
+          "oracle_text": "Create three 2/2 green Bear creature tokens. (Then exile this card. You may cast the creature later from exile.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery — Adventure"
+        }
+      ]
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "name": "Altar of Bhaal // Bone Offering",
+      "mana_cost": "{1}{B} // {2}{B}",
+      "cmc": 2.0,
+      "type_line": "Artifact // Sorcery — Adventure",
+      "oracle_text": "Altar of Bhaal: {2}{B}, {T}, Exile a creature you control: Return target creature card from your graveyard to the battlefield. Activate only as a sorcery.\n//\nBone Offering: Create a tapped 4/1 black Skeleton creature token with menace. (Then exile this card. You may cast the artifact later from exile.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "adventure",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{B}",
+          "name": "Altar of Bhaal",
+          "oracle_text": "{2}{B}, {T}, Exile a creature you control: Return target creature card from your graveyard to the battlefield. Activate only as a sorcery.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Artifact"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Bone Offering",
+          "oracle_text": "Create a tapped 4/1 black Skeleton creature token with menace. (Then exile this card. You may cast the artifact later from exile.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery — Adventure"
+        }
+      ]
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "name": "Young Red Dragon // Bathe in Gold",
+      "mana_cost": "{3}{R} // {1}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Dragon // Instant — Adventure",
+      "oracle_text": "Young Red Dragon: Flying\nThis creature can't block.\n//\nBathe in Gold: Create a Treasure token. (Then exile this card. You may cast the creature later from exile.)",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Treasure"
+      ],
+      "produced_mana": [],
+      "layout": "adventure",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{R}",
+          "name": "Young Red Dragon",
+          "oracle_text": "Flying\nThis creature can't block.",
+          "power": "3",
+          "toughness": "2",
+          "type_line": "Creature — Dragon"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Bathe in Gold",
+          "oracle_text": "Create a Treasure token. (Then exile this card. You may cast the creature later from exile.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant — Adventure"
+        }
+      ]
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "name": "Twincast",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Treasure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "An Offer You Can't Refuse",
+      "oracle_id": "234a734b-ba28-4f1b-9d01-3c3e7d516590",
+      "oracle_text": "Counter target noncreature spell. Its controller creates two Treasure tokens. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Swan Song",
+      "oracle_id": "8ddfc283-c9b4-41a5-af88-cf0068e986cc",
+      "oracle_text": "Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue Bird creature token with flying.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Storm"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Flusterstorm",
+      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
+      "oracle_text": "Counter target instant or sorcery spell unless its controller pays {1}.\nStorm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "e4bcd4ea-e7cd-4471-8f3b-18bb51d3d70c",
+      "name": "Pyroclasm",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Pyroclasm deals 2 damage to each creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "0230de18-8d15-4cfa-9d42-7ccddd9f9570",
+      "name": "Supreme Verdict",
+      "mana_cost": "{1}{W}{W}{U}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "This spell can't be countered.\nDestroy all creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -829,6 +1412,294 @@
       "published_at": "2017-02-09",
       "source": "wotc",
       "comment": "If you activate an Implement’s first ability, you’ll draw a card from its second ability before the first ability resolves. If the first ability has a target, you need a legal target to activate that ability, and you choose that target before seeing what card you’ll draw."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "An adventurer card is a permanent card in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Giant Killer is a white creature card whose mana value is 1. It can't be the target of the triggered ability of Mystic Sanctuary."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card's normal characteristics. The spell's color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won't give you permission to cast it as a permanent spell."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions for the permanent spell you cast from exile. Normally, you'll be able to cast it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it's not possible to cast the copy as a permanent."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner's graveyard as it resolves. For as long as it remains exiled, that player may cast it as a permanent spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won't be exiled and the spell's controller won't be able to cast it as a permanent later."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Flaxen Intruder's triggered ability goes on the stack without a target. While that ability is resolving, you may sacrifice it. When you do, the reflexive triggered ability triggers and you pick a target artifact or enchantment to be destroyed. This is different from effects that say \"If you do . . .\" in that players may take actions after you've sacrificed Flaxen Intruder but before the artifact or enchantment is destroyed."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it's a token) or cease to be a copy (if it's a nontoken permanent), and so you won't be able to cast it as an Adventure."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Casting a card as an Adventure isn't casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it's legal to cast that spell. For example, if Giant Killer is exiled with the last ability of Vivien, Champion of the Wilds, you can't cast it as Chop Down."
+    },
+    {
+      "oracle_id": "bacedc99-46d9-4757-8a27-8df77d7c2f02",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An adventurer card is a permanent card in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it’s in your graveyard, Altar of Bhaal is an artifact card whose mana value is 2."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it’s a token) or cease to be a copy (if it’s a nontoken permanent), and so you won’t be able to cast it as an Adventure."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner’s graveyard as it resolves. For as long as it remains exiled, that player may cast it as a permanent spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won’t be exiled and the spell’s controller won’t be able to cast it as a permanent later."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won’t give you permission to cast it as a permanent spell."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Casting a card as an Adventure isn’t casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "You must still follow any relevant timing rules for the permanent spell you cast from exile. Normally, you’ll be able to cast it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card’s normal characteristics. The spell’s color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it’s not possible to cast the copy from exile."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it’s legal to cast that spell."
+    },
+    {
+      "oracle_id": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An effect may refer to a card, spell, or permanent that “has an Adventure.” This refers to a card, spell, or permanent that has an adventurer card’s set of alternative characteristics, even if they’re not being used and even if that card was never cast as an Adventure."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Casting a card as an Adventure isn’t casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An effect may refer to a card, spell, or permanent that “has an Adventure.” This refers to a card, spell, or permanent that has an adventurer card’s set of alternative characteristics, even if they’re not being used and even if that card was never cast as an Adventure."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it’s not possible to cast the copy from exile."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it’s legal to cast that spell."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "You must still follow any relevant timing rules for the permanent spell you cast from exile. Normally, you’ll be able to cast it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won’t give you permission to cast it as a permanent spell."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner’s graveyard as it resolves. For as long as it remains exiled, that player may cast it as a permanent spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won’t be exiled and the spell’s controller won’t be able to cast it as a permanent later."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An adventurer card is a permanent card in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it’s in your graveyard, Altar of Bhaal is an artifact card whose mana value is 2."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card’s normal characteristics. The spell’s color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it’s a token) or cease to be a copy (if it’s a nontoken permanent), and so you won’t be able to cast it as an Adventure."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Twincast can copy any instant or sorcery spell, not just one with targets."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast, the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "234a734b-ba28-4f1b-9d01-3c3e7d516590",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If the target is still legal as it resolves but the spell can't be countered for some reason, its controller will still create two Treasure tokens."
+    },
+    {
+      "oracle_id": "234a734b-ba28-4f1b-9d01-3c3e7d516590",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If the target is no longer legal as An Offer You Can't Refuse resolves, no Treasure tokens are created."
+    },
+    {
+      "oracle_id": "8ddfc283-c9b4-41a5-af88-cf0068e986cc",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Swan Song can target a spell that can't be countered. That spell won't be countered when Swan Song resolves, but its controller will get a Bird token."
+    },
+    {
+      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A copy of a spell can be countered like any other spell, but it must be countered individually. Countering a spell with storm won't affect the copies."
+    },
+    {
+      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "You may choose new targets for any of the copies. You can make different choices for each copy."
+    },
+    {
+      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "The triggered ability that creates the copies can itself be countered by anything that can counter a triggered ability. If it is countered, no copies will be put onto the stack."
+    },
+    {
+      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "The copies are put directly onto the stack. They aren't cast and won't be counted by other spells with storm cast later in the turn."
+    },
+    {
+      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Spells cast from zones other than a player's hand and spells that were countered are counted by the storm ability."
     }
   ]
 }

@@ -10,13 +10,22 @@ SOURCE_SUBJECT_VERSION = 'source_subject_version'
 _FIELDS = {'op', 'source', 'subject', 'mode', 'duration', SOURCE_SUBJECT_VERSION}
 
 
+def _source_prevention_shape_is_closed(value, *, runtime=False):
+    fields = set(value) - {'_runtime_source'} if runtime else set(value)
+    version = value.get(SOURCE_SUBJECT_VERSION)
+    if type(version) is not int:
+        return False
+    if version == 1:
+        return fields == _FIELDS
+    return version == 2 and fields == _FIELDS | {'damage_kind'} and value.get('damage_kind') == 'combat'
+
+
 def source_prevention_dependencies(value):
     if not isinstance(value, Mapping) or SOURCE_SUBJECT_VERSION not in value:
         return ()
-    if (set(value) != _FIELDS or value.get('op') != 'create_damage_prevention_shield'
+    if (not _source_prevention_shape_is_closed(value) or value.get('op') != 'create_damage_prevention_shield'
             or value.get('source') != '$source' or value.get('subject') != '$source.zone_object'
-            or value.get('mode') != 'all' or value.get('duration') != 'until_end_of_turn'
-            or type(value[SOURCE_SUBJECT_VERSION]) is not int or value[SOURCE_SUBJECT_VERSION] != 1):
+            or value.get('mode') != 'all' or value.get('duration') != 'until_end_of_turn'):
         raise ValueError('Source-incarnation prevention has a closed versioned schema')
     return ('damage.prevention.persistent_amount',)
 
@@ -24,8 +33,7 @@ def source_prevention_dependencies(value):
 def source_prevention_subject_unavailable(host, effect, *, actor):
     if SOURCE_SUBJECT_VERSION not in effect:
         return False
-    if (set(effect) - {'_runtime_source'} != _FIELDS
-            or type(effect[SOURCE_SUBJECT_VERSION]) is not int or effect[SOURCE_SUBJECT_VERSION] != 1
+    if (not _source_prevention_shape_is_closed(effect, runtime=True)
             or effect.get('op') != 'create_damage_prevention_shield'
             or type(effect.get('source')) is not str or not effect['source']
             or effect.get('mode') != 'all' or effect.get('duration') != 'until_end_of_turn'):

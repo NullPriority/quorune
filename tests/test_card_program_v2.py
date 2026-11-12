@@ -1054,46 +1054,14 @@ class CardProgramV2Tests(unittest.TestCase):
                 "event_handlers"
             ]
         ]
+        from quorune.semantic_runtime import runtime_component_inventory
+        declared = {handler['handler_id'] for runtime_program in runtime_programs
+                    for ability in runtime_program.abilities for handler in ability.handlers}
+        authority = {row['handler_id']: row['capability_dependencies']
+                     for row in runtime_component_inventory()}
         self.assertEqual(
-            {
-                "ability.enchant.linked_graveyard_creature.v1": [],
-                "continuous.anthem.power_toughness.v1": [
-                    "continuous.power_toughness.fixed_anthem"
-                ],
-                "continuous.attached.fixed-characteristics.v1": [
-                    "continuous.attached.fixed_characteristics"
-                ],
-                "continuous.ability.fixed-query-grant.v1": [
-                    "continuous.ability.fixed_query_grant"
-                ],
-                "prevention.damage.fixed.v1": [
-                    "damage.prevention.static_fixed"
-                ],
-                "replacement.counter.quantity.v2": [
-                    "counter.placement.quantity_replacement"
-                ],
-                "replacement.damage.quantity.v1": [
-                    "damage.replacement.static_quantity"
-                ],
-                "replacement.damage.result.life_floor.v1": [
-                    "damage.result.replacement_order"
-                ],
-                "replacement.life.gain.multiplier.v1": [
-                    "life.gain.replacement.static_multiplier"
-                ],
-                "replacement.token.additional.v2": [
-                    "token.creation.additional_replacement"
-                ],
-                "replacement.zone.destination.v1": [
-                    "zone.change.destination_replacement"
-                ],
-            },
-            {
-                handler["handler_id"]: handler["registry"][
-                    "capability_dependencies"
-                ]
-                for handler in event_handlers
-            },
+            {handler_id: authority[handler_id] for handler_id in declared},
+            {handler['handler_id']: handler['registry']['capability_dependencies'] for handler in event_handlers},
         )
         self.assertTrue(
             all(

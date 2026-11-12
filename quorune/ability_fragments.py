@@ -39,10 +39,12 @@ from .characteristic_fragments import (
     QueryPowerToughnessDefinitionSpec,
 )
 from .declaration_fragments import (
+    AttachedGoadSpec,
     DeclarationCostTemplate,
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
 )
+from .deck_copy_limits import DeckCopyLimitSpec
 from .defender_permission import DefenderAttackPermission
 from .block_capacity_model import BlockCapacitySpec
 from .landwalk_permission_model import LandwalkBlockPermission
@@ -800,6 +802,7 @@ StaticAbilityFragment: TypeAlias = (
     | SpellCastKeywordTriggerSpec
     | ToxicSpec
     | PartnerWithSpec
+    | DeckCopyLimitSpec
     | StaticComponentSpec
     | StaticComponentScopeSpec
     | CounterMaximumSpec
@@ -822,6 +825,7 @@ StaticAbilityFragment: TypeAlias = (
     | MutateSpec
     | AsUnblockedAssignmentPermission
     | ToughnessAssignmentSpec
+    | AttachedGoadSpec
     | UmbraArmorSpec
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
@@ -867,6 +871,8 @@ def ability_fragment_to_dict(
         kind = TOXIC_ABILITY_FRAGMENT_KIND
     elif isinstance(fragment, PartnerWithSpec):
         kind = "partner_with"
+    elif isinstance(fragment, DeckCopyLimitSpec):
+        kind = "deck_copy_limit"
     elif isinstance(fragment, StaticComponentSpec):
         kind = "static_component"
     elif isinstance(fragment, StaticComponentScopeSpec):
@@ -910,6 +916,8 @@ def ability_fragment_to_dict(
     elif isinstance(fragment, AsUnblockedAssignmentPermission):
         kind = "as_unblocked_assignment"
     elif isinstance(fragment,ToughnessAssignmentSpec):kind='toughness_assignment_rule'
+    elif isinstance(fragment, AttachedGoadSpec):
+        kind = "attached_goad"
     elif isinstance(fragment, UmbraArmorSpec):
         kind = 'umbra_armor'
     elif isinstance(fragment, DeclarationCostTemplate):
@@ -973,8 +981,8 @@ def ability_fragment_from_dict(
         return SpellCastKeywordTriggerSpec.from_dict(value["value"])
     if value["kind"] == TOXIC_ABILITY_FRAGMENT_KIND:
         return ToxicSpec.from_dict(value["value"])
-    if value["kind"] == "partner_with":
-        return PartnerWithSpec.from_dict(value["value"])
+    if value["kind"] in {"partner_with", "deck_copy_limit"}:
+        return (PartnerWithSpec if value["kind"] == "partner_with" else DeckCopyLimitSpec).from_dict(value["value"])
     if value["kind"] == "static_component":
         return StaticComponentSpec.from_dict(value["value"])
     if value["kind"] == "static_component_scope":
@@ -1050,6 +1058,11 @@ def ability_fragment_from_dict(
     if value["kind"] == "as_unblocked_assignment":
         return AsUnblockedAssignmentPermission.from_dict(value["value"])
     if value['kind']=='toughness_assignment_rule':return ToughnessAssignmentSpec.from_dict(value['value'])
+    if value["kind"] == "attached_goad":
+        try:
+            return AttachedGoadSpec.from_dict(value["value"])
+        except ValueError as exc:
+            raise AbilityFragmentError(str(exc)) from exc
     if value['kind'] == 'umbra_armor':
         return UmbraArmorSpec.from_dict(value['value'])
     if value["kind"] == "declaration_cost":
@@ -1099,6 +1112,7 @@ def canonical_ability_fragments(
                 SpellCastKeywordTriggerSpec,
                 ToxicSpec,
                 PartnerWithSpec,
+                DeckCopyLimitSpec,
                 StaticComponentSpec,
                 StaticComponentScopeSpec,
                 CounterMaximumSpec,
@@ -1121,6 +1135,7 @@ def canonical_ability_fragments(
                 MutateSpec,
                 AsUnblockedAssignmentPermission,
                 ToughnessAssignmentSpec,
+                AttachedGoadSpec,
                 UmbraArmorSpec,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,

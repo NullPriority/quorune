@@ -37,7 +37,7 @@ from quorune.semantic_runtime.explore import (
 )
 from quorune.semantics import SemanticProgram, SemanticRegistry
 from quorune.model import CardInstance, StackItem
-from tests.common import keep_all, load_assets, make_session
+from tests.common import keep_all, load_assets, make_session, register_current_fixture_programs
 
 
 def _row(
@@ -357,6 +357,9 @@ class ExploreEngineTests(unittest.TestCase):
             name="Doc Samson, Super Psychiatrist",
             ref="explore-additional",
         )
+        register_current_fixture_programs(self.database, engine.semantics, (
+            self.database.lookup("Doubling Season"), self.database.lookup("Doc Samson, Super Psychiatrist"),
+        ))
 
     def _select_replacement(self, session, seat: str) -> None:
         projected = StateProjector(

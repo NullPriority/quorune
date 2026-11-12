@@ -23,10 +23,14 @@ TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
 PAID_SACRIFICE_STAT_MECHANIC = 'paid-sacrifice-creature-stat'
 PAID_SACRIFICE_STAT_CAPABILITY = 'quantity_expression.paid_sacrifice_creature_stat'
 PAID_SACRIFICE_STAT_CONTEXT = 'paid_sacrifice_creature_stats'
+PAID_SACRIFICE_MANA_VALUE_MECHANIC = 'paid-sacrifice-mana-value'
+PAID_SACRIFICE_MANA_VALUE_CAPABILITY = 'quantity_expression.paid_sacrifice_mana_value'
+PAID_SACRIFICE_MANA_VALUE_CONTEXT = 'paid_sacrifice_mana_value'
 
 
 class ScalarAmountOrigin(StrEnum):
     PAID_SACRIFICE_CREATURE = 'paid_sacrifice_creature_stat'
+    PAID_SACRIFICE_MANA_VALUE = 'paid_sacrifice_mana_value'
     REFLEXIVE_PAID_CREATURE = 'reflexive_paid_creature_stat'
     CAST_SPELL_MANA_VALUE = 'committed_cast_spell_mana_value'
     CAST_MANA_COLOR_COUNT = 'cast_mana_color_count'
@@ -65,9 +69,10 @@ class ScalarEffectAmountSpec:
     double_for_subtype: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in range(1, 12):
+        if type(self.schema_version) is not int or self.schema_version not in range(1, 13):
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
         _validate_reflexive_paid_power(self)
+        _validate_paid_sacrifice_mana_value(self)
         if (self.schema_version == 10) != (self.origin is ScalarAmountOrigin.HISTORY_COUNT):
             raise PublicQueryAmountError("History counts require their explicit scalar version")
         if self.schema_version == 10:
@@ -126,6 +131,7 @@ class ScalarEffectAmountSpec:
             ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
             ScalarAmountOrigin.CAST_SPELL_MANA_VALUE, ScalarAmountOrigin.PAID_SACRIFICE_CREATURE,
             ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE,
+            ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
             raise PublicQueryAmountError("Scalar characteristic does not match its origin")
@@ -190,6 +196,15 @@ class ScalarEffectAmountSpec:
             raise PublicQueryAmountError(str(exc)) from exc
 
 
+def _validate_paid_sacrifice_mana_value(spec: ScalarEffectAmountSpec) -> None:
+    if (spec.schema_version == 12) != (spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE):
+        raise PublicQueryAmountError('Paid sacrifice mana value requires its explicit scalar version')
+    if spec.schema_version == 12 and (
+        spec.characteristic != 'mana_value' or spec.binding_id is not None or spec.coefficient != 1
+    ):
+        raise PublicQueryAmountError('Paid sacrifice amounts read one sealed mana value')
+
+
 def _validate_reflexive_paid_power(spec: ScalarEffectAmountSpec) -> None:
     if (spec.schema_version == 11) != (spec.origin is ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE):
         raise PublicQueryAmountError("Reflexive paid power requires its explicit scalar version")
@@ -234,6 +249,29 @@ class PaidCreatureStatSnapshot:
     def from_dict(cls, value):
         if not isinstance(value, Mapping) or set(value) != {'schema_version', 'logical_object_id', 'power', 'toughness'}:
             raise PublicQueryAmountError('Paid sacrifice stats are unavailable or malformed')
+        return cls(**value)
+
+
+@dataclass(frozen=True, slots=True)
+class PaidSacrificeManaValueSnapshot:
+    logical_object_id: str
+    mana_value: int
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if (type(self.logical_object_id) is not str or not self.logical_object_id
+                or type(self.mana_value) is not int or self.mana_value < 0
+                or type(self.schema_version) is not int or self.schema_version != 1):
+            raise PublicQueryAmountError('Paid sacrifice requires an incarnation and exact mana value')
+
+    def to_dict(self):
+        return {'schema_version': self.schema_version, 'logical_object_id': self.logical_object_id,
+                'mana_value': self.mana_value}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {'schema_version', 'logical_object_id', 'mana_value'}:
+            raise PublicQueryAmountError('Paid sacrifice mana value is unavailable or malformed')
         return cls(**value)
 
 

@@ -22,6 +22,8 @@ from .util import unique_preserving_order
 class DynamicCharacteristicHost(Protocol):
     state: Any
 
+    def card_record(self, card: Any) -> Any: ...
+
     def _copyable_characteristics(self, card: Any) -> Mapping[str, Any]: ...
 
     def _type_parts(
@@ -102,6 +104,7 @@ def query_characteristic_count(
         object_ids = tuple(
             object_id
             for player in host.state.players.values()
+            if quantity.schema_version != 7 or player.in_game
             for object_id in player.zones[zone]
         )
 
@@ -113,13 +116,15 @@ def query_characteristic_count(
     matched = []
     for object_id in object_ids:
         if object_id not in host.state.cards:
-            if quantity.schema_version == 2:
+            if quantity.schema_version in {2, 7}:
                 raise ValueError("A public collection member is unavailable")
             continue
         candidate = host.state.cards[object_id]
-        if (quantity.schema_version in {2, 6} or quantity.query.state_predicate is not None) and candidate.phased_out:
+        if (quantity.schema_version in {2, 6, 7} or quantity.query.state_predicate is not None) and candidate.phased_out:
             continue
-        if quantity.schema_version == 2 and quantity.query.zones == ("graveyard",) and quantity.query.token is False and candidate.object_kind != "card":
+        if quantity.schema_version in {2, 7} and zone == "graveyard" and quantity.query.token is False and candidate.object_kind != "card":
+            continue
+        if quantity.literal_name is not None and candidate.face_down:
             continue
         if quantity.exclude_source and candidate.ref == source.ref:
             continue
@@ -131,7 +136,8 @@ def query_characteristic_count(
         effective = host._effective_card_data(
             candidate,
             maximum_layer=(Layer.TEXT if quantity.reduction is CharacteristicQuantityReduction.DEVOTION
-                else Layer.ABILITY if quantity.schema_version == 6 else _maximum_layer),
+                else Layer.ABILITY if quantity.schema_version == 6
+                else Layer.COLOR if quantity.schema_version == 7 else _maximum_layer),
             _enforce_static_component_applicability=(
                 _enforce_static_component_applicability
             ),
@@ -152,8 +158,15 @@ def query_characteristic_count(
             **_quantity_attachment_state(host, candidate, quantity,
                 enforce_applicability=_enforce_static_component_applicability),
         )
-        if object_matches_query(row, quantity.query):
-            matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
+        if not object_matches_query(row, quantity.query):
+            continue
+        if quantity.literal_name is not None:
+            from .carddb_characteristics import public_object_rules_names
+
+            record = host.card_record(candidate) if zone == "graveyard" else None
+            if quantity.literal_name not in public_object_rules_names(candidate, effective, record):
+                continue
+        matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
     return reduce_public_quantity(matched, quantity.reduction, mana_colors=quantity.mana_colors) * quantity.multiplier + quantity.offset
 
 

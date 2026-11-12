@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """Closed input validation for immutable zone-replacement snapshots."""
 
+from copy import deepcopy
+from dataclasses import replace
 from typing import Any, Mapping, Sequence
 
 from ..entry_counters import EffectEntryCounter
@@ -70,6 +72,32 @@ def zone_change_subject_characteristics(host, card, destination, entry_character
             destination_controller=controller)
     card_types, subtypes, supertypes = host._type_parts(str(characteristics.get('type_line') or ''))
     return characteristics, controller, card_types, subtypes, supertypes
+
+
+def conditional_counter_entry_types(host, card, controller, *, copy_values=None):
+    """Read the entrant's type layer without adding it to the battlefield."""
+
+    from ..continuous_effects import Layer
+    from ..entry_copy import COPIABLE_FACE_FIELD
+    from ..zone_object_state import reset_card_after_zone_change
+    from .fixed_characteristic_settings import prospective_creature_type_characteristics
+
+    preview = deepcopy(card)
+    reset_card_after_zone_change(preview, destination="battlefield", stack_to_battlefield=False)
+    preview = replace(
+        preview, zone="battlefield", controller=controller,
+        zone_change_counter=preview.zone_change_counter + 1,
+    )
+    if copy_values is not None:
+        preview = replace(
+            preview, active_face=copy_values.get(COPIABLE_FACE_FIELD),
+            annotations={**preview.annotations, "copy_overrides": dict(copy_values)},
+        )
+    data = host._effective_card_data(preview, maximum_layer=Layer.TYPE)
+    data = prospective_creature_type_characteristics(
+        host, preview, data, destination_controller=controller,
+    )
+    return tuple(sorted(set().union(*host._type_parts(str(data["type_line"])))))
 
 
 def validated_zone_change_snapshot_inputs(

@@ -21,8 +21,8 @@ from .spell_additional_cost_templates import (
     fixed_zone_change_additional_cost_template,
 )
 from ..rules.capabilities import CapabilityRegistry
-from ..rules.casting_additional_costs import fixed_creature_sacrifice_price
 from .paid_sacrifice_amount_templates import paid_sacrifice_amount_template
+from .paid_sacrifice_condition_templates import paid_sacrifice_condition_template
 from .waterbend_costs import fixed_waterbend_additional_cost_template
 from .random_discard_spell_costs import fixed_random_discard_spell_cost_template
 
@@ -189,9 +189,15 @@ def _additional_cost_result_node(
     text: str,
     span: SourceSpan,
 ) -> OracleNode:
-    paid = (paid_sacrifice_amount_template(rows[1][1], source_name=card_name,
-        compile_fixed=lambda body: effect_template(body, card_name=card_name))
-        if fixed_creature_sacrifice_price(cost.cost_schema) else None)
+    def compile_fixed(body):
+        return effect_template(body, card_name=card_name)
+
+    paid = paid_sacrifice_amount_template(
+        rows[1][1], cost_schema=cost.cost_schema, source_name=card_name,
+        compile_fixed=compile_fixed,
+    ) or paid_sacrifice_condition_template(
+        rows[1][1], cost_schema=cost.cost_schema, compile_fixed=compile_fixed,
+    )
     template, effects, target_schema, effect_mechanics = paid or effect_template(rows[1][1], card_name=card_name)
     if template is None:
         residual_id = append_residual(

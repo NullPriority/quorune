@@ -36,6 +36,7 @@ class FixedUntapParticipationCompilerTests(unittest.TestCase):
         cases=(TEXT,"Legendary creatures don't untap during their controllers' untap steps.",
             "Mercenaries don't untap during their controllers' untap steps.",
             "Creatures with power 3 or greater don't untap during their controllers' untap steps.",
+            "Nonwhite creatures with power 3 or greater don't untap during their controllers' untap steps.",
             "Creatures with power 1 or less don't untap during their controllers' untap steps.",
             "Creatures with ice counters on them don't untap during their controllers' untap steps.",
             "Untap all green and/or blue creatures you control during each other player's untap step.",
@@ -56,7 +57,7 @@ class FixedUntapParticipationCompilerTests(unittest.TestCase):
 
     def test_unrepresented_qualifiers_malformed_descriptors_and_producer_omission_fail_closed(self):
         for text in (TEXT.replace('Nonbasic lands','Lands with an activated ability'),
-                TEXT.replace('Nonbasic lands','Nonwhite creatures with power 3 or greater'),
+                TEXT.replace('Nonbasic lands','Nonwhite creatures with power X or greater'),
                 TEXT.replace('Nonbasic lands','Creatures with power X or greater'),
                 TEXT.replace('Nonbasic lands','Creatures of the chosen type'),
                 "Untap this creature during each other player's untap step if you control a Desert."):
@@ -77,6 +78,72 @@ class FixedUntapParticipationCompilerTests(unittest.TestCase):
             with self.subTest(missing=missing):
                 self.assertNotEqual('exact',compile_oracle_card(record(TEXT,'Enchantment'),
                     capability_registry=CapabilityRegistry(raw)).status)
+
+
+    def test_conditional_untap_compiles_closed_current_state_scopes(self):
+        from quorune.compiler.conditional_untap_templates import conditional_untap_step_handler
+        from quorune.semantic_runtime.conditional_untap import ConditionalUntapStepParticipationHandler
+        from quorune.untap_step import CONDITIONAL_UNTAP_CAPABILITY
+
+        registry = load_default_capability_registry()
+        cases = (
+            ("This creature doesn't untap during your untap step if you control a Reflection.", "source_controller"),
+            ("This creature doesn't untap during your untap step if an opponent controls two or more creatures.",
+             "any_opponent"),
+            ("As long as you control another snow permanent, enchanted creature doesn't untap during its controller's untap step.",
+             "source_controller"),
+            ("Enchanted creature doesn't untap during its controller's untap step unless that player is the monarch.",
+             "subject_controller_not_monarch"),
+        )
+        handler = ConditionalUntapStepParticipationHandler()
+        for text, scope in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(record(text, "Enchantment"), capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual((text, 0, len(text)), (node.text, node.span.start, node.span.end))
+                descriptor, = node.handlers
+                self.assertEqual(scope, descriptor["public_condition"]["scope"])
+                self.assertIn(CONDITIONAL_UNTAP_CAPABILITY, node.capability_dependencies)
+                self.assertIn(CURRENT_ABILITY_FRAGMENT_COVERAGE, node.runtime_coverage)
+                if scope == "subject_controller_not_monarch":
+                    self.assertIn("variant.monarch.designate", node.capability_dependencies)
+                handler.validate(descriptor)
+        for invalid in (
+            cases[0][0].replace("you control a Reflection", "you have no cards in hand"),
+            cases[0][0].replace("you control a Reflection", "it attacked during your last turn"),
+            cases[3][0].replace("that player", "you"),
+            cases[2][0].replace("enchanted creature", "all creatures"),
+        ):
+            self.assertIsNone(conditional_untap_step_handler(invalid, source_name="Fixture"))
+        descriptor = conditional_untap_step_handler(cases[0][0], source_name="Fixture")[1]
+        for changed in (
+            {"schema_version": True}, {"public_condition": {"scope": "any", "condition": {}}},
+            {"subject": {**descriptor["subject"], "relation": "query"}},
+            {"instruction": {"kind": "additional", "maximum": None}},
+        ):
+            with self.subTest(changed=changed), self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, **changed})
+
+    def test_conditional_untap_producer_and_capability_withdrawal_fail_closed(self):
+        from quorune.untap_step import CONDITIONAL_UNTAP_CAPABILITY
+
+        text = "This creature doesn't untap during your untap step if you control a Reflection."
+        source = record(text, "Creature")
+        registry = load_default_capability_registry()
+
+        def witness():
+            self.assertEqual("exact", compile_oracle_card(source, capability_registry=registry).status)
+
+        witness()
+        with patch("quorune.compiler.conditional_untap_templates.conditional_untap_step_handler",
+                   return_value=None), self.assertRaises(AssertionError):
+            witness()
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == CONDITIONAL_UNTAP_CAPABILITY).update(
+            status="blocked", blockers=["Conditional untap withdrawal witness"],
+        )
+        self.assertNotEqual("exact", compile_oracle_card(source, capability_registry=CapabilityRegistry(raw)).status)
 
 
 class FixedUntapParticipationRuntimeTests(unittest.TestCase):
@@ -329,6 +396,125 @@ class FixedUntapParticipationRuntimeTests(unittest.TestCase):
         with patch.object(StaticUntapStepParticipationHandler,'lower',return_value=()):
             with self.assertRaises(AssertionError):
                 self.test_actual_back_to_basics_preserves_basic_mana_and_blocks_nonbasic_untap()
+
+
+    def test_actual_alirios_rechecks_its_controllers_reflection_before_the_step(self):
+        for remove_reflection in (False, True):
+            with self.subTest(remove_reflection=remove_reflection):
+                session = self.session(50232100 + remove_reflection)
+                source = self.add(session.engine, "Alirios, Enraptured", zone="hand")
+                removal = self.add(session.engine, "Murder", zone="hand")
+                for card in (source, removal):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 3, "U": 1, "B": 2})
+                self.checkpoint(session)
+                self.cast(session, source)
+                reflection, = (card for card in session.state.cards.values()
+                               if card.is_token and card.controller == "A" and card.zone == "battlefield")
+                self.assertIn("Reflection", session.engine._effective_card_data(reflection)["type_line"])
+                self.assertTrue(session.state.cards[source.object_id].tapped)
+                if remove_reflection:
+                    self.cast(session, removal, (reflection.ref,))
+                    self.assertNotEqual("battlefield", session.state.cards[reflection.object_id].zone)
+                session = self.replay(session, load=True)
+                self.end_step(session, active="D")
+                self.checkpoint(session)
+                self.next_turn(session, active="D")
+                self.assertEqual(("A", "upkeep"), (session.state.active_player, session.state.step))
+                self.assertEqual(not remove_reflection, session.state.cards[source.object_id].tapped)
+                self.replay(session, load=True)
+
+    def test_actual_walking_dream_requires_two_creatures_under_one_opponents_control(self):
+        for split in (False, True):
+            with self.subTest(split=split):
+                session = self.session(50232104 + split)
+                source = self.add(session.engine, "Walking Dream", seat="B")
+                self.add(session.engine, "Grizzly Bears", seat="A", ref="dream-first-creature")
+                self.add(session.engine, "Grizzly Bears", seat="C" if split else "A", ref="dream-second-creature")
+                self.assert_closed(session, source)
+                source.tapped = True
+                self.end_step(session)
+                self.checkpoint(session)
+                self.next_turn(session)
+                self.assertEqual(("B", "upkeep"), (session.state.active_player, session.state.step))
+                self.assertEqual(not split, session.state.cards[source.object_id].tapped)
+                self.replay(session, load=True)
+
+    def test_actual_winters_rest_uses_its_own_controller_and_allows_a_spell_untap(self):
+        for friendly_snow in (False, True):
+            with self.subTest(friendly_snow=friendly_snow):
+                session = self.session(50232108 + friendly_snow)
+                aura = self.add(session.engine, "Winter's Rest", zone="hand")
+                body = self.add(session.engine, "Grizzly Bears", seat="B")
+                twiddle = self.add(session.engine, "Twiddle", seat="B", zone="hand")
+                self.add(session.engine, "Snow-Covered Island", seat="A" if friendly_snow else "B")
+                self.add(session.engine, "Island", seat="B")
+                for card in (aura, twiddle):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 1, "U": 1})
+                self.checkpoint(session)
+                self.cast(session, aura, (body.ref,))
+                self.assertEqual(body.object_id, session.state.cards[aura.object_id].attached_to)
+                self.assertTrue(session.state.cards[body.object_id].tapped)
+                session = self.replay(session, load=True)
+                self.end_step(session)
+                self.checkpoint(session)
+                self.next_turn(session)
+                self.assertEqual(("B", "upkeep"), (session.state.active_player, session.state.step))
+                self.assertEqual(friendly_snow, session.state.cards[body.object_id].tapped)
+                if friendly_snow:
+                    cast = session.act("pilot:B", {
+                        "action_id": f"cast:{twiddle.ref}", "targets": [body.ref], "pay": "auto",
+                    })
+                    self.assertTrue(cast.ok, cast.summary)
+                    self.assertEqual("semantic.choice", self.resolve(session).kind)
+                    accepted = session.act("pilot:B", {"action_id": "choose", "choice": "untap"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertFalse(session.state.cards[body.object_id].tapped)
+                self.replay(session, load=True)
+
+    def test_actual_fall_from_favor_uses_the_attached_controllers_monarchy(self):
+        for holder_is_monarch in (False, True):
+            with self.subTest(holder_is_monarch=holder_is_monarch):
+                session = self.session(50232112 + holder_is_monarch)
+                aura = self.add(session.engine, "Fall from Favor", zone="hand")
+                body = self.add(session.engine, "Grizzly Bears", seat="B")
+                self.assert_closed(session, aura)
+                self.prepare(session, mana={"C": 2, "U": 1})
+                self.checkpoint(session)
+                self.cast(session, aura, (body.ref,))
+                self.assertEqual("A", session.state.monarch)
+                self.assertTrue(session.state.cards[body.object_id].tapped)
+                session = self.replay(session, load=True)
+                if holder_is_monarch:
+                    session.engine.become_monarch("B", reason="Prepared current monarch before the untap step")
+                self.end_step(session)
+                self.checkpoint(session)
+                self.next_turn(session)
+                self.assertEqual(("B", "upkeep"), (session.state.active_player, session.state.step))
+                self.assertEqual(not holder_is_monarch, session.state.cards[body.object_id].tapped)
+                self.replay(session, load=True)
+
+    def test_actual_crackdown_filters_current_color_and_inclusive_power(self):
+        session = self.session(50232117)
+        source = self.add(session.engine, "Crackdown")
+        blocked = self.add(session.engine, "Wandering Ones", seat="B", ref="nonwhite-exactly-three")
+        white = self.add(session.engine, "Wandering Ones", seat="B", ref="current-white-three")
+        small = self.add(session.engine, "Grizzly Bears", seat="B", ref="nonwhite-under-threshold")
+        self.assert_closed(session, source)
+        for card in (blocked, white):
+            card.counters["+1/+1"] = 2
+        self.effect(session, white, Layer.COLOR, "5", ContinuousOperation("set_colors", ("W", "U")))
+        for card in (blocked, white, small):
+            card.tapped = True
+        self.end_step(session)
+        self.checkpoint(session)
+        self.next_turn(session)
+        self.assertEqual(("B", "upkeep"), (session.state.active_player, session.state.step))
+        self.assertTrue(session.state.cards[blocked.object_id].tapped)
+        self.assertFalse(session.state.cards[white.object_id].tapped)
+        self.assertFalse(session.state.cards[small.object_id].tapped)
+        self.replay(session, load=True)
 
 
 if __name__=='__main__':

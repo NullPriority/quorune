@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import copy
 import json
-from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Callable, Iterable, Mapping
@@ -16,6 +15,7 @@ from .semantic_runtime import (
 )
 from .semantics import SemanticRegistry
 from .stack_resolution import trusted_generic_empty_resolution, physical_stack_record
+from .stack_resolution_inputs import StackResolutionInputs, capture_stack_resolutions
 
 
 def verified_replay_inputs(
@@ -37,23 +37,30 @@ def verified_replay_inputs(
     return manifest, semantics
 
 
-@dataclass(frozen=True,slots=True)
-class StackResolutionInputs(Mapping[str,Any]):
-    stack_items: Mapping[str,Any]
-    physical_cards: Mapping[str,Any]
-
-    def __getitem__(self,key):return self.stack_items[key]
-
-    def __iter__(self):return iter(self.stack_items)
-
-    def __len__(self):return len(self.stack_items)
-
-
 def capture_stack_resolution_inputs(state: Any) -> StackResolutionInputs:
     """Retain actual command-local sources without eager binding or DB queries."""
     items={item.ref:item for item in state.stack}
     cards={ref:state.cards.get(item.card_object_id) for ref,item in items.items()}
     return StackResolutionInputs(MappingProxyType(items),MappingProxyType(cards))
+
+
+def submit_with_resolution_capture(engine, initial, *, token, principal, action, payload):
+    """Submit through the authoritative port while observing actual resolutions."""
+    with capture_stack_resolutions(engine, initial) as capture:
+        result = engine.try_submit(token=token, principal=principal, action=action, payload=payload)
+    return result, capture.snapshot()
+
+
+def validate_command_card_programs_used(command_semantics, semantics, *, sequence):
+    recorded = command_semantics.get('card_programs_used')
+    if recorded is None:return
+    if not isinstance(recorded, Mapping):
+        raise ValueError(f'Malformed CardProgram provenance at command {sequence}')
+    keys = [str(value.get('key')) for value in command_semantics.get('programs_used', [])
+        if isinstance(value, Mapping) and value.get('key')]
+    current = semantics.card_program_fingerprints_for_keys(keys)
+    if {str(key):str(value) for key, value in recorded.items()} != current:
+        raise ValueError(f'CardProgram fingerprint mismatch at command {sequence}')
 
 
 def resolved_semantic_execution_provenance_rows(
@@ -63,23 +70,29 @@ def resolved_semantic_execution_provenance_rows(
     """Bind actual resolution rows with fresh inputs only when they are needed."""
     rows = []
     capabilities = None
-    captured=before_stack_items if isinstance(before_stack_items,StackResolutionInputs) else None
-    items=captured.stack_items if captured is not None else before_stack_items
+    for item, physical_card in _resolved_stack_inputs(events, before_event_sequence, before_stack_items):
+        if capabilities is None:
+            capabilities = load_default_capability_registry()
+        rows.append(semantic_execution_provenance_row(
+            engine, item.semantic_key, capability_registry=capabilities,
+            profile=capability_profile, stack_item=item, physical_card=physical_card,
+        ))
+    return rows
+
+
+def _resolved_stack_inputs(events, before_event_sequence, captured, *, require_capture=False):
+    items = captured.stack_items if isinstance(captured, StackResolutionInputs) else captured
     for event in events:
         if event.event_id <= before_event_sequence or event.code != "stack.resolve":
             continue
         stack_ref = str(event.details.get("stack") or "")
         item = items.get(stack_ref)
-        if item is None or not item.semantic_key:
+        if item is None:
+            if require_capture:raise ValueError('A resolved stack object has no command-local observation')
             continue
-        if capabilities is None:
-            capabilities = load_default_capability_registry()
-        rows.append(semantic_execution_provenance_row(
-            engine, item.semantic_key, capability_registry=capabilities,
-            profile=capability_profile, stack_item=item,
-            physical_card=captured.physical_cards.get(stack_ref) if captured is not None else None,
-        ))
-    return rows
+        if not item.semantic_key:
+            continue
+        yield item, captured.physical_cards.get(stack_ref) if isinstance(captured, StackResolutionInputs) else None
 
 
 def card_program_trust_provenance(
@@ -104,7 +117,7 @@ def runtime_trust_provenance() -> dict[str, Any]:
     capabilities = load_default_capability_registry()
     semantic_handlers = default_semantic_handler_registry()
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "capability_registry_fingerprint": capabilities.fingerprint,
         "capability_evidence_fingerprint": capabilities.evidence_fingerprint,
         "semantic_handler_registry_fingerprint": semantic_handlers.fingerprint,
@@ -252,8 +265,32 @@ def _validate_runtime_trust_provenance(
         return
     if not isinstance(recorded, Mapping):
         raise ValueError(f"{context} runtime trust provenance is malformed")
-    if copy.deepcopy(dict(recorded)) != runtime_trust_provenance():
+    if type(recorded.get('schema_version')) is not int or copy.deepcopy(dict(recorded)) != runtime_trust_provenance():
         raise ValueError(f"Runtime trust provenance mismatch in {context}")
+
+
+def validate_resolution_provenance(recorded, semantics, *, engine, events, before_event_sequence,
+        captured, profile, sequence):
+    """Verify every observed resolution, including repeated implicit spell keys."""
+    from collections import defaultdict, deque
+    resolved = tuple(_resolved_stack_inputs(events, before_event_sequence, captured, require_capture=True))
+    if (not isinstance(recorded, list) or any(not isinstance(row, Mapping) for row in recorded)
+            or [row.get('key') for row in recorded] != [item.semantic_key for item, _card in resolved]):
+        raise ValueError(f"Resolved semantic provenance is incomplete or spurious at command {sequence}")
+    if any(type(row.get('version')) is not int or type(row.get('builtin')) is not bool for row in recorded):
+        raise ValueError(f'Malformed resolved semantic provenance at command {sequence}')
+    pending = defaultdict(deque)
+    for item, card in resolved:
+        pending[item.semantic_key].append((item, card))
+
+    def implicit(key):
+        if not pending[key]:return None
+        item, card = pending[key].popleft()
+        return implicit_semantic_execution_provenance(engine, key,
+            stack_item=item, physical_card=card, include_spell_copies=True)
+
+    validate_programs_used_provenance(recorded, semantics, profile=profile,
+        require_runtime_provenance=True, sequence=sequence, implicit_provenance=implicit)
 
 
 def validate_manifest_runtime_provenance(

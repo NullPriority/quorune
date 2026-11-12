@@ -12,7 +12,8 @@
       "mechanics/registry.json",
       "platform/continuous-effect-performance-baseline.json",
       "platform/module-classifications.json",
-      "quorune/rules/capability-evidence.json"
+      "quorune/rules/capability-evidence.json",
+      "quorune/semantic_packs/compiled-dungeon-rooms.json"
     ],
     "markdown_statuses": [
       "generated"
@@ -119,10 +120,44 @@
       "dependent_change_policy": "outputs"
     },
     {
+      "id": "dungeon-room-programs",
+      "depends_on": [
+        "capability-evidence"
+      ],
+      "outputs": [
+        "quorune/semantic_packs/compiled-dungeon-rooms.json"
+      ],
+      "check": [
+        "scripts/update_dungeon_room_programs.py",
+        "--check"
+      ],
+      "write": [
+        "scripts/update_dungeon_room_programs.py",
+        "--write"
+      ],
+      "write_with_database": null,
+      "write_policy": "automatic",
+      "input_groups": [
+        "python-product"
+      ],
+      "input_paths": [
+        "tests/fixtures/dungeon-cards.json"
+      ],
+      "implementation_inputs": [
+        "scripts/update_dungeon_room_programs.py",
+        "scripts/build_test_database.py"
+      ],
+      "database_identity": "none",
+      "execution_class": "foundation",
+      "reuse_policy": "safe",
+      "dependent_change_policy": "outputs"
+    },
+    {
       "id": "compact-ci-card-dependencies",
       "depends_on": [
         "architecture-audit",
         "capability-evidence",
+        "dungeon-room-programs",
         "module-classifications",
         "reusable-pieces",
         "rules-derived"
@@ -158,7 +193,8 @@
     {
       "id": "compiler-corpus-coverage",
       "depends_on": [
-        "capability-evidence"
+        "capability-evidence",
+        "dungeon-room-programs"
       ],
       "outputs": [
         "coverage/oracle-coverage.json",

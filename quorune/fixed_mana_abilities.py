@@ -21,10 +21,10 @@ from .activation_condition_model import (
     activation_restriction_spec,
 )
 from .rules.activation_counter_cost import SourceCounterRemovalCost
-from .mana_restrictions import (
-    legacy_mana_spend_restriction_for_tail,
-    valid_mana_spend_restriction,
-)
+from .mana_restrictions import legacy_mana_spend_restriction_for_tail
+from .mana_restriction_model import valid_mana_ability_spend_restriction
+from .mana_spend_rules import decode_mana_spend_rule
+from .fixed_mana_spend_templates import fixed_mana_spend_rule_template
 from .replacement.immutable import FrozenMap, thaw_value
 from .util import normalize_mana_bundle
 from .fixed_mana_results import FixedManaResultSpec
@@ -35,6 +35,7 @@ MANA_COST_KEYS = ("GENERIC", *MANA_KEYS)
 FIXED_MANA_HANDLER_ID = "ability.activated.mana.fixed-output.v1"
 FIXED_MANA_RESULT_HANDLER_ID = 'ability.activated.mana.fixed-result.v2'
 FIXED_MANA_SELECTED_COST_HANDLER_ID='ability.activated.mana.selected-cost.v3'
+FIXED_MANA_SPEND_RULE_HANDLER_ID = "ability.activated.mana.spend-rule.v4"
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
 _SYMBOL_GROUP = re.compile(r"(?:\{[WUBRGC]\})+")
 _ANY_COLOR = re.compile(
@@ -276,11 +277,14 @@ class FixedActivatedManaAbilitySpec:
         ):
             raise FixedManaAbilityError("Priced fixed mana requires a closed hybrid tap filter")
         if self.spend_restriction is not None and (
-            not valid_mana_spend_restriction(self.spend_restriction)
+            not valid_mana_ability_spend_restriction(self.spend_restriction)
         ):
             raise FixedManaAbilityError(
                 "Fixed mana spending restriction is unsupported"
             )
+        spend_rule = decode_mana_spend_rule(self.spend_restriction)
+        if spend_rule is not None and spend_rule.requires_choice and self.sacrifice_source:
+            raise FixedManaAbilityError("Source-bound mana spending requires an available designation source")
         if self.activation_limit is not None and not isinstance(
             self.activation_limit, ActivationLimit
         ):
@@ -516,7 +520,7 @@ def _restricted_modes_are_closed(
     del modes
     if restriction is None:
         return True
-    return valid_mana_spend_restriction(restriction)
+    return valid_mana_ability_spend_restriction(restriction)
 
 
 def _without_activation_restriction(ability: Any, effect_text: str, *, source_name='') -> str | None:
@@ -587,8 +591,12 @@ def compile_fixed_activated_mana_ability(
     effect_text = _without_activation_restriction(ability, effect_text,source_name=source_name)
     if effect_text is None:
         return None
-    restriction = ability.mana_spend_restriction
-    base_effect = _without_spend_restriction(effect_text, restriction)
+    typed_spend = fixed_mana_spend_rule_template(effect_text)
+    if typed_spend is None:
+        restriction = ability.mana_spend_restriction
+        base_effect = _without_spend_restriction(effect_text, restriction)
+    else:
+        base_effect, restriction = typed_spend
     if base_effect is None:
         return None
     result = None
@@ -627,6 +635,8 @@ def compile_fixed_activated_mana_ability(
             result is not None and result.kind=='damage_controller'
             and ability.builtin_semantic_key==f'builtin:mana-result-damage-controller:{result.amount}'))
         or (result is not None and (ability.sacrifice_source or ability.choices))
+        or (typed_spend is not None and (result is not None or ability.choices
+            or ability.sacrifice_source and decode_mana_spend_rule(restriction).requires_choice))
         or ability.target_schema is not None
         or ability.crew_threshold is not None
         or not _supported_activation_constraints(ability)
@@ -658,9 +668,17 @@ def compile_fixed_activated_mana_ability(
 def fixed_mana_handler_descriptor(
     spec: FixedActivatedManaAbilitySpec,
 ) -> dict[str, Any]:
+    if decode_mana_spend_rule(spec.spend_restriction) is not None:
+        handler_id, version = FIXED_MANA_SPEND_RULE_HANDLER_ID, 4
+    elif spec.choices:
+        handler_id, version = FIXED_MANA_SELECTED_COST_HANDLER_ID, 3
+    elif spec.result is not None:
+        handler_id, version = FIXED_MANA_RESULT_HANDLER_ID, 2
+    else:
+        handler_id, version = FIXED_MANA_HANDLER_ID, 1
     return {
-        "handler_id": FIXED_MANA_SELECTED_COST_HANDLER_ID if spec.choices else FIXED_MANA_RESULT_HANDLER_ID if spec.result is not None else FIXED_MANA_HANDLER_ID,
-        "schema_version": 3 if spec.choices else 2 if spec.result is not None else 1,
+        "handler_id": handler_id,
+        "schema_version": version,
         "event": "activate",
         "ability": spec.to_dict(),
     }

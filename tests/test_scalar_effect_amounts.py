@@ -46,6 +46,40 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_target_mana_value_sequence_promotes_only_its_validated_fixed_shape(self):
+        from dataclasses import replace
+        from quorune.compiler.public_query_effect_amounts import public_query_amount_program_is_closed
+        from quorune.semantics import SemanticRegistry
+
+        record = scalar_record(
+            "Destroy target creature or enchantment an opponent controls. "
+            "You lose life equal to that permanent's mana value.", type_line="Sorcery",
+        )
+        registry = SemanticRegistry(include_builtin_packs=False)
+        register_generated_programs(
+            SimpleNamespace(rulings=lambda card: ()), registry, (record,),
+            capability_registry=load_default_capability_registry(), capability_profile="commander_review",
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        program = registry.get(record.oracle_id + ":spell:front")
+        self.assertEqual("trusted", program.trust_level)
+        self.assertFalse(program.requires_arbiter)
+        required = program.capability_dependencies
+        self.assertTrue(public_query_amount_program_is_closed(program, required_dependencies=required))
+        for capability in required:
+            with self.subTest(missing=capability), self.assertRaises(ValueError):
+                replace(program, capability_dependencies=tuple(c for c in required if c != capability))
+        for change in ({"characteristic": "power"}, {"origin": "source_characteristic"}, {"extra": True}):
+            with self.subTest(scalar=change):
+                effects = deepcopy(program.effects)
+                effects[1]["amount"].update(change)
+                self.assertFalse(public_query_amount_program_is_closed(
+                    replace(program, effects=effects), required_dependencies=required,
+                ))
+        with mock.patch("quorune.compiler.public_query_effect_amounts.scalar_amount_specs", return_value=()):
+            self.assertFalse(public_query_amount_program_is_closed(program, required_dependencies=required))
+
     def test_typed_event_player_shapes_check_every_subscribed_occurrence(self):
         from quorune.compiler.event_player_results import _event_player, EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_RESULT_CAPABILITY
         from quorune.rules.event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition

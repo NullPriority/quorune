@@ -5,7 +5,9 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
+from ..attack_batch_model import DIRECT_PLAYER_ATTACK_CAPABILITY, DIRECT_PLAYER_ATTACK_EVENT, direct_player_attack_condition
 from ..creature_subtypes import canonical_creature_subtype
+from ..initiative_model import TAKE_INITIATIVE_CAPABILITY
 from ..rules.event_subscriptions import (
     FixedEventSubscription, LAND_PLAY_EVENT, fixed_event_subscription_condition,
 )
@@ -802,6 +804,33 @@ def _public_attack_spec(
     )
 
 
+def direct_player_attack_binding_spec(text: str) -> FixedPublicEventBindingSpec | None:
+    match = re.fullmatch(
+        r"Whenever (?P<head>you attack a player|you attack the player who has the initiative|"
+        r"(?:an opponent|a player) attacks you)(?P<count> with two or more creatures)?, (?P<body>.+)",
+        text, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    head = match["head"].casefold()
+    if head.startswith("you attack"):
+        if match["count"]:
+            return None
+        variant = ("controller_attacks_initiative_holder" if head.endswith("initiative")
+                   else "controller_attacks_player")
+    else:
+        variant = ("opponent_attacks_controller_with_two" if match["count"]
+                   else "opponent_attacks_controller")
+    capabilities = (DIRECT_PLAYER_ATTACK_CAPABILITY,)
+    if variant == "controller_attacks_initiative_holder":
+        capabilities += (TAKE_INITIATIVE_CAPABILITY,)
+    return _spec(
+        DIRECT_PLAYER_ATTACK_EVENT, variant, match["body"], "fixed-counter-direct-player-attack-v1",
+        "trigger-event-normalized-public-action", condition=direct_player_attack_condition(variant),
+        capabilities=capabilities,
+    )
+
+
 def _public_cycle_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
@@ -830,7 +859,8 @@ def fixed_public_action_event_binding_spec(
     """Parse one bounded action/result occurrence without compiling its body."""
 
     return (
-        _public_attack_spec(material_line)
+        direct_player_attack_binding_spec(material_line)
+        or _public_attack_spec(material_line)
         or _public_land_play_spec(material_line)
         or _public_expend_spec(material_line)
         or _public_ring_spec(material_line)

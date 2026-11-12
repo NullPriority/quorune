@@ -15,6 +15,7 @@ from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec, LIVE_B
 
 PUBLIC_QUERY_AMOUNT_KIND = "public_query_effect_amount"
 PUBLIC_QUERY_AMOUNT_CAPABILITY = "quantity_expression.public_query_effect_amount"
+SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY = "quantity_expression.source_relative_effect_count"
 CAST_X_AMOUNT_KIND = "cast_x_effect_amount"
 DECLARED_AMOUNT_CAPABILITY = "quantity_expression.declared_effect_amount"
 
@@ -65,7 +66,8 @@ def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec | Liv
     if quantity.schema_version == 3:
         return all(_quantity_is_public_amount_closed(term) for term in quantity.terms)
     return (quantity.scope in _ALLOWED_SCOPES and quantity.query is not None
-            and not quantity.exclude_source and not quantity.exclude_attached_object
+            and (not quantity.exclude_source or quantity.schema_version == 7 and quantity.query.zones == ("battlefield",))
+            and not quantity.exclude_attached_object
             and _query_is_layer_five_closed(quantity.query))
 
 
@@ -79,11 +81,11 @@ class PublicQueryAmountSpec:
     binding_id: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise PublicQueryAmountError(
                 "Unsupported public query effect amount schema version"
             )
-        if self.schema_version == 1 and self.binding_id is not None:
+        if self.schema_version != 2 and self.binding_id is not None:
             raise PublicQueryAmountError("Independent amounts cannot carry a declaration binding")
         if self.schema_version == 2 and (
             type(self.binding_id) is not str or not self.binding_id
@@ -99,10 +101,24 @@ class PublicQueryAmountSpec:
             raise PublicQueryAmountError(
                 "Public query effect amount requires a typed quantity"
             )
-        if not _quantity_is_public_amount_closed(self.quantity):
+        if self.schema_version == 3:
+            if self.quantity != CharacteristicQuantitySpec(
+                scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+                query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+                exclude_source=True,
+            ):
+                raise PublicQueryAmountError("Attack-relative amounts require one controlled creature count")
+        elif not _quantity_is_public_amount_closed(self.quantity):
             raise PublicQueryAmountError(
                 "Public query effect amount requires a cycle-safe public zone query"
             )
+
+    @property
+    def uses_source_relative_count(self) -> bool:
+        return self.schema_version == 3 or (
+            isinstance(self.quantity, CharacteristicQuantitySpec)
+            and self.quantity.schema_version == 7 and self.quantity.exclude_source
+        )
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -192,6 +208,16 @@ def cast_x_runtime_dependencies(value: Any) -> tuple[str,...]:
     return ()
 
 
+def source_relative_count_capabilities(value: Mapping[str, Any]) -> tuple[str, ...]:
+    quantity = value.get("quantity")
+    named_source = (isinstance(quantity, Mapping) and quantity.get("schema_version") == 7
+        and quantity.get("exclude_source") is True)
+    if value.get("schema_version") != 3 and not named_source:
+        return ()
+    spec = PublicQueryAmountSpec.from_dict(value)
+    return (SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY,) if spec.uses_source_relative_count else ()
+
+
 def scope_declared_amount_bindings(value: Any, source_scope: str) -> Any:
     """Give separate Oracle nodes separate declarations, even for identical prose."""
     if isinstance(value, Mapping):
@@ -214,6 +240,7 @@ __all__ = [
     "cast_x_runtime_dependencies",
     "PUBLIC_QUERY_AMOUNT_CAPABILITY",
     "PUBLIC_QUERY_AMOUNT_KIND",
+    "SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY",
     "PublicQueryAmountError",
     "PublicQueryAmountSpec",
     "scope_declared_amount_bindings",

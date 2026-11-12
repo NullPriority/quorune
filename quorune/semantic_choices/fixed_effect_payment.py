@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 from dataclasses import replace
 
-from ..fixed_effect_payment import FixedEffectPaymentSpec
+from ..fixed_effect_payment import RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
 from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap
 from ..rules.blight_model import blight_decline_branch_is_closed
@@ -20,8 +20,10 @@ from .model import (
 )
 from .optional_effect import _represented_effect
 from .blight import blight_creature_can_receive, blight_placement_intent
+from .controlled_return import controlled_return_intent
 
-_OBJECT_PAYMENT_KINDS=frozenset({'discard','sacrifice','exile','tap','source_sacrifice','blight'})
+_CONTROLLED_OBJECT_PAYMENTS = frozenset({'sacrifice', 'tap', 'blight', RETURN_PAYMENT_KIND})
+_OBJECT_PAYMENT_KINDS = _CONTROLLED_OBJECT_PAYMENTS | {'discard', 'exile', 'source_sacrifice'}
 
 
 def _object_payment_count(spec):
@@ -68,7 +70,8 @@ def _validated(
         raise SemanticChoiceError(str(exc)) from exc
     if ('cost' in effect) != (spec.kind == 'mana') or spec.kind == 'mana' and dict(effect['cost']) != dict(spec.requirements):
         raise SemanticChoiceError('Fixed payment mana identity changed')
-    if spec.kind in {'discard','exile','mana_discard'} and spec.predicate.owner != actor or spec.kind in {'sacrifice','tap','blight'} and spec.predicate.controller != actor:
+    if (spec.kind in {'discard','exile','mana_discard'} and spec.predicate.owner != actor
+            or spec.kind in _CONTROLLED_OBJECT_PAYMENTS and spec.predicate.controller != actor):
         raise SemanticChoiceError('Fixed payment object relation changed')
     effects = effect['effects']
     if "declined_effects" in effect:
@@ -77,11 +80,16 @@ def _validated(
         effects = effect["declined_effects"]
     if not isinstance(effects, (tuple, list)) or not 1 <= len(effects) <= 4:
         raise SemanticChoiceError('Fixed payment needs closed typed consequences')
+    consequences = []
     for nested in effects:
         if not isinstance(nested, Mapping) or nested.get('op') in {'offer_optional_effect', 'offer_optional_mana_payment'}:
             raise SemanticChoiceError('Fixed payments cannot nest')
+        if (spec.kind == RETURN_PAYMENT_KIND and nested.get("op") == "grant_declaration_restriction_until_end_of_turn"
+                and "card" in nested and nested["card"] is None):
+            continue
         _represented_effect(nested, actor=actor, query=query, allow_event_player_results=True)
-    return spec, tuple(FrozenMap(nested) for nested in effects)
+        consequences.append(FrozenMap(nested))
+    return spec, tuple(consequences)
 
 
 def prepare_fixed_effect_payment(
@@ -138,17 +146,18 @@ def prepare_fixed_payment_cost(
             candidates = context.query.objects(
                 zones=spec.predicate.zones,
                 owner=actor if spec.kind in {'discard','exile'} else None,
-                controller=actor if spec.kind in {'sacrifice','tap','blight'} else None,
+                controller=actor if spec.kind in _CONTROLLED_OBJECT_PAYMENTS else None,
             )
             legal = tuple(sorted(
                 (row for row in candidates if _object_matches_payment(row, spec, actor, context.query)),
                 key=lambda row: (row.ref, row.logical_object_id),
             ))
         payable = len(legal) >= required
-        if spec.mandatory and not payable:
+        if not payable and (spec.mandatory or spec.kind == RETURN_PAYMENT_KIND):
+            reason = "Mandatory discard is unavailable" if spec.mandatory else "No eligible permanent to return"
             return SemanticChoicePreparation(
                 request=None, continuation_effect=FrozenMap(effect),
-                auto_continue=AutoContinue("Mandatory discard is unavailable"),
+                auto_continue=AutoContinue(reason),
             )
         choice = ObjectChoice(
             field_name='cards', legal_refs=tuple(row.ref for row in legal),
@@ -157,7 +166,7 @@ def prepare_fixed_payment_cost(
             visibility='actor_private' if spec.kind == 'discard' else 'public',
             allowed_cardinalities=((0, required) if payable else (0,)) if required > 1 else None,
             owner_relation='actor' if spec.kind in {'discard','exile'} else 'any',
-            controller_relation='actor' if spec.kind in {'sacrifice','tap','source_sacrifice','blight'} else 'any',
+            controller_relation='actor' if spec.kind in _CONTROLLED_OBJECT_PAYMENTS or spec.kind == 'source_sacrifice' else 'any',
         )
     elif spec.kind=='remove_source_counter':
         source=_source_counter_payment_row(spec,context.query)
@@ -204,6 +213,8 @@ def complete_fixed_effect_payment(
 
 
 def _object_payment_intent(spec, actor, selected, label):
+    if spec.kind == RETURN_PAYMENT_KIND:
+        return controlled_return_intent(actor, selected, label)
     if spec.kind == "blight":
         return blight_placement_intent(actor, selected[0], spec.amount, label, effect_generated=False)
     if spec.kind == "tap":

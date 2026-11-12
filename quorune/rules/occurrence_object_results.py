@@ -31,6 +31,14 @@ def _permanent_occurrence_subscriptions(program):
 
 
 def occurrence_object_runtime_dependencies(program):
+    from .attachment_action_capability_shapes import targeted_equipment_attachment_runtime_dependencies
+    from .attachment_actions import entry_equipment_attachment_runtime_dependencies
+    from ..event_card_return import event_library_move_runtime_dependencies
+
+    if required := (entry_equipment_attachment_runtime_dependencies(program)
+                    or targeted_equipment_attachment_runtime_dependencies(program)
+                    or event_library_move_runtime_dependencies(program)):
+        return required
     from .creature_power_damage_capability_shapes import occurrence_power_damage_runtime_dependencies
     if required := occurrence_power_damage_runtime_dependencies(program):
         return required
@@ -95,6 +103,12 @@ def occurrence_object_runtime_dependencies(program):
     controller=any(isinstance(e.get(field),Mapping) and e[field].get('kind')=='occurrence_controller_information'
         for e in program.effects for field in ('target','player'))
     if controller:
+        if program.event == 'creature.attacks':
+            from .event_player_result_shapes import attached_combat_controller_runtime_dependencies
+            required = attached_combat_controller_runtime_dependencies(program)
+            if not required:
+                raise ValueError('Attached combat controller information requires a closed life instruction')
+            return required
         if program.event == 'creature.blocks':
             from .event_player_result_shapes import blocking_controller_runtime_dependencies
             required = blocking_controller_runtime_dependencies(program)

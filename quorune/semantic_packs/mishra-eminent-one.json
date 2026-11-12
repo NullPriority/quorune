@@ -117,23 +117,6 @@
       }
     },
     {
-      "key": "bb329a5c-b9f9-4973-a53f-090024146325:spell:front",
-      "label": "Red Elemental Blast",
-      "oracle_id": "bb329a5c-b9f9-4973-a53f-090024146325",
-      "effects": [{"op": "counter_or_destroy_blue", "target": "$target.0"}],
-      "destination": "graveyard",
-      "target_schema": {"count": 1, "selector": "blue_spell_or_permanent"},
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation"],
-      "tests": ["test_red_elemental_blast_targets_zimone"],
-      "provenance": {
-        "source_oracle_hash": "baca93ae5aa10651b17803aed248264090f0ffbb80b899881b96c68abb294806",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "vertical-slice",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "ecc435e2-deb1-420a-a79f-01dd08747314:spell:front",
       "label": "Pyroblast",
       "oracle_id": "ecc435e2-deb1-420a-a79f-01dd08747314",

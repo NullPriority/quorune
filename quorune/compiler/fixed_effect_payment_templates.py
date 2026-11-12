@@ -9,13 +9,15 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..fixed_effect_payment import (
-    FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_DISCARD_PAYMENT_VERSION, FixedEffectPaymentSpec,
+    FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_DISCARD_PAYMENT_VERSION,
+    RETURN_PAYMENT_KIND, RETURN_PAYMENT_VERSION, FixedEffectPaymentSpec, creature_or_vehicle_sacrifice_predicate,
 )
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..rules.blight_model import BLIGHT_PAYMENT_VERSION, blight_creature_predicate, blight_decline_branch_is_closed
 from ..util import mana_cost_to_vector, stable_json
 from .blight_templates import fixed_blight_effect_template
+from .controlled_return_templates import controlled_return_scope
 from .optional_payment_templates import OPTIONAL_MANA_PAYMENT_OPERATION
 from .spell_additional_cost_templates import (
     fixed_sacrifice_additional_cost_template, fixed_zone_change_additional_cost_template,
@@ -79,9 +81,14 @@ def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False
         parsed=fixed_zone_change_additional_cost_template(clause)
         if parsed is None or parsed.operation!='discard_one':return None
         return FixedEffectPaymentSpec('discard',predicate=replace(parsed.predicate,owner='$controller'))
+    if value.casefold() == "sacrifice a creature or vehicle":
+        return FixedEffectPaymentSpec("sacrifice", predicate=creature_or_vehicle_sacrifice_predicate("$controller"))
     if value.casefold().startswith('sacrifice '):
-        another=bool(re.match(r'sacrifice another ',value,re.I))
-        if another:clause='As an additional cost to cast this spell, '+re.sub(r'^sacrifice another ', 'sacrifice a ',value,flags=re.I)+'.'
+        another = re.fullmatch(r'sacrifice another (?P<subject>.+)', value, re.I)
+        if another:
+            subject = another['subject']
+            article = 'an' if subject[0].casefold() in 'aeiou' else 'a'
+            clause = f'As an additional cost to cast this spell, sacrifice {article} {subject}.'
         parsed=fixed_sacrifice_additional_cost_template(clause)
         from ..object_predicate import ObjectQuerySpec
         if parsed is not None:predicate=ObjectQuerySpec.from_dict(parsed.descriptor['predicate'])
@@ -139,7 +146,9 @@ def _owned_graveyard_exile_payment(value):
     except (TypeError,ValueError):return None
 
 
-def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], Compiled]) -> Compiled | None:
+def fixed_effect_payment_template(
+    text: str, *, compile_effect: Callable[[str], Compiled], source_is_permanent: bool | None = None,
+) -> Compiled | None:
     match = _MANDATORY_DISCARD.fullmatch(text.strip())
     declined = False
     if match is not None:
@@ -155,6 +164,12 @@ def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], 
                 return None
             declined = True
         cost = fixed_effect_payment_spec(match["cost"], allow_source_sacrifice=True, allow_hybrid_mana=not declined)
+        if cost is None and not declined:
+            returned = controlled_return_scope(match["cost"], source_is_permanent=source_is_permanent)
+            if returned is not None and (returned.minimum, returned.maximum) == (1, 1):
+                cost = FixedEffectPaymentSpec(
+                    RETURN_PAYMENT_KIND, predicate=returned.predicate, schema_version=RETURN_PAYMENT_VERSION,
+                )
     body=match['body'].strip()
     if cost is None or _OPEN.search(body) or '"' in body:return None
     template,effects,schema,mechanics=compile_effect(body)
@@ -162,6 +177,10 @@ def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], 
         from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
         source_result=FixedSourceCharacteristicsTemplate(source_kind='permanent',power=effects[0]['power'],toughness=effects[0]['toughness'])
         template,effects,schema,mechanics=source_result.compiled()
+    if cost.kind == RETURN_PAYMENT_KIND and source_is_permanent is True:
+        from .source_self_effect_templates import pin_source_result_incarnation
+
+        template, effects, schema, mechanics = pin_source_result_incarnation((template, effects, schema, mechanics))
     if template is None or not 1<=len(effects)<=4 or not mechanics or any(
         effect.get('op') in {'offer_optional_effect',OPTIONAL_MANA_PAYMENT_OPERATION} for effect in effects
     ) or FIXED_EFFECT_PAYMENT_MECHANIC in mechanics:return None
@@ -180,12 +199,15 @@ def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], 
             tuple(dict.fromkeys((FIXED_EFFECT_PAYMENT_MECHANIC,*mechanics))))
 
 
-def fixed_effect_payment_with_mandatory_prefix(text: str, *, compile_effect: Callable[[str], Compiled]) -> Compiled | None:
+def fixed_effect_payment_with_mandatory_prefix(
+    text: str, *, compile_effect: Callable[[str], Compiled], source_is_permanent: bool | None = None,
+) -> Compiled | None:
     """One independently typed mandatory clause stays outside payment scope."""
     match=re.fullmatch(r"(?P<first>.+?\.) (?:Then )?(?P<payment>You may .+)",text.strip(),re.I)
     if match is None or _OPEN.search(match['first']):return None
     first=compile_effect(match['first'])
-    paid=fixed_effect_payment_template(match['payment'],compile_effect=compile_effect)
+    paid=fixed_effect_payment_template(match['payment'],compile_effect=compile_effect,
+        source_is_permanent=source_is_permanent)
     if first[0] is None or len(first[1])!=1 or paid is None or first[2] is not None and paid[2] is not None:return None
     return ('fixed-payment-mandatory-prefix-v2',(*first[1],*paid[1]),first[2]or paid[2],
             tuple(dict.fromkeys(('fixed-effect-clause-sequence',*first[3],*paid[3]))))

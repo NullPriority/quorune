@@ -15,8 +15,9 @@ def special_trigger_envelope_capabilities(dependencies, mechanics):
 def special_result_trigger_runtime_dependencies(program):
     """Bind executable Manifest/half-life results and their subscriptions."""
     from collections.abc import Mapping
-    from .manifest_shapes import manifest_node_capabilities
+    from .manifest_shapes import manifest_node_capabilities, validate_manifest_result_envelope
     from ..fractional_quantity_model import HalfQuantitySpec,HALF_QUANTITY_KIND,HALF_LIFE_CAPABILITY
+    validate_manifest_result_envelope(program)
     required=set();manifest=False;half=False
     for effect in program.effects:
         if effect.get('op')=='manifest_card':
@@ -59,6 +60,20 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    from .event_counter_threshold import EVENT_COUNTER_THRESHOLD_MECHANIC, event_counter_threshold_node_capabilities
+    if EVENT_COUNTER_THRESHOLD_MECHANIC in mechanics:
+        return event_counter_threshold_node_capabilities(effects, target_schema)
+    from .controlled_return import CONTROLLED_RETURN_FIELD, controlled_return_node_capabilities
+    from .distinct_sacrifices import DISTINCT_SACRIFICE_FIELD, distinct_sacrifice_node_capabilities
+    from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD, captured_draw_cast_node_capabilities
+    if len(effects) == 1 and CAPTURED_DRAW_CAST_FIELD in effects[0]:
+        return captured_draw_cast_node_capabilities(effects=effects, target_schema=target_schema)
+    if len(effects) == 1 and DISTINCT_SACRIFICE_FIELD in effects[0]:
+        return distinct_sacrifice_node_capabilities(effects=effects, target_schema=target_schema)
+    if len(effects) == 1 and CONTROLLED_RETURN_FIELD in effects[0]:
+        return controlled_return_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
     from ..alternative_discard_model import ALTERNATIVE_DISCARD_MECHANIC
     if ALTERNATIVE_DISCARD_MECHANIC in mechanics:
         from .alternative_discard_shapes import alternative_discard_node_capabilities
@@ -98,6 +113,10 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
             mechanics=mechanics,cost_schema=cost_schema)
     from ..compiler.reanimation_templates import RELATIVE_TARGET_REANIMATION_MECHANIC
     if RELATIVE_TARGET_REANIMATION_MECHANIC in mechanics:
+        from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_MECHANIC
+        if REANIMATION_ENTRY_COUNTER_MECHANIC in mechanics:
+            from .reanimation_entry_counters import reanimation_entry_counter_node_capabilities
+            return reanimation_entry_counter_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
         from .reanimation_capability_shapes import relative_target_reanimation_node_capabilities
         return relative_target_reanimation_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
     from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC

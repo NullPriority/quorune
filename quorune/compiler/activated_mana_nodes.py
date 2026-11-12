@@ -23,6 +23,7 @@ from ..fixed_mana_abilities import (
     compile_fixed_activated_mana_ability,
     fixed_mana_handler_descriptor,
 )
+from ..mana_spend_rules import decode_mana_spend_rule
 from ..effect_contracts import REANIMATE_OPERATION
 from ..fixed_top_exile import FIXED_TOP_EXILE_OPERATION
 from ..preparation_model import PREPARATION_RESULT_OPERATION
@@ -101,6 +102,9 @@ def fixed_activated_mana_node(
             capability_profile, residuals, source_name=source_name,
         )
     capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
+    spend_rule = decode_mana_spend_rule(spec.spend_restriction)
+    if spend_rule is not None:
+        capabilities.extend(spend_rule.capability_dependencies)
     if spec.choices:capabilities.extend(('activation.selected_zone_change.fixed','activation.selected_tap.fixed'))
     if spec.result is not None:
         from ..fixed_mana_results import FIXED_MANA_RESULT_CAPABILITY
@@ -372,6 +376,10 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "detain_permanents",
     "restrict_permanent_actions_until_next_turn",
     "grant_keyword_until_end_of_turn",
+    "grant_next_spell_payment",
+    "grant_cast_permission",
+    "grant_cast_cascade",
+    "next_spell_uncounterable",
     "grant_declaration_restriction_until_end_of_turn",
     "offer_draw",
     "offer_optional_effect", "offer_optional_mana_payment",
@@ -434,8 +442,10 @@ def _activated_effect_dependency_gate(
     }
     capability_shaped_effect = (
         len(effects) == 1
-        and str(effects[0].get("op") or "")
-        in _CAPABILITY_SHAPED_EFFECT_OPERATIONS
+        and (
+            str(effects[0].get("op") or "") in _CAPABILITY_SHAPED_EFFECT_OPERATIONS
+            or effects[0] == {"op": "manifest_card", "player": "$controller", "mode": "top"}
+        )
     )
     closed_prevention_effect = (
         "cr-615-prevention-effects" in mechanics
@@ -665,6 +675,13 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    if text.casefold().startswith("add "):
+        from .fixed_stack_spell_copy import next_cast_copy_template
+
+        # This body produces mana immediately. The stack-resolution
+        # composition cannot own that activation.
+        if next_cast_copy_template(text.partition(". ")[2]) is not None:
+            return None, (), None, ()
     from .return_to_hand_templates import opposing_graveyard_return_sequence_template
 
     graveyard_return = opposing_graveyard_return_sequence_template(

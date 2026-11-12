@@ -17,6 +17,17 @@ accepted command additionally pins the card programs and compact runtime
 bindings actually used. Checkpoints accelerate recovery;
 commands remain the authority for deterministic verification.
 
+A command-local capture observes the resolver's actual stack objects and
+physical spell sources. It includes spells created and completed within one
+command while preserving the separate initial-stack snapshot used by ordered
+plans. The capture belongs to one engine and is discarded on exit, including
+rejection or failure; it adds no public event fields or persistent game state.
+Runtime-trust schema two binds current records to this capture contract.
+Replay matches completion order and repeated occurrences before verifying each
+source's registered or implicit binding. Missing, extra, reordered or unobserved
+resolutions reject. Older records retain the existing historical-absence path;
+declared runtime provenance must still match exactly.
+
 ```mermaid
 sequenceDiagram
     participant Client

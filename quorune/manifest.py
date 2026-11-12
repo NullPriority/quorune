@@ -11,6 +11,13 @@ from .util import mana_cost_to_vector
 
 MANIFEST_CAPABILITY = 'keyword_action.manifest.card'
 MANIFEST_DREAD_CAPABILITY = 'keyword_action.manifest_dread'
+MANIFEST_ATTACHMENT_CAPABILITY = "keyword_action.manifest_dread.attach_equipment"
+MANIFEST_ATTACHMENT_VERSION = "manifest_attachment_version"
+MANIFEST_ATTACHMENT_RESULT = "manifested_equipment_binding"
+MANIFEST_COUNTERS_FIELD = "manifest_result_counters"
+MANIFEST_COUNTERS_OPERATION = "place_manifest_result_counters"
+MANIFEST_COUNTERS_CAPABILITY = "keyword_action.manifest.result_counters"
+MANIFEST_TOP_TWO_CAPABILITY = "keyword_action.manifest.top_two"
 MANIFEST_MARKER = 'manifested_card'
 
 

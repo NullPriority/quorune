@@ -6,6 +6,10 @@ from ..apnap_object_payment import DECLINED_LIFE_LOSS, apnap_object_payment_depe
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..library_order_model import (
+    AFFECTED_HAND_TOP_CAPABILITY, AFFECTED_HAND_TOP_MECHANIC, HAND_TOP_APNAP_RESULT,
+)
+
 from ..compiler.affected_player_discard_templates import (
     FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
     FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC,
@@ -131,6 +135,28 @@ def fixed_affected_player_hand_exile_node_capabilities(
         allow_controller=False, action="exile",
         mechanic=FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC, capability=FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY,
     )
+
+
+def fixed_affected_player_hand_top_node_capabilities(*, effects, target_schema, mechanic_ids):
+    return _fixed_affected_player_hand_choice_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        allow_controller=False, action=HAND_TOP_APNAP_RESULT,
+        mechanic=AFFECTED_HAND_TOP_MECHANIC, capability=AFFECTED_HAND_TOP_CAPABILITY,
+    )
+
+
+def fixed_hand_top_apnap_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    target_schema = (
+        {"zones": ["player"], "categories": ["player"], "player_relation": "any", "count": 1}
+        if effect.get("target") == "$target.0" else None
+    )
+    required = fixed_affected_player_hand_top_node_capabilities(
+        effects=(effect,), target_schema=target_schema,
+        mechanic_ids=(AFFECTED_HAND_TOP_MECHANIC, "cr-402-hand", "cr-115-targets"),
+    )
+    if not required:
+        raise ValueError("Hand-to-top order requires a closed affected-player instruction")
+    return required
 
 
 def fixed_hand_exile_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:

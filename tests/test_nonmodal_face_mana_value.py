@@ -207,6 +207,7 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
     reject = actions.SpreeModeCostRuntimeTests.reject
     cast = zone_actions.SelfPublicZoneRuntimeTests.cast
     attack = InheritedNativeFixture.attack
+    target = InheritedNativeFixture.target
     until = InheritedNativeFixture.until
     resolve_top = InheritedNativeFixture.resolve_top
 
@@ -221,7 +222,12 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         path = Path(cls.temp.name) / 'nonmodal-value.sqlite3'
-        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json', FIXTURE], path)
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/cast-spell-mana-value-cards.json',
+            ROOT / 'tests/fixtures/granted-static-characteristic-cards.json',
+            FIXTURE,
+        ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Nonmodal value witness', [DeckEntry('Generic Bound Commander', 1, 'commander'),
@@ -303,6 +309,61 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
         actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
         return next(row for row in actions if row.get("card") == card.ref
                     and row.get("action") == "unlock_room" and row.get("door") == door)
+
+    def test_dusty_parlor_uses_cast_value_after_discount_with_optional_live_target(self):
+        for seed, selection in enumerate(("selected", "declined", "blinked"), 20203611):
+            with self.subTest(selection=selection):
+                session = self.session(seed)
+                room = self.add(session.engine, "Secret Arcade // Dusty Parlor", zone="hand")
+                locked_cast = self.add(session.engine, "Memnite", zone="hand")
+                ring = self.add(session.engine, "Sol Ring", zone="hand")
+                zero_cast = self.add(session.engine, "Ornithopter", zone="hand")
+                self.add(session.engine, "Foundry Inspector")
+                bear = self.add(session.engine, "Grizzly Bears", seat="B")
+                blink = self.add(session.engine, "Flicker of Fate", seat="B", zone="hand")
+                self.assert_closed(session, room)
+                session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+                self.prepare(session, mana={"C": 6, "W": 2})
+                self.checkpoint(session)
+
+                self.cast_room_half(session, room, "Secret Arcade", reserve={"C": 2, "W": 1})
+                self.assertEqual(("Secret Arcade",), session.state.cards[room.object_id].shared_type_doors.unlocked)
+                self.cast(session, "A", locked_cast)
+                self.assertIsNone(self.resolve(session))
+
+                offer = self.room_unlock_offer(session, session.state.cards[room.object_id], "Dusty Parlor")
+                self.assertEqual("{2}{W}", offer["cost"])
+                accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(("Secret Arcade", "Dusty Parlor"),
+                                 session.state.cards[room.object_id].shared_type_doors.unlocked)
+                self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+                hand_types = session.engine._type_parts(session.engine._effective_card_data(ring)["type_line"])[0]
+                self.assertNotIn("enchantment", hand_types)
+                self.cast(session, "A", ring)
+                current_spell = session.state.cards[ring.object_id]
+                self.assertEqual("stack", current_spell.zone)
+                stack_types = session.engine._type_parts(session.engine._effective_card_data(current_spell)["type_line"])[0]
+                self.assertIn("enchantment", stack_types)
+
+                selected_ref = bear.ref
+                selected_object = bear.logical_object_id
+                self.target(session, "A", [] if selection == "declined" else [selected_ref])
+                if selection == "blinked":
+                    self.cast(session, "B", blink, [selected_ref])
+                self.assertIsNone(self.resolve(session))
+                current_bear = session.state.cards[bear.object_id]
+                self.assertEqual("battlefield", current_bear.zone)
+                if selection == "blinked":
+                    self.assertNotEqual(selected_object, current_bear.logical_object_id)
+                expected = int(selection == "selected")
+                self.assertEqual(expected, current_bear.counters.get("+1/+1", 0))
+                if selection == "selected":
+                    self.cast(session, "A", zero_cast)
+                    self.target(session, "A", [current_bear.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual(expected, session.state.cards[bear.object_id].counters.get("+1/+1", 0))
+                self.replay(session, load=True)
 
     def test_room_paid_unlock_replays_and_a_blinked_room_reenters_with_both_doors_locked(self):
         session = self.session(20203601)

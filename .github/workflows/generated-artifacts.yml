@@ -58,6 +58,8 @@ jobs:
           cache: pip
       - name: Install pre-corpus validation dependencies
         run: python -m pip install -e . -r requirements-dev.txt
+      - name: Require complete generated-owner job graph
+        run: python scripts/validate_cloud_generation.py --check
       - id: owners
         name: Resolve affected generated owners
         run: >-
@@ -215,9 +217,83 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  dependent_foundations:
+    name: Generated cloud / Dependent foundation / ${{ matrix.owner }}
+    needs: [plan, foundations]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        owner: [dungeon-room-programs]
+    env:
+      CLOUD_GENERATED_SOURCE_SHA: ${{ needs.plan.outputs.source_sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.plan.outputs.source_sha }}
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+          cache: pip
+      - name: Install generation dependencies
+        run: python -m pip install -e . -r requirements-dev.txt
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cloud-owner-foundation-*-${{ github.run_id }}
+          path: .
+          merge-multiple: true
+      - id: owner-key
+        name: Resolve owner input fingerprint
+        run: >-
+          python scripts/cloud_generated_artifacts.py owner-key
+          --owner "${{ matrix.owner }}"
+      - id: owner-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.owner-key.outputs.cache_path }}
+          key: generated-owner-v1-${{ matrix.owner }}-${{ steps.owner-key.outputs.owner_fingerprint }}
+      - id: remote-cache
+        if: steps.owner-cache.outputs.cache-hit != 'true'
+        name: Find cross-commit owner artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_NAME: generated-owner-cache-v1-${{ matrix.owner }}-${{ steps.owner-key.outputs.owner_fingerprint }}
+        run: |
+          run_id=$(python scripts/find_reusable_workflow_artifact.py --name "$ARTIFACT_NAME")
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+      - if: steps.remote-cache.outputs.run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-owner-cache-v1-${{ matrix.owner }}-${{ steps.owner-key.outputs.owner_fingerprint }}
+          path: ${{ steps.owner-key.outputs.cache_path }}
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.remote-cache.outputs.run_id }}
+      - name: Generate and stage one owned output set
+        run: >-
+          python scripts/cloud_generated_artifacts.py run-owner
+          --owner "${{ matrix.owner }}"
+          --stage-dir "local/cloud-stage/${{ matrix.owner }}"
+          --affected-owners-json '${{ needs.plan.outputs.affected_owners }}'
+      - if: steps.owner-cache.outputs.cache-hit != 'true' && steps.remote-cache.outputs.run_id == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-owner-cache-v1-${{ matrix.owner }}-${{ steps.owner-key.outputs.owner_fingerprint }}
+          path: ${{ steps.owner-key.outputs.cache_path }}
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cloud-owner-foundation-${{ matrix.owner }}-${{ github.run_id }}
+          path: local/cloud-stage/${{ matrix.owner }}
+          if-no-files-found: error
+          retention-days: 7
+
   corpus:
     name: Generated cloud / Compiler corpus
-    needs: [plan, database, foundations]
+    needs: [plan, database, foundations, dependent_foundations]
     runs-on: ubuntu-latest
     env:
       CLOUD_GENERATED_SOURCE_SHA: ${{ needs.plan.outputs.source_sha }}

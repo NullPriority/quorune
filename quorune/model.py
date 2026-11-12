@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal, Mapping
 from .composition_storage import PermanentCompositionStorage
+from .dungeon_progress import DungeonJourney
 from .creature_subtypes import canonical_creature_subtype
 from .mandatory_loop_model import MandatoryLinkedLoopWatch
 
@@ -87,6 +88,7 @@ ObjectKind = Literal[
     "spell_copy",
     "card_copy",
     "emblem",
+    "dungeon",
 ]
 
 PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
@@ -97,6 +99,7 @@ PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
 PLAYER_COUNTERS_FIELD = "counters"
 
 TurnHistoryEventKind = Literal[
+    "first_venture",
     "trigger_optional_result_used",
     "crime_committed",
     "spell_mana_spent",
@@ -188,6 +191,13 @@ class TurnHistoryEvent:
             or self.types or type(self.amount) is not int or self.amount != 0
         ):
             raise ValueError('First life gain history requires only its gaining seat')
+        if self.kind == "first_venture" and (
+            type(self.actor) is not str or not self.actor
+            or any(value is not None for value in (self.object_incarnation, self.target, self.target_kind,
+                                                  self.target_object_incarnation, self.origin))
+            or self.types or type(self.amount) is not int or self.amount != 0
+        ):
+            raise ValueError("First Venture history requires only the venturing seat")
         if self.kind=='crime_committed' and (type(self.actor) is not str or not self.actor
                 or type(self.target) is not str or not self.target or self.target_kind!='stack_object'
                 or type(self.amount) is not int or self.amount!=1 or self.object_incarnation is not None
@@ -289,6 +299,7 @@ class TurnHistory:
     permanent_death_history_version: int | None = None
     public_movement_history_version: int | None = None
     first_life_gain_history_version: int | None = None
+    venture_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -319,6 +330,9 @@ class TurnHistory:
         life_gain_version = self.first_life_gain_history_version
         if life_gain_version is not None and (type(life_gain_version) is not int or life_gain_version != 1):
             raise ValueError('Unsupported first life gain history version')
+        venture_version = self.venture_history_version
+        if venture_version is not None and (type(venture_version) is not int or venture_version != 1):
+            raise ValueError("Unsupported Venture history version")
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
@@ -337,6 +351,9 @@ class TurnHistory:
         first_gainers = [event.target for event in self.events if event.kind == 'first_life_gain']
         if first_gainers and (life_gain_version is None or len(first_gainers) != len(set(first_gainers))):
             raise ValueError('First life gain facts require versioned history and unique gaining seats')
+        first_ventures = [event.actor for event in self.events if event.kind == "first_venture"]
+        if first_ventures and (venture_version is None or len(first_ventures) != len(set(first_ventures))):
+            raise ValueError("First Venture facts require versioned history and unique venturing seats")
         previous_absent = self.previous_turn_sequence is None
         if previous_absent != (self.previous_active_player is None):
             raise ValueError(
@@ -385,6 +402,7 @@ class TurnHistory:
             **({"public_movement_history_version": 1}
                if self.public_movement_history_version is not None else {}),
             **({'first_life_gain_history_version': 1} if self.first_life_gain_history_version is not None else {}),
+            **({"venture_history_version": 1} if self.venture_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -429,6 +447,7 @@ class TurnHistory:
             permanent_death_history_version=data.get("permanent_death_history_version"),
             public_movement_history_version=data.get("public_movement_history_version"),
             first_life_gain_history_version=data.get('first_life_gain_history_version'),
+            venture_history_version=data.get("venture_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)
@@ -565,10 +584,15 @@ class CardInstance:
             "spell_copy",
             "card_copy",
             "emblem",
+            "dungeon",
         }:
             raise ValueError(
                 f"Unsupported game object kind {self.object_kind!r}"
             )
+        if self.object_kind == "dungeon" and (
+            self.zone != "command" or self.owner != self.controller or self.is_commander
+        ):
+            raise ValueError("A dungeon is a nontraditional object owned in the command zone")
         if self.commander_designation_id == "":
             raise ValueError("Commander designation IDs cannot be empty")
         if self.commander_designation_id is not None and not self.is_commander:
@@ -794,8 +818,11 @@ class PlayerState:
     rules_seen: list[str] = field(default_factory=list)
     stats: dict[str, Any] = field(default_factory=dict)
     yield_policy: YieldPolicy = field(default_factory=YieldPolicy)
+    dungeon_journey: DungeonJourney | None = None
 
     def __post_init__(self) -> None:
+        if self.dungeon_journey is not None and not isinstance(self.dungeon_journey, DungeonJourney):
+            raise ValueError("Player dungeon state requires a typed journey")
         if (
             type(self.last_upkeep_timestamp) is not int
             or self.last_upkeep_timestamp < 0
@@ -844,6 +871,10 @@ class PlayerState:
             payload.pop("last_upkeep_timestamp")
         if not self.attachments:
             payload.pop("attachments")
+        if self.dungeon_journey is None:
+            payload.pop("dungeon_journey")
+        else:
+            payload["dungeon_journey"] = self.dungeon_journey.to_dict()
         return payload
 
     @classmethod
@@ -851,6 +882,8 @@ class PlayerState:
         payload = dict(data)
         payload["mana_pool"] = normalize_mana_bundle(payload.get("mana_pool"))
         payload["yield_policy"] = YieldPolicy.from_dict(payload.get("yield_policy"))
+        if "dungeon_journey" in payload:
+            payload["dungeon_journey"] = DungeonJourney.from_dict(payload["dungeon_journey"])
         return cls(**payload)
 
 
@@ -971,6 +1004,10 @@ class DelayedTrigger:
                 "Delayed-trigger referred-object IDs must be nonempty strings"
             )
         self.referred_object_ids = list(dict.fromkeys(values))
+        if isinstance(self.condition, dict) and "next_cast_copy" in self.condition:
+            from .event_spell_copy_model import next_cast_copy_trigger_spec
+
+            next_cast_copy_trigger_spec(self)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -1215,6 +1252,7 @@ class GameState:
     turn_history: TurnHistory | None = field(default_factory=TurnHistory)
     # CR 725 designation. ``None`` means no player has become the monarch.
     monarch: str | None = None
+    initiative: str | None = None
     # CR 731 public game designation. ``None`` is the initial state and also
     # preserves historical Game Record v3 payloads that predate day/night.
     day_night: Literal["day", "night"] | None = None
@@ -1431,6 +1469,7 @@ class GameState:
                 else {}
             ),
             "monarch": self.monarch,
+            **({"initiative": self.initiative} if self.initiative is not None else {}),
             **(
                 {"day_night": self.day_night}
                 if self.day_night is not None
@@ -1559,6 +1598,7 @@ class GameState:
                 else None
             ),
             monarch=data.get("monarch"),
+            initiative=data.get("initiative"),
             day_night=data.get("day_night"),
             pending_trigger_batches=cls._pending_trigger_batches_from_dict(
                 data.get("pending_trigger_batches", [])

@@ -153,12 +153,26 @@ def _blocking_controller_identity(context):
     return blocker.object_id, blocker.logical_object_id
 
 
+def _attacking_controller_identity(context):
+    from .attack_transition_model import AttackTransitionEvent
+
+    transition = AttackTransitionEvent.from_dict(context.get('attack_transition'))
+    attacker_ids = {row.attacker_object_id for row in transition.assignments}
+    for participant in transition.participants:
+        if participant.reference == context.get('card') and participant.object_id in attacker_ids:
+            return participant.object_id, participant.logical_object_id
+    raise ValueError('Attacking controller information requires the original declared attacker')
+
+
 def occurrence_controller_context(host, program, event, context):
     """Seal the original permanent for a public occurrence controller read."""
-    if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS | {'creature.blocks'}
+    combat_events = {'creature.attacks', 'creature.blocks'}
+    if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS | combat_events
             or not _uses_occurrence_controller(program.effects)):
         return {}
-    if event == 'creature.blocks':
+    if event == 'creature.attacks':
+        object_id, identity = _attacking_controller_identity(context)
+    elif event == 'creature.blocks':
         object_id, identity = _blocking_controller_identity(context)
     elif event in RECEIVED_DAMAGE_EVENTS:
         if (context.get('target_kind') != 'permanent' or 'creature' not in context.get('target_types', ())
@@ -171,7 +185,7 @@ def occurrence_controller_context(host, program, event, context):
         object_id = identity.rpartition('@')[0] if type(identity) is str else ''
     card = host.state.cards.get(object_id) if object_id else None
     if (card is None or card.zone != 'battlefield' or card.ref != context.get('card')
-            or card.logical_object_id != identity or event == 'creature.blocks' and card.phased_out):
+            or card.logical_object_id != identity or event in combat_events and card.phased_out):
         raise ValueError('Occurrence controller information requires the original public permanent')
     return {'card_object_id': object_id, 'card_object_identity': identity}
 

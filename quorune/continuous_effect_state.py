@@ -286,6 +286,7 @@ def apply_fixed_resolution_characteristics(
     """Commit a versioned fixed result through the existing multi-layer owner."""
     from .resolution_characteristic_model import (
         DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
+        FixedResolutionCardTypeAdditionSpec,
     )
     from .errors import GameRuleError
 
@@ -313,7 +314,8 @@ def apply_fixed_resolution_characteristics(
             except GameRuleError:
                 return []
         source = resolution_effect_source(host, effect, fallback_card=affected[0] if affected else None)
-        timing = _characteristic_effect_timing(host, effect, actor=actor, source=source)
+        timing = ((spec.duration, None, None) if isinstance(spec, FixedResolutionCardTypeAdditionSpec)
+                  else _characteristic_effect_timing(host, effect, actor=actor, source=source))
         if timing is None:
             return []
         duration, expiry_player, history = timing
@@ -638,6 +640,36 @@ def active_resolution_effects(
     )
 
 
+_PAID_HASTE_ZONES = ("battlefield", "stack")
+_PAID_HASTE_OPERATIONS = (ContinuousOperation("add_ability", "Haste"),)
+
+
+def commit_paid_mana_haste(host, item, card):
+    from .errors import GameRuleError
+    from .mana_spend_rules import consume_paid_mana_haste
+
+    try:
+        lifetime = consume_paid_mana_haste(host.state.players[item.controller].stats)
+    except ValueError as exc:
+        raise GameRuleError("Paid haste lifetime is malformed") from exc
+    if lifetime is None:
+        return
+    if item.kind != "spell" or item.card_object_id != card.object_id or card.zone != "stack":
+        raise GameRuleError("Paid haste requires its cast spell incarnation")
+    source = ResolutionEffectSource(item.ref, card.object_id, card.logical_object_id, card.ref)
+    effect = create_resolution_continuous_effect(host, source=source, targets=(card,),
+        layer=Layer.ABILITY, sublayer="6", operations=_PAID_HASTE_OPERATIONS,
+        duration=ContinuousEffectDuration(lifetime.value), zones=_PAID_HASTE_ZONES)
+    if effect is None:
+        raise GameRuleError("Paid haste requires the continuous-effect journal")
+
+
+def _is_paid_mana_haste_effect(effect: ContinuousJournalEffect) -> bool:
+    return (isinstance(effect, ContinuousEffect) and effect.origin is ContinuousEffectOrigin.RESOLUTION
+            and effect.layer is Layer.ABILITY and effect.operations == _PAID_HASTE_OPERATIONS
+            and effect.applies.zones == _PAID_HASTE_ZONES)
+
+
 def is_fixed_target_color_effect(effect: ContinuousJournalEffect) -> bool:
     return (isinstance(effect, ContinuousEffect) and effect.layer is Layer.COLOR
             and effect.applies is not None and effect.applies.zones == FIXED_TARGET_COLOR_ZONES)
@@ -645,6 +677,11 @@ def is_fixed_target_color_effect(effect: ContinuousJournalEffect) -> bool:
 
 def fixed_target_color_effects(state: Any, card: Any) -> tuple[ContinuousEffect, ...]:
     return tuple(effect for effect in active_resolution_effects(state, card) if is_fixed_target_color_effect(effect))
+
+
+def stack_resolution_effects(state: Any, card: Any) -> tuple[ContinuousEffect, ...]:
+    return tuple(effect for effect in active_resolution_effects(state, card)
+                 if is_fixed_target_color_effect(effect) or _is_paid_mana_haste_effect(effect))
 
 
 def active_resolution_declaration_rule_effects(
@@ -682,7 +719,7 @@ def expire_zone_departure_effects(state: Any, card: Any) -> None:
     identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
     journal[:] = [effect for effect in journal if not (
         isinstance(effect, ResolvedLinkedDepartureExile) and effect.subject == identity
-        or is_fixed_target_color_effect(effect) and identity in effect.locked_objects
+        or (is_fixed_target_color_effect(effect) or _is_paid_mana_haste_effect(effect)) and identity in effect.locked_objects
     )]
 
 

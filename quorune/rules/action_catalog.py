@@ -132,14 +132,12 @@ def _cast_offers(
 def _land_candidates(
     host: ActionCatalogHost, seat: str
 ) -> list[tuple[Any, Mapping[str, Any] | None]]:
-    player = host.state.players[seat]
-    if not (
-        seat == host.state.active_player
-        and not host.state.stack
-        and host.state.phase in {"precombat_main", "postcombat_main"}
-        and land_play_permission_options(host, seat)
-    ):
+    from .land_play_permissions import land_play_timing_matches, land_play_timing_window
+
+    timing = land_play_timing_window(host.state, seat)
+    if timing is None or not land_play_permission_options(host, seat):
         return []
+    player = host.state.players[seat]
     result = []
     for object_id in [
         *player.zones["hand"],
@@ -156,7 +154,7 @@ def _land_candidates(
         faces = host._land_play_faces(record) if record else []
         if not faces or not host._compiled_land_play_permission(seat, card):
             continue
-        result.extend((card, face) for face in faces)
+        result.extend((card, face) for face in faces if land_play_timing_matches(timing, card, record, face))
     return result
 
 

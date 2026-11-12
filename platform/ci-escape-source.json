@@ -1869,6 +1869,375 @@
         "test_empty_zone_modal_records.EmptyZoneModalRecordTests.test_empty_zone_batch_keeps_damage_clear_and_rejects_invalid_metadata"
       ],
       "resolution": "Retain the exact mutation evidence identity. Prove an explicit empty move preserves the native zero-target draw, then reintroduce the invalid empty-snapshot requirement and require that the same native witness kills it. Add the homogeneous target-set consumer to the empty-zone impact route; preserve the nonempty snapshot invariant."
+    },
+    {
+      "id": "ci-20261111-pr561-direct-player-target-carrier",
+      "run_id": 43048656262,
+      "head_sha": "b37e5eed2dbf81c8265f0978cc6a9b0df8c572d2",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "summary": "The direct-player attack compiler emitted a fixed typed target-effect wrapper that was absent from the shared trigger-template catalogue. The protected compiler census rejected Mirkwood Trapper while independently reconstructing its exact first ability; its second ability remained a material residual.",
+      "failed_surfaces": [
+        "Generated cloud / Compiler corpus"
+      ],
+      "regressions": [
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_direct_player_attack_target_body_is_accepted_by_corpus_assurance"
+      ],
+      "resolution": "Add the carrier to the existing canonical trigger catalogue, reconstruct its complete printed event and condition during assurance, retain target/effect and capability checks, and run the regression before any census when binding, catalogue or assurance inputs change."
+    },
+    {
+      "id": "ci-20261111-pr561-cloud-dependent-owner",
+      "run_id": 43058582745,
+      "head_sha": "49d2346aa36c947fa78209dd726039e2ce1e27c1",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "summary": "The manifest registered a reusable dungeon-room-programs owner depending on capability-evidence, but the cloud workflow omitted its producer. Every scheduled generation owner succeeded; strict final assembly rejected the missing dungeon receipt and no complete bundle was published.",
+      "failed_surfaces": [
+        "Generated cloud / Verify and bundle"
+      ],
+      "regressions": [
+        "test_ci_pipeline.CiPipelineTests.test_cloud_workflow_produces_every_reusable_owner_in_dependency_order",
+        "test_ci_pipeline.CiPipelineTests.test_cloud_workflow_rejects_missing_duplicate_and_unordered_owner_producers",
+        "test_ci_pipeline.CiPipelineTests.test_cloud_owner_schedule_guard_precedes_the_expensive_work"
+      ],
+      "resolution": "Schedule the dependent foundation after capability evidence and before corpus generation with the existing content-keyed cache and artifact path. Validate workflow producer completeness and dependency ordering against the canonical manifest, and enforce the unchanged cloud runner budget before any census. Preserve strict final owner-receipt and output-hash checks."
+    },
+    {
+      "id": "ci-20261111-pr561-retired-counter-view-fixtures",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "Retiring the two reviewed counter-replacement views left direct state-seeding fixtures without the current source registration performed by deck setup. Several related tests also pinned the prior mixed admission basis after the originals became capability closed.",
+      "failed_surfaces": [
+        "PR / Python / functional-01",
+        "PR / Python / functional-02",
+        "PR / Python / functional-03",
+        "PR / Python / functional-04",
+        "PR / Python / functional-05",
+        "PR / Python / functional-06",
+        "PR / Python / functional-07",
+        "PR / Python / functional-08",
+        "PR / Python / functional-09",
+        "PR / Python / functional-10",
+        "PR / Python / functional-11",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-01",
+        "PR / Windows / functional-02",
+        "PR / Windows / functional-03",
+        "PR / Windows / functional-04",
+        "PR / Windows / functional-05",
+        "PR / Windows / functional-06",
+        "PR / Windows / functional-07",
+        "PR / Windows / functional-08",
+        "PR / Windows / functional-09",
+        "PR / Windows / functional-10",
+        "PR / Windows / functional-11",
+        "PR / Windows / functional-12"
+      ],
+      "regressions": [
+        "test_amass_rules.AmassRuntimeTests.test_amass_token_and_counter_replacements_suspend_in_rule_order_and_replay",
+        "test_attached_counter_placement.AttachedCounterRuntimeTests.test_attachment_counter_replacement_is_seat_scoped_and_replays",
+        "test_attack_counter_triggers.AttackCounterTriggerRuntimeTests.test_dethrone_uses_complete_four_player_life_snapshot_and_quantity_replacement",
+        "test_attack_counter_triggers.AttackCounterTriggerRuntimeTests.test_training_uses_declaration_power_and_quantity_replacement",
+        "test_blight.FixedBlightRuntimeTests.test_actual_chaos_declined_mana_runs_mandatory_effect_blight",
+        "test_blight.FixedBlightRuntimeTests.test_actual_sourbread_blight_is_one_nontargeted_cost_and_resolves_before_lethal_stabilization",
+        "test_blight.FixedBlightRuntimeTests.test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays",
+        "test_blight.FixedBlightRuntimeTests.test_actual_wild_unraveling_resumes_mana_and_blight_before_countering",
+        "test_bloodthirst_rules.BloodthirstRuntimeTests.test_bloodthirst_counter_uses_canonical_quantity_replacement",
+        "test_bolster_rules.BolsterRuntimeTests.test_bolster_privacy_distinguishes_opaque_tokens_from_private_fields",
+        "test_bolster_rules.BolsterRuntimeTests.test_bolster_quantity_replacement_is_seat_scoped_and_replays_exactly",
+        "test_counter_placement_replacements.CounterPlacementReplacementTests.test_counter_quantity_component_changes_effect_generated_placement",
+        "test_counter_placement_replacements.CounterPlacementReplacementTests.test_counter_replacement_choice_is_seat_scoped",
+        "test_counter_placement_replacements.CounterPlacementReplacementTests.test_counter_replacement_choice_replays_exactly",
+        "test_counter_placement_replacements.CounterPlacementReplacementTests.test_counter_replacements_apply_in_affected_players_chosen_order",
+        "test_counter_placement_replacements.CounterPlacementReplacementTests.test_simultaneous_counter_choices_follow_apnap",
+        "test_cumulative_upkeep_counter_placement.CumulativeUpkeepRuntimeTests.test_fixed_life_payment_uses_replaced_age_count",
+        "test_cumulative_upkeep_counter_placement.CumulativeUpkeepRuntimeTests.test_fixed_life_replacement_choice_is_private_and_replays",
+        "test_cumulative_upkeep_counter_placement.CumulativeUpkeepRuntimeTests.test_four_player_replacement_choice_and_payment_are_seat_scoped",
+        "test_cumulative_upkeep_counter_placement.CumulativeUpkeepRuntimeTests.test_quantity_replacement_changes_age_counter_and_payment_together",
+        "test_cumulative_upkeep_counter_placement.CumulativeUpkeepRuntimeTests.test_quantity_replacement_resume_replays_exactly",
+        "test_endure.SourceEndureRuntimeTests.test_actual_endure_uses_current_controller_and_counter_cost_replacements",
+        "test_evolve_counter_placement.EvolveRuntimeTests.test_quantity_replacement_and_control_change_use_trigger_controller",
+        "test_explore_rules.ExploreEngineTests.test_counter_and_zone_replacements_suspend_before_explore_mutation",
+        "test_explore_rules.ExploreEngineTests.test_explore_preparation_replacement_resume_replays_exactly",
+        "test_explore_rules.ExploreEngineTests.test_tampered_explore_preparation_identity_rolls_back",
+        "test_fixed_counter_additional_costs.CounterCostReplacementChainTests.test_actual_lethal_sting_reconsiders_doubling_after_loading_zone_and_replays",
+        "test_fixed_counter_additional_costs.FixedCounterAdditionalCostRuntimeTests.test_counter_additional_cost_replacement_suspends_before_mutation_and_replays",
+        "test_fixed_counter_additional_costs.FixedCounterAdditionalCostRuntimeTests.test_counter_cost_provenance_mutant_is_killed",
+        "test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_fixed_counter_effect_suspends_for_quantity_replacement",
+        "test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
+        "test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_typed_fixed_counter_handler_places_counters_without_domain_dispatch",
+        "test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_vehicle_self_activation_uses_source_identity_and_replays_replacement",
+        "test_fixed_counter_placement_groups.FixedCounterPlacementGroupRuntimeTests.test_four_player_group_replacement_is_seat_scoped_and_replays",
+        "test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_fixed_counter_set_suspends_for_quantity_replacement",
+        "test_fixed_counter_placement_target_sets.FixedCounterPlacementTargetSetRuntimeTests.test_target_set_suspends_for_quantity_replacement_and_replays",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_death_counter_replacement_is_private_and_replays_exactly",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_scheduled_counter_trigger_suspends_for_quantity_replacement",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_x_and_query_amounts_use_frozen_preentry_state",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_keyword_entries_use_quantity_replacement",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_self_entry_uses_quantity_replacement",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_keyword_entry_is_seat_scoped_and_replays_exactly",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_self_entry_is_private_and_replays_exactly",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_stale_fixed_keyword_entry_choice_aborts_without_card_mutation",
+        "test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_stale_fixed_self_entry_aborts_without_card_mutation",
+        "test_fixed_multikind_counter_batches.FixedCounterBatchRuntimeTests.test_counter_batch_suspends_before_any_counter_is_placed",
+        "test_fixed_multikind_counter_batches.FixedCounterBatchRuntimeTests.test_four_player_counter_batch_replacement_is_seat_scoped_and_replays",
+        "test_fixed_multikind_counter_batches.FixedCounterBatchRuntimeTests.test_runtime_commits_fixed_counter_batch_atomically",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_counter_replacement_suspends_and_resumes_remaining_sequence_exactly",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_four_player_zone_object_keyword_sequence_is_private_and_replays",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_zone_object_keyword_continuation_rejects_stale_target_identity",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_zone_object_keyword_replacement_continuation_survives_restart",
+        "test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_competing_entry_counter_replacements_order_to_nine_or_ten",
+        "test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_resolving_entry_choice_is_private_and_replays_exactly",
+        "test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_simultaneous_entry_choices_follow_four_player_apnap",
+        "test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay",
+        "test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_battle_entry_doubles_defense_and_pins_protector",
+        "test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_entry_counter_owner_mutant_is_killed",
+        "test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_planeswalker_entry_uses_counter_replacement_owner",
+        "test_keyword_counter_composition.KeywordCounterCompositionTests.test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
+        "test_loyalty_counter_cost_replacements.LoyaltyCounterCostReplacementTests.test_competing_cost_replacements_suspend_before_mutation_and_replay",
+        "test_loyalty_counter_cost_replacements.LoyaltyCounterCostReplacementTests.test_doubling_season_ignores_positive_loyalty_cost_but_doc_applies",
+        "test_mentor_rules.MentorRuntimeTests.test_mentor_places_replacement_aware_counter_after_target_revalidation",
+        "test_persist_undying_rules.PersistUndyingRuntimeTests.test_death_return_replacement_continuation_survives_process_restart",
+        "test_persist_undying_rules.PersistUndyingRuntimeTests.test_death_return_replacement_resume_replays_exactly",
+        "test_persist_undying_rules.PersistUndyingRuntimeTests.test_persist_returns_under_owner_with_replacement_aware_counter",
+        "test_persist_undying_rules.PersistUndyingRuntimeTests.test_zone_and_counter_replacements_complete_before_return_mutates",
+        "test_proliferate_rules.ProliferateEngineTests.test_proliferate_counter_replacements_suspend_whole_batch_before_mutation",
+        "test_proliferate_rules.ProliferateEngineTests.test_proliferate_replacement_resume_replays_exactly",
+        "test_riot_rules.RiotRuntimeTests.test_riot_counter_uses_quantity_replacement_and_haste_uses_existing_rules",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_competing_saga_entry_replacements_order_to_three_or_four",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_four_player_saga_entry_replacement_choices_follow_apnap",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_read_ahead_quantity_replacement_uses_exact_chapter_gate",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_saga_counter_producer_mutations_are_killed",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_saga_entry_counter_uses_quantity_replacement_but_turn_action_does_not",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_saga_entry_replacement_choice_replays_exactly",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_saga_entry_replacement_continuation_survives_process_restart",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_saga_turn_action_applies_unqualified_but_not_effect_only_replacement",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_saga_turn_replacement_choice_is_private_resumable_and_exact",
+        "test_saga_counter_progression.SagaCounterProgressionTests.test_simultaneous_saga_turn_replacements_pin_event_ids_and_replay",
+        "test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_counter_resume_executes_later_typed_completion_intents_once",
+        "test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_fabricate_counter_replacement_replays_exactly",
+        "test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_fabricate_suspends_before_mutation_and_projection_is_seat_scoped",
+        "test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_semantic_counter_completion_identity_mutant_is_killed",
+        "test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_tampered_counter_intent_fails_closed_without_mutation",
+        "test_sunburst_rules.SunburstRuntimeTests.test_sunburst_counter_uses_canonical_quantity_replacement",
+        "test_support_counter_placement.SupportCounterPlacementRuntimeTests.test_support_partial_target_revalidation_and_quantity_replacement_replay",
+        "test_unleash_rules.UnleashRuntimeTests.test_unleash_counter_uses_canonical_quantity_replacement_order"
+      ],
+      "resolution": "Register original seeded controls through one ordinary generated-program fixture helper, retain payment provenance, rollback, projection, restart and replay checks, and assert the actual current strict binding. Use distinct legendary Food controls and a counter-only doubler where the fixture isolates token and counter stages.",
+      "run_id": 43086636766,
+      "head_sha": "d792b784bf9091e90149ef4af1ab439e7e1815e0",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261111-pr561-promoted-integration-contracts",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "Whole-source composition and reviewed-view retirement promoted syntax and changed current transport shapes that older integration expectations still treated as unsupported or preinstalled. The old duration witness is now a supported multiplier, and an omission test patched an alias bypassed by another valid caller.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Python / functional-01",
+        "PR / Python / functional-04",
+        "PR / Python / functional-05",
+        "PR / Python / functional-07",
+        "PR / Python / functional-08",
+        "PR / Python / functional-10",
+        "PR / Python / functional-11",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-01",
+        "PR / Windows / functional-04",
+        "PR / Windows / functional-05",
+        "PR / Windows / functional-07",
+        "PR / Windows / functional-08",
+        "PR / Windows / functional-10",
+        "PR / Windows / functional-11",
+        "PR / Windows / functional-12",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_activated_abilities.ActivatedAbilityAndCostTests.test_channel_is_exposed_from_hand_and_pays_authoritative_discounted_cost",
+        "test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_loyalty_cost_provenance_mutant_is_killed",
+        "test_card_program_v2.CardProgramV2Tests.test_explain_and_audit_identify_registered_typed_handlers",
+        "test_composite_quoted_grants.CompositeQuotedGrantCompilerTests.test_pure_attached_provider_retirement_checks_complete_child_behavior",
+        "test_controlled_return_choices.ControlledReturnCompilerTests.test_printed_schedule_and_color_union_require_the_closed_choice",
+        "test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_originals_admit_only_the_complete_external_entry_family",
+        "test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_action_pronoun_damage_dependency_and_omission_fail_closed",
+        "test_fixed_damage_effect_clauses.FixedDamageEffectCompilerTests.test_source_trigger_pronoun_rejects_unbounded_contexts_and_grammar",
+        "test_fixed_mana_abilities.FixedManaCompilerTests.test_legacy_restriction_prefix_requires_complete_suffix",
+        "test_fixed_mana_abilities.FixedManaRuntimeTests.test_unsupported_restriction_suffix_cannot_seed_a_payment",
+        "test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_grammar_keeps_open_forms_residual",
+        "test_graveyard_self_return_triggers.GraveyardSelfReturnCompilerTests.test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_fresh_current_value_and_global_producer_omissions_are_killed",
+        "test_oracle_ir.OracleIRTests.test_exact_generic_damage_handler_is_trusted_and_active_in_session",
+        "test_preflight_v080.SemanticPreflightV2Tests.test_exact_equip_keyword_is_recognized_as_supported",
+        "test_preflight_v080.SemanticPreflightV2Tests.test_native_replacement_coverage_requires_its_registered_capability",
+        "test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_ordered_query_and_target_set_compositions_keep_meaning_bearing_fields",
+        "test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_public_state_characteristics_execute_while_replacement_siblings_fail_closed",
+        "test_qualified_characteristic_quantities.QualifiedQuantityCompilerTests.test_scope_source_exclusion_and_qualifier_orders_keep_distinct_meaning",
+        "test_semantic_searches.SemanticPrivateSearchTests.test_spellseeker_search_trigger",
+        "test_typed_untap_step_participation.UntapStepCompilerTests.test_untap_step_descriptor_rejects_malformed_shapes"
+      ],
+      "resolution": "Keep supported originals positive; use explicit unrepresented siblings and duration modifiers for negative boundaries. Preserve historical attached-provider transport in a pinned fixture, validate the live damage instruction owner, exercise Spellseeker owner choice, and prove Channel payment through accepted commands rather than a retired metadata field. Derive handler inventories from actual declared programs and canonical registry definitions, preserve keyword callback arguments in fresh mutation probes, and retain genuine open mana restrictions after chosen-type syntax becomes supported.",
+      "run_id": 43086636766,
+      "head_sha": "d792b784bf9091e90149ef4af1ab439e7e1815e0",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261111-pr561-scripted-compiled-exile-price",
+      "category": "source_correctness",
+      "impact_edge_status": "added",
+      "summary": "The deterministic pilot recognized only the legacy alternate-exile shape. A current offered fixed collection price was selected without exile_cards and the actual cast was rejected; it also attempted an optional-target exile payment without a legal target.",
+      "failed_surfaces": [
+        "PR / Python / functional-06",
+        "PR / Windows / functional-06"
+      ],
+      "regressions": [
+        "test_compiled_reviewed_spell_consumers.CompiledReviewedSpellConsumerTests.test_scripted_pilot_completes_offered_pitch_payment_and_skips_empty_targets",
+        "test_seed_20260730_regression.Seed20260730RegressionTests.test_exact_opening_state_and_corrected_main_phase_delivery"
+      ],
+      "resolution": "Consume the offered fixed exile collection and count, preserve legacy scalar inputs, skip empty optional-target exile casts, and select a nonempty legal target when paying that price. Prove wrong-principal and missing-payment rollback, actual exile and resolution, private projection, save/load and replay without changing kernel legality.",
+      "run_id": 43086636766,
+      "head_sha": "d792b784bf9091e90149ef4af1ab439e7e1815e0",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261111-pr561-harvest-gain-basis",
+      "category": "source_correctness",
+      "impact_edge_status": "added",
+      "summary": "The current census probe forecasts capability-closed gains, while historical complete-card deltas include reviewed compatibility views. A test and calibration readers compared the different metrics, producing a false shortfall and forecast error despite matching immutable receipts.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_rules_scheduler.SupportDeliveryPolicyTests.test_harvest_calibration_uses_each_probe_metric_and_preserves_raw_history",
+        "test_rules_scheduler.RulesSchedulerTests.test_harvest_history_exposes_repeated_subthreshold_results",
+        "test_rules_scheduler.RulesSchedulerTests.test_harvest_history_is_derived_from_immutable_git_receipts"
+      ],
+      "resolution": "Choose the observed gain defined by the recorded probe for calibration, transition coverage and correction validation. Preserve all raw immutable trusted, exact and capability-closed deltas, retain the old basis for old probes, reject missing current-basis provenance, and kill the prior mixed-metric behavior in a focused model witness.",
+      "run_id": 43086636766,
+      "head_sha": "d792b784bf9091e90149ef4af1ab439e7e1815e0",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-prerequisite-budget-fixture",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "The prerequisite-budget fixture zeroed only historical complete-card gain after the current census probe correctly moved its observed basis to capability-closed gain. The supposedly subthreshold fixture remained above threshold, then passed a zero exception budget to the strict policy validator.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_prerequisite_exception_requires_measured_fanout_and_open_budget"
+      ],
+      "resolution": "Construct a subthreshold fixture across both recorded gain bases, use the canonical observed-gain reader for the fixture budget, and assert a positive subthreshold run before the exhaustion control. Select this same test in pre-corpus validation whenever the harvest metric readers change. Preserve production thresholds, probe-specific metric selection and immutable raw history.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-command-born-resolution-provenance",
+      "category": "source_correctness",
+      "impact_edge_status": "added",
+      "summary": "Resolution provenance captured only stack objects present before submission. Elves of Deep Shadow could be cast and auto-resolve within one command, so the record omitted its real implicit permanent-spell binding even though casting and gameplay succeeded.",
+      "failed_surfaces": [
+        "PR / Windows / functional-06"
+      ],
+      "regressions": [
+        "test_seed_20260730_regression.Seed20260730RegressionTests.test_exact_opening_state_and_corrected_main_phase_delivery",
+        "test_command_resolution_provenance.ResolutionCaptureRuntimeTests.test_original_generic_and_registered_resolutions_record_actual_sources_and_replay",
+        "test_command_resolution_provenance.ResolutionCaptureRuntimeTests.test_resolution_observation_omission_is_killed"
+      ],
+      "resolution": "Observe actual completion through the existing stack owner and retain actual physical sources in an engine-specific command capture. Preserve the original stack snapshot used for ordered plans. Under runtime-trust schema two, replay checks ordered completion occurrences and source bindings, rejects missing or extra evidence, and preserves the historical-absence and exact declared-runtime contracts. Retain the original seed assertion and prove both immediate and ordinary actual casts, privacy, rollback, replay and an omitted-observer mutant.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-normal-fixture-registration-consumers",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "Normal fixture registration activates every printed supported ability. Subtype-dispatch fixtures selected only part of a five-ability source and manually re-put selected views, while a qualified-activation witness incorrectly expected repeated normal registration to generate another program.",
+      "failed_surfaces": [
+        "PR / Python / functional-07",
+        "PR / Windows / functional-09"
+      ],
+      "regressions": [
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_creature_subtype_dispatches_death_and_graveyard_wordings",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_noncreature_kindred_subtype_only_dispatches_graveyard_wording",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_another_and_nontoken_filters_use_lki",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_control_and_owner_filters_use_lki",
+        "test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_graveyard_triggers_preserve_apnap_and_exact_replay",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays"
+      ],
+      "resolution": "Use narrow complete synthetic Oracle records for each selected dispatcher contract, retain the existing five-ability source for compiler consumers, and select normally registered current views without manually replacing them. Assert repeated activation registration generates nothing and preserves every existing view, then retain actual costs, target authority, LKI, APNAP, privacy and replay controls. Route fixture-registration changes to these consumers.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-incidental-attacker-abilities",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "Normally registering an incidental self-attack-life fixture activated its printed trigger. Five watcher tests then stopped at a legitimate trigger-order decision before the asserted watcher stack existed.",
+      "failed_surfaces": [
+        "PR / Python / functional-04",
+        "PR / Windows / functional-04"
+      ],
+      "regressions": [
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attachment_attack_binding_uses_current_relation_and_ability",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_equipped_attack_mill_composes_with_attachment_and_zone_owner",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
+        "test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners"
+      ],
+      "resolution": "Use the existing vanilla synthetic Goblin as the incidental attacking body, retain the dedicated self-attack trigger witness, and select normally registered trusted views through one shared fixture helper. Preserve watcher attachment, batch, APNAP, zone-owner, actual consequences and replay assertions; route normal fixture registration changes to these consumers.",
+      "run_id": 43130981500,
+      "head_sha": "d0ec6a14d93adc583e2e30db6de3b9bf4c9c423c",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-copy-provenance-rejection-stage",
+      "category": "missing_affected_test",
+      "impact_edge_status": "not_applicable",
+      "summary": "The copied-spell provenance omission mutant expected a later oracle-ID mismatch. Current runtime-trust schema two correctly rejects its missing physical-source record at the earlier resolved-provenance structural guard.",
+      "failed_surfaces": [
+        "PR / Python / functional-05"
+      ],
+      "regressions": [
+        "test_paid_color_entry.PaidColorEntryTests.test_fresh_copy_provenance_omission_is_killed",
+        "test_paid_color_entry.PaidColorEntryTests.test_legacy_generic_permanent_copy_records_its_exact_resolution_provenance",
+        "test_paid_color_entry.PaidColorEntryTests.test_copy_provenance_retains_the_historical_no_runtime_trust_mode"
+      ],
+      "resolution": "Retain the fresh native copied-permanent journey, assert that the copy reaches the omitted physical-source hook, and require the specific current malformed-resolved-provenance rejection. Preserve the unchanged positive copy and historical no-runtime controls; retain the already-present resolution-provenance route to the paid-color entry consumer. No runtime validation is relaxed.",
+      "run_id": 43174128758,
+      "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
+      "deterministic": true
+    },
+    {
+      "id": "ci-20261112-pr561-runtime-trust-manifest-schema",
+      "category": "source_correctness",
+      "impact_edge_status": "added",
+      "summary": "The current record writer emits runtime-trust schema two, but the Game Record v3 manifest schema still permitted only schema one. The Windows functional04 native save/replay witness rejected its own current manifest during structural validation.",
+      "failed_surfaces": [
+        "PR / Windows / functional-04",
+        "PR / Python / functional-04"
+      ],
+      "regressions": [
+        "test_game_record_v3.RuntimeTrustManifestSchemaTests.test_current_and_known_historical_schema_versions_keep_exact_replay_identity",
+        "test_game_record_v3.GameRecordV3Tests.test_v3_save_omits_raw_capabilities_and_replays"
+      ],
+      "resolution": "Admit the two known declared structural versions with an integer-only closed enumeration. Add a fast current-producer/schema contract proving that declared historical identity still fails exact replay validation, absent runtime trust retains its historical path, and booleans, unknown versions, missing fingerprints and extra fields reject. Route the manifest schema through the existing command-resolution provenance consumer edge. Runtime replay validation remains unchanged.",
+      "run_id": 43174128758,
+      "head_sha": "483e873ba1b66910babba81b6ccbebe9e19784e3",
+      "deterministic": true
     }
   ],
   "recent_pull_requests": [

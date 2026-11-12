@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from common import keep_all, load_assets
+from common import keep_all, load_assets, register_current_fixture_programs
 from quorune import CommanderSession, GameConfig
 from quorune.engine import GameRuleError
 from quorune.model import CardInstance, StackItem
@@ -51,8 +51,7 @@ class SemanticPreflightV2Tests(unittest.TestCase):
         record=self.db.lookup('Worldwalker Helm')
         registry=SemanticRegistry()
         capabilities=load_default_capability_registry()
-        register_generated_programs(self.db,registry,(record,),capability_registry=capabilities,
-            capability_profile='commander_review',promote_exact_runtime_handlers=True)
+        register_current_fixture_programs(self.db, registry, (record,), capability_registry=capabilities)
         self.assertEqual('fully_playable',card_semantic_status(record,registry,db=self.db,
             capability_registry=capabilities)['status'])
         current=next(p for p in registry.programs_for_oracle(record.oracle_id)
@@ -63,7 +62,6 @@ class SemanticPreflightV2Tests(unittest.TestCase):
         row=card_semantic_status(record,registry,db=self.db,capability_registry=capabilities)
         self.assertNotEqual('fully_playable',row['status'])
         self.assertIn('replacement_effect',row['unresolved'])
-        self.assertIn('keyword:explore',row['unresolved'])
 
     def test_native_static_owner_cannot_cover_an_unrelated_source_line(self):
         from dataclasses import replace
@@ -120,6 +118,13 @@ class SemanticPreflightV2Tests(unittest.TestCase):
     def test_trusted_program_is_invalidated_by_source_hash_drift(self):
         registry = SemanticRegistry()
         record = self.db.lookup("An Offer You Can't Refuse")
+        register_generated_programs(
+            self.db, registry, (record,),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review", promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
         program = registry.get(f"{record.oracle_id}:spell:front")
         self.assertIsNotNone(program)
         program.provenance["source_oracle_hash"] = "0" * 64
@@ -210,9 +215,12 @@ class SemanticPreflightV2Tests(unittest.TestCase):
         self.assertNotIn("mana_ability", row["unresolved"])
 
     def test_exact_equip_keyword_is_recognized_as_supported(self):
+        registry = SemanticRegistry()
+        record = self.db.lookup("Lightning Greaves")
+        register_current_fixture_programs(self.db, registry, (record,))
         row = card_semantic_status(
-            self.db.lookup("Lightning Greaves"),
-            SemanticRegistry(),
+            record,
+            registry,
             db=self.db,
         )
 

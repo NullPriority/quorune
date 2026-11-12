@@ -3,10 +3,12 @@
 from collections.abc import Mapping
 from types import SimpleNamespace
 
-from ..qualified_attack_model import (ATTACK_FACT_PREFIX, ATTACK_FACT_COLLECTIONS,
-    ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS, ATTACK_RECIPIENT_KIND_FIELD, QUALIFIED_ATTACK_CAPABILITY,
-    QUALIFIED_ATTACK_FULL_STATS_VERSION, defended_player_or_planeswalker_condition, qualified_attack_facts_version)
 from ..object_query import exact_numeric_characteristic
+from ..qualified_attack_model import (
+    ATTACK_FACT_PREFIX, ATTACK_FACT_COLLECTIONS, ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS,
+    ATTACK_RECIPIENT_KIND_FIELD, QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_FULL_STATS_VERSION,
+    defended_player_or_planeswalker_condition, qualified_attack_facts_version, source_attacks_battle_condition,
+)
 from ..replacement.immutable import thaw_value
 
 
@@ -55,9 +57,14 @@ def qualified_attack_runtime_dependencies(program):
         if isinstance(value, Mapping):
             field = value.get('field')
             if field == ATTACK_RECIPIENT_KIND_FIELD:
-                recipient_scope = defended_player_or_planeswalker_condition()
-                if thaw_value(value) != recipient_scope['all'][1]:
-                    raise ValueError('Declared defender kind requires the closed player-or-planeswalker filter')
+                battle_scope = source_attacks_battle_condition()
+                if thaw_value(value) == battle_scope["all"][-1]:
+                    if program.event != "creature.attacks" or thaw_value(program.event_condition) != battle_scope:
+                        raise ValueError("A battle-attack condition requires the source's own declared attack")
+                else:
+                    recipient_scope = defended_player_or_planeswalker_condition()
+                    if thaw_value(value) != recipient_scope['all'][1]:
+                        raise ValueError('Declared defender kind requires the closed player-or-planeswalker filter')
             if isinstance(field, str) and field.startswith(ATTACK_FACT_PREFIX):
                 found = True
                 if set(value) != {'field', 'op', 'value'}:

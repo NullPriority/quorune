@@ -3,42 +3,6 @@
   "name": "v0.8-exact-deck-mana-families",
   "programs": [
     {
-      "key": "4d18bcba-a346-445e-a182-6cc30b7e066d:ability:ab1",
-      "label": "Ashnod's Altar mana ability",
-      "oracle_id": "4d18bcba-a346-445e-a182-6cc30b7e066d",
-      "ability_id": "ability:ab1",
-      "active_zone": "battlefield",
-      "event": "activate",
-      "effects": [],
-      "trust_level": "trusted",
-      "coverage": ["mana_ability", "mana_side_effect", "sacrifice_cost", "colorless_mana"],
-      "tests": ["test_ashnods_altar_sacrifices_exactly_one_creature_for_two_colorless"],
-      "provenance": {
-        "source_oracle_hash": "864a3c21c92c9b2e8f6a59568597e65aca64f837a1ca6076353f49ef81f8fe37",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "v0.8-exact-mana-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "d0ee5bdc-2b69-4b73-9a20-ffcc18783b29:ability:ab1",
-      "label": "Mana Confluence mana ability",
-      "oracle_id": "d0ee5bdc-2b69-4b73-9a20-ffcc18783b29",
-      "ability_id": "ability:ab1",
-      "active_zone": "battlefield",
-      "event": "activate",
-      "effects": [],
-      "trust_level": "trusted",
-      "coverage": ["mana_ability", "mana_side_effect", "life_cost", "mana_choice"],
-      "tests": ["test_mana_confluence_pays_life_and_produces_selected_color"],
-      "provenance": {
-        "source_oracle_hash": "e381b99c0c1ec7115ac2f615ff3c483d2b2cea38791c7cb7b3adddc2180506b4",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "v0.8-exact-mana-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "95560508-7ac9-4be9-8a3f-3c7d5b52807b:ability:ab1",
       "label": "Fellwar Stone mana ability",
       "oracle_id": "95560508-7ac9-4be9-8a3f-3c7d5b52807b",
@@ -70,24 +34,6 @@
       "provenance": {
         "source_oracle_hash": "549742fb78860080282130357bb19756f462d853a1d648cbbe8b6ec256244b62",
         "source_rulings_hash": "dd015c23c410a28948671a965167f5b68791847a52b8759129172c128e22b0da",
-        "authored_by": "v0.8-exact-mana-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "55a519b4-61cb-448a-875b-4d6dbe00580f:ability:ab2",
-      "label": "Spire of Industry colored mana ability",
-      "oracle_id": "55a519b4-61cb-448a-875b-4d6dbe00580f",
-      "ability_id": "ability:ab2",
-      "active_zone": "battlefield",
-      "event": "activate",
-      "effects": [],
-      "trust_level": "trusted",
-      "coverage": ["mana_ability", "activation_condition", "life_cost", "mana_choice"],
-      "tests": ["test_spire_of_industry_requires_an_artifact_and_pays_life"],
-      "provenance": {
-        "source_oracle_hash": "d7cca0cd0002a8575daca3cd5c7c65190f2fde9286ed60fedfb3a95dcef23997",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "authored_by": "v0.8-exact-mana-family",
         "review_status": "reviewed"
       }

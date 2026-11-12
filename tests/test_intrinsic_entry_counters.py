@@ -110,6 +110,9 @@ class IntrinsicEntryCounterTests(unittest.TestCase):
         ref: str,
     ) -> CardInstance:
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         card = CardInstance(
             object_id=f"fixture:{ref}",
             ref=ref,
@@ -704,7 +707,10 @@ class IntrinsicEntryCounterTests(unittest.TestCase):
     def test_token_and_counter_replacements_resume_sequentially_and_replay(self):
         session = self.session(3065010, players=4)
         engine = session.engine
-        self.stage_competing_sources(engine, seat="A")
+        # Keep the token stage's two artifact-token additions separate from
+        # the two counter replacements; Doubling Season also changes tokens.
+        self.add_permanent(engine, seat="A", name="Vorinclex, Monstrous Raider", ref="a-doubling")
+        self.add_permanent(engine, seat="A", name="Doc Samson, Super Psychiatrist", ref="a-doc")
         for name, ref in (
             ("Stridehangar Automaton", "a-stridehangar"),
             ("Worldwalker Helm", "a-worldwalker"),

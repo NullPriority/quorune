@@ -34,6 +34,7 @@ from .util import unique_preserving_order
 from .semantic_runtime.zone_replacement_model import PreparedZoneChange
 if TYPE_CHECKING:
     from .composition_departure_batch import PreparedCompositionDepartureBatch
+    from .dungeon_runtime import DungeonCompletion
 
 
 def synchronize_state_based_observers(host):
@@ -233,6 +234,7 @@ class StateBasedExecutionPlan:
     zone_replacements: tuple[tuple[str, PreparedZoneChange], ...] = ()
     composition_departure_batch: PreparedCompositionDepartureBatch | None = None
     resolved_batch: StateBasedActionBatch | None = None
+    dungeon_completions: tuple[DungeonCompletion, ...] = ()
 
 
 def _prepare_counter_removals(
@@ -428,6 +430,8 @@ def prepare_state_based_execution(
         batch,
         moving=frozenset(moved),
     )
+    from .dungeon_runtime import prepare_dungeon_completions
+    dungeons = prepare_dungeon_completions(host)
     return StateBasedExecutionPlan(
         resolved_batch=batch,
         destruction=destruction,
@@ -438,6 +442,7 @@ def prepare_state_based_execution(
         saga_sacrifices=saga_ids,
         counter_removals=counter_removals,
         zone_replacements=zone_replacements,
+        dungeon_completions=dungeons,
         state_changed=bool(
             ordinary
             or any(entry.disposition is DestructionDisposition.REGENERATION
@@ -449,6 +454,7 @@ def prepare_state_based_execution(
             or batch.cease
             or batch.world_rule
             or saga_ids
+            or dungeons
         ),
     )
 
@@ -474,6 +480,8 @@ def _commit_state_based_zone_changes(
         raise StateBasedExecutionError(
             "State-based commit requires a typed execution plan"
         )
+    from .dungeon_runtime import commit_dungeon_completions, publish_dungeon_completions
+    completed_dungeons = commit_dungeon_completions(host, plan.dungeon_completions)
     commit_destruction_plan(
         host,
         plan.destruction,
@@ -485,6 +493,7 @@ def _commit_state_based_zone_changes(
         prepared_zone_replacements=dict(plan.zone_replacements),
     )
     log_saga_sacrifices(host, plan.saga_sacrifices)
+    publish_dungeon_completions(host, completed_dungeons)
 
 
 def log_saga_sacrifices(

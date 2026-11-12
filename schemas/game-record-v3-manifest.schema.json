@@ -405,7 +405,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": 1
+          "enum": [1, 2],
+          "type": "integer"
         },
         "semantic_handler_inventory": {
           "items": {

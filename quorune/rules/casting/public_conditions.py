@@ -7,6 +7,7 @@ from functools import partial
 from ...characteristic_read_frames import CharacteristicStateView as _StateView
 
 PUBLIC_SELF_COST_CAPABILITY='casting.cost.self_public_state_condition'
+ATTACKING_CONTROLLER_SELF_COST_CAPABILITY = "casting.cost.self_attacking_controller"
 
 
 @dataclass(frozen=True,slots=True)
@@ -68,6 +69,22 @@ def self_public_condition_multiplier(host,seat,source,condition):
         raise SelfCastReductionError('Shared self cost public facts are unavailable') from exc
 
 
+def current_creature_attacking_controller(host, seat: str) -> bool:
+    from ...continuous_effects import Layer
+
+    for object_id, defender in host.state.combat.attackers.items():
+        if defender != seat:
+            continue
+        card = host.state.cards.get(object_id)
+        if card is None or card.zone != "battlefield" or card.phased_out:
+            continue
+        effective = host._effective_card_data(card, maximum_layer=Layer.TYPE)
+        card_types, _, _ = host._type_parts(effective["type_line"])
+        if "creature" in card_types:
+            return True
+    return False
+
+
 def self_public_condition_dependencies(value):
     from ...self_cast_reductions import CastReductionMetric,CastReductionMetricKind
     from ...object_predicate import object_query_capabilities
@@ -82,6 +99,9 @@ def self_public_condition_dependencies(value):
             if metric.kind is not CastReductionMetricKind.PUBLIC_STATE:raise ValueError('Shared cost condition has no typed metric owner')
             raw=metric.public_state.to_dict()
             own.update((PUBLIC_SELF_COST_CAPABILITY,*object_query_capabilities(raw),*characteristic_quantity_capabilities(raw),*public_history_query_dependencies(raw),*public_zone_condition_capabilities(raw)))
+        if value.get('kind') == CastReductionMetricKind.CREATURE_ATTACKING_CONTROLLER.value:
+            CastReductionMetric.from_dict(thaw_value(value))
+            own.add(ATTACKING_CONTROLLER_SELF_COST_CAPABILITY)
         return tuple(sorted(own|{cap for child in value.values() for cap in self_public_condition_dependencies(child)}))
     if isinstance(value,(list,tuple)):return tuple(sorted({cap for child in value for cap in self_public_condition_dependencies(child)}))
     return ()

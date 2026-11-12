@@ -563,6 +563,64 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                     FixedSpellCostReductionHandler().validate(value)
 
 
+    def test_chosen_type_costs_lower_closed_creature_and_colored_spell_scopes(self):
+        from types import SimpleNamespace
+        from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+        from quorune.cast_cost_modifiers import CHOSEN_TYPE_CAST_COST_CAPABILITY
+        from quorune.semantic_runtime.chosen_type_cast_costs import ChosenTypeSpellCostModifierHandler
+
+        handler = ChosenTypeSpellCostModifierHandler()
+        cases = (
+            ("Creature spells of the chosen type cost {2} less to cast.",
+             "all_players", ("creature",), {"GENERIC": -2}),
+            ("Spells of the chosen type you cast cost {W}{U}{B}{R}{G} less to cast. "
+             "This effect reduces only the amount of colored mana you pay.",
+             "source_controller", (), {color: -1 for color in "WUBRG"}),
+        )
+        for index, (text, payer, types, mana) in enumerate(cases):
+            with self.subTest(text=text):
+                ir = self.compile(text, 601_537_001 + index)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                descriptor, = node.handlers
+                self.assertIn(CHOSEN_TYPE_CAST_COST_CAPABILITY, node.capability_dependencies)
+                self.assertIn(CURRENT_ABILITY_FRAGMENT_COVERAGE, node.runtime_coverage)
+                modifier = handler.validate(descriptor)
+                self.assertEqual((payer, types, mana), (
+                    modifier.affected_controller.value, modifier.predicates_any[0].types_all,
+                    dict(modifier.mana_adjustment),
+                ))
+                self.assertEqual((), handler.lower(descriptor, SimpleNamespace(annotations={})))
+                lowered, = handler.lower(descriptor, SimpleNamespace(annotations={"chosen_creature_type": "goblin"}))
+                self.assertEqual(("goblin",), lowered.predicates_any[0].subtypes_all)
+                with self.assertRaises(SemanticNodeError):
+                    handler.lower(descriptor, SimpleNamespace(annotations={"chosen_creature_type": "artifact"}))
+        for change in ({"affected_controller": "source_opponents"}, {"maximum_mana_value": 3}):
+            with self.subTest(change=change), self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, "modifier": {**descriptor["modifier"], **change}})
+
+    def test_chosen_type_costs_reject_open_qualifiers_and_missing_authority(self):
+        from quorune.cast_cost_modifiers import CHOSEN_TYPE_CAST_COST_CAPABILITY
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        text = "Creature spells of the chosen type cost {2} less to cast."
+        invalid = (
+            text.replace("{2}", "{X}"), text.replace("chosen type", "chosen color"),
+            text.replace("{2}", "{R}"), text[:-1] + " if it is your turn.",
+        )
+        for index, clause in enumerate(invalid):
+            self.assertNotEqual("exact", self.compile(clause, 601_537_010 + index).status)
+        self.assertEqual("exact", self.compile(text, 601_537_016).status)
+        with mock.patch("quorune.compiler.chosen_type_cast_costs.chosen_type_spell_cost_handler", return_value=None):
+            self.assertNotEqual("exact", self.compile(text, 601_537_017).status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == CHOSEN_TYPE_CAST_COST_CAPABILITY).update(
+            status="blocked", blockers=["Chosen type cost withdrawal witness"],
+        )
+        ir = compile_oracle_card(_record(text, 601_537_018), capability_registry=CapabilityRegistry(raw))
+        self.assertNotEqual("exact", ir.status)
+
+
 class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -625,6 +683,7 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         seat: str = "B",
         zone: str = "hand",
         controller: str | None = None,
+        register_exact: bool = False,
     ):
         engine = session.engine
         record = self.db.lookup(name)
@@ -651,6 +710,8 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
             capability_profile=engine.state.config.review_profile,
             promote_exact_runtime_handlers=True,
             promote_exact_effect_programs=True,
+            promote_exact_trigger_programs=register_exact,
+            promote_exact_capability_declarations=register_exact,
         )
         return card
 
@@ -1805,6 +1866,163 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         ):
             option = self.cost_option(engine, spell)
         self.assertEqual(2, option["requirements"]["GENERIC"])
+
+
+    def _assert_chosen_cost_card_closed(self, session, card):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        profile = session.state.config.review_profile
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(card.printed_name), semantic_registry=session.engine.semantics,
+            capability_registry=self.capabilities, capability_profile=profile,
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.capabilities, profile=profile)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        self.assertEqual("capability_closed", binding["trust_basis"])
+
+    def _issued_chosen_cost_actions(self, session, seat):
+        before = authoritative_state_hash(session.state)
+        packet = session.packet(f"pilot:{seat}", full=True)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        return {row["id"]: row for row in packet["decision"]["ctx"]["legal"]["actions"]}
+
+    def _chosen_cost_checkpoint(self, session):
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+    def _replay_chosen_cost(self, session):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "chosen-cost"
+            session.save(path)
+            proof = replay_record(path, self.db, verify=True)
+        self.assertTrue(proof["ok"], proof)
+        self.assertEqual(authoritative_state_hash(session.state), proof["final_state_hash"])
+
+    def _cast_chosen_type_provider(self, session, source, *, seat, choice, mana):
+        engine = session.engine
+        engine.state.players[seat].mana_pool["C"] = mana
+        self.prepare_main(session, seat)
+        self._chosen_cost_checkpoint(session)
+        offer = self._issued_chosen_cost_actions(session, seat)[f"cast:{source.ref}"]
+        cast = session.act(f"pilot:{seat}", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        for _ in range(12):
+            if session.state.pending_decision.kind == "replacement.order":
+                break
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        options = session.packet(f"pilot:{seat}", full=True)["decision"]["ctx"]["options"]
+        selected = next(option["id"] for option in options if option["id"].endswith(f":{choice}"))
+        response = {"action_id": "choose", "choices": {"replacement": selected}}
+        before = authoritative_state_hash(session.state)
+        other = "A" if seat == "B" else "B"
+        self.assertFalse(session.act(f"pilot:{other}", response).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act(f"pilot:{seat}", response)
+        self.assertTrue(accepted.ok, accepted.summary)
+        current = session.state.cards[source.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertEqual(choice, current.annotations["chosen_creature_type"])
+        self._replay_chosen_cost(session)
+
+    def test_actual_incubator_reduces_an_opponents_creature_and_preserves_kindred_and_face_down_costs(self):
+        session = self.session(601_537_101, players=4)
+        engine = session.engine
+        provider = self.add_card(session, name="Urza's Incubator", ref="chosen-incubator", seat="A", register_exact=True)
+        goblin = self.add_card(session, name="Skirk Marauder", ref="chosen-goblin", register_exact=True)
+        kindred = self.add_card(session, name="Boggart Shenanigans", ref="kindred-goblin", register_exact=True)
+        for card in (provider, goblin, kindred):
+            self._assert_chosen_cost_card_closed(session, card)
+        self._cast_chosen_type_provider(session, provider, seat="A", choice="goblin", mana=3)
+        session.state.players["B"].mana_pool.update(C=3, R=1)
+        self.prepare_main(session)
+        self._chosen_cost_checkpoint(session)
+        actions = self._issued_chosen_cost_actions(session, "B")
+        self.assertEqual(0, actions[f"cast:{goblin.ref}"]["cost_options"][0]["requirements"]["GENERIC"])
+        self.assertEqual(2, actions[f"cast:{kindred.ref}"]["cost_options"][0]["requirements"]["GENERIC"])
+        morph = actions[f"cast-morph:{goblin.ref}"]
+        self.assertEqual(3, morph["cost_options"][0]["requirements"]["GENERIC"])
+        cast = session.act("pilot:B", {"action_id": f"cast:{goblin.ref}", "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual(3, session.state.players["B"].mana_pool["C"])
+        self.assertEqual(0, session.state.players["B"].mana_pool["R"])
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("battlefield", session.state.cards[goblin.object_id].zone)
+        self._replay_chosen_cost(session)
+
+    def test_actual_morophon_prices_hybrid_choices_for_its_current_controller(self):
+        session = self.session(601_537_102, players=4)
+        engine = session.engine
+        provider = self.add_card(session, name="Morophon, the Boundless", ref="chosen-morophon", register_exact=True)
+        own = self.add_card(session, name="Boros Reckoner", ref="chosen-hybrid", register_exact=True)
+        foreign = self.add_card(session, name="Boros Reckoner", ref="foreign-hybrid", seat="A", register_exact=True)
+        for card in (provider, own):
+            self._assert_chosen_cost_card_closed(session, card)
+        self._cast_chosen_type_provider(session, provider, seat="B", choice="wizard", mana=7)
+        session.state.players["A"].mana_pool["R"] = 1
+        self.prepare_main(session, "A")
+        self._chosen_cost_checkpoint(session)
+        actions = self._issued_chosen_cost_actions(session, "A")
+        self.assertNotIn(f"cast:{foreign.ref}", actions)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:A", {"action_id": f"cast:{foreign.ref}", "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        session.state.players["B"].mana_pool["R"] = 1
+        self.prepare_main(session, "B")
+        self._chosen_cost_checkpoint(session)
+        offer = self._issued_chosen_cost_actions(session, "B")[f"cast:{own.ref}"]
+        option = next(row for row in offer["cost_options"]
+                      if all(row["requirements"].get(key, 0) == amount
+                             for key, amount in (("R", 1), ("W", 0), ("GENERIC", 0))))
+        accepted = session.act("pilot:B", {"action_id": offer["id"], "cost_option": option["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, session.state.players["B"].mana_pool["R"])
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("battlefield", session.state.cards[own.object_id].zone)
+        self._replay_chosen_cost(session)
+
+    def test_actual_morophon_prices_kindred_and_evoke_without_spilling_into_generic(self):
+        for index, (name, choice, generic, method) in enumerate((
+            ("Tarfire", "goblin", 0, "normal"), ("Mulldrifter", "elemental", 2, "evoke"),
+        )):
+            with self.subTest(name=name):
+                session = self.session(601_537_103 + index)
+                engine = session.engine
+                provider = self.add_card(session, name="Morophon, the Boundless", ref="total-cost-provider", register_exact=True)
+                spell = self.add_card(session, name=name, ref="chosen-total-cost", register_exact=True)
+                shock = self.add_card(session, name="Shock", ref="ordinary-red-spell", register_exact=True)
+                for card in (provider, spell):
+                    self._assert_chosen_cost_card_closed(session, card)
+                self._cast_chosen_type_provider(session, provider, seat="B", choice=choice, mana=7)
+                session.state.players["B"].mana_pool["C"] = generic
+                self.prepare_main(session)
+                self._chosen_cost_checkpoint(session)
+                actions = self._issued_chosen_cost_actions(session, "B")
+                offer = actions[f"cast:{spell.ref}"]
+                options = {row["id"]: row for row in offer["cost_options"]}
+                requirements = options[method]["requirements"]
+                self.assertEqual(generic, requirements["GENERIC"])
+                self.assertTrue(all(requirements[color] == 0 for color in "WUBRG"))
+                self.assertNotIn(f"cast:{shock.ref}", actions)
+                if method == "evoke":
+                    self.assertNotIn("normal", options)
+                accepted = session.act("pilot:B", {
+                    "action_id": offer["id"], "cost_option": method, "pay": "auto",
+                    "targets": [] if method == "evoke" else ["A"],
+                })
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual("stack", session.state.cards[spell.object_id].zone)
+                self.assertEqual(0, session.state.players["B"].mana_pool.get("C", 0))
+                self._replay_chosen_cost(session)
+                if method == "normal":
+                    self.resolve_stack_with_passes(session)
+                    self.assertEqual(38, session.state.players["A"].life)
+                    self._replay_chosen_cost(session)
 
 
 if __name__ == "__main__":

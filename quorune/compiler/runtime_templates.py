@@ -23,7 +23,7 @@ from .cast_cost_modifier_templates import (
     static_fixed_spell_cost_reduction_handler,
 )
 from .static_cast_rule_templates import static_cast_rule_handler
-from .combat_metadata_templates import static_goad_prohibition_handler
+from .combat_metadata_templates import attached_goad_handler, static_goad_prohibition_handler
 from .fixed_characteristic_settings import fixed_characteristic_setting_handler
 from .continuous_templates import (
     attached_fixed_characteristics_handler,
@@ -156,6 +156,12 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
 
 
 def _global_alternative_template(text):
+    from .spell_payment_grant_templates import spell_payment_grant_handler
+    payment = spell_payment_grant_handler(text)
+    if payment is not None:
+        return StaticRuntimeTemplate(compiled=payment, kind="static_ability", event=payment[1]["event"],
+            active_zone="battlefield", runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Spell payment grants require a complete current source and the shared payment owner")
     from .global_alternative_cost_templates import fixed_global_alternative_cost_handler
     from .turn_cast_grants import turn_cast_grant_handler
     compiled=turn_cast_grant_handler(text) or fixed_global_alternative_cost_handler(text)
@@ -170,12 +176,14 @@ def _step_participation_runtime_template(
 ) -> StaticRuntimeTemplate | None:
     if source_name is None:
         return None
+    from .conditional_untap_templates import conditional_untap_step_handler
     from .untap_selection_templates import fixed_untap_selection_limit_handler
 
     rule = (
         static_turn_step_skip_handler(text)
         or fixed_untap_selection_limit_handler(text, source_name=source_name)
         or static_untap_step_handler(text, source_name=source_name)
+        or conditional_untap_step_handler(text, source_name=source_name)
     )
     if rule is None:
         return None
@@ -197,6 +205,13 @@ def _source_permanent_participation_template(
 ) -> StaticRuntimeTemplate | None:
     if global_alternative := _global_alternative_template(text):
         return global_alternative
+    from .battlefield_cascade_grants import battlefield_cascade_grant_handler
+
+    cascade_grant = battlefield_cascade_grant_handler(text)
+    if cascade_grant is not None:
+        return StaticRuntimeTemplate(compiled=cascade_grant, kind="static_ability", event=cascade_grant[1]["event"],
+            active_zone="battlefield", runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Battlefield Cascade requires a current static ability and the shared cast trigger")
     goad_prohibition = static_goad_prohibition_handler(text)
     if goad_prohibition is not None:
         return StaticRuntimeTemplate(
@@ -236,8 +251,10 @@ def _source_permanent_participation_template(
         text,
         source_name=source_name or "",
     )
+    from .chosen_type_cast_costs import CHOSEN_TYPE_CAST_COST_TEMPLATE, chosen_type_spell_cost_handler
     from .targeted_spell_costs import targeted_spell_cost_template
     spell_cost_reduction = (targeted_spell_cost_template(text,source_name=source_name or 'source')
+        or chosen_type_spell_cost_handler(text)
         or static_fixed_spell_cost_reduction_handler(text, source_name=source_name or 'source'))
     if spell_cost_reduction is not None:
         template_id = spell_cost_reduction[0]
@@ -253,7 +270,7 @@ def _source_permanent_participation_template(
                 "static_ability",
                 *(
                     (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1", "optional-life-colored-reduction-v1"}
+                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1", "optional-life-colored-reduction-v1", CHOSEN_TYPE_CAST_COST_TEMPLATE}
                     else ()
                 ),
             ),
@@ -544,6 +561,12 @@ def _continuous_static_runtime_template(
 
 
 def _constant_static_characteristic_template(text, *, source_name, source_is_class):
+    from .cross_zone_type_addition_templates import cross_zone_type_addition_handler
+    cross_zone = None if source_is_class else cross_zone_type_addition_handler(text)
+    if cross_zone is not None:
+        return StaticRuntimeTemplate(compiled=cross_zone, kind="static_ability", event="characteristics.evaluate",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Cross-zone type additions require the complete source and shared type-layer owner")
     from .soulbond_templates import paired_characteristics_handler
     paired = paired_characteristics_handler(text, source_name=source_name or 'source')
     if paired is not None:
@@ -558,6 +581,13 @@ def _constant_static_characteristic_template(text, *, source_name, source_is_cla
     if attached is not None:
         return StaticRuntimeTemplate(compiled=attached, kind="static_ability", event="characteristics.evaluate",
             dependency_reason="Generic attached characteristics require a trusted continuous-effect capability")
+    goad = None if source_is_class else attached_goad_handler(text, source_name=source_name or "source")
+    if goad is not None:
+        return StaticRuntimeTemplate(
+            compiled=goad, kind="static_ability", event="characteristics.evaluate",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Attached goad requires its current static ability and declaration owners",
+        )
     setting = None if source_is_class else fixed_characteristic_setting_handler(text, source_name=source_name)
     if setting is not None:
         return StaticRuntimeTemplate(compiled=setting, kind="static_ability", event="characteristics.evaluate",
@@ -724,6 +754,15 @@ def static_runtime_template(
         trigger_multiplier = _trigger_multiplier_template(text,source_name)
         if trigger_multiplier is not None:
             return trigger_multiplier
+        from .venture_templates import fixed_venture_limit_template
+
+        venture_limit = fixed_venture_limit_template(text)
+        if venture_limit is not None:
+            return StaticRuntimeTemplate(
+                compiled=venture_limit, kind="static_ability", event="characteristics.evaluate",
+                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+                dependency_reason="Venture limits require current static components and turn history",
+            )
         counter_quantity = (
             None
             if source_is_class

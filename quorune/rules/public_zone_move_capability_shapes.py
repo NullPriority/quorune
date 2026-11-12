@@ -252,6 +252,18 @@ def fixed_owner_zone_move_node_capabilities(
     linked = linked_exile_return_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if linked:
         return linked
+    from ..event_card_return import (
+        event_library_move_capabilities, is_event_library_move, validate_event_library_move,
+    )
+
+    if len(effects) == 1 and is_event_library_move(effects[0]):
+        if target_schema is not None or FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics:
+            return ()
+        try:
+            validate_event_library_move(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return (FIXED_OWNER_ZONE_MOVE_CAPABILITY, *event_library_move_capabilities(effects[0]))
     if FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]

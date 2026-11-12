@@ -188,6 +188,9 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         is_token: bool = False,
     ) -> CardInstance:
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         current_controller = controller or seat
         public = zone == "battlefield"
         card = CardInstance(
@@ -232,26 +235,12 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         engine.semantics.put(programs[0])
         return programs[0]
 
-    def register_typed_event_trigger(
-        self,
-        engine,
-        source: CardInstance,
-    ):
-        programs = [
-            program
-            for program in generated_programs(
-                self.db,
-                self.db.by_oracle_id(source.oracle_id),
-                trust_level="trusted",
-                capability_registry=self.capabilities,
-                capability_profile="commander_review",
-            )
-            if program.provenance.get("template_id")
-            in FIXED_TYPED_EVENT_TEMPLATE_IDS
-        ]
-        self.assertEqual(1, len(programs))
-        engine.semantics.put(programs[0])
-        return programs[0]
+    def register_typed_event_trigger(self, engine, source: CardInstance):
+        from common import current_fixture_program_for_templates
+
+        return current_fixture_program_for_templates(
+            self, engine, source, FIXED_TYPED_EVENT_TEMPLATE_IDS,
+        )
 
     @staticmethod
     def _event_condition_fields(condition: Mapping | None) -> set[str]:
@@ -286,13 +275,7 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
     ):
         programs = [
             program
-            for program in generated_programs(
-                self.db,
-                self.db.by_oracle_id(source.oracle_id),
-                trust_level="trusted",
-                capability_registry=self.capabilities,
-                capability_profile="commander_review",
-            )
+            for program in engine.semantics.programs_for_oracle(source.oracle_id)
             if program.provenance.get("template_id")
             in FIXED_TYPED_EVENT_TEMPLATE_IDS
             and program.event == event
@@ -300,7 +283,6 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
             in self._event_condition_fields(program.event_condition)
         ]
         self.assertEqual(1, len(programs))
-        engine.semantics.put(programs[0])
         return programs[0]
 
     @staticmethod
@@ -1974,7 +1956,7 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         source = self.add_card(
             engine,
             seat="A",
-            name="Typed Subtype Graveyard Trigger Fixture",
+            name="Typed Dual Subtype Graveyard Trigger Fixture",
             ref="subtype-wording-source",
             zone="battlefield",
         )
@@ -2047,7 +2029,7 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         source = self.add_card(
             engine,
             seat="A",
-            name="Typed Subtype Graveyard Trigger Fixture",
+            name="Typed Dual Subtype Graveyard Trigger Fixture",
             ref="kindred-wording-source",
             zone="battlefield",
         )
@@ -2108,7 +2090,8 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
                 source = self.add_card(
                     engine,
                     seat="A",
-                    name="Typed Subtype Graveyard Trigger Fixture",
+                    name=("Typed Nontoken Subtype Graveyard Trigger Fixture" if qualifier == "token"
+                          else "Typed Another Subtype Graveyard Trigger Fixture"),
                     ref="subtype-filter-source",
                     zone="battlefield",
                 )
@@ -2149,7 +2132,7 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         source = self.add_card(
             engine,
             seat="A",
-            name="Typed Subtype Graveyard Trigger Fixture",
+            name="Typed Controlled Subtype Graveyard Trigger Fixture",
             ref="subtype-control-source",
             zone="battlefield",
         )
@@ -2199,7 +2182,7 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
                 source = self.add_card(
                     engine,
                     seat="A",
-                    name="Typed Subtype Graveyard Trigger Fixture",
+                    name="Typed Owned Subtype Graveyard Trigger Fixture",
                     ref="subtype-owner-source",
                     zone="battlefield",
                 )
@@ -2248,14 +2231,14 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         source_a = self.add_card(
             engine,
             seat="A",
-            name="Typed Subtype Graveyard Trigger Fixture",
+            name="Typed Another Subtype Graveyard Trigger Fixture",
             ref="subtype-apnap-source-a",
             zone="battlefield",
         )
         self.add_card(
             engine,
             seat="C",
-            name="Typed Subtype Graveyard Trigger Fixture",
+            name="Typed Another Subtype Graveyard Trigger Fixture",
             ref="subtype-apnap-source-c",
             zone="battlefield",
         )

@@ -221,7 +221,7 @@ class InteractionKernelTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.zone == "battlefield"
             and card.controller == "B"
-            and card.printed_name == "Bird"
+            and card.printed_name == "Bird Token"
         )
         self.assertEqual(
             {"Flying"},
@@ -375,13 +375,13 @@ class InteractionKernelTests(unittest.TestCase):
         )
         self.assertIn(
             artifact.ref,
-            abrade_action["target_schema"]["mode_schemas"]["destroy"][
+            abrade_action["target_schema"]["mode_schemas"]["mode_2"][
                 "groups"
             ][0]["legal_refs"],
         )
         self.assertIn(
             creature.ref,
-            abrade_action["target_schema"]["mode_schemas"]["damage"][
+            abrade_action["target_schema"]["mode_schemas"]["mode_1"][
                 "groups"
             ][0]["legal_refs"],
         )

@@ -11,7 +11,12 @@ from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
     FixedPublicStateConditionSpec,
 )
+from ..dungeon_progress import DUNGEON_COMPLETED_EVENT, DUNGEON_VENTURE_CAPABILITY
 from ..errors import GameRuleError
+from ..face_up_effect_model import (
+    FACE_DOWN_ENTRY_CAPABILITY, FACE_DOWN_ENTRY_FIELD,
+    TURN_FACE_UP_ACTOR_CAPABILITY, TURN_FACE_UP_ACTOR_FIELD, TURN_FACE_UP_EVENT,
+)
 from ..replacement.immutable import FrozenMap, freeze_value, thaw_value
 from ..scheduled_player import (
     UPKEEP_HAND_COUNT_CAPABILITY, UpkeepParticipantHandCondition,
@@ -196,6 +201,55 @@ def fixed_event_subscription_condition(
     return FixedEventSubscriptionSet(tuple(subscriptions)).to_condition()
 
 
+def dungeon_completion_dependencies(program, subscriptions: FixedEventSubscriptionSet | None) -> tuple[str, ...]:
+    if subscriptions is not None and subscriptions.subscription_for(DUNGEON_COMPLETED_EVENT) is not None:
+        raise EventSubscriptionError("Dungeon completion requires a single event subscription")
+    if program.event != DUNGEON_COMPLETED_EVENT:
+        return ()
+    player = {"battlefield": "$source.controller", "graveyard": "$source.owner"}.get(program.active_zone)
+    if player is None or program.event_condition != {"field": "player", "op": "eq", "value": player}:
+        raise EventSubscriptionError("Dungeon completion requires a source-relative completion subscription")
+    return (DUNGEON_VENTURE_CAPABILITY,)
+
+
+def event_has_capability_subscriber(host, event, capability):
+    semantics = getattr(host, "semantics", None)
+    return semantics is not None and any(
+        capability in program.capability_dependencies for program in semantics.programs_for_event(event)
+    )
+
+
+def face_transition_event_dependencies(program, subscriptions):
+    required = set()
+    scopes = {
+        FACE_DOWN_ENTRY_FIELD: ("permanent.enter", FACE_DOWN_ENTRY_CAPABILITY, True),
+        TURN_FACE_UP_ACTOR_FIELD: (TURN_FACE_UP_EVENT, TURN_FACE_UP_ACTOR_CAPABILITY, "$source.controller"),
+    }
+
+    def visit(event, value):
+        if isinstance(value, Mapping):
+            field = value.get("field")
+            if isinstance(field, str) and field in scopes:
+                expected_event, capability, expected_value = scopes[field]
+                if (event != expected_event or program.active_zone != "battlefield"
+                        or value != {"field": field, "op": "eq", "value": expected_value}
+                        or type(value["value"]) is not type(expected_value)):
+                    raise EventSubscriptionError("Face-transition facts require their closed battlefield subscription")
+                required.add(capability)
+            for child in value.values():
+                visit(event, child)
+        elif isinstance(value, (tuple, list)):
+            for child in value:
+                visit(event, child)
+
+    if subscriptions is None:
+        visit(program.event, program.event_condition)
+    else:
+        for child in subscriptions.subscriptions:
+            visit(child.event, child.condition)
+    return tuple(sorted(required))
+
+
 def _upkeep_hand_condition_leaf(condition: Mapping[str, Any] | None) -> Mapping[str, Any] | None:
     leaves = tuple(_public_state_leaves(condition))
     if not any(is_upkeep_hand_condition(leaf.get('condition')) for leaf in leaves):
@@ -305,8 +359,15 @@ def intervening_recheck_condition(program, *, context, controller):
 
 def source_event_intervening_recheck(host, program, *, context, controller, source_object_id):
     """Recheck a condition whose source occurrence carries the relevant facts."""
+    from ..attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
     from .attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE, attacked_player_life_holds
 
+    if DECLARED_ATTACK_POWER_COVERAGE in program.coverage:
+        from .attack_batches import declared_attack_power_recheck
+        try:
+            return declared_attack_power_recheck(program, context, controller=controller, source_object_id=source_object_id)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if ATTACKED_PLAYER_LIFE_COVERAGE in program.coverage:
         try:
             return attacked_player_life_holds(host, context, source_object_id=source_object_id, controller=controller)

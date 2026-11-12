@@ -75,6 +75,7 @@ class UntapStepSourceContext:
     source_tapped: bool
     component_id: str
     attached_object_id: str | None = None
+    public_condition_applies: bool | None = None
 
     def __post_init__(self) -> None:
         for field_name in (
@@ -92,6 +93,8 @@ class UntapStepSourceContext:
             raise SemanticNodeError(
                 "Untap-step source tapped state must be boolean"
             )
+        if self.public_condition_applies is not None and type(self.public_condition_applies) is not bool:
+            raise SemanticNodeError("Untap-step public condition result must be boolean")
         if self.attached_object_id is not None and (
             type(self.attached_object_id) is not str
             or not self.attached_object_id
@@ -431,8 +434,11 @@ class FixedUntapSelectionLimitHandler(StaticUntapStepParticipationHandler):
 
 @lru_cache(maxsize=1)
 def default_untap_step_component_registry() -> UntapStepComponentRegistry:
+    from .conditional_untap import ConditionalUntapStepParticipationHandler
+
     registry = UntapStepComponentRegistry(
         (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler(),
+         ConditionalUntapStepParticipationHandler(),
          FixedUntapSelectionLimitHandler(), StaticTurnStepSkipHandler(), PrintedPhasingHandler())
     )
     registry.require_registered_capabilities(
@@ -496,6 +502,8 @@ def current_step_is_skipped(host: UntapStepHost, active: str, step: str) -> bool
 def collect_untap_step_participations(
     host: UntapStepHost,
 ) -> tuple[UntapStepParticipation, ...]:
+    from .conditional_untap import conditional_untap_applies
+
     registry = default_untap_step_component_registry()
     participations: list[UntapStepParticipation] = []
     for source, program in _active_step_programs(host, "untap.step"):
@@ -509,6 +517,7 @@ def collect_untap_step_participations(
                         source_controller=source.controller,
                         source_tapped=bool(source.tapped),
                         component_id=f"{program.key}:{descriptor_index}",
+                        public_condition_applies=conditional_untap_applies(host, source, descriptor),
                         attached_object_id=(
                             source.attached_to
                             if source.attached_to in host.state.cards

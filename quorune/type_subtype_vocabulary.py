@@ -7,6 +7,7 @@ from .basic_land_types import LAND_SUBTYPES
 from .creature_subtypes import CREATURE_SUBTYPES
 
 
+CARD_SUPERTYPES = frozenset({"basic", "legendary", "ongoing", "snow", "world"})
 ARTIFACT_SUBTYPES=frozenset('attraction blood bobblehead book clue contraption equipment food fortification gold '
     'incubator infinity junk lander map mutagen powerstone spacecraft stone treasure vehicle vibranium'.split())
 MOUNT_VEHICLE_SUBTYPES = ("mount", "vehicle")

@@ -9,6 +9,7 @@ from .errors import GameRuleError
 from .impulse_access_model import (
     ImpulseAccessDuration,
     TemporaryCastPermissionGrant,
+    impulse_access_count_is_legal,
 )
 from .model import CardInstance, GameState
 from .zone_transitions import ZoneTransitionOwner
@@ -29,6 +30,7 @@ class ImpulseAccessRequest:
     count: int
     duration: ImpulseAccessDuration
     reason: str
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         if any(
@@ -38,10 +40,8 @@ class ImpulseAccessRequest:
             raise GameRuleError(
                 "Impulse-access requests require an actor, player, and reason"
             )
-        if type(self.count) is not int or not 1 <= self.count <= 10:
-            raise GameRuleError(
-                "Impulse-access requests require a fixed count from one to ten"
-            )
+        if not impulse_access_count_is_legal(self.count, self.schema_version):
+            raise GameRuleError("Impulse-access request count is invalid for its version")
         if not isinstance(self.duration, ImpulseAccessDuration):
             raise GameRuleError(
                 "Impulse-access requests require a typed duration"
@@ -96,6 +96,7 @@ class ImpulseAccessResult:
     requested_count: int
     exiled_refs: tuple[str, ...]
     moved_refs: tuple[str, ...]
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         exiled = tuple(self.exiled_refs)
@@ -103,8 +104,7 @@ class ImpulseAccessResult:
         if (
             type(self.player) is not str
             or not self.player
-            or type(self.requested_count) is not int
-            or not 1 <= self.requested_count <= 10
+            or not impulse_access_count_is_legal(self.requested_count, self.schema_version)
             or len(moved) > self.requested_count
             or len(exiled) > len(moved)
             or any(type(value) is not str or not value for value in moved)
@@ -127,7 +127,7 @@ def prepare_fixed_impulse_access(
     host._require_seat(request.actor, in_game=True)
     host._require_seat(request.player, in_game=True)
     library = host.state.players[request.player].zones["library"]
-    object_ids = tuple(reversed(library[-request.count :]))
+    object_ids = tuple(reversed(library[-request.count :])) if request.count else ()
     return ImpulseAccessPlan(
         request=request,
         top_first=tuple(
@@ -185,6 +185,10 @@ def _play_permission(
     }
     if request.duration is ImpulseAccessDuration.END_OF_TURN:
         permission["turn_sequence"] = host.state.turn_sequence
+    elif request.duration is ImpulseAccessDuration.NEXT_END_STEP:
+        permission["granted_during_own_end_step"] = (
+            host.state.step == "end_step" and host.state.active_player == request.player
+        )
     else:
         permission["expires_at_turns_begun"] = (
             host.state.players[request.player].turns_begun + 1
@@ -238,6 +242,7 @@ def commit_fixed_impulse_access(
         requested_count=plan.request.count,
         exiled_refs=tuple(card.ref for card in exiled),
         moved_refs=tuple(card.ref for card in moved),
+        schema_version=plan.request.schema_version,
     )
 
 
@@ -249,6 +254,27 @@ def resolve_fixed_impulse_access(
         host,
         prepare_fixed_impulse_access(host, request),
     )
+
+
+def apply_chosen_impulse_access(host, effect, *, actor, reason):
+    from .fixed_top_exile import chosen_impulse_grant
+
+    try:
+        identity, duration = chosen_impulse_grant(
+            {key: value for key, value in effect.items() if key not in {"reason", "_runtime_source"}}, actor=actor,
+        )
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._require_seat(actor, in_game=True)
+    card = host.state.cards.get(identity.object_id)
+    if (card is None or card.zone != "exile" or card.ref != identity.ref or card.owner != actor
+            or card.logical_object_id != identity.logical_object_id or not card.is_card_object or card.face_down):
+        raise GameRuleError("Chosen impulse access requires its current exiled card")
+    card.annotations["temporary_play_permission"] = _play_permission(host, ImpulseAccessRequest(actor, actor, 1, duration, reason))
+    host._log(actor, "permission.play", f"{actor} may play the chosen exiled card.",
+              {"player": actor, "object": card.ref, "duration": duration.value, "reason": reason},
+              importance=2, changed_objects=[card.object_id], changed_players=[actor])
+    return card.ref
 
 
 def grant_temporary_cast_permission(
@@ -346,6 +372,12 @@ def temporary_play_permission_is_current(
             and not_before >= 0
             and state.turn_sequence >= not_before
         )
+    if duration == ImpulseAccessDuration.NEXT_END_STEP.value:
+        granted = permission.get("granted_turn_sequence")
+        inside_step = permission.get("granted_during_own_end_step")
+        return (type(granted) is int and 0 <= granted <= state.turn_sequence and type(inside_step) is bool
+                and (state.step != "end_step" or state.active_player != seat
+                     or (granted == state.turn_sequence and inside_step)))
     if duration != ImpulseAccessDuration.END_OF_NEXT_TURN.value:
         return False
     expires = permission.get("expires_at_turns_begun")
@@ -354,6 +386,14 @@ def temporary_play_permission_is_current(
         and expires >= 0
         and state.players[seat].turns_begun <= expires
     )
+
+
+def expire_next_end_step_play_permissions(state: GameState, *, active_player: str) -> None:
+    for card in state.cards.values():
+        permission = card.annotations.get("temporary_play_permission")
+        if (isinstance(permission, Mapping) and permission.get("player") == active_player
+                and permission.get("duration") == ImpulseAccessDuration.NEXT_END_STEP.value):
+            card.annotations.pop("temporary_play_permission")
 
 
 def expire_temporary_play_permissions(

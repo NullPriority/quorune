@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed fixed blocker predicates for a resolved, target-anchored game rule."""
+"""Closed fixed blocker predicates for a resolved game rule."""
 
 from dataclasses import dataclass
 from typing import Mapping
@@ -19,9 +19,12 @@ class FixedBlockerRestrictionSpec:
     schema_version: int = 1
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version != 1 or type(self.except_matching) is not bool:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2) or type(self.except_matching) is not bool:
             raise ValueError('Fixed blocker restriction version and flags are closed')
-        if self.kind == 'subtype':
+        if self.schema_version == 2:
+            valid = (self.kind == 'keyword' and self.except_matching
+                     and type(self.quality) is str and self.quality in ('haste', 'defender'))
+        elif self.kind == 'subtype':
             valid = type(self.quality) is str and canonical_creature_subtype(self.quality) == self.quality
         elif self.kind == 'artifact_or_color':
             valid = type(self.quality) is str and self.quality in ('W', 'U', 'B', 'R', 'G') and self.except_matching
@@ -52,6 +55,8 @@ class FixedBlockerRestrictionSpec:
                 'subtypes_none' if self.except_matching else 'subtypes_any': (self.quality,)})
         elif self.kind == 'artifact_or_color':
             predicate = DeclarationObjectPredicate(types_none=('artifact',), colors_none=(self.quality,))
+        elif self.kind == 'keyword':
+            predicate = DeclarationObjectPredicate(keywords_none=(self.quality,))
         else:
             predicate = DeclarationObjectPredicate(stat=StatComparison('power', 'le', 'fixed', self.quality))
         return DeclarationRestrictionTemplate(template_id='temporary-fixed-blocker-'+self.slug+'-v1',

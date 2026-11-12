@@ -9,12 +9,13 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.compiler.program_generation import register_generated_programs
 from quorune.compiler.ability_keyword_fragment_model import (
     AbilityKeywordFragmentLowering,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, generated_programs
 from quorune.projection import StateProjector
@@ -503,6 +504,427 @@ class CascadeRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+
+class BattlefieldCascadeGrantTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "battlefield-cascade-grants.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "battlefield-cascade-grant-cards.json",
+            fixtures / "activation-restriction-material-cards.json",
+            fixtures / "characteristic-query-union-cards.json",
+            fixtures / "conditional-exile-cards.json",
+            fixtures / "enchanted-player-static-cards.json",
+            fixtures / "paid-sacrifice-creature-stat-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Battlefield Cascade", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def cascade_occurrences(self, session, card):
+        self.until(session, lambda game: game.state.pending_decision is not None
+            and game.state.pending_decision.kind in {"priority", "trigger.order"})
+        while session.state.pending_decision.kind == "trigger.order":
+            refs = [item.ref for batch in session.state.pending_trigger_batches for item in batch.items]
+            result = session.act(session.pending_principals()[0], {"action_id": "order", "triggers": refs})
+            self.assertTrue(result.ok, result.summary)
+        return [item for item in session.state.stack if item.semantic_key == "builtin:cascade"
+                and item.source_object_id == card.object_id]
+
+    def test_first_sliver_grants_only_from_battlefield_to_its_caster(self):
+        for giver_zone, caster in (("hand", "A"), ("battlefield", "A"), ("battlefield", "B")):
+            with self.subTest(giver_zone=giver_zone, caster=caster):
+                session = self.session(70285060 + (giver_zone == "battlefield") + (caster == "B"))
+                giver = self.add(session.engine, "The First Sliver", zone=giver_zone)
+                candidate = self.add(session.engine, "Universal Automaton", seat=caster,
+                    zone="library" if giver_zone == "hand" else "hand", ref="cascade-sliver-candidate")
+                if giver_zone == "hand":
+                    session.engine.move_card(candidate.object_id, "library", position="top", log=False)
+                self.assert_closed(session, giver)
+                self.prepare(session, actor=caster, active=caster, mana={"C": 1, "W": 1, "U": 1, "B": 1, "R": 1, "G": 1})
+                self.checkpoint(session)
+                if giver_zone == "hand":
+                    self.cast(session, caster, giver)
+                    self.assertEqual(1, len(self.cascade_occurrences(session, giver)))
+                    self.until(session, lambda game: game.state.pending_decision is not None
+                        and game.state.pending_decision.kind == "selection.exile_cast")
+                    result = session.act("pilot:A", {"action_id": "cast"})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("stack", session.state.cards[candidate.object_id].zone)
+                    self.assertFalse(self.cascade_occurrences(session, candidate))
+                else:
+                    self.cast(session, caster, candidate)
+                    self.assertEqual(int(caster == "A"), len(self.cascade_occurrences(session, candidate)))
+                self.replay(session, load=True)
+
+    def test_zhulodok_adds_two_distinct_instances_only_for_the_matching_origin_and_value(self):
+        from quorune.impulse_access import grant_temporary_cast_permission
+        from quorune.impulse_access_model import ImpulseAccessDuration, TemporaryCastPermissionGrant
+
+        for from_exile in (False, True):
+            with self.subTest(from_exile=from_exile):
+                session = self.session(70285064 + int(from_exile))
+                source = self.add(session.engine, "Zhulodok, Void Gorger")
+                spell = self.add(session.engine, "Maelstrom Colossus", zone="exile" if from_exile else "hand")
+                cheap = self.add(session.engine, "Universal Automaton", zone="hand")
+                self.assert_closed(session, source)
+                self.assert_closed(session, spell)
+                if from_exile:
+                    grant_temporary_cast_permission(session.engine, card=spell,
+                        grant=TemporaryCastPermissionGrant("A", ImpulseAccessDuration.END_OF_TURN, None, False, source.ref),
+                        reason="Prepared public cast permission")
+                self.prepare(session, mana={"C": 10})
+                self.checkpoint(session)
+                self.cast(session, "A", cheap)
+                self.assertFalse(self.cascade_occurrences(session, cheap))
+                self.assertIsNone(self.resolve(session))
+                self.cast(session, "A", spell)
+                occurrences = self.cascade_occurrences(session, spell)
+                self.assertEqual(1 if from_exile else 3, len(occurrences))
+                self.assertEqual(set(range(1, len(occurrences) + 1)),
+                    {item.context["cascade_instance"] for item in occurrences})
+                self.assertTrue(all(item.context["source_spell_mana_value"] == 8 for item in occurrences))
+                self.replay(session, load=True)
+
+    def test_cast_grant_survives_source_removal_and_preserves_private_library(self):
+        session = self.session(70285066)
+        engine = session.engine
+        source = self.add(engine, "Wildsear, Scouring Maw")
+        spell = self.add(engine, "Banishing Light", zone="hand")
+        removal = self.add(engine, "Murder", seat="B", zone="hand")
+        candidate = self.add(engine, "Universal Automaton", zone="library", ref="granted-cascade-library-top")
+        hidden = self.add(engine, "Generic Bound Growth", zone="library", ref="granted-cascade-hidden-tail")
+        for card in (hidden, candidate):
+            engine.move_card(card.object_id, "library", position="top", log=False)
+            card.known_to = []
+            card.revealed_to = []
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "W": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "B": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", spell)
+        self.assertEqual(1, len(self.cascade_occurrences(session, spell)))
+        self.assertIn("cascade", {key.casefold() for key in engine._effective_card_data(spell)["keywords"]})
+        for seat in "ABCD":
+            self.assertNotIn(candidate.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        self.cast(session, "B", removal, [source.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertNotIn("cascade", {key.casefold() for key in engine._effective_card_data(spell)["keywords"]})
+        self.until(session, lambda game: game.state.pending_decision is not None
+            and game.state.pending_decision.kind == "selection.exile_cast")
+        self.assertEqual("exile", session.state.cards[candidate.object_id].zone)
+        for seat in "ABCD":
+            self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        result = session.act("pilot:A", {"action_id": "decline"})
+        self.assertTrue(result.ok, result.summary)
+        self.replay(session, load=True)
+
+    def test_grant_source_sacrificed_to_pay_for_cast_does_not_qualify(self):
+        for sacrifice_source in (False, True):
+            with self.subTest(sacrifice_source=sacrifice_source):
+                session = self.session(70285067 + int(sacrifice_source))
+                source = self.add(session.engine, "Quandrix, the Proof")
+                other = self.add(session.engine, "Generic Bound Body")
+                spell = self.add(session.engine, "Fling", zone="hand")
+                price = source if sacrifice_source else other
+                self.assert_closed(session, source)
+                self.assert_closed(session, spell)
+                self.prepare(session, mana={"C": 1, "R": 1})
+                self.checkpoint(session)
+                offered = self.action(session, "A", spell)
+                result = session.act("pilot:A", {"action_id": offered["id"], "targets": ["B"],
+                    "sacrifice_cards": [price.ref], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("graveyard", session.state.cards[price.object_id].zone)
+                self.assertEqual(int(not sacrifice_source), len(self.cascade_occurrences(session, spell)))
+                self.replay(session, load=True)
+
+    def test_flamekin_reads_the_commander_designation_instead_of_printed_identity(self):
+        session = self.session(70285070)
+        source = self.add(session.engine, "Flamekin Herald")
+        commander = next(card for card in session.state.cards.values()
+                         if card.owner == "A" and card.is_commander)
+        ordinary = self.add(session.engine, "Generic Bound Commander", zone="hand", ref="nondesignated-commander-copy")
+        self.assertEqual(commander.oracle_id, ordinary.oracle_id)
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"W": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", ordinary)
+        self.assertFalse(self.cascade_occurrences(session, ordinary))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", commander)
+        self.assertEqual(1, len(self.cascade_occurrences(session, commander)))
+        self.replay(session, load=True)
+
+    def test_zhulodok_reads_announced_x_instead_of_printed_mana_value(self):
+        for x in (3, 4):
+            with self.subTest(x=x):
+                session = self.session(70285071 + x)
+                source = self.add(session.engine, "Zhulodok, Void Gorger")
+                spell = self.add(session.engine, "Walking Ballista", zone="hand")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 8})
+                self.checkpoint(session)
+                offered = self.action(session, "A", spell)
+                result = session.act("pilot:A", {"action_id": offered["id"], "x": x, "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                occurrences = self.cascade_occurrences(session, spell)
+                self.assertEqual(2 if x == 4 else 0, len(occurrences))
+                self.assertTrue(all(item.context["source_spell_mana_value"] == 2 * x for item in occurrences))
+                self.replay(session, load=True)
+
+    def test_battlefield_cascade_dependency_and_compiler_omission_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.semantic_runtime.battlefield_cascade_grants import CASCADE_GRANT_CAPABILITY, CASCADE_GRANT_EVENT
+
+        session = self.session(70285069)
+        card = self.add(session.engine, "Flamekin Herald")
+        self.assert_closed(session, card)
+        program = next(program for program in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                       if program.event == CASCADE_GRANT_EVENT)
+        deps = tuple(dep for dep in program.capability_dependencies if dep != CASCADE_GRANT_CAPABILITY)
+        unbound = replace(program, capability_dependencies=deps,
+            capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(unbound, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + CASCADE_GRANT_CAPABILITY, binding["blockers"])
+        options = dict(capability_registry=self.registry, capability_profile="commander_review")
+        original = self.db.lookup("Flamekin Herald")
+        variant = replace(original, oracle_text=original.oracle_text.replace("spells you cast", "spells an opponent casts"))
+        self.assertTrue(compile_oracle_card(variant, **options).material_residuals)
+        with patch("quorune.compiler.battlefield_cascade_grants.battlefield_cascade_grant_handler", return_value=None):
+            self.assertTrue(compile_oracle_card(original, **options).material_residuals)
+
+
+class TemporaryCastCascadeGrantTests(InheritedNativeFixture, unittest.TestCase):
+    cascade_occurrences = BattlefieldCascadeGrantTests.cascade_occurrences
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "temporary-cast-cascade.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "temporary-cast-cascade-grant-cards.json",
+            fixtures / "bestow-cards.json",
+            fixtures / "additional-conditional-modifier-cards.json",
+            fixtures / "characteristic-query-union-cards.json",
+            fixtures / "fixed-resolution-mana-cards.json",
+            fixtures / "paid-sacrifice-creature-stat-cards.json",
+            fixtures / "scryfall-exact-lists.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Temporary Cascade", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def activate(self, session, source, *, cost_cards=(), ability_id=None):
+        self.priority(session, "A")
+        prefix = f"activate:{source.ref}:"
+        action = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            if row["id"].startswith(prefix) and (ability_id is None or row["id"] == prefix + ability_id))
+        result = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [card.ref for card in cost_cards],
+                                         "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+
+    def postcombat(self, session):
+        self.until(session, lambda game: game.state.phase == "postcombat_main"
+            and game.state.pending_decision is not None and game.state.pending_decision.kind == "priority")
+        self.priority(session, "A")
+
+    def test_apostle_preserves_the_grant_for_the_next_noncreature_spell(self):
+        from quorune.rules.cast_cascade_grants import CAST_CASCADE_WINDOW
+
+        session = self.session(70285101)
+        source = self.add(session.engine, "Dark Apostle")
+        source.acquired_control_turn_count = -1
+        creature = self.add(session.engine, "Universal Automaton", zone="hand")
+        first = self.add(session.engine, "Dark Ritual", zone="hand", ref="apostle-first-ritual")
+        later = self.add(session.engine, "Dark Ritual", zone="hand", ref="apostle-second-ritual")
+        hidden = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand", ref="apostle-private")
+        for index in range(2):
+            self.add(session.engine, "Swamp", ref=f"apostle-mana-{index}")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 4})
+        self.checkpoint(session)
+        self.activate(session, source)
+        self.cast(session, "A", creature)
+        self.assertFalse(self.cascade_occurrences(session, creature))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(["noncreature"], session.state.players["A"].stats[CAST_CASCADE_WINDOW]["scopes"])
+        self.cast(session, "A", first)
+        self.assertEqual(1, len(self.cascade_occurrences(session, first)))
+        self.assertNotIn(CAST_CASCADE_WINDOW, session.state.players["A"].stats)
+        self.cast(session, "A", later)
+        self.assertFalse(self.cascade_occurrences(session, later))
+        for seat in "ABC":
+            self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        self.replay(session, load=True)
+
+    def test_apostle_matches_the_announced_bestow_type(self):
+        session = self.session(70285106)
+        source = self.add(session.engine, "Dark Apostle")
+        source.acquired_control_turn_count = -1
+        spell = self.add(session.engine, "Leafcrown Dryad", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body")
+        self.assert_closed(session, source)
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"C": 6, "G": 1})
+        self.checkpoint(session)
+        self.activate(session, source)
+        offered = self.action(session, "A", spell)
+        self.assertIn("bestow", {option["id"] for option in offered["cost_options"]})
+        result = session.act("pilot:A", {"action_id": offered["id"], "cost_option": "bestow",
+            "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, len(self.cascade_occurrences(session, spell)))
+        self.replay(session, load=True)
+
+    def test_bilepiper_binds_at_announcement_and_rolls_back_failed_payment(self):
+        from quorune.errors import GameRuleError
+        from quorune.rules.cast_cascade_grants import CAST_CASCADE_WINDOW, announced_cascade_instances
+        from quorune.rules.casting.source_placement import observe_cast_source_placement
+
+        session = self.session(70285102)
+        source = self.add(session.engine, "Sloppity Bilepiper")
+        source.acquired_control_turn_count = -1
+        fodder = self.add(session.engine, "Generic Bound Body")
+        creature = self.add(session.engine, "Universal Automaton", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3})
+        self.checkpoint(session)
+        self.activate(session, source, cost_cards=[fodder])
+        self.assertEqual("graveyard", session.state.cards[fodder.object_id].zone)
+        before = authoritative_state_hash(session.state)
+        observed = []
+
+        def observe(host, item):
+            casting_card = host.state.cards[item.card_object_id]
+            observed.append((announced_cascade_instances(item.context),
+                "cascade" in {word.casefold() for word in host._effective_card_data(casting_card)["keywords"]},
+                CAST_CASCADE_WINDOW in host.state.players["A"].stats,
+                any(entry.semantic_key == "builtin:cascade" for entry in host.state.stack)))
+            observe_cast_source_placement(host, item)
+
+        offered = self.action(session, "A", creature)
+        command = {"action_id": offered["id"], "pay": "auto"}
+        with patch("quorune.rules.casting.commit.observe_cast_source_placement", side_effect=observe):
+            with patch("quorune.rules.casting.commit.commit_reveal_additional_costs",
+                       side_effect=GameRuleError("Temporary Cascade rollback witness")):
+                rejected = session.act("pilot:A", command)
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            self.assertEqual("hand", session.state.cards[creature.object_id].zone)
+            self.assertEqual([(1, True, True, False)], observed)
+            self.cast(session, "A", creature)
+        self.assertEqual([(1, True, True, False)] * 2, observed)
+        self.assertEqual(1, len(self.cascade_occurrences(session, creature)))
+        self.assertNotIn(CAST_CASCADE_WINDOW, session.state.players["A"].stats)
+        self.replay(session, load=True)
+
+    def test_stagecoach_reserves_instant_and_sorcery_independently(self):
+        from quorune.rules.cast_cascade_grants import CAST_CASCADE_WINDOW
+
+        session = self.session(70285103)
+        engine = session.engine
+        source = self.add(engine, "Smoldering Stagecoach")
+        source.acquired_control_turn_count = -1
+        crew = self.add(engine, "Generic Bound Body")
+        first = self.add(engine, "Dark Ritual", zone="hand", ref="stagecoach-first-instant")
+        later = self.add(engine, "Dark Ritual", zone="hand", ref="stagecoach-second-instant")
+        sorcery = self.add(engine, "Divination", zone="hand")
+        for index, name in enumerate(("Swamp", "Swamp", "Island")):
+            self.add(engine, name, ref=f"stagecoach-mana-{index}")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        crew_ability = next(ability for ability in engine._activated_abilities(source) if ability.crew_threshold == 2)
+        self.activate(session, source, cost_cards=[crew], ability_id=crew_ability.ability_id)
+        self.attack(session, [(source, "B")])
+        self.postcombat(session)
+        self.assertEqual(["instant", "sorcery"], session.state.players["A"].stats[CAST_CASCADE_WINDOW]["scopes"])
+        self.cast(session, "A", first)
+        self.assertEqual(1, len(self.cascade_occurrences(session, first)))
+        self.cast(session, "A", later)
+        self.assertFalse(self.cascade_occurrences(session, later))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(["sorcery"], session.state.players["A"].stats[CAST_CASCADE_WINDOW]["scopes"])
+        self.cast(session, "A", sorcery)
+        self.assertEqual(1, len(self.cascade_occurrences(session, sorcery)))
+        self.assertNotIn(CAST_CASCADE_WINDOW, session.state.players["A"].stats)
+        self.replay(session, load=True)
+
+    def test_yidris_damage_steps_stack_two_grants_for_each_hand_cast(self):
+        from quorune.attachments import attach_objects
+        from quorune.impulse_access import grant_temporary_cast_permission
+        from quorune.impulse_access_model import ImpulseAccessDuration, TemporaryCastPermissionGrant
+        from quorune.rules.cast_cascade_grants import CAST_CASCADE_WINDOW
+
+        session = self.session(70285104)
+        engine = session.engine
+        source = self.add(engine, "Yidris, Maelstrom Wielder")
+        source.acquired_control_turn_count = -1
+        aura = self.add(engine, "Battle Mastery")
+        attach_objects(session.state.cards, aura, source, source_timestamp=aura.zone_timestamp,
+            players=session.state.players)
+        first = self.add(engine, "Fling", zone="hand", ref="yidris-first-hand-cast")
+        later = self.add(engine, "Dark Ritual", zone="hand", ref="yidris-second-hand-cast")
+        exiled = self.add(engine, "Universal Automaton", zone="exile")
+        for index, name in enumerate(("Swamp", "Swamp", "Mountain")):
+            self.add(engine, name, ref=f"yidris-mana-{index}")
+        grant_temporary_cast_permission(engine, card=exiled,
+            grant=TemporaryCastPermissionGrant("A", ImpulseAccessDuration.END_OF_TURN, None, True, source.ref),
+            reason="Prepared public cast permission")
+        self.assert_closed(session, source)
+        self.assert_closed(session, aura)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(source, "B")])
+        self.postcombat(session)
+        self.assertEqual(30, session.state.players["B"].life)
+        self.assertEqual(["hand_this_turn"] * 2, session.state.players["A"].stats[CAST_CASCADE_WINDOW]["scopes"])
+        self.cast(session, "A", exiled)
+        self.assertFalse(self.cascade_occurrences(session, exiled))
+        self.assertIsNone(self.resolve(session))
+        offered = self.action(session, "A", first)
+        result = session.act("pilot:A", {"action_id": offered["id"], "targets": ["C"],
+            "sacrifice_cards": [source.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        first_occurrences = self.cascade_occurrences(session, first)
+        self.cast(session, "A", later)
+        for occurrences in (first_occurrences, self.cascade_occurrences(session, later)):
+            self.assertEqual(2, len(occurrences))
+            self.assertEqual({1, 2}, {entry.context["cascade_instance"] for entry in occurrences})
+        self.replay(session, load=True)
+
+    def test_temporary_cascade_capability_and_scope_omission_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_OPERATION
+
+        session = self.session(70285105)
+        card = self.add(session.engine, "Dark Apostle")
+        self.assert_closed(session, card)
+        program = next(program for program in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                       if any(effect["op"] == CAST_CASCADE_OPERATION for effect in program.effects))
+        deps = tuple(dep for dep in program.capability_dependencies if dep != CAST_CASCADE_CAPABILITY)
+        unbound = replace(program, capability_dependencies=deps,
+            capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(unbound, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + CAST_CASCADE_CAPABILITY, binding["blockers"])
+        options = dict(capability_registry=self.registry, capability_profile="commander_review")
+        original = self.db.lookup("Dark Apostle")
+        variant = replace(original, oracle_text=original.oracle_text.replace("noncreature spell", "red spell", 1))
+        self.assertTrue(compile_oracle_card(variant, **options).material_residuals)
+        with patch("quorune.compiler.temporary_player_rule_templates._temporary_cascade_template", return_value=None):
+            self.assertTrue(compile_oracle_card(original, **options).material_residuals)
 
 
 if __name__ == "__main__":

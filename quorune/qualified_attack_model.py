@@ -19,6 +19,14 @@ def defended_player_or_planeswalker_condition():
     ]}
 
 
+def source_attacks_battle_condition():
+    return {"all": [
+        {"field": ATTACK_FACT_PREFIX + "version", "op": "eq", "value": 1},
+        {"field": "card", "op": "eq", "value": "$source.ref"},
+        {"field": ATTACK_RECIPIENT_KIND_FIELD, "op": "eq", "value": "battle"},
+    ]}
+
+
 def qualified_attack_facts_version(value):
     if value is not None and (type(value) is not int or value not in {1, QUALIFIED_ATTACK_FULL_STATS_VERSION}):
         raise ValueError('Unsupported qualified-attack facts version')

@@ -1,0 +1,454 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned originals for chosen mana spending and paid spell protection",
+  "cards": [
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "name": "Kolvori, God of Kinship // The Ringhart Crest",
+      "mana_cost": "{2}{G}{G} // {1}{G}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — God // Legendary Artifact",
+      "oracle_text": "Kolvori, God of Kinship: As long as you control three or more legendary creatures, Kolvori gets +4/+2 and has vigilance.\n{1}{G}, {T}: Look at the top six cards of your library. You may reveal a legendary creature card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\n//\nThe Ringhart Crest: As The Ringhart Crest enters, choose a creature type.\n{T}: Add {G}. Spend this mana only to cast a creature spell of the chosen type or a legendary creature spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "modal_dfc",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}{G}",
+          "name": "Kolvori, God of Kinship",
+          "oracle_text": "As long as you control three or more legendary creatures, Kolvori gets +4/+2 and has vigilance.\n{1}{G}, {T}: Look at the top six cards of your library. You may reveal a legendary creature card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "power": "2",
+          "toughness": "4",
+          "type_line": "Legendary Creature — God"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{G}",
+          "name": "The Ringhart Crest",
+          "oracle_text": "As The Ringhart Crest enters, choose a creature type.\n{T}: Add {G}. Spend this mana only to cast a creature spell of the chosen type or a legendary creature spell.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Artifact"
+        }
+      ]
+    },
+    {
+      "oracle_id": "584b15f2-6ae9-413a-8b8d-9244dbea4878",
+      "name": "Unclaimed Territory",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "79ba18fd-f184-43c1-86df-56ee18ce806c",
+      "name": "Secluded Courtyard",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type or activate an ability of a creature source of the chosen type.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "89ca686a-7c72-4d8f-9290-e89635624a83",
+      "name": "Cavern of Souls",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "banned",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9e62f30d-3130-416e-b459-48b5f71f8be9",
+      "name": "Pillar of Origins",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "As this artifact enters, choose a creature type.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "36937483-30cb-449a-8028-75017a124922",
+      "name": "Boseiju, Who Shelters All",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Legendary Land",
+      "oracle_text": "Boseiju enters tapped.\n{T}, Pay 2 life: Add {C}. If that mana is spent on an instant or sorcery spell, that spell can't be countered.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2004-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Because damage remains marked on creatures until the damage is removed as the turn ends, nonlethal damage dealt to Kolvori may become lethal if you controlled three or more legendary creatures and some of them leave the battlefield that turn."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \"play\") a specific modal double-faced card, you can't play it as a land."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "For The Ringhart Crest's first ability, you must choose an existing creature type, such as Fungus or Archer. You can't choose card types (e.g., artifact) or supertypes (e.g., snow)."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "A modal double-faced card can't be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can't be put onto the battlefield, it doesn't enter the battlefield."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that's being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face's name."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "There is a single triangle icon in the top left corner of the front face. There is a double triangle icon in the top left corner of the back face."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you're playing and ignore the other face's characteristics."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered."
+    },
+    {
+      "oracle_id": "490ac985-79b5-438d-a2e7-f47683b29683",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If The Ringhart Crest is somehow on the battlefield with no choice of creature type, the mana produced by its activated ability can still be spent to cast a legendary creature spell."
+    },
+    {
+      "oracle_id": "584b15f2-6ae9-413a-8b8d-9244dbea4878",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "To choose a creature type, you must choose an existing creature type, such as Vampire or Knight. You can't choose multiple creature types, such as \"Vampire Knight.\" Card types such as artifact can't be chosen, nor can subtypes that aren't creature types, such as Jace, Vehicle, or Treasure."
+    },
+    {
+      "oracle_id": "79ba18fd-f184-43c1-86df-56ee18ce806c",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If Secluded Courtyard is somehow on the battlefield without a chosen type, mana from its second mana ability can't be spent on anything."
+    },
+    {
+      "oracle_id": "89ca686a-7c72-4d8f-9290-e89635624a83",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "You must choose an existing creature type, such as Human or Warrior. Card types such as artifact can't be chosen."
+    },
+    {
+      "oracle_id": "89ca686a-7c72-4d8f-9290-e89635624a83",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "The spell can't be countered if the mana produced by Cavern of Souls is spent to cover any cost of the spell, even an additional cost such as a kicker cost. This is true even if you use the mana to pay an additional cost while casting a spell \"without paying its mana cost.\""
+    },
+    {
+      "oracle_id": "89ca686a-7c72-4d8f-9290-e89635624a83",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The spell can't be countered if the mana produced by Cavern of Souls is spent to cover any cost of the spell, even an additional cost such as a kicker cost. This is true even if you use the mana to pay an additional cost while casting a spell \"without paying its mana cost.\""
+    },
+    {
+      "oracle_id": "89ca686a-7c72-4d8f-9290-e89635624a83",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You must choose an existing creature type, such as Human or Warrior. Card types such as artifact can't be chosen."
+    },
+    {
+      "oracle_id": "9e62f30d-3130-416e-b459-48b5f71f8be9",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "To choose a creature type, you must choose an existing creature type, such as Vampire or Knight. You can’t choose multiple creature types, such as “Vampire Knight.” Card types such as artifact can’t be chosen, nor can subtypes that aren’t creature types, such as Jace, Vehicle, or Treasure."
+    },
+    {
+      "oracle_id": "36937483-30cb-449a-8028-75017a124922",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "The spell can't be countered if the mana produced by Boseiju is spent to cover any cost of the spell, even an additional cost such as a splice cost. This is true even if you pay an additional cost while casting a spell \"without paying its mana cost.\""
+    },
+    {
+      "oracle_id": "36937483-30cb-449a-8028-75017a124922",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Suppose mana produced by Boseiju is spent on a spell and an effect creates a copy of that spell. The copy can be countered, even though the original can't."
+    }
+  ]
+}

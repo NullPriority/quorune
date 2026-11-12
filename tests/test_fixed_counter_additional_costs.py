@@ -299,10 +299,8 @@ class CounterCostReplacementChainTests(unittest.TestCase):
             capability_registry=self.registry, capability_profile="commander_review",
         )
         binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
-        self.assertTrue(binding["compatible_ready"], binding)
-        reviewed = {"Doubling Season", "Doc Samson, Super Psychiatrist"}
-        expected = "mixed" if card.printed_name in reviewed else "capability_closed"
-        self.assertEqual(expected, binding["trust_basis"], card.printed_name)
+        self.assertEqual("capability_closed", binding["trust_basis"], card.printed_name)
+        self.assertTrue(binding["strict_capability_ready"], binding)
 
     def assert_unpaid(self, session, spell, payer, target):
         self.assertEqual("hand", session.state.cards[spell.object_id].zone)
@@ -455,6 +453,8 @@ class FixedCounterAdditionalCostRuntimeTests(unittest.TestCase):
     def add_permanent(self, session, name: str, ref: str) -> CardInstance:
         engine = session.engine
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,))
         card = CardInstance(
             object_id=f"fixture:{ref}",
             ref=ref,
@@ -551,15 +551,6 @@ class FixedCounterAdditionalCostRuntimeTests(unittest.TestCase):
         spell, creature = self.stage_spell_and_creature(session)
         self.add_permanent(session, "Doc Samson, Super Psychiatrist", "A-doc")
         self.add_permanent(session, "Vorinclex, Monstrous Raider", "A-vorinclex")
-        register_generated_programs(
-            self.db,
-            engine.semantics,
-            (self.db.lookup("Vorinclex, Monstrous Raider"),),
-            trust_level="provisional",
-            capability_registry=trusted_registry(),
-            capability_profile=engine.state.config.review_profile,
-            promote_exact_runtime_handlers=True,
-        )
         self.issue_priority(session)
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()

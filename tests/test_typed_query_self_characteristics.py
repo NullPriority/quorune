@@ -313,10 +313,17 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
         self.assertEqual(['flying'], list(quantity['query']['keywords_all']))
         program = self.compile(permanent(promoted, suffix=122_000_999), trust_level='provisional')
         self.assertEqual((), program.residuals)
+        named = 'This creature gets +1/+1 for each creature named Query Source you control.'
+        compiled_named = query_self_characteristics_handler(named, source_name='Query Source')
+        self.assertIsNotNone(compiled_named)
+        named_quantity = compiled_named[1]['fragment']['value']['quantity']
+        self.assertEqual(7, named_quantity['schema_version'])
+        self.assertEqual('Query Source', named_quantity['literal_name'])
+        self.assertEqual((), self.compile(permanent(named, suffix=122_000_998), trust_level='provisional').residuals)
         excluded = (
             "Domain — This creature gets +1/+1 for each basic land type among lands in the chosen player's graveyard.",
             "This creature gets +1/+1 for each card type among cards in your hand.",
-            "This creature gets +1/+1 for each creature named Query Source you control.",
+            "This creature gets +1/+1 for each creature named Query Source you control that attacked this turn.",
             "This creature gets +1/+1 for each creature you control with flying and has flying.",
             "This creature gets +1/+1 for each color among permanents with the chosen name.",
             "This creature gets +1/+1 for each artifact you control and has flying.",

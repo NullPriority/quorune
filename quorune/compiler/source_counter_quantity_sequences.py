@@ -29,8 +29,8 @@ def source_counter_quantity_sequence(text,*,card_name,compile_fixed,allow_pronou
 
 
 def source_bound_sequence_result(binding,body,*,card_name,effect_template):
-    from .source_self_effect_templates import source_characteristics_declaration_sequence
-    declarations=source_characteristics_declaration_sequence(body,card_name=card_name,compile_effect=effect_template)
+    from .source_self_effect_templates import source_declaration_sequence
+    declarations = source_declaration_sequence(body, card_name=card_name, compile_effect=effect_template)
     if declarations is not None:return declarations,True
     quantity=source_counter_quantity_sequence(body,card_name=card_name,
         compile_fixed=lambda text:effect_template(text,card_name=card_name),

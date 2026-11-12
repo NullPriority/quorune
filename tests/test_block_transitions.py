@@ -707,6 +707,89 @@ class BlockingControllerNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual({**life, 'C': life['C'] - 1}, {seat: p.life for seat, p in session.state.players.items()})
         self.replay(session, load=True)
 
+    def test_attached_block_life_loss_uses_one_occurrence_and_current_controller(self):
+        for index, (name, mana, amount) in enumerate((
+            ('Contaminated Bond', {'C': 1, 'B': 1}, 3),
+            ('Sinister Possession', {'B': 1}, 2),
+        )):
+            with self.subTest(card=name):
+                session = self.session(50977610 + index)
+                aura = self.add(session.engine, name, zone='hand')
+                wall = self.add(session.engine, 'Wall of Glare', seat='B')
+                attackers = [self.add(session.engine, 'Grizzly Bears', ref=f'attached-block-attacker-{i}') for i in range(2)]
+                for card in attackers:
+                    card.acquired_control_turn_count = -1
+                theft = self.add_control_response(session)
+                self.assert_closed(session, aura)
+                self.prepare(session, mana=mana)
+                self.checkpoint(session)
+                self.cast_for(session, 'A', aura, [wall.ref])
+                self.resolve_top(session)
+                self.declare_wall_blocks(session, wall, attackers)
+                trigger, = session.state.stack
+                self.assertEqual(aura.object_id, trigger.source_object_id)
+                self.assertEqual('A', trigger.controller)
+                self.assertFalse(trigger.targets)
+                self.cast_for(session, 'C', theft, [wall.ref])
+                self.resolve_top(session)
+                self.assertEqual('C', session.state.cards[wall.object_id].controller)
+                session = self.replay(session, load=True)
+                self.resolve_top(session)
+                self.assertEqual([40, 40, 40 - amount, 40], [session.state.players[seat].life for seat in 'ABCD'])
+                self.replay(session, load=True)
+
+    def test_attached_attack_life_reads_the_original_attacker_after_blink(self):
+        session = self.session(50977612)
+        aura = self.add(session.engine, 'Parasitic Impetus', zone='hand')
+        attacker = self.add(session.engine, 'Grizzly Bears')
+        other = self.add(session.engine, 'Grizzly Bears', ref='other-attacker')
+        attacker.acquired_control_turn_count = other.acquired_control_turn_count = -1
+        theft = self.add_control_response(session)
+        blink = self.add(session.engine, 'Planar Incision', seat='D', zone='hand')
+        for i in range(2):
+            self.add(session.engine, 'Island', seat='D', ref=f'attached-attack-blink-{i}')
+        self.assert_closed(session, aura)
+        self.prepare(session, mana={'C': 2, 'B': 1})
+        self.checkpoint(session)
+        self.cast_for(session, 'A', aura, [attacker.ref])
+        self.resolve_top(session)
+        self.attack(session, [(attacker, 'B'), (other, 'D')])
+        trigger, = session.state.stack
+        self.assertEqual(aura.object_id, trigger.source_object_id)
+        self.assertEqual('A', trigger.controller)
+        self.assertFalse(trigger.targets)
+        identity = attacker.logical_object_id
+        self.cast_for(session, 'C', theft, [attacker.ref])
+        self.resolve_top(session)
+        self.assertEqual('C', session.state.cards[attacker.object_id].controller)
+        self.cast_for(session, 'D', blink, [attacker.ref])
+        self.resolve_top(session)
+        returned = session.state.cards[attacker.object_id]
+        self.assertEqual('A', returned.controller)
+        self.assertNotEqual(identity, returned.logical_object_id)
+        self.assertEqual('graveyard', session.state.cards[aura.object_id].zone)
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual([42, 40, 38, 40], [session.state.players[seat].life for seat in 'ABCD'])
+        self.replay(session, load=True)
+
+    def test_attached_attack_loss_and_gain_resolve_before_state_actions(self):
+        session = self.session(50977613)
+        aura = self.add(session.engine, 'Parasitic Impetus', zone='hand')
+        attacker = self.add(session.engine, 'Grizzly Bears')
+        attacker.acquired_control_turn_count = -1
+        self.prepare(session, mana={'C': 2, 'B': 1})
+        session.state.players['A'].life = 2
+        self.checkpoint(session)
+        self.cast_for(session, 'A', aura, [attacker.ref])
+        self.resolve_top(session)
+        self.attack(session, [(attacker, 'B')])
+        self.assertEqual(1, self.trigger_count(session, aura))
+        self.resolve_top(session)
+        self.assertEqual(2, session.state.players['A'].life)
+        self.assertEqual(40, session.state.players['B'].life)
+        self.replay(session, load=True)
+
     def test_blocking_controller_requires_the_event_and_runtime_authority(self):
         from quorune.card_programs.binding import bind_semantic_program_runtime
         from quorune.oracle_ir import register_generated_programs

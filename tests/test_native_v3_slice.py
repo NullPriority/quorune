@@ -549,7 +549,7 @@ class TrustedSemanticScenarioTests(unittest.TestCase):
         self.assertEqual(
             2,
             sum(
-                item.label == "Zulaport Cutthroat dies trigger"
+                item.source_object_id == cutthroat.object_id
                 for item in engine.state.stack
             ),
         )
@@ -640,7 +640,7 @@ class TrustedSemanticScenarioTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [zimone.ref],
                 "pay": "manual",
                 "payment": {"R": 1},

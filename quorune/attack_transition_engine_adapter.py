@@ -58,6 +58,12 @@ class EngineAttackTransitionQuery(AttackTransitionQuery):
         self._fragment_cache: dict[str, tuple[Any, ...]] = {}
         self._training_power_required: bool | None = None
         self._attacker_ids: tuple[str, ...] | None = None
+        from .attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
+
+        self._declared_power_required = any(
+            DECLARED_ATTACK_POWER_COVERAGE in program.coverage
+            for program in engine.semantics.programs_for_event("creature.attacks")
+        )
 
     def turn_sequence(self) -> int:
         return self._engine.state.turn_sequence
@@ -172,7 +178,8 @@ class EngineAttackTransitionQuery(AttackTransitionQuery):
                 self._engine._numeric_stat(card.object_id, "power")
                 if card.object_id in self.attacker_object_ids()
                 and (
-                    self._requires_training_power_snapshot()
+                    self._declared_power_required
+                    or self._requires_training_power_snapshot()
                     or any(
                         spec.kind is CombatKeywordTriggerKind.MENTOR
                         for spec in trigger_specs
@@ -301,8 +308,8 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
             for assignment in event.assignments}
         saddled_attackers = frozenset(object_id for object_id in characteristic_contexts
             if is_saddled(engine.state.cards[object_id]))
-        from .rules.attack_batches import seal_attack_declaration
-        from .attack_batch_model import ATTACK_BATCH_CONTEXT
+        from .rules.attack_batches import direct_player_attack_facts, seal_attack_declaration
+        from .attack_batch_model import ATTACK_BATCH_CONTEXT, DIRECT_PLAYER_ATTACK_EVENT
         from .qualified_attack_model import ATTACK_RECIPIENT_KIND_FIELD
         declaration_context = ({ATTACK_BATCH_CONTEXT:seal_attack_declaration(event,characteristic_contexts)}
             if any(characteristic_contexts.values()) else {})
@@ -350,6 +357,11 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                     trigger_batch=stack_items,
                 )
             )
+        if engine.semantics.programs_for_event(DIRECT_PLAYER_ATTACK_EVENT):
+            for facts in direct_player_attack_facts(event, getattr(engine.state, "initiative", None)):
+                semantic_trigger_refs.extend(engine._dispatch_semantic_event(
+                    DIRECT_PLAYER_ATTACK_EVENT, facts, sources=semantic_sources, trigger_batch=stack_items,
+                ))
     except (AbilityFragmentError, AttackTransitionError) as exc:
         raise StateInvariantError(str(exc)) from exc
     engine._log(

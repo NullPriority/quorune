@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from common import (
     advance_fixture_turn,
@@ -925,7 +926,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
             "pilot:B",
             {
                 "action_id": "choose",
-                "choice": "attach",
+                "choice": "apply",
                 "plan": "BUILD_ENGINE",
                 "reason": "Attach the Staff to the entering Shaman.",
             },
@@ -1282,10 +1283,13 @@ class ExactZimoneClosureTests(unittest.TestCase):
             {source.ref for source in engine.available_mana_sources("B")},
         )
 
+    @patch("quorune.compiler.temporary_player_rule_templates._next_cast_protection_template", new=lambda text: None)
     def test_mistrise_marks_only_the_next_spell_uncounterable(self):
         session = self.make_session(1010)
         engine = session.engine
         village = self.card(engine, "B", "Mistrise Village")
+        legacy = engine.semantics.get(f"{village.oracle_id}:ability:ab3")
+        self.assertEqual([{"op": "next_spell_uncounterable", "player": "$controller"}], list(legacy.effects))
         forest = self.card(engine, "B", "Forest")
         spell = self.card(engine, "B", "Sol Ring")
         engine.move_card(forest.object_id, "battlefield", controller="B")
@@ -1379,8 +1383,9 @@ class ExactZimoneClosureTests(unittest.TestCase):
         )
         self.assertTrue(artifact.tapped)
         self.assertTrue(engine.state.stack[-1].context["granted_improvise"])
+        self.assertEqual(["improvise"], engine.state.stack[-1].context["next_spell_payment_grants"])
         self.assertNotIn(
-            "next_spell_improvise",
+            "next_spell_payment",
             engine.state.players["A"].stats,
         )
 
@@ -1407,14 +1412,14 @@ class ExactZimoneClosureTests(unittest.TestCase):
             "target_schema"
         ]
         self.assertEqual(
-            {"tap", "untap", "leave", "scry"},
+            {"mode_1", "mode_2"},
             set(schema["legal_modes"]),
         )
         result = session.act(
             "pilot:B",
             {
                 "action_id": "choose",
-                "modes": ["scry"],
+                "modes": ["mode_2"],
                 "targets": [],
                 "plan": "FILTER_DRAW",
                 "reason": "Use the scry mode.",
@@ -1645,8 +1650,9 @@ class ExactZimoneClosureTests(unittest.TestCase):
             and card.zone == "battlefield"
         )
         moloid.acquired_control_turn_count = -1
-        moloid.annotations["token_characteristics"]["oracle_text"] = ""
-        moloid.annotations["copy_overrides"]["oracle_text"] = ""
+        for field in ("token_characteristics", "copy_overrides"):
+            if field in moloid.annotations:
+                moloid.annotations[field]["oracle_text"] = ""
 
         engine.permissions.invalidate_current()
         engine.state.pending_decision = None
@@ -1668,7 +1674,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
             "pilot:B",
             {
                 "action_id": "choose",
-                "choice": "mill",
+                "choice": "apply",
                 "plan": "FILL_GRAVEYARD",
                 "reason": "Use the optional Moloid mill.",
             },

@@ -51,6 +51,16 @@ def _copy_exceptions(values: Mapping[str, Any]):
     return tuple(TokenCopyExceptionSpec.from_dict(value) for value in exceptions)
 
 
+def current_room_rules_names(card: Any, effective_name: str) -> tuple[str, ...] | None:
+    doors = current_shared_type_doors(card)
+    if doors is None:
+        return None
+    overrides = card.annotations.get("copy_overrides")
+    if overrides is not None and any(exception.name is not None for exception in _copy_exceptions(overrides)):
+        return (effective_name,) if effective_name else ()
+    return doors.unlocked if " // ".join(doors.unlocked) == effective_name else None
+
+
 def room_copy_unlock_costs(values: Mapping[str, Any]) -> tuple[Mapping[str, Any], ...]:
     no_cost = any(exception.remove_mana_cost for exception in _copy_exceptions(values))
     return tuple({

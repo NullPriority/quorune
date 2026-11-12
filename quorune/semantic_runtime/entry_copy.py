@@ -10,7 +10,7 @@ from typing import Any, Mapping
 from ..rules.amplify import AMPLIFY_HANDLER
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
     ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY,
-    COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD, copiable_oracle_id)
+    ENTRY_COPY_TAPPED_HANDLER, ENTRY_COPY_TAPPED_CAPABILITIES, COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD, copiable_oracle_id)
 from ..object_query import object_matches_query, object_query_result
 from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
 from ..token_copy_recipes import apply_copy_exception
@@ -18,6 +18,9 @@ from .component_registry import exact_fields
 from .context import SemanticNodeError
 from ..conditional_copy_model import CONDITIONAL_COPY_HANDLER,CONDITIONAL_COPY_CAPABILITY,EMBALMED_DESIGNATION
 from ..entry_copy_predicates import ENTRY_COPY_PREDICATE_HANDLER,ENTRY_COPY_PREDICATE_CAPABILITY,entry_copy_predicate_matches
+
+_COPY_VERSIONS = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER: 3,
+    ENTRY_COPY_PREDICATE_HANDLER: 4, CONDITIONAL_COPY_HANDLER: 5, ENTRY_COPY_TAPPED_HANDLER: 6}
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,7 +34,7 @@ class EntryCopyHandler:
 
     def validate(self, descriptor):
         exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'copy'}, field='intrinsic entry copy')
-        expected = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER:3, ENTRY_COPY_PREDICATE_HANDLER:4, CONDITIONAL_COPY_HANDLER:5}.get(self.handler_id)
+        expected = _COPY_VERSIONS.get(self.handler_id)
         if (self.schema_version != expected or descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
                 or descriptor['schema_version'] != self.schema_version or descriptor['event'] != self.event):
             raise SemanticNodeError('Intrinsic entry copy identity changed')
@@ -66,6 +69,10 @@ def entry_copy_handler(version):
     if version==3:return EntryCopyHandler(handler_id=ENTRY_COPY_VALUES_HANDLER,schema_version=3,capability_dependencies=(ENTRY_COPY_CAPABILITY,ENTRY_COPY_VALUES_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'707.9c','707.9d','205.3d'))
     if version==4:return EntryCopyHandler(handler_id=ENTRY_COPY_PREDICATE_HANDLER,schema_version=4,capability_dependencies=(ENTRY_COPY_CAPABILITY,ENTRY_COPY_PREDICATE_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'400.7d','601.2h'))
     if version==5:return EntryCopyHandler(handler_id=CONDITIONAL_COPY_HANDLER,schema_version=5,capability_dependencies=(ENTRY_COPY_CAPABILITY,CONDITIONAL_COPY_CAPABILITY),rule_references=(*EntryCopyHandler().rule_references,'707.9f','702.128a'))
+    if version == 6:
+        return EntryCopyHandler(handler_id=ENTRY_COPY_TAPPED_HANDLER, schema_version=6,
+            capability_dependencies=ENTRY_COPY_TAPPED_CAPABILITIES,
+            rule_references=(*EntryCopyHandler().rule_references, '614.1c', '205.3d', '205.3i'))
     raise SemanticNodeError('Copy selector version is unsupported')
 
 
@@ -138,7 +145,7 @@ def _copied_entry_effects(host, subject, source, target, values, *, form_key):
     registry = default_zone_change_replacement_registry()
     for program in programs:
         for index, descriptor in enumerate(program.handlers):
-            if descriptor.get('handler_id') in {ENTRY_COPY_HANDLER, ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_PREDICATE_HANDLER, CONDITIONAL_COPY_HANDLER}:
+            if descriptor.get('handler_id') in _COPY_VERSIONS:
                 continue
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
             from ..devour import DEVOUR_HANDLER
@@ -211,7 +218,6 @@ def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
     if source is None or host.card_record(source) is None:return ()
     root_key=None
     queue=[(source,root_key)];seen=set();effects={};forms={};counter_permissions={}
-    copy_handlers={ENTRY_COPY_HANDLER,ENTRY_COPY_QUERY_HANDLER,ENTRY_COPY_VALUES_HANDLER,ENTRY_COPY_PREDICATE_HANDLER,CONDITIONAL_COPY_HANDLER}
     while queue:
         view,form_key=queue.pop(0)
         key=form_key or '<initial>'
@@ -219,7 +225,7 @@ def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
         seen.add(key)
         for program in _copy_programs(host,view,subject):
             for index,descriptor in enumerate(program.handlers):
-                if descriptor.get('handler_id') not in copy_handlers:continue
+                if descriptor.get('handler_id') not in _COPY_VERSIONS:continue
                 spec=entry_copy_handler(descriptor.get('schema_version')).validate(descriptor)
                 occurrence=f'entry-copy-occurrence:{subject.object_ref}:{program.key}:{index}'
                 for target in _copy_candidates(host,spec,subject):
@@ -232,13 +238,19 @@ def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
                             effects[effect.effect_id+':'+next_key]=replace(effect,effect_id=effect.effect_id+':'+next_key)
                         queue.append((_copy_form_view(source,values),next_key))
                     effect_id=f'{descriptor["handler_id"]}:{subject.object_ref}:{program.key}:{index}:{key}:{target.ref}'
-                    types=tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
+                    if any(counter.required_entry_type is not None for counter in subject.effect_entry_counters):
+                        from .zone_replacement_inputs import conditional_counter_entry_types
+                        types = conditional_counter_entry_types(host, source, subject.destination_controller, copy_values=values)
+                    else:
+                        types = tuple(sorted(set().union(*host._type_parts(str(values['type_line'])))))
                     effects[effect_id]=ReplacementEffect(effect_id=effect_id,source_id=subject.object_ref,event_kind='zone.change',
                         replacement_class=ReplacementClass.ENTERS_COPY,occurrence_id=occurrence,
                         conditions={'destination':{'eq':'battlefield'},'object_ref':{'eq':subject.object_ref},'entry_copy_form':{'eq':form_key}},
-                        operations=(SetField('entry_copy_source',target.ref),SetField('entry_copy_form',next_key),SetField('entry_copy',values),SetField('object_types',types)),
+                        operations=(SetField('entry_copy_source',target.ref),SetField('entry_copy_form',next_key),
+                            SetField('entry_copy',values),SetField('object_types',types),
+                            *((SetField('tapped', True),) if spec.tapped else ())),
                         decline_operations=(SetField('entry_copy_source','declined'),),optional=True,
-                        label=f'{subject.object_ref}: enter as a copy of {target.ref}')
+                        label=f'{subject.object_ref}: enter{" tapped" if spec.tapped else ""} as a copy of {target.ref}')
                     from .counter_permissions import copied_entry_counter_permissions
                     counter_permissions[effect_id] = copied_entry_counter_permissions(
                         host, subject, _copy_form_view(source, values))

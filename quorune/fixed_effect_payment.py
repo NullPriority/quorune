@@ -5,11 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .object_predicate import ObjectQuerySpec
+from .object_predicate import ObjectQuerySpec, object_query_capabilities
 from .creature_subtypes import canonical_creature_subtype
 from .counter_names import normalized_counter_name
 from .replacement.immutable import FrozenMap, thaw_value
 from .rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_PAYMENT_VERSION, blight_creature_predicate
+from .rules.controlled_return import CONTROLLED_RETURN_CAPABILITY, ControlledReturn
 from .rules.hybrid_resolution_payment import (
     HYBRID_RESOLUTION_PAYMENT_CAPABILITY, HYBRID_RESOLUTION_PAYMENT_KIND,
     HYBRID_RESOLUTION_PAYMENT_VERSION, hybrid_resolution_mana_options,
@@ -23,7 +24,19 @@ ANOTHER_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.another_fixed_resolution'
 SOURCE_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.fixed_source_resolution'
 MANDATORY_DISCARD_PAYMENT_CAPABILITY = "cost.discard.mandatory_fixed_resolution"
 MANDATORY_DISCARD_PAYMENT_VERSION = 8
+RETURN_PAYMENT_KIND = "return_owner_hand"
+RETURN_PAYMENT_VERSION = 11
 _MANA_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
+
+
+def creature_or_vehicle_sacrifice_predicate(controller: str) -> ObjectQuerySpec:
+    return ObjectQuerySpec(
+        zones=("battlefield",), controller=controller,
+        any_of=(
+            ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+            ObjectQuerySpec(zones=("battlefield",), subtypes_all=("vehicle",)),
+        ),
+    )
 
 
 def _validate_fixed_tap_predicate(predicate: ObjectQuerySpec | None) -> None:
@@ -68,6 +81,13 @@ class FixedEffectPaymentSpec:
         if self.mandatory:
             self._validate_mandatory_discard()
             return
+        if self.kind == RETURN_PAYMENT_KIND:
+            if (type(self.schema_version) is not int or self.schema_version != RETURN_PAYMENT_VERSION
+                    or type(self.amount) is not int or self.amount != 1
+                    or any(value is not None for value in (self.requirements, self.counter_name, self.source_ref))):
+                raise ValueError("A return payment requires one controlled permanent")
+            ControlledReturn(self.predicate, 1, 1)
+            return
         another=self.kind=='sacrifice' and type(self.schema_version) is int and self.schema_version==6
         version=HYBRID_RESOLUTION_PAYMENT_VERSION if hybrid else 7 if self.kind=='source_sacrifice' else 6 if another else 5 if self.kind=='mana_discard' else 4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
         if type(self.schema_version) is not int or self.schema_version != version:
@@ -107,6 +127,9 @@ class FixedEffectPaymentSpec:
                 object.__setattr__(self, "hybrid_symbols", tuple(self.hybrid_symbols))
         elif self.requirements is not None:
             raise ValueError("Nonmana payments cannot carry mana requirements")
+        if self.kind == 'sacrifice' and isinstance(self.predicate, ObjectQuerySpec) and self.predicate.any_of:
+            self._validate_sacrifice_union()
+            return
         if self.kind == 'tap':
             _validate_fixed_tap_predicate(self.predicate)
         elif self.kind in {"discard", "sacrifice", "exile"}:
@@ -137,6 +160,12 @@ class FixedEffectPaymentSpec:
                 raise ValueError('Graveyard exile costs require known owned cards without controller restrictions')
         elif self.predicate is not None:
             raise ValueError("Resource payments cannot carry object predicates")
+
+    def _validate_sacrifice_union(self) -> None:
+        controller = self.predicate.controller
+        if (self.schema_version != 2 or self.amount != 1 or type(controller) is not str or not controller
+                or self.predicate != creature_or_vehicle_sacrifice_predicate(controller)):
+            raise ValueError("A sacrifice union requires one controlled creature or Vehicle")
 
     def _validate_blight(self) -> None:
         predicate = self.predicate
@@ -182,11 +211,12 @@ class FixedEffectPaymentSpec:
             raise ValueError("Fixed effect payment fields are malformed")
         if value["schema_version"] == MANDATORY_DISCARD_PAYMENT_VERSION and not allow_mandatory:
             raise ValueError("Mandatory discard is outside this payment's resolution scope")
+        predicate = thaw_value(value["predicate"])
         return cls(kind=value["kind"], amount=value["amount"], schema_version=value["schema_version"],
             counter_name=value.get('counter_name'),source_ref=value.get('source_ref'),
             hybrid_symbols=value.get('hybrid_symbols',()),
             requirements=FrozenMap(value["requirements"]) if isinstance(value["requirements"],Mapping) else value["requirements"],
-            predicate=ObjectQuerySpec.from_dict(value["predicate"]) if isinstance(value["predicate"],Mapping) else value["predicate"])
+            predicate=ObjectQuerySpec.from_dict(predicate) if isinstance(predicate, Mapping) else predicate)
 
     @property
     def hybrid_mana_options(self):
@@ -205,7 +235,8 @@ class FixedEffectPaymentSpec:
         costs['mana_discard']=(MANA_DISCARD_PAYMENT_CAPABILITY,'choice.affected_player.fixed_discard','zone.change.destination_replacement')
         costs["blight"] = (BLIGHT_CAPABILITY,)
         costs[HYBRID_RESOLUTION_PAYMENT_KIND]=(HYBRID_RESOLUTION_PAYMENT_CAPABILITY,)
-        return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind],
+        costs[RETURN_PAYMENT_KIND] = (CONTROLLED_RETURN_CAPABILITY, "zone.change.destination_replacement")
+        return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind], *object_query_capabilities(self.predicate),
             *((MANDATORY_DISCARD_PAYMENT_CAPABILITY,) if self.mandatory else ()),
             *((ANOTHER_SACRIFICE_PAYMENT_CAPABILITY,) if self.kind=='sacrifice' and self.schema_version==6 else ()))
 
@@ -226,6 +257,13 @@ def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, .
         if type(value.get("schema_version")) is not int or value["schema_version"] != 2 or "cost" in value:
             raise ValueError("Hybrid prices require their version-two optional payment wrapper")
         return FixedEffectPaymentSpec.from_dict(descriptor).capabilities
+    if descriptor.get("kind") == RETURN_PAYMENT_KIND:
+        payment = FixedEffectPaymentSpec.from_dict(descriptor)
+        if (type(value.get("schema_version")) is not int or value["schema_version"] != 2
+                or value.get("player") != "$controller" or payment.predicate.controller != "$controller"
+                or "cost" in value or "declined_effects" in value):
+            raise ValueError("Return payment requires its closed controller resolution scope")
+        return payment.capabilities
     mandatory = descriptor.get("schema_version") == MANDATORY_DISCARD_PAYMENT_VERSION
     if not mandatory and descriptor.get("kind") != "mana_discard":
         return ()

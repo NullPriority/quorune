@@ -51,9 +51,11 @@ from ..enchanted_player_model import EnchantedPlayerAttackRequirementSpec,ENCHAN
 from ..bound_declaration_model import BoundStaticDeclarationRulesSpec,BOUND_DECLARATION_CAPABILITY,BOUND_DECLARATION_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
+from ..trigger_participation_query_model import DUNGEON_ROOM_MULTIPLIER_COMPONENT
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .player_target_protection import PlayerTargetProtectionHandler
+from .venture_limit import VentureLimitHandler
 from .target_restrictions import TargetRestrictionHandler
 from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
@@ -1521,6 +1523,8 @@ class AbilityFragmentRegistry(
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
     from .all_colors import AllColorsDefinitionHandler
+    from .combat_metadata import AttachedGoadFragmentHandler
+    from .deck_copy_limits import DeckCopyLimitFragmentHandler
     from .rampage_fragment import RampageFragmentHandler
     from .landwalk_permissions import LandwalkPermissionFragmentHandler
     from .counter_permissions import CounterProhibitionAbilityFragmentHandler
@@ -1545,6 +1549,8 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ExertAttackFragmentHandler(),
             AsUnblockedAssignmentFragmentHandler(),
             ToughnessAssignmentFragmentHandler(),
+            AttachedGoadFragmentHandler(),
+            DeckCopyLimitFragmentHandler(),
             UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             AttachedUntapRestraintHandler(),
@@ -1576,6 +1582,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             MentorAbilityFragmentHandler(),
             ProtectionAbilityFragmentHandler(),
             PlayerTargetProtectionHandler(),
+            VentureLimitHandler(),
             TargetRestrictionHandler(),
             GraveyardCopyKeywordHandler(),
             StartEnginesHandler(),
@@ -1591,6 +1598,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             TypedTriggerParticipationAbilityFragmentHandler(),
             TypedTriggerParticipationAbilityFragmentHandler(handler_id='ability.static.trigger-prohibition.v2',
                 family='ability.static.trigger_prohibition',capability_dependencies=('trigger.participation.prohibition',)),
+            TypedTriggerParticipationAbilityFragmentHandler(**DUNGEON_ROOM_MULTIPLIER_COMPONENT),
             ToxicAbilityFragmentHandler(),
             WardAbilityFragmentHandler(),
             WardNonmanaAbilityFragmentHandler(),

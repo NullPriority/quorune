@@ -11,20 +11,30 @@ from .continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from .replacement.immutable import FrozenMap
-from .spell_mana_conditions import ManaSpentCondition
+from .spell_mana_conditions import ManaSpentCondition, PAID_MANA_CONDITION_CAPABILITY, PAID_MANA_CONDITION_MECHANIC
 from .declared_cost_conditions import DeclaredCastCostCondition
+from .paid_sacrifice_conditions import (
+    PAID_SACRIFICE_CONDITION_CAPABILITY, PAID_SACRIFICE_CONDITION_MECHANIC, PAID_SACRIFICE_CONDITION_VERSION,
+    PaidSacrificeCharacteristicCondition, validate_paid_sacrifice_instruction,
+)
 
 
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
 RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
 RESOLUTION_ALTERNATIVE_SCHEMA_VERSION = 13
+CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION = 15
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
 SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_same_target_self_replacement'
 PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_same_target_self_replacement'
 PUBLIC_SOURCE_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_source_self_replacement'
 CAST_FACT_CONDITION_CAPABILITY = 'resolution.effect.fixed_cast_fact'
 CAST_FACT_CONDITION_MECHANIC = 'fixed-cast-fact-condition'
+CAST_FACT_CONDITION_MECHANICS = {
+    CAST_FACT_CONDITION_CAPABILITY: CAST_FACT_CONDITION_MECHANIC,
+    PAID_MANA_CONDITION_CAPABILITY: PAID_MANA_CONDITION_MECHANIC,
+    PAID_SACRIFICE_CONDITION_CAPABILITY: PAID_SACRIFICE_CONDITION_MECHANIC,
+}
 _DERIVED_RESULT_MECHANICS = frozenset({
     "declared-effect-amount", "public-query-effect-amount", "scalar-effect-amount",
 })
@@ -156,9 +166,11 @@ def resolution_condition_is_closed(
 
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
-) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition, tuple[Mapping[str, Any], ...]]:
+) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get("schema_version") == PAID_SACRIFICE_CONDITION_VERSION:
+        return validate_paid_sacrifice_instruction(effect)
     if effect.get('schema_version') == 12:
         from .declared_cost_conditions import validate_declared_cost_instruction
         return validate_declared_cost_instruction(effect)
@@ -177,7 +189,7 @@ def validate_resolution_condition_instruction(
     }
     cast_fact = effect.get('schema_version') in {2,4,5}
     ordinary_alternative = effect.get('schema_version') == RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
-    has_otherwise = effect.get('schema_version') in {3, 4, 5, 8, 9, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION}
+    has_otherwise = effect.get('schema_version') in {3, 4, 5, 8, 9, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION}
     if effect.get('schema_version')==8:expected_fields|={'target_binding'}
     if effect.get('schema_version')==9:expected_fields|={'source_binding'}
     if cast_fact:

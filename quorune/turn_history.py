@@ -26,6 +26,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         permanent_death_history_version=history.permanent_death_history_version,
         public_movement_history_version=history.public_movement_history_version,
         first_life_gain_history_version=history.first_life_gain_history_version,
+        venture_history_version=history.venture_history_version,
     )
 
 
@@ -146,6 +147,20 @@ def current_turn_history_events(
     ):
         return ()
     return tuple(event for event in history.events if event.kind == kind)
+
+
+def ventured_this_turn(state: Any, player: str) -> bool | None:
+    history = getattr(state, "turn_history", None)
+    if getattr(history, "venture_history_version", None) != 1:
+        return None
+    return any(event.actor == player for event in current_turn_history_events(
+        history, turn_sequence=state.turn_sequence, kind="first_venture",
+    ))
+
+
+def record_first_venture(host, player: str) -> None:
+    if ventured_this_turn(host.state, player) is False:
+        host._record_turn_history("first_venture", actor=player)
 
 
 def record_first_life_gain(host, player: str) -> bool:

@@ -12,6 +12,7 @@ from ..rules.event_subscriptions import (
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_public_event_trigger_bindings import (
     FixedPublicEventBindingSpec,
+    _face_transition_spec,
     _spec,
 )
 
@@ -304,6 +305,106 @@ def _opponent_cast_or_source_death_spec(
     )
 
 
+def _color_cast_or_land_entry_spec(material_line):
+    match = re.fullmatch(
+        r"Whenever you cast a (?P<color>white|blue|black|red|green) spell or "
+        r"(?:a|an) (?P<subtype>Plains|Island|Swamp|Mountain|Forest) you control enters, "
+        r"(?P<body>you gain 1 life\.?)", material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from .spell_cast_predicates import fixed_spell_cast_binding_spec
+
+    body = match["body"]
+    cast = fixed_spell_cast_binding_spec(f"Whenever you cast a {match['color']} spell, {body}")
+    if cast is None:
+        return None
+    entry = {"all": [
+        {"field": "controller", "op": "eq", "value": "$source.controller"},
+        {"field": "subtypes", "op": "contains_any", "value": [match["subtype"].casefold()]},
+    ]}
+    subscriptions = (
+        FixedEventSubscription("spell.cast", cast.subject.event_condition),
+        FixedEventSubscription("land.enter", entry),
+    )
+    return _spec(
+        "spell.cast", "independent_dual_event", body,
+        "fixed-color-cast-or-land-entry-trigger-v1", "cr-603-handling-triggered-abilities",
+        condition=fixed_event_subscription_condition(subscriptions),
+        capabilities=("trigger.subscription.fixed_multi_event", "trigger.event.normalized_spell_cast",
+                      "trigger.event.normalized_zone_change"),
+    )
+
+
+def _face_transition_pair_spec(first, second, body):
+    children = tuple(_face_transition_spec(head + ", " + body) for head in (first, second))
+    if any(child is None for child in children) or tuple(child.variant for child in children) != (
+        "controlled_face_down_permanent_enters", "controlled_permanent_turned_face_up",
+    ):
+        return None
+    if re.search(r"\b(?:it|its|they|them|their|that (?:permanent|creature|player|card)|this way)\b", body, re.I):
+        return None
+    subscriptions = tuple(FixedEventSubscription(child.event, child.condition) for child in children)
+    return _spec(
+        subscriptions[0].event, "independent_dual_event", body,
+        "fixed-independent-face-transition-pair-v1", "trigger-event-normalized-zone-change",
+        condition=fixed_event_subscription_condition(subscriptions),
+        capabilities=("trigger.subscription.fixed_multi_event", "trigger.event.normalized_public_action",
+                      *children[0].capabilities, *children[1].capabilities),
+    )
+
+
+def _independent_pair_spec(independent, card_name):
+    if re.search(r'\band (?:when|whenever)\b', independent['first'] + ' ' + independent['second'], re.I):
+        return None
+    face_transition_pair = _face_transition_pair_spec(
+        independent["first"], independent["second"], independent["body"],
+    )
+    if face_transition_pair is not None:
+        return face_transition_pair
+    source_entry = re.fullmatch(r'(?:When|Whenever) (?P<source>.+?) enters', independent['first'], re.I)
+    if source_entry is None or not (
+            source_entry['source'].casefold() in {'this artifact', 'this creature', 'this enchantment', 'this permanent', 'this land'}
+            or card_name and SourceReferenceSpec(card_name).matches(source_entry['source'])):
+        return None
+    # Each complete prefix keeps its own typed predicate and controller.
+    # Calling the ordinary parser is bounded: child lines lack this separator.
+    from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding, _public_state_source_self_trigger_binding
+    children = tuple(fixed_counter_trigger_binding(
+        independent[name] + ', ' + independent['body'], card_name=card_name)
+        or _public_state_source_self_trigger_binding(
+            independent[name] + ', ' + independent['body'], card_name=card_name)
+        for name in ('first', 'second'))
+    if any(child is None or child.public_state_condition is not None
+            or child.event_condition is not None and 'event_subscriptions' in child.event_condition
+            for child in children):
+        return None
+    first, second = children
+    event_aliases = {'creature.enter': 'permanent.enter', 'land.enter': 'permanent.enter'}
+    events = tuple(event_aliases.get(child.event.value.removesuffix('.self'), child.event.value.removesuffix('.self')) for child in children)
+    if first.active_zone != second.active_zone or len(set(events)) != 2:
+        return None
+    # The primary subscription uses the established source-entry predicate.
+    # Other children retain source identity in their typed event suffix;
+    # removing it would widen a source damage/departure clause to all objects.
+    subscriptions = tuple(FixedEventSubscription(
+        event + ('.self' if index != 0 and child.event.value.endswith('.self') else ''),
+        (_source_condition(child.event_condition) if child.event_condition is not None else _source_condition())
+        if index == 0 else child.event_condition)
+        for index, (child, event) in enumerate(zip(children, events)))
+    from ..rules.capabilities import MECHANIC_CAPABILITY_DEPENDENCIES
+    event_capabilities = {cap for child in children for mechanic in child.event_mechanics
+        for cap in MECHANIC_CAPABILITY_DEPENDENCIES.get(mechanic, ())}
+    return _spec(first.event.value.removesuffix('.self'), 'independent_dual_event', independent['body'],
+        'fixed-independent-dual-event-trigger-v1', 'trigger-event-normalized-zone-change',
+        condition=fixed_event_subscription_condition(subscriptions),
+        capabilities=tuple(sorted({'trigger.subscription.fixed_multi_event',
+            *(cap for child in children for cap in child.explicit_capabilities),
+            *event_capabilities,
+            *(('trigger.event.normalized_spell_cast',) if any(child.event.value == 'spell.cast' for child in children) else ())})),
+        active_zone=first.active_zone)
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
@@ -311,7 +412,7 @@ def fixed_public_multi_event_binding_spec(
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one exact two-event source subscription with one active zone."""
 
-    paired = _source_block_pair_spec(material_line)
+    paired = _source_block_pair_spec(material_line) or _color_cast_or_land_entry_spec(material_line)
     if paired is not None:return paired
 
     cast_or_death = _opponent_cast_or_source_death_spec(material_line, card_name=card_name)
@@ -339,49 +440,7 @@ def fixed_public_multi_event_binding_spec(
 
     independent = re.fullmatch(r'(?P<first>(?:When|Whenever) .+?) and (?P<second>(?:when|whenever) .+?), (?P<body>.+)', material_line, re.I)
     if independent is not None and _SOURCE_ARTIFACT_ENTRY_SACRIFICE.fullmatch(material_line) is None:
-        if re.search(r'\band (?:when|whenever)\b', independent['first'] + ' ' + independent['second'], re.I):
-            return None
-        source_entry = re.fullmatch(r'(?:When|Whenever) (?P<source>.+?) enters', independent['first'], re.I)
-        if source_entry is None or not (
-                source_entry['source'].casefold() in {'this artifact', 'this creature', 'this enchantment', 'this permanent', 'this land'}
-                or card_name and SourceReferenceSpec(card_name).matches(source_entry['source'])):
-            return None
-        # Each complete prefix keeps its own typed predicate and controller.
-        # Calling the ordinary parser is bounded: child lines lack this separator.
-        from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding, _public_state_source_self_trigger_binding
-        children = tuple(fixed_counter_trigger_binding(
-            independent[name] + ', ' + independent['body'], card_name=card_name)
-            or _public_state_source_self_trigger_binding(
-                independent[name] + ', ' + independent['body'], card_name=card_name)
-            for name in ('first', 'second'))
-        if any(child is None or child.public_state_condition is not None
-                or child.event_condition is not None and 'event_subscriptions' in child.event_condition
-                for child in children):
-            return None
-        first, second = children
-        event_aliases = {'creature.enter': 'permanent.enter', 'land.enter': 'permanent.enter'}
-        events = tuple(event_aliases.get(child.event.value.removesuffix('.self'), child.event.value.removesuffix('.self')) for child in children)
-        if first.active_zone != second.active_zone or len(set(events)) != 2:
-            return None
-        # The primary subscription uses the established source-entry predicate.
-        # Other children retain source identity in their typed event suffix;
-        # removing it would widen a source damage/departure clause to all objects.
-        subscriptions = tuple(FixedEventSubscription(
-            event + ('.self' if index != 0 and child.event.value.endswith('.self') else ''),
-            (_source_condition(child.event_condition) if child.event_condition is not None else _source_condition())
-            if index == 0 else child.event_condition)
-            for index, (child, event) in enumerate(zip(children, events)))
-        from ..rules.capabilities import MECHANIC_CAPABILITY_DEPENDENCIES
-        event_capabilities = {cap for child in children for mechanic in child.event_mechanics
-            for cap in MECHANIC_CAPABILITY_DEPENDENCIES.get(mechanic, ())}
-        return _spec(first.event.value.removesuffix('.self'), 'independent_dual_event', independent['body'],
-            'fixed-independent-dual-event-trigger-v1', 'trigger-event-normalized-zone-change',
-            condition=fixed_event_subscription_condition(subscriptions),
-            capabilities=tuple(sorted({'trigger.subscription.fixed_multi_event',
-                *(cap for child in children for cap in child.explicit_capabilities),
-                *event_capabilities,
-                *(('trigger.event.normalized_spell_cast',) if any(child.event.value == 'spell.cast' for child in children) else ())})),
-            active_zone=first.active_zone)
+        return _independent_pair_spec(independent, card_name)
 
     source = _THIS_SOURCE_MULTI_EVENT.fullmatch(material_line)
     if source is not None:

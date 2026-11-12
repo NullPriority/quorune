@@ -75,6 +75,31 @@ DeclarationRequirementKind = Literal[
 
 DECLARATION_COMPONENT_CAPABILITY_ID = "combat.declaration.typed_components"
 DECLARATION_MANA_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
+ATTACHED_GOAD_CAPABILITY = "combat.goad.attached_creature"
+ATTACHED_GOAD_HANDLER_ID = "ability.static.attached-goad.v1"
+
+
+@dataclass(frozen=True, slots=True)
+class AttachedGoadSpec:
+    """A live goad cause on the attachment source's current ability list."""
+
+    source_subtype: Literal["aura", "equipment"]
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise ValueError("Unsupported attached goad schema version")
+        if type(self.source_subtype) is not str or self.source_subtype not in {"aura", "equipment"}:
+            raise ValueError("Attached goad requires an Aura or Equipment source")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"source_subtype": self.source_subtype, "schema_version": self.schema_version}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> "AttachedGoadSpec":
+        if not isinstance(value, Mapping) or set(value) != {"source_subtype", "schema_version"}:
+            raise ValueError("Attached goad has a closed schema")
+        return cls(source_subtype=value["source_subtype"], schema_version=value["schema_version"])
 
 
 def _validate_declarations(values: tuple[DeclarationKind, ...]) -> None:

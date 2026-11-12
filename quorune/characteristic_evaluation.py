@@ -33,6 +33,7 @@ from .characteristic_fragments import (
     CharacteristicQuantitySpec,
 )
 from .creature_subtypes import CREATURE_SUBTYPES
+from .type_subtype_vocabulary import CARD_SUPERTYPES
 from .all_colors import AllColorsCharacteristicDefinitionSpec,ALL_COLORS
 
 
@@ -40,6 +41,7 @@ _CARD_TYPES = {
     "artifact",
     "battle",
     "creature",
+    "dungeon",
     "enchantment",
     "instant",
     "kindred",
@@ -47,7 +49,6 @@ _CARD_TYPES = {
     "planeswalker",
     "sorcery",
 }
-_SUPERTYPES = frozenset("basic legendary ongoing snow world".split())
 
 
 def type_parts(type_line: str) -> tuple[set[str], set[str], set[str]]:
@@ -73,8 +74,18 @@ def type_parts(type_line: str) -> tuple[set[str], set[str], set[str]]:
                 ),
             )
         },
-        words.intersection(_SUPERTYPES),
+        words.intersection(CARD_SUPERTYPES),
     )
+
+
+def render_layered_type_line(values: Mapping[str, Any]) -> str:
+    left = [
+        *_ordered_words(values["supertypes"], "Basic Legendary Snow World".split()),
+        *_ordered_words(values["card_types"],
+                        "Artifact Battle Creature Enchantment Instant Kindred Land Planeswalker Sorcery".split()),
+    ]
+    right = [str(value).title() for value in values["subtypes"]]
+    return " ".join(left) + (f" — {' '.join(right)}" if right else "")
 
 
 def _numeric(value: Any) -> int | None:
@@ -650,22 +661,7 @@ def _render_characteristics(
     else:
         result.pop('prohibited_keywords', None)
     if render_type_line:
-        left = [
-            *_ordered_words(
-                values["supertypes"], "Basic Legendary Snow World".split()
-            ),
-            *_ordered_words(
-                values["card_types"],
-                (
-                    "Artifact Battle Creature Enchantment Instant Kindred Land "
-                    "Planeswalker Sorcery"
-                ).split(),
-            ),
-        ]
-        right = [str(value).title() for value in values["subtypes"]]
-        result["type_line"] = " ".join(left) + (
-            f" — {' '.join(right)}" if right else ""
-        )
+        result["type_line"] = render_layered_type_line(values)
     if card.annotations.get("bestowed") and card.attached_to:
         result["oracle_text"] = (
             "Enchant creature\nEnchanted creature gets +1/+1."

@@ -5,6 +5,7 @@ from .mill_templates import fixed_mill_effect_template
 from .life_templates import fixed_life_effect_template
 from .affected_player_discard_templates import (
     fixed_affected_player_discard_effect_template, fixed_affected_player_hand_exile_effect_template,
+    fixed_affected_player_hand_top_effect_template,
 )
 from .counter_placement_templates import fixed_player_counter_placement_effect_template
 
@@ -15,7 +16,7 @@ TARGET_PLAYER_SEQUENCE_MECHANIC='fixed-target-player-effect-sequence'
 def _leaf(text):
     for compiler in (fixed_draw_effect_template,fixed_mill_effect_template,fixed_life_effect_template,
             fixed_affected_player_discard_effect_template,fixed_affected_player_hand_exile_effect_template,
-            fixed_player_counter_placement_effect_template):
+            fixed_affected_player_hand_top_effect_template, fixed_player_counter_placement_effect_template):
         value=compiler(text)
         if value is not None:return value if isinstance(value,tuple) else value.compiled()
     return None
@@ -25,7 +26,7 @@ def fixed_target_player_sequence_template(text):
     normalized=' '.join(text.strip().split())
     match=re.fullmatch(r'Target (?P<relation>player|opponent) (?P<body>.+)',normalized,re.I)
     if match is None or any(token in normalized for token in ('"','(',')','{')):return None
-    verbs = r"(?:draws|mills|discards|exiles|loses|gains|gets)"
+    verbs = r"(?:draws|mills|discards|exiles|loses|gains|gets|chooses|puts(?=\s+(?:a|one|two|three)\s))"
     parts = re.split(
         rf",?\s+(?:and|then)\s+(?={verbs}\b)|,\s+(?={verbs}\b)|\.\s+(?=You (?:gain|lose)\b)",
         match["body"].replace(", and ", " and "), flags=re.I,

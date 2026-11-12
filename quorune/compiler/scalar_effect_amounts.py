@@ -165,6 +165,12 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     if cleanup is not None:return cleanup
     from .target_hand_amount_templates import normalized_target_hand_damage
     normalized = normalized_target_hand_damage(text.strip(),source_name)
+    if event == "spell.cast" and (counter_amount := re.fullmatch(
+        r"Put a number of (?P<counter>[A-Za-z0-9+/-]+) counters equal to "
+        r"(?P<value>that spell['’]s mana value) on (?P<receiver>[^.]+?)\.?",
+        normalized, re.I,
+    )) is not None:
+        normalized = f"Put X {counter_amount['counter']} counters on {counter_amount['receiver']}, where X is {counter_amount['value']}."
     tokens=re.fullmatch(r'Create a number of (?P<definition>[^.]+? tokens?) equal to (?P<value>[^.]+?)\.?',normalized,re.I)
     if tokens is not None:normalized=f"Create X {tokens['definition']}, where X is {tokens['value']}."
     token_counter=re.fullmatch(r'Create (?:a|an|one) (?P<definition>[^.]+? token(?: with [^.]+?)?) for each (?P<value>[^.]+? counters? on [^.]+?)\.',normalized,re.I)
@@ -210,6 +216,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         body = re.sub(r"\bdraw cards X\b", "Draw X cards", body, flags=re.I)
         body = re.sub(r"\b(mills?) cards X\b", r"\1 X cards", body, flags=re.I)
         body = re.sub(r"\b(deals?) damage X\b", r"\1 X damage", body, flags=re.I)
+        body = re.sub(r"\b(deals?) damage to ([^.]+) X\.", r"\1 X damage to \2.", body, flags=re.I)
         body = re.sub(r"\b(gain|gains|lose|loses) life X\b", r"\1 X life", body, flags=re.I)
     def canonical_fixed(text):
         if source_event:
@@ -226,8 +233,9 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
                 power=effect["power"], toughness=effect["toughness"])
             return source_result.compiled()
         return result
+    cast_event_counter_targets = event == "spell.cast" and re.fullmatch(r"that spell['’]s mana value", quantity, re.I) is not None
     fixed = declared_effect_amount_template(body, source_name=source_name,
-        compile_fixed=canonical_fixed, cast_x_available=True)
+        compile_fixed=canonical_fixed, cast_x_available=True, cast_event_counter_targets=cast_event_counter_targets)
     if fixed is None:
         return None
     if producer is None:
@@ -240,6 +248,11 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
             producer = _characteristic(quantity, source_name=source_name, body=body,
                 schema=fixed[2], event=event, source_event=source_event)
     if producer is None:
+        if quantity:
+            from .public_query_effect_amounts import public_query_effect_amount_template
+            return public_query_effect_amount_template(
+                normalized, source_name=source_name, compile_fixed=canonical_fixed,
+            )
         return None
     identity = "scalar:x:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24] if definition else None
     def project(value):
@@ -262,6 +275,8 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
     event = binding.event.value
+    if event == "spell.cast" and re.fullmatch(r"You (?:gain|lose) life equal to its mana value\.?", text.strip(), re.I):
+        text = re.sub(r"\bits mana value\b", "that spell's mana value", text, flags=re.I)
     if event == COUNTER_PLACEMENT_EVENT and not counter_placement_condition_names_kind(binding.event_condition):
         event = None
     return scalar_effect_amount_template(
@@ -285,18 +300,30 @@ def source_scalar_effect_amount_template(text,*,source_name,event,compile_fixed)
 
 def scalar_amount_shape_context(effects, mechanics):
     """Project only validated result slots, retaining the original fixed owner."""
+    from ..scalar_effect_amount_model import PAID_SACRIFICE_MANA_VALUE_MECHANIC
+
     count = 0
     def project(value, operation, path):
         nonlocal count
+        if isinstance(value, Mapping) and value.get('op') == 'mana' and isinstance(value.get('amount'), Mapping):
+            if set(value) != {'op', 'player', 'color', 'amount', 'source'}:
+                raise PublicQueryAmountError('A scalar mana result requires an unrestricted single color')
         if isinstance(value,Mapping) and value.get('op')=='offer_optional_effect':
             children=value.get('effects')
             if set(value)!={'op','player','effects'} or value.get('player')!='$controller' or not isinstance(children,(list,tuple)) or len(children)!=1 or not isinstance(children[0],Mapping):
                 raise PublicQueryAmountError('Scalar optional results require one closed controller child')
             return {**value,'effects':type(children)(project(child,str(child.get('op') or ''),()) for child in children)}
         if isinstance(value, Mapping) and value.get("kind") == SCALAR_AMOUNT_KIND:
-            if not _result_slot(operation, path):
-                raise PublicQueryAmountError("Scalar amount is outside a result slot")
             spec = ScalarEffectAmountSpec.from_dict(value)
+            if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
+                if PAID_SACRIFICE_MANA_VALUE_MECHANIC not in mechanics or (operation, path) not in {
+                    ('draw', ('count',)), ('life', ('delta',)),
+                    ('place_counters', ('amount',)), ('mana', ('amount',)),
+                }:
+                    raise PublicQueryAmountError('Paid sacrifice mana value is outside its closed result slots')
+            elif not _result_slot(operation, path,
+                                  cast_event_counter_targets=spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE):
+                raise PublicQueryAmountError("Scalar amount is outside a result slot")
             count += 1
             fixed = 2 * spec.coefficient
             return str(fixed) if path in {("characteristics", "power"), ("characteristics", "toughness")} else fixed
@@ -315,4 +342,8 @@ def scalar_amount_shape_context(effects, mechanics):
     from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC
     from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC
     from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
-    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount",TARGET_HAND_COUNT_MECHANIC,MULTIKICKER_AMOUNT_MECHANIC,MANA_COLOR_AMOUNT_MECHANIC,CAST_MANA_VALUE_MECHANIC,PAID_SACRIFICE_STAT_MECHANIC}
+    return fixed, set(mechanics) - {
+        SCALAR_AMOUNT_MECHANIC, "declared-effect-amount", TARGET_HAND_COUNT_MECHANIC,
+        MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, CAST_MANA_VALUE_MECHANIC,
+        PAID_SACRIFICE_STAT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
+    }

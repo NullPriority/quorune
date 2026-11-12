@@ -92,6 +92,21 @@ choice and its order. Opponents see ordinary hand and library counts and any
 destination that becomes public. A pending private selection or destination
 replacement resumes through the existing Game Record continuation.
 
+The affected-player form accepts a fixed one-, two- or three-card instruction
+for one announced player or opponent, every player, or every opponent. A
+target's legal availability is independent of hand size. Printed-order
+sequences keep their earlier results, including life loss against an empty
+hand.
+
+The affected seat receives the top-first choice. When multiple seats choose,
+the APNAP owner keeps their selections private and pins the selected
+incarnations until all choices are complete. The zone owner moves every
+selected card in one batch, preserving the chosen order in each owner's
+library. A required destination replacement choice suspends the batch before
+any movement.
+The projected choice and public event stream leave other seats' selections
+and library orders private.
+
 ## Ordered graveyard targets
 
 An instruction that puts cards from one graveyard at a library edge uses the
@@ -217,8 +232,16 @@ replacement choices suspend the whole procedure before either group moves.
 Saved intent identities carry entry status only for this destination; old hand
 and top/exile identities retain their existing bytes.
 
-Aura-capable or ambiguous selectors, attacking entry, linked post-entry grants
-and graveyard remainders remain outside this battlefield shape. Another player's
+A version-four fixed selection reveals the controller's top ten cards and
+requires one available creature choice. The selected card enters with the
+printed counters through the shared replacement-aware entry owner. The
+resulting battlefield incarnation gains hexproof through the controller's
+next turn boundary. The canonical whole-library shuffle follows, including
+when the revealed prefix contains no creature. Pending entry choices retain
+the exact revealed identities, counter instruction, and pending shuffle.
+
+Aura-capable or ambiguous selectors, attacking entry, other linked post-entry
+grants and graveyard remainders remain compiler residuals. Another player's
 library, conditional or payment instructions, unowned numeric, chosen and name
 predicates, other exile, cast or play destinations, and unowned preceding or
 trailing effects also remain material compiler residuals.

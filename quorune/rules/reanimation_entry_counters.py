@@ -1,10 +1,17 @@
 """Closed targeted return and entry-counter authority without marker inference."""
 from collections.abc import Mapping
-from ..reanimation_entry_counters import (REANIMATION_ENTRY_COUNTER_CAPABILITY,
-    REANIMATION_ENTRY_COUNTER_MECHANIC,validate_reanimation_entry_effect)
+from ..reanimation_entry_counters import (
+    CONDITIONAL_REANIMATION_COUNTER_CAPABILITY, CONDITIONAL_REANIMATION_COUNTER_MECHANIC,
+    CONDITIONAL_REANIMATION_COUNTER_VERSION, REANIMATION_ENTRY_COUNTER_CAPABILITY,
+    REANIMATION_ENTRY_COUNTER_MECHANIC, REANIMATION_ENTRY_COUNTER_VERSIONS, validate_reanimation_entry_effect,
+)
 from ..keyword_counters import keyword_counter_mechanic
 from .reanimation_followup import REANIMATION_FOLLOWUP_MECHANIC, REANIMATION_FOLLOWUP_VERSIONS
-from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities, FIXED_TARGET_REANIMATION_MECHANIC
+from ..compiler.reanimation_templates import relative_reanimation_scope
+from .reanimation_capability_shapes import (
+    FIXED_TARGET_REANIMATION_MECHANIC, RELATIVE_TARGET_REANIMATION_MECHANIC,
+    fixed_target_reanimation_node_capabilities, relative_target_reanimation_node_capabilities,
+)
 
 
 def reanimation_entry_counter_node_capabilities(*,effects,target_schema,mechanic_ids):
@@ -12,10 +19,19 @@ def reanimation_entry_counter_node_capabilities(*,effects,target_schema,mechanic
     effect=effects[0]
     try:validate_reanimation_entry_effect(effect)
     except (TypeError,ValueError,KeyError):return ()
-    base={key:value for key,value in effect.items() if key not in {'schema_version','entry_counter','source'}}
-    owned=fixed_target_reanimation_node_capabilities(effects=(base,),target_schema=target_schema,mechanic_ids=mechanic_ids)
-    if not owned:return ()
-    required={*owned,REANIMATION_ENTRY_COUNTER_CAPABILITY,'counter.producer.effect_entry'}
+    base = {key: value for key, value in effect.items() if key not in {"schema_version", "entry_counter", "source"}}
+    conditional = effect["schema_version"] == CONDITIONAL_REANIMATION_COUNTER_VERSION
+    if conditional != (CONDITIONAL_REANIMATION_COUNTER_MECHANIC in mechanic_ids):
+        return ()
+    if conditional and RELATIVE_TARGET_REANIMATION_MECHANIC in mechanic_ids:
+        owned = relative_target_reanimation_node_capabilities(effects=(base,), target_schema=target_schema, mechanics=mechanic_ids)
+    else:
+        owned = fixed_target_reanimation_node_capabilities(effects=(base,), target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if not owned:
+        return ()
+    required = {*owned, REANIMATION_ENTRY_COUNTER_CAPABILITY, "counter.producer.effect_entry"}
+    if conditional:
+        required.add(CONDITIONAL_REANIMATION_COUNTER_CAPABILITY)
     from .finality_counters import finality_counter_dependencies
     required.update(finality_counter_dependencies(effect))
     keyword=keyword_counter_mechanic(effect['entry_counter']['counter_name'])
@@ -36,10 +52,16 @@ def reanimation_entry_counter_runtime_dependencies(program):
     required=set()
     def visit(value):
         if isinstance(value,Mapping):
-            if value.get('op')=='reanimate' and (value.get('schema_version')==3
+            if value.get('op')=='reanimate' and (value.get('schema_version') in REANIMATION_ENTRY_COUNTER_VERSIONS
                     or 'entry_counter' in value and value.get('schema_version')!=2):
-                owned=reanimation_entry_counter_node_capabilities(effects=(value,),target_schema=program.target_schema,
-                    mechanic_ids=('fixed-target-reanimation','cr-115-targets',REANIMATION_ENTRY_COUNTER_MECHANIC))
+                mechanics = (FIXED_TARGET_REANIMATION_MECHANIC, "cr-115-targets", REANIMATION_ENTRY_COUNTER_MECHANIC)
+                if value.get("schema_version") == CONDITIONAL_REANIMATION_COUNTER_VERSION:
+                    mechanics = (*mechanics, CONDITIONAL_REANIMATION_COUNTER_MECHANIC,
+                        *((RELATIVE_TARGET_REANIMATION_MECHANIC,)
+                          if relative_reanimation_scope(program.target_schema) is not None else ()))
+                owned = reanimation_entry_counter_node_capabilities(
+                    effects=(value,), target_schema=program.target_schema, mechanic_ids=mechanics,
+                )
                 if not owned:raise ValueError('Entry-counter reanimation lacks its closed target and counter shape')
                 required.update(owned)
             elif value.get('op') == 'reanimate' and (

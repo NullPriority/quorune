@@ -7,7 +7,14 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..dungeon_progress import (
+    DUNGEON_COMPLETED_EVENT, DUNGEON_COMPLETION_TRIGGER_VARIANT, DUNGEON_VENTURE_CAPABILITY,
+)
 from ..life_change import FIRST_LIFE_GAIN_CAPABILITY, FIRST_LIFE_GAIN_EVENT
+from ..face_up_effect_model import (
+    FACE_DOWN_ENTRY_CAPABILITY, FACE_DOWN_ENTRY_FIELD,
+    TURN_FACE_UP_ACTOR_CAPABILITY, TURN_FACE_UP_ACTOR_FIELD, TURN_FACE_UP_EVENT,
+)
 from ..class_levels import CLASS_MECHANIC_ID
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_entry_return_requirements import (
@@ -96,7 +103,7 @@ _PUBLIC_CYCLE_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _PUBLIC_FACE_UP_TRIGGER = re.compile(
-    r"^Whenever a permanent is turned face up, (?P<body>.+)$",
+    r"^Whenever (?:a permanent|this creature or another permanent) is turned face up, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_FACE_UP_TRIGGER = re.compile(
@@ -721,6 +728,8 @@ def _attachment_death_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
     graveyard=re.fullmatch(r'(?:When|Whenever) enchanted (?P<type>artifact|creature|enchantment|land|permanent) is put into a graveyard(?: from the battlefield)?, (?P<body>.+)',material_line,re.I)
+    if graveyard is None:
+        graveyard = re.fullmatch(r'(?:When|Whenever) enchanted (?P<type>land) dies, (?P<body>.+)', material_line, re.I)
     if graveyard is not None:
         kind=graveyard['type'].casefold()
         return _spec('permanent.graveyard','enchanted_permanent_graveyard',graveyard['body'],
@@ -977,8 +986,16 @@ def _public_damage_spec(
 
 
 def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> FixedPublicEventBindingSpec | None:
-    from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY, defended_player_or_planeswalker_condition
+    from ..qualified_attack_model import (
+        QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_VARIANT,
+        defended_player_or_planeswalker_condition, source_attacks_battle_condition,
+    )
 
+    battle = re.fullmatch(r"(?:When|Whenever) this creature attacks a battle, (?P<body>.+)", material_line, re.I)
+    if battle is not None:
+        return _spec("creature.attacks", QUALIFIED_ATTACK_VARIANT, battle["body"],
+            "fixed-counter-public-attack-trigger-v1", "trigger-event-normalized-public-action",
+            condition=source_attacks_battle_condition(), capabilities=(QUALIFIED_ATTACK_CAPABILITY,))
     saddled = re.fullmatch(r"(?:When|Whenever) (?P<source>.+?) attacks while saddled, (?P<body>.+)",
         material_line, re.I)
     if saddled is not None and _source_subject(saddled["source"], card_name=card_name):
@@ -1072,7 +1089,50 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
     )
 
 
+def _face_transition_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    entry = re.fullmatch(r"Whenever a face-down (?P<kind>creature|permanent) you control enters, (?P<body>.+)",
+                         material_line, re.IGNORECASE)
+    if entry is not None:
+        conditions = [
+            {"field": FACE_DOWN_ENTRY_FIELD, "op": "eq", "value": True},
+            {"field": "controller", "op": "eq", "value": "$source.controller"},
+        ]
+        if entry["kind"].casefold() == "creature":
+            conditions.append({"field": "types", "op": "contains_any", "value": ["creature"]})
+        return _spec(
+            "permanent.enter", "controlled_face_down_permanent_enters", entry["body"],
+            "fixed-counter-face-down-entry-v1", "trigger-event-normalized-zone-change",
+            condition={"all": conditions}, capabilities=(FACE_DOWN_ENTRY_CAPABILITY,),
+        )
+    turned = re.fullmatch(
+        r"Whenever (?:(?P<active>you turn a permanent face up)|"
+        r"(?:a permanent you control|this (?:creature|enchantment) or another permanent you control) is turned face up), "
+        r"(?P<body>.+)", material_line, re.IGNORECASE,
+    )
+    if turned is None:
+        return None
+    active = turned["active"] is not None
+    return _spec(
+        TURN_FACE_UP_EVENT, "controller_turns_up_permanent" if active else "controlled_permanent_turned_face_up",
+        turned["body"], "fixed-counter-public-face-up-trigger-v1", "trigger-event-normalized-public-action",
+        condition={"field": TURN_FACE_UP_ACTOR_FIELD if active else "controller",
+                   "op": "eq", "value": "$source.controller"},
+        capabilities=(TURN_FACE_UP_ACTOR_CAPABILITY,) if active else (),
+    )
+
+
 def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    transition = _face_transition_spec(material_line)
+    if transition is not None:
+        return transition
+    dungeon = re.fullmatch(r"Whenever you complete a dungeon, (?P<body>.+)", material_line, re.IGNORECASE)
+    if dungeon is not None:
+        return _spec(
+            DUNGEON_COMPLETED_EVENT, DUNGEON_COMPLETION_TRIGGER_VARIANT, dungeon["body"],
+            "fixed-counter-dungeon-completion-trigger-v1", "cr-603-handling-triggered-abilities",
+            condition={"field": "player", "op": "eq", "value": "$source.controller"},
+            capabilities=(DUNGEON_VENTURE_CAPABILITY,),
+        )
     cycle = _PUBLIC_CYCLE_TRIGGER.fullmatch(material_line)
     if cycle is not None:
         source_self = cycle.group("source") is not None

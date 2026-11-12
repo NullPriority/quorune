@@ -12,7 +12,7 @@ from .cast_lifecycles import (
 )
 from .cast_timing import cast_timing_is_legal
 from .compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_specs
-from .compiled_cast_timing import compiled_cast_timing_permissions
+from .compiled_cast_timing import compiled_cast_timing_permissions, compiled_self_cast_restriction_reason
 from .counter_placement import (
     commit_prepared_counter_placements,
     CounterPlacementError,
@@ -29,6 +29,8 @@ from .errors import GameRuleError, StateInvariantError
 from .mana_undo import clear_mana_undo_stack
 from .model import CardInstance, StackItem
 from .rules.action_proposals import ActionOffer, freeze_json
+from .rules.temporary_cast_timing import temporary_cast_timing_permissions
+from .semantic_runtime.static_cast_rules import static_cast_prohibition_reason
 from .stack_resolution import complete_stack_resolution
 from .trigger_processing import enqueue_trigger_batch
 
@@ -118,12 +120,12 @@ def _suspend_timing_is_legal(
     face = record.faces[0] if record.faces else None
     type_line = str(face.get("type_line") or "") if face else record.type_line
     face_name = str(face.get("name") or "") if face else None
-    return cast_timing_is_legal(
-        host.state,
-        seat,
-        type_line,
-        compiled_cast_timing_permissions(host, card, face_name=face_name, actor=seat),
-    )
+    temporary = temporary_cast_timing_permissions(host, seat, card, face=face)
+    if temporary and (compiled_self_cast_restriction_reason(host, seat, card, face_name=face_name)
+                      or static_cast_prohibition_reason(host, seat, card, face=face)):
+        return False
+    printed = compiled_cast_timing_permissions(host, card, face_name=face_name, actor=seat)
+    return cast_timing_is_legal(host.state, seat, type_line, (*printed, *temporary))
 
 
 def build_suspend_offer(

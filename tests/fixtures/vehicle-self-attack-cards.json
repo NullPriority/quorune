@@ -1,0 +1,2981 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Vehicle self-attack and crew/source-identity witnesses.",
+  "cards": [
+    {
+      "oracle_id": "060d109f-2969-4f9e-a723-535d662a571a",
+      "name": "Mukotai Soulripper",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, you may sacrifice another artifact or creature. If you do, put a +1/+1 counter on this Vehicle and it gains menace until end of turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1009f979-b1fa-4427-bf9e-2a533a4ca19b",
+      "name": "_____ _____ Rocketship",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying\nWhen this Vehicle enters, you may put up to two name stickers on it.\nWhenever this Vehicle attacks, choose a letter. This Vehicle gets +1/+1 until end of turn for each name sticker on it that begins with the chosen letter.\nCrew 2",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "banned"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "name": "Mobile Garrison",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, untap another target artifact or creature you control.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-01-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "18ad0dd1-2d0e-46b4-8ab1-ece07180267f",
+      "name": "Imperial Recovery Unit",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, return target creature or Vehicle card with mana value 2 or less from your graveyard to your hand.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1e9b3c9e-07ae-4de5-8607-93773825f655",
+      "name": "Raiders' Karve",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "20932bca-52be-4288-9c7d-4154650c5ec9",
+      "name": "Necron Monolith",
+      "mana_cost": "{7}",
+      "cmc": 7.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying, indestructible\nEternity Gate — Whenever this Vehicle attacks, mill three cards. For each creature card milled this way, create a 2/2 black Necron Warrior artifact creature token.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying",
+        "Indestructible",
+        "Eternity Gate",
+        "Crew",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2219e636-74d0-4f82-8704-e6d66c5f7f09",
+      "name": "Rocketeer Boostbuggy",
+      "mana_cost": "{R}{G}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nExhaust — {3}: This Vehicle becomes an artifact creature. Put a +1/+1 counter on it. (Activate each exhaust ability only once.)\nCrew 1",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Treasure",
+        "Crew",
+        "Exhaust"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "22fa2860-d746-4429-b7e3-3403bef27f7b",
+      "name": "Midnight Crusader Shuttle",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Midnight Entity — Whenever this Vehicle attacks, defending player faces a villainous choice — That player sacrifices a creature of their choice, or you gain control of a creature of your choice that player controls until end of turn. If you gain control of a creature this way, tap it, and it's attacking that player.\nCrew 2",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew",
+        "Midnight Entity"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-10-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2951671b-ac01-4e65-857f-0b7b7c7478ce",
+      "name": "Reaver Titan",
+      "mana_cost": "{7}",
+      "cmc": 7.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Void Shields — Protection from mana value 3 or less\nGatling Blaster — Whenever this Vehicle attacks, it deals 5 damage to each opponent.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "10",
+      "toughness": "10",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Gatling Blaster",
+        "Void Shields",
+        "Protection",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3c322d99-2bc4-4618-aeb3-5583fce54f1b",
+      "name": "Spider-Mobile",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Trample\nWhenever this Vehicle attacks or blocks, it gets +1/+1 until end of turn for each Spider you control.\nCrew 2",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "name": "Smuggler's Copter",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4cdf524a-1a99-4143-823b-d3c5c867c580",
+      "name": "Colossal Plow",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, add {W}{W}{W} and you gain 3 life. Until end of turn, you don't lose this mana as steps and phases end.\nCrew 6 (Tap any number of creatures you control with total power 6 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "6",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Lifelink",
+      "oracle_id": "4fe8316a-9cff-43e9-a1d5-993a0c9daf3a",
+      "oracle_text": "Enchant creature\nEnchanted creature has lifelink. (Damage dealt by the creature also causes its controller to gain that much life.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-07-15",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "oracle_id": "5d93b4a9-0d51-45bd-a0e7-90737d019822",
+      "name": "Filigree Racer",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "When this Vehicle enters, you get {E}{E}{E}{E} (four energy counters).\nWhenever this Vehicle attacks, you may pay {E}{E}. When you do, target instant or sorcery card in your graveyard gains jump-start until end of turn. (You may cast that card from your graveyard by discarding a card in addition to paying its other costs. Then exile it.)\nCrew 1",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Renegade Freighter",
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "oracle_text": "Whenever this Vehicle attacks, it gets +1/+1 and gains trample until end of turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": "3",
+      "type_line": "Artifact — Vehicle"
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "name": "Untethered Express",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Trample\nWhenever this Vehicle attacks, put a +1/+1 counter on it.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-01-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7903666e-7803-4cfc-9ed9-482a6b577c96",
+      "name": "Salvation Engine",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Other artifact creatures you control get +2/+2.\nWhenever this Vehicle attacks, return up to one target artifact card from your graveyard to the battlefield.\nCrew 6",
+      "power": "6",
+      "toughness": "10",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7f82bae3-feaa-4967-a843-32a4f72806d5",
+      "name": "Subterranean Schooner",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, target creature that crewed it this turn explores. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on that creature, then put the card back or put it into your graveyard.)\nCrew 1",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Crew",
+        "Explore"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "name": "Smoldering Stagecoach",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Smoldering Stagecoach's power is equal to the number of instant and sorcery cards in your graveyard.\nWhenever this Vehicle attacks, the next instant spell and the next sorcery spell you cast this turn each have cascade.\nCrew 2",
+      "power": "*",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "name": "Conqueror's Galleon // Conqueror's Foothold",
+      "mana_cost": "{4} // ",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle // Land",
+      "oracle_text": "Conqueror's Galleon: When this Vehicle attacks, exile it at end of combat, then return it to the battlefield transformed under your control.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)\n//\nConqueror's Foothold: (Transforms from Conqueror's Galleon.)\n{T}: Add {C}.\n{2}, {T}: Draw a card, then discard a card.\n{4}, {T}: Draw a card.\n{6}, {T}: Return target card from your graveyard to your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Transform",
+        "Crew"
+      ],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "transform",
+      "released_at": "2017-09-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}",
+          "name": "Conqueror's Galleon",
+          "oracle_text": "When this Vehicle attacks, exile it at end of combat, then return it to the battlefield transformed under your control.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+          "power": "2",
+          "toughness": "10",
+          "type_line": "Artifact — Vehicle"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Conqueror's Foothold",
+          "oracle_text": "(Transforms from Conqueror's Galleon.)\n{T}: Add {C}.\n{2}, {T}: Draw a card, then discard a card.\n{4}, {T}: Draw a card.\n{6}, {T}: Return target card from your graveyard to your hand.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Land"
+        }
+      ]
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Fervor",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "oracle_text": "Creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "oracle_id": "8fba247e-9849-4a06-84ff-242894b0503a",
+      "name": "Recon Craft Theta",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying\nWhen this Vehicle enters, create a 0/0 blue Alien creature token. Put a +1/+1 counter on it.\nWhenever this Vehicle attacks, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)\nCrew 2",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying",
+        "Crew",
+        "Proliferate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-03-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "name": "TARDIS",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-10-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "92c9b2fd-95d6-4937-aee2-67b4bb8ca29d",
+      "name": "Aerial Surveyor",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks, if defending player controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.\nCrew 2",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "954b30b2-b88c-4558-b06c-4518b49d7b20",
+      "name": "Getaway Car",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Haste\nWhenever this Vehicle attacks or blocks, return up to one target creature that crewed it this turn to its owner's hand.\nCrew 1",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Haste",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a6c3aa17-8338-4daa-889e-d36dc715e546",
+      "name": "Rolling Hamsphere",
+      "mana_cost": "{7}",
+      "cmc": 7.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "This Vehicle gets +1/+1 for each Hamster you control.\nWhenever this Vehicle attacks, create three 1/1 red Hamster creature tokens, then it deals X damage to any target, where X is the number of Hamsters you control.\nCrew 3",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "aeb9a2e6-ad11-4e2c-81d0-caf279d31ece",
+      "name": "Turtle Van",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, put a +1/+1 counter on target creature that crewed it this turn. Then if that creature is a Mutant, Ninja, or Turtle, double the number of +1/+1 counters on it.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew",
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "name": "Ballista Charger",
+      "mana_cost": "{5}",
+      "cmc": 5.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, it deals 1 damage to any target.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b71239fb-d7dc-4bac-b8aa-26b454409344",
+      "name": "Mobile Homestead",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "This Vehicle has haste as long as you control a Mount.\nWhenever this Vehicle attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "name": "Consulate Dreadnought",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Crew 6 (Tap any number of creatures you control with total power 6 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "7",
+      "toughness": "11",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-01-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c3775748-ff62-469f-916b-8e551ccce23c",
+      "name": "Careening Mine Cart",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Treasure",
+        "Crew"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c68c2a98-9a6d-4199-af3a-78eb92beda48",
+      "name": "Luxurious Locomotive",
+      "mana_cost": "{5}",
+      "cmc": 5.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, create a Treasure token for each creature that crewed it this turn. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")\nCrew 1. Activate only once each turn. (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "6",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Treasure",
+        "Crew"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d64a4ad2-c80e-4a7f-93f2-b702916dba07",
+      "name": "Thunderhawk Gunship",
+      "mana_cost": "{6}",
+      "cmc": 6.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying\nWhen this Vehicle enters, create two 2/2 white Astartes Warrior creature tokens with vigilance.\nWhenever this Vehicle attacks, attacking creatures you control gain flying until end of turn.\nCrew 2",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d94144b0-8967-4904-bb6b-44b0022d1f19",
+      "name": "Goliath Truck",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Stowage — Whenever this Vehicle attacks, put two +1/+1 counters on another target attacking creature.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Stowage",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "name": "Foreboding Steamboat",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they control. Exile them until this Vehicle leaves the battlefield.\nWhenever this Vehicle attacks, put a card exiled with it into its owner's graveyard. If you do, investigate.\nCrew 2",
+      "power": "5",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Investigate",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e3016295-00f7-4daf-91b0-57653733b103",
+      "name": "Adventurer's Airship",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks, draw a card, then discard a card.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e7b746c8-1b32-42ed-8328-4e16274209d8",
+      "name": "Kylox's Voltstrider",
+      "mana_cost": "{1}{U}{R}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Collect evidence 6: This Vehicle becomes an artifact creature until end of turn.\nWhenever this Vehicle attacks, you may cast an instant or sorcery spell from among cards exiled with it. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.\nCrew 2",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Collect evidence",
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e9832d58-0ee6-4641-a9fd-d34d54b3b11c",
+      "name": "Passenger Ferry",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, you may pay {U}. When you do, another target attacking creature can't be blocked this turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-09-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f22665cd-4710-48df-83c1-3c9081097cb5",
+      "name": "Hedge Shredder",
+      "mana_cost": "{2}{G}{G}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, you may mill two cards.\nWhenever one or more land cards are put into your graveyard from your library, put them onto the battlefield tapped.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Crew",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "1009f979-b1fa-4427-bf9e-2a533a4ca19b",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "When determining what a name begins with, ignore all spaces and punctuation, including blank lines."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "All attackers are chosen at once. You can't attack with Mobile Garrison, untap a tapped creature, and then attack with that creature."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "Untapping an attacking creature doesn't remove it from combat."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "14ef5aa4-5f61-4fbd-9a8d-35920c40ec25",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "2219e636-74d0-4f82-8704-e6d66c5f7f09",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Exhaust abilities can be activated any time you could normally activate an ability."
+    },
+    {
+      "oracle_id": "2219e636-74d0-4f82-8704-e6d66c5f7f09",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If an ability triggers whenever you activate an exhaust ability, that ability resolves before the exhaust ability resolves."
+    },
+    {
+      "oracle_id": "2219e636-74d0-4f82-8704-e6d66c5f7f09",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If an exhaust ability of a permanent is activated, and then that permanent leaves the battlefield and returns to the battlefield, it becomes a new object so its exhaust ability can be activated again."
+    },
+    {
+      "oracle_id": "22fa2860-d746-4429-b7e3-3403bef27f7b",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "A player facing a villainous choice can always choose either option, even if one or both of the options are impossible. For example, if one of the options is to sacrifice a creature, a player who controls no creatures can still choose that option."
+    },
+    {
+      "oracle_id": "22fa2860-d746-4429-b7e3-3403bef27f7b",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If a spell or ability requires multiple players to face a villainous choice, the result is a little different from other effects in Magic. In that case, the first player in turn order makes their choice and the action for that choice is performed before the next player makes their choice. Then each of the remaining players repeat this process in turn order."
+    },
+    {
+      "oracle_id": "22fa2860-d746-4429-b7e3-3403bef27f7b",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "When a creature becomes attacking this way, it wasn't declared as an attacker, so triggered abilities that trigger when a creature attacks won't trigger. Similar, all restrictions or costs to attack are ignored. For example, if the chosen creature has defender, it could still end up being an attacking creature this way."
+    },
+    {
+      "oracle_id": "22fa2860-d746-4429-b7e3-3403bef27f7b",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "When a player faces a villainous choice, they first choose one of the two options, then all actions in the chosen option are performed."
+    },
+    {
+      "oracle_id": "2951671b-ac01-4e65-857f-0b7b7c7478ce",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The protection ability means the following: - Reaver Titan can't be blocked by creatures with mana value 3 or less. - Reaver Titan can't be enchanted by Auras with mana value 3 or less. It also can't be equipped by Equipment with mana value 3 or less. - Reaver Titan can't be targeted by spells with mana value 3 or less. It also can't be targeted by abilities from sources with mana value 3 or less. - All damage that would be dealt to Reaver Titan by sources with mana value 3 or less is prevented."
+    },
+    {
+      "oracle_id": "2951671b-ac01-4e65-857f-0b7b7c7478ce",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "While a spell with X in its cost is on the stack, its mana value takes the chosen value of X into account. Reaver Titan can be chosen as a target for a Light Up the Night (which has mana cost {X}{R}) if X is 3 or greater, for example, but it can't be chosen as a target for a Light Up the Night if X is 2, 1, or 0."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "4fe8316a-9cff-43e9-a1d5-993a0c9daf3a",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The controller of the enchanted creature, not the controller of Lifelink, gains the life (in case they’re different players)."
+    },
+    {
+      "oracle_id": "5d93b4a9-0d51-45bd-a0e7-90737d019822",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "A spell cast using jump-start will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "5d93b4a9-0d51-45bd-a0e7-90737d019822",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If an effect allows you to pay an alternative cost rather than a spell's mana cost, you may pay that alternative cost when you jump-start a spell. You'll still discard a card as an additional cost to cast it."
+    },
+    {
+      "oracle_id": "5d93b4a9-0d51-45bd-a0e7-90737d019822",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "When casting a spell with jump-start, you must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using jump-start only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "Any +1/+1 counters on Untethered Express remain on it when it stops being a creature."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "652f049d-770e-4bd7-b65f-fe56e618366a",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "7f82bae3-feaa-4967-a843-32a4f72806d5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If a resolving spell or ability instructs a specific creature to explore but that creature has left the battlefield, the creature still explores. If you reveal a nonland card this way, you won't put a +1/+1 counter on anything, but you may put the revealed card into your graveyard. Effects that trigger \"whenever a creature explores\" trigger as appropriate."
+    },
+    {
+      "oracle_id": "7f82bae3-feaa-4967-a843-32a4f72806d5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If an ability instructs a creature to explore, its controller reveals the top card of their library. If it's a land card, they'll put it into their hand. Otherwise, they'll put a +1/+1 counter on that creature, then choose to either leave that card on top of their library or put it into their graveyard."
+    },
+    {
+      "oracle_id": "7f82bae3-feaa-4967-a843-32a4f72806d5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If no card is revealed, most likely because that player's library is empty, the exploring creature receives a +1/+1 counter."
+    },
+    {
+      "oracle_id": "7f82bae3-feaa-4967-a843-32a4f72806d5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "In some unusual cases, noncreature permanents may explore. For example, if the creature card returned by Defossilize is somehow not a creature once it's on the battlefield, it can still explore. You'll take all the same actions, and you may end up putting a +1/+1 counter on the permanent. (Note that some effects target a creature, and those effects would still require a legal target to have it explore.)"
+    },
+    {
+      "oracle_id": "7f82bae3-feaa-4967-a843-32a4f72806d5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Once an ability that causes a creature to explore begins to resolve, no player may take any other actions until it's done. Notably, opponents can't try to remove the exploring creature after you reveal a nonland card but before it receives a counter."
+    },
+    {
+      "oracle_id": "7f82bae3-feaa-4967-a843-32a4f72806d5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells or abilities might cause a creature to explore multiple times in a row. If you reveal a nonland card when a creature explores and leave it on top of your library, then the creature explores again immediately afterwards, you'll reveal the same card again."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "\"Cascade\" means \"When you cast this spell, exile cards from the top of your library until you exile a nonland card whose mana value is less than this spell's mana value. You may cast that card without paying its mana cost if the resulting spell's mana value is less than this spell's mana value. Then put all cards exiled this way that weren't cast on the bottom of your library in a random order.\""
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The ability that defines Smoldering Stagecoach's power works in all zones, not just the battlefield."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether you cast the last card exiled."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Conqueror's Galleon won't be exiled if it doesn't survive combat."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Unlike the other double-faced cards in the Ixalan set, Conqueror's Galleon is exiled and then returned to battlefield transformed. It will be considered a new object entering the battlefield. Notably, it will return to the battlefield untapped."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "88b18901-50cd-461c-b1bc-be900210be8e",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "If an attacking creature loses haste, perhaps because Fervor leaves the battlefield after attackers have been declared, it won't be removed from combat."
+    },
+    {
+      "oracle_id": "8fba247e-9849-4a06-84ff-242894b0503a",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "If a player or permanent has more than one kind of counter on it, and you choose for it to get additional counters, it must get one of each kind of counter it already has. You can't have it get just one kind of counter it already has and not the others."
+    },
+    {
+      "oracle_id": "8fba247e-9849-4a06-84ff-242894b0503a",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Players can respond to a spell or ability whose effect includes proliferating. Once that spell or ability starts to resolve, however, and its controller chooses which permanents and players will get new counters, it's too late for anyone to respond."
+    },
+    {
+      "oracle_id": "8fba247e-9849-4a06-84ff-242894b0503a",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to proliferate may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't proliferate."
+    },
+    {
+      "oracle_id": "8fba247e-9849-4a06-84ff-242894b0503a",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You can choose any permanent that has a counter, including ones controlled by opponents. You can choose any player who has a counter, including opponents. You can't choose cards in any zone other than the battlefield, even if they have counters on them."
+    },
+    {
+      "oracle_id": "8fba247e-9849-4a06-84ff-242894b0503a",
+      "published_at": "2024-03-08",
+      "source": "wotc",
+      "comment": "You don't have to choose every permanent or player that has a counter—only the ones you want to add counters to. Since \"any number\" includes zero, you don't have to choose any permanents at all, and you don't have to choose any players at all."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "You may planeswalk at the time TARDIS's triggered ability resolves, not at the time you cast the next spell."
+    },
+    {
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "You may planeswalk only in games using the Planechase variant. If you are instructed to planeswalk in any other game, nothing happens."
+    },
+    {
+      "oracle_id": "92c9b2fd-95d6-4937-aee2-67b4bb8ca29d",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Aerial Surveyor's triggered ability has an intervening \"if\" clause. That means (1) the ability won't trigger at all unless the defending player controls more lands than you, and (2) the ability will do nothing if you control at least as many lands as the defending player by the time it resolves."
+    },
+    {
+      "oracle_id": "a6c3aa17-8338-4daa-889e-d36dc715e546",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "The value of X is determined only once, as Rolling Hamsphere's second ability resolves."
+    },
+    {
+      "oracle_id": "aeb9a2e6-ad11-4e2c-81d0-caf279d31ece",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "To double the number of +1/+1 counters on a creature, put a number of +1/+1 counters on it equal to the number it already has. Other cards that interact with putting counters on it will interact with this effect accordingly."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2016-09-20",
+      "source": "wotc",
+      "comment": "Ballista Charger's triggered ability resolves before blockers are chosen. A creature dealt lethal damage this way won't be around to block."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "b4862430-e3d3-4f29-90ca-50141e36e2f1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "b71239fb-d7dc-4bac-b8aa-26b454409344",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Once a Mobile Homestead that came under your control this turn has legally attacked, causing it to lose haste by removing all Mounts you control won't cause Mobile Homestead to stop attacking."
+    },
+    {
+      "oracle_id": "b71239fb-d7dc-4bac-b8aa-26b454409344",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Putting a land card onto the battlefield with Mobile Homestead's triggered ability doesn't count as playing a land. It can put a land card onto the battlefield even if you've already played your land for the turn."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren’t attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don’t affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it’s not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won’t be a creature, even if the Vehicle it’s copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle’s printed power and toughness."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can’t attack unless you’ve controlled it continuously since your turn began, it can block if it’s untapped, it can be tapped to pay a Vehicle’s crew cost, and so on."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can’t try to stop the ability by changing a creature’s power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that’s crewed won’t normally have any creature type."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn’t count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won’t trigger."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it’s already an artifact creature. Doing so has no effect on the Vehicle. It doesn’t change its power and toughness."
+    },
+    {
+      "oracle_id": "bc822c9a-633f-4830-9cb3-9af6a80622e4",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "c68c2a98-9a6d-4199-af3a-78eb92beda48",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Luxurious Locomotive's triggered ability counts each creature that crewed it this turn, including creatures that are no longer on the battlefield as the ability resolves."
+    },
+    {
+      "oracle_id": "c68c2a98-9a6d-4199-af3a-78eb92beda48",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "c68c2a98-9a6d-4199-af3a-78eb92beda48",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Clue is an artifact type. Even though it appears on some cards with other permanent types, it's never a creature type, a land type, or anything but an artifact type."
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If Foreboding Steamboat leaves the battlefield before its first triggered ability resolves, the chosen creatures won't be exiled at all."
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If an effect refers to a Clue, it means any Clue artifact, not just a Clue artifact token. For example, you can sacrifice Wrench to pay for Alquist Proft, Master Sleuth's activated ability."
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Some abilities trigger \"whenever you sacrifice a Clue\". Those abilities trigger whenever you sacrifice a Clue for any reason, not just to activate a Clue's activated ability."
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Some spells and abilities that investigate may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Clue tokens."
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Starting with the player whose turn it is, each player in turn order chooses two nontoken, non-Vehicle creatures they control, then all the creatures chosen by all players are exiled at the same time. Players get to know the choices made by players who chose before them."
+    },
+    {
+      "oracle_id": "d97a0e41-9dd7-4466-afb7-3d8bd6cd0eed",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Clue to pay multiple costs. For example, you can't sacrifice a Clue token to activate its own ability and also to activate Alquist Proft, Master Sleuth's ability."
+    },
+    {
+      "oracle_id": "e7b746c8-1b32-42ed-8328-4e16274209d8",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If you can't exile enough cards to meet or exceed the required mana value, you can't choose to collect evidence at all."
+    },
+    {
+      "oracle_id": "e7b746c8-1b32-42ed-8328-4e16274209d8",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Once you've announced that you're casting a spell, players can't take actions until you've finished doing so. Notably, opponents can't try to remove cards from your graveyard to stop you from collecting evidence."
+    },
+    {
+      "oracle_id": "e7b746c8-1b32-42ed-8328-4e16274209d8",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You choose whether or not to cast a spell from among the exiled cards as Kylox's Voltstrider's triggered ability resolves. If you do, you do so as part of the resolution of that ability. You can't wait to cast it later in the turn. Timing restrictions based on the card's type are ignored."
+    },
+    {
+      "oracle_id": "f22665cd-4710-48df-83c1-3c9081097cb5",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If your library contains one or fewer cards when Hedge Shredder's first ability begins to resolve, you can't choose to mill two cards."
+    }
+  ]
+}

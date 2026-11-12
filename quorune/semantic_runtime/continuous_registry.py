@@ -19,6 +19,7 @@ def default_continuous_effect_component_registry(
     from .conditional_color_grants import ConditionalColorGrantHandler
     from .keyword_prohibitions import OpponentKeywordProhibitionHandler
     from .basic_type_addition import ScopedBasicTypeAdditionHandler
+    from .cross_zone_type_additions import CrossZoneTypeAdditionHandler
     from .basic_type_setting import FixedBasicTypeSettingHandler
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
@@ -56,6 +57,7 @@ def default_continuous_effect_component_registry(
             ),
             AddBasicLandTypeHandler(),
             ScopedBasicTypeAdditionHandler(),
+            CrossZoneTypeAdditionHandler(),
             FixedBasicTypeSettingHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),

@@ -194,6 +194,8 @@ _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
             ("artifact",),
             ("creature", "enchantment"),
             ("artifact", "creature"),
+            ("artifact", "creature", "planeswalker"),
+            ("enchantment", "instant", "sorcery"),
         )
     ),
     *tuple(
@@ -618,6 +620,9 @@ def targeted_counter_node_capabilities(
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed direct stack-counter grammar."""
 
+    if effects and effects[0].get("op") == "resolve_stack_counter_followup":
+        from .stack_counter_followup import stack_counter_followup_node_capabilities
+        return stack_counter_followup_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if len(effects) == 1 and effects[0].get("op") == "counter_unless_pay":
         from .stack_controller_payment_shapes import stack_controller_payment_node_capabilities
         return stack_controller_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
@@ -939,6 +944,9 @@ def fixed_target_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed targeted fixed characteristic effect."""
 
+    from .fixed_stat_multipliers import is_fixed_stat_multiplier, fixed_stat_multiplier_node_capabilities
+    if any(is_fixed_stat_multiplier(effect) for effect in effects):
+        return fixed_stat_multiplier_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(effect.get("schema_version") == 12 and effect.get("op") == "apply_source_characteristics_until_end_of_turn" for effect in effects):
         from .power_toughness_switch import power_toughness_switch_node_capabilities
         return power_toughness_switch_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
@@ -999,9 +1007,12 @@ def fixed_source_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed source-bound characteristic effect."""
 
-    if len(effects) == 1 and effects[0].get("op") == "modify_stats_until_end_of_turn":
-        from .fixed_resolution_characteristic_shapes import fixed_attached_stat_node_capabilities
-        return fixed_attached_stat_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if len(effects) == 1 and isinstance(effects[0].get("card"), Mapping):
+        from .fixed_resolution_characteristic_shapes import (
+            fixed_attached_characteristic_node_capabilities, is_attached_characteristic_effect,
+        )
+        if is_attached_characteristic_effect(effects[0]):
+            return fixed_attached_characteristic_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
 
     if any(effect.get('card') == '$event.block_counterpart' for effect in effects):
         from ..compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate

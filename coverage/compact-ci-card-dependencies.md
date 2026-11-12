@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "d37397c1d28b27363b9d3aae249eec757e6c76f8d7725582b8438551cd921425"
+verified: "bdfcfb305ca6d4a0afb543b27e239cedb98414d226158048a1aa35f47882a5a3"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,12 +17,12 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 590 |
-| Cards | 6251 |
-| Rulings | 18950 |
-| Modules inspected | 932 |
-| Static requirements | 2882 |
-| Declared dynamic requirements | 177 |
+| Fixture files | 635 |
+| Cards | 6586 |
+| Rulings | 20551 |
+| Modules inspected | 950 |
+| Static requirements | 2970 |
+| Declared dynamic requirements | 184 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
 | Missing deck dependencies | 0 |
@@ -34,23 +34,23 @@ Overall closure: **closed**.
 | --- | ---: | --- |
 | casting-costs-mana | 74 | closed |
 | combat-declarations | 25 | closed |
-| compiler-cardprogram | 95 | closed |
+| compiler-cardprogram | 103 | closed |
 | core-domain | 14 | closed |
 | counter-continuous-effects | 64 | closed |
 | deterministic-game-regressions | 6 | closed |
 | events-replacement-zone | 60 | closed |
 | functional-01 | 68 | closed |
-| functional-02 | 66 | closed |
-| functional-03 | 83 | closed |
-| functional-04 | 72 | closed |
+| functional-02 | 68 | closed |
+| functional-03 | 84 | closed |
+| functional-04 | 81 | closed |
 | functional-05 | 56 | closed |
-| functional-06 | 65 | closed |
-| functional-07 | 69 | closed |
-| functional-08 | 122 | closed |
+| functional-06 | 66 | closed |
+| functional-07 | 70 | closed |
+| functional-08 | 123 | closed |
 | functional-09 | 93 | closed |
-| functional-10 | 64 | closed |
+| functional-10 | 66 | closed |
 | functional-11 | 72 | closed |
-| functional-12 | 68 | closed |
+| functional-12 | 69 | closed |
 | generated-validation | 34 | closed |
 | main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |

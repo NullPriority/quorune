@@ -5,8 +5,11 @@ from typing import Any, Mapping, Sequence
 
 from ..attachments import attach_objects, detach_object
 from ..rules.reconfigure import source_has_reconfigure, commit_reconfigure_attachment_effect
+from ..rules.attachment_actions import (
+    ENTRY_ATTACHMENT_VERSION, TARGETED_EQUIPMENT_VERSION, equipment_attachment_is_legal,
+    validate_entry_equipment_attachment, validate_targeted_equipment_attachment,
+)
 from ..aura import legal_aura_target_refs
-from ..zone_object_cleanup import resolve_zone_object_cleanup_group
 from ..continuous_effects import ContinuousOperation, Layer
 from ..continuous_effect_state import (
     ContinuousEffectStateError,
@@ -20,23 +23,17 @@ from ..effect_contracts import (
     effect_family_contract,
     REANIMATE_OPERATION,
 )
-from ..impulse_access import grant_temporary_cast_permission
-from ..impulse_access_model import (
-    TemporaryCastPermissionError,
-    TemporaryCastPermissionGrant,
-)
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..model import CardInstance
 from ..milling import mill_cards, MillRequest
 from ..linked_exile_return import resolve_linked_exile_return, return_linked_exiled_objects
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
-from ..target_protection_engine_adapter import protection_verdict_for_ref
-from ..protection import ProtectionVerdict
 from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
+from .linked_zone_movement import apply_move_if_in_zone
 
 _EXILE_ZONE = "exile"
 
@@ -146,136 +143,6 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
             actor=actor, source=source, followup=followup)
     return moved
 
-
-
-def _apply_move_if_in_zone(
-    host: Any,
-    effect: Mapping[str, Any],
-    *,
-    actor: str,
-    operation: str,
-    reason: str,
-) -> Any:
-    if "cards" in effect:
-        return resolve_zone_object_cleanup_group(
-            host,
-            effect,
-            actor=actor,
-            operation=operation,
-            reason=reason,
-        )
-    op = operation
-    expected_zone = str(effect.get("from") or "")
-    raw_grant = effect.get("then_cast_permission")
-    try:
-        grant = (
-            TemporaryCastPermissionGrant.from_dict(raw_grant)
-            if isinstance(raw_grant, Mapping)
-            else None
-        )
-    except TemporaryCastPermissionError as exc:
-        raise GameRuleError(str(exc)) from exc
-    if raw_grant is not None and grant is None:
-        raise GameRuleError("Linked cast permission must be a typed object")
-    if grant is not None and grant.player != actor:
-        raise GameRuleError("Linked cast-permission player changed")
-    try:
-        card = host._resolve_object(
-            actor,
-            str(effect["card"]),
-        )
-    except GameRuleError:
-        host._log(
-            actor,
-            "effect.linked_object_missing",
-            "A linked object no longer exists in the game.",
-            {
-                "object": str(effect["card"]),
-                "expected_zone": expected_zone,
-                "reason": "object_absent",
-            },
-            importance=2,
-        )
-        return None
-    if not expected_zone or card.zone != expected_zone or card.phased_out:
-        return None
-    expected_counter = effect.get(
-        "expected_zone_change_counter"
-    )
-    expected_identity = effect.get(
-        "expected_object_identity"
-    )
-    identity_mismatch = (
-        expected_counter is not None
-        and card.zone_change_counter
-        != int(expected_counter)
-    ) or (
-        expected_identity is not None
-        and card.logical_object_id
-        != str(expected_identity)
-    )
-    if identity_mismatch:
-        host._log(
-            actor,
-            "effect.linked_object_missing",
-            (
-                f"{card.ref} is no longer the object linked by "
-                "the effect."
-            ),
-            {
-                "object": card.ref,
-                "expected_zone": expected_zone,
-                "reason": "object_identity_changed",
-            },
-            importance=2,
-            changed_objects=[card.object_id],
-        )
-        return None
-    required_controller = effect.get("required_controller")
-    if (
-        required_controller is not None
-        and card.controller != str(required_controller)
-    ):
-        return None
-    destination = str(effect.get("destination") or "graveyard")
-    moved = host.move_card(
-        card.object_id,
-        destination,
-        controller=effect.get("controller"),
-        tapped=(
-            bool(effect["tapped"])
-            if "tapped" in effect
-            else None
-        ),
-        position=(
-            effect["position"]
-            if effect.get("position") is not None
-            else "top"
-        ),
-        reason=reason,
-        semantic_events=True,
-        transition_kind=(
-            ZoneTransitionKind.SACRIFICE
-            if effect.get("transition_kind") == "sacrifice"
-            else ZoneTransitionKind.ORDINARY
-        ),
-        replacement_selections=tuple(
-            effect.get("_replacement_selections") or ()
-        ),
-        aura_target_ref=(
-            str(effect["_aura_target_ref"])
-            if effect.get("_aura_target_ref") is not None
-            else None
-        ),
-    )
-    if grant is not None and card.zone == destination:
-        grant_temporary_cast_permission(
-            host,
-            card=card,
-            grant=grant,
-            reason=reason,
-        )
-    return moved
 
 
 def _apply_prepare_graveyard_creature_aura(
@@ -459,6 +326,8 @@ def _attachment_target_is_legal(
     *,
     attachment_kind: str,
 ) -> bool:
+    if attachment_kind == "equipment":
+        return equipment_attachment_is_legal(host, attachment, creature)
     attachment_types, attachment_subtypes, _ = host._type_parts(
         str(host._effective_card_data(attachment).get("type_line") or "")
     )
@@ -467,15 +336,6 @@ def _attachment_target_is_legal(
     )
     if "creature" not in creature_types:
         return False
-    if attachment_kind == "equipment":
-        return bool(
-            "artifact" in attachment_types
-            and "equipment" in attachment_subtypes
-            and attachment.object_id != creature.object_id
-            and ('creature' not in attachment_types or source_has_reconfigure(host, attachment))
-            and protection_verdict_for_ref(host, host._effective_card_data(creature), attachment.ref)
-                is ProtectionVerdict.ALLOWED
-        )
     enchant_spec = host._compiled_enchant_spec(attachment)
     return bool(
         "enchantment" in attachment_types
@@ -492,6 +352,28 @@ def _attachment_target_is_legal(
     )
 
 
+def _apply_attach_instruction(host, effect, *, actor, operation, reason):
+    from ..manifest import MANIFEST_ATTACHMENT_RESULT
+
+    if MANIFEST_ATTACHMENT_RESULT in effect:
+        from ..rules.manifest_shapes import manifested_attachment_is_current
+
+        try:
+            if not manifested_attachment_is_current(host.state.cards, effect):
+                return None
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+    if TARGETED_EQUIPMENT_VERSION in effect:
+        try:
+            attachment, recipient = validate_targeted_equipment_attachment(effect, resolved=True)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        if attachment is None or recipient is None:
+            return None
+        effect = {**effect, "source": attachment, "target": recipient}
+    return _apply_attach(host, effect, actor=actor, operation=operation, reason=reason)
+
+
 def _apply_attach(
     host: Any,
     effect: Mapping[str, Any],
@@ -501,6 +383,11 @@ def _apply_attach(
     reason: str,
 ) -> Any:
     op = operation
+    if ENTRY_ATTACHMENT_VERSION in effect:
+        try:
+            validate_entry_equipment_attachment(effect, resolved=True)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
     legacy_equipment_shape = (
         "equipment" in effect
         and "creature" in effect
@@ -544,6 +431,8 @@ def _apply_attach(
         )
         return None
     creature = _attachment_object(host, actor, creature_value)
+    if TARGETED_EQUIPMENT_VERSION in effect and (attachment.phased_out or creature.phased_out):
+        return None
     if creature.zone != "battlefield":
         details = {
             ("equipment" if legacy_equipment_shape else "attachment"): attachment.ref,
@@ -1497,7 +1386,7 @@ HANDLERS = {
     'return_linked_exiled_objects': return_linked_exiled_objects,
     'prepare_graveyard_creature_aura': _apply_prepare_graveyard_creature_aura,
     'reanimate_attached_creature_aura': _apply_reanimate_attached_creature_aura,
-    'attach': _apply_attach,
+    'attach': _apply_attach_instruction,
     'unattach': _apply_unattach,
     'create_attached_token': _apply_create_attached_token,
     'bestow_prepare': _apply_bestow_prepare,
@@ -1512,7 +1401,7 @@ HANDLERS = {
     'exile_top_library_card': _apply_exile_top_library_card,
     'mill': _apply_mill,
     'move': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
-    'move_if_in_zone': _apply_move_if_in_zone,
+    'move_if_in_zone': apply_move_if_in_zone,
     'pump_controlled_creatures': _apply_pump_controlled_creatures,
     REANIMATE_OPERATION: _apply_reanimate,
     'reveal_top_permanent': _apply_reveal_top_permanent,

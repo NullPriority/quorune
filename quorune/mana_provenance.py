@@ -6,6 +6,8 @@ from dataclasses import dataclass, replace
 from typing import Any, Callable, Mapping, MutableMapping, Sequence
 
 from .util import normalize_mana_bundle
+from .mana_restrictions import mana_spend_haste_lifetime, mana_spend_protects_spell
+from .mana_spend_rules import PAID_MANA_PROTECTION_FIELD, decode_mana_spend_rule, remember_paid_mana_haste
 from .rules.mana_pool_payment import ManaPoolAllocation, unit_for_lot
 
 
@@ -56,6 +58,12 @@ class ManaProvenanceLot:
             raise ManaProvenanceError(
                 "mana provenance restriction is invalid"
             )
+        try:
+            rule = decode_mana_spend_rule(self.restriction)
+        except ValueError as exc:
+            raise ManaProvenanceError(str(exc)) from exc
+        if rule is not None and rule.is_template:
+            raise ManaProvenanceError("A mana lot requires its production-bound choice")
         if self.retention not in {None, "end_of_combat"}:
             raise ManaProvenanceError("mana provenance retention is invalid")
         if (
@@ -574,6 +582,10 @@ def _mark_uncounterable_spell_payment(player: Any) -> None:
     player.stats["next_spell_uncounterable"] = True
 
 
+def _mark_typed_spell_payment(player: Any) -> None:
+    player.stats[PAID_MANA_PROTECTION_FIELD] = 1
+
+
 class ManaProvenanceHostMixin:
     """Narrow engine facade for the typed mana-provenance state owner."""
 
@@ -686,12 +698,16 @@ class ManaProvenanceHostMixin:
             pool_allocation=pool_allocation,
         )
         after = self._restricted_mana(seat)
-        if sum(
-            before.get("legendary_spell_uncounterable", {}).values()
-        ) > sum(
-            after.get("legendary_spell_uncounterable", {}).values()
-        ):
+        consumed = tuple(restriction for restriction, bundle in before.items()
+                         if sum(bundle.values()) > sum(after.get(restriction, {}).values()))
+        if "legendary_spell_uncounterable" in consumed:
             _mark_uncounterable_spell_payment(self.state.players[seat])
+        if any(mana_spend_protects_spell(restriction, spend_context) for restriction in consumed):
+            _mark_typed_spell_payment(self.state.players[seat])
+        for restriction in consumed:
+            lifetime = mana_spend_haste_lifetime(restriction, spend_context)
+            if lifetime is not None:
+                remember_paid_mana_haste(self.state.players[seat].stats, lifetime)
 
 
 __all__ = [

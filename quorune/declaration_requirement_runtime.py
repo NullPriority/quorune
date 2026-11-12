@@ -16,6 +16,7 @@ def typed_attacker_requirements(
     *,
     active_seats: Sequence[str],
     error_type: type[Exception],
+    goading_players: Sequence[str] = (),
 ) -> list[DeclarationRequirement]:
     """Return current intrinsic attack requirements for one legal attacker."""
 
@@ -58,6 +59,23 @@ def typed_attacker_requirements(
                 ),
             )
         )
+    for goader in goading_players:
+        name = host.display_name(attacker.object_id)
+        result.extend((
+            DeclarationRequirement(
+                requirement_id=f"attack:{attacker.ref}:goad:{goader}:attack",
+                kind="choose",
+                variable=attacker.ref,
+                label=f"{name} attacks this combat if able because {goader} goaded it.",
+            ),
+            DeclarationRequirement(
+                requirement_id=f"attack:{attacker.ref}:goad:{goader}:other",
+                kind="choose_option_in",
+                variable=attacker.ref,
+                options=tuple(seat for seat in active_seats if seat not in {attacker.controller, goader}),
+                label=f"{name} attacks a player other than {goader} if able.",
+            ),
+        ))
     return result
 
 

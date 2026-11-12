@@ -1102,6 +1102,44 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("headless: true", config)
         self.assertIn('open: "never"', config)
 
+    def test_cloud_workflow_produces_every_reusable_owner_in_dependency_order(self):
+        from scripts.generated_artifacts import load_manifest
+        from scripts.validate_cloud_generation import CLOUD_RUNNER_BUDGET, validate_cloud_schedule
+
+        result = validate_cloud_schedule()
+        expected = {spec.id for spec in load_manifest() if spec.reuse_policy == "safe"}
+        self.assertTrue(expected <= set(result["owners"]))
+        self.assertLessEqual(result["peak_parallel_runners"], CLOUD_RUNNER_BUDGET)
+
+    def test_cloud_workflow_rejects_missing_duplicate_and_unordered_owner_producers(self):
+        from scripts.validate_cloud_generation import validate_cloud_schedule
+
+        text = (ROOT / ".github/workflows/generated-artifacts.yml").read_text(encoding="utf-8")
+        missing = re.sub(r"\n  dependent_foundations:\n.*?(?=\n  corpus:)", "", text, flags=re.DOTALL)
+        with self.assertRaisesRegex(ValueError, "missing=.*dungeon-room-programs"):
+            validate_cloud_schedule(workflow_text=missing)
+        mutations = (
+            text.replace("          - capability-evidence\n", "          - capability-evidence\n          - capability-evidence\n", 1),
+            text.replace("needs: [plan, foundations]", "needs: plan", 1),
+            text.replace("needs: [plan, database, foundations, dependent_foundations]", "needs: [plan, database, foundations]", 1),
+            text.replace("owner: [dungeon-room-programs]", "owner: [unknown-owner]", 1),
+            text.replace("needs: [plan, foundations]", "needs: [plan, foundations, corpus]", 1),
+        )
+        for changed in mutations:
+            self.assertNotEqual(text, changed)
+            with self.subTest(workflow=changed), self.assertRaises(ValueError):
+                validate_cloud_schedule(workflow_text=changed)
+
+    def test_cloud_owner_schedule_guard_precedes_the_expensive_work(self):
+        from scripts.quick_gate import build_plan
+
+        text = (ROOT / ".github/workflows/generated-artifacts.yml").read_text(encoding="utf-8")
+        self.assertLess(text.index("scripts/validate_cloud_generation.py --check"),
+            text.index("scripts/cloud_generated_artifacts.py plan"))
+        plan = build_plan([".github/workflows/generated-artifacts.yml"], phase="pre-corpus")
+        names = [step.name for step in plan["steps"]]
+        self.assertLess(names.index("cloud-owner-schedule"), names.index("generated-owner-plan"))
+
     def test_cloud_generated_workflow_is_read_only_parallel_and_downloadable(self):
         cloud = (
             ROOT / ".github/workflows/generated-artifacts.yml"
@@ -1120,6 +1158,7 @@ class CiPipelineTests(unittest.TestCase):
                 "plan",
                 "database",
                 "foundations",
+                "dependent_foundations",
                 "corpus",
                 "fanout",
                 "architecture",
@@ -1169,6 +1208,7 @@ class CiPipelineTests(unittest.TestCase):
             "plan",
             "database",
             "foundations",
+            "dependent_foundations",
             "corpus",
             "fanout",
             "architecture",
@@ -1189,6 +1229,7 @@ class CiPipelineTests(unittest.TestCase):
         for name in (
             "database",
             "foundations",
+            "dependent_foundations",
             "corpus",
             "fanout",
             "architecture",

@@ -110,6 +110,11 @@ def fixed_public_self_replacement_template(text,*,source_name,compile_component)
             'effects':deepcopy(list(replacement[1])),'mechanic_ids':list(replacement[3]),
             'otherwise_effects':deepcopy(list(normal[1])),'otherwise_mechanic_ids':list(normal[3]),
             'prefix_mechanic_ids':list(mandatory[3])}
+        if effect['schema_version'] == 3:
+            from ..token_copy_recipes import copy_recipes
+            from ..resolution_conditions import CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION
+            if copy_recipes((*effect['effects'], *effect['otherwise_effects'])):
+                effect['schema_version'] = CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION
         if targeted:effect['target_binding']=deepcopy(normal[2])
         if source_result:effect['source_binding']='$source'
         results.append(('public-same-target-self-replacement-v1' if targeted else 'public-source-self-replacement-v1' if source_result else 'fixed-public-self-replacement-v1',

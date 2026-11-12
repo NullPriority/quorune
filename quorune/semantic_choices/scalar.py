@@ -459,6 +459,10 @@ class ChooseOptionHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if "venture" in effect or "take_initiative" in effect:
+            from .venture import prepare_dungeon_choice
+
+            return prepare_dungeon_choice(effect, context)
         if "attacking_card_entry" in effect:
             from .attacking_card_entry import prepare_attacking_card_entry_choice
 
@@ -498,6 +502,10 @@ class ChooseOptionHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        if "venture" in continuation.effect:
+            from .venture import complete_venture_choice
+
+            return complete_venture_choice(continuation, response, query)
         choice = str(
             response.get("choice") or response.get("option") or ""
         )

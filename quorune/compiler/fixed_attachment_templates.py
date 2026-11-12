@@ -6,8 +6,13 @@ from dataclasses import dataclass, replace
 import re
 from typing import Any, Mapping
 
-from ..rules.attachment_actions import CREATE_AND_ATTACH, validate_created_token_attachment
+from ..rules.attachment_actions import (
+    CREATE_AND_ATTACH, TARGETED_EQUIPMENT_RECIPIENT, targeted_equipment_attachment_effect,
+    validate_created_token_attachment,
+)
 from ..attachment_references import AttachmentReferenceKind
+from ..event_counter_reference import EVENT_ENTRY_OBJECT
+from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
 from .direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
 from .token_templates import fixed_token_creation_effect_template
@@ -104,6 +109,52 @@ class FixedSourceAttachmentTemplate:
         )
 
 
+def targeted_equipment_attachment_template(
+    text: str, *, card_name: str, source_is_permanent: bool | None, entry_recipient: bool = False,
+):
+    match = re.fullmatch(
+        r"Attach (?P<up_to>up to one )?(?P<attachment>target Equipment(?: you control| an opponent controls)?)"
+        r" to (?P<recipient>.+)",
+        " ".join(text.strip().removesuffix(".").split()), re.I,
+    )
+    if match is None:
+        return None
+    attachment = direct_permanent_target_spec(match["attachment"])
+    if attachment is None:
+        return None
+    first = {"id": "target_0", **attachment.to_target_schema()}
+    if match["up_to"]:
+        first.pop("count")
+        first["up_to"] = 1
+    groups = [first]
+    recipient = match["recipient"]
+    if entry_recipient and recipient.casefold() in {"it", "that creature"}:
+        target = EVENT_ENTRY_OBJECT
+    elif source_is_permanent and (
+        recipient.casefold() == "this creature" or SourceReferenceSpec(card_name).matches(recipient)
+    ):
+        target = "$source.zone_object"
+    else:
+        optional = re.fullmatch(r"up to one (target .+)", recipient, re.I)
+        spec = direct_permanent_target_spec(optional[1] if optional else recipient)
+        if spec is None:
+            return None
+        second = {"id": "target_1", **spec.to_target_schema()}
+        if optional:
+            second.pop("count")
+            second["up_to"] = 1
+        groups.append(second)
+        target = TARGETED_EQUIPMENT_RECIPIENT
+    effects = (targeted_equipment_attachment_effect(target),)
+    schema = {"groups": groups}
+    mechanics = ("cr-701-3-attach", "cr-115-targets")
+    from ..rules.attachment_action_capability_shapes import targeted_equipment_attachment_node_capabilities
+
+    if not targeted_equipment_attachment_node_capabilities(effects=effects, target_schema=schema, mechanic_ids=mechanics):
+        return None
+    return "fixed-targeted-equipment-attachment-v1", effects, schema, mechanics
+
+
 def fixed_source_attachment_effect_template(
     text: str,
     *,
@@ -115,7 +166,7 @@ def fixed_source_attachment_effect_template(
     if (
         source_attachment_relation is AttachmentReferenceKind.EQUIPPED
         and re.fullmatch(
-            r"Attach it to target creature you control\.?",
+            r"Attach (?:it|this Equipment) to target creature you control\.?",
             normalized,
             re.IGNORECASE,
         )
@@ -124,6 +175,16 @@ def fixed_source_attachment_effect_template(
             template_id="fixed-source-equipment-attach-trigger-v1",
             attachment_kind="equipment",
             controller_only=True,
+        )
+    if (
+        source_attachment_relation is AttachmentReferenceKind.EQUIPPED
+        and re.fullmatch(r"Attach this Equipment to target creature an opponent controls\.?", normalized, re.I)
+    ):
+        return FixedSourceAttachmentTemplate(
+            template_id="fixed-source-equipment-opponent-attach-v1",
+            attachment_kind="equipment",
+            controller_only=False,
+            target_spec=DirectPermanentTargetSpec(types_any=("creature",), controller_relation="opponent"),
         )
     restricted = re.fullmatch(
         r"Attach it to (?P<target>target .+ you control)\.?", normalized, re.I

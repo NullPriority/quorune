@@ -7,7 +7,7 @@ import pkgutil
 import unittest
 from unittest.mock import patch
 
-from common import keep_all, load_assets, make_session
+from common import keep_all, load_assets, make_session, register_current_fixture_programs
 from quorune import aerial_blocking as aerial_blocking_module
 from quorune import (
     combat_damage_assignment as combat_assignment_module,
@@ -2560,6 +2560,7 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
                 log=False,
             )
             doubling = self.db.lookup("Doubling Season")
+            register_current_fixture_programs(self.db, engine.semantics, (doubling,))
             source = CardInstance(
                 object_id="fixture:doubling-season-mutation",
                 ref="A-doubling-mutation",

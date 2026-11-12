@@ -520,6 +520,56 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         )
         TargetEffectCorpusCollector().observe(record, ir)
 
+    def test_direct_player_attack_target_body_is_accepted_by_corpus_assurance(self):
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectAssuranceError
+        from test_qualified_zone_event_queries import query_record
+
+        capabilities = load_default_capability_registry()
+        body = "target attacking creature gets -2/-0 until end of turn."
+        for prefix in (
+            "Whenever you attack a player, ",
+            "Whenever you attack the player who has the initiative, ",
+            "Whenever a player attacks you, ",
+            "Whenever an opponent attacks you with two or more creatures, ",
+        ):
+            with self.subTest(prefix=prefix):
+                record = replace(query_record(prefix + body), type_line="Creature — Scout")
+                ir = compile_oracle_card(record, capability_registry=capabilities, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertIn(node.template_id, FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS)
+                self.assertEqual("combat.player_attacked", node.event)
+                TargetEffectCorpusCollector().observe(record, ir)
+
+        mutants = (
+            {"event": "creature.attacks"},
+            {"event_condition": None},
+            {"active_zone": "graveyard"},
+            {"cost": {"mana": "{1}"}},
+            {"template_id": "fixed-typed-effect-controller-spell-cast-trigger-v1"},
+            {"event": "spell.cast", "template_id": "fixed-typed-effect-controller-spell-cast-trigger-v1"},
+            {"mechanics": tuple(value for value in node.mechanics if value != "fixed-typed-event-effect-trigger")},
+            {"capability_dependencies": tuple(value for value in node.capability_dependencies
+                if value != "trigger.event.direct_player_attack")},
+            {"capability_dependencies": tuple(value for value in node.capability_dependencies
+                if value != "trigger.placement.apnap")},
+            {"effects": ({**node.effects[0], "power": -3},)},
+            {"target_schema": {**node.target_schema, "count": 2}},
+        )
+        for changes in mutants:
+            with self.subTest(changes=changes):
+                altered = replace(ir, faces=(replace(ir.faces[0], nodes=(replace(node, **changes),)),))
+                with self.assertRaises(TargetEffectAssuranceError):
+                    TargetEffectCorpusCollector().observe(record, altered)
+
+        sibling = "Whenever a player attacks, if they aren't attacking you, that player chooses an attacking creature. It gets +2/+0 until end of turn."
+        record = replace(query_record("Whenever a player attacks you, " + body + "\n" + sibling),
+            type_line="Creature — Scout")
+        partial = compile_oracle_card(record, capability_registry=capabilities, capability_profile="commander_review")
+        self.assertEqual("partial", partial.status)
+        self.assertTrue(any(residual.text == sibling for residual in partial.material_residuals))
+        TargetEffectCorpusCollector().observe(record, partial)
+
     def test_tap_state_version_codec_and_record_provenance_are_explicit(self):
         from quorune.record_state_provenance import format_state_versions, validate_state_versions
         state = GameState(
@@ -3204,6 +3254,10 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertEqual("exact", combined.status, combined.material_residuals)
         self.assertEqual("card.discarded", combined.faces[0].nodes[0].event)
         self.assertIn("trigger.event.cycle_or_discard", combined.faces[0].nodes[0].capability_dependencies)
+        direct = self.compile("Whenever you attack a player, draw a card.", type_line="Creature — Advisor")
+        self.assertEqual("exact", direct.status, direct.material_residuals)
+        self.assertEqual("combat.player_attacked", direct.faces[0].nodes[0].event)
+        self.assertIn("trigger.event.direct_player_attack", direct.faces[0].nodes[0].capability_dependencies)
         cases = (
             "Whenever this creature becomes tapped for the first time each turn, draw a card.",
             "Whenever you cycle or discard a card for the first time each turn, draw a card.",
@@ -3211,7 +3265,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever you sacrifice one or more Foods, draw a card.",
             "Whenever one or more creature tokens you control deal combat "
             "damage to a player, draw a card.",
-            "Whenever you attack a player, draw a card.",
+            "Whenever you attack a player with exactly two creatures, draw a card.",
         )
         for text in cases:
             with self.subTest(text=text):
@@ -3935,11 +3989,20 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             targeted_node.capability_dependencies,
         )
 
+        for text in (
+            "When this creature enters, you may return another creature you control to its owner's hand.",
+            "When this creature enters, return another creature you control to its owner's hand, then draw a card.",
+        ):
+            with self.subTest(composed_return=text):
+                ir = self.compile(text, type_line="Creature — Test")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertIn("choice.controller.bounded_return_owner_hand", ir.faces[0].nodes[0].capability_dependencies)
+
         exclusions = (
             "When this creature enters, return each other creature you control to its owner's hand.",
-            "When this creature enters, you may return another creature you control to its owner's hand.",
+            "When this creature enters, you may return another creature you control with power 5 or greater to its owner's hand.",
             "When this creature enters, return X creatures you control to their owner's hand.",
-            "When this creature enters, return another creature you control to its owner's hand, then draw a card.",
+            "When this creature enters, return another creature you control with power 5 or greater to its owner's hand, then draw a card.",
         )
         for text in exclusions:
             with self.subTest(excluded=text):

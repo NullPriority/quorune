@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 import test_life_gain_prohibitions as native
 from quorune import stack_counter as stack_counter_module
 from quorune.carddb import CardDatabase
@@ -923,6 +924,210 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
                     GameState.from_dict({**wire, key: bad})
                 with self.assertRaisesRegex(ValueError, "Stack resolution authority provenance"):
                     validate_state_versions({"format": {**manifest["format"], key: bad}}, state)
+
+
+class NextCastCounterProtectionTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "next-cast-counter-protection.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "scryfall-exact-lists.json",
+            fixtures / "next-cast-counter-protection-cards.json",
+            fixtures / "characteristic-query-union-cards.json",
+            fixtures / "fixed-resolution-mana-cards.json",
+            fixtures / "fixed-stack-spell-copy-cards.json",
+            fixtures / "additional-conditional-modifier-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Next-cast counter protection", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    @staticmethod
+    def spell_item(session, card):
+        return next(item for item in session.state.stack if item.kind == "spell" and item.card_object_id == card.object_id)
+
+    def cast_at_stack_item(self, session, seat, card, target):
+        self.priority(session, seat)
+        offered = self.action(session, seat, card)
+        self.assertIn(target.ref, offered["target_schema"]["legal_refs"])
+        result = session.act("pilot:" + seat, {"action_id": offered["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+
+    def activate_village(self, session, village):
+        self.priority(session, "A")
+        action_id = f"activate:{village.ref}:ab3"
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(action_id, {row["id"] for row in actions})
+        result = session.act("pilot:A", {"action_id": action_id, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+
+    def test_village_protects_only_the_cast_announced_after_its_activation(self):
+        from quorune.rules.next_cast_counter_protection import NEXT_CAST_PROTECTION_WINDOW, announced_cast_is_protected
+
+        session = self.session(70160101)
+        village = self.add(session.engine, "Mistrise Village")
+        older = self.add(session.engine, "Dark Ritual", zone="hand", ref="village-older-cast")
+        following = self.add(session.engine, "Dark Ritual", zone="hand", ref="village-protected-cast")
+        counter = self.add(session.engine, "Counterspell", seat="B", zone="hand")
+        self.assert_closed(session, village)
+        self.prepare(session, mana={"U": 1, "B": 2})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        self.cast(session, "A", older)
+        previous_item = self.spell_item(session, older)
+        self.activate_village(session, village)
+        self.assertFalse(announced_cast_is_protected(previous_item))
+        self.assertEqual(["any"], session.state.players["A"].stats[NEXT_CAST_PROTECTION_WINDOW]["scopes"])
+        self.cast(session, "A", following)
+        self.assertTrue(announced_cast_is_protected(self.spell_item(session, following)))
+        self.assertNotIn(NEXT_CAST_PROTECTION_WINDOW, session.state.players["A"].stats)
+        self.cast_at_stack_item(session, "B", counter, previous_item)
+        self.assertEqual("graveyard", session.state.cards[older.object_id].zone)
+        self.assertEqual("stack", session.state.cards[following.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_insist_keeps_the_grant_through_rollback_and_dismiss_still_draws(self):
+        from quorune.rules.next_cast_counter_protection import NEXT_CAST_PROTECTION_WINDOW, announced_cast_is_protected
+        from quorune.rules.casting.source_placement import observe_cast_source_placement
+
+        session = self.session(70160102)
+        engine = session.engine
+        source = self.add(engine, "Insist", zone="hand")
+        unmatched = self.add(engine, "Dark Ritual", zone="hand")
+        creature = self.add(engine, "Universal Automaton", zone="hand")
+        dismiss = self.add(engine, "Dismiss", seat="B", zone="hand")
+        draw = self.add(engine, "Generic Bound Growth", seat="B", zone="library", ref="dismiss-private-draw")
+        engine.move_card(draw.object_id, "library", position="top", log=False)
+        draw.known_to = []
+        draw.revealed_to = []
+        self.assert_closed(session, source)
+        self.assert_closed(session, dismiss)
+        self.prepare(session, mana={"G": 1, "B": 1})
+        session.state.players["B"].mana_pool.update({"C": 2, "U": 2})
+        self.checkpoint(session)
+        initial_hand = len(session.state.players["A"].zones["hand"])
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        self.assertEqual(initial_hand, len(session.state.players["A"].zones["hand"]))
+        self.cast(session, "A", unmatched)
+        self.assertFalse(announced_cast_is_protected(self.spell_item(session, unmatched)))
+        self.resolve_top(session)
+        self.priority(session, "A")
+        before = authoritative_state_hash(session.state)
+        observed = []
+
+        def observe(host, item):
+            observed.append((announced_cast_is_protected(item), NEXT_CAST_PROTECTION_WINDOW in host.state.players["A"].stats))
+            observe_cast_source_placement(host, item)
+
+        offered = self.action(session, "A", creature)
+        with patch("quorune.rules.casting.commit.observe_cast_source_placement", side_effect=observe):
+            with patch("quorune.rules.casting.commit.commit_reveal_additional_costs",
+                       side_effect=GameRuleError("Next-cast protection rollback witness")):
+                rejected = session.act("pilot:A", {"action_id": offered["id"], "pay": "auto"})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            self.assertEqual("hand", session.state.cards[creature.object_id].zone)
+            self.cast(session, "A", creature)
+        self.assertEqual([(True, True)] * 2, observed)
+        protected = self.spell_item(session, creature)
+        self.assertTrue(announced_cast_is_protected(protected))
+        self.assertNotIn(NEXT_CAST_PROTECTION_WINDOW, session.state.players["A"].stats)
+        self.cast_at_stack_item(session, "B", dismiss, protected)
+        self.assertEqual("stack", session.state.cards[creature.object_id].zone)
+        self.assertEqual("hand", session.state.cards[draw.object_id].zone)
+        self.assertIn(draw.ref, json.dumps(session.packet("pilot:B", full=True)))
+        for seat in "ACD":
+            self.assertNotIn(draw.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        self.replay(session, load=True)
+
+    def test_overmaster_consumes_one_union_scope_and_leaves_spell_copies_counterable(self):
+        from quorune.rules.next_cast_counter_protection import NEXT_CAST_PROTECTION_WINDOW, announced_cast_is_protected
+
+        session = self.session(70160103)
+        source = self.add(session.engine, "Overmaster", zone="hand")
+        first = self.add(session.engine, "Dark Ritual", zone="hand")
+        later = self.add(session.engine, "Divination", zone="hand")
+        twincast = self.add(session.engine, "Twincast", seat="B", zone="hand")
+        copy_counter = self.add(session.engine, "Counterspell", seat="C", zone="hand", ref="counter-ritual-copy")
+        later_counter = self.add(session.engine, "Counterspell", seat="B", zone="hand", ref="counter-later-sorcery")
+        self.assert_closed(session, source)
+        self.assert_closed(session, twincast)
+        self.prepare(session, mana={"R": 1, "B": 1, "U": 1})
+        session.state.players["B"].mana_pool["U"] = 4
+        session.state.players["C"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        self.cast(session, "A", first)
+        protected = self.spell_item(session, first)
+        self.assertTrue(announced_cast_is_protected(protected))
+        self.assertNotIn(NEXT_CAST_PROTECTION_WINDOW, session.state.players["A"].stats)
+        self.cast_at_stack_item(session, "B", twincast, protected)
+        copied = next(item for item in session.state.stack if item.kind == "spell_copy")
+        self.assertFalse(announced_cast_is_protected(copied))
+        self.cast_at_stack_item(session, "C", copy_counter, copied)
+        self.assertFalse(any(item.ref == copied.ref for item in session.state.stack))
+        self.assertTrue(announced_cast_is_protected(self.spell_item(session, first)))
+        self.resolve_top(session)
+        self.cast(session, "A", later)
+        later_item = self.spell_item(session, later)
+        self.assertFalse(announced_cast_is_protected(later_item))
+        self.cast_at_stack_item(session, "B", later_counter, later_item)
+        self.assertEqual("graveyard", session.state.cards[later.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_village_unused_window_expires_during_cleanup(self):
+        from quorune.rules.next_cast_counter_protection import NEXT_CAST_PROTECTION_WINDOW
+
+        session = self.session(70160104)
+        village = self.add(session.engine, "Mistrise Village")
+        self.assert_closed(session, village)
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        self.activate_village(session, village)
+        turn = session.state.turn_sequence
+        self.assertIn(NEXT_CAST_PROTECTION_WINDOW, session.state.players["A"].stats)
+        self.until(session, lambda game: game.state.turn_sequence > turn)
+        self.assertNotIn(NEXT_CAST_PROTECTION_WINDOW, session.state.players["A"].stats)
+        self.replay(session, load=True)
+
+    def test_next_cast_protection_dependency_and_compiler_omission_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.next_cast_counter_protection import (
+            NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_OPERATION,
+            is_versioned_next_cast_protection, next_cast_protection_effect_scope,
+        )
+
+        session = self.session(70160105)
+        card = self.add(session.engine, "Mistrise Village")
+        self.assert_closed(session, card)
+        program = next(program for program in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                       if any(effect["op"] == NEXT_CAST_PROTECTION_OPERATION for effect in program.effects))
+        self.assertEqual(1, program.effects[0]["schema_version"])
+        deps = tuple(dep for dep in program.capability_dependencies if dep != NEXT_CAST_PROTECTION_CAPABILITY)
+        closure = self.registry.closure(deps, profile="commander_review").to_dict() if deps else None
+        unbound = replace(program, capability_dependencies=deps, capability_closure=closure)
+        binding = bind_semantic_program_runtime(unbound, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + NEXT_CAST_PROTECTION_CAPABILITY, binding["blockers"])
+        malformed = dict(program.effects[0])
+        malformed.pop("schema_version")
+        self.assertTrue(is_versioned_next_cast_protection(malformed))
+        with self.assertRaisesRegex(ValueError, "closed controller result"):
+            next_cast_protection_effect_scope(malformed)
+        options = dict(capability_registry=self.registry, capability_profile="commander_review")
+        original = self.db.lookup("Mistrise Village")
+        variant = replace(original, oracle_text=original.oracle_text.replace("next spell you cast", "next red spell you cast"))
+        self.assertTrue(compile_oracle_card(variant, **options).material_residuals)
+        with patch("quorune.compiler.temporary_player_rule_templates._next_cast_protection_template", return_value=None):
+            self.assertTrue(compile_oracle_card(original, **options).material_residuals)
 
 
 if __name__ == "__main__":

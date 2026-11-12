@@ -95,6 +95,104 @@ def replace_namespace(value, **changes):
 
 
 class GrantedStaticCharacteristicCompilerTests(unittest.TestCase):
+    def test_cross_zone_type_addition_keeps_spell_and_owned_card_predicates_distinct(self):
+        from quorune.compiler.cross_zone_type_addition_templates import cross_zone_type_addition_handler
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.semantic_runtime.cross_zone_type_additions import CrossZoneTypeAdditionHandler
+
+        text = ("Nonland permanents you control are artifacts in addition to their other types. "
+                "The same is true for permanent spells you control and nonland permanent cards you own "
+                "that aren't on the battlefield.")
+        compiled = cross_zone_type_addition_handler(text)
+        self.assertIsNotNone(compiled)
+        descriptor = compiled[1]
+        handler = CrossZoneTypeAdditionHandler()
+        battlefield, stack, cards = handler.validate(descriptor).recipients("A")
+        self.assertEqual(("battlefield",), battlefield.zones)
+        self.assertEqual(("land",), battlefield.excluded_types)
+        self.assertEqual("A", battlefield.controller)
+        self.assertEqual(("stack",), stack.zones)
+        self.assertEqual("A", stack.controller)
+        self.assertNotIn("land", stack.types_any)
+        self.assertIsNone(stack.owner)
+        self.assertEqual("A", cards.owner)
+        self.assertIsNone(cards.controller)
+        self.assertIn("stack", cards.zones)
+        self.assertNotIn("battlefield", cards.zones)
+        self.assertIs(cards.token, False)
+        self.assertEqual(("land",), cards.excluded_types)
+        spec = handler.validate(descriptor)
+
+        def require_owned_scope():
+            self.assertEqual(3, len(spec.recipients("A")))
+
+        require_owned_scope()
+        with patch.object(type(spec), "recipients", return_value=(battlefield, stack)):
+            with self.assertRaises(AssertionError):
+                require_owned_scope()
+        from quorune.characteristic_evaluation import type_parts
+        from quorune.rules.cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+        effects = handler.lower(descriptor, SimpleNamespace(
+            source_object_id="cross-zone-source", component_id="static", source_timestamp=1, source_controller="A",
+        ))
+        host = SimpleNamespace(_type_parts=type_parts)
+        physical = CardInstance(object_id="creature", ref="creature", oracle_id="test:creature",
+            printed_name="Test Creature", owner="A", controller="B", zone="stack")
+        copied = replace(physical, object_kind="spell_copy")
+        with patch("quorune.rules.cross_zone_characteristics._cross_zone_type_effects", return_value=effects):
+            def spell_types(card, controller):
+                text = prospective_cross_zone_spell_type_line(host, card, controller, "Creature — Bear")
+                return type_parts(text)[0]
+
+            self.assertEqual({"artifact", "creature"}, spell_types(physical, "B"))
+            self.assertEqual({"creature"}, spell_types(copied, "B"))
+            self.assertEqual({"artifact", "creature"}, spell_types(copied, "A"))
+        with self.assertRaises(SemanticNodeError):
+            handler.validate({**descriptor, "requires_complete_card_program": False})
+        self.assertIsNone(cross_zone_type_addition_handler(text.replace("permanent spells", "all spells")))
+        self.assertIsNone(cross_zone_type_addition_handler(text.replace("cards you own", "cards opponents own")))
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.cross_zone_type_additions import CROSS_ZONE_TYPE_ADDITION_CAPABILITY
+
+        registry = load_default_capability_registry()
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == CROSS_ZONE_TYPE_ADDITION_CAPABILITY).update(
+            status="blocked", blockers=["withdrawn cross-zone type authority"],
+        )
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual("exact", compile_oracle_card(query_record(text), capability_registry=withdrawn).status)
+
+    def test_static_type_addition_keeps_closed_receiver_qualifications(self):
+        from quorune.compiler.fixed_characteristic_settings import fixed_characteristic_setting_handler
+        from quorune.compiler.public_state_queries import fixed_characteristic_battlefield_query_subject
+        from quorune.object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+
+        cases = (
+            ("All permanents are enchantments in addition to their other types.", "Enchantment", "any",
+             ObjectQuerySpec(zones=("battlefield",))),
+            ("Creatures you control with +1/+1 counters on them are artifacts in addition to their other types.",
+             "Artifact", "source_controller", ObjectQuerySpec(zones=("battlefield",), types_all=("creature",),
+                 state_predicate=PermanentStatePredicateSpec(counter_name="+1/+1", minimum_counter_count=1))),
+            ("Nontoken artifacts you control are lands in addition to their other types.",
+             "Land", "source_controller", ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",), token=False)),
+        )
+        for clause, added, relation, predicate in cases:
+            with self.subTest(clause=clause):
+                lowered = fixed_characteristic_setting_handler(clause)
+                self.assertIsNotNone(lowered)
+                descriptor = lowered[1]
+                self.assertEqual(relation, descriptor["target"]["controller"])
+                self.assertEqual(predicate, ObjectQuerySpec.from_dict(descriptor["target"]["predicate"]))
+                self.assertEqual([{"op": "add_types", "field": "card_types", "values": [added]}],
+                                 descriptor["modifier"]["type_operations"])
+        relation, query, excludes = fixed_characteristic_battlefield_query_subject("Other token artifacts you control")
+        self.assertEqual(("source_controller", ("artifact",), True, True),
+                         (relation, query.types_all, query.token, excludes))
+        self.assertIsNone(fixed_characteristic_battlefield_query_subject("Nontoken artifact spells you control"))
+        self.assertIsNone(fixed_characteristic_setting_handler("All permanents are enchantments."))
+
     def test_complete_grants_bind_closed_hidden_children_and_permanent_subjects(self):
         registry=load_default_capability_registry()
         clauses=('Commander creatures you own have "Creature tokens you control get +2/+2."',
@@ -192,6 +290,158 @@ class GrantedStaticCharacteristicNativeTests(unittest.TestCase):
         result=session.act('pilot:'+seat,{'action_id':offered['id'],'targets':list(targets),
             'pay':'auto','reserve':reserve or {}})
         self.assertTrue(result.ok,result.summary)
+
+    def test_original_evening_changes_target_legality_and_loses_it_on_departure(self):
+        session = self.session(613_611_948)
+        evening = self.add(session.engine, "Enchanted Evening", zone="hand")
+        target = self.add(session.engine, "Grizzly Bears", seat="B", ref="evening-target")
+        first = self.add(session.engine, "Disenchant", zone="hand")
+        reply = self.add(session.engine, "Naturalize", seat="B", zone="hand")
+        self.assert_closed(session, evening)
+        self.prepare(session, mana={"C": 4, "W": 3})
+        session.state.players["B"].mana_pool.update({"C": 1, "G": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", evening)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"creature", "enchantment"}, self.card_types(session, target))
+        self.cast_for(session, "A", first, [target.ref])
+        self.cast_for(session, "B", reply, [evening.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[evening.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertEqual({"creature"}, self.card_types(session, target))
+        self.replay(session)
+
+    def card_types(self, session, card):
+        current = session.state.cards[card.object_id]
+        return session.engine._type_parts(session.engine._effective_card_data(current)["type_line"])[0]
+
+    def test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand(self):
+        session = self.session(613_611_951)
+        source = self.add(session.engine, "Biotransference", zone="hand")
+        creature = self.add(session.engine, "Grizzly Bears", zone="hand", ref="biotransference-private-own")
+        foreign = self.add(session.engine, "Grizzly Bears", seat="B", zone="hand", ref="biotransference-private-foreign")
+        counter = self.add(session.engine, "Annul", seat="B", zone="hand")
+        remove = self.add(session.engine, "Naturalize", seat="B", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3, "B": 2, "G": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "G": 1, "U": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"artifact", "creature"}, self.card_types(session, creature))
+        self.assertEqual({"creature"}, self.card_types(session, foreign))
+        self.assertNotIn(creature.ref, json.dumps(session.packet("pilot:B", full=True)))
+        self.cast_for(session, "A", creature)
+        spell = next(item for item in session.state.stack if item.card_object_id == creature.object_id)
+        self.assertEqual({"artifact", "creature"}, self.card_types(session, creature))
+        self.assertTrue(any(item.source_object_id == source.object_id and item.kind == "triggered_ability"
+                            for item in session.state.stack))
+        self.cast_for(session, "B", counter, [spell.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+        self.assertEqual({"artifact", "creature"}, self.card_types(session, creature))
+        self.assertEqual(39, session.state.players["A"].life)
+        self.assertTrue(any(card.controller == "A" and card.zone == "battlefield" and card.is_token
+                            and {"artifact", "creature"} <= self.card_types(session, card)
+                            for card in session.state.cards.values()))
+        self.cast_for(session, "B", remove, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"creature"}, self.card_types(session, creature))
+        self.replay(session)
+
+    def test_original_mycosynth_uses_permanent_spell_types_for_price_and_keeps_land_cards_unmodified(self):
+        from quorune.rules.cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+        session = self.session(613_611_952)
+        source = self.add(session.engine, "Encroaching Mycosynth", zone="hand")
+        reducer = self.add(session.engine, "Foundry Inspector")
+        creature = self.add(session.engine, "Grizzly Bears", zone="hand", ref="mycosynth-own")
+        foreign = self.add(session.engine, "Grizzly Bears", seat="B", zone="hand", ref="mycosynth-foreign")
+        land = self.add(session.engine, "Island", zone="hand")
+        sorcery = self.add(session.engine, "Stone Rain", zone="hand")
+        self.assert_closed(session, source)
+        self.assert_closed(session, reducer)
+        self.prepare(session, mana={"C": 2, "U": 1, "G": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source, reserve={"G": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"artifact", "creature"}, self.card_types(session, creature))
+        self.assertEqual({"land"}, self.card_types(session, land))
+        self.assertEqual({"sorcery"}, self.card_types(session, sorcery))
+        self.assertEqual({"creature"}, self.card_types(session, foreign))
+        prospective = prospective_cross_zone_spell_type_line(session.engine, foreign, "A", "Creature — Bear")
+        self.assertEqual({"artifact", "creature"}, session.engine._type_parts(prospective)[0])
+        self.assertEqual({"G": 1}, {key: value for key, value in session.state.players["A"].mana_pool.items() if value})
+        self.cast_for(session, "A", creature)
+        self.assertEqual({"artifact", "creature"}, self.card_types(session, creature))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[creature.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_original_flesh_reads_current_counter_qualification_before_the_penalty(self):
+        session = self.session(613_611_949)
+        source = self.add(session.engine, "The Flesh Is Weak", zone="hand")
+        own = self.add(session.engine, "Grizzly Bears", ref="flesh-own")
+        opponent = self.add(session.engine, "Grizzly Bears", seat="B", ref="flesh-opponent")
+        opponent.counters["+1/+1"] = 1
+        hexmage = self.add(session.engine, "Vampire Hexmage", ref="flesh-marked-hexmage")
+        hexmage.counters["+1/+1"] = 1
+        unmarked = self.add(session.engine, "Vampire Hexmage", ref="flesh-unmarked-hexmage")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "W": 1, "U": 1, "B": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[unmarked.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[hexmage.object_id].zone)
+        self.assertEqual({"artifact", "creature"}, self.card_types(session, own))
+        self.assertEqual({"creature"}, self.card_types(session, opponent))
+        self.assertEqual((3, 3), self.stats(session, own))
+        self.assertEqual((2, 2), self.stats(session, opponent))
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        ability = next((row for row in actions if row["id"].startswith(f"activate:{hexmage.ref}:")), None)
+        self.assertIsNotNone(ability, [row["id"] for row in actions])
+        result = session.act("pilot:A", {"action_id": ability["id"], "targets": [own.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"creature"}, self.card_types(session, own))
+        self.assertEqual((1, 1), self.stats(session, own))
+        self.replay(session, load=True)
+
+    def test_original_toph_limits_land_addition_to_controlled_nontoken_artifacts(self):
+        session = self.session(613_611_950)
+        source = self.add(session.engine, "Toph, the First Metalbender", zone="hand")
+        own = self.add(session.engine, "Sol Ring", ref="toph-own")
+        opponent = self.add(session.engine, "Sol Ring", seat="B", ref="toph-opponent")
+        rain = self.add(session.engine, "Stone Rain", zone="hand")
+        token_ref, = session.engine.create_token("A", name="Public Artifact Control",
+            characteristics={"type_line": "Token Artifact"})
+        token = session.engine._resolve_object("A", token_ref, zones={"battlefield"})
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3, "R": 2, "G": 1, "W": 1})
+        self.checkpoint(session)
+        abilities = session.engine._activated_abilities(own)
+        self.cast_for(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"artifact", "land"}, self.card_types(session, own))
+        self.assertEqual({"artifact"}, self.card_types(session, opponent))
+        self.assertEqual({"artifact"}, self.card_types(session, token))
+        self.assertEqual(abilities, session.engine._activated_abilities(own))
+        offered = self.action(session, "A", rain)
+        self.assertIn(own.ref, offered["target_schema"]["legal_refs"])
+        self.assertNotIn(token.ref, offered["target_schema"]["legal_refs"])
+        before = authoritative_state_hash(session.state)
+        result = session.act("pilot:A", {"action_id": offered["id"], "targets": [token.ref], "pay": "auto"})
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.cast_for(session, "A", rain, [own.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[own.object_id].zone)
+        self.replay(session, load=True)
 
     def test_each_original_rune_cast_draws_and_uses_its_equipment_receiver(self):
         cases=(('Rune of Sustenance','W','lifelink',(2,2)),('Rune of Flight','U','flying',(2,2)),

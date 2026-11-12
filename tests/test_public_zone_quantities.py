@@ -6,12 +6,23 @@ from types import SimpleNamespace
 import json,tempfile,unittest
 from unittest.mock import patch
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
+from quorune.carddb_characteristics import public_object_rules_names
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.rules.capabilities import load_default_capability_registry
-from quorune.characteristic_fragments import CharacteristicQuantitySpec,CharacteristicQuantityScope as S,CharacteristicQuantityReduction as R
+from quorune.characteristic_fragments import (
+    PUBLIC_NAMED_COUNT_CAPABILITY, CharacteristicQuantitySpec,
+    CharacteristicQuantityScope as S, CharacteristicQuantityReduction as R,
+)
+from quorune.compiler.query_characteristic_templates import query_characteristic_quantity
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.dynamic_characteristics import query_characteristic_count
+from quorune.record import authoritative_state_hash
+from quorune.attachments import attach_objects
+from quorune.query_effect_amount_model import (
+    PublicQueryAmountSpec, SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY,
+)
 from scripts.build_test_database import build_fixture_database
 import test_created_token_counters as controls
 from quorune.rules.evidence_storage import read_evidence_document
@@ -21,6 +32,358 @@ SIZE='quantity_expression.zone_cardinality'
 NAMES=('Adamaro, First to Desire','Enemy of Enlightenment','Beacon Bolt','Cosmogoyf',
     'Sage of Ancient Lore // Werewolf of Ancient Hunger','Multani, Maro-Sorcerer',
     'Crackling Drake','Serpentine Curve','Body of Research')
+
+
+class PublicNamedQuantityContractTests(unittest.TestCase):
+    def test_literal_name_codec_preserves_old_shapes_and_rejects_nonpublic_domains(self):
+        def parse(text):
+            return query_characteristic_quantity(text, source_name="Name Fixture", definition_extensions=True)
+
+        named = parse("cards named Accumulated Knowledge in all graveyards")
+        self.assertEqual(7, named.schema_version)
+        self.assertIs(S.ALL_ZONES, named.scope)
+        self.assertIs(False, named.query.token)
+        self.assertEqual("Accumulated Knowledge", named.literal_name)
+        payload = named.to_dict()
+        self.assertEqual(named, CharacteristicQuantitySpec.from_dict(json.loads(json.dumps(payload))))
+        legacy = parse("creatures you control").to_dict()
+        self.assertNotIn("literal_name", legacy)
+        self.assertEqual(legacy, CharacteristicQuantitySpec.from_dict(legacy).to_dict())
+        for invalid in (
+            {**payload, "literal_name": None},
+            {**payload, "literal_name": "Accumulated\nKnowledge"},
+            {**payload, "schema_version": 2},
+            {**payload, "query": ObjectQuerySpec(zones=("hand",)).to_dict()},
+            {**payload, "query": ObjectQuerySpec(zones=("graveyard",)).to_dict()},
+        ):
+            with self.subTest(version=invalid["schema_version"], name=invalid["literal_name"]), self.assertRaises(ValueError):
+                CharacteristicQuantitySpec.from_dict(invalid)
+        self.assertEqual("Squee, Dubious Monarch", parse("other creatures you control named Squee, Dubious Monarch").literal_name)
+        for text in ("cards named Wastes in your hand", "cards named Wastes in your library",
+                "creatures you control named Wolf or Bear", "creatures of the chosen name on the battlefield"):
+            with self.subTest(text=text):
+                self.assertIsNone(parse(text))
+
+    def test_public_name_facts_distinguish_faces_rooms_and_literal_separators(self):
+        from quorune.shared_type_doors import SharedTypeDoors, SHARED_TYPE_COPY_EXCEPTIONS, SHARED_TYPE_COPY_FIELD
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec
+
+        graveyard = SimpleNamespace(zone="graveyard", face_down=False, phased_out=False)
+        faces = ({"name": "Fire"}, {"name": "Ice"})
+        effective = {"name": "Fire // Ice"}
+        split = SimpleNamespace(layout="split", faces=faces)
+        self.assertEqual(("Fire", "Ice"), public_object_rules_names(graveyard, effective, split))
+        for layout in ("modal_dfc", "adventure", "flip"):
+            self.assertEqual(("Fire",), public_object_rules_names(graveyard, effective,
+                SimpleNamespace(layout=layout, faces=faces)))
+
+        battlefield = SimpleNamespace(zone="battlefield", face_down=False, phased_out=False,
+            shared_type_doors=None, annotations={})
+        self.assertEqual(("Fire // Ice",), public_object_rules_names(battlefield, effective))
+        battlefield.shared_type_doors = SharedTypeDoors(("Fire", "Ice"), ("Fire",))
+        self.assertEqual(("Fire",), public_object_rules_names(battlefield, {"name": "Fire"}))
+        battlefield.shared_type_doors = battlefield.shared_type_doors.unlock("Ice")
+        self.assertEqual(("Fire", "Ice"), public_object_rules_names(battlefield, effective))
+        battlefield.annotations["copy_overrides"] = {
+            SHARED_TYPE_COPY_FIELD: faces,
+            SHARED_TYPE_COPY_EXCEPTIONS: [TokenCopyExceptionSpec(schema_version=3, name="Fire // Ice").to_dict()],
+        }
+        self.assertEqual(("Fire // Ice",), public_object_rules_names(battlefield, effective))
+        battlefield.face_down = True
+        self.assertEqual((), public_object_rules_names(battlefield, effective))
+
+    def test_named_quantity_compiler_omission_is_distinguished(self):
+        text = "artifacts you control named Powerstone Shard"
+        self.assertEqual("Powerstone Shard", query_characteristic_quantity(text, source_name="Fixture").literal_name)
+        with patch("quorune.compiler.query_characteristic_templates.named_collection_quantity", return_value=None):
+            self.assertIsNone(query_characteristic_quantity(text, source_name="Fixture"))
+
+
+class PublicNamedQuantityNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "public-named-quantity.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "conditional-copy-value-cards.json",
+            fixtures / "face-down-method-cards.json",
+            fixtures / "additional-conditional-modifier-cards.json",
+            fixtures / "public-named-quantity-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Public named quantities", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def test_original_named_owners_close_and_runtime_requires_the_dependency(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+
+        session = self.session(201_200_050)
+        for index, name in enumerate(("Accumulated Knowledge", "Plague Rats", "Powerstone Shard", "Timberpack Wolf", "Undead Servant")):
+            with self.subTest(card=name):
+                card = self.add(session.engine, name, ref=f"named-closure-{index}")
+                self.assert_closed(session, card)
+                program = next(p for p in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if PUBLIC_NAMED_COUNT_CAPABILITY in p.capability_dependencies)
+                deps = tuple(dep for dep in program.capability_dependencies if dep != PUBLIC_NAMED_COUNT_CAPABILITY)
+                changed = replace(program, capability_dependencies=deps,
+                    capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+                result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+                self.assertFalse(result["strict"])
+                self.assertIn("capability:undeclared_runtime_dependency:" + PUBLIC_NAMED_COUNT_CAPABILITY, result["blockers"])
+
+    def test_actual_accumulated_knowledge_counts_only_named_cards_in_all_graveyards(self):
+        session = self.session(201_200_051)
+        engine = session.engine
+        source = self.add(engine, "Accumulated Knowledge", zone="hand")
+        for seat in "BC":
+            self.add(engine, "Accumulated Knowledge", seat=seat, zone="graveyard", ref=f"named-graveyard-{seat}")
+        self.add(engine, "Accumulated Knowledge", seat="D", zone="exile", ref="named-exile")
+        self.add(engine, "Generic Bound Growth", seat="B", zone="graveyard", ref="unrelated-graveyard")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 3, "U": 2})
+        library_size = len(session.state.players["A"].zones["library"])
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(library_size - 3, len(session.state.players["A"].zones["library"]))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_powerstone_shard_counts_its_named_controlled_artifact(self):
+        session = self.session(201_200_052)
+        engine = session.engine
+        source = self.add(engine, "Powerstone Shard", zone="hand")
+        self.add(engine, "Powerstone Shard", seat="B", ref="opposing-shard")
+        self.add(engine, "Golem-Skin Gauntlets", ref="unrelated-artifact")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 6})
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered = next(action for action in actions if action["id"].startswith(f"activate:{source.ref}:"))
+        self.assertTrue(offered.get("mana_ability"))
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", {"action_id": offered["id"]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        mana = session.state.players["A"].mana_pool["C"]
+        accepted = session.act("pilot:A", {"action_id": offered["id"]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(mana + 1, session.state.players["A"].mana_pool["C"])
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_actual_timberpack_counts_current_copy_names_and_keeps_manifest_private(self):
+        session = self.session(201_200_053)
+        engine = session.engine
+        hidden = self.add(engine, "Timberpack Wolf", zone="library", ref="nameless-own-wolf")
+        opposing = self.add(engine, "Timberpack Wolf", seat="B", ref="named-opposing-wolf")
+        manifest = self.add(engine, "Soul Summons", zone="hand")
+        clone = self.add(engine, "Clone", zone="hand")
+        counterpart = self.add(engine, "Cackling Counterpart", zone="hand")
+        for card in (opposing, manifest, clone, counterpart):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 15, "U": 7, "W": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", manifest)
+        self.assertIsNone(self.resolve(session))
+        hidden = session.state.cards[hidden.object_id]
+        self.assertTrue(hidden.face_down)
+        self.assertEqual("battlefield", hidden.zone)
+        self.cast(session, "A", clone)
+        self.assertEqual("replacement.order", self.resolve(session).kind)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        choice = next(option for option in options if opposing.ref in option["id"] and not option["id"].startswith("decline:"))
+        accepted = session.act("pilot:A", {"action_id": "choose", "replacement": choice["id"]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        copy = session.state.cards[clone.object_id]
+        self.assertEqual("Timberpack Wolf", engine._effective_card_data(copy)["name"])
+        self.assertEqual(2, engine._numeric_stat(copy.object_id, "power"))
+        self.cast(session, "A", counterpart, [copy.ref])
+        self.assertIsNone(self.resolve(session))
+        token, = (card for card in session.state.cards.values()
+            if card.zone == "battlefield" and card.controller == "A" and card.is_token)
+        self.assertEqual("Timberpack Wolf", engine._effective_card_data(token)["name"])
+        self.assertEqual((3, 3, 2, 2), tuple(engine._numeric_stat(card.object_id, "power")
+            for card in (copy, token, hidden, opposing)))
+        for seat in "BCD":
+            battlefield = session.packet(f"pilot:{seat}", full=True)["state"]["players"]["A"]["bf"]
+            projected = next(card for card in battlefield if card["id"] == hidden.ref)
+            self.assertNotEqual("Timberpack Wolf", projected.get("n"))
+            self.assertNotEqual(hidden.oracle_id[:8], projected.get("cid"))
+        self.replay(session, load=True)
+
+    def test_actual_plague_rats_definition_counts_both_current_battlefields(self):
+        session = self.session(201_200_054)
+        engine = session.engine
+        source = self.add(engine, "Plague Rats", zone="hand")
+        opposing = self.add(engine, "Plague Rats", seat="B", ref="other-plague-rats")
+        self.assert_closed(session, source)
+        self.assertEqual(1, engine._numeric_stat(opposing.object_id, "power"))
+        self.prepare(session, mana={"C": 5, "B": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        for card in (source, opposing):
+            self.assertEqual((2, 2), tuple(engine._numeric_stat(card.object_id, field) for field in ("power", "toughness")))
+        self.replay(session, load=True)
+
+    def test_actual_undead_servant_counts_its_departed_source_in_its_own_graveyard(self):
+        session = self.session(201_200_055)
+        engine = session.engine
+        servant = self.add(engine, "Undead Servant", zone="hand")
+        self.add(engine, "Undead Servant", seat="B", zone="graveyard", ref="foreign-servant")
+        murder = self.add(engine, "Murder", zone="hand")
+        for card in (servant, murder):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 8, "B": 5})
+        self.checkpoint(session)
+        self.cast(session, "A", servant)
+        self.resolve_top(session)
+        self.assertEqual(1, self.trigger_count(session, servant))
+        self.cast(session, "A", murder, [servant.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[servant.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        token, = (card for card in session.state.cards.values()
+            if card.zone == "battlefield" and card.controller == "A" and card.is_token)
+        self.assertIn("zombie", engine._type_parts(engine._effective_card_data(token)["type_line"])[1])
+        self.replay(session, load=True)
+
+
+class SourceRelativeEffectCountTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "source-relative-effect-count.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "attached-exile-activation-cards.json",
+            fixtures / "source-attack-alone-cards.json",
+            fixtures / "source-relative-effect-count-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Source-relative effects", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def test_hare_counts_a_returned_source_as_another_creature(self):
+        for blink in (False, True):
+            with self.subTest(blink=blink):
+                session = self.session(400_700_061 + int(blink))
+                engine = session.engine
+                first = self.add(engine, "Hare Apparent", zone="hand", ref="hare-first-copy")
+                second = self.add(engine, "Hare Apparent", zone="hand", ref="hare-second-copy")
+                self.add(engine, "Hare Apparent", seat="B", ref="opposing-hare")
+                private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="private-relative-effect")
+                shift = self.add(engine, "Cloudshift", zone="hand") if blink else None
+                self.assert_closed(session, first)
+                self.prepare(session, mana={"C": 7, "W": 4})
+                self.checkpoint(session)
+                self.cast(session, "A", first)
+                self.assertIsNone(self.resolve(session))
+                self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+                self.cast(session, "A", second)
+                self.resolve_top(session)
+                self.assertEqual(1, self.trigger_count(session, second))
+                old_identity = session.state.cards[second.object_id].logical_object_id
+                self.assertEqual(old_identity, session.state.stack[-1].context["source_logical_object_id"])
+                if shift is not None:
+                    self.cast(session, "A", shift, [second.ref])
+                    self.resolve_top(session)
+                    new_identity = session.state.cards[second.object_id].logical_object_id
+                    self.assertNotEqual(old_identity, new_identity)
+                    self.assertEqual(2, self.trigger_count(session, second))
+                    self.assertEqual([old_identity, new_identity], [item.context["source_logical_object_id"]
+                        for item in session.state.stack])
+                self.assertIsNone(self.resolve(session))
+                rabbits = [card for card in session.state.cards.values() if card.is_token
+                    and card.zone == "battlefield" and card.controller == "A"]
+                self.assertEqual(3 if blink else 1, len(rabbits))
+                self.assertTrue(all(card.printed_name == "Rabbit Token" for card in rabbits))
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+                self.replay(session, load=True)
+
+    def test_sigil_counts_other_creatures_after_equipment_removal(self):
+        for alone in (False, True):
+            with self.subTest(alone=alone):
+                session = self.session(400_700_063 + int(alone))
+                engine = session.engine
+                sigil = self.add(engine, "Sigil of Valor")
+                attacker = self.add(engine, "Generic Bound Body", ref="sigil-original-attacker")
+                other = self.add(engine, "Generic Bound Body", ref="sigil-other-creature")
+                attacker.acquired_control_turn_count = other.acquired_control_turn_count = -1
+                attach_objects(session.state.cards, sigil, attacker, source_timestamp=sigil.zone_timestamp,
+                    players=session.state.players)
+                removal = self.add(engine, "Disenchant", seat="B", zone="hand")
+                for index in (1, 2):
+                    self.add(engine, "Generic Bound Plains", seat="B", ref=f"sigil-removal-land-{index}")
+                self.assert_closed(session, sigil)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.attack(session, [(attacker, "B")] if alone else [(attacker, "B"), (other, "B")])
+                self.assertEqual(int(alone), self.trigger_count(session, sigil))
+                if alone:
+                    self.cast(session, "B", removal, [sigil.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("graveyard", session.state.cards[sigil.object_id].zone)
+                    self.assertIsNone(self.resolve(session))
+                self.assertEqual((3 if alone else 2, 2), tuple(engine._numeric_stat(card.object_id, "power")
+                    for card in (attacker, other)))
+                self.replay(session, load=True)
+
+    def test_sealed_attack_count_survives_attachment_movement_and_requires_its_context(self):
+        from quorune.semantic_runtime.query_effect_amounts import resolve_public_query_amount
+
+        session = self.session(400_700_065)
+        engine = session.engine
+        sigil = self.add(engine, "Sigil of Valor")
+        attacker = self.add(engine, "Generic Bound Body", ref="sealed-attacker")
+        self.add(engine, "Generic Bound Body", ref="sealed-other-creature")
+        new_attachment = self.add(engine, "Generic Bound Body", seat="B", ref="current-attachment")
+        attach_objects(session.state.cards, sigil, new_attachment, source_timestamp=sigil.zone_timestamp,
+            players=session.state.players)
+        program = next(program for program in engine.semantics.programs_for_oracle(sigil.oracle_id)
+            if program.event == "creature.attacks")
+        amount = program.effects[0]["power"]
+        self.assertEqual(3, PublicQueryAmountSpec.from_dict(amount).schema_version)
+        item = SimpleNamespace(controller="A", ref="sealed-attack-count", source_object_id=sigil.object_id,
+            context={"event": "creature.attacks", "event_counter_recipient": {
+                "reference": attacker.ref, "logical_object_id": attacker.logical_object_id,
+            }})
+        self.assertEqual(1, resolve_public_query_amount(engine, amount, item))
+        item.context["event"] = "permanent.enter"
+        with self.assertRaisesRegex(ValueError, "sealed attack occurrence"):
+            resolve_public_query_amount(engine, amount, item)
+
+    def test_source_relative_count_authority_and_compiler_omission_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+
+        session = self.session(400_700_066)
+        for name in ("Hare Apparent", "Sigil of Valor"):
+            with self.subTest(card=name):
+                card = self.add(session.engine, name)
+                self.assert_closed(session, card)
+                program = next(program for program in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY in program.capability_dependencies)
+                deps = tuple(dep for dep in program.capability_dependencies if dep != SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY)
+                changed = replace(program, capability_dependencies=deps,
+                    capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+                binding = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+                self.assertIn("capability:undeclared_runtime_dependency:" + SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY,
+                    binding["blockers"])
+        with patch("quorune.compiler.attack_event_results._seal_attack_relative_amounts", return_value=False):
+            ir = compile_oracle_card(self.db.lookup("Sigil of Valor"), capability_registry=self.registry,
+                capability_profile="commander_review")
+        self.assertTrue(ir.material_residuals)
 
 
 class PublicZoneQuantityTests(unittest.TestCase):

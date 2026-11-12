@@ -2,7 +2,7 @@ from __future__ import annotations
 from .control_capability_shapes import fixed_control_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
-from .temporary_cast_restrictions import temporary_cast_node_capabilities
+from .next_spell_payment import temporary_player_rule_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
 from .combat_removal_shapes import combat_removal_node_capabilities
@@ -99,10 +99,12 @@ from .token_creation_capability_shapes import (
 )
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .attachment_action_capability_shapes import fixed_attachment_action_node_capabilities
+from .controlled_return import controlled_return_node_capabilities
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
 from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
 from .impulse_access_capability_shapes import fixed_impulse_access_node_capabilities
 from .monarch_capability_shapes import fixed_monarch_node_capabilities
+from ..initiative_model import dungeon_choice_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
 from .transform_capability_shapes import source_transform_node_capabilities
@@ -156,7 +158,7 @@ _COMPONENT_RESOLVERS = (
     fixed_resolution_mana_choice_capabilities,
     fixed_resolution_mana_capabilities,
     all_kind_counter_component_capabilities,
-    temporary_cast_node_capabilities,
+    temporary_player_rule_node_capabilities,
     fixed_goad_node_capabilities,
     fixed_prevention_component_capabilities,
     fixed_extra_turn_node_capabilities,
@@ -173,9 +175,11 @@ _COMPONENT_RESOLVERS = (
     fixed_target_effect_sequence_node_capabilities,
     fixed_source_effect_sequence_node_capabilities,
     fixed_entry_return_node_capabilities,
+    controlled_return_node_capabilities,
     tap_state_event_player_node_capabilities,
     fixed_impulse_access_node_capabilities,
     fixed_monarch_node_capabilities,
+    dungeon_choice_node_capabilities,
     ring_temptation_node_capabilities,
     event_player_sacrifice_node_capabilities,
     source_transform_node_capabilities,
@@ -405,7 +409,9 @@ def fixed_optional_effect_node_capabilities(
         or nested[0].get("op") == OPTIONAL_EFFECT_OPERATION
     ):
         return ()
-    references_target = _contains_target_reference(nested[0])
+    from .attachment_actions import is_targeted_equipment_attachment
+
+    references_target = _contains_target_reference(nested[0]) or is_targeted_equipment_attachment(nested[0])
     if (target_schema is None) == references_target:
         return ()
     dependencies = closed_effect_component_capabilities(

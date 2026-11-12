@@ -42,6 +42,9 @@ _DIRECT_BITE = re.compile(
     r"(?P<relation> you don't control| an opponent controls)?\.?$",
     re.IGNORECASE,
 )
+_TARGETED_SELF_BITE = re.compile(
+    r"^Target creature deals damage to itself equal to its power\.?$", re.IGNORECASE,
+)
 _SOURCE_BITE = re.compile(
     r"^(?P<optional>You may have )?(?P<source>this creature|it|enchanted creature|.+?) deal(?:s)? damage equal "
     r"to its power to (?P<second>any other target|any target|"
@@ -53,6 +56,13 @@ _STAT_PREP_FIGHT = re.compile(
     rf"^Target (?P<first>{_QUALITY}) you control gets "
     r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) until end of turn\. "
     r"(?:Then )?(?:it|that creature) fights "
+    rf"(?P<article>another target|up to one target|target) (?P<second>{_QUALITY})"
+    r"(?P<relation> you don't control| an opponent controls)?\.?$",
+    re.IGNORECASE,
+)
+_MULTIPLIER_PREP_FIGHT = re.compile(
+    r"^(?P<prep>(?:Double|Triple) the power and toughness of target (?P<first>creature) you control until end of turn)\. "
+    r"(?:Then )?it fights "
     rf"(?P<article>another target|up to one target|target) (?P<second>{_QUALITY})"
     r"(?P<relation> you don't control| an opponent controls)?\.?$",
     re.IGNORECASE,
@@ -423,6 +433,23 @@ def _direct_bite(
     )
 
 
+def _targeted_self_bite() -> FixedCreaturePowerDamageTemplate:
+    creature = _creature_group(group_id="fighter", quality="creature", relation="any")
+    return FixedCreaturePowerDamageTemplate(
+        template_id="fixed-targeted-creature-self-power-damage-v1",
+        effects=({
+            "op": CREATURE_POWER_DAMAGE_OPERATION,
+            "kind": "bite",
+            "source": "$target.0",
+            "target": "$target.0",
+            "target_must_be_creature": True,
+            "source_lki": None,
+        },),
+        target_schema={"groups": [creature]},
+        mechanics=(CREATURE_POWER_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage"),
+    )
+
+
 def _source_bite(
     match: re.Match[str],
     *,
@@ -479,7 +506,7 @@ def _prepared_fight(
     match: re.Match[str],
     *,
     prep_effect: Mapping[str, Any],
-    prep_mechanic: str,
+    prep_mechanics: tuple[str, ...],
     template_id: str,
 ) -> FixedCreaturePowerDamageTemplate | None:
     fighter = _creature_group(
@@ -515,7 +542,7 @@ def _prepared_fight(
             "fight",
             "cr-115-targets",
             "cr-120-damage",
-            prep_mechanic,
+            *prep_mechanics,
         ),
     )
 
@@ -535,7 +562,7 @@ def _stat_prepared_fight(
             "power": power,
             "toughness": toughness,
         },
-        prep_mechanic="cr-611-continuous-effects",
+        prep_mechanics=("cr-611-continuous-effects",),
         template_id="fixed-target-stat-prep-fight-v1",
     )
 
@@ -557,7 +584,7 @@ def _counter_prepared_fight(
             "amount": count,
             "source": "$source",
         },
-        prep_mechanic="cr-122-counters",
+        prep_mechanics=("cr-122-counters",),
         template_id="fixed-target-counter-prep-fight-v1",
     )
 
@@ -575,6 +602,16 @@ def fixed_creature_power_damage_effect_template(
     stat_prep = _STAT_PREP_FIGHT.fullmatch(normalized)
     if stat_prep is not None:
         return _stat_prepared_fight(stat_prep)
+    multiplier_prep = _MULTIPLIER_PREP_FIGHT.fullmatch(normalized)
+    if multiplier_prep is not None:
+        from .fixed_stat_multipliers import fixed_stat_multiplier_effect_template
+
+        prep = fixed_stat_multiplier_effect_template(multiplier_prep["prep"], source_name=card_name,
+            source_is_permanent=None, source_card_types=())
+        if prep is not None:
+            return _prepared_fight(multiplier_prep, prep_effect=prep[1][0],
+                prep_mechanics=tuple(mechanic for mechanic in prep[3] if mechanic != "cr-115-targets"),
+                template_id="fixed-target-multiplier-prep-fight-v1")
     counter_prep = _COUNTER_PREP_FIGHT.fullmatch(normalized)
     if counter_prep is not None:
         return _counter_prepared_fight(counter_prep)
@@ -592,6 +629,8 @@ def fixed_creature_power_damage_effect_template(
             allow_source_pronoun=allow_source_pronoun,
             source_attachment_relation=source_attachment_relation,
         )
+    if _TARGETED_SELF_BITE.fullmatch(normalized):
+        return _targeted_self_bite()
     direct_bite = _DIRECT_BITE.fullmatch(normalized)
     if direct_bite is not None:
         return _direct_bite(direct_bite)

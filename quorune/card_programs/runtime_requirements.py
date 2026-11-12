@@ -23,7 +23,7 @@ from ..mana_spent_amounts import mana_color_amount_runtime_dependencies
 from ..rules.selected_counter_costs import selected_counter_runtime_dependencies
 from ..rules.activation.source_counter_choices import any_source_counter_runtime_dependencies
 from ..activation_mana_cost import activation_mana_option_runtime_dependencies
-from ..semantic_runtime.activated_abilities import ability_local_mana_reduction_runtime_dependencies
+from ..semantic_runtime.activated_abilities import activated_catalog_runtime_dependencies
 from ..rules.source_keyword_choice_shapes import source_keyword_choice_runtime_dependencies
 from ..rules.source_protection_choice_shapes import source_protection_choice_runtime_dependencies
 from ..rules.source_fixed_protection_shapes import source_fixed_protection_runtime_dependencies
@@ -48,6 +48,10 @@ from ..rules.spell_self_exile import (
 from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dependencies
 from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
 from ..rules.keyword_runtime_requirements import keyword_runtime_dependencies
+from ..rules.event_subscriptions import (
+    FixedEventSubscriptionSet, LAND_PLAY_EVENT, dungeon_completion_dependencies,
+    face_transition_event_dependencies, upkeep_hand_runtime_dependencies,
+)
 from ..rules.fixed_blocker_restriction_shapes import fixed_blocker_runtime_dependencies
 from ..rules.source_block_pairs import source_block_pair_runtime_dependencies
 from ..rules.nonmana_buyback_costs import nonmana_buyback_runtime_dependencies
@@ -78,7 +82,7 @@ def nonmana_equip_runtime_dependencies(program):
 def _cost_metric_runtime_requirements(program):
     required, blockers = set(), set()
     try:
-        required.update(ability_local_mana_reduction_runtime_dependencies(program))
+        required.update(activated_catalog_runtime_dependencies(program))
     except (TypeError, ValueError, KeyError) as exc:
         blockers.add(f'runtime_ability_local_mana_reduction:invalid:{exc}')
     for resolver, label in (
@@ -173,7 +177,6 @@ def _event_query_runtime_requirements(program):
     from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
     from ..counter_placement_event_model import counter_placement_event_dependencies
     from ..player_result_events import player_result_runtime_dependencies
-    from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT, upkeep_hand_runtime_dependencies
     from ..rules.spell_cast_events import spell_cast_event_runtime_dependencies
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
@@ -203,7 +206,8 @@ def _event_query_runtime_requirements(program):
                 required.add('trigger.event.normalized_zone_change')
             if any(child.event.removesuffix('.self')==MUTATE_EVENT for child in subscriptions.subscriptions):
                 required.add(MUTATE_CAPABILITY)
-        required.update(upkeep_hand_runtime_dependencies(program))
+        required.update(upkeep_hand_runtime_dependencies(program), dungeon_completion_dependencies(program, subscriptions))
+        required.update(face_transition_event_dependencies(program, subscriptions))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_event_subscriptions:invalid:{exc}')
     for resolver,value,label in (
@@ -257,6 +261,30 @@ def _intrinsic_spell_face_dependencies(coverage):
     ) if marker in coverage}
 
 
+def _validate_paid_sacrifice_mana_value_scope(program, values, amounts):
+    from ..compiler.public_query_effect_amounts import public_query_amount_program_is_closed
+    from ..scalar_effect_amount_model import (
+        PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
+        SCALAR_AMOUNT_CAPABILITY, ScalarAmountOrigin, scalar_amount_specs,
+    )
+
+    paid_value = PAID_SACRIFICE_MANA_VALUE_CAPABILITY in amounts
+    if paid_value != (PAID_SACRIFICE_MANA_VALUE_MECHANIC in program.coverage):
+        raise ValueError('Paid sacrifice mana value requires its typed scalar and mechanic')
+    if not paid_value:
+        return
+    specs = scalar_amount_specs(values)
+    if (
+        program.event != 'resolve' or not program.ability_id.startswith('spell:')
+        or len(specs) != 1 or specs[0].origin is not ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE
+        or scalar_amount_specs(program.effects) != specs
+        or not public_query_amount_program_is_closed(
+            program, required_dependencies=(SCALAR_AMOUNT_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_CAPABILITY),
+        )
+    ):
+        raise ValueError('Paid sacrifice mana value requires one closed spell result and its fixed sacrifice')
+
+
 def _value_runtime_requirements(program):
     """Infer the existing minima for typed values and their public predicates."""
     from ..characteristic_fragments import characteristic_quantity_capabilities
@@ -267,6 +295,11 @@ def _value_runtime_requirements(program):
     values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
     required = set(characteristic_quantity_capabilities((*values, program.event_condition)))
     blockers = set()
+    from ..rules.stack_counter_followup import stack_counter_followup_runtime_dependencies
+    try:
+        required.update(stack_counter_followup_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f"runtime_stack_counter_followup:invalid:{exc}")
     try:
         required.update(next_turn_effect_dependencies(program.effects))
     except ValueError as exc:
@@ -284,6 +317,7 @@ def _value_runtime_requirements(program):
         blockers.add(f"runtime_self_public_condition:invalid:{exc}")
     try:
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
+        _validate_paid_sacrifice_mana_value_scope(program, values, amounts)
         from ..rules.reflexive_payment_shapes import validate_reflexive_paid_power_scope
         validate_reflexive_paid_power_scope(program.effects, values, amounts)
         from ..announced_damage import VARIABLE_DAMAGE_ALLOCATION_CAPABILITY, variable_damage_allocation
@@ -301,7 +335,7 @@ def _value_runtime_requirements(program):
             required.update(validate_derived_characteristic_program(program))
         if FIXED_TOP_EXILE_CAPABILITY in amounts:
             from ..rules.discover_capability_shapes import validate_fixed_top_exile_program_scope
-            validate_fixed_top_exile_program_scope(program)
+            validate_fixed_top_exile_program_scope(program, values)
         if SELECTED_PLAYER_RESULT_CAPABILITY in amounts:
             from ..rules.any_number_target_shapes import selected_player_result_node_capabilities
             if not selected_player_result_node_capabilities(
@@ -346,16 +380,22 @@ def _value_runtime_requirements(program):
 
 
 def _zone_move_runtime_requirements(program, required, blockers):
+    from ..rules.event_counter_threshold import event_counter_threshold_program_dependencies
     from ..rules.graveyard_card_targets import (
         graveyard_copy_cast_runtime_dependencies,
         opposing_graveyard_return_runtime_dependencies, public_graveyard_return_runtime_dependencies,
         targeted_graveyard_cast_runtime_dependencies,
     )
+    from ..rules.controlled_return import controlled_return_runtime_dependencies
     from ..rules.entry_return_capability_shapes import checked_entry_return_runtime_dependencies
     from ..rules.public_zone_move_capability_shapes import triggered_source_exile_runtime_dependencies
-    from ..rules.reanimation_capability_shapes import source_power_reanimation_runtime_dependencies
+    from ..rules.reanimation_capability_shapes import (
+        attached_event_battlefield_return_runtime_dependencies,
+        source_power_reanimation_runtime_dependencies,
+    )
 
     for resolver, label in (
+        (event_counter_threshold_program_dependencies, 'event_counter_threshold'),
         (spell_self_exile_runtime_dependencies, 'spell_self_exile'),
         (spell_self_shuffle_runtime_dependencies, 'spell_self_shuffle'),
         (spell_self_bottom_runtime_dependencies, 'spell_self_bottom'),
@@ -366,6 +406,8 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (graveyard_copy_cast_runtime_dependencies, 'graveyard_copy_cast'),
         (source_power_reanimation_runtime_dependencies, 'source_power_reanimation'),
         (checked_entry_return_runtime_dependencies, 'checked_entry_return'),
+        (controlled_return_runtime_dependencies, 'controlled_return'),
+        (attached_event_battlefield_return_runtime_dependencies, 'attached_event_battlefield_return'),
     ):
         try:
             required.update(resolver(program))

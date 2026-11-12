@@ -1,7 +1,4 @@
 {
-  "schema_version": 1,
-  "fixture_kind": "public_exact-list_card_data",
-  "source": "Pinned fixed activation-result originals and canonical normal-registration price, target, hand, search, stun and graveyard controls",
   "cards": [
     {
       "cmc": 4.0,
@@ -48,7 +45,7 @@
       "produced_mana": [],
       "released_at": "2020-08-07",
       "toughness": "2",
-      "type_line": "Artifact Creature — Human Artificer"
+      "type_line": "Artifact Creature \u2014 Human Artificer"
     },
     {
       "cmc": 2.0,
@@ -95,7 +92,7 @@
       "produced_mana": [],
       "released_at": "2019-06-14",
       "toughness": "2",
-      "type_line": "Creature — Goblin Artificer"
+      "type_line": "Creature \u2014 Goblin Artificer"
     },
     {
       "cmc": 2.0,
@@ -188,21 +185,12 @@
       "type_line": "Artifact"
     },
     {
-      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
-      "name": "Memnite",
-      "mana_cost": "{0}",
-      "type_line": "Artifact Creature — Construct",
-      "oracle_text": "",
-      "power": "1",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
+      "cmc": 0.0,
       "color_identity": [],
+      "colors": [],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2011-05-14",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -228,7 +216,16 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "cmc": 0.0
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Memnite",
+      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2011-05-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature \u2014 Construct"
     },
     {
       "cmc": 1.0,
@@ -318,28 +315,19 @@
       "produced_mana": [],
       "released_at": "2023-01-13",
       "toughness": "2",
-      "type_line": "Artifact Creature — Thopter"
+      "type_line": "Artifact Creature \u2014 Thopter"
     },
     {
-      "oracle_id": "3501a839-eef5-44e4-8637-b5754780454e",
-      "name": "Expedite",
-      "mana_cost": "{R}",
-      "type_line": "Instant",
-      "oracle_text": "Target creature gains haste until end of turn.\nDraw a card.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "R"
-      ],
+      "cmc": 1.0,
       "color_identity": [
         "R"
       ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2020-11-20",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -365,31 +353,30 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "cmc": 1.0
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Expedite",
+      "oracle_id": "3501a839-eef5-44e4-8637-b5754780454e",
+      "oracle_text": "Target creature gains haste until end of turn.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
     },
     {
-      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
-      "name": "Control Magic",
-      "mana_cost": "{2}{U}{U}",
       "cmc": 4.0,
-      "type_line": "Enchantment — Aura",
-      "oracle_text": "Enchant creature\nYou control enchanted creature.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "U"
-      ],
       "color_identity": [
         "U"
       ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
       "keywords": [
         "Enchant"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2017-06-09",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -414,7 +401,17 @@
         "timeless": "legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Control Magic",
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-06-09",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
     },
     {
       "cmc": 4.0,
@@ -507,22 +504,12 @@
       "type_line": "Instant"
     },
     {
-      "oracle_id": "1573f7f9-672c-421a-b1ac-3d0d8aea59ca",
-      "name": "Tormod's Crypt",
-      "mana_cost": "{0}",
       "cmc": 0.0,
-      "type_line": "Artifact",
-      "oracle_text": "{T}, Sacrifice this artifact: Exile target player's graveyard.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
       "color_identity": [],
+      "colors": [],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2023-01-13",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -547,31 +534,29 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Tormod's Crypt",
+      "oracle_id": "1573f7f9-672c-421a-b1ac-3d0d8aea59ca",
+      "oracle_text": "{T}, Sacrifice this artifact: Exile target player's graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": null,
+      "type_line": "Artifact"
     },
     {
-      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
-      "name": "Llanowar Elves",
-      "mana_cost": "{G}",
       "cmc": 1.0,
-      "type_line": "Creature — Elf Druid",
-      "oracle_text": "{T}: Add {G}.",
-      "power": "1",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "G"
-      ],
       "color_identity": [
         "G"
       ],
-      "keywords": [],
-      "produced_mana": [
+      "colors": [
         "G"
       ],
+      "defense": null,
+      "keywords": [],
       "layout": "normal",
-      "released_at": "2024-11-15",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -596,31 +581,33 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Llanowar Elves",
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Druid"
     },
     {
-      "oracle_id": "22c044ad-77d7-4c93-953d-e2daa9686ff7",
-      "name": "Kiora's Follower",
-      "mana_cost": "{G}{U}",
       "cmc": 2.0,
-      "type_line": "Creature — Merfolk",
-      "oracle_text": "{T}: Untap another target permanent.",
-      "power": "2",
-      "toughness": "2",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "G",
-        "U"
-      ],
       "color_identity": [
         "G",
         "U"
       ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2023-11-17",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -645,7 +632,17 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{U}",
+      "name": "Kiora's Follower",
+      "oracle_id": "22c044ad-77d7-4c93-953d-e2daa9686ff7",
+      "oracle_text": "{T}: Untap another target permanent.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Merfolk"
     },
     {
       "cmc": 0.0,
@@ -692,7 +689,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land — Island"
+      "type_line": "Basic Land \u2014 Island"
     },
     {
       "cmc": 0.0,
@@ -739,7 +736,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land — Mountain"
+      "type_line": "Basic Land \u2014 Mountain"
     },
     {
       "cmc": 0.0,
@@ -786,51 +783,623 @@
       ],
       "released_at": "2026-11-13",
       "toughness": null,
-      "type_line": "Basic Land — Plains"
+      "type_line": "Basic Land \u2014 Plains"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Ashaya, Soul of the Wild",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "oracle_text": "Ashaya's power and toughness are each equal to the number of lands you control.\nNontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": "*",
+      "type_line": "Legendary Creature \u2014 Elemental"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bear"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Liquimetal Torque",
+      "oracle_id": "b7d4b7dd-fbb1-4ca3-875f-ef13a95e66ad",
+      "oracle_text": "{T}: Add {C}.\n{T}: Target nonland permanent becomes an artifact in addition to its other types until end of turn.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Minamo, School at Water's Edge",
+      "oracle_id": "17784f90-89a1-47a5-83ef-ae60dfc30bd1",
+      "oracle_text": "{T}: Add {U}.\n{U}, {T}: Untap target legendary permanent.",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2004-10-01",
+      "toughness": null,
+      "type_line": "Legendary Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Academy Ruins",
+      "oracle_id": "a3da7d5b-2c2b-45fe-b9c5-413b8c8fc0a2",
+      "oracle_text": "{T}: Add {C}.\n{1}{U}, {T}: Put target artifact card from your graveyard on top of your library.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2020-08-07",
+      "toughness": null,
+      "type_line": "Legendary Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Buried Ruin",
+      "oracle_id": "3644f316-f9a3-46c9-9b1e-747f86cf4ead",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Return target artifact card from your graveyard to your hand.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Channel"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Otawara, Soaring City",
+      "oracle_id": "e9b6a394-691c-425a-9307-76d8edc7375e",
+      "oracle_text": "{T}: Add {U}.\nChannel — {3}{U}, Discard this card: Return target artifact, creature, enchantment, or planeswalker to its owner's hand. This ability costs {1} less to activate for each legendary creature you control.",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Legendary Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Cycling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Xander's Lounge",
+      "oracle_id": "8291543f-d086-48aa-b2b7-5481ca8c9198",
+      "oracle_text": "({T}: Add {U}, {B}, or {R}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "R",
+        "U"
+      ],
+      "released_at": "2022-04-29",
+      "toughness": null,
+      "type_line": "Land — Island Swamp Mountain"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Cycling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Zagoth Triome",
+      "oracle_id": "fdd46004-eaba-4024-8687-39b23dc6a58c",
+      "oracle_text": "({T}: Add {B}, {G}, or {U}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "U"
+      ],
+      "released_at": "2020-04-24",
+      "toughness": null,
+      "type_line": "Land — Swamp Forest Island"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
     }
   ],
+  "fixture_kind": "public_exact-list_card_data",
   "rulings": [
     {
+      "comment": "Master Transmuter can be returned to its owner's hand to pay the cost of its activated ability.",
       "oracle_id": "da46786e-28df-4638-ab3d-121011d2f150",
       "published_at": "2020-08-07",
-      "source": "wotc",
-      "comment": "Master Transmuter can be returned to its owner's hand to pay the cost of its activated ability."
+      "source": "wotc"
     },
     {
+      "comment": "The artifact card you put onto the battlefield when the ability resolves may be the same card that you returned to your hand when you paid the cost. If so, it returns to the battlefield as a new object with no relation to its previous existence.",
       "oracle_id": "da46786e-28df-4638-ab3d-121011d2f150",
       "published_at": "2020-08-07",
-      "source": "wotc",
-      "comment": "The artifact card you put onto the battlefield when the ability resolves may be the same card that you returned to your hand when you paid the cost. If so, it returns to the battlefield as a new object with no relation to its previous existence."
+      "source": "wotc"
     },
     {
+      "comment": "Because targets are chosen for activated abilities before costs (such as \"Sacrifice an artifact\") are paid, Goblin Engineer's second ability can't target the artifact that will be sacrificed to pay its cost.",
       "oracle_id": "c1d6cce8-085f-42cb-8b0c-b6fbbf88b16a",
       "published_at": "2021-03-19",
-      "source": "wotc",
-      "comment": "Because targets are chosen for activated abilities before costs (such as \"Sacrifice an artifact\") are paid, Goblin Engineer's second ability can't target the artifact that will be sacrificed to pay its cost."
+      "source": "wotc"
     },
     {
+      "comment": "If a card in a player's graveyard has {X} in its mana cost, X is considered to be 0.",
       "oracle_id": "c1d6cce8-085f-42cb-8b0c-b6fbbf88b16a",
       "published_at": "2021-03-19",
-      "source": "wotc",
-      "comment": "If a card in a player's graveyard has {X} in its mana cost, X is considered to be 0."
+      "source": "wotc"
     },
     {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
       "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
       "published_at": "2016-06-08",
-      "source": "wotc",
-      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+      "source": "wotc"
     },
     {
+      "comment": "The controller of Vedalken Orrery can cast nonland artifact, creature, enchantment, and sorcery cards any time they could cast an instant. This includes on other players' turns and during the upkeep step, draw step, combat phase, and end step.",
       "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
       "published_at": "2004-12-01",
-      "source": "wotc",
-      "comment": "The controller of Vedalken Orrery can cast nonland artifact, creature, enchantment, and sorcery cards any time they could cast an instant. This includes on other players' turns and during the upkeep step, draw step, combat phase, and end step."
+      "source": "wotc"
     },
     {
+      "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\".",
       "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
       "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A land that's a Forest has the intrinsic mana ability \"{T}: Add {G}.\"",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "As long as Ashaya is on the battlefield, it's affected by its second ability and thus its first ability counts itself.",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to Ashaya may become lethal if lands you control leave the battlefield during that turn.",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability that defines Ashaya's power and toughness applies in all zones, not just the battlefield.",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't play creature cards as lands; you'll still have to cast them as spells, and they'll enter the battlefield as lands (in addition to their other types).",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "e9b6a394-691c-425a-9307-76d8edc7375e",
+      "published_at": "2022-02-18",
       "source": "wotc",
-      "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\"."
+      "comment": "Discarding the card is part of the cost to activate a channel ability."
+    },
+    {
+      "oracle_id": "e9b6a394-691c-425a-9307-76d8edc7375e",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a channel ability requires a target, you may not activate it without a target just to discard the card."
     }
-  ]
+  ],
+  "schema_version": 1,
+  "source": "Pinned fixed activation-result originals and canonical normal-registration price, target, hand, search, stun and graveyard controls"
 }

@@ -1,56 +1,5 @@
 {
   "schema_version": 3,
   "name": "v0.8-exact-deck-keyword-families",
-  "programs": [
-    {
-      "key": "fdd46004-eaba-4024-8687-39b23dc6a58c:ability:ab3",
-      "label": "Zagoth Triome cycling",
-      "oracle_id": "fdd46004-eaba-4024-8687-39b23dc6a58c",
-      "ability_id": "ability:ab3",
-      "active_zone": "hand",
-      "event": "activate",
-      "effects": [
-        {
-          "op": "draw",
-          "player": "$controller",
-          "count": 1,
-          "reason": "Cycling"
-        }
-      ],
-      "trust_level": "trusted",
-      "coverage": ["activated_ability", "keyword_ability", "cycling", "discard_cost", "draw"],
-      "tests": ["test_exact_list_cycling_pays_three_discards_and_draws"],
-      "provenance": {
-        "source_oracle_hash": "b07db898bf336e9406be6e5d578f8898917380e551cd9295c5fbe9bc1b0316ea",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "v0.8-exact-keyword-family",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "8291543f-d086-48aa-b2b7-5481ca8c9198:ability:ab3",
-      "label": "Xander's Lounge cycling",
-      "oracle_id": "8291543f-d086-48aa-b2b7-5481ca8c9198",
-      "ability_id": "ability:ab3",
-      "active_zone": "hand",
-      "event": "activate",
-      "effects": [
-        {
-          "op": "draw",
-          "player": "$controller",
-          "count": 1,
-          "reason": "Cycling"
-        }
-      ],
-      "trust_level": "trusted",
-      "coverage": ["activated_ability", "keyword_ability", "cycling", "discard_cost", "draw"],
-      "tests": ["test_exact_list_cycling_pays_three_discards_and_draws"],
-      "provenance": {
-        "source_oracle_hash": "94490a0aec0953632ecf020014375e60a49ad93d8b8596ec14e2b0b7ccf513c1",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "v0.8-exact-keyword-family",
-        "review_status": "reviewed"
-      }
-    }
-  ]
+  "programs": []
 }

@@ -1,0 +1,1300 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Bloodfray Giant",
+      "oracle_id": "5f83fd2f-c4cb-4bcf-a4db-0238df251740",
+      "oracle_text": "Trample\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike",
+        "Haste",
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}{R}",
+      "name": "Carnival Hellsteed",
+      "oracle_id": "34ae5b49-f8bf-4aa8-bb62-92d6d3118b26",
+      "oracle_text": "First strike, haste\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "4",
+      "type_line": "Creature — Nightmare Horse"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Chaos Imps",
+      "oracle_id": "31e99241-592d-4be4-9ef3-6dde522b1885",
+      "oracle_text": "Flying\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)\nThis creature has trample as long as it has a +1/+1 counter on it.",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "5",
+      "type_line": "Creature — Imp"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Dead Reveler",
+      "oracle_id": "5cee3505-0291-4f1b-9e5f-2909a31acd8e",
+      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": "3",
+      "type_line": "Creature — Zombie"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Drillworks Mole",
+      "oracle_id": "9fa3286b-ee10-4f68-bfc3-974cdc39d986",
+      "oracle_text": "{2}, {T}: Put a +1/+1 counter on this creature and a +1/+1 counter on up to one target commander creature you control.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Mole"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Evolutionary Escalation",
+      "oracle_id": "f9837988-a097-4f00-a94f-4856d5d9894e",
+      "oracle_text": "At the beginning of your upkeep, put three +1/+1 counters on target creature you control and three +1/+1 counters on target creature an opponent controls.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-11-11",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike",
+        "Haste",
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{R}",
+      "name": "Exava, Rakdos Blood Witch",
+      "oracle_id": "524249cd-68d9-472a-89cd-5872641ca6de",
+      "oracle_text": "First strike, haste\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)\nEach other creature you control with a +1/+1 counter on it has haste.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2013-05-03",
+      "toughness": "3",
+      "type_line": "Legendary Creature — Human Cleric"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Gore-House Chainwalker",
+      "oracle_id": "dbe3e317-3c39-4b38-ae06-eae02a910c37",
+      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "1",
+      "type_line": "Creature — Human Warrior"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Regenerate",
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Grim Roustabout",
+      "oracle_id": "1adcc4a8-b2dd-4d9a-bded-188b81c84a10",
+      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)\n{1}{B}: Regenerate this creature.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "1",
+      "type_line": "Creature — Skeleton Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{R}",
+      "name": "Hellhole Flailer",
+      "oracle_id": "e13c1703-1184-4a8c-9310-f11e4e673597",
+      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)\n{2}{B}{R}, Sacrifice this creature: It deals damage equal to its power to target player or planeswalker.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "2",
+      "type_line": "Creature — Ogre Warrior"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Merfolk of the Pearl Trident",
+      "oracle_id": "218d9277-c179-4de3-9c7f-79b5a6d4fa38",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": "1",
+      "type_line": "Creature — Merfolk"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B/R}",
+      "name": "Rakdos Cackler",
+      "oracle_id": "763a2d27-52a8-43d9-b649-0f6c0cf87a07",
+      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "1",
+      "type_line": "Creature — Devil"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Rakdos Drake",
+      "oracle_id": "0715167b-00b1-45a4-94a0-60d4097a1428",
+      "oracle_text": "Flying\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": "2",
+      "type_line": "Creature — Drake"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "River Heralds' Boon",
+      "oracle_id": "682eb224-cab4-4829-810b-72e63a9ceb5d",
+      "oracle_text": "Put a +1/+1 counter on target creature and a +1/+1 counter on up to one target Merfolk.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-09-29",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Serrated Biskelion",
+      "oracle_id": "c8552706-83f2-41d7-8068-75891abb8bde",
+      "oracle_text": "{T}: Put a -1/-1 counter on this creature and a -1/-1 counter on target creature.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2010-09-03",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Construct"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{R}",
+      "name": "Spawn of Rix Maadi",
+      "oracle_id": "39d4373b-35b4-4ceb-b4d5-9ca474365eb0",
+      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "3",
+      "type_line": "Creature — Horror"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike",
+        "Unleash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Splatter Thug",
+      "oracle_id": "3baee36b-d64f-448c-ae45-c1ec124c92ec",
+      "oracle_text": "First strike\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": "2",
+      "type_line": "Creature — Human Warrior"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Stand Together",
+      "oracle_id": "54bfd255-cce6-4c67-8a18-2bc01400f4b6",
+      "oracle_text": "Put two +1/+1 counters on target creature and two +1/+1 counters on another target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2004-02-06",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Unleash",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Thrill-Kill Assassin",
+      "oracle_id": "f13f5705-e3e0-4e1e-a5b3-61e04e23a374",
+      "oracle_text": "Deathtouch\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": "2",
+      "type_line": "Creature — Human Assassin"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "0715167b-00b1-45a4-94a0-60d4097a1428",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "0715167b-00b1-45a4-94a0-60d4097a1428",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "0715167b-00b1-45a4-94a0-60d4097a1428",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "0715167b-00b1-45a4-94a0-60d4097a1428",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "1adcc4a8-b2dd-4d9a-bded-188b81c84a10",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "1adcc4a8-b2dd-4d9a-bded-188b81c84a10",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "1adcc4a8-b2dd-4d9a-bded-188b81c84a10",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "1adcc4a8-b2dd-4d9a-bded-188b81c84a10",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Chaos Imps will have trample if it has any +1/+1 counter on it, not just the one put on it by the unleash ability.",
+      "oracle_id": "31e99241-592d-4be4-9ef3-6dde522b1885",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can't block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "31e99241-592d-4be4-9ef3-6dde522b1885",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that's already blocking won't remove it from combat. It will continue to block.",
+      "oracle_id": "31e99241-592d-4be4-9ef3-6dde522b1885",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "31e99241-592d-4be4-9ef3-6dde522b1885",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it's entering the battlefield. At that point, it's too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "31e99241-592d-4be4-9ef3-6dde522b1885",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "34ae5b49-f8bf-4aa8-bb62-92d6d3118b26",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "34ae5b49-f8bf-4aa8-bb62-92d6d3118b26",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "34ae5b49-f8bf-4aa8-bb62-92d6d3118b26",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "34ae5b49-f8bf-4aa8-bb62-92d6d3118b26",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "39d4373b-35b4-4ceb-b4d5-9ca474365eb0",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "39d4373b-35b4-4ceb-b4d5-9ca474365eb0",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "39d4373b-35b4-4ceb-b4d5-9ca474365eb0",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "39d4373b-35b4-4ceb-b4d5-9ca474365eb0",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "3baee36b-d64f-448c-ae45-c1ec124c92ec",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "3baee36b-d64f-448c-ae45-c1ec124c92ec",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "3baee36b-d64f-448c-ae45-c1ec124c92ec",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "3baee36b-d64f-448c-ae45-c1ec124c92ec",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "524249cd-68d9-472a-89cd-5872641ca6de",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "524249cd-68d9-472a-89cd-5872641ca6de",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "524249cd-68d9-472a-89cd-5872641ca6de",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "524249cd-68d9-472a-89cd-5872641ca6de",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "5cee3505-0291-4f1b-9e5f-2909a31acd8e",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "5cee3505-0291-4f1b-9e5f-2909a31acd8e",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "5cee3505-0291-4f1b-9e5f-2909a31acd8e",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "5cee3505-0291-4f1b-9e5f-2909a31acd8e",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "5f83fd2f-c4cb-4bcf-a4db-0238df251740",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "5f83fd2f-c4cb-4bcf-a4db-0238df251740",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "5f83fd2f-c4cb-4bcf-a4db-0238df251740",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "5f83fd2f-c4cb-4bcf-a4db-0238df251740",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose one Merfolk creature as both targets for River Heralds’ Boon. You can also choose two different Merfolk creatures.",
+      "oracle_id": "682eb224-cab4-4829-810b-72e63a9ceb5d",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "763a2d27-52a8-43d9-b649-0f6c0cf87a07",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "763a2d27-52a8-43d9-b649-0f6c0cf87a07",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "763a2d27-52a8-43d9-b649-0f6c0cf87a07",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "763a2d27-52a8-43d9-b649-0f6c0cf87a07",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you target a commander creature with Drillworks Mole's activated ability and that creature is no longer a legal target as the ability resolves, you will not put a +1/+1 counter on Drillworks Mole. Conversely, if the target is still legal, you will put a counter on the commander creature you control, even if Drillworks Mole is no longer on the battlefield as the ability resolves.",
+      "oracle_id": "9fa3286b-ee10-4f68-bfc3-974cdc39d986",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Serrated Biskelion leaves the battlefield before its ability resolves, you’ll still put a -1/-1 counter on the targeted creature. If the target leaves the battlefield or otherwise becomes an illegal target before the ability resolves, the ability doesn’t resolve and you won’t put a -1/-1 counter on Serrated Biskelion.",
+      "oracle_id": "c8552706-83f2-41d7-8068-75891abb8bde",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "dbe3e317-3c39-4b38-ae06-eae02a910c37",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "dbe3e317-3c39-4b38-ae06-eae02a910c37",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "dbe3e317-3c39-4b38-ae06-eae02a910c37",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "dbe3e317-3c39-4b38-ae06-eae02a910c37",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The damage dealt by the last ability is equal to Hellhole Flailer's power when it was last on the battlefield. For example, if it had a +1/+1 counter on it, it will deal 4 damage.",
+      "oracle_id": "e13c1703-1184-4a8c-9310-f11e4e673597",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can't block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "e13c1703-1184-4a8c-9310-f11e4e673597",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that's already blocking won't remove it from combat. It will continue to block.",
+      "oracle_id": "e13c1703-1184-4a8c-9310-f11e4e673597",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "e13c1703-1184-4a8c-9310-f11e4e673597",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it's entering the battlefield. At that point, it's too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "e13c1703-1184-4a8c-9310-f11e4e673597",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with unleash can’t block if it has any +1/+1 counter on it, not just one put on it by the unleash ability.",
+      "oracle_id": "f13f5705-e3e0-4e1e-a5b3-61e04e23a374",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Putting a +1/+1 counter on a creature with unleash that’s already blocking won’t remove it from combat. It will continue to block.",
+      "oracle_id": "f13f5705-e3e0-4e1e-a5b3-61e04e23a374",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The unleash ability applies no matter where the creature is entering the battlefield from.",
+      "oracle_id": "f13f5705-e3e0-4e1e-a5b3-61e04e23a374",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You make the choice to have the creature with unleash enter the battlefield with a +1/+1 counter or not as it’s entering the battlefield. At that point, it’s too late for a player to respond to the creature spell by trying to counter it, for example.",
+      "oracle_id": "f13f5705-e3e0-4e1e-a5b3-61e04e23a374",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one target becomes illegal before Evolutionary Escalation’s ability resolves, you’ll put three +1/+1 counters on the target that’s still legal.",
+      "oracle_id": "f9837988-a097-4f00-a94f-4856d5d9894e",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there aren’t two legal targets for Evolutionary Escalation’s ability as it’s put onto the stack, it’s taken off the stack and no creature gets +1/+1 counters.",
+      "oracle_id": "f9837988-a097-4f00-a94f-4856d5d9894e",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose two targets for Evolutionary Escalation’s ability as it’s put onto the stack. No player may cast spells or activate abilities during your turn before this happens.",
+      "oracle_id": "f9837988-a097-4f00-a94f-4856d5d9894e",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Oracle/rulings subset; shared records retain canonical compact CI printing metadata."
+}

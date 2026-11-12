@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "4f9616d595005c9dbef9ec25111a4f6fe2465c7ad47e71779cd26c1763925e16"
+verified: "bb8f83f01398e03d350fd7b89aef0baa75656dd8a560ed8757125b23357064ca"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -22,7 +22,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Starscream, Power Hungry // Starscream, Seeker Leader | 223 | 29 | 7 | 8 | 4 | 19 | `blocked` |
 | Tribute to Horobi // Echo of Death's Wail | 219 | 38 | 6 | 7 | 5 | 6 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 217 | 34 | 4 | 7 | 7 | 19 | `blocked` |
-| Cleric Class | 215 | 30 | 5 | 8 | 9 | 12 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 213 | 32 | 6 | 6 | 6 | 13 | `blocked` |
 | Rowan Kenrith | 212 | 29 | 5 | 6 | 5 | 21 | `blocked` |
 | Jugan Defends the Temple // Remnant of the Rising Star | 208 | 26 | 7 | 7 | 8 | 9 | `blocked` |
@@ -63,4 +62,5 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 184 | 23 | 6 | 5 | 8 | 8 | `blocked` |
 | Megatron, Tyrant // Megatron, Destructive Force | 184 | 19 | 5 | 5 | 11 | 18 | `blocked` |
 | Optimus Prime, Hero // Optimus Prime, Autobot Leader | 184 | 24 | 5 | 6 | 7 | 16 | `blocked` |
+| Tales of Master Seshiro // Seshiro's Living Legacy | 184 | 28 | 7 | 5 | 4 | 6 | `blocked` |
 | Animate Dead | 131 | 16 | 5 | 3 | 5 | 5 | `blocked` |

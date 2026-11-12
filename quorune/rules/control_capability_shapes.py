@@ -13,6 +13,10 @@ from .permanent_predicate_capability_shapes import (
 )
 
 
+def control_covered_mechanics(supplied: set[str]) -> set[str]:
+    return {FIXED_CONTROL_MECHANIC, "cr-611-continuous-effects"} if FIXED_CONTROL_CAPABILITY in supplied else set()
+
+
 def fixed_control_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],

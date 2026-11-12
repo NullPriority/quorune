@@ -48,8 +48,8 @@ from .fixed_mana_abilities import FixedManaMode, supports_hybrid_filter_price
 from .mana_restrictions import (
     canonical_mana_spend_restriction,
     legacy_mana_spend_restriction_for_tail,
-    valid_mana_spend_restriction,
 )
+from .mana_restriction_model import valid_mana_ability_spend_restriction
 from .rules.attachment_actions import fixed_equip_ability_spec
 from .rules.source_references import (
     SourceReferenceSpec,
@@ -617,7 +617,7 @@ def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:
         raise ValueError("library_search_types are unsupported")
     _validate_dynamic_mana_output(ability)
     if ability.mana_spend_restriction is not None and (
-        not valid_mana_spend_restriction(ability.mana_spend_restriction)
+        not valid_mana_ability_spend_restriction(ability.mana_spend_restriction)
     ):
         raise ValueError("mana_spend_restriction is unsupported")
 

@@ -3,38 +3,6 @@
   "name": "exact-list-interaction-suite",
   "programs": [
     {
-      "key": "234a734b-ba28-4f1b-9d01-3c3e7d516590:spell:front",
-      "label": "An Offer You Can't Refuse",
-      "oracle_id": "234a734b-ba28-4f1b-9d01-3c3e7d516590",
-      "effects": [
-        {"op": "counter_stack", "stack": "$target.0"},
-        {"op": "create_treasure", "controller": "$target.controller.0"},
-        {"op": "create_treasure", "controller": "$target.controller.0"}
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "groups": [
-          {
-            "id": "spell",
-            "zones": ["stack"],
-            "categories": ["spell"],
-            "creature": false,
-            "source_exclusion": true,
-            "count": 1
-          }
-        ]
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "counter", "token_creation"],
-      "tests": ["test_an_offer_empty_stack_and_treasure_resolution"],
-      "provenance": {
-        "source_oracle_hash": "c0bdfd6dc825e93cb90d8b39767a3ac42a96292e18134d508d013af907f0f223",
-        "source_rulings_hash": "e28547ab577f54b0a96fdeceeaeec079a9fd9fa16a5779bbf9b46a71c7d7cc6b",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "74d3277a-38e5-4732-afed-084a56148f20:spell:front",
       "label": "Mana Drain",
       "oracle_id": "74d3277a-38e5-4732-afed-084a56148f20",
@@ -61,43 +29,6 @@
       "provenance": {
         "source_oracle_hash": "89e9be05b9bf509438f52b909acc1c04d8c68bbf1a2b6fe17def84d2ddeacd73",
         "source_rulings_hash": "4750e8abde2ddc652a7d578d46e3536a707974dfed5368f47a8e5f36b0e2c0c4",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "8ddfc283-c9b4-41a5-af88-cf0068e986cc:spell:front",
-      "label": "Swan Song",
-      "oracle_id": "8ddfc283-c9b4-41a5-af88-cf0068e986cc",
-      "effects": [
-        {"op": "counter_stack", "stack": "$target.0"},
-        {
-          "op": "create_token",
-          "controller": "$target.controller.0",
-          "name": "Bird",
-          "characteristics": {
-            "type_line": "Token Creature — Bird",
-            "power": "2",
-            "toughness": "2",
-            "colors": ["U"],
-            "keywords": ["Flying"]
-          }
-        }
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["stack"],
-        "categories": ["spell"],
-        "types_any": ["enchantment", "instant", "sorcery"],
-        "source_exclusion": true,
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "counter", "token_creation"],
-      "tests": ["test_swan_song_target_filter_and_bird"],
-      "provenance": {
-        "source_oracle_hash": "4b60ea4fa89aa23092bce7a6ddc9813d2bf40dd4e8cce63791ac5adb222865bf",
-        "source_rulings_hash": "282539d071bd09f9498ede130f693c68a079a88b69e37b4cab65c367fab39b47",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }
@@ -174,42 +105,6 @@
       }
     },
     {
-      "key": "bb329a5c-b9f9-4973-a53f-090024146325:spell:front",
-      "label": "Red Elemental Blast",
-      "oracle_id": "bb329a5c-b9f9-4973-a53f-090024146325",
-      "effects": [],
-      "destination": "graveyard",
-      "target_schema": {
-        "mode_count": 1,
-        "modes": {
-          "counter": {
-            "zones": ["stack"],
-            "categories": ["spell"],
-            "colors_any": ["U"],
-            "source_exclusion": true,
-            "count": 1,
-            "effects": [{"op": "counter_or_destroy_blue", "target": "$target.0"}]
-          },
-          "destroy": {
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
-            "colors_any": ["U"],
-            "count": 1,
-            "effects": [{"op": "counter_or_destroy_blue", "target": "$target.0"}]
-          }
-        }
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "mode_selection", "target_validation", "counter", "destroy"],
-      "tests": ["test_reb_mode_specific_blue_targets"],
-      "provenance": {
-        "source_oracle_hash": "baca93ae5aa10651b17803aed248264090f0ffbb80b899881b96c68abb294806",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "ecc435e2-deb1-420a-a79f-01dd08747314:spell:front",
       "label": "Pyroblast",
       "oracle_id": "ecc435e2-deb1-420a-a79f-01dd08747314",
@@ -246,139 +141,6 @@
       }
     },
     {
-      "key": "bf1341dd-41a3-49f6-87ec-63170dde4324:ability:ab2",
-      "label": "Boseiju, Who Endures — Channel",
-      "oracle_id": "bf1341dd-41a3-49f6-87ec-63170dde4324",
-      "ability_id": "ability:ab2",
-      "active_zone": "hand",
-      "event": "activate",
-      "effects": [
-        {"op": "destroy", "card": "$target.0"},
-        {
-          "op": "search",
-          "searching_player": "$target.controller.0",
-          "zone": "library",
-          "selector": {"predicate": "land_with_basic_land_type"},
-          "count": {"minimum": 0, "maximum": 1},
-          "destination": "battlefield",
-          "reveal": true,
-          "shuffle_after": true,
-          "optional": true,
-          "instruction": "You may find a land card with a basic land type."
-        }
-      ],
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "controller": "opponent",
-        "predicate": "artifact_or_enchantment_or_nonbasic_land",
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["activated_ability", "target_validation", "destroy", "private_search", "legend_discount"],
-      "tests": ["test_boseiju_target_and_search"],
-      "provenance": {
-        "source_oracle_hash": "80e3f8726a6fcfee87b81d0ed8685deac80263a199a25c05ee3505e70e94196c",
-        "source_rulings_hash": "7f8a0e0608ac777ad766f78d5561f3f3eb3fbb8c52ec61383355ae9f28bf945f",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "e9b6a394-691c-425a-9307-76d8edc7375e:ability:ab2",
-      "label": "Otawara, Soaring City — Channel",
-      "oracle_id": "e9b6a394-691c-425a-9307-76d8edc7375e",
-      "ability_id": "ability:ab2",
-      "active_zone": "hand",
-      "event": "activate",
-      "effects": [{"op": "bounce", "card": "$target.0"}],
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["artifact", "creature", "enchantment", "planeswalker"],
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["activated_ability", "target_validation", "bounce", "legend_discount"],
-      "tests": ["test_otawara_target_filter"],
-      "provenance": {
-        "source_oracle_hash": "f607b7add939569c1d04a6f463c497157d9fca13d7702d873c93029109f632cf",
-        "source_rulings_hash": "29f01855b0b9b48aa09dd85a343c5517e4e72dd93ace516b3c9ea2314f9c25e4",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "ac10d218-f9a6-4058-9cda-a15ca1b0b7b5:spell:front",
-      "label": "Assassin's Trophy",
-      "oracle_id": "ac10d218-f9a6-4058-9cda-a15ca1b0b7b5",
-      "effects": [
-        {"op": "destroy", "card": "$target.0"},
-        {
-          "op": "search",
-          "searching_player": "$target.controller.0",
-          "zone": "library",
-          "selector": {"types": ["land"], "supertypes": ["basic"]},
-          "count": {"minimum": 0, "maximum": 1},
-          "destination": "battlefield",
-          "reveal": true,
-          "shuffle_after": true,
-          "optional": true
-        }
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "controller": "opponent",
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "destroy", "private_search"],
-      "tests": ["test_assassins_trophy_target_and_basic_search"],
-      "provenance": {
-        "source_oracle_hash": "b1860dd781b00616fdfd3d45cdc3778b0b39000bfab2ef6b173c984a720afb90",
-        "source_rulings_hash": "47e35e4dbb86f086553d47277d75621644bfbc516d161c53602b75b13323f90b",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a:spell:front",
-      "label": "Abrade",
-      "oracle_id": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a",
-      "effects": [],
-      "destination": "graveyard",
-      "target_schema": {
-        "mode_count": 1,
-        "modes": {
-          "damage": {
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
-            "creature": true,
-            "count": 1,
-            "effects": [{"op": "damage", "target": "$target.0", "amount": 3}]
-          },
-          "destroy": {
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
-            "artifact": true,
-            "count": 1,
-            "effects": [{"op": "destroy", "card": "$target.0"}]
-          }
-        }
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "mode_selection", "target_validation", "damage", "destroy"],
-      "tests": ["test_abrade_mode_targets_and_resolution"],
-      "provenance": {
-        "source_oracle_hash": "ad1cf89df23f42a639a4bef3e6003cf7270eebc01cfb9742898df13429b01ec1",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8:spell:front",
       "label": "Chaos Warp",
       "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
@@ -398,32 +160,6 @@
       "provenance": {
         "source_oracle_hash": "d3cbf33eeb6f65ae0f1ad69eb19a1a987728e589673535a6162b8226b3b1d213",
         "source_rulings_hash": "458dd7284c71459b4b48fed47492e4e5c65dc248ef67419983f8017482359c06",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "5825997b-10d7-4a36-972c-a80ddd90b8ed:spell:front",
-      "label": "Feed the Swarm",
-      "oracle_id": "5825997b-10d7-4a36-972c-a80ddd90b8ed",
-      "effects": [
-        {"op": "destroy", "card": "$target.0"},
-        {"op": "lose_life", "player": "$controller", "amount": "$target.mana_value.0"}
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["creature", "enchantment"],
-        "controller": "opponent",
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "destroy", "life"],
-      "tests": ["test_feed_the_swarm_target_and_life_loss"],
-      "provenance": {
-        "source_oracle_hash": "0e9611cd2c4262c08d56bfe50d1cd7362f8587938c00004ae47fd954665c0516",
-        "source_rulings_hash": "3e4044ec9aa7810d53f96be2caab9893f85eb59d8442f123cbe6b0d8ccef04ae",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }
@@ -463,72 +199,6 @@
       "provenance": {
         "source_oracle_hash": "f3230d1df4aad5746295ea5c7029c4d0c426d7c76487a0c8a70d14c6ccaf8a82",
         "source_rulings_hash": "e9f7f0bc9c7b79f082adf8293b23aff0b535a576e09dd229338685b55f193170",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "5f627e45-deee-4a4f-8128-57b0d8ebc553:spell:front",
-      "label": "Force of Vigor",
-      "oracle_id": "5f627e45-deee-4a4f-8128-57b0d8ebc553",
-      "effects": [{"op": "destroy_selected", "cards": "$targets"}],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["artifact", "enchantment"],
-        "up_to": 2,
-        "distinct": true
-      },
-      "cost_schema": {
-        "alternate_costs": [
-          {
-            "id": "pitch",
-            "kind": "alternate_exile",
-            "label": "Exile another green card rather than pay mana",
-            "requirements": {},
-            "condition": {"not_your_turn": true},
-            "exile_from_hand": {
-              "colors_any": ["G"],
-              "exclude_source": true,
-              "count": 1
-            }
-          }
-        ]
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "destroy", "alternate_cost"],
-      "tests": ["test_force_of_vigor_zero_one_two_targets_and_pitch"],
-      "provenance": {
-        "source_oracle_hash": "5396ea0f8fdc0e374f947733be4dee32775590ab8313d3efa3cfb6f3480cbdbf",
-        "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "afaef788-34d1-460b-b884-9d7ae6ddeb18:spell:front",
-      "label": "Toxic Deluge",
-      "oracle_id": "afaef788-34d1-460b-b884-9d7ae6ddeb18",
-      "effects": [{
-        "op": "modify_all_matching_permanents_until_end_of_turn",
-        "required_type": "creature",
-        "amount": "$x",
-        "scale": -1,
-        "event_code": "effect.toxic_deluge"
-      }],
-      "destination": "graveyard",
-      "cost_schema": {
-        "additional_costs": [
-          {"id": "life_x", "kind": "life_x", "minimum": 0}
-        ]
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "life_cost", "continuous_effect", "state_based_actions"],
-      "tests": ["test_toxic_deluge_authoritative_x_life_cost"],
-      "provenance": {
-        "source_oracle_hash": "cd099260b7e7c5755a6bc1e829901385c0f97d081cae7ae862567352ec5c336a",
-        "source_rulings_hash": "b232f79b2d92ab565a6c79f7cefd13fc3db8ac7c62ce9fde0e06cdc0ada5d389",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }
@@ -757,36 +427,6 @@
       "provenance": {
         "source_oracle_hash": "af7fa45b4559e63a7274eeec2e10398085abc2cc114a4a9377a4c884af7b723a",
         "source_rulings_hash": "8d3d229ef905e13a98f374c7751203847a98e80180f40b481f74c560747425b5",
-        "authored_by": "interaction-kernel",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "86bf58f2-7f25-4e10-b797-25e0e8e67769:spell:front",
-      "label": "Flusterstorm",
-      "oracle_id": "86bf58f2-7f25-4e10-b797-25e0e8e67769",
-      "effects": [
-        {
-          "op": "counter_unless_pay",
-          "stack": "$target.0",
-          "player": "$target.controller.0",
-          "cost": {"GENERIC": 1}
-        }
-      ],
-      "destination": "graveyard",
-      "target_schema": {
-        "zones": ["stack"],
-        "categories": ["spell"],
-        "types_any": ["instant", "sorcery"],
-        "source_exclusion": true,
-        "count": 1
-      },
-      "trust_level": "trusted",
-      "coverage": ["spell_resolution", "target_validation", "counter", "storm"],
-      "tests": ["test_flusterstorm_storm_and_target_reassignment"],
-      "provenance": {
-        "source_oracle_hash": "46234390c2969f697a3dd9f5fdcaae6502bcfe9ce0150abbf67ede6cf6b21c9e",
-        "source_rulings_hash": "ef4932e259ce8c636f7c79d0763a1fc24c2991c6db7f86fdb9a52ff2a05c1670",
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }

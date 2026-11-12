@@ -312,7 +312,7 @@ def relative_target_reanimation_template(text, *, card_name, event):
     excluded = None
     if event == "attack" and choice == "up to one " and quality == "permanent":
         scope = "optional_permanent"
-    elif event == "end_step" and not choice and quality == "creature":
+    elif event in {"end_step", "attack_with_entry_counters"} and not choice and quality == "creature":
         scope = "mandatory_creature"
     elif event == "dies" and choice == "another " and (quality == "creature" or match["excluded"] is not None):
         scope = "another_creature"

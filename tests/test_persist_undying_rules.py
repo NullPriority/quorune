@@ -199,7 +199,7 @@ class PersistUndyingCompilerTests(unittest.TestCase):
                 self.assertEqual(2, len({node.node_id for node in nodes}))
                 self.assertEqual(2, len({(node.span.start, node.span.end) for node in nodes}))
                 for node in nodes:
-                    self.assertEqual("creature.dies.self", node.event)
+                    self.assertEqual("permanent.graveyard.self", node.event)
                     self.assertEqual(
                         {
                             "field": "death_return_departed_without_counter",
@@ -394,7 +394,7 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
         source.oracle_id = identity
         source.printed_name = record.name
         for program in tuple(engine.semantics.programs_for_oracle(source.oracle_id)):
-            if program.event == "creature.dies.self":
+            if program.event in {"creature.dies.self", "permanent.graveyard.self"}:
                 engine.semantics.remove(program.key)
         programs = [
             program
@@ -430,6 +430,10 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
         engine._stabilize()
 
     def stage_competing_counter_sources(self, engine, *, seat: str):
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (
+            self.db.lookup("Doubling Season"), self.db.lookup("Doc Samson, Super Psychiatrist"),
+        ), capability_registry=self.capabilities)
         return (
             self.add_card(
                 engine,
@@ -446,8 +450,11 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
         )
 
     def test_persist_returns_under_owner_with_replacement_aware_counter(self):
+        from common import register_current_fixture_programs
         session = self.session(7027901)
         engine = session.engine
+        register_current_fixture_programs(self.db, engine.semantics, (self.db.lookup("Doubling Season"),),
+                                          capability_registry=self.capabilities)
         source = self.add_card(
             engine, seat="A", name="Protean Hulk", ref="persist-source"
         )

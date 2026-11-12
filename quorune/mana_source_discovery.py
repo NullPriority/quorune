@@ -15,7 +15,7 @@ from .mana_ability_runtime import (
     typed_mana_modes_for_abilities,
 )
 from .rules.activation.conditions import activation_condition_status
-from .mana_restrictions import valid_mana_spend_restriction
+from .mana_restriction_model import valid_produced_mana_spend_restriction
 from .triggered_mana import fixed_mana_providers, modes_with_triggered_mana
 
 
@@ -64,7 +64,7 @@ def _unrestricted_when_payable(
             continue
         if host._mana_restriction_allows(restriction, spend_context):
             result.append(replace(mode, conditional=False))
-        elif mode.triggered_mana and valid_mana_spend_restriction(restriction):
+        elif mode.triggered_mana and valid_produced_mana_spend_restriction(restriction):
             result.append(replace(mode, conditional=False, base_fundable=False))
         elif any(host._mana_restriction_allows(restriction, context) for context in intermediate_contexts):
             result.append(replace(mode, conditional=True, intermediate_only=True))

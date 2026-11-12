@@ -40,7 +40,11 @@ class QualifiedQuantityCompilerTests(unittest.TestCase):
         for phrase,scope in (('other creature you control with flying','controller_zone'),('other creature with flying you control','controller_zone'),('other creature on the battlefield with flying','all_zones'),('creature your opponents control without flying','opponent_zones')):
             q=query_characteristic_quantity(phrase,source_name='Source');self.assertIsNotNone(q,phrase);self.assertEqual(6,q.schema_version);self.assertEqual(scope,q.scope.value)
             self.assertEqual(phrase.startswith('other '),q.exclude_source)
-        for phrase in ('creature in your hand with flying','creature you control with an unrepresented ability','creature you control named Fixed Name','face-down creature on the battlefield'):
+        named = query_characteristic_quantity('creature you control named Fixed Name', source_name='Source')
+        self.assertEqual('Fixed Name', named.literal_name)
+        self.assertEqual('controller_zone', named.scope.value)
+        self.assertEqual(7, named.schema_version)
+        for phrase in ('creature in your hand with flying','creature you control with an unrepresented ability','creature you control with the chosen name','face-down creature on the battlefield'):
             self.assertIsNone(query_characteristic_quantity(phrase,source_name='Source'))
 
     def test_layer_boundary_uses_current_keywords_and_phased_out_exclusion(self):

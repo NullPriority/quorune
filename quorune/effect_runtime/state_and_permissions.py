@@ -11,6 +11,7 @@ from ..permanent_designations import (
     PermanentDesignationError,
     advance_class_level,
 )
+from ..semantic_runtime.combat_metadata import active_goading_players
 from ..trigger_processing import schedule_delayed_trigger
 from .player_speed import apply_speed_increase
 
@@ -109,15 +110,7 @@ def _apply_goad(
             importance=1,
         )
         return card.ref
-    existing = next(
-        (
-            designation
-            for designation in host._active_goad_designations(card)
-            if designation.player == actor
-        ),
-        None,
-    )
-    if existing is not None:
+    if actor in active_goading_players(host, card):
         host._log(
             actor,
             "permanent.goad.redundant",
@@ -165,6 +158,10 @@ def _apply_next_spell_improvise_or_next_spell_uncounterable(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.next_cast_counter_protection import is_versioned_next_cast_protection
+
+    if is_versioned_next_cast_protection(effect):
+        return _apply_next_cast_protection(host, effect, actor=actor, reason=reason)
     op = operation
     seat = str(effect.get("player") or actor)
     host.state.players[seat].stats[op] = True
@@ -185,6 +182,55 @@ def _apply_next_spell_improvise_or_next_spell_uncounterable(
     )
     return True
 
+
+def _apply_next_cast_protection(host, effect, *, actor, reason):
+    from ..rules.next_cast_counter_protection import grant_next_cast_protection, next_cast_protection_effect_scope
+
+    if actor not in host.active_seats:
+        raise GameRuleError("Next-cast protection requires the active ability controller")
+    try:
+        scope = next_cast_protection_effect_scope({key: value for key, value in effect.items()
+            if key not in {"reason", "_runtime_source"}}, actor=actor)
+        grant_next_cast_protection(host.state.players[actor].stats, host.state.turn_sequence, scope)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(actor, "effect.next_cast_counter_protection", f"{actor} gains next-spell counter protection.",
+        {"player": actor, "scope": scope.value, "reason": reason}, importance=1, changed_players=[actor])
+    return True
+
+
+def _apply_next_spell_payment(host, effect, *, actor, operation, reason):
+    from ..rules.next_spell_payment import grant_next_spell_payment, next_spell_payment_kind
+
+    if actor not in host.active_seats:
+        raise GameRuleError("Next spell payment requires the active ability controller")
+    try:
+        kind = next_spell_payment_kind({key: value for key, value in effect.items()
+                                        if key not in {"reason", "_runtime_source"}}, actor=actor)
+        grant_next_spell_payment(host.state.players[actor].stats, host.state.turn_sequence, kind)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(actor, "effect.next_spell_payment", f"{actor}'s next spell has {kind}.",
+              {"player": actor, "payment": kind, "reason": reason}, importance=1, changed_players=[actor])
+    return True
+
+
+
+def _apply_cast_cascade_grant(host, effect, *, actor, operation, reason):
+    from ..rules.cast_cascade_grants import cast_cascade_effect_scopes, grant_cast_cascade
+
+    if actor not in host.active_seats:
+        raise GameRuleError("Temporary Cascade requires the active ability controller")
+    try:
+        scopes = cast_cascade_effect_scopes({key: value for key, value in effect.items()
+                                            if key not in {"reason", "_runtime_source"}}, actor=actor)
+        grant_cast_cascade(host.state.players[actor].stats, host.state.turn_sequence, scopes)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(actor, "effect.cast_cascade_grant", f"{actor} gains a temporary Cascade grant.",
+              {"player": actor, "scopes": [scope.value for scope in scopes], "reason": reason},
+              importance=1, changed_players=[actor])
+    return True
 
 
 def _apply_veil_of_summer(
@@ -460,6 +506,8 @@ HANDLERS = {
     'gain_class_level': _apply_gain_class_level,
     'grant_uncounterable_hexproof_from_colors_until_end': _apply_grant_uncounterable_hexproof_from_colors_until_end,
     'mana': _apply_mana,
+    'grant_next_spell_payment': _apply_next_spell_payment,
+    'grant_cast_cascade': _apply_cast_cascade_grant,
     'next_spell_improvise': _apply_next_spell_improvise_or_next_spell_uncounterable,
     'next_spell_uncounterable': _apply_next_spell_improvise_or_next_spell_uncounterable,
     'veil_of_summer': _apply_veil_of_summer,

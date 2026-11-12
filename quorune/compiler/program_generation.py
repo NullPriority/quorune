@@ -10,6 +10,8 @@ from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_nod
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 from ..rules.source_keyword_choice_shapes import is_closed_source_keyword_choice_program
 from ..rules.source_protection_choice_shapes import is_closed_source_protection_program
+from ..rules.event_spell_copy import is_closed_next_cast_copy_program
+from ..rules.temporary_cast_timing import is_closed_temporary_cast_timing_program
 
 from collections import Counter
 from dataclasses import asdict
@@ -1217,6 +1219,7 @@ def _is_closed_graveyard_copy_cast_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     from ..preparation import is_closed_activated_preparation_program
+    from ..rules.stack_counter_followup import is_closed_stack_counter_followup_program
     from ..rules.target_player_sequences import is_closed_target_player_sequence_program
     from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
     from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
@@ -1231,6 +1234,7 @@ def _closed_effect_recognizers():
     from ..rules.any_number_target_shapes import is_closed_any_number_target_program
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
+    from ..rules.next_cast_counter_protection import is_closed_next_cast_protection_program
     return (
         is_closed_activated_preparation_program,
         is_closed_target_player_sequence_program,
@@ -1248,6 +1252,9 @@ def _closed_effect_recognizers():
         _is_closed_graveyard_copy_cast_program,
         closed_fused_program,
         is_closed_library_search_prohibition_program,
+        is_closed_next_cast_protection_program,
+        is_closed_next_cast_copy_program,
+        is_closed_temporary_cast_timing_program,
         is_closed_announced_target_set_program,
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
@@ -1260,6 +1267,7 @@ def _closed_effect_recognizers():
         is_closed_fixed_modal_program,
         is_closed_fixed_effect_payment_program,
         is_closed_stack_controller_payment_program,
+        is_closed_stack_counter_followup_program,
         _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
@@ -1347,6 +1355,15 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
     from .nonleaf_effect_closure import effect_program_is_closed
+    from ..rules.attachment_action_capability_shapes import (
+        is_closed_fixed_source_equipment_activation_program, is_closed_targeted_equipment_attachment_program,
+    )
+    from ..rules.cast_cascade_grants import is_closed_cast_cascade_program
+    from ..rules.next_spell_payment import is_closed_next_spell_payment_program
+    if (is_closed_next_spell_payment_program(program) or is_closed_cast_cascade_program(program)
+            or is_closed_fixed_source_equipment_activation_program(program)
+            or is_closed_targeted_equipment_attachment_program(program)):
+        return True
     return effect_program_is_closed(program,recognizers=_closed_effect_recognizers(),
         recursive_is_closed=_is_closed_effect_program,composed_is_closed=is_closed_composed_spell_effect_program)
 

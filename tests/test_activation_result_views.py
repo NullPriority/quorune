@@ -57,6 +57,96 @@ class ActivationResultViewTests(unittest.TestCase):
         cls.db.close()
         cls.temp.cleanup()
 
+    def test_promoted_targeted_land_catalogs_pay_before_their_result(self):
+        cases = (
+            ("Minamo, School at Water's Edge", {"U": 1}, "untap"),
+            ("Academy Ruins", {"C": 1, "U": 1}, "library"),
+            ("Buried Ruin", {"C": 2}, "hand"),
+            ("Otawara, Soaring City", {"C": 2, "U": 1}, "channel"),
+        )
+        for index, (name, mana, result_kind) in enumerate(cases):
+            with self.subTest(card=name):
+                session = self.session(602_400_962 + index)
+                engine = session.engine
+                source = self.add(engine, name, zone="hand" if result_kind == "channel" else "battlefield")
+                if result_kind in ("library", "hand"):
+                    target = self.add(engine, "Sol Ring", zone="graveyard", ref="catalog-owned-grave-target")
+                    wrong = self.add(engine, "Sol Ring", seat="B", zone="graveyard", ref="catalog-other-grave-target")
+                elif result_kind == "untap":
+                    target = self.add(engine, "Isamaru, Hound of Konda", seat="B", ref="catalog-legend-target")
+                    engine.change_control(target.object_id, "C")
+                    target.tapped = True
+                    wrong = self.add(engine, "Generic Bound Body", seat="C", ref="catalog-nonlegend-target")
+                else:
+                    target = self.add(engine, "Generic Bound Body", seat="B", ref="catalog-return-target")
+                    engine.change_control(target.object_id, "C")
+                    wrong = self.add(engine, "Generic Bound Plains", seat="C", ref="catalog-land-target")
+                    self.add(engine, "Isamaru, Hound of Konda", ref="catalog-discount-legend")
+                self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+                self.prepare(session, mana=mana)
+                self.checkpoint(session)
+                rows = self.actions(session)
+                offer, = (row for row in rows if row["id"] == f"activate:{source.ref}:ab2")
+                command = {"action_id": offer["id"], "targets": [wrong.ref], "pay": "auto"}
+                self.reject(session, command)
+                command["targets"] = [target.ref]
+                self.reject(session, command, seat="D")
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertTrue(session.state.stack)
+                for color in mana:
+                    self.assertEqual(0, session.state.players["A"].mana_pool.get(color, 0))
+                expected_source_zone = "graveyard" if result_kind in ("hand", "channel") else "battlefield"
+                self.assertEqual(expected_source_zone, session.state.cards[source.object_id].zone)
+                if result_kind == "untap":
+                    self.assertTrue(session.state.cards[target.object_id].tapped)
+                elif result_kind in ("hand", "library"):
+                    self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[target.object_id]
+                if result_kind == "untap":
+                    self.assertFalse(current.tapped)
+                    self.assertEqual(("B", "C"), (current.owner, current.controller))
+                elif result_kind == "library":
+                    self.assertEqual("library", current.zone)
+                    self.assertEqual(target.object_id, session.state.players["A"].zones["library"][-1])
+                elif result_kind == "hand":
+                    self.assertIn(target.object_id, session.state.players["A"].zones["hand"])
+                else:
+                    self.assertIn(target.object_id, session.state.players["B"].zones["hand"])
+                    self.assertNotIn(target.object_id, session.state.players["A"].zones["hand"])
+                self.replay(session)
+
+    def test_promoted_triome_cycling_discards_before_private_draw(self):
+        for index, name in enumerate(("Xander's Lounge", "Zagoth Triome")):
+            with self.subTest(card=name):
+                session = self.session(702_290_962 + index)
+                source = self.add(session.engine, name, zone="hand")
+                self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+                self.prepare(session, mana={"C": 3})
+                self.checkpoint(session)
+                before = set(session.state.players["A"].zones["hand"])
+                offer, = (row for row in self.actions(session) if row["id"].startswith("activate:" + source.ref + ":"))
+                command = {"action_id": offer["id"], "pay": "auto"}
+                self.reject(session, command, seat="B")
+                accepted = session.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                self.assertEqual(before - {source.object_id}, set(session.state.players["A"].zones["hand"]))
+                self.assertTrue(session.state.stack)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                drawn = set(session.state.players["A"].zones["hand"]) - (before - {source.object_id})
+                self.assertEqual(1, len(drawn))
+                card = session.state.cards[next(iter(drawn))]
+                for observer in "BCD":
+                    self.assertNotIn(card.ref, json.dumps(session.packet("pilot:" + observer, full=True)))
+                self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+                self.assertFalse(any(row["id"].startswith("activate:" + source.ref + ":") for row in self.actions(session)))
+                self.reject(session, command)
+                self.replay(session)
+
     def test_four_originals_bind_complete_results_and_preserve_all_prices(self):
         from quorune.card_programs.activation_view_equivalence import shadowed_reviewed_activation_view_keys as shadow
         counts = dict(zip(NAMES, (1, 1, 1, 2)))
@@ -138,6 +228,75 @@ class ActivationResultViewTests(unittest.TestCase):
         with patch('quorune.card_programs.activation_target_equivalence._optional_tapped_creature_target', return_value=None):
             with self.assertRaises(AssertionError):
                 getattr(type(self)(method), method)()
+
+    def test_nonland_type_view_requires_equivalent_target_price_and_duration(self):
+        from quorune.card_programs.activation_view_equivalence import shadowed_reviewed_activation_view_keys as shadow
+
+        _s, _source, record, current, old = self.views("Liquimetal Torque", 859211)
+        reviewed = next(program for program in old if program.ability_id == "ability:ab2")
+        generated = next(program for program in current if program.key == reviewed.key)
+        self.assertIs(reviewed.target_schema["land"], False)
+        self.assertEqual(["land"], generated.target_schema["types_none"])
+        before = json.dumps([generated.to_dict(), reviewed.to_dict()], sort_keys=True)
+
+        def compare(new=generated, legacy=reviewed):
+            return shadow(record, (new,), (legacy,), capability_registry=self.registry,
+                          capability_profile="commander_review")
+
+        self.assertEqual({reviewed.key}, compare())
+        for field, value in (("land", True), ("land", 0), ("count", True), ("future", True)):
+            changed = {**reviewed.target_schema, field: value}
+            handlers = deepcopy(reviewed.handlers)
+            handlers[0]["ability"]["target_schema"] = changed
+            self.assertFalse(compare(legacy=replace(reviewed, target_schema=changed, handlers=handlers)))
+        effect = generated.effects[0]
+        for field, value in (("duration", "zone_object"), ("power", 1), ("card_type", "Enchantment")):
+            changed = {**effect, "characteristics": {**effect["characteristics"], field: value}}
+            self.assertFalse(compare(new=replace(generated, effects=[changed])))
+        self.assertFalse(compare(legacy=replace(reviewed, cost_schema={"tap_source": False})))
+        self.assertEqual(before, json.dumps([generated.to_dict(), reviewed.to_dict()], sort_keys=True))
+
+    def test_original_torque_binds_native_nonland_targets_and_revalidates_departure(self):
+        from quorune.resolution_characteristic_model import TARGET_CARD_TYPE_ADDITION_VERSION
+
+        for departed in (False, True):
+            with self.subTest(departed=departed):
+                s = self.session(859220 + departed)
+                source = self.add(s.engine, "Liquimetal Torque", ref="torque")
+                target = self.add(s.engine, "Grizzly Bears", seat="B", ref="torque-nonland")
+                land_creature = self.add(s.engine, "Grizzly Bears", seat="C", ref="torque-effective-land")
+                self.add(s.engine, "Ashaya, Soul of the Wild", seat="C", ref="torque-land-source")
+                self.assertTrue(self.binding(s, source)["strict_capability_ready"])
+                if departed:
+                    bounce = self.add(s.engine, "Unsummon", seat="B", zone="hand", ref="torque-bounce")
+                    s.state.players["B"].mana_pool["U"] = 1
+                self.prepare(s)
+                self.checkpoint(s)
+                row = next(row for row in self.actions(s, "A") if row["id"] == f"activate:{source.ref}:ab2")
+                command = {"action_id": row["id"], "targets": [target.ref]}
+                self.assertIn(target.ref, row["target_schema"]["legal_refs"])
+                self.assertNotIn(land_creature.ref, row["target_schema"]["legal_refs"])
+                self.reject(s, {**command, "targets": [land_creature.ref]}, seat="A")
+                self.reject(s, command, seat="D")
+                result = s.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertTrue(s.state.cards[source.object_id].tapped)
+                program = s.engine.semantics.get(s.state.stack[-1].semantic_key)
+                self.assertEqual(TARGET_CARD_TYPE_ADDITION_VERSION, program.effects[0]["schema_version"])
+                self.assertTrue(program.provenance["authored_by"].startswith("oracle-ir-v"))
+                if departed:
+                    self.priority(s, "B")
+                    reply = next(row for row in self.actions(s, "B") if row["id"] == f"cast:{bounce.ref}")
+                    result = s.act("pilot:B", {"action_id": reply["id"], "targets": [target.ref], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                s = self.resume(s)
+                self.assertIsNone(self.resolve(s))
+                card = s.state.cards[target.object_id]
+                types, subtypes, _ = s.engine._type_parts(s.engine._effective_card_data(card)["type_line"])
+                self.assertEqual("hand" if departed else "battlefield", card.zone)
+                self.assertEqual({"creature"} if departed else {"artifact", "creature"}, types)
+                self.assertEqual({"bear"}, subtypes)
+                self.replay(s, load=True)
 
     def test_real_paid_transmuter_can_return_and_put_back_its_own_new_incarnation(self):
         s = self.session(859100)

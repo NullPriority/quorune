@@ -338,7 +338,7 @@ def _keyword_intervening_condition_actual(
 
 def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
-    from .attack_batch_model import ATTACK_BATCH_CONDITION
+    from .attack_batch_model import ATTACK_BATCH_CONDITION, DECLARED_ATTACK_POWER_FIELD
     from .block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
     from .rules.attacked_player_life import ATTACKED_PLAYER_LIFE_FIELD, attacked_player_life_holds
     from .spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_FIELD
@@ -354,6 +354,12 @@ def _extended_action_condition_actual(host,condition,*,source,context):
         if field==ATTACK_BATCH_CONDITION:
             from .rules.attack_batches import qualified_attack_match_count
             return True,qualified_attack_match_count(source,condition,context)
+        if field == DECLARED_ATTACK_POWER_FIELD:
+            from .rules.attack_batches import declared_attack_power_total
+            return True, declared_attack_power_total(
+                context, source_object_id=source.object_id,
+                source_logical_object_id=source.logical_object_id, controller=source.controller,
+            )
     except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     return False,None
 
@@ -1072,7 +1078,8 @@ def _semantic_trigger_context(
     stack_context.update(printed_backup_source_context(source,program))
     from .rules.trigger_limits import event_source_usage_context
     stack_context.update(event_source_usage_context(source,program,host.state.turn_sequence))
-    if 'source_entry_cast_intervening' in program.coverage:
+    from .attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
+    if 'source_entry_cast_intervening' in program.coverage or DECLARED_ATTACK_POWER_COVERAGE in program.coverage:
         stack_context['source_logical_object_id']=source.logical_object_id
     from .connive import connive_trigger_departure_context
     stack_context.update(connive_trigger_departure_context(host, source, program))
@@ -1372,6 +1379,8 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
         host, source=source, program=program, event=event, context=context,
         active_zone=active_zone, source_characteristics=characteristics,
     )
+    from .rules.event_counter_threshold import initial_event_counter_threshold
+    stack_context.update(initial_event_counter_threshold(program.effects))
     from .drawing.miracle_triggers import miracle_trigger_context
     from .reflexive_trigger_model import bound_reflexive_has_targets
     from .relative_power_target import bind_relative_mana_value_trigger_schema
@@ -1402,6 +1411,18 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
     )
 
 
+def _source_may_observe_event(source, event, programs):
+    """Reject only sources with neither a subscription nor a shared keyword path."""
+    if (event == 'spell.cast' or source.annotations.get('evoked') is True
+            or source.annotations.get('fixed_blitz_designation') is not None):
+        return True
+    return any(
+        program.trust_level == 'unresolved' or program.event_condition is not None
+        or not isinstance(program.event, str) or program.event.removesuffix('.self') == event
+        for program in programs
+    )
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1422,6 +1443,8 @@ def dispatch_semantic_event(
     for source in candidates:
         active_zone, characteristics, programs = _event_programs_for_source(
             host,source,event,source_zones=source_zones,source_characteristics=source_characteristics)
+        if not _source_may_observe_event(source, event, programs):
+            continue
         from .rules.trigger_participation_runtime import typed_trigger_participations
         _extra,prevented=typed_trigger_participations(host,source=source,controller=source.controller,event=event,context=context,
             sources=participation_sources,source_characteristics=source_characteristics,

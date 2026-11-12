@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
+from ..face_up_effect_model import TURN_FACE_UP_EVENT
 from ..transform_timestamp_model import TRANSFORM_EVENT
 from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
@@ -12,6 +13,30 @@ EVENT_COUNTER_MECHANIC='fixed-entry-event-object-counter'
 PUBLIC_SOURCE_COUNTER_CAPABILITY='counter.producer.fixed_public_source_event'
 PUBLIC_SOURCE_COUNTER_MECHANIC='fixed-public-event-source-counter'
 PUBLIC_TARGET_COUNTER_MECHANIC='fixed-public-event-target-counter'
+
+
+def event_counter_threshold_result(binding, body, *, effect_template, card_name):
+    if binding.variant != "enchanted_creature_attacks" or binding.event_condition != {
+        "field": "source_attachment_target_ref", "op": "eq", "value": "$context.card",
+    }:
+        return None
+    match = re.fullmatch(
+        r"(?P<place>Put a \+1/\+1 counter on it\.) Then if it has "
+        r"(?P<minimum>two|three|four|five) or more \+1/\+1 counters on it, sacrifice this Aura\.",
+        body, re.I,
+    )
+    if match is None:
+        return None
+    placement = entry_event_counter_result(binding, match["place"], effect_template=effect_template, card_name=card_name)
+    if placement is None:
+        return None
+    from ..rules.event_counter_threshold import EVENT_COUNTER_THRESHOLD_MECHANIC, event_counter_threshold_instruction
+
+    compiled, current = placement
+    minimum = {"two": 2, "three": 3, "four": 4, "five": 5}[match["minimum"].casefold()]
+    return ("fixed-attached-attack-counter-threshold-v1",
+            (*compiled[1], event_counter_threshold_instruction(minimum)), None,
+            (*compiled[3], EVENT_COUNTER_THRESHOLD_MECHANIC)), current
 
 
 def public_event_counter_set_result(binding,body,*,effect_template,card_name,accepted_variants=()):
@@ -83,7 +108,10 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     )
     tap=binding.event.value in {'permanent.tap','permanent.untap'} and binding.variant in {'public_tap_state_transition','source_public_tap_state_transition'}
     transform = binding.event.value == TRANSFORM_EVENT and binding.variant == "controlled_permanent_transforms_into"
-    if not (entry or action or tap or transform):return None
+    turn_up = binding.event.value == TURN_FACE_UP_EVENT and binding.variant in {
+        "controller_turns_up_permanent", "controlled_permanent_turned_face_up",
+    }
+    if not (entry or action or tap or transform or turn_up):return None
     if binding.variant.startswith('one_or_more') or binding.variant in {'aggregated_zone_event','independent_dual_event'}:return None
     operation = r'Put .+? counters? on'
     if binding.variant in ATTACHED_CREATURE_ATTACK_VARIANTS:

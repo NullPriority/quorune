@@ -1,4 +1,4 @@
-"""CR 601.2h/608.2h/707.10: results read the creature actually paid."""
+"""CR 601.2h/608.2h/707.10: results read the permanent actually paid."""
 
 from dataclasses import replace
 import json
@@ -15,16 +15,138 @@ from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.declared_cast_cost_model import declared_cost_copy_fields
 from quorune.oracle_ir import compile_oracle_card
+from quorune.paid_sacrifice_conditions import (
+    PAID_SACRIFICE_CHARACTERISTICS_CONTEXT, PAID_SACRIFICE_CONDITION_CAPABILITY,
+    PaidSacrificeCharacteristicCondition, PaidSacrificeCharacteristics,
+)
 from quorune.query_effect_amount_model import PublicQueryAmountError
 from quorune.record import authoritative_state_hash
+from quorune.resolution_characteristic_model import (
+    TARGET_CARD_TYPE_ADDITION_CAPABILITY, FixedResolutionCardTypeAdditionSpec,
+    fixed_resolution_characteristic_instruction,
+)
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.scalar_effect_amount_model import (
+    PAID_SACRIFICE_MANA_VALUE_CAPABILITY, PAID_SACRIFICE_MANA_VALUE_CONTEXT,
+    PAID_SACRIFICE_MANA_VALUE_MECHANIC, PaidSacrificeManaValueSnapshot,
     PAID_SACRIFICE_STAT_CAPABILITY, PAID_SACRIFICE_STAT_CONTEXT,
     PaidCreatureStatSnapshot, ScalarAmountOrigin, ScalarEffectAmountSpec,
 )
-from quorune.scalar_effect_amounts import resolve_scalar_effect_amount
+from quorune.scalar_effect_amounts import resolve_paid_sacrifice_condition, resolve_scalar_effect_amount
 from scripts.build_test_database import build_fixture_database
 from test_bound_effect_programs import record
+
+
+class PaidSacrificeCharacteristicTests(unittest.TestCase):
+    def test_paid_characteristic_requires_original_fixed_price_and_exact_branches(self):
+        from quorune.rules.resolution_condition_shapes import bound_resolution_condition_runtime_dependencies
+
+        price = "As an additional cost to cast this spell, sacrifice a creature.\n"
+        body = "Draw two cards. If the sacrificed creature was legendary, draw three cards instead."
+        registry = load_default_capability_registry()
+
+        def compile_source(text, capabilities=registry):
+            return compile_oracle_card(record(text), capability_registry=capabilities, capability_profile="commander_review")
+
+        ir = compile_source(price + body)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        effect, = node.effects
+        self.assertEqual(price + body, node.text)
+        self.assertEqual(PaidSacrificeCharacteristicCondition("creature", "legendary").reference(), effect["cast_fact"])
+        self.assertEqual((3, 2), (effect["effects"][0]["count"], effect["otherwise_effects"][0]["count"]))
+        self.assertIn(PAID_SACRIFICE_CONDITION_CAPABILITY, node.capability_dependencies)
+        valid = SimpleNamespace(effects=node.effects, target_schema=node.target_schema, cost_schema=node.cost, coverage=node.mechanics)
+        self.assertIn(PAID_SACRIFICE_CONDITION_CAPABILITY, bound_resolution_condition_runtime_dependencies(valid))
+        for cost, effects in ((None, node.effects), (node.cost, ({**effect, "cast_fact": True},))):
+            forged = SimpleNamespace(**{**vars(valid), "cost_schema": cost, "effects": effects})
+            with self.assertRaises(ValueError):
+                bound_resolution_condition_runtime_dependencies(forged)
+
+        for unsupported in (body, price.replace("a creature", "an artifact") + body,
+                            price + body.replace("legendary", "mystical"),
+                            price + body.replace("draw three cards instead", "exile target artifact instead")):
+            with self.subTest(text=unsupported):
+                self.assertNotEqual("exact", compile_source(unsupported).status)
+
+        payload = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf8"))
+        capability = next(row for row in payload["capabilities"] if row["id"] == PAID_SACRIFICE_CONDITION_CAPABILITY)
+        capability.update(status="blocked", blockers=["withdrawn paid characteristic authority"])
+        withdrawn = CapabilityRegistry(payload)
+        withdrawn.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual("exact", compile_source(price + body, withdrawn).status)
+
+    def test_paid_characteristic_receipt_checks_original_incarnation(self):
+        context_key = PAID_SACRIFICE_CHARACTERISTICS_CONTEXT
+        receipt = PaidSacrificeCharacteristics("paid@1", ("artifact",), ("vehicle",), ("legendary",)).to_dict()
+        item = SimpleNamespace(kind="spell", context={
+            context_key: receipt, "fixed_cast_lifecycle_cost_objects": [{"logical_object_id": "paid@1"}],
+        })
+        reference = PaidSacrificeCharacteristicCondition("permanent", "legendary").reference()
+
+        def witness():
+            self.assertTrue(resolve_paid_sacrifice_condition(reference, item))
+
+        witness()
+        with patch("quorune.paid_sacrifice_conditions.paid_sacrifice_trait_field", return_value="types"):
+            with self.assertRaises(AssertionError):
+                witness()
+        self.assertTrue(resolve_paid_sacrifice_condition(
+            PaidSacrificeCharacteristicCondition("permanent", "vehicle").reference(), item))
+        self.assertFalse(resolve_paid_sacrifice_condition(
+            PaidSacrificeCharacteristicCondition("permanent", "creature").reference(), item))
+        copied = SimpleNamespace(kind="spell_copy", context=declared_cost_copy_fields(item.context))
+        self.assertTrue(resolve_paid_sacrifice_condition(reference, copied))
+        for malformed in (None, {**receipt, "logical_object_id": "paid@2"},
+                          {**receipt, "types": ["Artifact"]}, {**receipt, "subtypes": ["vehicle", "vehicle"]}):
+            item.context[context_key] = malformed
+            with self.assertRaises(ValueError):
+                resolve_paid_sacrifice_condition(reference, item)
+
+    def test_target_card_type_addition_keeps_other_layers_and_exact_duration(self):
+        from quorune.rules.resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+
+        examples = (
+            ("Target land becomes an artifact in addition to its other types until end of turn.", "until_end_of_turn", ("4",)),
+            ("Target creature becomes an artifact in addition to its other types.", "zone_object", ("4",)),
+            ("Until end of turn, target nonartifact creature gets +1/+0 and becomes an artifact in addition to its other types.",
+             "until_end_of_turn", ("4", "7c")),
+        )
+        registry = load_default_capability_registry()
+        for text, duration, sublayers in examples:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(record(text), capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                effect, = node.effects
+                spec, ref = fixed_resolution_characteristic_instruction(effect)
+                self.assertEqual(("$target.0", "Artifact", duration), (ref, spec.card_type, spec.duration.value))
+
+                def witness():
+                    layers = spec.layer_operations()
+                    self.assertEqual(sublayers, tuple(layer[1] for layer in layers))
+                    self.assertEqual("add_types", layers[0][2][0].op)
+
+                witness()
+                with patch.object(FixedResolutionCardTypeAdditionSpec, "layer_operations", return_value=()):
+                    with self.assertRaises(AssertionError):
+                        witness()
+                self.assertIn(TARGET_CARD_TYPE_ADDITION_CAPABILITY, node.capability_dependencies)
+                forged = {**effect, "characteristics": {**effect["characteristics"], "duration": "while_source_present"}}
+                self.assertEqual((), fixed_resolution_characteristic_capabilities(
+                    effects=(forged,), target_schema=node.target_schema, mechanic_ids=node.mechanics,
+                ))
+                self.assertEqual((), fixed_resolution_characteristic_capabilities(
+                    effects=(effect,), target_schema=None, mechanic_ids=node.mechanics,
+                ))
+        open_ended = "Target land becomes an artifact in addition to its other types until your next turn."
+        self.assertNotEqual("exact", compile_oracle_card(record(open_ended), capability_registry=registry).status)
+        payload = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf8"))
+        capability = next(row for row in payload["capabilities"] if row["id"] == TARGET_CARD_TYPE_ADDITION_CAPABILITY)
+        capability.update(status="blocked", blockers=["withdrawn card type addition authority"])
+        withdrawn = CapabilityRegistry(payload)
+        withdrawn.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual("exact", compile_oracle_card(record(examples[0][0]), capability_registry=withdrawn).status)
 
 
 class PaidSacrificeCreatureStatTests(unittest.TestCase):
@@ -80,6 +202,66 @@ class PaidSacrificeCreatureStatTests(unittest.TestCase):
                 resolve_scalar_effect_amount(None, power, item)
 
 
+class PaidSacrificeManaValueTests(unittest.TestCase):
+    def test_paid_mana_value_requires_the_matching_price_and_trusted_authority(self):
+        price = 'As an additional cost to cast this spell, sacrifice an artifact.\n'
+        result = "Draw cards equal to the sacrificed artifact's mana value."
+        registry = load_default_capability_registry()
+
+        def compile_source(text, capabilities=registry):
+            return compile_oracle_card(
+                record(text), capability_registry=capabilities, capability_profile='commander_review',
+            )
+
+        ir = compile_source(price + result)
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(price + result, node.text)
+        self.assertIn(PAID_SACRIFICE_MANA_VALUE_CAPABILITY, node.capability_dependencies)
+        spec = ScalarEffectAmountSpec.from_dict(node.effects[0]['count'])
+        self.assertEqual((ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE, 'mana_value', 12),
+                         (spec.origin, spec.characteristic, spec.schema_version))
+        for text in (
+            result,
+            price.replace('an artifact', 'a creature') + result,
+            price.replace('an artifact', 'an artifact or creature') + result,
+            price + "You gain life equal to the sacrificed artifact's mana value. Draw X cards.",
+            price + "Add X mana of any one color, where X is the sacrificed artifact's mana value.",
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual('exact', compile_source(text).status)
+
+        payload = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf8'))
+        cap = next(row for row in payload['capabilities'] if row['id'] == PAID_SACRIFICE_MANA_VALUE_CAPABILITY)
+        cap.update(status='blocked', blockers=['withdrawn paid mana value authority'])
+        withdrawn = CapabilityRegistry(payload)
+        withdrawn.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual('exact', compile_source(price + result, withdrawn).status)
+
+    def test_paid_mana_value_receipt_rejects_wrong_incarnation_and_kills_zero_mutant(self):
+        snapshot = PaidSacrificeManaValueSnapshot('object@1', 4).to_dict()
+        item = SimpleNamespace(kind='spell', controller='A', context={
+            PAID_SACRIFICE_MANA_VALUE_CONTEXT: snapshot,
+            'fixed_cast_lifecycle_cost_objects': [{'logical_object_id': 'object@1'}],
+        })
+        value = ScalarEffectAmountSpec(
+            ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE, characteristic='mana_value', schema_version=12,
+        ).to_dict()
+
+        def witness():
+            self.assertEqual(4, resolve_scalar_effect_amount(None, value, item))
+
+        witness()
+        with patch('quorune.scalar_effect_amounts._paid_sacrifice_mana_value', return_value=0):
+            with self.assertRaises(AssertionError):
+                witness()
+        for malformed in (None, {**snapshot, 'mana_value': True}, {**snapshot, 'mana_value': -1},
+                          {**snapshot, 'logical_object_id': 'object@2'}):
+            item.context[PAID_SACRIFICE_MANA_VALUE_CONTEXT] = malformed
+            with self.assertRaises(PublicQueryAmountError):
+                resolve_scalar_effect_amount(None, value, item)
+
+
 class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -88,6 +270,7 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
         build_fixture_database([
             ROOT / 'tests/fixtures/bound-effect-program-cards.json',
             ROOT / 'tests/fixtures/paid-sacrifice-creature-stat-cards.json',
+            ROOT / 'tests/fixtures/paid-sacrifice-mana-value-cards.json',
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -96,10 +279,10 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
             DeckEntry('Generic Bound Plains', 25),
         ], ['Generic Bound Commander'])
 
-    def cast_with_creature_price(self, session, spell, creature, targets=(), invalid_price=None):
+    def cast_with_sacrifice(self, session, spell, permanent, targets=(), invalid_price=None):
         self.priority(session, 'A')
         action = self.action(session, 'A', spell)
-        command = {'action_id': action['id'], 'sacrifice_cards': [creature.ref], 'pay': 'auto'}
+        command = {'action_id': action['id'], 'sacrifice_cards': [permanent.ref], 'pay': 'auto'}
         if targets:
             command['targets'] = list(targets)
         if invalid_price is not None:
@@ -110,6 +293,136 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
         result = session.act('pilot:A', command)
         self.assertTrue(result.ok, result.summary)
         return next(item for item in session.state.stack if item.card_object_id == spell.object_id)
+
+    def test_original_nasty_end_and_copy_read_the_same_legendary_price(self):
+        for legendary in (False, True):
+            with self.subTest(legendary=legendary):
+                session = self.session(704_601_240 + legendary)
+                source = self.add(session.engine, "Nasty End", zone="hand")
+                paid = self.add(session.engine, "Isamaru, Hound of Konda" if legendary else "Grizzly Bears",
+                                ref="nasty-end-price")
+                foreign = self.add(session.engine, "Grizzly Bears", seat="C", ref="nasty-end-foreign-price")
+                if legendary:
+                    copier = self.add(session.engine, "Twincast", seat="B", zone="hand")
+                    for index in range(2):
+                        self.add(session.engine, "Island", seat="B", ref=f"nasty-end-copy-island-{index}")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"B": 1, "C": 1})
+                self.checkpoint(session)
+                hands = {seat: set(session.state.players[seat].zones["hand"]) for seat in "AB"}
+                identity = paid.logical_object_id
+                original = self.cast_with_sacrifice(session, source, paid, invalid_price=foreign)
+                receipt = original.context[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT]
+                self.assertEqual(identity, receipt["logical_object_id"])
+                self.assertEqual(legendary, "legendary" in receipt["supertypes"])
+                self.assertEqual("graveyard", session.state.cards[paid.object_id].zone)
+                if legendary:
+                    self.cast_for(session, "B", copier, [original.ref])
+                    self.resolve_top(session)
+                    copied = session.state.stack[-1]
+                    self.assertEqual(("spell_copy", "B"), (copied.kind, copied.controller))
+                    self.assertEqual(receipt, copied.context[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                for seat, count in (("A", 3 if legendary else 2), ("B", 3 if legendary else 0)):
+                    drawn = set(session.state.players[seat].zones["hand"]) - hands[seat]
+                    self.assertEqual(count, len(drawn))
+                    for viewer in set("ABCD") - {seat}:
+                        packet = json.dumps(session.packet("pilot:" + viewer, full=True))
+                        for object_id in drawn:
+                            self.assertNotIn(session.state.cards[object_id].ref, packet)
+                self.replay(session)
+
+    def test_original_foundry_helix_uses_the_effective_paid_artifact_type(self):
+        for granted in (False, True):
+            with self.subTest(granted=granted):
+                session = self.session(704_601_242 + granted)
+                source = self.add(session.engine, "Foundry Helix", zone="hand")
+                paid = self.add(session.engine, "Grizzly Bears")
+                self.add(session.engine, "Sol Ring")
+                coating = self.add(session.engine, "Liquimetal Coating") if granted else None
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"W": 1, "R": 1, "C": 1})
+                self.checkpoint(session)
+                if coating is not None:
+                    self.assert_closed(session, coating)
+                    rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    ability = next(row for row in rows if row["id"].startswith(f"activate:{coating.ref}:"))
+                    result = session.act("pilot:A", {"action_id": ability["id"], "targets": [paid.ref]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual({"artifact", "creature"}, session.engine._type_parts(
+                        session.engine._effective_card_data(paid)["type_line"])[0])
+                original = self.cast_with_sacrifice(session, source, paid, ["C"])
+                receipt = original.context[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT]
+                self.assertEqual(granted, "artifact" in receipt["types"])
+                self.assertNotIn("Artifact", session.engine.card_record(paid).type_line)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual([44 if granted else 40, 40, 36, 40],
+                                 [session.state.players[seat].life for seat in "ABCD"])
+                self.replay(session)
+
+    def test_original_transmogrant_adds_artifact_through_its_sacrifice_and_expires_on_reentry(self):
+        session = self.session(205_611_300)
+        source = self.add(session.engine, "Ashnod's Transmogrant")
+        target = self.add(session.engine, "Grizzly Bears")
+        illegal = self.add(session.engine, "Sol Ring")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"W": 1})
+        self.checkpoint(session)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        ability = next(row for row in rows if row["id"].startswith(f"activate:{source.ref}:"))
+        before = authoritative_state_hash(session.state)
+        result = session.act("pilot:A", {"action_id": ability["id"], "targets": [illegal.ref]})
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": ability["id"], "targets": [target.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        session = self.replay(session, load=True)
+        current = session.state.cards[target.object_id]
+        original_id = current.logical_object_id
+        self.assertEqual({"artifact", "creature"}, session.engine._type_parts(
+            session.engine._effective_card_data(current)["type_line"])[0])
+        self.assertEqual(1, current.counters["+1/+1"])
+        self.cast_for(session, "A", blink, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[target.object_id]
+        self.assertNotEqual(original_id, current.logical_object_id)
+        self.assertEqual({"creature"}, session.engine._type_parts(session.engine._effective_card_data(current)["type_line"])[0])
+        self.assertFalse(current.counters)
+        self.replay(session)
+
+    def test_original_paid_vehicle_and_legendary_artifact_keep_their_fixed_results(self):
+        cases = (
+            ("Hellish Sideswipe", "Sky Skiff", {"B": 1}, "subtypes", "vehicle"),
+            ("Splitting the Powerstone", "Mox Opal", {"U": 1, "C": 2}, "supertypes", "legendary"),
+        )
+        for index, (name, paid_name, mana, field, trait) in enumerate(cases):
+            with self.subTest(card=name):
+                session = self.session(704_601_244 + index)
+                source = self.add(session.engine, name, zone="hand")
+                paid = self.add(session.engine, paid_name)
+                target = self.add(session.engine, "Darksteel Myr", seat="C") if index == 0 else None
+                self.assert_closed(session, source)
+                self.prepare(session, mana=mana)
+                self.checkpoint(session)
+                before = set(session.state.cards)
+                hand = set(session.state.players["A"].zones["hand"])
+                original = self.cast_with_sacrifice(session, source, paid, [target.ref] if target else ())
+                self.assertIn(trait, original.context[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT][field])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(1, len(set(session.state.players["A"].zones["hand"]) - hand))
+                if target:
+                    self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+                else:
+                    created = [session.state.cards[object_id] for object_id in session.state.cards.keys() - before]
+                    self.assertEqual(2, len(created))
+                    self.assertTrue(all(card.tapped and card.zone == "battlefield" and card.controller == "A"
+                                        and "Powerstone" in card.printed_name for card in created))
+                self.replay(session, load=True)
 
     def test_original_momentous_fall_and_its_copy_keep_the_two_paid_stats(self):
         session = self.session(704_601_201)
@@ -127,7 +440,7 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
         self.assertIsNone(self.resolve(session))
         hands = {seat: set(session.state.players[seat].zones['hand']) for seat in 'AB'}
         incarnation = session.state.cards[creature.object_id].logical_object_id
-        original = self.cast_with_creature_price(session, spell, creature)
+        original = self.cast_with_sacrifice(session, spell, creature)
         snapshot = PaidCreatureStatSnapshot(incarnation, 3, 7).to_dict()
         self.assertEqual(snapshot, original.context[PAID_SACRIFICE_STAT_CONTEXT])
         self.assertEqual('graveyard', session.state.cards[creature.object_id].zone)
@@ -165,7 +478,7 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
                     self.cast_for(session, 'B', shrink, [creature.ref])
                     self.assertIsNone(self.resolve(session))
                 target = 'C' if negative else creature.ref
-                item = self.cast_with_creature_price(session, spell, creature, [target], invalid_price=foreign)
+                item = self.cast_with_sacrifice(session, spell, creature, [target], invalid_price=foreign)
                 self.assertEqual(-3 if negative else 2, item.context[PAID_SACRIFICE_STAT_CONTEXT]['power'])
                 self.assertEqual('graveyard', session.state.cards[creature.object_id].zone)
                 session = self.replay(session, load=True)
@@ -197,13 +510,13 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
         self.prepare(session, mana={'C': 6, 'B': 4})
         self.checkpoint(session)
 
-        first = self.cast_with_creature_price(session, carrion, giant)
+        first = self.cast_with_sacrifice(session, carrion, giant)
         self.assertEqual(3, first.context[PAID_SACRIFICE_STAT_CONTEXT]['power'])
         self.assertIsNone(self.resolve(session))
         tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == 'battlefield']
         self.assertEqual(['A'] * 3, [card.controller for card in tokens])
 
-        second = self.cast_with_creature_price(session, explosion, first_bear)
+        second = self.cast_with_sacrifice(session, explosion, first_bear)
         self.assertEqual(2, second.context[PAID_SACRIFICE_STAT_CONTEXT]['power'])
         session = self.replay(session, load=True)
         self.assertIsNone(self.resolve(session))
@@ -212,3 +525,127 @@ class PaidSacrificeCreatureNativeTests(InheritedNativeFixture, unittest.TestCase
         self.assertEqual(2, session.engine._numeric_stat(wall.object_id, 'toughness'))
         self.assertFalse(any(card.is_token and card.zone == 'battlefield' for card in session.state.cards.values()))
         self.replay(session)
+
+    def test_original_morbid_curiosity_and_copy_draw_from_the_paid_artifact(self):
+        session = self.session(704_601_211)
+        spell = self.add(session.engine, 'Morbid Curiosity', zone='hand')
+        artifact = self.add(session.engine, 'Thran Dynamo')
+        foreign = self.add(session.engine, 'Sol Ring', seat='D')
+        copier = self.add(session.engine, 'Twincast', seat='B', zone='hand')
+        self.add(session.engine, 'Island', seat='B', ref='mana-value-copy-island-1')
+        self.add(session.engine, 'Island', seat='B', ref='mana-value-copy-island-2')
+        for source in (spell, artifact, copier):
+            self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 1, 'B': 2})
+        self.checkpoint(session)
+        hands = {seat: set(session.state.players[seat].zones['hand']) for seat in 'AB'}
+        snapshot = PaidSacrificeManaValueSnapshot(artifact.logical_object_id, 4).to_dict()
+        original = self.cast_with_sacrifice(session, spell, artifact, invalid_price=foreign)
+        self.assertEqual(snapshot, original.context[PAID_SACRIFICE_MANA_VALUE_CONTEXT])
+        self.assertEqual('graveyard', session.state.cards[artifact.object_id].zone)
+        self.assertEqual('battlefield', session.state.cards[foreign.object_id].zone)
+
+        self.cast_for(session, 'B', copier, [original.ref])
+        self.resolve_top(session)
+        copied = session.state.stack[-1]
+        self.assertEqual(('spell_copy', 'B'), (copied.kind, copied.controller))
+        self.assertEqual(snapshot, copied.context[PAID_SACRIFICE_MANA_VALUE_CONTEXT])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        for seat in 'AB':
+            drawn = set(session.state.players[seat].zones['hand']) - hands[seat]
+            self.assertEqual(4, len(drawn))
+            for viewer in set('ABCD') - {seat}:
+                packet = json.dumps(session.packet('pilot:' + viewer, full=True))
+                for oid in drawn:
+                    self.assertNotIn(session.state.cards[oid].ref, packet)
+        self.replay(session)
+
+    def test_original_reckoners_bargain_reads_the_paid_value_after_destination_replacement(self):
+        session = self.session(704_601_212)
+        spell = self.add(session.engine, "Reckoner's Bargain", zone='hand')
+        artifact = self.add(session.engine, 'Thran Dynamo')
+        self.add(session.engine, 'Dauthi Voidwalker', seat='B')
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={'C': 1, 'B': 1})
+        self.checkpoint(session)
+        size = len(session.state.players['A'].zones['hand'])
+        original = self.cast_with_sacrifice(session, spell, artifact)
+        self.assertEqual(4, original.context[PAID_SACRIFICE_MANA_VALUE_CONTEXT]['mana_value'])
+        self.assertEqual('exile', session.state.cards[artifact.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(44, session.state.players['A'].life)
+        self.assertEqual(size + 1, len(session.state.players['A'].zones['hand']))
+        self.replay(session)
+
+    def test_original_forge_armor_keeps_payment_when_its_target_leaves(self):
+        for target_leaves in (False, True):
+            with self.subTest(target_leaves=target_leaves):
+                session = self.session(704_601_213 + target_leaves)
+                spell = self.add(session.engine, 'Forge Armor', zone='hand')
+                artifact = self.add(session.engine, 'Thran Dynamo')
+                body = self.add(session.engine, 'Grizzly Bears')
+                bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+                self.add(session.engine, 'Island', seat='B')
+                self.assert_closed(session, spell)
+                self.prepare(session, mana={'C': 4, 'R': 1})
+                self.checkpoint(session)
+                self.cast_with_sacrifice(session, spell, artifact, [body.ref], invalid_price=body)
+                if target_leaves:
+                    self.cast_for(session, 'B', bounce, [body.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual('graveyard', session.state.cards[artifact.object_id].zone)
+                card = session.state.cards[body.object_id]
+                self.assertEqual(('hand', 0) if target_leaves else ('battlefield', 4),
+                                 (card.zone, card.counters.get('+1/+1', 0)))
+                self.replay(session, load=True)
+
+    def test_original_sacrifice_adds_black_mana_only_for_the_paid_creature_value(self):
+        session = self.session(704_601_215)
+        zero_spell = self.add(session.engine, 'Sacrifice', zone='hand', ref='zero-mana-value-sacrifice')
+        positive_spell = self.add(session.engine, 'Sacrifice', zone='hand', ref='positive-mana-value-sacrifice')
+        producer = self.add(session.engine, 'Raise the Alarm', zone='hand')
+        body = self.add(session.engine, 'Grizzly Bears')
+        for source in (zero_spell, producer, body):
+            self.assert_closed(session, source)
+        copy_ref, = session.engine.create_token('A', name='', copy_of=body.ref, reason='paid-value fixture')
+        copied_creature = next(card for card in session.state.cards.values() if card.ref == copy_ref)
+        self.prepare(session, mana={'C': 1, 'W': 1, 'B': 2})
+        self.checkpoint(session)
+        self.cast_for(session, 'A', producer, reserve={'B': 2})
+        self.assertIsNone(self.resolve(session))
+        token = next(card for card in session.state.cards.values()
+                     if card.is_token and card.zone == 'battlefield' and card.ref != copy_ref)
+
+        first = self.cast_with_sacrifice(session, zero_spell, token)
+        self.assertEqual(0, first.context[PAID_SACRIFICE_MANA_VALUE_CONTEXT]['mana_value'])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.players['A'].mana_pool['B'])
+
+        second = self.cast_with_sacrifice(session, positive_spell, copied_creature)
+        self.assertEqual(2, second.context[PAID_SACRIFICE_MANA_VALUE_CONTEXT]['mana_value'])
+        self.assertEqual(0, session.state.players['A'].mana_pool['B'])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, session.state.players['A'].mana_pool['B'])
+        self.assertEqual('battlefield', session.state.cards[body.object_id].zone)
+        self.replay(session)
+
+    def test_paid_mana_value_runtime_binding_checks_the_cost_and_result_owner(self):
+        session = self.session(704_601_216)
+        spell = self.add(session.engine, 'Sacrifice', zone='hand')
+        self.assert_closed(session, spell)
+        program, = session.engine.semantics.programs_for_oracle(spell.oracle_id)
+        for changed in (
+            replace(program, cost_schema=None),
+            replace(program, coverage=tuple(x for x in program.coverage if x != PAID_SACRIFICE_MANA_VALUE_MECHANIC)),
+            replace(program, effects=({**program.effects[0], 'player': 'B'},)),
+            replace(program, effects=({**program.effects[0], 'spend_restriction': 'spell.types_any=creature'},)),
+        ):
+            binding = bind_semantic_program_runtime(
+                changed, capability_registry=self.registry, profile='commander_review',
+            )
+            self.assertFalse(binding['strict'])
+            self.assertTrue(any(blocker.startswith('runtime_typed_result_amount:invalid:')
+                                for blocker in binding['blockers']), binding['blockers'])

@@ -9,6 +9,11 @@ TOP_ORDER_MECHANIC = 'fixed-controller-top-order'
 HAND_TOP_ORDER_OPERATION = "put_hand_cards_on_library_top"
 HAND_TOP_ORDER_CAPABILITY = "library.order.fixed_hand_to_top"
 HAND_TOP_ORDER_MECHANIC = "fixed-hand-to-library-top"
+AFFECTED_HAND_TOP_CAPABILITY = "library.order.affected_player_hand_to_top"
+AFFECTED_HAND_TOP_MECHANIC = "fixed-affected-player-hand-to-top"
+HAND_TOP_APNAP_RESULT = "library_top"
+HAND_TOP_APNAP_EVENT = "choice.library_top"
+HAND_TOP_FIRST = "top_to_bottom"
 HAND_TOP_ORDER_RULES = ("400.7", "401.4", "608.2c", "608.2d", "609.3")
 GRAVEYARD_LIBRARY_ORDER_OPERATION = "put_graveyard_targets_in_library"
 GRAVEYARD_LIBRARY_ORDER_CAPABILITY = "library.order.graveyard_targets"
@@ -67,6 +72,10 @@ class FixedHandTopOrderSpec:
         return cls(value["count"])
 
 
+def is_affected_hand_top_choice(effect: Mapping[str, Any]) -> bool:
+    return effect.get("then") == HAND_TOP_APNAP_RESULT
+
+
 def _library_order_members(value: Any) -> tuple[str, ...]:
     if (not isinstance(value, (list, tuple))
             or any(type(member) is not str or not member for member in value)
@@ -92,11 +101,40 @@ class LibraryArrivalOrder:
     def to_dict(self) -> dict[str, Any]:
         return {"chooser": self.chooser, "position": self.position, "members": list(self.members)}
 
+    @property
+    def origin_zones(self) -> tuple[str, ...]:
+        return ("graveyard",)
+
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "LibraryArrivalOrder":
+        if isinstance(value, Mapping) and set(value) == {"chooser", "position", "members", "scope"}:
+            if value["scope"] == "event_departure":
+                return DepartedLibraryArrivalOrder(value["chooser"], value["position"], value["members"])
         if not isinstance(value, Mapping) or set(value) != {"chooser", "position", "members"}:
             raise ValueError("Library arrival order has unknown or missing fields")
         return cls(value["chooser"], value["position"], value["members"])
+
+
+@dataclass(frozen=True, slots=True)
+class DepartedLibraryArrivalOrder(LibraryArrivalOrder):
+    """The owner's private order for a surviving public departure group."""
+
+    position: str | int
+
+    def __post_init__(self) -> None:
+        members = _library_order_members(self.members)
+        if (type(self.chooser) is not str or not self.chooser or len(members) < 2
+                or type(self.position) not in (str, int)
+                or self.position not in ("top", "bottom", 2, 3, 4, 5)):
+            raise ValueError("Departed library order requires a private owner and fixed group position")
+        object.__setattr__(self, "members", members)
+
+    @property
+    def origin_zones(self) -> tuple[str, ...]:
+        return ("graveyard", "exile")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {**LibraryArrivalOrder.to_dict(self), "scope": "event_departure"}
 
 
 def validate_graveyard_library_order_effect(value: Mapping[str, Any], *, resolved: bool = False) -> None:

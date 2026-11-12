@@ -1,5 +1,6 @@
 """CR508.5: actual combat results reach the sealed defending player."""
 import json,tempfile,unittest
+from dataclasses import replace
 from pathlib import Path
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
@@ -261,12 +262,14 @@ class CombatDefendingPlayerNativeTests(InheritedNativeFixture,unittest.TestCase)
                     self.assertNotIn(top.ref, json.dumps(s.packet(f'pilot:{seat}', full=True)))
                 self.replay(s, load=True)
 
-    def test_attached_attack_keeps_unowned_other_attacker_exclusion_residual(self):
+    def test_attached_attack_keeps_unsupported_opponent_count_residual(self):
         card = self.db.lookup('Sigil of Valor')
-        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+        counterexample = replace(card, oracle_text=card.oracle_text.replace(
+            'each other creature you control', 'each other creature an opponent controls'))
+        ir = compile_oracle_card(counterexample, capability_registry=self.registry, capability_profile='commander_review')
         self.assertNotEqual('exact', ir.status)
         self.assertEqual(1, len(ir.material_residuals))
-        self.assertIn('for each other creature you control', ir.material_residuals[0].text)
+        self.assertIn('for each other creature an opponent controls', ir.material_residuals[0].text)
 
     def test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker(self):
         s=self.session(508509701)

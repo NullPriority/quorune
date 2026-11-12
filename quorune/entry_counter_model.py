@@ -251,6 +251,14 @@ class IntrinsicEntryCounter:
         return "counter.producer.intrinsic_entry"
 
 
+def validate_required_entry_type(value: Any) -> str:
+    from .creature_subtypes import canonical_creature_subtype
+
+    if type(value) is not str or (value != "creature" and canonical_creature_subtype(value) != value):
+        raise EntryCounterError("Entry counters require a canonical creature type or subtype")
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class EffectEntryCounter:
     """One effect-generated counter attached to a proposed battlefield entry."""
@@ -260,6 +268,7 @@ class EffectEntryCounter:
     placing_player: str
     source_ref: str
     rule_id: str
+    required_entry_type: str | None = None
 
     def __post_init__(self) -> None:
         counter_name = _normalized_nonempty(
@@ -278,15 +287,20 @@ class EffectEntryCounter:
                     "nonempty string"
                 )
         object.__setattr__(self, "counter_name", counter_name)
+        if self.required_entry_type is not None:
+            validate_required_entry_type(self.required_entry_type)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "counter_name": self.counter_name,
             "amount": self.amount,
             "placing_player": self.placing_player,
             "source_ref": self.source_ref,
             "rule_id": self.rule_id,
         }
+        if self.required_entry_type is not None:
+            result["required_entry_type"] = self.required_entry_type
+        return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "EffectEntryCounter":
@@ -302,7 +316,7 @@ class EffectEntryCounter:
             "rule_id",
         }
         missing = sorted(expected - set(value))
-        unknown = sorted(set(value) - expected)
+        unknown = sorted(set(value) - expected - {"required_entry_type"})
         if missing or unknown:
             details = [
                 *(f"missing {field}" for field in missing),
@@ -317,6 +331,10 @@ class EffectEntryCounter:
             placing_player=value["placing_player"],
             source_ref=value["source_ref"],
             rule_id=value["rule_id"],
+            required_entry_type=(
+                validate_required_entry_type(value["required_entry_type"])
+                if "required_entry_type" in value else None
+            ),
         )
 
 

@@ -35,6 +35,7 @@ from .affected_player_sacrifice_templates import (
 from .fixed_attachment_templates import (
     created_token_attachment_effect_template,
     fixed_source_attachment_effect_template,
+    targeted_equipment_attachment_template,
 )
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
@@ -113,15 +114,25 @@ def _attachment_or_zone_result(
 ) -> CompiledEffectTemplate | None:
     from .attached_destruction import attached_destruction_template
     from .exile_templates import attached_exile_effect_template
-    from .fixed_resolution_characteristics import fixed_attached_stat_effect_template
-    attached_stats = fixed_attached_stat_effect_template(text, source_attachment_relation=source_attachment_relation)
-    if attached_stats is not None:
-        return attached_stats
+    from .fixed_resolution_characteristics import (
+        fixed_attached_keyword_effect_template, fixed_attached_stat_effect_template,
+    )
+    attached_characteristic = (
+        fixed_attached_stat_effect_template(text, source_attachment_relation=source_attachment_relation)
+        or fixed_attached_keyword_effect_template(text, source_attachment_relation=source_attachment_relation)
+    )
+    if attached_characteristic is not None:
+        return attached_characteristic
     created_attachment = created_token_attachment_effect_template(
         text, source_attachment_relation=source_attachment_relation,
     )
     if created_attachment is not None:
         return created_attachment
+    targeted_equipment = targeted_equipment_attachment_template(
+        text, card_name=card_name, source_is_permanent=source_is_permanent,
+    )
+    if targeted_equipment is not None:
+        return targeted_equipment
     template = (
         attached_exile_effect_template(text, source_attachment_relation=source_attachment_relation)
         or attached_destruction_template(text, source_attachment_relation=source_attachment_relation)
@@ -220,7 +231,10 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     """Retain the precedence of leaves that do not inspect source context."""
     from .graveyard_copy_cast_templates import graveyard_copy_cast_template
     from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
+    from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
 
+    if (conditional_return := conditional_reanimation_entry_counter_template(text)) is not None:
+        return conditional_return
     if (copy_cast := graveyard_copy_cast_template(text)) is not None:
         return copy_cast
     if (graveyard_cast := targeted_graveyard_cast_template(text)) is not None:
@@ -244,7 +258,27 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     return None
 
 
+def _distinct_sacrifice_template(text: str) -> CompiledEffectTemplate | None:
+    from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD, DISTINCT_SACRIFICE_ROLES
+
+    material = " ".join(text.split()).casefold().removesuffix(".")
+    sacrifice = "sacrifice a creature, an artifact, and a land"
+    if material not in {sacrifice, "discard a card and " + sacrifice}:
+        return None
+    before = None
+    mechanics = ("sacrifice",)
+    if material != sacrifice:
+        _, effects, _, discard_mechanics = _discard.standalone_controller_discard_effect_template("Discard a card.")
+        before, = effects
+        mechanics = (*discard_mechanics, *mechanics)
+    effect = {"op": "choose_objects", "player": "$controller",
+              DISTINCT_SACRIFICE_FIELD: {"schema_version": 1, "roles": list(DISTINCT_SACRIFICE_ROLES), "before": before}}
+    return "distinct-permanent-sacrifices-v1", (effect,), None, mechanics
+
+
 def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate | None:
+    if distinct := _distinct_sacrifice_template(text):
+        return distinct
     if 'life unless' in text.casefold():
         from .apnap_object_payment_templates import apnap_object_payment_template
 
@@ -303,6 +337,10 @@ def typed_resolution_effect_template(
     )
     if attachment is not None:
         return attachment
+    from .controlled_return_templates import controlled_return_template
+    controlled_return = controlled_return_template(text, source_is_permanent=source_is_permanent)
+    if controlled_return is not None:
+        return controlled_return
     fixed_damage = fixed_damage_effect_template(text, card_name=card_name)
     if fixed_damage is not None:
         return fixed_damage.compiled()

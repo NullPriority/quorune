@@ -46,6 +46,7 @@ from ..replicate_model import FixedManaReplicateSpec
 from ..conspire_model import FixedConspireSpec
 from ..casualty_model import FixedCasualtySpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
+from .spell_payment_grants import SPELL_PAYMENT_GRANT_HANDLERS, SpellPaymentGrantHandler, SpellPaymentGrantSpec
 from .context import SemanticNodeError
 from .paid_entry_copy import PaidEntryCopyCostHandler
 from .multikicker import FixedManaMultikickerHandler
@@ -583,6 +584,7 @@ class CastCostComponentRegistry(
         | FixedConspireSpec
         | FixedCasualtySpec
         | FixedBargainSpec
+        | SpellPaymentGrantSpec
         | SpliceSpec
         | DeclaredCostReductionSpec
         | FixedActivationCostModifierSpec,
@@ -593,6 +595,7 @@ class CastCostComponentRegistry(
 
 @lru_cache(maxsize=1)
 def default_cast_cost_component_registry() -> CastCostComponentRegistry:
+    from .chosen_type_cast_costs import ChosenTypeSpellCostModifierHandler
     from .global_alternative_costs import GlobalAlternativeCostHandler
     from .splice_costs import SpliceCostHandler
     from .target_count_costs import FixedManaPerTargetCostHandler
@@ -608,6 +611,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedSpellCostReductionHandler(),
             TargetedSpellCostHandler(),
             ConditionalSpellCostModifierHandler(),
+            ChosenTypeSpellCostModifierHandler(),
             ImproviseCostHandler(),
             SelfSpellCostReductionHandler(),
             TypedAffinityCostHandler(),
@@ -630,6 +634,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             TurnCastGrantHandler(),
             *turn_cast_rider_handlers(),
             *qualified_turn_grant_handlers(),
+            *(SpellPaymentGrantHandler(kind) for kind in SPELL_PAYMENT_GRANT_HANDLERS),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())
@@ -816,7 +821,11 @@ def active_fixed_spell_cost_reductions(
 ) -> tuple[FixedSpellCostReductionSpec, ...]:
     """Collect applicable trusted reducers at the casting boundary."""
 
+    from ..cast_cost_modifiers import CHOSEN_TYPE_CAST_COST_HANDLER_ID
     from ..compiled_cast_timing import prospective_conditional_flash_spell_data
+    from .chosen_type_cast_costs import chosen_type_cost_spell_row
+
+    chosen_row = None
     effective = dict(prospective_conditional_flash_spell_data(host,card,seat,face_down_method=face_down_method))
     if cast_type_line is not None:
         effective["type_line"] = cast_type_line
@@ -864,15 +873,26 @@ def active_fixed_spell_cost_reductions(
             for descriptor in program.handlers:
                 if (
                     descriptor.get("handler_id")
-                    not in {FIXED_SPELL_COST_REDUCTION_HANDLER_ID, CONDITIONAL_SPELL_COST_HANDLER_ID}
+                    not in {FIXED_SPELL_COST_REDUCTION_HANDLER_ID, CONDITIONAL_SPELL_COST_HANDLER_ID,
+                            CHOSEN_TYPE_CAST_COST_HANDLER_ID}
                 ):
                     continue
                 if descriptor['handler_id'] == CONDITIONAL_SPELL_COST_HANDLER_ID:
                     condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
                     if not host._fixed_public_state_condition_holds(source, condition, require_available=True):
                         continue
-                spec = registry.lower(descriptor, None)[0]
+                lowered = registry.lower(descriptor, source)
+                if not lowered:
+                    continue
+                spec, = lowered
                 assert isinstance(spec, FixedSpellCostReductionSpec)
+                spell_row = row
+                if descriptor["handler_id"] == CHOSEN_TYPE_CAST_COST_HANDLER_ID:
+                    if chosen_row is None:
+                        chosen_row = chosen_type_cost_spell_row(
+                            host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
+                        )
+                    spell_row = chosen_row
                 if (
                     _modifier_context_applies(
                         host,
@@ -882,7 +902,7 @@ def active_fixed_spell_cost_reductions(
                         origin=card.zone,
                     )
                     and any(
-                        object_matches_query(row, predicate)
+                        object_matches_query(spell_row, predicate)
                         for predicate in spec.predicates_any
                     )
                 ):

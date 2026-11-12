@@ -323,7 +323,7 @@ def initial_commander_state(
             spell_origin_history_version=1,graveyard_type_history_version=1,spell_mana_history_version=1,crime_history_version=1,
             committed_occurrence_history_version=1, damage_life_history_version=1,
             permanent_death_history_version=1, public_movement_history_version=1,
-            first_life_gain_history_version=1),
+            first_life_gain_history_version=1, venture_history_version=1),
         active_player=None,
         phase="setup",
         step="mulligan",

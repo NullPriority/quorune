@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..compiler.impulse_access_templates import IMPULSE_ACCESS_CAPABILITY_ID
-from ..impulse_access_model import ImpulseAccessDuration
+from ..impulse_access_model import ImpulseAccessDuration, IMPULSE_ACCESS_DECLARED_COUNT_VERSION, impulse_access_count_is_legal
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import ImpulseAccessIntent, IntentPlan
 
@@ -30,7 +30,7 @@ class FixedImpulseAccessHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        allowed = {"op", "player", "count", "duration", "reason"}
+        allowed = {"op", "player", "count", "duration", "reason", "schema_version"}
         if set(effect) - allowed or not {
             "op",
             "player",
@@ -45,16 +45,21 @@ class FixedImpulseAccessHandler:
                 "Fixed impulse-access operation is unsupported"
             )
         count = effect.get("count")
-        if type(count) is not int or not 1 <= count <= 10:
-            raise SemanticNodeError(
-                "Fixed impulse access requires a count from one to ten"
-            )
+        version = effect.get("schema_version", 1)
+        if (not impulse_access_count_is_legal(count, version)
+                or ("schema_version" in effect and (version != IMPULSE_ACCESS_DECLARED_COUNT_VERSION
+                    or effect["player"] != context.actor))):
+            raise SemanticNodeError("Impulse access requires a count and controller valid for its instruction version")
         try:
             duration = ImpulseAccessDuration(str(effect.get("duration") or ""))
         except ValueError as exc:
             raise SemanticNodeError(
                 "Fixed impulse access requires a supported duration"
             ) from exc
+        if version == IMPULSE_ACCESS_DECLARED_COUNT_VERSION and duration not in {
+            ImpulseAccessDuration.END_OF_TURN, ImpulseAccessDuration.END_OF_NEXT_TURN,
+        }:
+            raise SemanticNodeError("Declared impulse access requires its fixed turn duration")
         player = context.query.require_active_seat(
             str(effect.get("player") or context.actor)
         )
@@ -73,6 +78,7 @@ class FixedImpulseAccessHandler:
                     count=count,
                     duration=duration,
                     reason=reason,
+                    schema_version=version,
                 ),
             ),
         )

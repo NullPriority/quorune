@@ -37,6 +37,13 @@ def _event_player(binding,subject):
 
 def _occurrence_player(event,condition,variant,subject):
     if subject=='you':return '$controller'
+    if subject == 'its controller' and condition == {
+        'field': 'source_attachment_target_ref', 'op': 'eq', 'value': '$context.card',
+    } and (
+        event == 'creature.attacks' and variant in ATTACHED_CREATURE_ATTACK_VARIANTS
+        or event in {'creature.attacks', 'creature.blocks'} and variant == 'enchanted_creature_attacks_or_blocks'
+    ):
+        return occurrence_controller_reference()
     if subject.replace('\u2019', "'")=="that creature's controller":
         # CR 608.2h uses current information while the original blocker remains.
         if event == 'creature.blocks' and variant == 'a_creature_blocks' and condition is None:
@@ -68,11 +75,16 @@ def _bound_result_template(binding,text,*,effect_template,card_name):
         scalar=scalar_effect_amount_template(text,source_name=card_name,event='spell.cast',
             compile_fixed=lambda value:effect_template(value,card_name=card_name))
         if scalar is not None:return scalar
+    if compiled[0] is None:
+        from .public_query_effect_amounts import public_query_effect_amount_template
+        query = public_query_effect_amount_template(text, source_name=card_name,
+            compile_fixed=lambda value: effect_template(value, card_name=card_name))
+        if query is not None:return query
     return compiled
 
 
 def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
-    match=re.fullmatch(r"(?P<subject>that player|they|defending player|that creature['’]s controller|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)",body,re.I)
+    match=re.fullmatch(r"(?P<subject>that player|they|defending player|that creature['’]s controller|its controller|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)",body,re.I)
     if match is None:return None
     player=_event_player(binding,match['subject'].casefold())
     if player is None:return None
@@ -152,6 +164,9 @@ def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
             return None
     else:
         compiled = _bound_result_template(binding, normalized, effect_template=effect_template, card_name=card_name)
+    if compiled[0] is None:
+        from .source_self_effect_templates import bound_source_fixed_damage
+        compiled = bound_source_fixed_damage(binding, normalized) or compiled
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'

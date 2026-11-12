@@ -190,3 +190,88 @@ class FixedTopOrderCompilerTests(unittest.TestCase):
         bound = bind_semantic_program_runtime(withdrawn, capability_registry=registry, profile="commander_review")
         self.assertFalse(bound["strict"])
         self.assertIn(f"capability:undeclared_runtime_dependency:{HAND_TOP_ORDER_CAPABILITY}", bound["blockers"])
+
+
+    def test_affected_hand_top_compiles_and_requires_its_own_capability(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.compiler.program_generation import register_generated_programs
+        from quorune.library_order_model import AFFECTED_HAND_TOP_CAPABILITY, HAND_TOP_APNAP_RESULT
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        cases = (
+            ("Target player chooses three cards from their hand and puts them on top of their library in any order.",
+             "Sorcery", 3, "any"),
+            ("When this creature enters, target opponent puts a card from their hand on top of their library.",
+             "Creature", 1, "opponent"),
+            ("When this creature dies, each player puts a card from their hand on top of their library.",
+             "Creature", 1, None),
+            ("Target opponent loses 3 life and puts a card from their hand on top of their library.",
+             "Sorcery", 1, "opponent"),
+        )
+        for text, card_type, count, relation in cases:
+            with self.subTest(text=text):
+                record = replace(query_record(text), type_line=card_type)
+                ir = compile_oracle_card(record, capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                result = node.effects[-1]
+                self.assertEqual(("choose_cards_apnap", HAND_TOP_APNAP_RESULT, count, True),
+                                 (result["op"], result["then"], result["count"], result["hidden"]))
+                self.assertIn(AFFECTED_HAND_TOP_CAPABILITY, node.capability_dependencies)
+                if relation is None:
+                    self.assertIsNone(node.target_schema)
+                    self.assertEqual("all", result["players"])
+                else:
+                    self.assertEqual(relation, node.target_schema["player_relation"])
+                    self.assertEqual(["$target.0"], result["players"])
+                if "loses" in text:
+                    self.assertEqual(["lose_life", "choose_cards_apnap"], [effect["op"] for effect in node.effects])
+
+        semantics = SemanticRegistry()
+        record = replace(query_record(cases[0][0]), type_line="Sorcery")
+        database = SimpleNamespace(rulings=lambda _record: ())
+        register_generated_programs(database, semantics, [record], capability_registry=registry,
+                                    capability_profile="commander_review", promote_exact_effect_programs=True)
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        self.assertTrue(bind_semantic_program_runtime(program, capability_registry=registry,
+                                                     profile="commander_review")["strict"])
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != AFFECTED_HAND_TOP_CAPABILITY)
+        withdrawn = replace(program, coverage=[], capability_dependencies=dependencies,
+                            capability_closure=registry.closure(dependencies, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(withdrawn, capability_registry=registry, profile="commander_review")
+        self.assertIn(f"capability:undeclared_runtime_dependency:{AFFECTED_HAND_TOP_CAPABILITY}", binding["blockers"])
+
+    def test_affected_hand_top_rejects_other_zones_counts_and_open_actor_fields(self):
+        from quorune.compiler.affected_player_discard_templates import fixed_affected_player_hand_top_effect_template
+        from quorune.rules.affected_player_discard_capability_shapes import fixed_hand_top_apnap_payload_dependencies
+
+        registry = load_default_capability_registry()
+        text = "Target opponent puts a card from their hand on top of their library."
+        for invalid in (
+            text.replace("a card", "X cards"), text.replace("their hand", "your hand"),
+            text.replace("their library", "your library"), text.replace("on top", "on the bottom"),
+            text.replace("puts a card", "chooses two cards").replace("on top", "and puts it on top"),
+            text[:-1] + " if they have three cards in hand.",
+        ):
+            with self.subTest(text=invalid):
+                record = replace(query_record(invalid), type_line="Sorcery")
+                self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=registry).status)
+        effect, = fixed_affected_player_hand_top_effect_template(text)[1]
+        for changed in ({"actor": "$target.0"}, {"hidden": False}, {"target": "$controller"},
+                        {"count": True}, {"predicate": {}}, {"extra": 1}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                fixed_hand_top_apnap_payload_dependencies({**effect, **changed})
+
+    def test_affected_hand_top_producer_omission_mutant_is_killed(self):
+        registry = load_default_capability_registry()
+        record = replace(query_record("Target opponent puts a card from their hand on top of their library."),
+                         type_line="Sorcery")
+
+        def witness():
+            self.assertEqual("exact", compile_oracle_card(record, capability_registry=registry).status)
+
+        witness()
+        with patch("quorune.compiler.fixed_top_order_templates.fixed_affected_player_hand_top_effect_template",
+                   return_value=None), self.assertRaises(AssertionError):
+            witness()

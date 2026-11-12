@@ -46,6 +46,7 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
+    if relative == 'quorune/stack_resolution_inputs.py':return 'domain'
     if relative == "quorune/announced_damage.py":
         return "rules"
     if relative in {"quorune/triggered_mana.py", "quorune/triggered_mana_model.py"}:
@@ -59,6 +60,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative in {'quorune/turn_skip_model.py', 'quorune/mandatory_loop_model.py'}:return 'domain'
     if relative in {'quorune/earthbend_model.py', 'quorune/suspect_model.py'}:return 'domain'
     if relative in {'quorune/dungeon_catalog.py', 'quorune/dungeon_progress.py', 'quorune/next_turn_effect.py'}:return 'domain'
+    if relative == "quorune/initiative_model.py":return "domain"
+    if relative in {"quorune/dungeon_runtime.py", "quorune/initiative_runtime.py"}:return "rules"
     if relative == 'quorune/apnap_object_payment.py':return 'domain'
     if relative=='quorune/earthbend.py':return 'rules'
     if relative=='quorune/created_token_cleanup.py':return 'rules'
@@ -180,6 +183,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/bound_declaration_model.py",
         "quorune/type_subtype_vocabulary.py",
         "quorune/mana_restriction_model.py",
+        "quorune/mana_spend_rules.py",
         "quorune/preparation_model.py",
         "quorune/targeted_spell_costs.py",
         "quorune/waterbend.py",
@@ -202,6 +206,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/prevention_recipient_sets.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
+        "quorune/deck_copy_limits.py",
         "quorune/fixed_blocker_restrictions.py",
         "quorune/source_block_pair_model.py",
         "quorune/temporary_all_blocker_model.py",
@@ -262,6 +267,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/declaration_rule_effects.py",
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",
+        "quorune/paid_sacrifice_conditions.py",
         "quorune/continuous_effect_model.py",
         "quorune/source_continuity.py",
         "quorune/soulbond_model.py",
@@ -497,6 +503,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/mana_restrictions.py",
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
+        "quorune/fixed_mana_spend_templates.py",
         "quorune/intrinsic_basic_land_mana.py",
         "quorune/intrinsic_land_abilities.py",
         "quorune/mana_ability_runtime.py",
@@ -995,8 +1002,10 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/mana_activation.py",
         "quorune/mana_provenance.py",
         "quorune/mana_restrictions.py",
+        "quorune/mana_spend_rules.py",
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
+        "quorune/fixed_mana_spend_templates.py",
         "quorune/intrinsic_basic_land_mana.py",
         "quorune/intrinsic_land_abilities.py",
         "quorune/public_quantity_mana_abilities.py",
@@ -1151,6 +1160,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/stack_counter.py",
         "quorune/stack_resolution.py",
+        "quorune/stack_resolution_inputs.py",
     }:
         return "stack_counter"
     if relative in {

@@ -92,9 +92,10 @@ class UnleashCompilerAndModelTests(unittest.TestCase):
         self.assertEqual(
             {
                 "counter.producer.optional_self_entry",
+                "counter.placement.quantity_replacement",
                 "combat.block.self_counter_prohibition",
             },
-            {node.capability_dependencies[0] for node in nodes},
+            {capability for node in nodes for capability in node.capability_dependencies},
         )
         keyword_end = self.card.oracle_text.index(" (")
         self.assertEqual(
@@ -214,6 +215,7 @@ class UnleashCompilerAndModelTests(unittest.TestCase):
     def test_unleash_dependencies_fail_closed(self):
         for capability_id in (
             "counter.producer.optional_self_entry",
+            "counter.placement.quantity_replacement",
             "combat.block.self_counter_prohibition",
         ):
             with self.subTest(capability_id=capability_id):
@@ -238,6 +240,16 @@ class UnleashCompilerAndModelTests(unittest.TestCase):
                         for blocker in residual.blockers
                     )
                 )
+
+    def test_ordinary_unleash_whole_card_binds_through_the_normal_runtime_path(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        program = compile_best_available_card_program(self.db, self.card, semantic_registry=SemanticRegistry(),
+            capability_registry=self.capabilities, capability_profile="commander_review")
+        binding = bind_card_program_runtime(program, capability_registry=self.capabilities, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
 
 
 class UnleashRuntimeTests(unittest.TestCase):
@@ -294,6 +306,9 @@ class UnleashRuntimeTests(unittest.TestCase):
         controller: str | None = None,
     ) -> CardInstance:
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         current_controller = controller or seat
         public = zone in {"battlefield", "graveyard", "exile", "command", "stack"}
         card = CardInstance(

@@ -180,6 +180,9 @@ class _FixedPublicStateSnapshotResolver:
             return self._most_common_color_quantity(condition)
         if source is None:
             return None
+        from ..initiative_model import DUNGEON_STATUS_FACTS, dungeon_status_value
+        if fact.value in DUNGEON_STATUS_FACTS:
+            return dungeon_status_value(self.state, source.controller, fact.value, condition.fact_parameter)
         from ..public_zone_condition_model import public_zone_fact_value
         zone_value = public_zone_fact_value(self.state, source.controller, fact.value, condition.fact_parameter)
         if zone_value is not None:
@@ -915,6 +918,7 @@ def collect_card_program_continuous_effects(
     copied_static_source_resolver: Callable[[Any], Sequence[Any] | None] | None = None,
     ability_source_participation: Callable[[Any,str],bool|None] | None = None,
     generated_effect_sources: dict[str,tuple[str,str]] | None = None,
+    handler_ids: frozenset[str] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     completed_layer_queries = characteristic_query_boundary_version(
         getattr(state, 'characteristic_query_boundary_version', None)
@@ -923,6 +927,8 @@ def collect_card_program_continuous_effects(
     registered_handler_ids = frozenset(
         str(row["handler_id"]) for row in registry.inventory()
     )
+    if handler_ids is not None:
+        registered_handler_ids &= handler_ids
     if metrics is not None:
         metrics.collection_calls += 1
     effects: list[ContinuousEffect] = []

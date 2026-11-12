@@ -22,6 +22,8 @@ from .closed_effect_programs import (
     _partition,
     _sentence_partition,
 )
+from .library_search_templates import FixedLibrarySearchTemplate, fixed_library_search_effect_template
+from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, OPTIONAL_EFFECT_OPERATION
 
 
 BOUND_EFFECT_PROGRAM_MECHANIC = "bound-effect-program"
@@ -34,6 +36,19 @@ _TARGET_CONTROLLER_DAMAGE = re.compile(
     r"(?P<source>.+?) deals (?P<amount>[1-9][0-9]*) damage to that "
     r"(?P<kind>permanent|artifact|battle|creature|enchantment|land|planeswalker)"
     r"['’]s controller\.",
+    re.IGNORECASE,
+)
+_TARGET_CONTROLLER_SEARCH = re.compile(
+    r"(?:Its controller|(?P<opponent>That player)|That "
+    r"(?P<kind>permanent|artifact|battle|creature|enchantment|land|planeswalker)['’]s controller) "
+    r"may search their library for (?P<body>.+)\.",
+    re.IGNORECASE,
+)
+_TARGET_CONTROLLER_FIXED_RESULT = re.compile(
+    r"(?:Then )?(?:Its controller|That "
+    r"(?P<kind>permanent|artifact|battle|creature|enchantment|land|planeswalker)['’]s controller) "
+    r"(?P<verb>draws|gains|loses) (?P<amount>(?:[1-9][0-9]*|[a-z]+) (?:cards?|life))"
+    r"(?: and (?P<gain>you gain (?:[1-9][0-9]*|[a-z]+) life))?\.",
     re.IGNORECASE,
 )
 _CONTROLLER_PREFIX_OPS = frozenset({
@@ -125,6 +140,21 @@ def target_controller_prefix_matches(effect: Mapping[str, Any]) -> bool:
     )
 
 
+def target_controller_search_prefix_matches(effect: Mapping[str, Any]) -> bool:
+    return target_controller_prefix_matches(effect) and effect["op"] in {"destroy", "exile_permanent"}
+
+
+def target_controller_zone_result_prefix_matches(effect: Mapping[str, Any]) -> bool:
+    return (
+        isinstance(effect, Mapping)
+        and effect.get("card") == "$target.0"
+        and (
+            effect.get("op") in {"destroy", "exile_permanent", "bounce"}
+            or effect.get("op") == "move" and effect.get("destination") == "library"
+        )
+    )
+
+
 def _target_type_is_guaranteed(schema: Mapping[str, Any], kind: str) -> bool:
     if kind == "permanent" or kind in schema.get("types_all", ()):
         return True
@@ -161,6 +191,79 @@ def _target_controller_damage_tail(
         damage[0], ({**expected, "target": target_controller_reference()},), None,
         (*damage[3], TARGET_CONTROLLER_INFORMATION_MECHANIC),
     )
+
+
+def _target_controller_search_program(
+    clauses: tuple[str, ...] | None,
+    compile_component: ComponentCompiler,
+) -> BoundEffectProgramTemplate | None:
+    if clauses is None or (match := _TARGET_CONTROLLER_SEARCH.fullmatch(clauses[1])) is None:
+        return None
+    first = compile_component(clauses[0])
+    schema = first[2]
+    if (
+        first[0] is None or schema is None or not _public_single_target(schema)
+        or schema["categories"] != ["permanent"] or schema.get("up_to")
+        or len(first[1]) != 1 or not target_controller_search_prefix_matches(first[1][0])
+    ):
+        return None
+    if match["opponent"] is not None and schema.get("controller_relation") != "opponent":
+        return None
+    if match["kind"] is not None and not _target_type_is_guaranteed(schema, match["kind"].casefold()):
+        return None
+    search = fixed_library_search_effect_template(f"Search your library for {match['body']}.")
+    if not isinstance(search, FixedLibrarySearchTemplate) or (
+        search.destination != "battlefield" or search.count != 1 or search.optional_count
+    ):
+        return None
+    _, (search_effect,), _, mechanics = search.compiled()
+    chooser = target_controller_reference()
+    optional_search = (
+        "fixed-target-controller-optional-library-search-v1",
+        ({"op": OPTIONAL_EFFECT_OPERATION, "player": chooser,
+          "effects": [{**search_effect, "searching_player": chooser}]},),
+        None,
+        (*mechanics, FIXED_OPTIONAL_EFFECT_MECHANIC, TARGET_CONTROLLER_INFORMATION_MECHANIC),
+    )
+    following = tuple(compile_component(clause) for clause in clauses[2:])
+    if any(component[2] is not None for component in following):
+        return None
+    return _program((first, optional_search, *following), schema=schema)
+
+
+def _target_controller_fixed_result_program(
+    clauses: tuple[str, ...] | None,
+    compile_component: ComponentCompiler,
+) -> BoundEffectProgramTemplate | None:
+    if clauses is None or (match := _TARGET_CONTROLLER_FIXED_RESULT.fullmatch(clauses[1])) is None:
+        return None
+    first = compile_component(clauses[0])
+    schema = first[2]
+    if (
+        first[0] is None or not _public_single_target(schema)
+        or schema["categories"] != ["permanent"] or schema.get("up_to")
+        or len(first[1]) != 1 or not target_controller_zone_result_prefix_matches(first[1][0])
+        or (match["kind"] and not _target_type_is_guaranteed(schema, match["kind"].casefold()))
+    ):
+        return None
+    verb = match["verb"].casefold().removesuffix("s")
+    result = compile_component(f"You {verb} {match['amount']}.")
+    if result[0] is None or result[2] is not None or len(result[1]) != 1:
+        return None
+    effect, = result[1]
+    if effect.get("op") not in {"draw", "life", "lose_life"} or effect.get("player") != "$controller":
+        return None
+    bound_result = (
+        result[0], ({**effect, "player": target_controller_reference()},), None,
+        (*result[3], TARGET_CONTROLLER_INFORMATION_MECHANIC),
+    )
+    following_text = clauses[2:]
+    if match["gain"]:
+        following_text = (match["gain"] + ".", *following_text)
+    following = tuple(compile_component(clause) for clause in following_text)
+    if any(component[2] is not None for component in following):
+        return None
+    return _program((first, bound_result, *following), schema=schema)
 
 
 def _single_target_reference(text: str, compile_component: ComponentCompiler, *, conditional_tail=None):
@@ -258,6 +361,16 @@ def bound_effect_program_template(
     target_count = len(_TARGET_WORD.findall(normalized))
     if target_count > 1:
         return None
+    if target_count == 1:
+        sentences = _sentence_partition(normalized)
+        affected_search = _target_controller_search_program(sentences, compile_component)
+        if affected_search is not None:
+            return affected_search
+        if " controller " in normalized.casefold():
+            for clauses in (sentences, _partition(normalized, ", then ")):
+                fixed_result = _target_controller_fixed_result_program(clauses, compile_component)
+                if fixed_result is not None:
+                    return fixed_result
     if _UNSAFE_LINKAGE.search(linkage_text):
         clauses = _sentence_partition(normalized)
         if (

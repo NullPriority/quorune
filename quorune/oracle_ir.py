@@ -29,8 +29,9 @@ from .compiler.fixed_public_characteristic_sets import (
     fixed_public_characteristic_set_effect_template,
 )
 from .compiler.fixed_attachment_keyword_nodes import fixed_attachment_keyword_node
+from .compiler.fixed_stack_spell_copy import next_cast_copy_template
 from .compiler.attached_granted_ability_nodes import (
-    compile_keyword_or_attached_grant_nodes as _keyword_or_attached_grant_nodes,
+    compile_early_material_nodes as _early_material_nodes,
 )
 from .compiler.effect_template_composition import (
     reviewed_contextual_effect_template,
@@ -52,7 +53,7 @@ from .compiler.dependency_gate import (
 )
 from .compiler.draw_templates import (
     draw_reveal_or_trigger_nodes,
-    fixed_draw_effect_template, trigger_ability_word_material_line,
+    fixed_captured_draw_cast_effect_template, fixed_draw_effect_template, trigger_ability_word_material_line,
 )
 from .compiler.delayed_draw_templates import (
     fixed_next_turn_upkeep_draw_effect_template,
@@ -110,6 +111,7 @@ from .compiler.modal_templates import (
     fixed_nonrepeating_modal_template,
 )
 from .compiler.monarch_templates import fixed_monarch_effect_template
+from .compiler.venture_templates import fixed_initiative_effect_template, fixed_venture_effect_template
 from .compiler.ring_templates import fixed_ring_temptation_template
 from .compiler.keyword_nodes import (
     bloodthirst_keyword_node,
@@ -178,7 +180,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v910"
+ORACLE_COMPILER_VERSION = "oracle-ir-v977"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -267,16 +269,17 @@ def _effect_template(
     """Compile only whole, reviewed Oracle sentence templates."""
 
     normalized = text.strip()
-    monarch = fixed_monarch_effect_template(normalized)
-    if monarch is not None:
-        return monarch.compiled()
+    variant = (fixed_monarch_effect_template(normalized) or fixed_venture_effect_template(normalized)
+               or fixed_initiative_effect_template(normalized))
+    if variant is not None:
+        return variant.compiled()
     ring = fixed_ring_temptation_template(normalized)
     if ring is not None:
         return ring.compiled()
     delayed_draw = fixed_next_turn_upkeep_draw_effect_template(normalized)
     if delayed_draw is not None:
         return delayed_draw.compiled()
-    draw_template = fixed_draw_effect_template(normalized)
+    draw_template = fixed_captured_draw_cast_effect_template(normalized) or fixed_draw_effect_template(normalized)
     if draw_template is not None:
         return draw_template
     player_result = fixed_player_result_template(normalized,source_name=card_name)
@@ -1247,7 +1250,7 @@ def _compile_face(
         if player_nodes is not None:
             nodes.extend(player_nodes)
             continue
-        early_nodes = _keyword_or_attached_grant_nodes(
+        early_nodes = _early_material_nodes(
             record=record, face_id=face_id, node_id=node_id, line=line,
             material_line=material_line, span=span,
             source_name=face_name or record.name, effect_template=contextual_effect_template, keywords=keywords,
@@ -1278,7 +1281,7 @@ def _compile_face(
             nodes.append(ability_node)
             continue
 
-        event_nodes = draw_reveal_or_trigger_nodes(
+        event_nodes = None if spell and next_cast_copy_template(material_line) is not None else draw_reveal_or_trigger_nodes(
             permanent=permanent, node_id=node_id,
             line=line, span=span,
             card_name=face_name or record.name,

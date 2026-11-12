@@ -57,7 +57,7 @@ class ActivatedAbilityAndCostTests(unittest.TestCase):
         hint = next(item for item in abilities if item["s"] == boseiju.ref and item["a"] == "ab2")
         self.assertEqual("hand", hint["z"])
         self.assertEqual({"GENERIC": 1, "G": 1}, hint["m"])
-        self.assertEqual(1, hint["legend_discount"])
+        self.assertNotIn("needs_rules", hint)
 
         result = session.act(
             "pilot:B",

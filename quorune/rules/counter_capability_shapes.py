@@ -94,6 +94,7 @@ def fixed_counter_placement_group_node_capabilities(
         return ()
     return (
         "counter.producer.fixed_permanent_group_effect",
+        "counter.producer.fixed_effect",
         *(("counter.characteristic.keyword",) if counter_mechanic else ()),
         "target.revalidate_resolution",
     )

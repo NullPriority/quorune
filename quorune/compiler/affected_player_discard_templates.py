@@ -8,6 +8,7 @@ from enum import Enum
 import re
 from typing import Any, Mapping
 
+from ..library_order_model import AFFECTED_HAND_TOP_MECHANIC, HAND_TOP_APNAP_RESULT
 from ..object_predicate import ObjectQuerySpec
 from ..util import stable_json
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -31,6 +32,12 @@ _INSTRUCTION = re.compile(
 _HAND_EXILE_INSTRUCTION = re.compile(
     r"^(?P<subject>target player|target opponent|each player|each opponent) "
     r"exiles (?:(?P<one>a|one) card|(?P<many>two|three) cards) from (?:their|his or her) hand\.?$",
+    re.IGNORECASE,
+)
+_HAND_TOP_INSTRUCTION = re.compile(
+    r"(?P<subject>target player|target opponent|each player|each opponent) "
+    r"(?P<verb>puts|chooses) (?P<count>a|one|two|three) (?P<noun>cards?) from their hand"
+    r"(?: and puts (?P<link>it|them))? on top of their library(?: in any order)?\.?",
     re.IGNORECASE,
 )
 _COUNTS = {"a": 1, "one": 1, "two": 2, "three": 3}
@@ -203,6 +210,31 @@ def fixed_affected_player_hand_exile_effect_template(text: str):
         _affected_player_hand_target(subject),
         (FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC, _HAND_MECHANIC,
          *((_TARGETS_MECHANIC,) if subject.targeted else ())),
+    )
+
+
+def fixed_affected_player_hand_top_effect_template(text: str):
+    match = _HAND_TOP_INSTRUCTION.fullmatch(" ".join(text.strip().split()))
+    if match is None:
+        return None
+    count = _COUNTS[match["count"].casefold()]
+    link = match["link"]
+    if (
+        (match["noun"].casefold() == "card") != (count == 1)
+        or (match["verb"].casefold() == "chooses") != (link is not None)
+        or (link is not None and (link.casefold() == "it") != (count == 1))
+    ):
+        return None
+    subject = _SUBJECTS[match["subject"].casefold()]
+    effect = _affected_player_hand_choice(
+        subject, count, action=HAND_TOP_APNAP_RESULT,
+        prompt="Choose cards from your hand to put on top of your library, top card first.",
+    )
+    return (
+        "fixed-affected-player-hand-to-top-v1",
+        (effect,),
+        _affected_player_hand_target(subject),
+        (AFFECTED_HAND_TOP_MECHANIC, _HAND_MECHANIC, *((_TARGETS_MECHANIC,) if subject.targeted else ())),
     )
 
 

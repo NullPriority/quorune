@@ -9,9 +9,11 @@ from ..fixed_mana_abilities import (
     FIXED_MANA_HANDLER_ID,
     FIXED_MANA_RESULT_HANDLER_ID,
     FIXED_MANA_SELECTED_COST_HANDLER_ID,
+    FIXED_MANA_SPEND_RULE_HANDLER_ID,
     FixedActivatedManaAbilitySpec,
     FixedManaAbilityError,
 )
+from ..mana_spend_rules import MANA_SPEND_RULE_CAPABILITY, MANA_SPEND_RULES, decode_mana_spend_rule
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -59,6 +61,8 @@ class FixedActivatedManaAbilityHandler:
             if (spec.result is not None) != (descriptor['schema_version']==2):
                 raise FixedManaAbilityError('Fixed mana result requires schema version two')
             if bool(spec.choices)!=(descriptor['schema_version']==3):raise FixedManaAbilityError('Selected mana costs require version three')
+            if (decode_mana_spend_rule(spec.spend_restriction) is not None) != (self.schema_version == 4):
+                raise FixedManaAbilityError("Typed spending rules require schema version four")
             return spec
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -94,12 +98,21 @@ class FixedManaSelectedCostAbilityHandler(FixedActivatedManaAbilityHandler):
     rule_references: tuple[str,...]=('302.6','602.2b','605.1a','605.3b','701.21a')
 
 
+@dataclass(frozen=True, slots=True)
+class FixedManaSpendRuleAbilityHandler(FixedActivatedManaAbilityHandler):
+    handler_id: str = FIXED_MANA_SPEND_RULE_HANDLER_ID
+    schema_version: int = 4
+    capability_dependencies: tuple[str, ...] = (*FIXED_MANA_HANDLER_CAPABILITIES, MANA_SPEND_RULE_CAPABILITY)
+    rule_references: tuple[str, ...] = MANA_SPEND_RULES
+
+
 @lru_cache(maxsize=1)
 def default_fixed_mana_ability_registry() -> FixedManaAbilityRegistry:
     registry = FixedManaAbilityRegistry((
         FixedActivatedManaAbilityHandler(),
         FixedManaResultAbilityHandler(),
         FixedManaSelectedCostAbilityHandler(),
+        FixedManaSpendRuleAbilityHandler(),
         PublicQuantityActivatedManaHandler(),
         ChosenColorActivatedManaHandler(),
     ))

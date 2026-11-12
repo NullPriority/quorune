@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
+from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD
+from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
 from ..semantic_runtime.intents import (
     CreateTokenIntent,
     LifeChangeIntent,
@@ -47,6 +50,8 @@ class PublicObjectChoiceHandler:
         "_minimum",
         "_maximum",
         "_stack_label",
+        CONTROLLED_RETURN_FIELD,
+        "_return_candidates",
     )
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = (
@@ -67,6 +72,15 @@ class PublicObjectChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if CAPTURED_DRAW_CAST_FIELD in effect:
+            from .captured_draw_cast import prepare_captured_draw_cast
+            return prepare_captured_draw_cast(effect, context)
+        if DISTINCT_SACRIFICE_FIELD in effect:
+            from .distinct_sacrifices import prepare_distinct_sacrifices
+            return prepare_distinct_sacrifices(effect, context)
+        if CONTROLLED_RETURN_FIELD in effect:
+            from .controlled_return import prepare_controlled_return
+            return prepare_controlled_return(effect, context)
         refs = context.query.choice_candidate_refs()
         if not refs:
             return SemanticChoicePreparation(
@@ -140,6 +154,15 @@ class PublicObjectChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        if CAPTURED_DRAW_CAST_FIELD in effect:
+            from .captured_draw_cast import complete_captured_draw_cast
+            return complete_captured_draw_cast(continuation, response, query)
+        if DISTINCT_SACRIFICE_FIELD in effect:
+            from .distinct_sacrifices import complete_distinct_sacrifices
+            return complete_distinct_sacrifices(continuation, response, query)
+        if CONTROLLED_RETURN_FIELD in effect:
+            from .controlled_return import complete_controlled_return
+            return complete_controlled_return(continuation, response, query)
         selected = tuple(
             str(value)
             for value in response.get("objects", response.get("cards", ()))

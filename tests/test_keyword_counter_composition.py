@@ -464,12 +464,8 @@ class KeywordCounterCompositionTests(unittest.TestCase):
         binding = bind_card_program_runtime(
             program, capability_registry=registry, profile="commander_review",
         )
-        self.assertFalse(binding["strict_capability_ready"])
-        self.assertIn(
-            "ability:replacement:counter-quantity:capability:"
-            "undeclared_runtime_dependency:counter.placement.quantity_replacement",
-            binding["blockers"],
-        )
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        self.assertEqual("capability_closed", binding["trust_basis"])
         from dataclasses import replace
         securitron = self.db.lookup("Securitron Squadron")
         self.assertEqual('exact', compile_oracle_card(securitron, capability_registry=registry,
@@ -712,7 +708,7 @@ class KeywordCounterCompositionTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [opposing.ref],
                 "pay": "manual",
                 "payment": {"R": 1},
@@ -724,7 +720,7 @@ class KeywordCounterCompositionTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["destroy"],
+                "modes": ["mode_2"],
                 "targets": [later_protected.ref],
                 "pay": "manual",
                 "payment": {"R": 1},

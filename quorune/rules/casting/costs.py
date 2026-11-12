@@ -6,6 +6,7 @@ from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from .face_queries import build_cast_cost_options
+from .option_expansion import bind_granted_payment_mechanics
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
 from .additional_zone_costs import select_zone_change_additional_cost
 from ...casting_payment_keywords import (
@@ -48,6 +49,7 @@ from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...object_query import object_matches_query, object_query_result
 from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from ..action_proposals import CastCostOption
+from ..next_spell_payment import with_next_spell_payments
 from ..casting_additional_costs import (
     AdditionalCostError,
     fixed_counter_additional_cost,
@@ -142,11 +144,10 @@ def _compiled_payment_mechanics(
 ) -> list[dict[str, Any]] | None:
     """Resolve trusted printed payment mechanics at the selected face."""
 
+    stats = host.state.players[seat].stats
+    turn_sequence = host.state.turn_sequence
     if suppress_source_costs:
-        mechanics: list[dict[str, Any]] = []
-        if host.state.players[seat].stats.get("next_spell_improvise"):
-            mechanics.append({"kind": "improvise", "schema_version": 1})
-        return mechanics
+        return with_next_spell_payments(stats, turn_sequence, [])
     mechanics = host._cost_payment_mechanics(record, schema)
     printed_keywords = {str(value).casefold() for value in record.keywords}
     compiled_by_kind: dict[str, tuple[Any, ...]] = {
@@ -185,23 +186,16 @@ def _compiled_payment_mechanics(
                 "schema_version": compiled_convoke[0].schema_version,
             }
         )
-    compiled_delve = compiled_by_kind["delve"]
-    if compiled_delve:
-        mechanics.append(compiled_delve[0].to_dict())
-    compiled_improvise = compiled_by_kind["improvise"]
-    if compiled_improvise:
-        mechanics.append(compiled_improvise[0].to_dict())
+    for kind in ("delve", "improvise"):
+        specs = compiled_by_kind[kind]
+        if specs:
+            mechanics.append(specs[0].to_dict())
     for kind in compiled_by_kind:
         declared = kind in declared_kinds
         printed = kind in printed_keywords
         if (declared or printed) and not compiled_by_kind[kind]:
             return None
-    if host.state.players[seat].stats.get("next_spell_improvise") and not any(
-        str(value.get("kind") or "").casefold() == "improvise"
-        for value in mechanics
-    ):
-        mechanics.append({"kind": "improvise", "schema_version": 1})
-    return mechanics
+    return with_next_spell_payments(stats, turn_sequence, mechanics)
 
 
 def _with_kicker_cost(
@@ -521,7 +515,8 @@ def _initial_options(
     from .entwine_costs import with_entwine_mode_cost_options
     expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
     from .option_expansion import expand_optional_resource_costs
-    expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
+    expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
+        mechanics=mechanics, mandatory=mandatory, cast_type_line=cast_type_line)
     from .aftermath import with_aftermath_stack_context
     from .assist_costs import ASSIST_OPTION_FIELD
     if schema.get("compiled_assist") is True:
@@ -1037,6 +1032,8 @@ def _apply_payment_mechanics(
     spend_context: Any,
     reserved_cards: Sequence[Any] = (),
 ) -> tuple[dict[str, Any], list[Any]] | None:
+    from .mixed_tap_payment import apply_tap_payments, supports_mixed_tap_payment
+
     choice_schema: dict[str, Any] = {}
     selected_cards: list[Any] = list(reserved_cards)
     kinds = tuple(
@@ -1056,7 +1053,7 @@ def _apply_payment_mechanics(
         for mechanic in mechanics
         if str(mechanic.get("kind") or "").casefold() == "delve"
     )
-    if len(tap_mechanics) > 1 or len(delve_mechanics) > 1:
+    if len(delve_mechanics) > 1 or (len(tap_mechanics) > 1 and not supports_mixed_tap_payment(tap_mechanics)):
         return None
     for mechanic in mechanics:
         kind = str(mechanic.get("kind") or "").casefold()
@@ -1073,33 +1070,9 @@ def _apply_payment_mechanics(
         choice_schema=choice_schema,
     ):
         return None
-    if tap_mechanics:
-        mechanic = tap_mechanics[0]
-        kind = str(mechanic.get("kind") or "").casefold()
-        if kind == "convoke":
-            if not _apply_convoke(
-                host,
-                seat,
-                option,
-                response,
-                hint=hint,
-                spend_context=spend_context,
-                selected_cards=selected_cards,
-                choice_schema=choice_schema,
-            ):
-                return None
-        elif not _apply_improvise(
-            host,
-            seat,
-            option,
-            mechanic,
-            response,
-            hint=hint,
-            spend_context=spend_context,
-            selected_cards=selected_cards,
-            choice_schema=choice_schema,
-        ):
-            return None
+    if not apply_tap_payments(host, seat, option, tap_mechanics, response, hint=hint,
+                              spend_context=spend_context, selected_cards=selected_cards, choice_schema=choice_schema):
+        return None
     return choice_schema, selected_cards
 
 
@@ -1330,6 +1303,7 @@ def _finalize_option(
     cast_type_line: str | None,
 ) -> CastCostOption | None:
     option = copy.deepcopy(option)
+    mechanics = bind_granted_payment_mechanics(option, mechanics, response, hint=hint)
     if announced_additional_cost_dependencies({'additional_costs': list(mandatory_costs)}) and mechanics:
         return None
     selected_additional_costs = option.pop(
@@ -1476,6 +1450,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
 def _cast_cost_options_for_submission(host, seat, card, program, submission, *, hint, force_without_mana_cost,
         alternative_base, cast_type_line, suppress_source_costs, resolving_exile_authority,
         minimum_library_x, source_grant_only=None):
+    from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+    cast_type_line = prospective_cross_zone_spell_type_line(host, card, seat, cast_type_line) or cast_type_line
     initial = _initial_options(
         host,
         seat,
@@ -1527,6 +1504,10 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
             if option.get("cast_type_line")
             else cast_type_line
         )
+        if option.get("cast_type_line"):
+            projected = prospective_cross_zone_spell_type_line(host, card, seat, option_cast_type_line)
+            if projected is not None:
+                option["cast_type_line"] = option_cast_type_line = projected
         from ..splice import SPLICE_INTERNAL_SELECTION, SPLICE_SELECTION
         if SPLICE_SELECTION in submission or SPLICE_INTERNAL_SELECTION in submission:
             from .splice_costs import apply_splice_declaration

@@ -11,6 +11,7 @@ from .disturb_costs import cast_view_zone_permission,disturb_back_cast_permissio
 from ..prototype import compiled_prototype_spec
 from .characteristic_methods import characteristic_cast_view,characteristic_program_key,characteristic_offer_fields
 from ..fuse import fuse_source_cast_is_complete
+from ..temporary_cast_timing import temporary_cast_timing_permissions
 from typing import Any, Literal, Protocol
 
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
@@ -422,6 +423,7 @@ def _combined_cast_timing_permissions(
             else compiled_sneak_timing_permissions(host, card)
         ),
         *static_cast_timing_permissions(host, actor, card, face=face),
+        *temporary_cast_timing_permissions(host, actor, card, face=face),
     )
 
 
@@ -486,6 +488,8 @@ def _cast_program_and_cost(
     face: Mapping[str, Any] | None,
 ) -> tuple[str, str, int, str, Any, CastCostOption]:
     card=prospective_cast_card(host,card,str(face.get('name')) if face else None)
+    from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
     response = request.response()
     method_spec = _required_face_down_method_spec(
         host,
@@ -497,6 +501,7 @@ def _cast_program_and_cost(
         if method_spec is not None
         else str(face.get("type_line") or "") if face else record.type_line
     )
+    type_line = prospective_cross_zone_spell_type_line(host, card, request.actor, type_line) or type_line
     mana_cost = (
         "{3}"
         if method_spec is not None
@@ -775,6 +780,7 @@ def build_cast_proposal(
             else getattr(program, "target_schema", None)
         ),
     )
+    cast_view = prospective_cast_card(host, card, str(face.get("name")) if face else None)
     (
         selected_dict,
         targets,
@@ -786,12 +792,13 @@ def build_cast_proposal(
     ) = _cast_targets_and_tap_costs(
         host,
         request,
-        prospective_cast_card(host,card,str(face.get('name')) if face else None),
+        cast_view,
         program,
         selected,
         aura_target_schema,
     )
     from ...announced_damage import cast_allocation_details
+    from .face_queries import typed_mana_spend_details
     allocation = cast_allocation_details(
         target_schema if target_schema is not None else getattr(program, "target_schema", None), targets, response,
     )
@@ -815,6 +822,8 @@ def build_cast_proposal(
         details=freeze_json(
             {
                 **_classic_flash_proposal_details(host,request,card,face),
+                **typed_mana_spend_details(host, cast_view, type_line, actor=request.actor,
+                    use_selected_type=bool(selected_dict.get("cast_type_line")) or request.cast_method in FACE_DOWN_CAST_METHODS),
                 **allocation,
                 "selected_cost_option": selected_dict,
                 "selected_modes": selected_modes,
@@ -954,14 +963,14 @@ def build_cast_offer(
     face_name: str | None = None,
     splice_declaration: Mapping[str, Any] | None = None,
     resolving_payment: Literal["free", "paid"] | None = None,
-    resolving_origin: Literal["exile", "graveyard"] = "exile",
+    resolving_origin: Literal["exile", "graveyard", "hand"] = "exile",
 ) -> CastProposalResult:
     """Use the casting proposal queries to advertise one executable action."""
 
     if resolving_payment is not None and (
         card.zone != resolving_origin
         or resolving_payment not in ("free", "paid")
-        or resolving_origin not in {"exile", "graveyard"}
+        or resolving_origin not in {"exile", "graveyard", "hand"}
         or resolving_payment == "paid" and resolving_origin != "exile"
     ):
         return CastProposalResult("unavailable", "zone_permission")
@@ -983,6 +992,8 @@ def build_cast_offer(
     if cast_method=='fuse' and face_name is not None:return CastProposalResult('unavailable','fuse_single_face')
     front = host._select_cast_face(record,face_name) if record.faces and cast_method!='fuse' else None
     card=prospective_cast_card(host,card,face_name)
+    from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
     if resolving_payment is None and card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):
         return CastProposalResult('unavailable','zone_permission')
     type_line = (
@@ -990,6 +1001,7 @@ def build_cast_offer(
         if method_spec is not None
         else str(front.get("type_line") or "") if front else record.type_line
     )
+    type_line = prospective_cross_zone_spell_type_line(host, card, seat, type_line) or type_line
     if type_line_has_card_type(type_line, "land"):
         return CastProposalResult("unavailable", "land_not_spell")
     if resolving_payment is None and not _zone_lifecycle_cast_timing_is_legal(host, seat, card):

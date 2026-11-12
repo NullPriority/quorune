@@ -341,7 +341,7 @@ class ExactDeckInteractionFamilyTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.owner == "A"
             and card.is_token
-            and card.printed_name == "Eldrazi"
+            and card.printed_name == "Eldrazi Token"
         )
         data = engine._effective_card_data(eldrazi)
         self.assertEqual(("10", "10"), (data["power"], data["toughness"]))
@@ -454,7 +454,7 @@ class ExactDeckInteractionFamilyTests(unittest.TestCase):
                     packet = session.packet("pilot:B", full=True)
                     self.assertEqual(
                         ["W", "U", "B", "R", "G"],
-                        packet["decision"]["ctx"]["options"],
+                        packet["decision"]["legal_actions"][0]["choice_schema"]["legal_values"],
                     )
                     result = session.act(
                         "pilot:B",

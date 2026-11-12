@@ -256,6 +256,11 @@ def _term(
 
 
 def _public_condition_metric(condition: str) -> CastReductionMetric | None:
+    if " ".join(condition.casefold().split()) == "if a creature is attacking you":
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.CREATURE_ATTACKING_CONTROLLER,
+            schema_version=4,
+        )
     legacy=_legacy_public_condition_metric(condition)
     if legacy is not None:return legacy
     legacy=_turn_fact_metric(condition)

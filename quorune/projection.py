@@ -96,6 +96,7 @@ class StateProjector:
         ) = None,
         land_play_count_resolver: Callable[[str], int] | None = None,
         hand_visibility_resolver: Callable[[str], bool] | None = None,
+        goading_players_resolver: Callable[[CardInstance], tuple[str, ...]] | None = None,
     ):
         self.card_db = card_db
         self.state = state
@@ -106,6 +107,7 @@ class StateProjector:
         )
         self.land_play_count_resolver = land_play_count_resolver
         self.hand_visibility_resolver = hand_visibility_resolver
+        self.goading_players_resolver = goading_players_resolver
 
     @staticmethod
     def seat_for(principal: str) -> str | None:
@@ -201,15 +203,16 @@ class StateProjector:
             or seat in card.revealed_to
             for seat in seats
         ) or (card.zone == 'hand' and (
-            self._hand_is_public(card.owner) or self._miracle_card_is_revealed(card)
+            self._hand_is_public(card.owner) or self._scoped_hand_card_is_revealed(card)
         ))
 
     def _hand_is_public(self, owner: str) -> bool:
         return self.hand_visibility_resolver is not None and self.hand_visibility_resolver(owner)
 
-    def _miracle_card_is_revealed(self, card: CardInstance) -> bool:
+    def _scoped_hand_card_is_revealed(self, card: CardInstance) -> bool:
+        from .drawing.captured_hand import captured_draw_is_public
         from .drawing.miracle_triggers import miracle_reveal_active
-        return miracle_reveal_active(self.state, card)
+        return miracle_reveal_active(self.state, card) or captured_draw_is_public(self.state, card)
 
     def _effective(self, card: CardInstance) -> dict[str, Any]:
         try:
@@ -421,10 +424,13 @@ class StateProjector:
             )
         if card.attacking:
             obj["atk"] = card.attacking
-        if card.goaded_by:
-            obj["goad"] = sorted(
-                designation.player for designation in card.goaded_by
-            )
+        goaders = (
+            self.goading_players_resolver(card)
+            if self.goading_players_resolver is not None and card.zone == "battlefield" and card.attachments
+            else tuple(designation.player for designation in card.goaded_by)
+        )
+        if goaders:
+            obj["goad"] = sorted(goaders)
         if card.monstrous_value is not None:
             obj["monstrous"] = card.monstrous_value
         if card.suspected_at is not None:
@@ -616,7 +622,7 @@ class StateProjector:
             if known:
                 return {'known_hand': [self._obj(card, principal) for card in known]}
         else:
-            revealed = [oid for oid in identities if self._miracle_card_is_revealed(self.state.cards[oid])]
+            revealed = [oid for oid in identities if self._scoped_hand_card_is_revealed(self.state.cards[oid])]
             if revealed:
                 return {'known_hand': self._zone(revealed, principal, public_unordered=True)}
         return {}
@@ -648,6 +654,8 @@ class StateProjector:
                 ),
                 "cmd": self._zone(p.zones["command"], principal),
             }
+            if p.dungeon_journey is not None:
+                summary["dungeon_journey"] = p.dungeon_journey.to_dict()
             generic_counters = _generic_player_counter_rows(p)
             from .city_blessing_model import player_has_citys_blessing
             if player_has_citys_blessing(p):summary['citys_blessing']=True
@@ -724,6 +732,7 @@ class StateProjector:
                 "over": self.state.game_over,
                 "winner": self.state.winner,
                 "monarch": self.state.monarch,
+                **({"initiative": self.state.initiative} if self.state.initiative is not None else {}),
                 **(
                     {"day_night": self.state.day_night}
                     if self.state.day_night is not None

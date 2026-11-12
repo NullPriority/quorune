@@ -13,6 +13,8 @@ from .context import SemanticNodeError
 
 
 _LIFE_GAIN_HANDLER_ID = "replacement.life.gain.multiplier.v1"
+_LIFE_GAIN_ADDITION_HANDLER_ID = "replacement.life.gain.addition.v1"
+_LIFE_GAIN_ADDITION_CAPABILITY = "life.gain.replacement.static_addition"
 _RELATIONS = {"any", "source_controller", "opponent"}
 
 
@@ -56,6 +58,12 @@ class LifeGainMultiplierNode:
     multiplier: int
 
 
+@dataclass(frozen=True, slots=True)
+class LifeGainAdditionNode:
+    affected_player_relation: str
+    addition: int
+
+
 def _relation_condition(
     relation: str,
     source_controller: str,
@@ -74,6 +82,46 @@ def _relation(value: Any, *, field: str) -> str:
             f"{field} must be any, source_controller, or opponent"
         )
     return relation
+
+
+def _life_gain_modification(descriptor, *, handler_id, schema_version, event):
+    exact_fields(
+        descriptor,
+        {"handler_id", "schema_version", "event", "condition", "modification"},
+        field="runtime handler",
+    )
+    if descriptor["handler_id"] != handler_id:
+        raise SemanticNodeError("Runtime handler ID does not match registry")
+    if descriptor["schema_version"] != schema_version:
+        raise SemanticNodeError(f"Unsupported {handler_id} schema version")
+    if descriptor["event"] != event:
+        raise SemanticNodeError(f"{handler_id} must handle {event}")
+    condition = descriptor["condition"]
+    if not isinstance(condition, Mapping):
+        raise SemanticNodeError("Life-gain replacement condition must be an object")
+    exact_fields(condition, {"affected_player_relation"}, field="life-gain replacement condition")
+    modification = descriptor["modification"]
+    if not isinstance(modification, Mapping):
+        raise SemanticNodeError("Life-gain replacement modification must be an object")
+    relation = _relation(condition["affected_player_relation"], field="condition.affected_player_relation")
+    return relation, modification
+
+
+def _positive_life_gain_replacement(context, *, handler_id, event, relation, quantity, operation, label):
+    conditions = {"direction": {"eq": "gain"}, "amount": {"not_in": [0]}}
+    affected = _relation_condition(relation, context.source_controller)
+    if affected is not None:
+        conditions["affected_player"] = affected
+    component_id = context.component_id or str(quantity)
+    return ReplacementEffect(
+        effect_id=f"{handler_id}:{context.source_ref}:{component_id}",
+        source_id=context.source_ref,
+        event_kind=event,
+        replacement_class=ReplacementClass.OTHER,
+        conditions=conditions,
+        operations=(operation,),
+        label=f"{context.source_ref}: {label}",
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -97,61 +145,14 @@ class LifeGainMultiplierHandler:
     def validate(
         self, descriptor: Mapping[str, Any]
     ) -> LifeGainMultiplierNode:
-        exact_fields(
-            descriptor,
-            {
-                "handler_id",
-                "schema_version",
-                "event",
-                "condition",
-                "modification",
-            },
-            field="runtime handler",
+        relation, modification = _life_gain_modification(
+            descriptor, handler_id=self.handler_id, schema_version=self.schema_version, event=self.event,
         )
-        if descriptor["handler_id"] != self.handler_id:
-            raise SemanticNodeError(
-                "Runtime handler ID does not match registry"
-            )
-        if descriptor["schema_version"] != self.schema_version:
-            raise SemanticNodeError(
-                f"Unsupported {self.handler_id} schema version"
-            )
-        if descriptor["event"] != self.event:
-            raise SemanticNodeError(
-                f"{self.handler_id} must handle {self.event}"
-            )
-        condition = descriptor["condition"]
-        if not isinstance(condition, Mapping):
-            raise SemanticNodeError(
-                "Life-gain replacement condition must be an object"
-            )
-        exact_fields(
-            condition,
-            {"affected_player_relation"},
-            field="life-gain replacement condition",
-        )
-        modification = descriptor["modification"]
-        if not isinstance(modification, Mapping):
-            raise SemanticNodeError(
-                "Life-gain replacement modification must be an object"
-            )
-        exact_fields(
-            modification,
-            {"multiplier"},
-            field="life-gain replacement modification",
-        )
+        exact_fields(modification, {"multiplier"}, field="life-gain replacement modification")
         multiplier = modification["multiplier"]
         if type(multiplier) is not int or multiplier < 2:
-            raise SemanticNodeError(
-                "Life-gain multiplier must be an integer of at least 2"
-            )
-        return LifeGainMultiplierNode(
-            affected_player_relation=_relation(
-                condition["affected_player_relation"],
-                field="condition.affected_player_relation",
-            ),
-            multiplier=multiplier,
-        )
+            raise SemanticNodeError("Life-gain multiplier must be an integer of at least 2")
+        return LifeGainMultiplierNode(affected_player_relation=relation, multiplier=multiplier)
 
     def replacement_effect(
         self,
@@ -159,33 +160,53 @@ class LifeGainMultiplierHandler:
         context: LifeReplacementSourceContext,
     ) -> ReplacementEffect:
         node = self.validate(descriptor)
-        conditions: dict[str, Any] = {
-            "direction": {"eq": "gain"},
-            "amount": {"not_in": [0]},
-        }
-        affected = _relation_condition(
-            node.affected_player_relation,
-            context.source_controller,
+        return _positive_life_gain_replacement(
+            context, handler_id=self.handler_id, event=self.event, relation=node.affected_player_relation,
+            quantity=node.multiplier, operation={"op": "multiply", "field": "amount", "factor": node.multiplier},
+            label="multiply life gained",
         )
-        if affected is not None:
-            conditions["affected_player"] = affected
-        component_id = context.component_id or str(node.multiplier)
-        return ReplacementEffect(
-            effect_id=(
-                f"{self.handler_id}:{context.source_ref}:{component_id}"
-            ),
-            source_id=context.source_ref,
-            event_kind=self.event,
-            replacement_class=ReplacementClass.OTHER,
-            conditions=conditions,
-            operations=(
-                {
-                    "op": "multiply",
-                    "field": "amount",
-                    "factor": node.multiplier,
-                },
-            ),
-            label=f"{context.source_ref}: multiply life gained",
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: LifeReplacementSourceContext,
+    ) -> tuple[ReplacementEffect, ...]:
+        return (self.replacement_effect(descriptor, context),)
+
+
+@dataclass(frozen=True, slots=True)
+class LifeGainAdditionHandler:
+    handler_id: str = _LIFE_GAIN_ADDITION_HANDLER_ID
+    schema_version: int = 1
+    family: str = "replacement.life.gain.addition"
+    event: str = "life.change"
+    rule_references: tuple[str, ...] = (
+        "119.10", "120.4c", "614.1", "614.5", "616.1", "616.1f",
+    )
+    capability_dependencies: tuple[str, ...] = (_LIFE_GAIN_ADDITION_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> LifeGainAdditionNode:
+        relation, modification = _life_gain_modification(
+            descriptor, handler_id=self.handler_id, schema_version=self.schema_version, event=self.event,
+        )
+        if type(descriptor["schema_version"]) is not int or relation != "source_controller":
+            raise SemanticNodeError("Life-gain addition requires its versioned source-controller scope")
+        exact_fields(modification, {"addition"}, field="life-gain replacement modification")
+        amount = modification["addition"]
+        if type(amount) is not int or amount < 1:
+            raise SemanticNodeError("Life-gain addition must be a positive integer")
+        return LifeGainAdditionNode(affected_player_relation=relation, addition=amount)
+
+    def replacement_effect(
+        self,
+        descriptor: Mapping[str, Any],
+        context: LifeReplacementSourceContext,
+    ) -> ReplacementEffect:
+        node = self.validate(descriptor)
+        return _positive_life_gain_replacement(
+            context, handler_id=self.handler_id, event=self.event, relation=node.affected_player_relation,
+            quantity=node.addition, operation={"op": "add", "field": "amount", "amount": node.addition},
+            label="add to life gained",
         )
 
     def lower(
@@ -220,7 +241,7 @@ class LifeReplacementRegistry(
 @lru_cache(maxsize=1)
 def default_life_replacement_registry() -> LifeReplacementRegistry:
     from .life_prohibitions import LifeGainProhibitionHandler
-    registry = LifeReplacementRegistry((LifeGainMultiplierHandler(),LifeGainProhibitionHandler()))
+    registry = LifeReplacementRegistry((LifeGainMultiplierHandler(), LifeGainAdditionHandler(), LifeGainProhibitionHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

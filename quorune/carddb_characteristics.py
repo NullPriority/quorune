@@ -132,6 +132,31 @@ def shared_type_copy_display_values(values: Mapping[str, Any]) -> dict[str, Any]
     return result
 
 
+def public_object_rules_names(
+    card: CardInstance, effective: Mapping[str, Any], record: CardRecord | None = None,
+) -> tuple[str, ...]:
+    """Read public rules names from the current object and its typed face data."""
+
+    if card.zone not in {"battlefield", "graveyard"} or card.face_down or card.phased_out:
+        return ()
+    if card.zone == "graveyard" and record is not None and record.faces:
+        if record.layout == "split":
+            return tuple(face["name"] for face in record.faces)
+        if record.layout in {"modal_dfc", "transform", "flip", "meld", "adventure", "omen", "prepare", "battle"}:
+            return (record.faces[0]["name"],)
+
+    name = effective.get("name")
+    if type(name) is not str or not name:
+        return ()
+    if card.zone == "battlefield":
+        from .rules.room_copy_values import current_room_rules_names
+
+        room_names = current_room_rules_names(card, name)
+        if room_names is not None:
+            return room_names
+    return (name,)
+
+
 def base_card_characteristics(
     card: CardInstance,
     record: CardRecord | None,
@@ -238,6 +263,7 @@ def base_card_characteristics(
 
 __all__ = [
     "base_card_characteristics",
+    "public_object_rules_names",
     "custom_copyable_characteristics",
     "copiable_card_characteristics",
     "separate_custom_display_text",

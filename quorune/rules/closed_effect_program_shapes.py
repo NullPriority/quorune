@@ -10,7 +10,7 @@ from .fixed_effect_clause_shapes import (
 )
 from ..fractional_quantity_model import HALF_QUANTITY_KIND
 from .bound_effect_program_shapes import (
-    bound_effect_program_node_capabilities, has_target_controller_recipient,
+    bound_effect_program_node_capabilities, has_target_controller_recipient, has_target_controller_search_role,
 )
 
 
@@ -46,7 +46,8 @@ def closed_effect_program_node_capabilities(
     if (
         CLOSED_EFFECT_PROGRAM_MECHANIC not in mechanics
         or not 2 <= len(effects) <= 8
-        or any(has_target_controller_recipient(effect) for effect in effects)
+        or any(has_target_controller_recipient(effect) or has_target_controller_search_role(effect)
+               for effect in effects)
     ):
         return ()
     target_effects = tuple(
@@ -110,11 +111,24 @@ def closed_effect_program_runtime_dependencies(program):
         if CLOSED_EFFECT_PROGRAM_CAPABILITY not in required:raise ValueError('Modal ordered-program annotation has no owning branch')
         return tuple(sorted({*required,*modal_owned}))
     if any(has_target_controller_recipient(effect) for effect in program.effects):
+        from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
+
+        projected = public_query_amount_shape_context(program.effects, set(program.coverage), target_schema=schema)
+        if projected is None:
+            raise ValueError("A target controller result requires its closed amount shape")
+        effects, mechanics = projected
+        owned = closed_effect_program_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=mechanics,
+        )
+        if not owned:
+            raise ValueError("A target controller result requires its preceding closed target instruction")
+        return owned
+    if any(has_target_controller_search_role(effect) for effect in program.effects):
         owned = closed_effect_program_node_capabilities(
             effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
         )
         if not owned:
-            raise ValueError("Target controller damage requires its preceding closed target instruction")
+            raise ValueError("Target controller search requires its preceding closed target instruction")
         return owned
     if CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage:
         return ()

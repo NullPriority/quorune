@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Comparison-only aliases for one complete battlefield creature target."""
+"""Comparison-only aliases for complete activation target schemas."""
 
 from collections.abc import Mapping
 from copy import deepcopy
@@ -30,6 +30,21 @@ def _single_creature_target(schema):
         return target_plan(value)
     except (TypeError, ValueError):
         return None
+
+
+def _single_nonland_permanent_target(schema):
+    fields = {"zones", "categories", "count"}
+    if (not isinstance(schema, Mapping) or set(schema) not in (fields | {"land"}, fields | {"types_none"})
+            or schema["zones"] != ["battlefield"] or schema["categories"] != ["permanent"]
+            or type(schema["count"]) is not int or schema["count"] != 1):
+        return None
+    if "land" in schema:
+        if schema["land"] is not False:
+            return None
+    elif schema["types_none"] != ["land"]:
+        return None
+    return target_plan({"zones": ["battlefield"], "categories": ["permanent"],
+                        "count": 1, "types_none": ["land"]})
 
 
 def _fixed_graveyard_artifact_target(schema):
@@ -74,7 +89,8 @@ def reviewed_activation_with_equivalent_target(current, old):
     if current.target_schema == old.target_schema:
         return old
     equivalent = False
-    for decode in (_single_creature_target, _fixed_graveyard_artifact_target, _optional_tapped_creature_target):
+    for decode in (_single_creature_target, _fixed_graveyard_artifact_target,
+                   _optional_tapped_creature_target, _single_nonland_permanent_target):
         a, b = (decode(p.target_schema) for p in (current, old))
         if a is not None and b is not None and a == b:
             equivalent = True;break

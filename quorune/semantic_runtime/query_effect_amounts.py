@@ -39,14 +39,27 @@ def _live_quantity_source(host, item, quantity):
     """Exclude the original source object, never its later incarnation."""
     source_id = getattr(item, 'source_object_id', None) or getattr(item, 'card_object_id', None)
     source = host.state.cards.get(source_id)
-    if quantity.exclude_source:
-        context = getattr(item, 'context', None)
-        identity = context.get('source_logical_object_id') if isinstance(context, Mapping) else None
-        if type(identity) is not str or not identity:
-            raise PublicQueryAmountError('Source-excluding quantity requires its captured logical identity')
-        if source is None or source.logical_object_id != identity:
-            quantity = replace(quantity, exclude_source=False)
+    context = getattr(item, 'context', None)
+    identity = context.get('source_logical_object_id') if isinstance(context, Mapping) else None
+    if type(identity) is not str or not identity:
+        raise PublicQueryAmountError('Source-excluding quantity requires its captured logical identity')
+    if source is None or source.logical_object_id != identity:
+        quantity = replace(quantity, exclude_source=False)
     return quantity, source.ref if source is not None else None
+
+
+def _relative_quantity(host, item, spec: PublicQueryAmountSpec):
+    quantity = spec.quantity
+    if spec.schema_version == 3:
+        from ..event_counter_reference import resolve_event_counter_recipient
+
+        if item.context.get("event") != "creature.attacks":
+            raise PublicQueryAmountError("Attack-relative counts require a sealed attack occurrence")
+        reference = resolve_event_counter_recipient(host, item)
+        return (replace(quantity, exclude_source=False), None) if reference is None else (quantity, reference)
+    if quantity.exclude_source:
+        return _live_quantity_source(host, item, quantity)
+    return quantity, None
 
 
 def resolve_public_query_amount(
@@ -77,14 +90,15 @@ def resolve_public_query_amount(
             if not isinstance(previous, Mapping) or set(previous) != {"controller", "quantity", "value"} or previous["controller"] != controller or previous["quantity"] != spec.quantity.to_dict() or type(previous["value"]) is not int or previous["value"] < 0:
                 raise PublicQueryAmountError("Declared amount continuation changed its identity or value")
             return spec.coefficient * previous["value"]
-    if isinstance(spec.quantity, LiveBattlefieldQuantitySpec):
-        quantity, source_ref = _live_quantity_source(host, item, spec.quantity)
-        try:
+    try:
+        quantity, source_ref = _relative_quantity(host, item, spec)
+        if isinstance(quantity, LiveBattlefieldQuantitySpec):
             count = current_live_battlefield_count(host, controller, quantity, source_ref=source_ref)
-        except ValueError as exc:
-            raise PublicQueryAmountError(str(exc)) from exc
-    else:
-        count = query_characteristic_count(host, _ResolutionQuantitySource(controller=controller, ref=stack_ref), spec.quantity)
+        else:
+            count = query_characteristic_count(host,
+                _ResolutionQuantitySource(controller=controller, ref=source_ref or stack_ref), quantity)
+    except ValueError as exc:
+        raise PublicQueryAmountError(str(exc)) from exc
     if type(count) is not int or count < 0:
         raise PublicQueryAmountError("Public quantity is unavailable or malformed")
     if cache is not None:

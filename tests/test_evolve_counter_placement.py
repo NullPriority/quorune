@@ -296,6 +296,9 @@ class EvolveRuntimeTests(unittest.TestCase):
         zone: str,
     ) -> CardInstance:
         record = self.db.lookup(name)
+        from common import register_current_fixture_programs
+        register_current_fixture_programs(self.db, engine.semantics, (record,),
+                                          profile=engine.state.config.review_profile)
         visible = list(engine.seats) if zone == "battlefield" else [seat]
         card = CardInstance(
             object_id=f"fixture:{ref}",

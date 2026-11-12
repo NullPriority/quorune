@@ -210,6 +210,233 @@ class AbilitySourceCounterRuntimeTests(unittest.TestCase):
         self.reject(s,command,seat='D')
         result=s.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
 
+    def _cast_checked_face(self, session, card, face=None, *, seat="A", targets=()):
+        self.priority(session, seat)
+        rows = [row for row in self.actions(session, seat) if row.get("card") == card.ref
+                and (row.get("face") == face if face is not None else row["id"] == "cast:" + card.ref)]
+        self.assertTrue(rows, self.actions(session, seat))
+        row = rows[0]
+        self.assertTrue(self.binding(session, card)["strict_capability_ready"])
+        command = {"action_id": row["id"], "targets": list(targets), "pay": "auto"}
+        if face is not None:
+            command["face"] = face
+        if row.get("cost_options"):
+            command["cost_option"] = row["cost_options"][0]["id"]
+        self.reject(session, command, seat="D" if seat != "D" else "C")
+        result = session.act("pilot:" + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def _resolve_checked_counter_source(self, session, source):
+        for _ in range(24):
+            if session.state.cards[source.object_id].zone != "stack":
+                return
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("The offered counterspell did not finish resolving")
+
+    def test_compiled_counter_tokens_use_target_controller_after_counter_attempt(self):
+        for index, (name, victim_name) in enumerate((
+            ("An Offer You Can't Refuse", "Pyroclasm"),
+            ("Swan Song", "Pyroclasm"),
+            ("An Offer You Can't Refuse", "Supreme Verdict"),
+            ("Swan Song", "Supreme Verdict"),
+        )):
+            with self.subTest(counter=name, target=victim_name):
+                session = self.session(715_111_630 + index)
+                source = self.add(session.engine, name, zone="hand")
+                victim = self.add(session.engine, victim_name, seat="B", zone="hand")
+                self.prepare(session, mana={"U": 1})
+                session.state.active_player = "B"
+                session.state.players["B"].mana_pool.update(C=1, R=1, W=2, U=1)
+                self.checkpoint(session)
+                self._cast_checked_face(session, victim, seat="B")
+                target = session.state.stack[-1]
+                self._cast_checked_face(session, source, targets=(target.ref,))
+                session = self.replay(session, load=True)
+                self._resolve_checked_counter_source(session, source)
+                self.assertEqual("stack" if victim_name == "Supreme Verdict" else "graveyard",
+                                 session.state.cards[victim.object_id].zone)
+                tokens = [card for card in session.state.cards.values()
+                          if card.is_token and card.zone == "battlefield"]
+                treasure = name == "An Offer You Can't Refuse"
+                self.assertEqual(2 if treasure else 1, len(tokens))
+                for token in tokens:
+                    self.assertEqual(("B", "B"), (token.owner, token.controller))
+                    data = session.engine._effective_card_data(token)
+                    self.assertIn("Treasure" if treasure else "Bird", data["type_line"])
+                    if not treasure:
+                        self.assertEqual("Bird Token", token.printed_name)
+                        self.assertEqual({"U"}, set(data["colors"]))
+                        self.assertEqual((2, 2), (session.engine._numeric_stat(token.object_id, "power"),
+                                                  session.engine._numeric_stat(token.object_id, "toughness")))
+                        self.assertIn("flying", session.engine._combat_keywords(token))
+                self.replay(session, load=True)
+
+    def test_compiled_counter_tokens_reject_creatures_and_fizzle_after_target_removal(self):
+        for index, name in enumerate(("An Offer You Can't Refuse", "Swan Song")):
+            with self.subTest(counter=name, boundary="creature"):
+                session = self.session(715_111_640 + index)
+                source = self.add(session.engine, name, zone="hand")
+                victim = self.add(session.engine, "Grizzly Bears", seat="B", zone="hand")
+                self.prepare(session, mana={"U": 1})
+                session.state.active_player = "B"
+                session.state.players["B"].mana_pool.update(C=1, G=1)
+                self.checkpoint(session)
+                self._cast_checked_face(session, victim, seat="B")
+                target = session.state.stack[-1]
+                self.priority(session, "A")
+                self.assertFalse(any(row.get("card") == source.ref for row in self.actions(session)))
+                self.reject(session, {"action_id": "cast:" + source.ref,
+                                      "targets": [target.ref], "pay": "auto"})
+                self.replay(session, load=True)
+            with self.subTest(counter=name, boundary="removed target"):
+                session = self.session(715_111_642 + index)
+                source = self.add(session.engine, name, zone="hand")
+                victim = self.add(session.engine, "Pyroclasm", seat="B", zone="hand")
+                removal = self.add(session.engine, "Counterspell", seat="C", zone="hand")
+                self.prepare(session, mana={"U": 1})
+                session.state.active_player = "B"
+                session.state.players["B"].mana_pool.update(C=1, R=1)
+                session.state.players["C"].mana_pool["U"] = 2
+                self.checkpoint(session)
+                self._cast_checked_face(session, victim, seat="B")
+                target = session.state.stack[-1]
+                self._cast_checked_face(session, source, targets=(target.ref,))
+                self._cast_checked_face(session, removal, seat="C", targets=(target.ref,))
+                self.assertIsNone(self.settle(session))
+                self.assertEqual("graveyard", session.state.cards[victim.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+                self.replay(session, load=True)
+
+    def test_compiled_flusterstorm_copies_retarget_and_pay_independently(self):
+        session = self.session(715_111_650)
+        source = self.add(session.engine, "Flusterstorm", zone="hand")
+        first = self.add(session.engine, "Shock", seat="B", zone="hand", ref="storm-first-shock")
+        second = self.add(session.engine, "Shock", seat="C", zone="hand", ref="storm-second-shock")
+        self.prepare(session, mana={"U": 1})
+        for seat in "BC":
+            session.state.players[seat].mana_pool.update(R=1, C=1)
+        self.checkpoint(session)
+        self._cast_checked_face(session, first, seat="B", targets=("C",))
+        first_ref = session.state.stack[-1].ref
+        self._cast_checked_face(session, second, seat="C", targets=("D",))
+        second_ref = session.state.stack[-1].ref
+        self._cast_checked_face(session, source, targets=(first_ref,))
+        self.assertEqual(2, session.state.stack[-1].context["copy_count"])
+        self.assertEqual("semantic.storm", self.settle(session).kind)
+        command = {"action_id": "choose", "copy_targets": [[first_ref], [second_ref]]}
+        self.reject(session, command, seat="B")
+        self.reject(session, {**command, "copy_targets": [[first_ref]]})
+        self.reject(session, {**command, "copy_targets": [[first_ref], ["not-a-stack-object"]]})
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        copies = [item for item in session.state.stack if item.kind == "spell_copy"]
+        self.assertEqual([[first_ref], [second_ref]], [item.targets for item in copies])
+        self.assertEqual(3, len(session.engine._current_turn_history("spell_cast")))
+        for seat, paid in (("C", True), ("B", False)):
+            self.assertEqual("semantic.choice", self.settle(session).kind)
+            self.assertEqual(["pilot:" + seat], session.pending_principals())
+            packet = session.packet("pilot:" + seat, full=True)["decision"]
+            self.assertEqual(1, packet["ctx"]["cost"]["GENERIC"])
+            for other in "ABCD":
+                if other != seat:
+                    self.assertIsNone(session.packet("pilot:" + other, full=True)["decision"])
+            command = {"action_id": "choose", "pay": paid}
+            self.reject(session, command, seat="A")
+            session = self.replay(session, load=True)
+            result = session.act("pilot:" + seat, command)
+            self.assertTrue(result.ok, result.summary)
+            self.assertEqual(0 if paid else 1, session.state.players[seat].mana_pool["C"])
+        self.assertIsNone(self.settle(session))
+        self.assertEqual("graveyard", session.state.cards[first.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[second.object_id].zone)
+        self.assertEqual([40, 40, 40, 38], [session.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual(3, len(session.engine._current_turn_history("spell_cast")))
+        self.replay(session, load=True)
+
+    def test_token_adventure_creates_printed_tokens_then_casts_its_normal_face(self):
+        cases = (
+            ("Flaxen Intruder // Welcome Home", "Welcome Home", "Flaxen Intruder", 3, 2, 2, "G", False, None),
+            ("Altar of Bhaal // Bone Offering", "Bone Offering", "Altar of Bhaal", 1, 4, 1, "B", True, "menace"),
+        )
+        for index, (name, face, normal, count, power, toughness, color, tapped, keyword) in enumerate(cases):
+            with self.subTest(card=name):
+                session = self.session(715_111_600 + index)
+                source = self.add(session.engine, name, zone="hand")
+                self.prepare(session, mana={"C": 10, "G": 5, "B": 5})
+                self.checkpoint(session)
+                before = set(session.state.cards)
+                self._cast_checked_face(session, source, face)
+                self.assertIsNone(self.settle(session))
+                tokens = [card for oid, card in session.state.cards.items()
+                          if oid not in before and card.is_token and card.zone == "battlefield"]
+                self.assertEqual(count, len(tokens))
+                for token in tokens:
+                    self.assertEqual("A", token.controller)
+                    self.assertEqual(tapped, token.tapped)
+                    self.assertEqual(power, session.engine._numeric_stat(token.object_id, "power"))
+                    self.assertEqual(toughness, session.engine._numeric_stat(token.object_id, "toughness"))
+                    self.assertEqual({color}, set(session.engine._effective_card_data(token).get("colors", ())))
+                    if keyword is not None:
+                        self.assertIn(keyword, session.engine._combat_keywords(token))
+                self.assertEqual("exile", session.state.cards[source.object_id].zone)
+                session = self.resume(session)
+                self._cast_checked_face(session, session.state.cards[source.object_id], normal)
+                self.assertIsNone(self.settle(session))
+                self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_countered_token_adventure_creates_no_tokens_or_exile_permission(self):
+        session = self.session(715_111_602)
+        source = self.add(session.engine, "Flaxen Intruder // Welcome Home", zone="hand")
+        response = self.add(session.engine, "Counterspell", seat="B", zone="hand")
+        self.prepare(session, mana={"C": 5, "G": 2})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        before = set(session.state.cards)
+        self._cast_checked_face(session, source, "Welcome Home")
+        original = session.state.stack[-1]
+        self._cast_checked_face(session, response, seat="B", targets=(original.ref,))
+        self.assertIsNone(self.settle(session))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertFalse(any(card.is_token and card.zone == "battlefield"
+                             for oid, card in session.state.cards.items() if oid not in before))
+        self.assertNotIn("adventure_cast_permission", session.state.cards[source.object_id].annotations)
+        self.replay(session, load=True)
+
+    def test_copied_token_adventure_uses_each_spell_controller_and_one_card_permission(self):
+        session = self.session(715_111_603)
+        source = self.add(session.engine, "Young Red Dragon // Bathe in Gold", zone="hand")
+        response = self.add(session.engine, "Twincast", seat="B", zone="hand")
+        self.prepare(session, mana={"C": 1, "R": 1})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        before = set(session.state.cards)
+        self._cast_checked_face(session, source, "Bathe in Gold")
+        original = session.state.stack[-1]
+        self._cast_checked_face(session, response, seat="B", targets=(original.ref,))
+        decision = self.settle(session)
+        if decision is not None:
+            self.assertEqual(("semantic.choice", ["B"]), (decision.kind, decision.actors))
+            command = {"action_id": "choose", "targets": []}
+            self.reject(session, command, seat="A")
+            result = session.act("pilot:B", command)
+            self.assertTrue(result.ok, result.summary)
+            self.assertIsNone(self.settle(session))
+        tokens = [card for oid, card in session.state.cards.items()
+                  if oid not in before and card.is_token and card.zone == "battlefield"]
+        self.assertEqual(["A", "B"], sorted(card.controller for card in tokens))
+        for token in tokens:
+            self.assertIn("treasure", type_parts(session.engine._effective_card_data(token)["type_line"])[1])
+        current = session.state.cards[source.object_id]
+        self.assertEqual("exile", current.zone)
+        self.assertEqual("A", current.annotations["adventure_cast_permission"]["player"])
+        self.assertEqual(1, sum("adventure_cast_permission" in card.annotations for card in session.state.cards.values()))
+        self.replay(session, load=True)
+
     def test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw(self):
         s,spell,private=self.fixture(113700300)
         source=self.add(s.engine,'Mind Stone',seat='B')

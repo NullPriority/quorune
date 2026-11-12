@@ -16,6 +16,7 @@ from ..resolution_characteristic_model import (
     IndefiniteEnchantmentFormSpec, INDEFINITE_ENCHANTMENT_FORM_CAPABILITY, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
     FixedResolutionModifierSpec, FixedResolutionSubtypeSettingSpec, decode_temporary_creature_type_choice,
+    FixedResolutionCardTypeAdditionSpec, TARGET_CARD_TYPE_ADDITION_CAPABILITY, TARGET_CARD_TYPE_ADDITION_MECHANIC,
     fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
@@ -30,6 +31,7 @@ _CONTINUOUS_EFFECT_MECHANIC_OWNERS = frozenset({
     INDEFINITE_SOURCE_ANIMATION_CAPABILITY,
     INDEFINITE_ENCHANTMENT_FORM_CAPABILITY,
     FIXED_TARGET_COLOR_CAPABILITY,
+    TARGET_CARD_TYPE_ADDITION_CAPABILITY,
 })
 
 
@@ -39,6 +41,8 @@ def continuous_resolution_covered_mechanics(supplied: set[str]) -> set[str]:
         covered.add(INDEFINITE_SOURCE_ANIMATION_MECHANIC)
     if INDEFINITE_ENCHANTMENT_FORM_CAPABILITY in supplied:
         covered.add(INDEFINITE_ENCHANTMENT_FORM_MECHANIC)
+    if TARGET_CARD_TYPE_ADDITION_CAPABILITY in supplied:
+        covered.add(TARGET_CARD_TYPE_ADDITION_MECHANIC)
     return covered
 
 
@@ -124,10 +128,21 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
     mechanics=set(mechanic_ids)
     if ('cr-611-continuous-effects' not in mechanics or len(effects) != 1
             or not mechanics.intersection({PERMANENT_CHARACTERISTIC_MECHANIC,
-                INDEFINITE_SOURCE_ANIMATION_MECHANIC, INDEFINITE_ENCHANTMENT_FORM_MECHANIC})):
+                INDEFINITE_SOURCE_ANIMATION_MECHANIC, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,
+                TARGET_CARD_TYPE_ADDITION_MECHANIC})):
         return ()
     try:spec,selection=fixed_resolution_characteristic_instruction(effects[0])
     except (TypeError,ValueError,KeyError):return ()
+    if isinstance(spec, FixedResolutionCardTypeAdditionSpec):
+        from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities
+
+        if (not {TARGET_CARD_TYPE_ADDITION_MECHANIC, "cr-115-targets"} <= mechanics
+                or selection != "$target.0" or not direct_permanent_target_schema_is_closed(target_schema)):
+            return ()
+        if ((spec.power or spec.toughness) and target_schema.get("types_any") != ["creature"]
+                and "creature" not in target_schema.get("types_all", ())):
+            return ()
+        return (*spec.capability_dependencies, *direct_target_predicate_capabilities(target_schema))
     if isinstance(spec, IndefiniteEnchantmentFormSpec):
         return spec.capability_dependencies if (
             target_schema is None and INDEFINITE_ENCHANTMENT_FORM_MECHANIC in mechanics

@@ -990,7 +990,7 @@ def death_return_keyword_node(
         text=line,
         span=span,
         active_zone="battlefield",
-        event="creature.dies.self",
+        event="permanent.graveyard.self",
         lowerable=True,
         exact=not gate.blockers,
         template_id=f"{mechanic}-death-return-counter-v1",
@@ -1167,7 +1167,7 @@ def unleash_keyword_nodes(
             "unleash-entry",
             "all",
             "zone.change",
-            "counter.producer.optional_self_entry",
+            ("counter.producer.optional_self_entry", "counter.placement.quantity_replacement"),
             "unleash-optional-entry-counter-v1",
             unleash_entry_handler_descriptor(),
             "optional_entry_counter",
@@ -1176,7 +1176,7 @@ def unleash_keyword_nodes(
             "unleash-block",
             "battlefield",
             "combat.block",
-            "combat.block.self_counter_prohibition",
+            ("combat.block.self_counter_prohibition",),
             "unleash-self-counter-block-prohibition-v1",
             unleash_block_handler_descriptor(),
             "counter_conditional_block_restriction",
@@ -1187,13 +1187,13 @@ def unleash_keyword_nodes(
         suffix,
         active_zone,
         event,
-        capability,
+        capabilities,
         template_id,
         handler,
         runtime_coverage,
     ) in specifications:
-        gate = explicit_capability_gate(
-            capability,
+        gate = explicit_capabilities_gate(
+            capabilities,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
         )

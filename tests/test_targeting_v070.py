@@ -201,7 +201,7 @@ class ExactTargetingTests(unittest.TestCase):
         )
         self.assertEqual(
             [blue.ref],
-            reb_action["target_schema"]["mode_schemas"]["destroy"]["groups"][0][
+            reb_action["target_schema"]["mode_schemas"]["mode_2"]["groups"][0][
                 "legal_refs"
             ],
         )

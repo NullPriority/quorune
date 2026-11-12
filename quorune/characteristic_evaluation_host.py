@@ -33,7 +33,7 @@ from .continuous_effects import (
     ContinuousOperation,
     Layer,
 )
-from .continuous_effect_state import active_resolution_effects, fixed_target_color_effects
+from .continuous_effect_state import active_resolution_effects, stack_resolution_effects
 from .dynamic_characteristics import (
     apply_dynamic_characteristic_fragments,
     query_characteristic_count,
@@ -748,10 +748,17 @@ class CharacteristicEvaluationHostMixin:
             else ()
         )
         if card.zone == "stack":
-            runtime_effects = fixed_target_color_effects(self.state, card)
+            runtime_effects = stack_resolution_effects(self.state, card)
             if maximum_layer is None or maximum_layer >= Layer.ABILITY:
                 from .compiled_cast_timing import compiled_conditional_flash_stack_effects
-                runtime_effects = (*runtime_effects, *compiled_conditional_flash_stack_effects(self, card))
+                from .semantic_runtime.battlefield_cascade_grants import stack_cascade_grant_effects
+
+                runtime_effects = (*runtime_effects, *compiled_conditional_flash_stack_effects(self, card),
+                    *stack_cascade_grant_effects(self, card))
+        if card.zone != "battlefield":
+            from .rules.cross_zone_characteristics import cross_zone_type_effects_for_card
+
+            runtime_effects = (*runtime_effects, *cross_zone_type_effects_for_card(self, card, maximum_layer=maximum_layer))
         enchanted, equipped, modified = (
             self._attachment_public_state(
                 card,

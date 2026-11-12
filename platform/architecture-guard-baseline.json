@@ -1571,9 +1571,9 @@
     "physical_lines": 7062
   },
   "exception_binding": {
-    "adr": "docs/adr/0161-ordinary-attacking-token-results.md",
-    "allowance_fingerprint": "b94b2c6fe30759d1da93b7a8f68bf6c6f3800cb2d4b69858640685eb9dcc5953",
-    "exception_id": "ARCH-EXC-0063"
+    "adr": "docs/adr/0165-temporary-cast-cascade-grants.md",
+    "allowance_fingerprint": "d478d642b2277f53e8bd9e602db8dee6cbaace0b0514b8ff3a323dc94ed59780",
+    "exception_id": "ARCH-EXC-0065"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1884,9 +1884,11 @@
     "goad",
     "grant_ability_fragment",
     "grant_ability_marker",
+    "grant_cast_cascade",
     "grant_cast_permission",
     "grant_declaration_restriction_until_end_of_turn",
     "grant_keyword_until_end_of_turn",
+    "grant_next_spell_payment",
     "grant_play_without_mana_cost",
     "grant_uncounterable_hexproof_from_colors_until_end",
     "grant_zone_object_keyword",

@@ -7,10 +7,37 @@ from ..ability_fragments import ability_fragment_to_dict, CURRENT_ABILITY_FRAGME
 from ..exert_model import ExertAttackSpec, EXERT_ATTACK_CAPABILITY, EXERT_UNTAP_CAPABILITY, EXERT_ATTACK_HANDLER
 from ..rules.capabilities import capability_dependencies_for_node
 from ..rules.source_references import SourceReferenceSpec
+from ..source_prevention import SOURCE_SUBJECT_VERSION
+from .damage_templates import source_pronoun_damage_effect_template
 from .static_runtime_nodes import runtime_handler_node
 from .dependency_gate import explicit_capabilities_gate
 from .ir_model import OracleNode, append_residual
-from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
+from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation, source_declaration_sequence
+
+
+_SELF_COMBAT_SHIELD = re.compile(
+    r'Prevent all combat damage that would be dealt to (?:it|this creature) this turn\.', re.I,
+)
+
+
+def _exert_result(body, *, source_name, effect_template):
+    damage = source_pronoun_damage_effect_template(body)
+    if damage is not None:
+        return damage.compiled()
+    if _SELF_COMBAT_SHIELD.fullmatch(body) is not None:
+        effect = {
+            'op': 'create_damage_prevention_shield', 'source': '$source',
+            'subject': '$source.zone_object', 'mode': 'all', 'duration': 'until_end_of_turn',
+            'damage_kind': 'combat', SOURCE_SUBJECT_VERSION: 2,
+        }
+        return 'exert-source-combat-prevention-v1', (effect,), None, ('cr-615-prevention-effects',)
+    normalized = normalized_source_result_body(body) or body
+    compiled = effect_template(normalized, card_name=source_name)
+    if compiled[0] is not None:
+        return compiled
+    return source_declaration_sequence(
+        body, card_name=source_name, compile_effect=effect_template, allow_pronoun=True,
+    ) or compiled
 
 
 def exert_attack_nodes(*,record,face_id,node_id,line,material_line,span,source_name,
@@ -18,8 +45,7 @@ def exert_attack_nodes(*,record,face_id,node_id,line,material_line,span,source_n
     match=re.fullmatch(r'You may exert (?P<source>.+?) as it attacks\. When you do, (?P<body>.+)',material_line,re.I)
     if match is None or not (match['source'].casefold()=='this creature' or SourceReferenceSpec(source_name).matches(match['source'])):
         return None
-    body=normalized_source_result_body(match['body']) or match['body']
-    compiled=effect_template(body,card_name=source_name)
+    compiled = _exert_result(match['body'], source_name=source_name, effect_template=effect_template)
     if compiled[0] is None:
         return None
     compiled=pin_source_result_incarnation(compiled)

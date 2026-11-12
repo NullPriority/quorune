@@ -1,0 +1,542 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned originals for temporary Cascade grants",
+  "cards": [
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "name": "Dark Apostle",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Astartes Warlock",
+      "oracle_text": "Gift of Chaos — {3}, {T}: The next noncreature spell you cast this turn has cascade. (When you cast that spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Gift of Chaos"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "name": "Sloppity Bilepiper",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Creature — Demon",
+      "oracle_text": "Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this turn has cascade. (When you next cast a creature spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Jolly Gutpipes"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "name": "Smoldering Stagecoach",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Smoldering Stagecoach's power is equal to the number of instant and sorcery cards in your graveyard.\nWhenever this Vehicle attacks, the next instant spell and the next sorcery spell you cast this turn each have cascade.\nCrew 2",
+      "power": "*",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "name": "Yidris, Maelstrom Wielder",
+      "mana_cost": "{U}{B}{R}{G}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Ogre Wizard",
+      "oracle_text": "Trample\nWhenever Yidris deals combat damage to a player, as you cast spells from your hand this turn, they gain cascade. (When you cast the spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": "5",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a06c7c1a-8534-40fb-8bb8-59f8f2530567",
+      "name": "Battle Mastery",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature has double strike. (It deals both first-strike and regular combat damage.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "See also \"Returning Keyword Ability: Cascade\" in the General Notes section."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Two new cards in this set give the next spell you cast cascade. This means that the next spell you cast gains cascade as you begin to cast it by putting it on the stack, and the cascade ability will trigger when you finish casting that spell."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "As Dark Apostle's activated ability resolves, it creates a continuous effect that won't begin to apply until you start casting a noncreature spell this turn. It applies to that spell and the timestamp of that effect is the time that the spell was put on the stack."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you activate the ability of more than one Dark Apostle (or the same one more than once) in the same turn, the next noncreature spell you cast will have that many instances of cascade, each of which will trigger separately."
+    },
+    {
+      "oracle_id": "8a446307-d9ff-4854-90e6-9cdff5b77aa6",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you activate the ability of more than one Sloppity Bilepiper (or the same one more than once) in the same turn, the next creature spell you cast will have that many instances of cascade, each of which will trigger separately."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Two new cards in this set give the next spell you cast cascade. This means that the next spell you cast gains cascade as you begin to cast it by putting it on the stack, and the cascade ability will trigger when you finish casting that spell."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "As Sloppity Bilepiper's activated ability resolves, it creates a continuous effect that won't begin to apply until you start casting a creature spell this turn. It applies to that spell and the timestamp of that effect is the time that the object was put on the stack."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "See also \"Returning Keyword Ability: Cascade\" in general notes."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "6bd38092-7788-4bb6-9447-16c56e11e603",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The ability that defines Smoldering Stagecoach's power works in all zones, not just the battlefield."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether you cast the last card exiled."
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "\"Cascade\" means \"When you cast this spell, exile cards from the top of your library until you exile a nonland card whose mana value is less than this spell's mana value. You may cast that card without paying its mana cost if the resulting spell's mana value is less than this spell's mana value. Then put all cards exiled this way that weren't cast on the bottom of your library in a random order.\""
+    },
+    {
+      "oracle_id": "83f87884-f0f9-482e-887e-35a8a5c20eb0",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2016-11-08",
+      "source": "wotc",
+      "comment": "If Yidris's triggered ability resolves more than once in one turn, spells you cast from your hand will gain cascade that many times. Each instance of cascade triggers separately; resolve one cascade trigger and the spell you cast from it before resolving the next cascade trigger."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2016-11-08",
+      "source": "wotc",
+      "comment": "Spells you cast from your hand this turn will gain cascade even if Yidris leaves the battlefield."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+    },
+    {
+      "oracle_id": "9efe8aff-9a7d-4397-b5fd-c1a0fad7c15f",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "a06c7c1a-8534-40fb-8bb8-59f8f2530567",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "If a creature loses double strike after dealing combat damage in the first combat damage step, it won’t assign combat damage in the second one."
+    }
+  ]
+}

@@ -112,3 +112,74 @@ def event_spell_copy_runtime_dependencies(program):
         return ()
     if program.event!='spell.cast':raise ValueError('Event spell-copy instruction requires its normalized cast event')
     return (EVENT_SPELL_COPY_CAPABILITY,)
+
+
+def next_cast_copy_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..event_spell_copy_model import NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC, next_cast_copy_payload
+
+    if target_schema is not None or len(effects) != 1 or NEXT_CAST_COPY_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        next_cast_copy_payload(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return (NEXT_CAST_COPY_CAPABILITY,)
+
+
+def is_closed_next_cast_copy_program(program):
+    required = next_cast_copy_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    return bool(required) and set(required) <= set(program.capability_dependencies)
+
+
+def schedule_next_cast_copy(host, effect, *, actor):
+    from ..continuous_effect_state import ResolutionEffectSource
+    from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD, next_cast_copy_payload
+    from ..trigger_processing import schedule_delayed_trigger
+
+    spec = next_cast_copy_payload(effect, actor=actor)
+    source = ResolutionEffectSource.from_effect(effect)
+    if source.object_id is None or source.logical_object_id is None:
+        raise ValueError("Next-cast copy requires its resolving source incarnation")
+    return schedule_delayed_trigger(
+        host, controller=actor, label="Copy the next qualifying spell this turn", event_kind="spell.cast",
+        condition={NEXT_CAST_COPY_FIELD: spec.to_dict()}, stack_template={}, source_object_id=source.object_id,
+        source_logical_object_id=source.logical_object_id, once=True, expires_turn_sequence=host.state.turn_sequence,
+    ).ref
+
+
+def next_cast_copy_matches(trigger, context):
+    from ..event_spell_copy_model import next_cast_copy_trigger_spec
+    from .spell_cast_events import SpellCastEvent
+
+    spec = next_cast_copy_trigger_spec(trigger)
+    cast = SpellCastEvent.from_context(context)
+    if cast.controller != trigger.controller:
+        return False
+    if spec.scope == "instant_or_sorcery" and not {"instant", "sorcery"}.intersection(cast.types):
+        return False
+    if spec.scope == "lesson" and "lesson" not in cast.subtypes:
+        return False
+    return spec.maximum_mana_value is None or (
+        cast.mana_value is not None and cast.mana_value <= spec.maximum_mana_value
+    )
+
+
+def bind_next_cast_copy_occurrence(host, trigger, item, context):
+    from ..event_spell_copy_model import next_cast_copy_trigger_spec
+    from .spell_cast_events import SpellCastEvent
+
+    spec = next_cast_copy_trigger_spec(trigger)
+    cast = SpellCastEvent.from_context(context)
+    target = next((spell for spell in host.state.stack if spell.ref == cast.stack_ref), None)
+    if target is None:
+        raise ValueError("Next-cast copy lost the committed spell")
+    source = capture_event_spell_copy_source(host, target)
+    if source.logical_object_id != cast.logical_object_id:
+        raise ValueError("Next-cast copy occurrence changed its spell incarnation")
+    item.context.update({
+        "stack": target.ref,
+        EVENT_SPELL_COPY_CONTEXT: source.to_dict(),
+        "dynamic_effects": [event_spell_copy_effect() for _ in range(spec.copies)],
+    })

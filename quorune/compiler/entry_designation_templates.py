@@ -13,6 +13,8 @@ from ..entry_designations import (
     ENTRY_DESIGNATION_CAPABILITY,
     ENTRY_DESIGNATION_HANDLER_ID,
     ENTRY_DESIGNATION_HANDLER_IDS,
+    LIMITED_CREATURE_TYPE_ENTRY_CAPABILITY,
+    LIMITED_CREATURE_TYPE_ENTRY_HANDLER_ID,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .continuous_templates import (
@@ -107,7 +109,7 @@ def _plain_entry_designation_handler(text: str, *, source_name: str):
         re.IGNORECASE,
     )
     if match is None:
-        return None
+        return _listed_creature_type_entry_handler(text, source=source)
     return (
         "intrinsic-entry-designation-v1",
         {
@@ -118,6 +120,22 @@ def _plain_entry_designation_handler(text: str, *, source_name: str):
         },
         (ENTRY_DESIGNATION_CAPABILITY,),
     )
+
+
+def _listed_creature_type_entry_handler(text, *, source):
+    from ..creature_subtypes import canonical_creature_subtype
+
+    match = re.fullmatch(rf"As {source} enters, choose (?P<leading>[^.]+?)(?:,)? or (?P<last>[^,.]+)\.",
+        text, re.IGNORECASE)
+    if match is None:
+        return None
+    types = tuple(canonical_creature_subtype(value) for value in (*match["leading"].split(", "), match["last"]))
+    if any(value is None for value in types) or len(set(types)) != len(types):
+        return None
+    return "intrinsic-limited-creature-type-entry-v3", {
+        "handler_id": LIMITED_CREATURE_TYPE_ENTRY_HANDLER_ID, "schema_version": 3, "event": "zone.change",
+        "designation": "creature_type", "options": sorted(types),
+    }, (ENTRY_DESIGNATION_CAPABILITY, LIMITED_CREATURE_TYPE_ENTRY_CAPABILITY)
 
 
 def chosen_characteristics_handler(text: str, *, source_name: str = 'source'):

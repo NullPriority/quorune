@@ -163,6 +163,111 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         with patch("quorune.compiler.bound_effect_programs._target_controller_damage_tail", return_value=None):
             self.assertNotEqual("exact", self.compile(text).status)
 
+    def test_target_controller_life_and_draw_keep_one_closed_zone_target(self):
+        from types import SimpleNamespace
+        from quorune.rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
+        from quorune.target_controller_information import (
+            TARGET_CONTROLLER_INFORMATION_CAPABILITY, TARGET_CONTROLLER_INFORMATION_MECHANIC,
+            target_controller_reference,
+        )
+
+        cases = (
+            ("Destroy target creature. Its controller loses 2 life and you gain 2 life.", "destroy", "lose_life", 3),
+            ("Exile target nonland permanent. Its controller draws a card.", "exile_permanent", "draw", 2),
+            ("Return target creature to its owner's hand. Then its controller loses 1 life.", "bounce", "lose_life", 2),
+            ("Put target creature into its owner's library second from the top. Its controller gains 3 life.",
+             "move", "life", 2),
+        )
+        for text, prefix, result, count in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual(count, len(node.effects))
+                self.assertEqual((prefix, result), tuple(effect["op"] for effect in node.effects[:2]))
+                self.assertEqual(target_controller_reference(), node.effects[1]["player"])
+                self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, node.capability_dependencies)
+                self.assertEqual(1, node.target_schema["count"])
+                if count == 3:
+                    self.assertEqual({"op": "life", "player": "$controller", "delta": 2}, node.effects[2])
+
+        for text in (
+            "Destroy target creature. That land's controller gains 4 life.",
+            "Destroy target creature. If you do, its controller draws a card.",
+            "Destroy up to one target creature. Its controller loses 2 life.",
+            "Target creature gets +2/+2 until end of turn. Its controller draws a card.",
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", self.compile(text).status)
+
+        node, = self.compile(cases[0][0]).faces[0].nodes
+        first, recipient, gain = node.effects
+        for altered in (
+            (first, {**recipient, "player": target_controller_reference(1)}, gain),
+            (first, {**recipient, "amount": True}, gain),
+            (first, recipient, {**gain, "player": "$target.0"}),
+            (first, gain, recipient),
+        ):
+            self.assertEqual((), bound_effect_program_node_capabilities(
+                effects=altered, target_schema=node.target_schema, mechanic_ids=node.mechanics,
+            ))
+        self.assertEqual((), bound_effect_program_node_capabilities(
+            effects=node.effects, target_schema=node.target_schema,
+            mechanic_ids=set(node.mechanics) - {TARGET_CONTROLLER_INFORMATION_MECHANIC},
+        ))
+
+        ir = self.compile("Exile target creature. Its controller gains life equal to its power.")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        probe = SimpleNamespace(effects=node.effects, target_schema=node.target_schema, coverage=node.mechanics)
+        self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, closed_effect_program_runtime_dependencies(probe))
+        prefix, result = node.effects
+        probe.effects = (prefix, {**result, "delta": {**result["delta"], "coefficient": True}})
+        with self.assertRaises(ValueError):
+            closed_effect_program_runtime_dependencies(probe)
+
+    def test_optional_search_requires_the_controller_of_one_closed_removal_target(self):
+        from types import SimpleNamespace
+        from quorune.rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
+        from quorune.target_controller_information import (
+            TARGET_CONTROLLER_INFORMATION_CAPABILITY, target_controller_reference,
+        )
+
+        tail = "Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle."
+        ir = self.compile("Exile target creature. " + tail + " Draw a card.")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        first, optional, draw = node.effects
+        search, = optional["effects"]
+        self.assertEqual("exile_permanent", first["op"])
+        self.assertEqual("draw", draw["op"])
+        self.assertEqual(target_controller_reference(), optional["player"])
+        self.assertEqual(target_controller_reference(), search["searching_player"])
+        self.assertTrue(search["enters_tapped_override"])
+        expected = {TARGET_CONTROLLER_INFORMATION_CAPABILITY, "effect.choice.optional_fixed", "library.search.fixed_to_battlefield"}
+        self.assertTrue(expected <= set(node.capability_dependencies))
+        program = SimpleNamespace(target_schema=node.target_schema, effects=node.effects, coverage=node.mechanics)
+        self.assertTrue(expected <= set(closed_effect_program_runtime_dependencies(program)))
+        for wrapper in (
+            {**optional, "player": "$controller"},
+            {**optional, "effects": [{**search, "searching_player": target_controller_reference(1)}]},
+            {**optional, "effects": [{**search, "destination": "hand"}]},
+        ):
+            with self.subTest(wrapper=wrapper):
+                forged = SimpleNamespace(target_schema=node.target_schema, effects=(first, wrapper, draw), coverage=node.mechanics)
+                with self.assertRaisesRegex(ValueError, "preceding closed target instruction"):
+                    closed_effect_program_runtime_dependencies(forged)
+        for text in (
+            "Destroy target creature. " + tail.replace("Its controller", "That player"),
+            "Destroy target land. " + tail.replace("Its controller", "That creature's controller"),
+            "Destroy up to one target creature. " + tail,
+            "Tap target creature. " + tail,
+            "Destroy target creature. " + tail + " Rewrite history.",
+            "Choose one or both —\n• Draw a card.\n• Destroy target creature. " + tail,
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", self.compile(text).status)
+
     def test_linked_followups_require_one_guaranteed_target_and_closed_rider(self):
         prefix = "Gain control of target artifact until end of turn. "
         text = prefix + "Untap that artifact. It gains haste until end of turn."
@@ -690,6 +795,96 @@ class BoundTargetControllerRuntimeTests(unittest.TestCase):
         self.assertIn(target.ref, reply["target_schema"]["legal_refs"])
         self._act(session, seat, {"action_id": reply["id"], "targets": [target.ref],
                                  "pay": "manual", "payment": payment})
+
+    def test_original_zone_results_follow_departure_controller_and_effective_power(self):
+        cases = (
+            ("Introduction to Annihilation", {"C": 5}, "exile", 1, 0),
+            ("Call to Heel", {"C": 1, "U": 1}, "hand", 1, 0),
+            ("Oust", {"W": 1}, "library", 0, 3),
+            ("Swords to Plowshares", {"W": 1}, "exile", 0, 3),
+        )
+        for index, (name, mana, destination, cards_drawn, life_gained) in enumerate(cases):
+            with self.subTest(card=name):
+                session = self.session(725_200 + index)
+                engine = session.engine
+                source = self.add(engine, name, zone="hand")
+                target = self.add(engine, "Ornithopter", seat="B")
+                control = self.add(engine, "Blind with Anger", seat="C", zone="hand")
+                engine.state.players["C"].mana_pool.update({"C": 3, "R": 1})
+                if name == "Swords to Plowshares":
+                    growth = self.add(engine, "Giant Growth", seat="D", zone="hand")
+                    engine.state.players["D"].mana_pool["G"] = 1
+                top = engine.state.players["B"].zones["library"][-1]
+                draws = {seat: len(engine.state.players[seat].draw_history) for seat in "BC"}
+                hands = set(engine.state.players["C"].zones["hand"])
+                action = self.ready(session, source, mana)
+                self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+                self.checkpoint(session)
+                self._act(session, "A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+                self._reply(session, "C", control, target, {"C": 3, "R": 1})
+                if name == "Swords to Plowshares":
+                    self._reply(session, "D", growth, target, {"G": 1})
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(destination, session.state.cards[target.object_id].zone)
+                if destination == "library":
+                    self.assertEqual([target.object_id, top], session.state.players["B"].zones["library"][-2:])
+                if destination == "hand":
+                    self.assertIn(target.object_id, session.state.players["B"].zones["hand"])
+                self.assertEqual(40, session.state.players["B"].life)
+                self.assertEqual(40 + life_gained, session.state.players["C"].life)
+                self.assertEqual(draws["B"], len(session.state.players["B"].draw_history))
+                self.assertEqual(draws["C"] + cards_drawn, len(session.state.players["C"].draw_history))
+                drawn = set(session.state.players["C"].zones["hand"]) - hands
+                self.assertEqual(cards_drawn, len(drawn))
+                for object_id in drawn:
+                    ref = session.state.cards[object_id].ref
+                    self.assertIn(ref, json.dumps(session.packet("pilot:C", full=True)))
+                    for seat in "ABD":
+                        self.assertNotIn(ref, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+                self.replay(session)
+
+    def test_original_certain_death_separates_indestructible_from_an_illegal_target(self):
+        for illegal in (False, True):
+            with self.subTest(illegal=illegal):
+                session = self.session(725_210 + int(illegal))
+                engine = session.engine
+                source = self.add(engine, "Certain Death", zone="hand")
+                target = self.add(engine, "Darksteel Myr", seat="B")
+                if illegal:
+                    bounce = self.add(engine, "Unsummon", seat="C", zone="hand")
+                    engine.state.players["C"].mana_pool["U"] = 1
+                action = self.ready(session, source, {"C": 5, "B": 1})
+                self.checkpoint(session)
+                self._act(session, "A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+                if illegal:
+                    self._reply(session, "C", bounce, target, {"U": 1})
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("hand" if illegal else "battlefield", session.state.cards[target.object_id].zone)
+                expected = [40, 40, 40, 40] if illegal else [42, 38, 40, 40]
+                self.assertEqual(expected, [session.state.players[seat].life for seat in "ABCD"])
+                self.replay(session)
+
+    def test_original_flesh_allergy_counts_paid_and_resolved_deaths_in_order(self):
+        for sacrifice_target in (False, True):
+            with self.subTest(sacrifice_target=sacrifice_target):
+                session = self.session(725_220 + int(sacrifice_target))
+                engine = session.engine
+                source = self.add(engine, "Flesh Allergy", zone="hand")
+                cost = self.add(engine, "Generic Bound Body")
+                target = cost if sacrifice_target else self.add(engine, "Ornithopter", seat="B")
+                action = self.ready(session, source, {"C": 2, "B": 2})
+                self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+                self.checkpoint(session)
+                self._act(session, "A", {"action_id": action["id"], "targets": [target.ref],
+                                         "sacrifice_cards": [cost.ref], "pay": "auto"})
+                self.assertEqual("graveyard", session.state.cards[cost.object_id].zone)
+                if not sacrifice_target:
+                    self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+                self.assertEqual([40, 40 if sacrifice_target else 38, 40, 40],
+                                 [session.state.players[seat].life for seat in "ABCD"])
+                self.replay(session)
 
     def test_structural_distortion_uses_departure_controller_after_a_real_response(self):
         session = self.session(725100)

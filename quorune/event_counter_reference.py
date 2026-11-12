@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from .damage_recipient_model import (DAMAGE_PERMANENT_OBJECT,DAMAGE_PERMANENT_CONTEXT,
     uses_damaged_permanent,capture_damaged_permanent)
 from .transform_timestamp_model import TRANSFORM_EVENT
+from .face_up_effect_model import TURN_FACE_UP_EVENT
 
 EVENT_COUNTER_OBJECT='$event.counter_object'
 EVENT_ENTRY_OBJECT='$event.entry_object'
@@ -45,7 +46,7 @@ def event_counter_recipient_context(program,event,context):
         if context.get('target_kind')!='permanent':raise ValueError('Received event object must be a permanent')
         identity=context.get('target_logical_object_id')
     elif event in {'permanent.tap','permanent.untap'}:identity=context.get('card_object_identity')
-    elif event == TRANSFORM_EVENT:identity=context.get("logical_object_id")
+    elif event in {TRANSFORM_EVENT, TURN_FACE_UP_EVENT}:identity=context.get("logical_object_id")
     elif event=='creature.attacks':
         from .attack_transition_model import AttackTransitionEvent
         transition=AttackTransitionEvent.from_dict(context.get('attack_transition'))
@@ -80,6 +81,10 @@ def resolve_block_counterpart_recipient(host, item):
 
 
 def resolve_sealed_event_object_value(host, item, value):
+    if value == "$event.counter_threshold_count":
+        from .rules.event_counter_threshold import event_counter_threshold_count
+
+        return True, event_counter_threshold_count(host, item)
     if value==DAMAGE_PERMANENT_OBJECT:
         return True,_resolve_public_incarnation(host,item.context.get(DAMAGE_PERMANENT_CONTEXT))
     if value == BLOCK_COUNTERPART_OBJECT:

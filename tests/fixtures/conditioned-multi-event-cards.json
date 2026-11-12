@@ -96,6 +96,103 @@
       "released_at": "2022-02-18",
       "toughness": "4",
       "type_line": "Legendary Creature — Human Advisor"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Dusk Urchins",
+      "oracle_id": "1c2cc166-dc59-44ce-86d5-ed6013b0bf67",
+      "oracle_text": "Whenever this creature attacks or blocks, put a -1/-1 counter on it.\nWhen this creature dies, draw a card for each -1/-1 counter on it.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": "3",
+      "type_line": "Creature — Ouphe"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Menace",
+        "Connive"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Scurrilous Sentry",
+      "oracle_id": "52bfcb09-007c-47d8-8038-692e7dd8f922",
+      "oracle_text": "Menace\nWhenever this creature enters or attacks, it connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on this creature.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": "3",
+      "type_line": "Creature — Human Knight Rogue"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -116,6 +213,36 @@
       "comment": "The artifact and the enchantment may be the same permanent.",
       "oracle_id": "cd6018de-5791-4c13-b134-38c410f04872",
       "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Dusk Urchins has just 1 toughness when it blocks, it will get a -1/-1 counter and be put into the graveyard. The creature that it blocked remains blocked, however.",
+      "oracle_id": "1c2cc166-dc59-44ce-86d5-ed6013b0bf67",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The -1/-1 counter is put on Dusk Urchins during the declare attackers or declare blockers step, whichever is appropriate, so it will be smaller by the time combat damage is dealt. (Note that this is different from how the _Shadowmoor_ card Wicker Warcrawler works.)",
+      "oracle_id": "1c2cc166-dc59-44ce-86d5-ed6013b0bf67",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a resolving spell or ability instructs a specific creature to connive but that creature has left the battlefield, the creature still connives. If you discard a nonland card this way, you won't put a +1/+1 counter on anything. Abilities that trigger \"when [that creature] connives\" will trigger.",
+      "oracle_id": "52bfcb09-007c-47d8-8038-692e7dd8f922",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If no card is discarded, most likely because that player's hand is empty and an effect says they can't draw cards, the conniving creature does not receive a +1/+1 counter.",
+      "oracle_id": "52bfcb09-007c-47d8-8038-692e7dd8f922",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once an ability that causes a creature to connive begins to resolve, no player may take any other actions until it's done. Notably, opponents can't try to remove the conniving creature after you discard a nonland card but before it receives a counter.",
+      "oracle_id": "52bfcb09-007c-47d8-8038-692e7dd8f922",
+      "published_at": "2024-06-07",
       "source": "wotc"
     }
   ],

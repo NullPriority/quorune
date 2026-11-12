@@ -148,7 +148,7 @@ from .trigger_processing import (
     collect_ward_occurrences,
     complete_trigger_order_decision,
     enqueue_trigger_batch,
-    pin_upkeep_hand_at_departure,
+    pin_player_departure_trigger_facts,
     TriggerProcessingHostMixin,
 )
 from .trigger_discovery import (
@@ -283,6 +283,10 @@ from .rules.action_catalog import build_priority_action_catalog
 from .rules.event_subscriptions import LAND_PLAY_EVENT
 from .rules.land_play_permissions import (
     consume_land_play_permission,
+    land_play_face_type_line,
+    land_play_timing_matches,
+    land_play_timing_window,
+    resolving_exile_land_play_response,
     selected_land_play_permission,
 )
 from .rules.zone_action_permissions import (
@@ -297,7 +301,7 @@ from .semantic_runtime.action_permissions import (
 from .semantic_runtime.casting_activation_metadata import (
     active_loyalty_cost_modifiers,
 )
-from .semantic_runtime.combat_metadata import active_goad_prohibitions
+from .semantic_runtime.combat_metadata import active_goading_players, active_goad_prohibitions
 from .semantic_runtime import (
     AddManaIntent,
     AddSubtypeIntent,
@@ -816,6 +820,8 @@ class CommanderEngine(
 
     def _assert_invariants(self) -> None:
         from .composition_storage import validate_composition_membership
+        from .dungeon_runtime import validate_dungeon_membership
+        validate_dungeon_membership(self)
         try:validate_composition_membership(self.state)
         except ValueError as exc:raise StateInvariantError(str(exc)) from exc
         membership: dict[str, list[tuple[str, str]]] = {}
@@ -904,6 +910,8 @@ class CommanderEngine(
             )
         if self.state.day_night not in {None, "day", "night"}:
             raise StateInvariantError("The day/night designation is invalid")
+        if self.state.initiative is not None and self.state.initiative not in self.active_seats:
+            raise StateInvariantError("The initiative belongs to a player still in the game")
         history = self.state.turn_history
         if history is not None:
             if history.schema_version != 1:
@@ -2414,13 +2422,16 @@ class CommanderEngine(
         except SemanticNodeError as exc:
             raise GameRuleError(str(exc)) from exc
 
-    def _play_land(self, seat: str, response: Mapping[str, Any]) -> None:
-        self._check_priority(seat)
-        self._sorcery_timing(seat)
+    def _play_land(self, seat: str, response: Mapping[str, Any], *, resolving=None) -> None:
+        if resolving is None:
+            self._check_priority(seat)
+            timing = land_play_timing_window(self.state, seat)
+            if timing is None:
+                self._sorcery_timing(seat)
+        else:
+            response = resolving_exile_land_play_response(self, seat, resolving)
         player = self.state.players[seat]
-        selected_permission = selected_land_play_permission(
-            self, seat, response
-        )
+        selected_permission = selected_land_play_permission(self, seat, response if resolving is None else {})
         raw_from = str(response.get("from") or "hand")
         card = self._resolve_object(
             seat,
@@ -2453,7 +2464,9 @@ class CommanderEngine(
             face = legal_faces[0]
         if not legal_faces:
             raise GameRuleError(f"{card.printed_name} is not a land")
-        if not self._compiled_land_play_permission(seat, card):
+        if resolving is None and not land_play_timing_matches(timing, card, record, face):
+            self._sorcery_timing(seat)
+        if resolving is None and not self._compiled_land_play_permission(seat, card):
             raise GameRuleError(
                 f"Playing {card.printed_name} from {card.zone} is not "
                 "authorized by a compiled zone permission."
@@ -2488,7 +2501,8 @@ class CommanderEngine(
         )
         tapped = card.tapped
         life_paid = life_before - player.life
-        consume_land_play_permission(self, seat, selected_permission)
+        consume_land_play_permission(self, seat, selected_permission, played_card=card,
+                                     type_line=land_play_face_type_line(record, face))
         self._log(
             seat,
             "land.play",
@@ -2506,6 +2520,8 @@ class CommanderEngine(
             changed_players=[seat],
         )
         dispatch_semantic_event(self, LAND_PLAY_EVENT, {"player": seat, "from": origin})
+        if resolving is not None:
+            return
         # CR 117.5 and 704.3 require state-based actions and waiting triggers
         # to be handled before the active player receives priority after this
         # special action.  Without this boundary, an enters trigger created by
@@ -4381,7 +4397,7 @@ class CommanderEngine(
         if predicate.token is not None and card.is_token != predicate.token:
             return False
         if predicate.goaded is not None:
-            goaded = bool(self._active_goad_designations(card))
+            goaded = bool(active_goading_players(self, card))
             if goaded != predicate.goaded:
                 return False
         if predicate.tapped is not None and card.tapped != predicate.tapped:
@@ -4992,41 +5008,9 @@ class CommanderEngine(
                     card,
                     active_seats=self.active_seats,
                     error_type=GameRuleError,
+                    goading_players=active_goading_players(self, card),
                 )
             )
-            for designation in self._active_goad_designations(card):
-                requirements.extend(
-                    (
-                        DeclarationRequirement(
-                            requirement_id=(
-                                f"attack:{card.ref}:goad:{designation.player}:attack"
-                            ),
-                            kind="choose",
-                            variable=card.ref,
-                            label=(
-                                f"{self.display_name(card.object_id)} attacks "
-                                f"this combat if able because {designation.player} "
-                                "goaded it."
-                            ),
-                        ),
-                        DeclarationRequirement(
-                            requirement_id=(
-                                f"attack:{card.ref}:goad:{designation.player}:other"
-                            ),
-                            kind="choose_option_in",
-                            variable=card.ref,
-                            options=tuple(
-                                seat
-                                for seat in self.active_seats
-                                if seat not in {active, designation.player}
-                            ),
-                            label=(
-                                f"{self.display_name(card.object_id)} attacks "
-                                f"a player other than {designation.player} if able."
-                            ),
-                        ),
-                    )
-                )
         domains, restrictions, restriction_gaps = (
             self._declaration_restrictions("attack", domains)
         )
@@ -6695,12 +6679,14 @@ class CommanderEngine(
         unique = [seat for seat in unique_preserving_order(seats) if seat in self.active_seats]
         if not unique:
             return
-        pin_upkeep_hand_at_departure(self, unique)
+        pin_player_departure_trigger_facts(self, unique)
         departing_monarch = self.state.monarch in unique
         monarch_before_departure = self.state.monarch
         active_before_departure = self.state.active_player
+        from .dungeon_runtime import remove_departing_dungeon
         for seat in unique:
             player = self.state.players[seat]
+            remove_departing_dungeon(self, seat)
             player.in_game = False
             self.state.eliminated_players.append(seat)
             # Remove owned objects before ending grants and synchronizing custody (CR 800.4a).
@@ -6763,6 +6749,8 @@ class CommanderEngine(
             self._log(seat, "player.eliminated", f"{seat} left the game: {reason}.", {"reason": reason}, importance=3, changed_players=[seat])
 
         remaining = self.active_seats
+        from .initiative_runtime import transfer_departing_initiative
+        transfer_departing_initiative(self, active_before_departure)
         if departing_monarch:
             if not remaining:
                 previous = self.state.monarch

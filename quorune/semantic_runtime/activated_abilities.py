@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed compiler-pinned descriptors for activated-ability discovery."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Any, Mapping
 
@@ -37,6 +37,27 @@ def ability_local_mana_reduction_runtime_dependencies(program: Any) -> tuple[str
            for ability in catalogs):
         raise ValueError('Ability-local reduction differs between the catalog and activation cost')
     return ability_local_mana_reduction_capabilities(reduction, program.active_zone)
+
+
+def fixed_mana_spend_rule_runtime_dependencies(program: Any) -> tuple[str, ...]:
+    from ..fixed_mana_abilities import FIXED_MANA_SPEND_RULE_HANDLER_ID, FixedActivatedManaAbilitySpec
+    from ..mana_spend_rules import decode_mana_spend_rule, is_typed_mana_spend_rule
+
+    catalogs = [descriptor["ability"] for descriptor in program.handlers
+                if descriptor.get("handler_id") == ACTIVATED_ABILITY_CATALOG_HANDLER_ID
+                and is_typed_mana_spend_rule(descriptor["ability"].get("mana_spend_restriction"))]
+    specs = [FixedActivatedManaAbilitySpec.from_dict(descriptor["ability"])
+             for descriptor in program.handlers if descriptor.get("handler_id") == FIXED_MANA_SPEND_RULE_HANDLER_ID]
+    if catalogs and (program.event != "activate" or len(catalogs) != 1 or len(specs) != 1
+            or ActivatedAbility.from_dict(catalogs[0]) != replace(specs[0].to_activated_ability(), builtin_semantic_key=program.key)):
+        raise ValueError("Typed mana catalog requires its matching fixed-output handler")
+    return tuple(sorted({capability for spec in specs
+        for capability in decode_mana_spend_rule(spec.spend_restriction).capability_dependencies}))
+
+
+def activated_catalog_runtime_dependencies(program):
+    return (*ability_local_mana_reduction_runtime_dependencies(program),
+            *fixed_mana_spend_rule_runtime_dependencies(program))
 
 
 @dataclass(frozen=True, slots=True)

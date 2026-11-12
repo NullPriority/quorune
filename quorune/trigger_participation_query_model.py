@@ -4,10 +4,20 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from .creature_subtypes import CREATURE_SUBTYPES
+from .dungeon_progress import DUNGEON_ROOM_EVENT
 from .object_predicate import ObjectQuerySpec
 
 TRIGGER_PREDICATE_CAPABILITY='trigger.participation.typed_source_event'
 TRIGGER_PROHIBITION_CAPABILITY='trigger.participation.prohibition'
+DUNGEON_ROOM_MULTIPLIER_CAPABILITY = "trigger.participation.dungeon_room"
+DUNGEON_ROOM_MULTIPLIER_HANDLER = "ability.static.trigger-participation-dungeon-room.v2"
+DUNGEON_ROOM_MULTIPLIER_RULES = ("309.4c", "603.2d")
+DUNGEON_ROOM_MULTIPLIER_COMPONENT = {
+    "handler_id": DUNGEON_ROOM_MULTIPLIER_HANDLER,
+    "capability_dependencies": (DUNGEON_ROOM_MULTIPLIER_CAPABILITY,),
+    "rule_references": DUNGEON_ROOM_MULTIPLIER_RULES,
+}
+OWNED_DUNGEON_ROOM = "owned_dungeon_room"
 
 
 @dataclass(frozen=True,slots=True)
@@ -21,6 +31,7 @@ class TriggerParticipationRule:
     modifier_condition: str='none'
     outcome: str='additional'
     source_zones: tuple[str,...]=('battlefield',)
+    source_kind: str | None = None
 
 
 def _q(**values):return ObjectQuerySpec(**values)
@@ -33,6 +44,11 @@ def trigger_participation_rule(name,subtype=None):
         if type(subtype) is not str or subtype not in CREATURE_SUBTYPES:
             raise ValueError('Trigger participation requires a canonical creature subtype')
     elif subtype is not None:raise ValueError('Unexpected trigger participation subtype')
+    if name == OWNED_DUNGEON_ROOM:
+        return TriggerParticipationRule(
+            events=(DUNGEON_ROOM_EVENT,), source_relation="owned",
+            source_zones=("command",), source_kind="dungeon",
+        )
     entering=('permanent.enter','artifact.enter','creature.enter','land.enter','enchantment.enter')
     leaving=('permanent.leave','creature.dies','artifact.graveyard','permanent.graveyard')
     permanent=_q(types_any=('artifact','battle','creature','enchantment','land','planeswalker'))

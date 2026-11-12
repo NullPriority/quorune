@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned originals for declared attack power and the signed-power control",
+  "cards": [
+    {
+      "oracle_id": "058062c7-071b-4b14-903d-ae8d2876b37f",
+      "name": "Minion of the Mighty",
+      "mana_cost": "{R}",
+      "type_line": "Creature — Kobold",
+      "oracle_text": "Menace\nPack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may put a Dragon creature card from your hand onto the battlefield tapped and attacking.",
+      "power": "0",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Pack tactics",
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "cmc": 1.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4d92b3d3-d34b-430f-af6a-db512d204d06",
+      "name": "Hobgoblin Captain",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature — Goblin Barbarian",
+      "oracle_text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, this creature gains first strike until end of turn.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Pack tactics"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9e445336-8b1e-4642-b8bc-aa460ad79a3f",
+      "name": "Gnoll Hunter",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Gnoll",
+      "oracle_text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, put a +1/+1 counter on this creature.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Pack tactics"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d5b4e9fd-3df6-4d1d-8135-d7c8615b05a7",
+      "name": "Tiger-Tribe Hunter",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Creature — Human Barbarian",
+      "oracle_text": "Trample\nPack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may sacrifice another creature. When you do, this creature deals damage equal to the sacrificed creature's power to target creature.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Pack tactics",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "cmc": 5.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e74c4001-d958-4d2b-b57d-c3601f01580c",
+      "name": "Battle Cry Goblin",
+      "mana_cost": "{1}{R}",
+      "type_line": "Creature — Goblin",
+      "oracle_text": "{1}{R}: Goblins you control get +1/+0 and gain haste until end of turn.\nPack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, create a 1/1 red Goblin creature token that's tapped and attacking.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Pack tactics"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "758aeca5-6ef3-4463-a65a-66b39289cc86",
+      "name": "Char-Rumbler",
+      "mana_cost": "{2}{R}{R}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "Double strike\n{R}: This creature gets +1/+0 until end of turn.",
+      "power": "-1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Double strike"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "058062c7-071b-4b14-903d-ae8d2876b37f",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "A Dragon creature card is a creature card with the creature type Dragon, not necessarily a creature card with the word “Dragon” in its name."
+    },
+    {
+      "oracle_id": "058062c7-071b-4b14-903d-ae8d2876b37f",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "You choose which player or planeswalker the Dragon is attacking as you put it onto the battlefield. It doesn't have to be the same player or planeswalker Minion of the Mighty is attacking."
+    },
+    {
+      "oracle_id": "058062c7-071b-4b14-903d-ae8d2876b37f",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "The creature card is already tapped and attacking as it's put onto the battlefield. Any abilities that trigger whenever a creature becomes tapped or whenever a creature attacks won't trigger."
+    },
+    {
+      "oracle_id": "d5b4e9fd-3df6-4d1d-8135-d7c8615b05a7",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "The pack tactics ability goes on the stack without a target. If you sacrifice another creature as it resolves, the reflexive triggered ability will trigger and choose a target for it at that time."
+    },
+    {
+      "oracle_id": "d5b4e9fd-3df6-4d1d-8135-d7c8615b05a7",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "Use the sacrificed creature's power as it last existed on the battlefield to determine how much damage is dealt."
+    },
+    {
+      "oracle_id": "e74c4001-d958-4d2b-b57d-c3601f01580c",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "Battle Cry Goblin's activated ability will affect only Goblins you control as it resolves. If you activate it before attacking and then create a Goblin with its triggered ability during combat, the Goblin you create will not get +1/+0."
+    },
+    {
+      "oracle_id": "758aeca5-6ef3-4463-a65a-66b39289cc86",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "A first strike damage step will be created if Char-Rumbler is in combat, even if its power is 0 or less. The normal combat damage step will follow."
+    },
+    {
+      "oracle_id": "758aeca5-6ef3-4463-a65a-66b39289cc86",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "If Char-Rumbler's power changes between the assignment of first-strike combat damage and the assignment of normal combat damage, Char-Rumbler will deal a different amount of damage in each combat damage step."
+    },
+    {
+      "oracle_id": "758aeca5-6ef3-4463-a65a-66b39289cc86",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "Yes, Char-Rumbler's printed power is -1. While its power is -1 or 0, it simply deals no combat damage."
+    },
+    {
+      "oracle_id": "758aeca5-6ef3-4463-a65a-66b39289cc86",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Because Char-Rumber's power is normally negative, you'll have to give it at least +2/+0 before it'll deal damage. It won't deal negative damage."
+    }
+  ]
+}

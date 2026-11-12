@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..library_order_model import HAND_TOP_APNAP_EVENT
 from ..replacement.immutable import FrozenMap
 from ..apnap_object_payment import DECLINED_LIFE_LOSS
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
@@ -55,6 +56,7 @@ def _intents(effect: Mapping[str, Any], *, source_ref: str | None = None) -> tup
     reason = effect["reason"]
     event_code = effect["event_code"]
     message = effect["message"]
+    hand_top = event_code == HAND_TOP_APNAP_EVENT
     if (
         any(type(value) is not str or not value for value in refs)
         or len(refs) != len(set(refs))
@@ -65,12 +67,16 @@ def _intents(effect: Mapping[str, Any], *, source_ref: str | None = None) -> tup
             type(value) is not str or not value
             for value in (actor, destination, reason, event_code, message)
         )
-        or destination not in {"exile", "graveyard", "hand"}
+        or (
+            (zones != ("hand",) or destination != "library" or DECLINED_LIFE_LOSS in effect)
+            if hand_top else destination not in {"exile", "graveyard", "hand"}
+        )
         or event_code not in {
             "choice.discard",
             "choice.exile",
             "choice.sacrifice",
             "choice.return_owner_hand",
+            HAND_TOP_APNAP_EVENT,
         }
     ):
         raise SemanticChoiceError("APNAP object commit is malformed")
@@ -94,6 +100,8 @@ def _intents(effect: Mapping[str, Any], *, source_ref: str | None = None) -> tup
         if refs
         else ()
     )
+    if hand_top:
+        return move
     loss = ()
     if DECLINED_LIFE_LOSS in effect:
         players = effect['declining_players']

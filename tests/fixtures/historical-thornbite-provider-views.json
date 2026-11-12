@@ -1,0 +1,290 @@
+{
+  "name": "historical-thornbite-attached-provider-views",
+  "programs": [
+    {
+      "ability_id": "spell:front",
+      "active_zone": "stack",
+      "coverage": [
+        "permanent_characteristics",
+        "static_ability",
+        "granted_activated_ability",
+        "granted_triggered_ability"
+      ],
+      "destination": "battlefield",
+      "effects": [],
+      "event": "resolve",
+      "key": "dae4815e-9025-4993-ab46-52a3f1a7219e:spell:front",
+      "label": "Thornbite Staff",
+      "oracle_id": "dae4815e-9025-4993-ab46-52a3f1a7219e",
+      "provenance": {
+        "authored_by": "v0.8-exact-deck-closure",
+        "review_status": "reviewed",
+        "source_oracle_hash": "00a18bf359265622865f3f1791dba43ba2a7967a4b9c77594cf3d9eca6290242",
+        "source_rulings_hash": "0716c69497a1e7fc602e27aa49294a102b40c0a720408817c6427c507812e0b1"
+      },
+      "tests": [
+        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach"
+      ],
+      "trust_level": "trusted"
+    },
+    {
+      "ability_id": "static:attached-grants",
+      "active_zone": "battlefield",
+      "coverage": [
+        "static_ability",
+        "continuous_effect",
+        "attached_object",
+        "granted_activated_ability",
+        "granted_triggered_ability"
+      ],
+      "effects": [],
+      "event": "characteristics.evaluate",
+      "handlers": [
+        {
+          "condition": {
+            "relation": "source_attached_object"
+          },
+          "event": "characteristics.evaluate",
+          "handler_id": "continuous.attached.fixed-characteristics.v1",
+          "modifier": {
+            "add_abilities": [],
+            "add_ability_fragments": [
+              {
+                "kind": "granted_activated",
+                "value": {
+                  "ability_id": "granted:damage",
+                  "cost_text": "{2}, {T}",
+                  "effect_text": "This creature deals 1 damage to any target",
+                  "fixed_mana_outputs": [],
+                  "mana": {
+                    "GENERIC": 2
+                  },
+                  "mana_ability": false,
+                  "schema_version": 1,
+                  "semantic_key": "dae4815e-9025-4993-ab46-52a3f1a7219e:granted:damage",
+                  "sorcery_speed": false,
+                  "tap_source": true
+                }
+              },
+              {
+                "kind": "granted_triggered",
+                "value": {
+                  "ability_id": "granted:untap-on-creature-death",
+                  "event": "creature.dies",
+                  "label": "Whenever a creature dies, untap this creature.",
+                  "schema_version": 1,
+                  "semantic_key": "dae4815e-9025-4993-ab46-52a3f1a7219e:granted:untap"
+                }
+              }
+            ],
+            "add_rules_text": [],
+            "power": 0,
+            "remove_abilities": [],
+            "toughness": 0,
+            "type_operations": []
+          },
+          "schema_version": 1
+        }
+      ],
+      "key": "dae4815e-9025-4993-ab46-52a3f1a7219e:static:attached-grants",
+      "label": "Thornbite Staff attached ability grants",
+      "oracle_id": "dae4815e-9025-4993-ab46-52a3f1a7219e",
+      "provenance": {
+        "authored_by": "v0.8-exact-deck-closure",
+        "review_status": "reviewed",
+        "source_oracle_hash": "00a18bf359265622865f3f1791dba43ba2a7967a4b9c77594cf3d9eca6290242",
+        "source_rulings_hash": "0716c69497a1e7fc602e27aa49294a102b40c0a720408817c6427c507812e0b1"
+      },
+      "tests": [
+        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach"
+      ],
+      "trust_level": "trusted"
+    },
+    {
+      "ability_id": "ability:ab3",
+      "active_zone": "battlefield",
+      "coverage": [
+        "activated_ability",
+        "equip",
+        "keyword_ability",
+        "target_validation",
+        "attachment"
+      ],
+      "effects": [
+        {
+          "creature": "$target.0",
+          "equipment": "$source",
+          "op": "attach"
+        }
+      ],
+      "event": "activate",
+      "key": "dae4815e-9025-4993-ab46-52a3f1a7219e:ability:ab3",
+      "label": "Thornbite Staff equip",
+      "oracle_id": "dae4815e-9025-4993-ab46-52a3f1a7219e",
+      "provenance": {
+        "authored_by": "v0.8-exact-deck-closure",
+        "review_status": "reviewed",
+        "source_oracle_hash": "00a18bf359265622865f3f1791dba43ba2a7967a4b9c77594cf3d9eca6290242",
+        "source_rulings_hash": "0716c69497a1e7fc602e27aa49294a102b40c0a720408817c6427c507812e0b1"
+      },
+      "target_schema": {
+        "categories": [
+          "permanent"
+        ],
+        "controller_relation": "you",
+        "count": 1,
+        "creature": true,
+        "zones": [
+          "battlefield"
+        ]
+      },
+      "tests": [
+        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach"
+      ],
+      "trust_level": "trusted"
+    },
+    {
+      "ability_id": "trigger:shaman-enter",
+      "active_zone": "battlefield",
+      "coverage": [
+        "triggered_ability",
+        "shaman_enters",
+        "optional_attachment"
+      ],
+      "effects": [
+        {
+          "op": "choose_option",
+          "options": [
+            {
+              "id": "attach",
+              "label": "Attach Thornbite Staff"
+            },
+            {
+              "id": "decline",
+              "label": "Do not attach"
+            }
+          ],
+          "player": "$controller",
+          "prompt": "You may attach Thornbite Staff to the Shaman that entered.",
+          "then_by_choice": {
+            "attach": [
+              {
+                "creature": "$context.card",
+                "equipment": "$source",
+                "op": "attach"
+              }
+            ],
+            "decline": []
+          }
+        }
+      ],
+      "event": "creature.enter",
+      "event_condition": {
+        "field": "subtypes",
+        "op": "contains_any",
+        "value": [
+          "shaman"
+        ]
+      },
+      "key": "dae4815e-9025-4993-ab46-52a3f1a7219e:trigger:shaman-enter",
+      "label": "Thornbite Staff Shaman-enter trigger",
+      "oracle_id": "dae4815e-9025-4993-ab46-52a3f1a7219e",
+      "provenance": {
+        "authored_by": "v0.8-exact-deck-closure",
+        "review_status": "reviewed",
+        "source_oracle_hash": "00a18bf359265622865f3f1791dba43ba2a7967a4b9c77594cf3d9eca6290242",
+        "source_rulings_hash": "0716c69497a1e7fc602e27aa49294a102b40c0a720408817c6427c507812e0b1"
+      },
+      "tests": [
+        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach"
+      ],
+      "trust_level": "trusted"
+    },
+    {
+      "ability_id": "granted:damage",
+      "active_zone": "battlefield",
+      "coverage": [
+        "granted_activated_ability",
+        "target_validation",
+        "damage"
+      ],
+      "effects": [
+        {
+          "amount": 1,
+          "op": "damage",
+          "source": "$source",
+          "target": "$target.0"
+        }
+      ],
+      "event": "activate",
+      "key": "dae4815e-9025-4993-ab46-52a3f1a7219e:granted:damage",
+      "label": "Thornbite Staff granted damage ability",
+      "oracle_id": "dae4815e-9025-4993-ab46-52a3f1a7219e",
+      "provenance": {
+        "authored_by": "v0.8-exact-deck-closure",
+        "review_status": "reviewed",
+        "source_oracle_hash": "00a18bf359265622865f3f1791dba43ba2a7967a4b9c77594cf3d9eca6290242",
+        "source_rulings_hash": "0716c69497a1e7fc602e27aa49294a102b40c0a720408817c6427c507812e0b1"
+      },
+      "target_schema": {
+        "groups": [
+          {
+            "categories": [
+              "player",
+              "permanent"
+            ],
+            "count": 1,
+            "id": "any_target",
+            "predicate": "damageable",
+            "zones": [
+              "player",
+              "battlefield"
+            ]
+          }
+        ]
+      },
+      "tests": [
+        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach"
+      ],
+      "trust_level": "trusted"
+    },
+    {
+      "ability_id": "granted:untap",
+      "active_zone": "battlefield",
+      "coverage": [
+        "granted_triggered_ability",
+        "creature_dies",
+        "untap"
+      ],
+      "effects": [
+        {
+          "card": "$source",
+          "op": "untap"
+        }
+      ],
+      "event": "creature.dies",
+      "event_condition": {
+        "field": "types",
+        "op": "contains_any",
+        "value": [
+          "creature"
+        ]
+      },
+      "key": "dae4815e-9025-4993-ab46-52a3f1a7219e:granted:untap",
+      "label": "Thornbite Staff granted untap ability",
+      "oracle_id": "dae4815e-9025-4993-ab46-52a3f1a7219e",
+      "provenance": {
+        "authored_by": "v0.8-exact-deck-closure",
+        "granted_only": true,
+        "review_status": "reviewed",
+        "source_oracle_hash": "00a18bf359265622865f3f1791dba43ba2a7967a4b9c77594cf3d9eca6290242",
+        "source_rulings_hash": "0716c69497a1e7fc602e27aa49294a102b40c0a720408817c6427c507812e0b1"
+      },
+      "tests": [
+        "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach"
+      ],
+      "trust_level": "trusted"
+    }
+  ],
+  "schema_version": 3
+}

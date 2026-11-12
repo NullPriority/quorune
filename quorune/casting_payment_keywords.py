@@ -15,6 +15,7 @@ DELVE_MECHANIC_ID = "delve"
 IMPROVISE_MECHANIC_ID = "improvise"
 ASSIST_MECHANIC_ID = "assist"
 ASSIST_CAPABILITY = "casting.payment.assist"
+PAYMENT_GRANT_SCOPE_FIELD = "payment_grant_scope"
 
 
 class CastingPaymentKeywordError(ValueError):

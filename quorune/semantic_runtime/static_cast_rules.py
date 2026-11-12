@@ -21,6 +21,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import ObjectQueryResult, object_matches_query, object_query_result
 from ..rules.capabilities import load_default_capability_registry
 from ..static_player_restriction_model import StaticPlayerRestrictionSpec, StaticPlayerRestrictionKind
+from .battlefield_cascade_grants import BattlefieldCascadeGrantHandler, BattlefieldCascadeGrantSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
@@ -269,7 +270,7 @@ class SplitSecondHandler:
 
 
 class StaticCastRuleRegistry(
-    RuntimeComponentRegistry[StaticCastRuleSourceContext, StaticCastRule]
+    RuntimeComponentRegistry[StaticCastRuleSourceContext, StaticCastRule | BattlefieldCascadeGrantSpec]
 ):
     pass
 
@@ -279,6 +280,7 @@ def default_static_cast_rule_registry() -> StaticCastRuleRegistry:
     registry = StaticCastRuleRegistry(
         (
             SplitSecondHandler(),
+            BattlefieldCascadeGrantHandler(),
             StaticCastRuleHandler(
                 STATIC_CAST_TIMING_HANDLER_ID,
                 StaticCastRuleKind.TIMING_PERMISSION,
@@ -447,12 +449,20 @@ def spell_query_result(
     card: Any,
     *,
     face: Mapping[str, Any] | None = None,
+    casting_player: str | None = None,
 ) -> ObjectQueryResult:
     effective = dict(host._effective_card_data(card))
     if face is not None:
         for key in ("name", "type_line", "colors", "keywords", "mana_value"):
             if face.get(key) is not None:
                 effective[key] = face[key]
+    if casting_player is not None:
+        from ..rules.cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+        selected = face.get("type_line") if face is not None else None
+        type_line = prospective_cross_zone_spell_type_line(host, card, casting_player, selected)
+        if type_line is not None:
+            effective["type_line"] = type_line
     return object_query_result(
         card,
         effective,
@@ -498,7 +508,7 @@ def static_cast_timing_permissions(
     )
     if not rules:
         return ()
-    row = spell_query_result(host, card, face=face)
+    row = spell_query_result(host, card, face=face, casting_player=player)
     name = str((face or {}).get("name") or row.printed_name)
     enchant_spec = (
         host._compiled_enchant_spec(
@@ -545,7 +555,7 @@ def static_cast_prohibition_reason(
     )
     if not rules and not temporary:
         return None
-    row = spell_query_result(host, card, face=face)
+    row = spell_query_result(host, card, face=face, casting_player=player)
     if any(restriction_matches_spell(effect,row) for effect in temporary):return 'temporary_cast_prohibition'
     name = str((face or {}).get("name") or row.printed_name)
     for rule in rules:

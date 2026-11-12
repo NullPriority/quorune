@@ -80,6 +80,8 @@ def validate_zone_transition_request(
     if not isinstance(transition_kind, ZoneTransitionKind):
         raise GameRuleError("Zone transitions require a supported typed event kind")
     card = cards[object_id]
+    if getattr(card, "object_kind", "card") == "dungeon":
+        raise GameRuleError("A dungeon moves only through its Venture and completion rules")
     if transition_kind is ZoneTransitionKind.COUNTERED_SPELL and card.zone != "stack":
         raise GameRuleError(
             "Only a physical spell on the stack can use the countered-spell transition"

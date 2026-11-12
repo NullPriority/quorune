@@ -12,6 +12,7 @@ from test_qualified_zone_event_queries import query_record
 import test_qualified_attack_subjects as native
 from quorune.attack_batch_model import (QualifiedAttackBatchSpec,ATTACK_BATCH_CONDITION,
     ATTACK_BATCH_CONTEXT,QUALIFIED_ATTACK_BATCH_CAPABILITY as CAPABILITY)
+from quorune.attack_batch_model import DECLARED_ATTACK_POWER_CAPABILITY, DECLARED_ATTACK_POWER_COVERAGE
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.object_predicate import ObjectQuerySpec
@@ -175,8 +176,10 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'qualified-attack-batches.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/power-toughness-switch-cards.json',
             ROOT/'tests/fixtures/qualified-attack-batch-cards.json',
-            ROOT/'tests/fixtures/defender-declaration-numeric-cards.json'],path)
+            ROOT/'tests/fixtures/defender-declaration-numeric-cards.json',
+            ROOT/'tests/fixtures/attack-declaration-power-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Attack batches',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
 
@@ -382,3 +385,183 @@ class QualifiedAttackBatchNativeTests(unittest.TestCase):
         self.attack(session,[(bodies[0],'B'),(bodies[1],'C'),(bodies[2],'D')]);self.assertEqual(1,self.trigger_count(session,source))
         self.cast(session,'B',removal,[bodies[0].ref]);session=self.replay(session,load=True);self.assertIsNone(self.resolve(session))
         self.assertEqual(life+2,session.state.players['A'].life);self.replay(session,load=True)
+
+    def _ready_attackers(self, session, *names):
+        cards = tuple(self.add(session.engine, name) for name in names)
+        for card in cards:
+            card.acquired_control_turn_count = -1
+        return cards
+
+    def test_pack_tactics_rechecks_original_six_power_across_defenders(self):
+        from quorune.rules.attack_batches import declared_attack_power_recheck
+
+        session = self.session(50890101)
+        hunter, bear, goblin = self._ready_attackers(session, "Gnoll Hunter", "Grizzly Bears", "Goblin Piker")
+        removal = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B")
+        self.assert_closed(session, hunter)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(hunter, "B"), (bear, "C"), (goblin, "D")])
+        self.assertEqual(1, self.trigger_count(session, hunter))
+        item = next(item for item in session.state.stack if item.source_object_id == hunter.object_id)
+        program = session.engine.semantics.get(item.semantic_key)
+        self.assertTrue(declared_attack_power_recheck(
+            program, item.context, source_object_id=hunter.object_id, controller="A",
+        ))
+        incomplete = deepcopy(item.context["attack_transition"])
+        del next(row for row in incomplete["participants"] if row["object_id"] == hunter.object_id)["power"]
+        for changed in (
+            {"defender": "C"},
+            {"source_logical_object_id": "unrelated-incarnation"},
+            {"attack_transition": incomplete},
+        ):
+            with self.subTest(changed=tuple(changed)), self.assertRaises(ValueError):
+                declared_attack_power_recheck(program, {**item.context, **changed},
+                    source_object_id=hunter.object_id, controller="A")
+        self.cast(session, "B", removal, [bear.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[bear.object_id].zone)
+        self.assertEqual({"+1/+1": 1}, session.state.cards[hunter.object_id].counters)
+        self.replay(session, load=True)
+
+    def _attack_with_negative_power(self):
+        session = self.session(50890102)
+        hunter, bear, goblin, rumbler = self._ready_attackers(
+            session, "Gnoll Hunter", "Grizzly Bears", "Goblin Piker", "Char-Rumbler",
+        )
+        self.assert_closed(session, hunter)
+        self.assertEqual(-1, session.engine._numeric_stat(rumbler.object_id, "power"))
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(hunter, "B"), (bear, "C"), (goblin, "D"), (rumbler, "B")])
+        return session, hunter
+
+    def test_pack_tactics_counts_negative_power(self):
+        session, hunter = self._attack_with_negative_power()
+        self.assertEqual(0, self.trigger_count(session, hunter))
+        self.replay(session, load=True)
+
+    def test_pack_tactics_reads_power_after_a_precombat_pump(self):
+        session = self.session(50890107)
+        hunter, automaton = self._ready_attackers(session, "Gnoll Hunter", "Universal Automaton")
+        pump = self.add(session.engine, "Infuriate", zone="hand")
+        self.assert_closed(session, hunter)
+        self.prepare(session, mana={"R": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", pump, [automaton.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(4, session.engine._numeric_stat(automaton.object_id, "power"))
+        self.attack(session, [(hunter, "B"), (automaton, "C")])
+        self.assertEqual(1, self.trigger_count(session, hunter))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"+1/+1": 1}, session.state.cards[hunter.object_id].counters)
+        self.replay(session, load=True)
+
+    def test_pack_tactics_negative_power_control_kills_clamped_sum(self):
+        with patch("quorune.rules.attack_batches.sum", lambda powers: sum(max(0, power) for power in powers), create=True):
+            session, hunter = self._attack_with_negative_power()
+        self.assertEqual(1, self.trigger_count(session, hunter))
+
+    def test_pack_tactics_two_distinct_sources_grant_first_strike_and_put_a_token_attacking(self):
+        session = self.session(50890103)
+        captain, goblin, automaton = self._ready_attackers(
+            session, "Hobgoblin Captain", "Battle Cry Goblin", "Universal Automaton",
+        )
+        for card in (captain, goblin):
+            self.assert_closed(session, card)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(captain, "B"), (goblin, "C"), (automaton, "D")])
+        self.assertEqual((1, 1), (self.trigger_count(session, captain), self.trigger_count(session, goblin)))
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        result = session.act("pilot:A", {"action_id": "choose", "attacking": {"attacking:0": "D"}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        token, = (card for card in session.state.cards.values() if card.zone == "battlefield" and card.is_token)
+        self.assertTrue(token.tapped)
+        self.assertEqual("D", session.state.combat.attackers[token.object_id])
+        self.assertIn("first strike", session.engine._combat_keywords(session.state.cards[captain.object_id]))
+        self.replay(session, load=True)
+
+    def test_pack_tactics_minion_offers_only_private_dragons_and_enters_attacking(self):
+        session = self.session(50890104)
+        minion, bear, goblin = self._ready_attackers(session, "Minion of the Mighty", "Grizzly Bears", "Goblin Piker")
+        bear.counters["+1/+1"] = 2
+        dragon = self.add(session.engine, "Shivan Dragon", zone="hand", ref="pack-tactics-private-dragon")
+        other = self.add(session.engine, "Generic Bound Body", zone="hand", ref="pack-tactics-private-nondragon")
+        self.assert_closed(session, minion)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(minion, "B"), (bear, "C"), (goblin, "D")])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        offers = session.packet("pilot:A", full=True)["decision"]["ctx"]["objects"]
+        self.assertEqual({dragon.ref}, {row["id"] for row in offers})
+        self.assertNotIn(dragon.ref, json.dumps(session.packet("pilot:D", full=True)))
+        command = {"action_id": "choose", "card": dragon.ref}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertFalse(session.act("pilot:A", {**command, "card": other.ref}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        selected = session.act("pilot:A", command)
+        self.assertTrue(selected.ok, selected.summary)
+        session = self.replay(session, load=True)
+        entered = session.act("pilot:A", {"action_id": "choose", "choice": "C"})
+        self.assertTrue(entered.ok, entered.summary)
+        self.assertTrue(session.state.cards[dragon.object_id].tapped)
+        self.assertEqual("C", session.state.combat.attackers[dragon.object_id])
+        self.assertEqual(0, self.trigger_count(session, minion))
+        self.replay(session, load=True)
+
+    def test_pack_tactics_tiger_chooses_a_creature_target_after_the_sacrifice(self):
+        session = self.session(50890105)
+        hunter, bear = self._ready_attackers(session, "Tiger-Tribe Hunter", "Grizzly Bears")
+        target = self.add(session.engine, "Goblin Piker", seat="B")
+        self.assert_closed(session, hunter)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(hunter, "B"), (bear, "C")])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        parent = session.state.stack[-1]
+        self.assertFalse(parent.targets)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "cards": [hunter.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        paid = session.act("pilot:A", {"action_id": "choose", "cards": [bear.ref]})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertEqual("graveyard", session.state.cards[bear.object_id].zone)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        self.assertEqual(parent.ref, session.state.stack[-1].context["reflexive_parent"])
+        session = self.replay(session, load=True)
+        selected = session.act("pilot:A", {"action_id": "choose", "targets": [target.ref]})
+        self.assertTrue(selected.ok, selected.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_pack_tactics_runtime_requires_the_capability_and_closed_recheck(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+
+        session = self.session(50890106)
+        card = self.add(session.engine, "Gnoll Hunter")
+        self.assert_closed(session, card)
+        program = next(p for p in session.engine.semantics.programs_for_oracle(card.oracle_id)
+            if DECLARED_ATTACK_POWER_CAPABILITY in p.capability_dependencies)
+        deps = tuple(dep for dep in program.capability_dependencies if dep != DECLARED_ATTACK_POWER_CAPABILITY)
+        variants = (
+            replace(program, capability_dependencies=deps,
+                capability_closure=self.registry.closure(deps, profile="commander_review").to_dict()),
+            replace(program, coverage=[tag for tag in program.coverage if tag != DECLARED_ATTACK_POWER_COVERAGE]),
+            replace(program, event_condition={"not": program.event_condition}),
+        )
+        for variant in variants:
+            binding = bind_semantic_program_runtime(variant, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+        original = self.db.lookup("Gnoll Hunter")
+        compiler_options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        malformed = replace(original, oracle_text=original.oracle_text.replace("6 or greater", "X or greater"))
+        self.assertTrue(compile_oracle_card(malformed, **compiler_options).material_residuals)
+        with patch("quorune.compiler.public_trigger_conditions._DECLARED_POWER_CONDITION") as grammar:
+            grammar.fullmatch.return_value = None
+            self.assertTrue(compile_oracle_card(original, **compiler_options).material_residuals)

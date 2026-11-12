@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VERSION
 from ..resolution_conditions import (
     RESOLUTION_CONDITION_CAPABILITY,
     RESOLUTION_CONDITION_OPERATION,
@@ -54,8 +55,13 @@ class PublicResolutionConditionHandler:
         from .resolution_result_validation import validate_resolution_result_children
         validate_resolution_result_children(effect, effects, otherwise, context)
         try:
-            matched = (effect['cast_fact']>=condition.minimum if effect.get('schema_version') in {6,7}
-                else effect['cast_fact'] if effect.get('schema_version') in {2,4,5} else context.query.resolution_condition_matches(condition.to_dict()))
+            version = effect.get("schema_version")
+            if version in {6, 7}:
+                matched = effect["cast_fact"] >= condition.minimum
+            elif version in {2, 4, 5, PAID_SACRIFICE_CONDITION_VERSION}:
+                matched = effect["cast_fact"]
+            else:
+                matched = context.query.resolution_condition_matches(condition.to_dict())
             if type(matched) is not bool:
                 raise ValueError('Resolution cast fact is unavailable')
         except (ValueError, TypeError, KeyError) as exc:

@@ -37,6 +37,7 @@ from ..resolution_conditions import (
     RESOLUTION_CONDITION_OPERATION, ResolutionConditionBinding,
     validate_resolution_condition_instruction,
 )
+from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VERSION
 from .context import (
     ChoiceObjectView,
     ChoiceStackView,
@@ -232,7 +233,8 @@ class SemanticChoiceCoordinationMixin:
             from ..soulbond_model import SoulbondOpportunity
             from ..soulbond_state import opportunity_candidates
             return opportunity_candidates(self, SoulbondOpportunity.from_effect(effect))
-        if str(effect.get("op") or "") != "choose_objects":
+        from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
+        if str(effect.get("op") or "") != "choose_objects" or CONTROLLED_RETURN_FIELD in effect:
             return ()
         selector = dict(effect.get("selector") or {})
         selector.setdefault("min", int(effect.get("minimum", 1)))
@@ -468,9 +470,14 @@ class SemanticChoiceCoordinationMixin:
         stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
         from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
+        from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
         from ..fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
         from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_OPERATION
         from ..rules.graveyard_copy_cast_model import GRAVEYARD_COPY_OFFER
+
+        if CAPTURED_DRAW_CAST_FIELD in effect and "_captured" in effect:
+            from ..drawing.captured_hand_casting import captured_draw_cast_options
+            return captured_draw_cast_options(self, item=stack_item, actor=actor, effect=effect)
 
         if effect.get("op") == GRAVEYARD_COPY_OFFER:
             from .graveyard_copy_cast import graveyard_copy_cast_options
@@ -532,6 +539,8 @@ class SemanticChoiceCoordinationMixin:
         """Materialize immutable facts under the instruction's visibility scope."""
 
         from ..discover_casting import resolving_exile_library_refs
+        from ..dungeon_progress import DUNGEON_VENTURE_FIELD, DungeonJourney
+        from ..semantic_runtime.venture_limit import current_venture_allowed
         choice_effect = effect or {}
         object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
@@ -540,7 +549,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         condition_facts = {}
-        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12}:
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12,PAID_SACRIFICE_CONDITION_VERSION}:
             try:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
                 if choice_effect["player"] != actor:
@@ -562,6 +571,9 @@ class SemanticChoiceCoordinationMixin:
             explore_source_types=materialize_explore_source_types(self, stack_item, choice_effect),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
+            venture_journey=((self.state.players[actor].dungeon_journey or DungeonJourney())
+                             if DUNGEON_VENTURE_FIELD in choice_effect else None),
+            venture_allowed=DUNGEON_VENTURE_FIELD not in choice_effect or current_venture_allowed(self, actor),
             counter_permissions=collect_counter_permissions(self),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),
@@ -709,7 +721,11 @@ class SemanticChoiceCoordinationMixin:
             effect = bind_connive_instruction(self, item, effect)
             effect = bind_endure_instruction(self, item, effect)
             from ..drawing.miracle_casting import bind_miracle_cast_instruction
+            from ..drawing.captured_hand_casting import bind_captured_draw_offer
+            from ..dungeon_runtime import check_dungeon_choice_instruction
             effect = bind_miracle_cast_instruction(item, effect)
+            effect = bind_captured_draw_offer(item, effect)
+            check_dungeon_choice_instruction(self, item, effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         handler = registry.handler_for_operation(str(effect.get("op") or ""))

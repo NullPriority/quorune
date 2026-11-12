@@ -142,6 +142,11 @@ rationale. A new compiler identity can declare a new
 transition before its corpus exists. This check reads the existing history;
 it does not generate the census or rules queue.
 
+Changes to harvest metric readers also run the prerequisite-budget witness
+before corpus generation. Its synthetic history uses each probe's recorded
+gain basis, so eligibility and exhausted-budget controls exercise the same
+contract as production.
+
 Architecture capsule generation reads and parses the current test import
 inventory once per report, then applies each subsystem's unchanged import
 matching rule to that snapshot. Later reports reread the files, so edits and
@@ -402,6 +407,14 @@ This phase does not execute the broader behavioral inventory. Non-harvest declar
 transition parser rather than a separate permissive metadata check. The workflow
 is not subscribed to `ready_for_review`, so moving an unchanged draft into review does
 not restart cloud generation.
+
+Before any census, the cloud and local pre-corpus paths compare the workflow's
+owner producers with the generated-artifact manifest. Every reusable owner has
+one producer, and every generated dependency completes before its consumer.
+Independent foundations run in parallel; dependent source components wait for
+their foundations and complete before the corpus job. The same check derives
+the workflow's maximum parallel runner demand and enforces its checked budget.
+The final bundle still requires each exact-source owner receipt and output hash.
 
 Each reusable owner is keyed by its Git-clean implementation and direct-source
 closure, dependency-output fingerprints, canonical manifest row, and governed

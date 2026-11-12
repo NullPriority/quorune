@@ -20,6 +20,7 @@ from ..ability_fragments import (
     canonical_ability_fragments,
     decayed_ability_fragments,
 )
+from ..adventure import ADVENTURE_COVERAGE
 from ..cast_face_offers import OMEN_COVERAGE
 from ..compiler.token_templates import (
     FIXED_TOKEN_DEFINITION_BATCH_MECHANIC,
@@ -229,6 +230,7 @@ _AUXILIARY_MECHANICS = frozenset(
         AFTERLIFE_MECHANIC_ID,
         "generated_oracle_ir",
         "spell_resolution",
+        ADVENTURE_COVERAGE,
         OMEN_COVERAGE,
         "triggered_ability",
         TYPED_TOKEN_ABILITY_MECHANIC_ID,

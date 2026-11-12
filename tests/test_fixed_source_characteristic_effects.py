@@ -512,6 +512,12 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 )
 
     def test_source_characteristic_grammar_keeps_open_forms_residual(self):
+        promoted = self.compile("{2}: This artifact becomes a 2/2 Bird artifact creature until end of turn and can't be blocked this turn.",
+                                type_line="Artifact")
+        self.assertEqual("exact", promoted.status, promoted.material_residuals)
+        self.assertEqual(["apply_source_characteristics_until_end_of_turn", "grant_declaration_restriction_until_end_of_turn"],
+                         [effect["op"] for effect in promoted.faces[0].nodes[0].effects])
+        self.assertEqual("unblockable", promoted.faces[0].nodes[0].effects[1]["restriction"])
         cases = (
             (
                 "{1}: This creature gets +X/+X and gains trample until end of turn.",
@@ -528,10 +534,6 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
             (
                 "{2}: This land becomes a 2/2 creature until your next turn. It's still a land.",
                 "Land",
-            ),
-            (
-                "{2}: This artifact becomes a 2/2 Bird artifact creature until end of turn and can't be blocked this turn.",
-                "Artifact",
             ),
             (
                 "{2}: This artifact becomes a copy of target creature until end of turn.",

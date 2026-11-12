@@ -118,6 +118,9 @@ class ProliferateEngineTests(unittest.TestCase):
         )
         if card is None:
             record = self.database.lookup(name)
+            from common import register_current_fixture_programs
+            register_current_fixture_programs(self.database, engine.semantics, (record,),
+                                              profile=engine.state.config.review_profile)
             card = CardInstance(
                 object_id=f"fixture:{ref}",
                 ref=ref,

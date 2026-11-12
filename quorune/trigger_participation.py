@@ -85,7 +85,12 @@ class TriggerMultiplierSpec:
     @property
     def capability_id(self) -> str:
         if self.schema_version==2:
-            from .trigger_participation_query_model import trigger_participation_rule,TRIGGER_PREDICATE_CAPABILITY,TRIGGER_PROHIBITION_CAPABILITY
+            from .trigger_participation_query_model import (
+                DUNGEON_ROOM_MULTIPLIER_CAPABILITY, OWNED_DUNGEON_ROOM, TRIGGER_PREDICATE_CAPABILITY,
+                TRIGGER_PROHIBITION_CAPABILITY, trigger_participation_rule,
+            )
+            if self.rule == OWNED_DUNGEON_ROOM:
+                return DUNGEON_ROOM_MULTIPLIER_CAPABILITY
             return (TRIGGER_PROHIBITION_CAPABILITY if trigger_participation_rule(self.rule,self.subtype).outcome=='prevent'
                 else TRIGGER_PREDICATE_CAPABILITY)
         return _MULTIPLIER_CAPABILITIES[self.predicate]
@@ -93,7 +98,11 @@ class TriggerMultiplierSpec:
     @property
     def rule_ids(self) -> tuple[str, ...]:
         if self.schema_version==2:
-            from .trigger_participation_query_model import trigger_participation_rule
+            from .trigger_participation_query_model import (
+                DUNGEON_ROOM_MULTIPLIER_RULES, OWNED_DUNGEON_ROOM, trigger_participation_rule,
+            )
+            if self.rule == OWNED_DUNGEON_ROOM:
+                return DUNGEON_ROOM_MULTIPLIER_RULES
             return ('101.2','603.2','603.10') if trigger_participation_rule(self.rule,self.subtype).outcome=='prevent' else ('603.2d','603.10')
         return ("603.2d",)
 
