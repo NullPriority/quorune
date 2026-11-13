@@ -21843,7 +21843,8 @@
         "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
         "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
         "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
-        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "multiplayer_tests": [
         "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
@@ -21855,7 +21856,8 @@
         "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
         "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
         "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
-        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "negative_tests": [
         "test_attack_bands_are_closed_disjoint_incarnations_and_old_wire_is_unchanged",
@@ -21871,7 +21873,8 @@
         "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
         "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
         "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
-        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum",
+        "test_complete_original_requires_token_and_banding_dependencies_and_rejects_unknown_variants"
       ],
       "official_rules": [
         "702.22a",
@@ -21910,7 +21913,8 @@
         "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
         "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
         "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
-        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "privacy_tests": [
         "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
@@ -21922,7 +21926,8 @@
         "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
         "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
         "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
-        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "replay_tests": [
         "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
@@ -21934,7 +21939,8 @@
         "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
         "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
         "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
-        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "required_evidence": [
         "positive",
@@ -72731,7 +72737,8 @@
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
         "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
-        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "multiplayer_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72758,7 +72765,8 @@
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
         "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
-        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "negative_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72787,7 +72795,8 @@
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
         "test_singular_articles_share_one_closed_definition_and_original_source_span",
         "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
-        "test_query_defined_token_stats_require_complete_intrinsic_definitions"
+        "test_query_defined_token_stats_require_complete_intrinsic_definitions",
+        "test_complete_original_requires_token_and_banding_dependencies_and_rejects_unknown_variants"
       ],
       "official_rules": [
         "111.2",
@@ -72843,7 +72852,8 @@
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
         "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
-        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "privacy_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72870,7 +72880,8 @@
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
         "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
-        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "replay_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72898,7 +72909,8 @@
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
         "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
         "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
-        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change",
+        "test_original_created_knight_forms_a_real_band_rejects_illegal_groups_and_chooses_blocker_damage"
       ],
       "required_evidence": [
         "positive",
@@ -93185,7 +93197,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 832,
+  "registry_version": 833,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

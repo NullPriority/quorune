@@ -461,6 +461,7 @@
     "tests/fixtures/attacking-token-result-cards.json",
     "tests/fixtures/backup-cards.json",
     "tests/fixtures/banding-cards.json",
+    "tests/fixtures/banding-token-cards.json",
     "tests/fixtures/bargain-cards.json",
     "tests/fixtures/batch-admission-retention-cards.json",
     "tests/fixtures/batch-interaction-recovery-cards.json",

@@ -177,6 +177,7 @@ def token_decayed_definition_dependencies(
 
 _CREATURE_KEYWORDS = frozenset(
     {
+        "Banding",
         "Deathtouch",
         "Decayed",
         "Defender",

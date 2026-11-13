@@ -57,6 +57,7 @@ _COLOR_ORDER = "WUBRG"
 _CREATURE_TOKEN_KEYWORDS = frozenset(
     {
         "deathtouch",
+        "banding",
         "decayed",
         "defender",
         "double strike",

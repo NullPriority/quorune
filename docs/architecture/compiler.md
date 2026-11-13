@@ -2457,6 +2457,11 @@ retains the red mana through combat and clears it when combat ends. Unclosed
 creation shells, other unquoted event keywords, multiple event keywords and
 unsupported counts remain residual.
 
+Ordinary fixed creature-token definitions can carry Banding through the
+existing combat owner. Admission requires both the token-definition and
+Banding capabilities, including when coverage annotations are removed.
+Parameterized "bands with other" abilities keep their separate boundary.
+
 Quoted abilities of an explicitly named token may use the printed token name
 as their source reference. The typed child compiler first retains the historical
 `Created Token` route; a previously residual child can then use the pinned name

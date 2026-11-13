@@ -14593,6 +14593,22 @@
         "test_surveil_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ordinary-banding-token-definitions",
+      "patterns": [
+        "quorune/compiler/token_templates.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "tests/test_banding_tokens.py",
+        "tests/fixtures/banding-token-cards.json"
+      ],
+      "test_modules": [
+        "test_banding_tokens",
+        "test_banding",
+        "test_fixed_token_production",
+        "test_additional_token_compiler",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
