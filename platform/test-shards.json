@@ -608,6 +608,7 @@
       "test_fixed_source_counter_activation_costs",
       "test_fixed_tap_payments",
       "test_fixed_zone_cast_lifecycles",
+      "test_flash_surcharge",
       "test_hand_entry_followup",
       "test_hybrid_resolution_payment",
       "test_keyword_counter_composition",

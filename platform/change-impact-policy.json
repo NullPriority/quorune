@@ -14609,6 +14609,21 @@
         "test_additional_token_compiler",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "mana-surcharge-instant-timing",
+      "patterns": [
+        "quorune/compiler/surcharge_flash_nodes.py",
+        "quorune/semantic_runtime/surcharge_flash.py",
+        "quorune/rules/casting/surcharge_flash_costs.py",
+        "tests/test_flash_surcharge.py"
+      ],
+      "test_modules": [
+        "test_flash_surcharge",
+        "test_flash_cast_timing",
+        "test_conditional_flash",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

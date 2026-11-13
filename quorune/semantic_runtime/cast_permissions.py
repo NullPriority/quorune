@@ -95,8 +95,9 @@ class CastPermissionRegistry(
 def default_cast_permission_registry() -> CastPermissionRegistry:
     from .conditional_flash import ConditionalFlashPermissionHandler
     from .self_cast_restrictions import SelfCastRestrictionHandler
+    from .surcharge_flash import ManaSurchargeFlashPermissionHandler
     registry = CastPermissionRegistry((FlashCastPermissionHandler(),ConditionalFlashPermissionHandler(),
-        SelfCastRestrictionHandler(),ClassicFlashPermissionHandler()))
+        SelfCastRestrictionHandler(),ClassicFlashPermissionHandler(),ManaSurchargeFlashPermissionHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

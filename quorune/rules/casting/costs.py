@@ -1449,7 +1449,7 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
 
 def _cast_cost_options_for_submission(host, seat, card, program, submission, *, hint, force_without_mana_cost,
         alternative_base, cast_type_line, suppress_source_costs, resolving_exile_authority,
-        minimum_library_x, source_grant_only=None):
+        minimum_library_x, source_grant_only=None, ignore_timing=False):
     from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
 
     cast_type_line = prospective_cross_zone_spell_type_line(host, card, seat, cast_type_line) or cast_type_line
@@ -1469,6 +1469,9 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
     if initial is None:
         return ()
     expanded, mandatory, mechanics, has_x = initial
+    from .surcharge_flash_costs import mana_surcharge_flash_variants
+    expanded=mana_surcharge_flash_variants(host,seat,card,expanded,
+        suppress_source_costs=suppress_source_costs,ignore_timing=ignore_timing)
     from .turn_cast_grants import with_turn_cast_grant_choices
     expanded=with_turn_cast_grant_choices(host,seat,card,expanded,cast_type_line=cast_type_line,force_without_mana_cost=force_without_mana_cost)
     from .optional_life_costs import optional_life_cost_variants

@@ -8784,6 +8784,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/surcharge_flash_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/surveil_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -16681,6 +16696,20 @@
     },
     {
       "file": "quorune/rules/casting/static_modifiers.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/casting/surcharge_flash_costs.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -25118,6 +25147,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/surcharge_flash.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/suspect_handler.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -27213,5 +27257,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "eabb96d54f7af004243acce9a69f95ec8075f0cfa0b49a85f4ac38ef169ce48f"
+  "fingerprint": "a6945cad82475c3d51bfbcbe36572804f07ef108a05793e41afbb86f11ec7216"
 }

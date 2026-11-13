@@ -71415,6 +71415,72 @@
     {
       "applicability": {
         "exclusions": [
+          "variable or nonmana surcharges",
+          "conflicting intrinsic surcharge permissions on one face",
+          "unrepresented remaining card clauses"
+        ],
+        "inputs": [
+          "one current trusted face permission",
+          "ordinary casting authority",
+          "server-owned timing override",
+          "authoritative base cost options"
+        ],
+        "outputs": [
+          "marked additional-cost variants before reductions",
+          "ordinary options only under independent timing authority"
+        ],
+        "summary": "A face-bound intrinsic instant-timing permission is coupled to its fixed additional generic mana cost without granting the Flash keyword."
+      },
+      "blockers": [
+        "Implementation and behavioral evidence are in progress."
+      ],
+      "dependencies": [
+        "timing.cast.printed_flash"
+      ],
+      "dependency_fail_closed_rationale": "The intrinsic timing permission and its surcharge must be independently required by runtime binding.",
+      "dependency_fail_closed_status": "not_run",
+      "id": "timing.cast.mana_surcharge_flash",
+      "implementation_components": [
+        "quorune.cast_timing.ManaSurchargeFlashSpec",
+        "quorune.compiler.surcharge_flash_nodes.surcharge_flash_node",
+        "quorune.semantic_runtime.surcharge_flash.ManaSurchargeFlashPermissionHandler",
+        "quorune.compiled_cast_timing.compiled_mana_surcharge_flash_spec",
+        "quorune.rules.casting.surcharge_flash_costs.mana_surcharge_flash_variants"
+      ],
+      "implementation_mutation_rationale": "Removing the paid cost branch or bypassing its ordinary-branch filter must fail actual off-turn payment witnesses.",
+      "implementation_mutation_status": "not_run",
+      "interaction_tests": [],
+      "multiplayer_tests": [],
+      "negative_tests": [],
+      "official_rules": [
+        "113.6e",
+        "601.2b",
+        "601.2f",
+        "609.4",
+        "702.8a"
+      ],
+      "positive_tests": [],
+      "privacy_tests": [],
+      "replay_tests": [],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "blocked",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "conditional Flash",
           "Flash granted to or removed from a card",
           "player-wide as-though-Flash permissions",
@@ -93197,7 +93263,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 833,
+  "registry_version": 834,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
