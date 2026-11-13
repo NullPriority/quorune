@@ -507,6 +507,24 @@ brackets, both complete leaf closures and distinct body fingerprints are
 required before either program is admitted. An unrepresented source or sibling
 keeps the whole spell residual.
 
+`compiler/awaken_spell_faces.py` uses the same paired-body boundary for one
+fixed Awaken alternative. The declaration binds the price, counter count,
+ordinary body's mechanics and both body fingerprints. Only the paid program
+adds a controlled land target. `target_clause_binding.py` preserves separate
+ordinary and land roles, including when both legally select the same object.
+The existing cost owner applies increases and reductions after selecting the
+alternative; free casts retain only the ordinary route. Copies keep the
+selected program and may retarget through the normal copy owner.
+
+Awaken resolves the ordinary instructions before its counter placement and
+incarnation-bound land animation. The versioned characteristic result retains
+prior types, colors, abilities and tapped state, adds the Elemental type and
+Haste, and sets base power and toughness independently from counters. It
+persists through cleanup and ends for a departed battlefield incarnation.
+Counter replacement and prohibition remain with the existing counter owner;
+the animation creates no Earthbend return. Unclosed ordinary bodies, unknown
+prices and unsupported source forms keep the complete source residual.
+
 `compiler/overload_spell_faces.py` derives and validates both fixed Overload
 bodies at the whole-spell boundary. The normal physical spell and its separate
 target-free derived program retain the original source identity and spans.
@@ -3917,7 +3935,7 @@ Direct-player attack wrappers use the same canonical trigger-template catalogue
 as other binding consumers. Assurance checks their printed event, active zone,
 controller condition and trigger mechanics before accepting the inner target
 effect. The source gate exercises this carrier before a compiler census.
-For paired Overload and Cleave sources, the audit reconstructs each resolution
+For paired Overload, Cleave and Awaken sources, the audit reconstructs each resolution
 body from the retained printed source and checks the fixed price, program role,
 body fingerprint, and alternative-cost capability before the ordinary target
 grammar checks. A keyword declaration cannot become part of the leaf body or

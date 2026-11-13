@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections.abc import Mapping as MappingABC
 
 
 def special_trigger_envelope_capabilities(dependencies, mechanics):
@@ -60,6 +61,10 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    if 'fixed-awaken-paid-body' in mechanics or isinstance(cost_schema,MappingABC) and 'awaken' in cost_schema:
+        from .awaken_shapes import awaken_node_capabilities
+        awaken=awaken_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
+        if awaken is not None:return awaken
     from .event_counter_threshold import EVENT_COUNTER_THRESHOLD_MECHANIC, event_counter_threshold_node_capabilities
     if EVENT_COUNTER_THRESHOLD_MECHANIC in mechanics:
         return event_counter_threshold_node_capabilities(effects, target_schema)

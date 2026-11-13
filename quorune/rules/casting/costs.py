@@ -487,20 +487,13 @@ def _initial_options(
         )
     if intrinsic_disturb:
         base=disturb_base_options(host,seat,card,commander_tax=commander_tax)
-    from .overload_costs import overload_cost_options
-    overload_options = overload_cost_options(host, seat, card, program, commander_tax=commander_tax,
+    from .fixed_text_variant_costs import all_fixed_variant_cost_options
+    variants = all_fixed_variant_cost_options(host, seat, card, program, commander_tax=commander_tax,
         force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs)
-    if overload_options is None:
+    if variants is None:
         return None
-    base.extend(overload_options)
-    from .cleave_costs import cleave_cost_options
-    cleave_options = cleave_cost_options(host, seat, card, program, commander_tax=commander_tax,
-        force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
-        suppress_source_costs=suppress_source_costs)
-    if cleave_options is None:
-        return None
-    base.extend(cleave_options)
+    base.extend(variants)
     from .option_expansion import expand_optional_mana_costs
     expanded = expand_optional_mana_costs(host, card, base, schema, response=response, hint=hint)
     mandatory = [dict(value) for value in schema.get("additional_costs", [])]

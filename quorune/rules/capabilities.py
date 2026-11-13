@@ -286,6 +286,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-entwine-mode-costs': ('casting.additional_cost.entwine_fixed_modes',),
     'overload': ('casting.alternative_cost.overload_fixed_mana',),
     'cleave': ('casting.alternative_cost.cleave_fixed_mana',),
+    'awaken': ('casting.alternative_cost.awaken_fixed_mana',),
+    'fixed-awaken-paid-body': ('casting.alternative_cost.awaken_fixed_mana',),
     'fixed-stack-spell-copy': ('stack.copy.fixed_instant_or_sorcery', 'target.revalidate_resolution'),
     'cast-event-spell-copy': ('stack.copy.cast_event_spell',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),

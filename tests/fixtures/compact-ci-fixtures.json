@@ -459,6 +459,7 @@
     "tests/fixtures/attack-declaration-power-cards.json",
     "tests/fixtures/attacking-card-entry-cards.json",
     "tests/fixtures/attacking-token-result-cards.json",
+    "tests/fixtures/awaken-cards.json",
     "tests/fixtures/backup-cards.json",
     "tests/fixtures/banding-cards.json",
     "tests/fixtures/banding-token-cards.json",

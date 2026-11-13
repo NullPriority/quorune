@@ -14,6 +14,11 @@ from ..rules.capabilities import CapabilityRegistry
 from ..rules.spell_self_exile import terminal_spell_move
 from ..semantics import SemanticProgram
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..target_clause_binding import (
+    scope_clause_target as _scope_component_target,
+    scope_clause_effect as _scoped_component_effect,
+    clause_target_roles_are_exact as _component_target_roles_are_exact,
+)
 from .intrinsic_counter_nodes import intrinsic_empty_spell_admission
 
 
@@ -92,55 +97,6 @@ def _composed_target_schema(schemas: Sequence[Mapping[str, Any]], *, distinct: b
     return {'groups': [{**{k:v for k,v in schema.items() if k not in {'count','up_to'}},
         'id': 'clause_' + str(index), 'min': 0 if 'up_to' in schema else 1, 'max': schema.get('up_to',1)} for index,schema in enumerate(schemas)],
         **({'globally_distinct':True} if distinct else {})}
-
-
-def _scope_component_target(value: Any, role: int, *, restore: bool = False) -> Any:
-    if isinstance(value, Mapping):
-        return {key: _scope_component_target(item, role, restore=restore) for key,item in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_scope_component_target(item, role, restore=restore) for item in value]
-    group = '$target_group.clause_' + str(role)
-    scalar = group + '.0'
-    controller = group + '.current_controller.0'
-    if restore:
-        if value == controller:
-            return '$target.current_controller.0'
-        return '$target.0' if value == scalar else '$targets' if value == group else value
-    if value == '$target.current_controller.0':
-        return controller
-    return scalar if value == '$target.0' else group if value == '$targets' else value
-
-
-
-def _scoped_component_effect(effect: Mapping[str, Any], role: int, *, restore: bool = False) -> dict[str, Any]:
-    scoped = _scope_component_target(effect, role, restore=restore)
-    branches = scoped.get('then_by_choice')
-    if scoped.get('op') != 'choose_option' or not isinstance(branches, Mapping) or len(branches) != 2:
-        return scoped
-    reference = '$target.0' if restore else f'$target_group.clause_{role}.0'
-    if not all(isinstance(branch, (list, tuple)) and len(branch) == 1
-               and isinstance(branch[0], Mapping)
-               and branch[0].get('op') == 'grant_keyword_until_end_of_turn'
-               and branch[0].get('card') == reference for branch in branches.values()):
-        return scoped
-    # The option only applies its own target's keyword. Expose that target to
-    # the existing instruction filter before the player is asked to choose.
-    if restore and scoped.get('target') == reference:
-        del scoped['target']
-    elif not restore and 'target' not in scoped:
-        scoped['target'] = reference
-    return scoped
-
-
-def _component_target_roles_are_exact(value: Any, role: int) -> bool:
-    if isinstance(value, Mapping):
-        return all(_component_target_roles_are_exact(item, role) for item in value.values())
-    if isinstance(value, (list, tuple)):
-        return all(_component_target_roles_are_exact(item, role) for item in value)
-    if isinstance(value, str) and (value.startswith('$target.') or value == '$targets' or value.startswith('$target_group.')):
-        group = '$target_group.clause_' + str(role)
-        return value in {group, group + '.0', group + '.current_controller.0'}
-    return True
 
 
 def generated_node_groups(
@@ -442,11 +398,10 @@ def _node_group_provenance(
     copy_requires_complete_source = any(STACK_SPELL_COPY_MECHANIC in node.mechanics for node in nodes)
     from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC
     face_up_requires_complete_source = any(FACE_UP_EFFECT_MECHANIC in node.mechanics for node in nodes)
-    from ..overload_model import OVERLOAD_BOUNDARY
-    from ..cleave_model import CLEAVE_BOUNDARY
+    from ..spell_text_variants import SpellTextVariantKind
     from ..rules.fuse_model import FUSE_HANDLER
     fuse_source = next((h['fuse'] for f in ir.faces for n in f.nodes for h in n.handlers if h.get('handler_id')==FUSE_HANDLER),None)
-    text_variant_requires_complete_source = fuse_source is not None or any(OVERLOAD_BOUNDARY in node.runtime_coverage or CLEAVE_BOUNDARY in node.runtime_coverage for node in nodes)
+    text_variant_requires_complete_source = fuse_source is not None or any(kind.boundary in node.runtime_coverage for node in nodes for kind in SpellTextVariantKind)
     from ..preparation_model import PREPARATION_RESULT_MECHANIC
     preparation_requires_complete_source = any(PREPARATION_RESULT_MECHANIC in node.mechanics for node in nodes)
     from ..rules.graveyard_self_return import GRAVEYARD_SELF_ENTRY_MECHANIC

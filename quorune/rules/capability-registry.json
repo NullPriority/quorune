@@ -11129,6 +11129,140 @@
     {
       "applicability": {
         "exclusions": [
+          "unknown ordinary effects",
+          "variable or complex prices",
+          "unsupported source or target forms"
+        ],
+        "inputs": [
+          "one fixed ordinary mana alternative",
+          "positive fixed counter count",
+          "two complete source-correlated spell bodies"
+        ],
+        "outputs": [
+          "paid-only land target",
+          "ordinary effects then counters then lasting land animation"
+        ],
+        "summary": "A fixed Awaken alternative price correlates ordinary and augmented spell programs and a paid-only controlled land target."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.indefinite_target_land_animation",
+        "counter.producer.fixed_effect",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Every complete program must retain its independent price, target, counter and layered characteristic owners.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.alternative_cost.awaken_fixed_mana",
+      "implementation_components": [
+        "quorune.awaken_model.FixedManaAwakenSpec",
+        "quorune.spell_text_variants.validated_variant_mana",
+        "quorune.rules.spell_text_variant_shapes.variant_spec",
+        "quorune.compiler.awaken_spell_faces.compile_fixed_awaken_face",
+        "quorune.rules.awaken_shapes.ordinary_awaken_body",
+        "quorune.rules.awaken_shapes.awaken_node_capabilities",
+        "quorune.rules.casting.fixed_text_variant_costs.all_fixed_variant_cost_options",
+        "quorune.rules.casting.fixed_text_variant_costs.validate_text_variant_commit"
+      ],
+      "implementation_mutation_rationale": "Omitting the paid target, price, counter or lasting animation must fail independent native witnesses.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken",
+        "test_paid_body_preserves_the_original_target_role_and_infers_both_land_owners_without_a_producer_marker"
+      ],
+      "multiplayer_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken"
+      ],
+      "negative_tests": [
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken",
+        "test_paid_body_correlations_reject_recomputed_fingerprints_for_wrong_order_count_or_target_roles",
+        "test_price_and_target_flag_are_closed_without_changing_existing_paid_variant_codecs",
+        "test_targeted_land_shape_requires_the_controller_target_and_its_distinct_capability"
+      ],
+      "official_rules": [
+        "118.9a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "702.113a",
+        "702.113b",
+        "707.10",
+        "707.10c"
+      ],
+      "positive_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken",
+        "test_lasting_targeted_land_form_uses_existing_retaining_layers_and_closed_target_instructions",
+        "test_paid_body_preserves_the_original_target_role_and_infers_both_land_owners_without_a_producer_marker",
+        "test_price_and_target_flag_are_closed_without_changing_existing_paid_variant_codecs"
+      ],
+      "privacy_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken"
+      ],
+      "replay_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "malformed/nested/empty brackets",
           "unknown siblings or either unclosed body",
           "variable/complex/repeated costs and other source forms"
@@ -34660,6 +34794,132 @@
       "replay_tests": [
         "test_indefinite_animation_rechecks_enchantment_survives_cleanup_and_ends_on_reentry",
         "test_opal_guardian_animates_after_countered_opponent_spell_and_protects"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "other recipient domains",
+          "non-retaining forms",
+          "color replacement or ability removal"
+        ],
+        "inputs": [
+          "one bound current controlled land",
+          "retaining fixed creature settings",
+          "typed resolving source"
+        ],
+        "outputs": [
+          "same-timestamp type, ability and base-stat components",
+          "no cleanup expiry and no Earthbend return trigger"
+        ],
+        "summary": "One controlled target land retains its prior types and colors while taking a fixed incarnation-bound creature form."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Every complete program must retain its independent price, target, counter and layered characteristic owners.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.indefinite_target_land_animation",
+      "implementation_components": [
+        "quorune.resolution_characteristic_model.IndefiniteTargetLandAnimationSpec",
+        "quorune.resolution_characteristic_model.fixed_resolution_characteristic_instruction",
+        "quorune.continuous_effect_state.apply_fixed_resolution_characteristics",
+        "quorune.rules.resolution_characteristic_shapes.fixed_resolution_characteristic_capabilities"
+      ],
+      "implementation_mutation_rationale": "Omitting the paid target, price, counter or lasting animation must fail independent native witnesses.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken",
+        "test_paid_body_preserves_the_original_target_role_and_infers_both_land_owners_without_a_producer_marker"
+      ],
+      "multiplayer_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken"
+      ],
+      "negative_tests": [
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken",
+        "test_paid_body_correlations_reject_recomputed_fingerprints_for_wrong_order_count_or_target_roles",
+        "test_price_and_target_flag_are_closed_without_changing_existing_paid_variant_codecs",
+        "test_targeted_land_shape_requires_the_controller_target_and_its_distinct_capability"
+      ],
+      "official_rules": [
+        "205.1b",
+        "400.7",
+        "611.2a",
+        "613.1d",
+        "613.1f",
+        "613.4b",
+        "613.4c"
+      ],
+      "positive_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken",
+        "test_lasting_targeted_land_form_uses_existing_retaining_layers_and_closed_target_instructions",
+        "test_paid_body_preserves_the_original_target_role_and_infers_both_land_owners_without_a_producer_marker",
+        "test_price_and_target_flag_are_closed_without_changing_existing_paid_variant_codecs"
+      ],
+      "privacy_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken"
+      ],
+      "replay_tests": [
+        "test_actual_animation_retains_old_subtypes_and_abilities_across_cleanup_then_ends_on_blink",
+        "test_actual_cost_reduction_is_applied_to_awaken_and_the_target_land_can_pay_its_own_price",
+        "test_actual_counter_replacement_and_prohibition_do_not_turn_animation_into_an_earthbend_return",
+        "test_actual_mixed_spell_and_land_targets_resolve_each_legal_role_and_reject_a_returned_incarnation",
+        "test_actual_nontargeted_mass_bodies_resolve_before_the_land_becomes_a_creature",
+        "test_actual_opponents_spell_copy_retains_awaken_and_can_retarget_both_roles_without_paying_again",
+        "test_actual_ordinary_and_paid_routes_keep_distinct_prices_targets_and_layered_land_results",
+        "test_actual_original_bodies_keep_their_own_target_roles_before_counters_and_animation",
+        "test_actual_underpayment_foreign_land_and_paid_price_omission_cannot_admit_free_awaken"
       ],
       "required_evidence": [
         "positive",
@@ -93531,7 +93791,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 836,
+  "registry_version": 837,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

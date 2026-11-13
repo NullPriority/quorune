@@ -1292,16 +1292,8 @@ def _revalidate_cast_contracts(
     from .kicked_targets import validate_kicked_target_commit
     try:validate_kicked_target_commit(program,selected_option)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_kicked_targets') from exc
-    from .overload_costs import validate_overload_commit
-    try:
-        validate_overload_commit(host, card, program, selected_option)
-    except ValueError as exc:
-        raise CastProposalError(str(exc), reason='stale_overload_variant') from exc
-    from .cleave_costs import validate_cleave_commit
-    try:
-        validate_cleave_commit(host, card, program, selected_option)
-    except ValueError as exc:
-        raise CastProposalError(str(exc), reason='stale_cleave_variant') from exc
+    from .fixed_text_variant_costs import validate_text_variant_commit
+    validate_text_variant_commit(host,card,program,selected_option)
     try:
         conspirators = conspire_tap_cards(host, proposal.seat, card, selected_option)
     except ValueError as exc:

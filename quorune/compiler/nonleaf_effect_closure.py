@@ -54,10 +54,9 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     if closed_random_discard_spell_result(program,recognizers=recognizers):return True
     from .waterbend_costs import closed_waterbend_spell_result
     if closed_waterbend_spell_result(program,recognizers=recognizers):return True
-    from ..rules.cleave_shapes import fixed_cleave_program_is_closed
-    if fixed_cleave_program_is_closed(program):return True
-    from ..rules.overload_shapes import fixed_overload_program_is_closed
-    if fixed_overload_program_is_closed(program):return True
+    from ..rules.spell_text_variant_shapes import fixed_variant_program_is_closed
+    from ..spell_text_variants import SpellTextVariantKind
+    if any(fixed_variant_program_is_closed(program,kind) for kind in SpellTextVariantKind):return True
     from ..rules.stack_spell_copy_shapes import fixed_stack_spell_copy_program_is_closed
     if fixed_stack_spell_copy_program_is_closed(program):return True
     from ..face_up_effect_model import face_up_node_capabilities

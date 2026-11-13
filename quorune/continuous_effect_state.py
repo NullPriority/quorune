@@ -300,7 +300,7 @@ def apply_fixed_resolution_characteristics(
     """Commit a versioned fixed result through the existing multi-layer owner."""
     from .resolution_characteristic_model import (
         DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
-        FixedResolutionCardTypeAdditionSpec,
+        FixedResolutionCardTypeAdditionSpec, IndefiniteTargetLandAnimationSpec,
     )
     from .errors import GameRuleError
 
@@ -327,8 +327,13 @@ def apply_fixed_resolution_characteristics(
                 affected = (host._resolve_object(actor,selection,zones={'battlefield'}),)
             except GameRuleError:
                 return []
+        if isinstance(spec,IndefiniteTargetLandAnimationSpec):
+            land=affected[0]
+            if (land.phased_out or land.controller!=actor
+                    or 'land' not in host._type_parts(str(host._effective_card_data(land).get('type_line') or ''))[0]):
+                raise GameRuleError('Indefinite target land animation requires a current controlled land')
         source = resolution_effect_source(host, effect, fallback_card=affected[0] if affected else None)
-        timing = ((spec.duration, None, None) if isinstance(spec, FixedResolutionCardTypeAdditionSpec)
+        timing = ((spec.duration, None, None) if isinstance(spec, (FixedResolutionCardTypeAdditionSpec,IndefiniteTargetLandAnimationSpec))
                   else _characteristic_effect_timing(host, effect, actor=actor, source=source))
         if timing is None:
             return []

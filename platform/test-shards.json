@@ -1115,6 +1115,7 @@
       "test_another_sacrifice_payments",
       "test_ante_rules",
       "test_attacking_token_results",
+      "test_awaken_casting",
       "test_batch_admission_retention",
       "test_beginning_phase_rules",
       "test_bestow_typed_grants",

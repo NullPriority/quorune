@@ -14672,6 +14672,35 @@
         "test_fixed_combat_entry_keyword_lifecycles",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "awaken-paid-targeted-land-animation",
+      "patterns": [
+        "quorune/awaken_model.py",
+        "quorune/target_clause_binding.py",
+        "quorune/compiler/awaken_spell_faces.py",
+        "quorune/compiler/paired_spell_faces.py",
+        "quorune/compiler/program_composition.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/awaken_shapes.py",
+        "quorune/resolution_characteristic_model.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/rules/resolution_characteristic_shapes.py",
+        "quorune/rules/casting/fixed_text_variant_costs.py",
+        "quorune/spell_text_variants.py",
+        "quorune/rules/spell_text_variant_shapes.py",
+        "tests/test_awaken_casting.py",
+        "tests/fixtures/awaken-cards.json"
+      ],
+      "test_modules": [
+        "test_awaken_casting",
+        "test_fixed_cleave",
+        "test_fixed_overload",
+        "test_independent_target_clauses",
+        "test_fixed_target_effect_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

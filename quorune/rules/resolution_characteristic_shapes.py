@@ -17,6 +17,7 @@ from ..resolution_characteristic_model import (
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
     FixedResolutionModifierSpec, FixedResolutionSubtypeSettingSpec, decode_temporary_creature_type_choice,
     FixedResolutionCardTypeAdditionSpec, TARGET_CARD_TYPE_ADDITION_CAPABILITY, TARGET_CARD_TYPE_ADDITION_MECHANIC,
+    IndefiniteTargetLandAnimationSpec, INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY, INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC,
     fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
@@ -32,6 +33,7 @@ _CONTINUOUS_EFFECT_MECHANIC_OWNERS = frozenset({
     INDEFINITE_ENCHANTMENT_FORM_CAPABILITY,
     FIXED_TARGET_COLOR_CAPABILITY,
     TARGET_CARD_TYPE_ADDITION_CAPABILITY,
+    INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY,
 })
 
 
@@ -43,6 +45,8 @@ def continuous_resolution_covered_mechanics(supplied: set[str]) -> set[str]:
         covered.add(INDEFINITE_ENCHANTMENT_FORM_MECHANIC)
     if TARGET_CARD_TYPE_ADDITION_CAPABILITY in supplied:
         covered.add(TARGET_CARD_TYPE_ADDITION_MECHANIC)
+    if INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY in supplied:
+        covered.add(INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC)
     return covered
 
 
@@ -129,10 +133,15 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
     if ('cr-611-continuous-effects' not in mechanics or len(effects) != 1
             or not mechanics.intersection({PERMANENT_CHARACTERISTIC_MECHANIC,
                 INDEFINITE_SOURCE_ANIMATION_MECHANIC, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,
-                TARGET_CARD_TYPE_ADDITION_MECHANIC})):
+                TARGET_CARD_TYPE_ADDITION_MECHANIC,INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC})):
         return ()
     try:spec,selection=fixed_resolution_characteristic_instruction(effects[0])
     except (TypeError,ValueError,KeyError):return ()
+    if isinstance(spec,IndefiniteTargetLandAnimationSpec):
+        expected={'zones':['battlefield'],'categories':['permanent'],'count':1,
+                  'types_any':['land'],'controller_relation':'you'}
+        return spec.capability_dependencies if (selection=='$target.0' and target_schema==expected
+            and {INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC,'cr-115-targets'}<=mechanics) else ()
     if isinstance(spec, FixedResolutionCardTypeAdditionSpec):
         from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities
 

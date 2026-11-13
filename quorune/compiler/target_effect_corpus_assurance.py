@@ -495,6 +495,11 @@ def grammar_source_fingerprint() -> str:
     from .independent_target_rows import independent_target_source_rows
     from .oracle_source_text import material_source_lines
     from .exert_nodes import exert_attack_nodes
+    from .awaken_spell_faces import awaken_resolution_body,compile_fixed_awaken_face
+    from ..awaken_model import FixedManaAwakenSpec
+    from ..rules.awaken_shapes import ordinary_awaken_body,awaken_node_capabilities,awaken_result_effects
+    from ..resolution_characteristic_model import IndefiniteTargetLandAnimationSpec
+    from ..target_clause_binding import scope_clause_target,scope_clause_effect,clause_target_roles_are_exact
     values: Iterable[Any] = (
         FixedTargetCharacteristicsTemplate.__post_init__,
         FixedTargetCharacteristicsTemplate.compiled,
@@ -511,6 +516,10 @@ def grammar_source_fingerprint() -> str:
         rejected_target_effect_contracts,
         _without_parenthetical_reminder,
         cleave_bodies,
+        awaken_resolution_body,compile_fixed_awaken_face,ordinary_awaken_body,awaken_node_capabilities,
+        awaken_result_effects,FixedManaAwakenSpec.__post_init__,FixedManaAwakenSpec.from_dict,
+        IndefiniteTargetLandAnimationSpec.__post_init__,IndefiniteTargetLandAnimationSpec.from_dict,
+        scope_clause_target,scope_clause_effect,clause_target_roles_are_exact,
         spell_body_fingerprint,
         variant_spec,
         _paired_spell_resolution_body,
@@ -577,6 +586,10 @@ def _paired_spell_resolution_body(record: CardRecord, node: OracleNode) -> str |
             or node.text != record.oracle_text or node.span.start != 0 or node.span.end != len(node.text)):
         raise TargetEffectAssuranceError('Paid spell audit requires one complete printed source')
     kind = kinds[0]
+    if kind is SpellTextVariantKind.AWAKEN:
+        from .awaken_spell_faces import awaken_resolution_body
+        try:return awaken_resolution_body(record,node)
+        except (KeyError,TypeError,ValueError) as exc:raise TargetEffectAssuranceError(str(exc)) from exc
     roles = set(node.runtime_coverage).intersection({kind.normal_role, kind.paid_role})
     paid = roles == {kind.paid_role}
     if (kind.boundary not in node.runtime_coverage or roles not in ({kind.normal_role}, {kind.paid_role})
@@ -605,7 +618,7 @@ def _paired_spell_resolution_body(record: CardRecord, node: OracleNode) -> str |
         body = bodies[int(paid)]
     elif paid:
         body = re.sub(r'\btarget\b', 'each', body, flags=re.I)
-    expected = (spec.overloaded_fingerprint if kind is SpellTextVariantKind.OVERLOAD else spec.cleaved_fingerprint) if paid else spec.normal_fingerprint
+    expected = getattr(spec,kind.paid_fingerprint_field) if paid else spec.normal_fingerprint
     if spell_body_fingerprint(node.effects, node.target_schema) != expected:
         raise TargetEffectAssuranceError('Paid spell audit lost its declared body fingerprint')
     return body
