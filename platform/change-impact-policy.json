@@ -14832,6 +14832,23 @@
         "test_announced_target_cardinality",
         "test_mana_value_destruction"
       ]
+    },
+    {
+      "id": "creature-power-damage-recipient-domains",
+      "patterns": [
+        "quorune/compiler/creature_power_damage_templates.py",
+        "quorune/rules/creature_power_damage_capability_shapes.py",
+        "tests/test_power_damage_recipients.py",
+        "tests/fixtures/power-damage-recipient-cards.json"
+      ],
+      "test_modules": [
+        "test_power_damage_recipients",
+        "test_fixed_creature_power_damage",
+        "test_prepared_creature_power_damage_compiler",
+        "test_prepared_creature_power_damage_native",
+        "test_creature_power_multiples_compiler",
+        "test_creature_power_multiples_native"
+      ]
     }
   ],
   "risk_rules": [

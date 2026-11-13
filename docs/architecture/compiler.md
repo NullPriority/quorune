@@ -5920,10 +5920,14 @@ and colored-tap owners are structural runtime minima. See the
 Fixed preparation followed by creature-power damage composes independently
 closed temporary characteristics or +1/+1 counter placement with the existing
 one-way damage instruction. The preparation's canonical target predicate must
-equal the announced damage source's predicate. Both targets are announced
-together, and the pronoun binds only that same controlled creature. A separate
+equal the announced damage source's predicate. Target selections are announced
+together, and the pronoun binds only that same controlled creature. The
+recipient can be optional without making the source optional. Choosing no
+recipient preserves independently closed preparation. Direct one-way damage
+also preserves exact player-only or creature/planeswalker/battle recipient
+domains and an explicit other-creature exclusion. A separate
 composition capability and whole-program shape check cover the ordered result;
-unknown antecedents, conditional preparation and variable amounts remain
+unknown antecedents, conditional preparation and unrepresented variable amounts remain
 residual. The [damage transaction](damage.md) owns execution and attribution.
 
 One normalized battlefield entry or creature death can bind an occurrence

@@ -688,6 +688,12 @@ transactions; none reparses Oracle text or owns the underlying counter or zone
 mutation. Broad legacy exile and return operations remain separate because they
 represent other origins, destinations, quantities, choices, or hidden-zone
 movement outside these closed direct-target grammars.
+Creature-power damage keeps its source and recipient as separate target roles.
+An omitted optional recipient produces no damage while legal preparation of
+the source still applies. Player-only and creature/planeswalker/battle domains
+retain their exact restrictions, and an explicit other recipient excludes the
+source creature. Target revalidation precedes the existing power reader and
+damage transaction; an illegal targeted source cannot supply departure LKI.
 Affected-permanent sets can additionally carry a closed `mana_value_filter`
 with a fixed equality or inequality. Stored instructions may use the existing
 announced-X or named source-counter amount at its value field. The amount

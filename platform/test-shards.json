@@ -1301,6 +1301,7 @@
       "test_object_query",
       "test_ordered_composition_followups",
       "test_ordinary_cycling",
+      "test_power_damage_recipients",
       "test_protocol",
       "test_prowess_rules",
       "test_quest_counter_sacrifice_costs",

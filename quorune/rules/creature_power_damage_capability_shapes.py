@@ -127,7 +127,9 @@ def _recipient_group(group: object, *, direct: bool) -> bool:
         "count": 1,
     }:
         return True
-    if value.get("types_any") == ["creature", "planeswalker"]:
+    if value == {'id':'recipient','zones':['player'],'categories':['player'],'count':1}:
+        return type(value['count']) is int
+    if value.get("types_any") in (["creature", "planeswalker"], ['creature','planeswalker','battle']):
         return set(value) == {
             "id",
             "zones",
@@ -140,7 +142,7 @@ def _recipient_group(group: object, *, direct: bool) -> bool:
         ) == ["permanent"] and value.get("controller_relation") in {
             "any",
             "opponent",
-        } and value.get("count") == 1
+        } and value.get("count") == 1 and type(value.get('count')) is int
     return _creature_group(value, group_id="recipient")
 
 
@@ -346,9 +348,9 @@ def fixed_creature_power_damage_node_capabilities(
     dependencies.update(prep_dependencies)
     if multiplier == 2:
         dependencies.add(CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY)
-    if kind == "bite" and isinstance(target_group, Mapping) and target_group.get(
-        "predicate"
-    ) == "damageable":
+    if kind == "bite" and isinstance(target_group, Mapping) and (
+        target_group.get("predicate") == "damageable" or target_group.get('zones') == ['player']
+    ):
         dependencies.add("damage.result.player_life")
     return tuple(sorted(dependencies))
 

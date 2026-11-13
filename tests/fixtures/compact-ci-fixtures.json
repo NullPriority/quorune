@@ -842,6 +842,7 @@
     "tests/fixtures/player-speed-cards.json",
     "tests/fixtures/player-target-protection-cards.json",
     "tests/fixtures/plural-reanimation-cards.json",
+    "tests/fixtures/power-damage-recipient-cards.json",
     "tests/fixtures/power-toughness-switch-cards.json",
     "tests/fixtures/power-up-cards.json",
     "tests/fixtures/predefined-role-cards.json",
