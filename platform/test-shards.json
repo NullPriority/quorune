@@ -612,6 +612,7 @@
       "test_land_condition_quantities",
       "test_land_search_view_equivalence",
       "test_mana_discard_payments",
+      "test_mana_source_counter_payments",
       "test_mass_destruction_effect_clauses",
       "test_modal_activation_admission",
       "test_multikicker_entry_counters",

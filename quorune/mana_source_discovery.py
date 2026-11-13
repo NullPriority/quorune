@@ -98,6 +98,12 @@ def mana_plan_abilities(host: Any, seat: str, card: Any, *, card_types=None) -> 
         from .semantic_runtime.activation_restrictions import current_activation_prohibitions
         if current_activation_prohibitions(host, card, ability, actor=seat):
             continue
+        from .mana_source_counter_payment_model import exact_mana_source_counter_payment
+        if exact_mana_source_counter_payment(host.state) and ability.source_counter_removal_cost is not None:
+            from .rules.activation.counter_costs import plan_source_counter_removal_payment,SourceCounterActivationCostError
+            if ability.source_counter_removal_cost.schema_version!=1:continue
+            try:plan_source_counter_removal_payment(host,card,ability.source_counter_removal_cost)
+            except SourceCounterActivationCostError:continue
         if not _mana_plan_cost_is_supported(host,seat,card,ability):
             continue
         if ability.tap_source:

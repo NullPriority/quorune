@@ -14097,6 +14097,26 @@
         "test_fuse_rules",
         "test_announced_x_additional_costs"
       ]
+    },
+    {
+      "id": "exact-mana-source-counter-payments",
+      "patterns": [
+        "quorune/mana_source_counter_payment_model.py",
+        "quorune/mana_ability_runtime.py",
+        "quorune/mana_source_discovery.py",
+        "quorune/mana_mode_effects.py",
+        "quorune/mana_activation.py",
+        "quorune/rules/activation/counter_costs.py",
+        "tests/test_mana_source_counter_payments.py",
+        "tests/fixtures/mana-source-counter-payment-cards.json"
+      ],
+      "test_modules": [
+        "test_mana_source_counter_payments",
+        "test_fixed_mana_abilities",
+        "test_mana_mode_effects",
+        "test_game_record_v3",
+        "test_command_resolution_provenance"
+      ]
     }
   ],
   "risk_rules": [

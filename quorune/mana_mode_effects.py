@@ -6,6 +6,7 @@ from typing import Any, Callable, Mapping, Protocol, Sequence, TypeAlias
 from .damage import damage_proposal, DamageError, resolve_damage_batch
 from .errors import GameRuleError
 from .life_state import LifeStateError, pay_life_cost
+from .rules.activation_counter_cost import SourceCounterRemovalCost
 
 
 class ManaModeEffectHost(Protocol):
@@ -43,7 +44,13 @@ class SkipActorUntap:
     effect_index: int
 
 
-ManaModeEffect: TypeAlias = DealDamageToController | PayLife | SacrificeManaSource | SkipActorUntap
+@dataclass(frozen=True, slots=True)
+class RemoveManaSourceCounters:
+    effect_index: int
+    cost: SourceCounterRemovalCost
+
+
+ManaModeEffect: TypeAlias = DealDamageToController | PayLife | SacrificeManaSource | SkipActorUntap | RemoveManaSourceCounters
 
 
 def _exact_fields(
@@ -94,6 +101,15 @@ def _decode_skip_untap(effect: Mapping[str, Any], index: int) -> ManaModeEffect:
     return SkipActorUntap(index)
 
 
+def _decode_counter_cost(effect,index):
+    from .rules.activation_counter_cost import SourceCounterRemovalCost
+    _exact_fields(effect,{'op','cost'},message='Mana counter costs require only their operation and typed cost')
+    try:cost=SourceCounterRemovalCost.from_dict(effect['cost'])
+    except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
+    if cost.schema_version!=1:raise GameRuleError('Automatic mana counter costs require a fixed named counter')
+    return RemoveManaSourceCounters(index,cost)
+
+
 _MODE_EFFECT_DECODERS: Mapping[
     str, Callable[[Mapping[str, Any], int], ManaModeEffect]
 ] = {
@@ -101,6 +117,7 @@ _MODE_EFFECT_DECODERS: Mapping[
     "pay_life": _decode_life_payment,
     "sacrifice_source": _decode_sacrifice,
     'skip_actor_untap': _decode_skip_untap,
+    'remove_source_counters': _decode_counter_cost,
 }
 
 
@@ -278,6 +295,13 @@ def apply_mana_mode_effects(
             )
         elif isinstance(effect, PayLife):
             _apply_life_payment(host, effect, seat=seat)
+        elif isinstance(effect,RemoveManaSourceCounters):
+            from .rules.activation.counter_costs import plan_source_counter_removal_payment,SourceCounterActivationCostError
+            from .counter_removal import commit_counter_removals,CounterRemovalError
+            if source is None or source.zone!='battlefield' or source.controller!=seat:
+                raise GameRuleError('Mana counter cost requires its controlled battlefield source')
+            try:commit_counter_removals(host,plan_source_counter_removal_payment(host,source,effect.cost))
+            except (SourceCounterActivationCostError,CounterRemovalError) as exc:raise GameRuleError(str(exc)) from exc
         elif isinstance(effect,SkipActorUntap):
             from .tap_state import prohibit_next_player_untap
             if source is None:raise GameRuleError('Next-actor untap mana result requires its original source')

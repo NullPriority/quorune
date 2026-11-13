@@ -10,6 +10,20 @@ concern: "game-record"
 
 # Game Record v3
 
+Current checkpoints and record formats carry
+`mana_source_counter_payment_version: 1`. Automatic mana source discovery and
+commit then enforce the same exact named source-counter costs as explicit
+activation. Historical absence remains absent on serialization and retains its
+recorded execution. Declared null, boolean or unknown versions and mismatches
+between format and initial checkpoint reject.
+
+`mana_cost_order_version: 1` independently requires automatic activation costs,
+including life payments, to commit before mana output. Printed damage remains
+an after-output result. Historical absence preserves the earlier life-payment
+order, including records that already declare the source-counter payment
+version. It stays absent on serialization. Null, boolean, unknown versions and
+manifest/checkpoint mismatches reject.
+
 Current `runtime_trust.schema_version` is `2`. It binds command provenance to
 actual completed stack objects, including spells created and resolved by one
 command. Replay checks completion order and multiplicity, then validates each

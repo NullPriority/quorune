@@ -329,13 +329,16 @@ def _commit_plan_mode(
     triggered_mana_option: str | None = None,
 ) -> None:
     trigger_source = tap_mana_source(host, card, tap_source=mode.tap_source)
+    from .mana_source_counter_payment_model import exact_mana_cost_order
+    cost_operations = {"sacrifice_source","remove_source_counters"}
+    if exact_mana_cost_order(host.state):cost_operations.add("pay_life")
     cost_effects = tuple(
         effect for effect in mode.side_effects
-        if effect.get("op") == "sacrifice_source"
+        if effect.get("op") in cost_operations
     )
     result_effects = tuple(
         effect for effect in mode.side_effects
-        if effect.get("op") != "sacrifice_source"
+        if effect.get("op") not in cost_operations
     )
     if mode.tap_source:
         set_permanent_tapped(host,card.ref,actor=seat,tapped=True,reason="mana ability cost",log=False)

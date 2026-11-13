@@ -30,7 +30,11 @@ def plan_source_counter_removal_cost(
 ):
     """Plan the same identity-pinned exact removal for offers and payment."""
 
-    cost = ability.source_counter_removal_cost
+    return plan_source_counter_removal_payment(host,source,ability.source_counter_removal_cost,response=response)
+
+
+def plan_source_counter_removal_payment(host,source,cost,*,response=None):
+    """One identity-pinned cost plan shared by explicit and automatic activation."""
     if cost is None:
         return None
     if cost.schema_version == 2:
@@ -86,5 +90,6 @@ __all__ = [
     "SourceCounterActivationCostHost",
     "commit_source_counter_removal_cost",
     "plan_source_counter_removal_cost",
+    "plan_source_counter_removal_payment",
     "preview_source_counter_removal_cost",
 ]

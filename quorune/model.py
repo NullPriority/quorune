@@ -24,6 +24,10 @@ from .util import normalize_mana_bundle, stable_json
 from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
+from .mana_source_counter_payment_model import (
+    mana_source_counter_payment_fields,read_mana_source_counter_payment_version,
+    mana_cost_order_fields,read_mana_cost_order_version,
+)
 from .ability_source_information import ability_source_information_version
 from .qualified_attack_model import QUALIFIED_ATTACK_FULL_STATS_VERSION, qualified_attack_facts_version
 from .permanent_event_state_model import ZONE_EVENT_NUMERICS_VERSION, permanent_event_state_version
@@ -1278,6 +1282,8 @@ class GameState:
     mulligan_round: int = 0
     ref_counters: dict[str, int] = field(default_factory=dict)
     spell_mana_counts_version: int | None = 1
+    mana_source_counter_payment_version: int | None = 1
+    mana_cost_order_version: int | None = 1
     ability_source_information_version: int | None = 1
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
@@ -1406,6 +1412,8 @@ class GameState:
                 else {}
             ),
             **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
+            **mana_source_counter_payment_fields(self.mana_source_counter_payment_version),
+            **mana_cost_order_fields(self.mana_cost_order_version),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
             **event_versions,
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
@@ -1545,6 +1553,8 @@ class GameState:
             current_turn=(TurnEntry.from_dict(data["current_turn"]) if data.get("current_turn") else None),
             last_normal_turn_player=data.get("last_normal_turn_player"),
             spell_mana_counts_version=spell_mana_counts_version(data.get('spell_mana_counts_version')),
+            mana_source_counter_payment_version=read_mana_source_counter_payment_version(data),
+            mana_cost_order_version=read_mana_cost_order_version(data),
             ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
             cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
