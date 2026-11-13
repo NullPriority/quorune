@@ -46,7 +46,7 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
-    if relative=='quorune/recipient_control_model.py':return 'domain'
+    if relative in {'quorune/recipient_control_model.py','quorune/target_controller_reference.py'}:return 'domain'
     if relative == 'quorune/stack_resolution_inputs.py':return 'domain'
     if relative=='quorune/fixed_dual_damage_model.py':return 'domain'
     if relative=='quorune/graveyard_target_unions.py':return 'rules'
@@ -845,7 +845,7 @@ def _owner(relative: str, layer: str) -> str:
         return 'mana_rules'
     if relative == 'quorune/spell_mana_conditions.py':
         return 'semantic_choices'
-    if relative in {'quorune/rules/paid_mana_resolution.py','quorune/target_controller_information.py',
+    if relative in {'quorune/rules/paid_mana_resolution.py','quorune/target_controller_information.py','quorune/target_controller_reference.py',
             'quorune/rules/event_spell_copy.py','quorune/event_spell_copy_model.py'}:
         return 'targets_and_choices'
     if relative == 'quorune/rules/paid_color_entry.py':

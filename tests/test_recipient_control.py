@@ -118,6 +118,37 @@ class RecipientControlCompilerTests(unittest.TestCase):
     def test_unsupported_untargeted_mana_side_effect_does_not_gain_normal_activation_admission(self):
         self.assertNotEqual('exact',self.compile('{T}: Add {B}{B}{B}{B}. An opponent gains control of this creature.',permanent=True).status)
 
+    def test_removal_followup_binds_the_target_controller_without_a_second_player_target(self):
+        ir=self.compile('{T}: Destroy target artifact or creature. That permanent\'s controller gains control of this creature.',permanent=True)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node,=ir.faces[0].nodes
+        self.assertEqual(1,node.target_schema['count'])
+        self.assertEqual(2,node.effects[1]['schema_version'])
+        self.assertEqual({'kind':'target_controller_information','schema_version':1,'index':0},node.effects[1]['controller'])
+        self.assertIn('resolution.target_controller_information',node.capability_dependencies)
+        for text in ('Destroy target creature. Its owner gains control of this creature.',
+                'Destroy up to one target creature. Its controller gains control of this creature.',
+                'Destroy target creature. That land\'s controller gains control of this creature.',
+                'You may exile target artifact. If you do, its controller gains control of this creature.'):
+            with self.subTest(text=text):self.assertNotEqual('exact',self.compile(text,permanent=True).status)
+
+    def test_target_controller_control_payloads_reject_changed_roles_and_keep_v1_strict(self):
+        from quorune.recipient_control_model import validate_recipient_control_effect
+        from quorune.rules.capabilities import capability_dependencies_for_node
+        from quorune.rules.recipient_control_shapes import recipient_control_runtime_dependencies
+        node=self.compile('{T}: Destroy target creature. Its controller gains control of this creature.',permanent=True).faces[0].nodes[0]
+        for change in ({'schema_version':1},{'schema_version':True},{'controller':'$controller'},
+                {'controller':{'kind':'target_controller_information','schema_version':1,'index':1}},
+                {'controller':{'kind':'target_owner_information','schema_version':1,'index':0}},{'card':'$target.0'}):
+            with self.subTest(change=change):
+                effects=(node.effects[0],{**node.effects[1],**change})
+                self.assertEqual((),capability_dependencies_for_node(effects=effects,target_schema=node.target_schema,mechanic_ids=node.mechanics))
+                with self.assertRaises(ValueError):recipient_control_runtime_dependencies(SimpleNamespace(effects=effects,target_schema=node.target_schema))
+        with self.assertRaises(ValueError):validate_recipient_control_effect({**node.effects[1],'schema_version':1})
+        resolved={**node.effects[1],'controller':'C'}
+        with self.assertRaises(ValueError):validate_recipient_control_effect(resolved)
+        validate_recipient_control_effect(resolved,resolved=True)
+
 
 class RecipientControlNativeTests(InheritedNativeFixture,unittest.TestCase):
     reject=recipient_fixtures.TargetRecipientNativeTests.reject
@@ -385,6 +416,79 @@ class RecipientControlNativeTests(InheritedNativeFixture,unittest.TestCase):
                 stripped=replace(program,coverage=(),capability_dependencies=deps,capability_closure=self.registry.closure(deps,profile='commander_review').to_dict())
                 bound=bind_semantic_program_runtime(stripped,capability_registry=self.registry,profile='commander_review')
                 self.assertFalse(bound['strict']);self.assertIn('capability:undeclared_runtime_dependency:continuous.control.fixed_recipient',bound['blockers'])
+
+    def starke_departure(self):
+        # CR 608.2h: B announces, C controls at departure, D physically owns it.
+        extra={}
+        def before(s,source,gift):
+            gift.controller='B'
+            s.state.players['A'].zones['battlefield'].remove(gift.object_id)
+            s.state.players['B'].zones['battlefield'].append(gift.object_id)
+            extra['theft']=self.add(s.engine,'Turn Against',seat='C',zone='hand')
+            s.state.players['C'].mana_pool.update({'C':4,'R':1})
+        s,source,gift,private=self.scene('Starke of Rath',zone='battlefield',before=before)
+        self.activate(s,source,[gift.ref]);self.cast(s,'C',extra['theft'],[gift.ref]);self.resolve_top(s)
+        self.assertEqual('C',s.state.cards[gift.object_id].controller)
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        self.assertEqual(('graveyard','D'),(s.state.cards[gift.object_id].zone,s.state.cards[gift.object_id].owner))
+        self.assertEqual(('C','A'),(s.state.cards[source.object_id].controller,s.state.cards[source.object_id].owner))
+        self.assertIn(source.object_id,s.state.players['C'].zones['battlefield'])
+        self.finish(s,private)
+
+    def test_starke_uses_the_departure_controller_after_a_response_changes_control(self):
+        self.starke_departure()
+
+    def test_starke_does_not_give_a_returned_source_or_resolve_against_a_returned_target(self):
+        for blink_source in (True,False):
+            with self.subTest(blink_source=blink_source):
+                extra={}
+                def before(s,source,gift):
+                    gift.controller='B'
+                    s.state.players['A'].zones['battlefield'].remove(gift.object_id)
+                    s.state.players['B'].zones['battlefield'].append(gift.object_id)
+                    extra['blink']=self.add(s.engine,'Cloudshift',seat='A' if blink_source else 'B',zone='hand')
+                    s.state.players['B'].mana_pool['W']=1
+                s,source,gift,private=self.scene('Starke of Rath',zone='battlefield',before=before)
+                subject=source if blink_source else gift;old=subject.logical_object_id
+                self.activate(s,source,[gift.ref]);self.cast(s,'A' if blink_source else 'B',extra['blink'],[subject.ref])
+                self.resolve_top(s);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+                self.assertNotEqual(old,s.state.cards[subject.object_id].logical_object_id)
+                self.assertEqual(('A','battlefield'),(s.state.cards[source.object_id].controller,s.state.cards[source.object_id].zone))
+                self.assertEqual('graveyard' if blink_source else 'battlefield',s.state.cards[gift.object_id].zone)
+                self.finish(s,private)
+
+    def test_starke_gives_control_even_when_indestructibility_prevents_destruction(self):
+        extra={}
+        def before(s,source,gift):
+            extra['target']=self.add(s.engine,'Darksteel Myr',seat='B');extra['target'].owner='D'
+        s,source,gift,private=self.scene('Starke of Rath',zone='battlefield',before=before)
+        target=extra['target'];self.assert_closed(s,target)
+        self.activate(s,source,[target.ref]);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        self.assertEqual(('battlefield','B','D'),tuple(getattr(s.state.cards[target.object_id],k) for k in ('zone','controller','owner')))
+        self.assertEqual('B',s.state.cards[source.object_id].controller)
+        self.finish(s,private)
+
+    def test_starke_payload_requires_target_information_even_when_coverage_is_removed(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        s,source,gift,private=self.scene('Starke of Rath',zone='battlefield')
+        program=next(p for p in s.engine.semantics.programs_for_oracle(source.oracle_id) if any(e.get('op')=='give_control' for e in p.effects))
+        for cap in ('resolution.target_controller_information','continuous.control.fixed_recipient'):
+            deps=tuple(c for c in program.capability_dependencies if c!=cap)
+            stripped=replace(program,coverage=(),capability_dependencies=deps,capability_closure=self.registry.closure(deps,profile='commander_review').to_dict())
+            bound=bind_semantic_program_runtime(stripped,capability_registry=self.registry,profile='commander_review')
+            self.assertFalse(bound['strict']);self.assertIn('capability:undeclared_runtime_dependency:'+cap,bound['blockers'])
+
+    def test_fresh_starke_witness_kills_reading_the_announcement_controller_as_recipient(self):
+        from unittest.mock import patch
+        from quorune.target_controller_information import resolve_target_controller_information
+        def wrong(host,value,item):
+            resolve_target_controller_information(host,value,item)
+            return item.context['target_snapshots'][item.targets[value['index']]]['controller']
+        method='test_starke_uses_the_departure_controller_after_a_response_changes_control'
+        type(self)(method).starke_departure()
+        with patch('quorune.target_controller_information.resolve_target_controller_information',wrong):
+            with self.assertRaises(AssertionError):type(self)(method).starke_departure()
 
     def test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked(self):
         extra={}

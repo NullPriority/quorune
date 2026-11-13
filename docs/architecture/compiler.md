@@ -3730,6 +3730,19 @@ of the giver alone does not end the gift. Payload-derived recipient requirements
 remain mandatory when coverage annotations are absent. The original acquiring-
 actor control instruction retains its existing field and principal contract.
 
+A removal followed by its target's controller gaining the source uses the
+existing bound target-result composition. Version two of `give_control` carries
+the closed target-controller information reference; version one retains its
+explicit player reference. `target_controller_reference.py` owns the reference
+schema shared by payload validation and the existing rules reader. That reader
+uses the original target's current controller or its controller at departure,
+captured by the canonical zone owner. Ownership and announcement-time control
+do not substitute for that
+information. Failure to destroy an indestructible target still permits the
+following gift; an entirely illegal target stops resolution. The gifted source
+remains its original battlefield incarnation. Optional targeted exile costs
+and owner-addressed control followups remain outside this producer.
+
 `compiler/source_tap_characteristics.py` admits fixed characteristic changes
 for the uninterrupted tapped interval of their original permanent source.
 The existing source continuity owner records that interval for the pending

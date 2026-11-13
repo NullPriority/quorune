@@ -40,7 +40,7 @@ def target_recipient_result_template(text, *, compile_component):
     if not target_recipient_prefix_is_closed(prefix[1][0],schema,relation): return None
     if tail['kind'] and not _target_type_is_guaranteed(schema,tail['kind'].casefold()): return None
     verb = tail['verb'].casefold().removesuffix('s')
-    targeted = verb in {'discard','get'}
+    targeted = verb in {'discard','get'} or verb=='gain' and tail['body'].casefold().startswith('control of ')
     subject = 'Target player ' + tail['verb'] if targeted else 'Create' if verb=='create' else 'You ' + verb
     result = compile_component(subject + ' ' + tail['body'] + '.')
     if result[0] is None or len(result[1]) != 1: return None

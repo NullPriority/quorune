@@ -26315,6 +26315,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/target_controller_reference.py",
+      "layer": "domain",
+      "owning_subsystem": "targets_and_choices",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/target_cost_subject.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -27505,5 +27517,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "562b83df003b63f1bb4b3de21fa4e269fd72bfec1632c685ae8a6ed9ede3be68"
+  "fingerprint": "781db6e76262a908ec96d92c09961a6dbe9e39701fdf075637c6442a60e50163"
 }

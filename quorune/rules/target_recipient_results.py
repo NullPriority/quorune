@@ -36,6 +36,12 @@ def target_recipient_prefix_is_closed(effect,schema,relation):
 def _fixed_result_shape(effect,schema):
     if not isinstance(effect,Mapping):return False
     op=effect.get('op')
+    if op=='give_control':
+        from ..recipient_control_model import validate_recipient_control_effect
+        try:validate_recipient_control_effect(effect)
+        except (TypeError,ValueError):return False
+        return (effect['schema_version']==1 and schema==_PLAYER_SCHEMA and effect['controller']=='$target.0'
+            and effect['card']=='$source.zone_object' and effect['source']=='$source')
     if op in {'draw','life','lose_life','create_token'}:
         field={'draw':'count','life':'delta','lose_life':'amount','create_token':'quantity'}[op]
         recipient='controller' if op=='create_token' else 'player'
@@ -53,6 +59,9 @@ def bind_fixed_recipient_result(effect,schema,recipient):
     bound=deepcopy(dict(effect))
     if bound['op']=='choose_cards_apnap':
         bound['players']=[dict(recipient)];bound.pop('target')
+    elif bound['op']=='give_control':
+        if recipient.get('kind')!=TARGET_CONTROLLER_INFORMATION_KIND:return None
+        bound.update(schema_version=2,controller=dict(recipient))
     else:
         field='controller' if bound['op']=='create_token' else 'target' if bound['op']=='place_player_counters' else 'player'
         bound[field]=dict(recipient)
@@ -68,6 +77,12 @@ def _restored_result(result):
         reference=players[0];restored['players']=['$target.0'];restored['target']='$target.0';schema=_PLAYER_SCHEMA
     elif op=='place_player_counters':
         reference=result.get('target');restored['target']='$target.0';schema=_COUNTER_SCHEMA
+    elif op=='give_control':
+        from ..recipient_control_model import validate_recipient_control_effect
+        try:validate_recipient_control_effect(result)
+        except (TypeError,ValueError):return None
+        if result['schema_version']!=2:return None
+        reference=result['controller'];restored.update(schema_version=1,controller='$target.0');schema=_PLAYER_SCHEMA
     else:
         field='controller' if op=='create_token' else 'player'
         reference=result.get(field);restored[field]='$controller';schema=None

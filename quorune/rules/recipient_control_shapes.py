@@ -40,7 +40,12 @@ def recipient_control_runtime_dependencies(program):
         if isinstance(value,Mapping):
             if value.get('op')==GIVE_CONTROL_OPERATION:
                 validate_recipient_control_effect(value)
-                if value['source']!='$source' or value['controller']!='$target.0' or value['card'] not in {'$target.1','$source.zone_object'}:
+                if value['schema_version']==2:
+                    from ..target_controller_information import TARGET_CONTROLLER_INFORMATION_CAPABILITY
+                    if value['source']!='$source' or value['card']!='$source.zone_object':
+                        raise ValueError('Target-controller control requires its original source subject')
+                    required.add(TARGET_CONTROLLER_INFORMATION_CAPABILITY)
+                elif value['source']!='$source' or value['controller']!='$target.0' or value['card'] not in {'$target.1','$source.zone_object'}:
                     raise ValueError('Recipient control payload lost its subject or recipient role')
                 required.add(RECIPIENT_CONTROL_CAPABILITY)
             elif value.get('op')==CHOOSE_CONTROL_RECIPIENT_OPERATION:

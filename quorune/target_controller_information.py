@@ -7,10 +7,11 @@ from dataclasses import dataclass
 
 from .received_damage_model import RECEIVED_DAMAGE_EVENTS
 from .selection.target_query import target_identity_matches_snapshot
+from .target_controller_reference import (
+    TARGET_CONTROLLER_INFORMATION_KIND,TARGET_CONTROLLER_INFORMATION_CAPABILITY,TARGET_CONTROLLER_INFORMATION_MECHANIC,
+    target_controller_reference,controller_reference_index,
+)
 
-TARGET_CONTROLLER_INFORMATION_KIND='target_controller_information'
-TARGET_CONTROLLER_INFORMATION_CAPABILITY='resolution.target_controller_information'
-TARGET_CONTROLLER_INFORMATION_MECHANIC='fixed-target-controller-information'
 _LKI_FIELD='target_controller_information_lki'
 TARGET_OWNER_INFORMATION_KIND='target_owner_information'
 TARGET_OWNER_INFORMATION_CAPABILITY='resolution.target_owner_information'
@@ -40,18 +41,6 @@ def resolve_target_owner_information(host,value,item):
             or not 0<=snapshot['zone_change_counter']<=card.zone_change_counter):
         raise ValueError('Target owner information disagrees with its physical object')
     return owner
-
-
-def target_controller_reference(index=0):
-    return {'kind':TARGET_CONTROLLER_INFORMATION_KIND,'schema_version':1,'index':index}
-
-
-def controller_reference_index(value):
-    if (not isinstance(value,Mapping) or set(value)!={'kind','schema_version','index'}
-            or value['kind']!=TARGET_CONTROLLER_INFORMATION_KIND or type(value['schema_version']) is not int
-            or value['schema_version']!=1 or type(value['index']) is not int or value['index']<0):
-        raise ValueError('Target controller information requires one closed target index')
-    return value['index']
 
 
 @dataclass(frozen=True,slots=True)

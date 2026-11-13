@@ -104,7 +104,7 @@ class RecipientControlHandler:
     def lower(self,effect,context):
         from ..recipient_control_model import validate_recipient_control_effect
         try:
-            validate_recipient_control_effect(effect,allow_reason=True)
+            validate_recipient_control_effect(effect,allow_reason=True,resolved=True)
             recipient=effect['controller'];card=effect['card']
             if recipient is not None:context.query.require_known_seat(recipient)
             source=_source(context)
