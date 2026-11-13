@@ -12661,7 +12661,7 @@
           "module": "quorune.semantic_choices.defaults"
         }
       ],
-      "internal_edges": 11470,
+      "internal_edges": 11471,
       "modules": [
         {
           "fan_in": 2,
@@ -17190,7 +17190,7 @@
         },
         {
           "fan_in": 2,
-          "fan_out": 14,
+          "fan_out": 15,
           "module": "quorune.mana_activation"
         },
         {
@@ -17224,7 +17224,7 @@
           "module": "quorune.mana_restrictions"
         },
         {
-          "fan_in": 4,
+          "fan_in": 5,
           "fan_out": 0,
           "module": "quorune.mana_source_counter_payment_model"
         },
@@ -22157,7 +22157,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1941,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "409d4b58eacd073b93d577573a1d13df83054af6ada5602046bc2e1d543f8725",
+      "source_fingerprint": "dbf9589bb9785c5eda22c92866fe5066931ca9b6566ef4ea3163bd7122c2d556",
       "uncovered_high_risk_pairs": 78
     },
     "migration_queue": [],
@@ -22546,7 +22546,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 337472,
+      "logical_lines": 337502,
       "methods": {
         "dunder": 990,
         "private": 1097,
@@ -22660,6 +22660,13 @@
           "physical_lines": 1539
         },
         {
+          "file": "quorune/model.py",
+          "functions_and_methods": 57,
+          "language": "python",
+          "logical_lines": 1481,
+          "physical_lines": 1685
+        },
+        {
           "file": "quorune/compiler/program_generation.py",
           "functions_and_methods": 72,
           "language": "python",
@@ -22686,13 +22693,6 @@
           "language": "python",
           "logical_lines": 1476,
           "physical_lines": 1558
-        },
-        {
-          "file": "quorune/model.py",
-          "functions_and_methods": 57,
-          "language": "python",
-          "logical_lines": 1475,
-          "physical_lines": 1679
         },
         {
           "file": "quorune/semantic_runtime/zone_replacements.py",
@@ -23976,6 +23976,13 @@
           "physical_lines": 468
         },
         {
+          "file": "quorune/mana_activation.py",
+          "functions_and_methods": 22,
+          "language": "python",
+          "logical_lines": 420,
+          "physical_lines": 460
+        },
+        {
           "file": "quorune/declaration_costs.py",
           "functions_and_methods": 8,
           "language": "python",
@@ -23995,13 +24002,6 @@
           "language": "python",
           "logical_lines": 417,
           "physical_lines": 458
-        },
-        {
-          "file": "quorune/mana_activation.py",
-          "functions_and_methods": 22,
-          "language": "python",
-          "logical_lines": 417,
-          "physical_lines": 457
         },
         {
           "file": "quorune/combat_damage_assignment.py",
@@ -25075,6 +25075,13 @@
           "physical_lines": 256
         },
         {
+          "file": "quorune/record_state_provenance.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 237,
+          "physical_lines": 253
+        },
+        {
           "file": "quorune/rules/effect_node_capabilities.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -25101,13 +25108,6 @@
           "language": "python",
           "logical_lines": 231,
           "physical_lines": 262
-        },
-        {
-          "file": "quorune/record_state_provenance.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 231,
-          "physical_lines": 247
         },
         {
           "file": "quorune/compiler/combat_entry_activation_nodes.py",
@@ -33083,6 +33083,13 @@
           "physical_lines": 41
         },
         {
+          "file": "quorune/mana_source_counter_payment_model.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 32,
+          "physical_lines": 49
+        },
+        {
           "file": "quorune/mana_spent_amounts.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -35134,13 +35141,6 @@
           "physical_lines": 21
         },
         {
-          "file": "quorune/mana_source_counter_payment_model.py",
-          "functions_and_methods": 4,
-          "language": "python",
-          "logical_lines": 17,
-          "physical_lines": 26
-        },
-        {
           "file": "quorune/rampage.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -36262,7 +36262,7 @@
           "physical_lines": 1678
         }
       ],
-      "physical_lines": 375038,
+      "physical_lines": 375076,
       "python_file_count": 1897,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -36280,7 +36280,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 7547,
+      "top_level_functions": 7551,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -60971,7 +60971,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 151,
+        "primary_test_count": 152,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_source_counter_targets",
@@ -66793,7 +66793,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1500,
     "compiler_module_physical_lines": 1568,
-    "compiler_version": "oracle-ir-v978",
+    "compiler_version": "oracle-ir-v979",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -67537,7 +67537,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 897,
         "exact_nodes": 1015,
-        "fingerprint": "988b911ad4afdb2014c87431f74cf6f1366258dedbb0789209cae2919c01f7bf",
+        "fingerprint": "7df044e22640f30c335a9cb7cbd463c01038bb83e9d33f1566771949feb45f05",
         "grammar_source_fingerprint": "3a2122fcb405fad00b1045ee31a08dd7ce7e64f2b50204cdba7c7276bcad6382",
         "identity_fingerprint": "8a0173badec9eb5c96fe9e87231fc9414a8d14efab1b1d7c2e0f5f9658935c76",
         "present": true,
@@ -67549,7 +67549,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 922,
         "exact_nodes": 1053,
-        "fingerprint": "36c95507d6024dc89fc2d9331ec61e5160687b4e13c1666bce58d80c93b317b6",
+        "fingerprint": "70fbd9d205aa622e6ab91095986238fcc08fbffdc6b686fd9ef4e806879a719a",
         "grammar_source_fingerprint": "3a2122fcb405fad00b1045ee31a08dd7ce7e64f2b50204cdba7c7276bcad6382",
         "identity_fingerprint": "22cc278c5eef35bc90029d47178f2f587d1ec44f8ea8a8d44cf2ecf691b83a12",
         "present": true,
@@ -67568,7 +67568,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "bd6483f1c56bd44d641756e6fae8639567142db257d8e37007cd2172fc3775dc",
+      "fingerprint": "57b31a35417c2faaaba5e85c2d1a9d4626f40fe6458cb69d25068e3e62a032a9",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -68112,7 +68112,7 @@
       "generic-search-v1": 7,
       "generic-search-v2": 7,
       "interaction-kernel": 14,
-      "oracle-ir-v978": 30,
+      "oracle-ir-v979": 30,
       "replacement-choice-nested-events": 1,
       "reviewed-predefined-token-name-correction": 1,
       "v0.8-artifact-engine-family": 22,
@@ -68429,14 +68429,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 12507,
-      "discovered_total": 15816,
+      "conventional_ast_cases": 12509,
+      "discovered_total": 15818,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 363,
         "fuzz_named": 1,
         "privacy_or_projection_named": 140,
-        "replay_named": 829,
+        "replay_named": 830,
         "server_named": 94
       },
       "reconciles": true,
