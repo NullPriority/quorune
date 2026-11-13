@@ -617,6 +617,13 @@ def _fixed_combat_shield(normalized: str) -> PreventionTemplate | None:
 
 
 def _all_combat_damage(normalized: str) -> PreventionTemplate | None:
+    targeted=re.fullmatch(r'prevent all combat damage that would be dealt (?:this turn by creatures '
+        r'(?P<first>target player|target opponent) controls|by creatures (?P<last>target player|target opponent) controls this turn)\.?',normalized,re.I)
+    if targeted is not None:
+        from ..rules.target_controller_prevention import targeted_controller_prevention_effect,player_target_schema,MECHANIC
+        phrase=(targeted['first'] or targeted['last']).casefold()
+        schema=player_target_schema('opponent' if phrase=='target opponent' else 'any')
+        return ('target-player-controller-combat-prevention-v1',(targeted_controller_prevention_effect(),),schema,_rules(schema,MECHANIC))
     if re.fullmatch(
         r"prevent all combat damage that would be dealt this turn\.?",
         normalized,

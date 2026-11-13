@@ -27,6 +27,9 @@ def fixed_chosen_source_damageable_capabilities(*, effects, target_schema, mecha
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
     if 'cr-615-prevention-effects' not in set(mechanic_ids) or len(effects)!=1:return ()
     effect=effects[0]
+    if isinstance(effect,Mapping) and {'source_controller_target_version','source_controller_target'}.intersection(effect):
+        from .target_controller_prevention import targeted_controller_prevention_capabilities
+        return targeted_controller_prevention_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if isinstance(effect, Mapping) and 'source_subject_version' in effect:
         from ..source_prevention import source_prevention_dependencies
         if target_schema is not None:return ()

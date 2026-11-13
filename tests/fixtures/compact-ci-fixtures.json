@@ -1011,6 +1011,7 @@
     "tests/fixtures/target-announcements.json",
     "tests/fixtures/target-characteristic-sets.json",
     "tests/fixtures/target-controller-damage-cards.json",
+    "tests/fixtures/target-controller-prevention-cards.json",
     "tests/fixtures/target-dependent-activation-cards.json",
     "tests/fixtures/target-player-hand-count-cards.json",
     "tests/fixtures/target-player-sequence-cards.json",

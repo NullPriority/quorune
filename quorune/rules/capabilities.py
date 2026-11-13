@@ -1445,6 +1445,8 @@ def capability_covered_mechanics(
         # precommit boundary. This is deliberately narrower than claiming the
         # complete CR 119 family or life-gain-prevention grammar.
         covered.add("cr-119-life")
+    if "damage.prevention.target_player_sources" in supplied:
+        covered.add("target-player-source-controller-prevention")
     if "trigger.placement.apnap" in supplied:
         covered.add("cr-603-handling-triggered-abilities")
     from .resolution_characteristic_shapes import continuous_resolution_covered_mechanics

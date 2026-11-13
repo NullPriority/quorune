@@ -14701,6 +14701,27 @@
         "test_fixed_target_effect_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "target-controller-prevention",
+      "patterns": [
+        "quorune/rules/target_controller_prevention.py",
+        "quorune/damage_modifier_state.py",
+        "quorune/compiler/prevention_templates.py",
+        "quorune/rules/prevention_component_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "tests/test_target_controller_prevention.py",
+        "tests/fixtures/target-controller-prevention-cards.json"
+      ],
+      "test_modules": [
+        "test_target_controller_prevention",
+        "test_scoped_damage_prevention",
+        "test_damage_prevention_shields",
+        "test_filtered_prevention",
+        "test_attached_prevention",
+        "test_awaken_casting",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

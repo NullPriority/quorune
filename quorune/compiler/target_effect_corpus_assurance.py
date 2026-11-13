@@ -500,6 +500,9 @@ def grammar_source_fingerprint() -> str:
     from ..rules.awaken_shapes import ordinary_awaken_body,awaken_node_capabilities,awaken_result_effects
     from ..resolution_characteristic_model import IndefiniteTargetLandAnimationSpec
     from ..target_clause_binding import scope_clause_target,scope_clause_effect,clause_target_roles_are_exact
+    from .prevention_templates import _all_combat_damage
+    from ..rules.target_controller_prevention import (player_target_schema,targeted_controller_prevention_effect,
+        bound_prevention_player,targeted_controller_prevention_dependencies,targeted_controller_prevention_capabilities)
     values: Iterable[Any] = (
         FixedTargetCharacteristicsTemplate.__post_init__,
         FixedTargetCharacteristicsTemplate.compiled,
@@ -520,6 +523,8 @@ def grammar_source_fingerprint() -> str:
         awaken_result_effects,FixedManaAwakenSpec.__post_init__,FixedManaAwakenSpec.from_dict,
         IndefiniteTargetLandAnimationSpec.__post_init__,IndefiniteTargetLandAnimationSpec.from_dict,
         scope_clause_target,scope_clause_effect,clause_target_roles_are_exact,
+        _all_combat_damage,player_target_schema,targeted_controller_prevention_effect,bound_prevention_player,
+        targeted_controller_prevention_dependencies,targeted_controller_prevention_capabilities,
         spell_body_fingerprint,
         variant_spec,
         _paired_spell_resolution_body,

@@ -44904,6 +44904,88 @@
     {
       "applicability": {
         "exclusions": [
+          "variable quantities",
+          "other source predicates",
+          "multiple selected players"
+        ],
+        "inputs": [
+          "one player or opponent target",
+          "combat damage",
+          "until end of turn"
+        ],
+        "outputs": [
+          "one fixed source-controller scope on a canonical shield"
+        ],
+        "summary": "Combat prevention from creatures controlled by one targeted player at damage time, preserving its creator."
+      },
+      "blockers": [],
+      "dependencies": [
+        "damage.prevention.persistent_amount",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "The selected player and canonical shield owner remain independently required.",
+      "dependency_fail_closed_status": "passed",
+      "id": "damage.prevention.target_player_sources",
+      "implementation_components": [
+        "quorune.rules.target_controller_prevention.bound_prevention_player",
+        "quorune.rules.target_controller_prevention.targeted_prevention_scope",
+        "quorune.damage_modifier_state.DamagePreventionScope.event_conditions"
+      ],
+      "implementation_mutation_rationale": "Removing the source controller must expose the independent other-controller combat damage control.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_ordinary_and_awaken_prevent_only_selected_controller_combat_after_control_change",
+        "test_actual_departed_opponent_cannot_become_an_unrestricted_shield_when_land_target_remains_legal"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ordinary_and_awaken_prevent_only_selected_controller_combat_after_control_change",
+        "test_actual_departed_opponent_cannot_become_an_unrestricted_shield_when_land_target_remains_legal"
+      ],
+      "negative_tests": [
+        "test_fixed_player_scope_preserves_legacy_encoding_and_rejects_ambiguous_bindings",
+        "test_instruction_is_closed_and_missing_or_departed_player_cannot_widen_the_scope",
+        "test_runtime_minimum_requires_the_binding_without_producer_annotations",
+        "test_withdrawing_bound_player_authority_fails_closed_without_withdrawing_ordinary_prevention",
+        "test_actual_departed_opponent_cannot_become_an_unrestricted_shield_when_land_target_remains_legal"
+      ],
+      "official_rules": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "615.1a",
+        "615.6"
+      ],
+      "positive_tests": [
+        "test_closed_player_grammar_preserves_target_relation_and_unknown_neighbors_stay_residual",
+        "test_actual_ordinary_and_awaken_prevent_only_selected_controller_combat_after_control_change"
+      ],
+      "privacy_tests": [
+        "test_actual_ordinary_and_awaken_prevent_only_selected_controller_combat_after_control_change",
+        "test_actual_departed_opponent_cannot_become_an_unrestricted_shield_when_land_target_remains_legal"
+      ],
+      "replay_tests": [
+        "test_actual_ordinary_and_awaken_prevent_only_selected_controller_combat_after_control_change",
+        "test_actual_departed_opponent_cannot_become_an_unrestricted_shield_when_land_target_remains_legal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "static this-way prevention triggers not represented by a durable shield",
           "conditional per-source characteristic branches within one simultaneous batch",
           "reflexive triggers",
@@ -93803,7 +93885,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 838,
+  "registry_version": 839,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

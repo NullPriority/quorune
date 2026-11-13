@@ -315,6 +315,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         from ..rules.created_token_cleanup_shapes import created_token_cleanup_payload_dependencies
         own = (*own, *created_token_cleanup_payload_dependencies(value))
         from ..source_prevention import source_prevention_dependencies
+        from ..rules.target_controller_prevention import targeted_controller_prevention_dependencies
+        own=(*own,*targeted_controller_prevention_dependencies(value))
         own = (*own, *source_prevention_dependencies(value))
         from ..conditional_recipient_model import conditional_recipient_capabilities
         own = (*own, *conditional_recipient_capabilities(value))

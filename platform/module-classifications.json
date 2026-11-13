@@ -20236,6 +20236,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/target_controller_prevention.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/target_cost_subjects.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -27310,5 +27324,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "20c106b86e5194c0bae55228dc154ac8e665960983e2055a19443c9b4bac2864"
+  "fingerprint": "aa3443610d942ff18d26da4b11e1fa71f817fa0ac1ce000b7bd59a297b945a2a"
 }

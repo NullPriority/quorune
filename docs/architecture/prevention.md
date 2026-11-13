@@ -52,6 +52,12 @@ the current layer-6 ability component, recomputes controller and attachment fact
 and stops when the source leaves the battlefield. Turn-bound shields freeze
 their resolved public identities and expire through the ordinary cleanup
 owner. Both forms still enter the same affected-player replacement ordering.
+Targeted-player combat prevention binds one resolved player as a fixed source
+controller predicate, independently of the shield's creator. Creature status
+and controller are checked on each damage occurrence, including later control
+changes. A departed or illegal player creates no shield; a separately legal
+Awaken land target can still resolve. Historical scope records omit this
+optional binding and preserve their previous encoding.
 Negative type, subtype, keyword, and color predicates distinguish an explicitly
 known empty collection from unavailable current or last-known facts. Missing
 facts fail closed instead of satisfying a `contains none` predicate. When two

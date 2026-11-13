@@ -1215,6 +1215,7 @@
       "test_state_qualified_zone_events",
       "test_state_trigger_predicates",
       "test_subtype_composite_grants",
+      "test_target_controller_prevention",
       "test_target_player_hand_counts",
       "test_target_player_sequences",
       "test_target_restrictions",
