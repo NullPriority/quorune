@@ -48,6 +48,8 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
             return (*attachment, None)
         from .suspect_templates import normalize_entering_source_suspect
         body = normalize_entering_source_suspect(body)
+    from .recipient_control_templates import normalized_source_recipient_control_body
+    body=normalized_source_recipient_control_body(body) or body
     compiled = fixed_announced_damage_template(body, card_name=card_name, allow_source_pronoun=True)
     compiled=compiled or source_scalar_effect_amount_template(body,source_name=card_name,
         event={'enters':'permanent.enter','dies':'creature.dies','leaves the battlefield':'permanent.leave'}[event_phrase],

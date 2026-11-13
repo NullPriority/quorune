@@ -40,6 +40,7 @@ from .fixed_attachment_templates import (
     targeted_equipment_attachment_template,
 )
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
+from .recipient_control_templates import recipient_control_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
 from .conditional_exile_templates import conditional_source_exile_template
 from .amass_templates import fixed_amass_effect_template
@@ -222,6 +223,8 @@ def _source_context_resolution_template(
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)
     if mana is not None:
         return mana
+    recipient=recipient_control_effect_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
+    if recipient is not None:return recipient
     control = fixed_control_effect_template(
         text, card_name=card_name, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types),

@@ -14953,6 +14953,32 @@
         "test_fixed_token_creation_effects",
         "test_token_creation_triggers"
       ]
+    },
+    {
+      "id": "fixed-recipient-control",
+      "patterns": [
+        "quorune/compiler/program_generation.py",
+        "quorune/compiler/recipient_control_templates.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/recipient_control_model.py",
+        "quorune/rules/control_capability_shapes.py",
+        "quorune/rules/recipient_control_shapes.py",
+        "quorune/semantic_choices/control_recipient.py",
+        "quorune/semantic_runtime/control_handlers.py",
+        "quorune/semantic_runtime/control_intents.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "tests/fixtures/recipient-control-cards.json",
+        "tests/test_recipient_control.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_casting_payment_keywords",
+        "test_fixed_control_effects",
+        "test_recipient_control",
+        "test_shared_modal_target_resolution",
+        "test_static_attached_control"
+      ]
     }
   ],
   "risk_rules": [

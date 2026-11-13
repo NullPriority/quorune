@@ -8,7 +8,7 @@ from ..preparation_model import preparation_result_node_capabilities
 from ..emblem_program_model import compiled_emblem_node_capabilities
 from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .library_order_shapes import fixed_library_order_capabilities
-from .control_capability_shapes import fixed_control_node_capabilities
+from .control_capability_shapes import resolution_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
@@ -143,7 +143,7 @@ def effect_node_capabilities(
         earthbend_node_capabilities,
         suspect_node_capabilities,
         fixed_blight_node_capabilities,
-        fixed_control_node_capabilities,
+        resolution_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
         fixed_counter_placement_batch_node_capabilities,

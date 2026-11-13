@@ -3714,6 +3714,22 @@ the existing layer-two journal and custody history, without reading Oracle
 text during play. Exchange, dynamic subjects, unsupported durations, and
 independently unsupported siblings remain residuals.
 
+`compiler/recipient_control_templates.py` separately binds the player acquiring
+control, the affected permanent, and the resolving actor. A targeted player or
+opponent uses an ordinary player target, paired with a permanent target when the
+text specifies one. A source pronoun binds only within a source-specific event;
+its battlefield incarnation stays pinned. An untargeted opponent is chosen by
+the resolving controller through the existing semantic-choice framework.
+
+The versioned `give_control` instruction and its separate typed intent commit
+through that same control journal with a fixed zone-object duration. Costs and
+preceding draw, search, or mana instructions still belong to the resolving
+actor. Physical ownership does not change. Ending the acquiring player's effect
+reveals the earlier custody history, which may differ from ownership; departure
+of the giver alone does not end the gift. Payload-derived recipient requirements
+remain mandatory when coverage annotations are absent. The original acquiring-
+actor control instruction retains its existing field and principal contract.
+
 `compiler/source_tap_characteristics.py` admits fixed characteristic changes
 for the uninterrupted tapped interval of their original permanent source.
 The existing source continuity owner records that interval for the pending

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .control_capability_shapes import fixed_control_node_capabilities
+from .control_capability_shapes import resolution_control_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .next_spell_payment import temporary_player_rule_node_capabilities
@@ -173,7 +173,7 @@ _COMPONENT_RESOLVERS = (
     whole_hand_discard_node_capabilities,
     discard_result_node_capabilities,
     random_discard_node_capabilities,
-    fixed_control_node_capabilities,
+    resolution_control_node_capabilities,
     fixed_attachment_action_node_capabilities,
     fixed_source_characteristics_node_capabilities,
     fixed_target_effect_sequence_node_capabilities,

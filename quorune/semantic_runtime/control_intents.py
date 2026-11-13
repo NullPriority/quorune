@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Immutable requests to the shared resolution-control owner."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 
 from ..continuous_effect_model import ContinuousEffectDuration
 from ..continuous_effect_state import ResolutionEffectSource
@@ -73,4 +73,21 @@ class GainControlSetIntent:
             raise ValueError("Control-set haste requires its printed end-of-turn duration")
 
 
-ControlIntent = GainControlIntent | GainControlSetIntent
+@dataclass(frozen=True,slots=True)
+class GiveControlIntent:
+    actor: str
+    object_ref: str
+    controller: str
+    source: ResolutionEffectSource
+    reason: str
+    duration: ContinuousEffectDuration=field(init=False,default=ContinuousEffectDuration.ZONE_OBJECT)
+    history_snapshot: SourceContinuitySnapshot | None=field(init=False,default=None)
+    resolution_timestamp: int | None=field(init=False,default=None)
+
+    def __post_init__(self):
+        _validate_control(self.actor,self.actor,self.duration,self.source,self.reason)
+        if any(type(value) is not str or not value for value in (self.object_ref,self.controller)):
+            raise ValueError('Recipient control requires a permanent and explicit acquiring player')
+
+
+ControlIntent = GainControlIntent | GainControlSetIntent | GiveControlIntent

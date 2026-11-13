@@ -920,6 +920,7 @@
     "tests/fixtures/reanimation-entry-counter-cards.json",
     "tests/fixtures/reanimation-followup-cards.json",
     "tests/fixtures/received-damage-cards.json",
+    "tests/fixtures/recipient-control-cards.json",
     "tests/fixtures/recipient-modifier-cards.json",
     "tests/fixtures/recipient-result-cards.json",
     "tests/fixtures/reconfigure-cards.json",

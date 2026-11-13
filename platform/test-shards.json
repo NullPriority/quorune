@@ -1471,6 +1471,7 @@
       "test_public_compositions",
       "test_qualified_public_history",
       "test_receiver_query_unions",
+      "test_recipient_control",
       "test_ring_temptation_choices",
       "test_ring_temptation_model",
       "test_selected_counter_costs",

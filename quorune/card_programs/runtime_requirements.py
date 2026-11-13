@@ -397,6 +397,7 @@ def _value_runtime_requirements(program):
 
 
 def _zone_move_runtime_requirements(program, required, blockers):
+    from ..rules.recipient_control_shapes import recipient_control_runtime_dependencies
     from ..rules.event_counter_threshold import event_counter_threshold_program_dependencies
     from ..rules.graveyard_card_targets import (
         graveyard_copy_cast_runtime_dependencies,
@@ -424,6 +425,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (source_power_reanimation_runtime_dependencies, 'source_power_reanimation'),
         (checked_entry_return_runtime_dependencies, 'checked_entry_return'),
         (controlled_return_runtime_dependencies, 'controlled_return'),
+        (recipient_control_runtime_dependencies,'recipient_control'),
         (attached_event_battlefield_return_runtime_dependencies, 'attached_event_battlefield_return'),
     ):
         try:

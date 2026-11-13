@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .token_creation_intents import execute_token_creation_intent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
-from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent
+from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent
 from ..semantic_runtime.connive_intent import ConniveCompletedIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
 
@@ -145,7 +145,7 @@ from ..util import unique_preserving_order
 
 
 class SemanticChoiceIntentHostMixin:
-    def gain_control_intent(self, intent: GainControlIntent):
+    def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent):
         from ..control_effects import gain_control_of_refs, ControlEffectError
         try:
             return gain_control_of_refs(

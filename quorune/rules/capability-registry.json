@@ -32665,6 +32665,173 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented variable recipients, random recipients, exchanges or sets",
+          "unsupported durations or result siblings",
+          "unrepresented event-object pronouns",
+          "unsupported untargeted mana side-effect compositions"
+        ],
+        "inputs": [
+          "one targeted player or opponent and one targeted permanent, or a pinned source permanent",
+          "one untargeted opponent choice for a pinned source",
+          "resolving actor and original source provenance"
+        ],
+        "outputs": [
+          "separate resolving actor, acquiring controller and physical owner",
+          "one ordinary zone-object control effect",
+          "original source incarnation and selected target revalidation",
+          "resolution-time public opponent choice where the text does not target"
+        ],
+        "summary": "Acquire control of one existing battlefield permanent for a separately bound recipient, through the shared control journal."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.control.fixed_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Symbolic recipient and subject roles are closed independently; opcode-derived minimums reject missing recipient authority even with coverage stripped. Verified withdrawal blocks gifts while retaining classic acquisition.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.control.fixed_recipient",
+      "implementation_components": [
+        "quorune.compiler.program_generation._is_closed_fixed_control_program",
+        "quorune.compiler.recipient_control_templates.recipient_control_effect_template",
+        "quorune.compiler.recipient_control_templates.source_bound_recipient_control_result",
+        "quorune.control_effects.gain_control_of_refs",
+        "quorune.recipient_control_model.recipient_control_effect",
+        "quorune.recipient_control_model.validate_recipient_control_effect",
+        "quorune.rules.control_capability_shapes.resolution_control_node_capabilities",
+        "quorune.rules.recipient_control_shapes.recipient_control_node_capabilities",
+        "quorune.rules.recipient_control_shapes.recipient_control_runtime_dependencies",
+        "quorune.semantic_choices.control_recipient.ControlRecipientChoiceHandler",
+        "quorune.semantic_runtime.control_handlers.RecipientControlHandler",
+        "quorune.semantic_runtime.control_intents.GiveControlIntent"
+      ],
+      "implementation_mutation_rationale": "A fresh native Donate witness kills assigning control to the resolving actor in place of the selected acquiring player.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
+        "test_bazaar_trader_targets_only_its_controlled_permanent_union",
+        "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
+        "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
+        "test_horse_uses_an_untargeted_resolution_choice_with_saved_controller_authority",
+        "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
+        "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
+        "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
+        "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
+        "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
+        "test_sleeper_entry_target_is_chosen_before_priority_and_uses_the_new_controller",
+        "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
+        "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
+      ],
+      "multiplayer_tests": [
+        "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
+        "test_bazaar_trader_targets_only_its_controlled_permanent_union",
+        "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
+        "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
+        "test_horse_uses_an_untargeted_resolution_choice_with_saved_controller_authority",
+        "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
+        "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
+        "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
+        "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
+        "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
+        "test_sleeper_entry_target_is_chosen_before_priority_and_uses_the_new_controller",
+        "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
+        "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
+      ],
+      "negative_tests": [
+        "test_gift_and_choice_payloads_require_the_recipient_owner_without_coverage",
+        "test_malformed_recipient_subject_and_version_roles_have_no_capability_closure",
+        "test_registered_recipient_handler_is_closed_and_null_target_is_a_noop",
+        "test_unsupported_untargeted_mana_side_effect_does_not_gain_normal_activation_admission",
+        "test_untargeted_choice_is_controller_owned_live_opponent_scoped_and_incarnation_bound",
+        "test_verified_recipient_withdrawal_rejects_gifts_but_keeps_classic_acquisition"
+      ],
+      "official_rules": [
+        "110.2",
+        "115.1d",
+        "302.6",
+        "506.4",
+        "608.2b",
+        "608.2d",
+        "611.2a",
+        "613.1b",
+        "613.7",
+        "800.4a"
+      ],
+      "positive_tests": [
+        "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
+        "test_bazaar_trader_targets_only_its_controlled_permanent_union",
+        "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
+        "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
+        "test_horse_uses_an_untargeted_resolution_choice_with_saved_controller_authority",
+        "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
+        "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
+        "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
+        "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
+        "test_new_recipient_intent_keeps_the_old_acquiring_actor_contract_strict",
+        "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
+        "test_sleeper_entry_target_is_chosen_before_priority_and_uses_the_new_controller",
+        "test_source_anaphora_is_bound_only_for_a_source_specific_trigger",
+        "test_targeted_player_and_permanent_roles_have_distinct_owned_slots",
+        "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
+        "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
+      ],
+      "privacy_tests": [
+        "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
+        "test_bazaar_trader_targets_only_its_controlled_permanent_union",
+        "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
+        "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
+        "test_horse_uses_an_untargeted_resolution_choice_with_saved_controller_authority",
+        "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
+        "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
+        "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
+        "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
+        "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
+        "test_sleeper_entry_target_is_chosen_before_priority_and_uses_the_new_controller",
+        "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
+        "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
+      ],
+      "replay_tests": [
+        "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
+        "test_bazaar_trader_targets_only_its_controlled_permanent_union",
+        "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
+        "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
+        "test_horse_uses_an_untargeted_resolution_choice_with_saved_controller_authority",
+        "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
+        "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
+        "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
+        "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
+        "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
+        "test_sleeper_entry_target_is_chosen_before_priority_and_uses_the_new_controller",
+        "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
+        "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "historical custody-history modes",
           "unrepresented targets, dynamic control subjects, exchange and unrepresented durations",
           "phasing execution and independently unsupported Oracle siblings"
@@ -94814,7 +94981,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 851,
+  "registry_version": 852,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

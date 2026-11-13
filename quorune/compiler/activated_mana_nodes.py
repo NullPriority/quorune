@@ -344,6 +344,8 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     'create_role_token',
     "gain_control",
     "gain_control_set",
+    "give_control",
+    "choose_control_recipient",
     "amass",
     "apply_source_characteristics_until_end_of_turn",
     "attach",
