@@ -68,6 +68,14 @@ def open_tribute_entry_choice(event,payload,children,operation,*,effect_id):
             'object_ref':payload.get('object_ref'),
             'controller':controller,'opponent':operation.opponent,'players':list(operation.players),
             'subject':event.affected_object.to_dict(),'zone':thaw_value(payload),'accepted':None})
+    from ..counter_permission_events import counter_event_is_prohibited
+    if counter_event_is_prohibited(tribute_counter_event(child)):
+        from .applicability import replacement_choice
+        from .application import apply_replacement
+        decision=tribute_decision_replacement(operation.spec,object_ref=payload['object_ref'],
+            root_id=effect_id,opponent=operation.opponent)
+        child=apply_replacement(replacement_choice(child,(decision,)),(decision,),
+            'decline:'+decision.effect_id)
     children.append(child)
 
 
@@ -102,23 +110,43 @@ def validate_tribute_choice_event(event,*,pending=False):
     return spec,subject
 
 
-def complete_tribute_entry_choice(event,payload,children,operation,*,effect_id):
-    from .model import ReplaceableEvent,ReplacementEffectError
+def tribute_counter_event(event):
+    """Propose the chosen opponent's counters under captured entry permissions."""
+    from .model import ReplaceableEvent
     from .operations import CreateAffectedObjectCounter
     from .application import _create_affected_object_counter_event
+    from ..counter_permission_events import apply_counter_permissions,COUNTER_PERMISSIONS_FIELD
+    from ..counter_permission import CounterPermissionSnapshot
     spec,subject=validate_tribute_choice_event(event,pending=True)
-    if spec!=operation.spec:
-        raise ReplacementEffectError('Tribute decision specification changed')
-    payload['accepted']=operation.accepted
-    if not operation.accepted:return
+    payload=event.payload;children=[]
     # Reuse the captured containing zone subject to construct its counter
     # request. The adapter itself is not an additional zone-change event.
     entry=ReplaceableEvent(event_id=payload['entry_id'],kind='zone.change',affected_player=None,
         affected_object=subject,payload=payload['zone'],entry_scope=event.entry_scope)
     counter=CreateAffectedObjectCounter(counter_name='+1/+1',amount=spec.amount,
         placing_player=event.affected_player,source_ref=payload['zone']['object_ref'],sequence=0)
-    _create_affected_object_counter_event(entry,payload['zone'],children,counter,effect_id=effect_id)
-    children[-1]=replace(children[-1],event_id=f'{event.event_id}/counter:0')
+    _create_affected_object_counter_event(entry,payload['zone'],children,counter,effect_id=payload['replacement_id']+':decision')
+    result=replace(children[0],event_id=f'{event.event_id}/counter:0')
+    stored=payload['zone'].get(COUNTER_PERMISSIONS_FIELD)
+    if stored is not None:
+        permissions=CounterPermissionSnapshot.from_dict(thaw_value(stored))
+        excluded=event.entry_scope.reserved_zone_changes if event.entry_scope is not None else ()
+        result=apply_counter_permissions(result,permissions,excluded_sources=excluded)
+    return result
+
+
+def complete_tribute_entry_choice(event,payload,children,operation,*,effect_id):
+    from .model import ReplacementEffectError
+    from ..counter_permission_events import counter_event_is_prohibited
+    spec,_subject=validate_tribute_choice_event(event,pending=True)
+    if spec!=operation.spec or effect_id!=payload['replacement_id']+':decision':
+        raise ReplacementEffectError('Tribute decision specification or identity changed')
+    if operation.accepted:
+        counter=tribute_counter_event(event)
+        if counter_event_is_prohibited(counter):
+            raise ReplacementEffectError('Prohibited counters cannot pay Tribute')
+        children.append(counter)
+    payload['accepted']=operation.accepted
 
 
 def pending_tribute_entry_choice(event):
@@ -167,10 +195,15 @@ def tribute_entry_replacements(spec,*,object_ref,component_id,players):
                 'destination_controller':{'not_in':[opponent]}},
             operations=(OpenTributeEntryChoice(spec,opponent,tuple(players),root_id),),
             label=f'{object_ref}: choose {opponent} to decide Tribute {spec.amount}'))
-        result.append(ReplacementEffect(effect_id=f'{root_id}:decision',source_id=object_ref,
-            event_kind=TRIBUTE_ENTRY_EVENT,replacement_class=ReplacementClass.OTHER,
-            conditions={'replacement_id':{'eq':root_id},'object_ref':{'eq':object_ref},'opponent':{'eq':opponent},'spec':{'eq':spec.to_dict()},'accepted':{'eq':None}},
-            operations=(CompleteTributeEntryChoice(spec,True),),
-            decline_operations=(CompleteTributeEntryChoice(spec,False),),optional=True,
-            label=f'Put {spec.amount} +1/+1 counters on {object_ref}',decline_label='Do not pay Tribute'))
+        result.append(tribute_decision_replacement(spec,object_ref=object_ref,root_id=root_id,opponent=opponent))
     return tuple(result)
+
+
+def tribute_decision_replacement(spec,*,object_ref,root_id,opponent):
+    from .model import ReplacementClass,ReplacementEffect
+    return ReplacementEffect(effect_id=f'{root_id}:decision',source_id=object_ref,
+        event_kind=TRIBUTE_ENTRY_EVENT,replacement_class=ReplacementClass.OTHER,
+        conditions={'replacement_id':{'eq':root_id},'object_ref':{'eq':object_ref},'opponent':{'eq':opponent},'spec':{'eq':spec.to_dict()},'accepted':{'eq':None}},
+        operations=(CompleteTributeEntryChoice(spec,True),),
+        decline_operations=(CompleteTributeEntryChoice(spec,False),),optional=True,
+        label=f'Put {spec.amount} +1/+1 counters on {object_ref}',decline_label='Do not pay Tribute')

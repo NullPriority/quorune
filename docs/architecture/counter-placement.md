@@ -169,13 +169,19 @@ life gain sums actual gains for the prospective entry controller independently
 of later losses. The amount freezes before replacement ordering; an unavailable
 or stale journal rejects these new descriptors before entry. Historical
 descriptors retain their existing compatibility behavior.
-The replacement engine also has typed staged Tribute decision primitives.
-The entry controller selects one captured opponent; that opponent's counter
-decision finishes before another replacement application proceeds. Planned
-counters retain the entering controller and the distinct placing player, and
-the replacement journal records both choosers. These primitives do not yet
-provide Tribute card admission: keyword compilation, committed entry outcomes,
-unpaid-trigger conditions and native gameplay integration remain unfinished.
+The compiler lowers fixed Tribute counts to a typed staged entry handler and
+independently compiles supported unpaid-entry results. The entry controller
+selects one captured opponent; that opponent's counter decision finishes before
+another replacement application proceeds. Planned counters retain the entering
+controller and the distinct placing player, so quantity replacements can query
+either identity. Captured counter prohibition makes payment unavailable and
+completes the decision as unpaid. The replacement journal retains the outcome
+and chooser identities.
+
+Committed Tribute outcomes bind the ability link to the entering logical
+incarnation. The normalized entry event exposes that frozen unpaid fact to the
+linked trigger, independently of later counter totals. Unknown unpaid result
+bodies remain residual and prevent whole-card admission.
 Prospective objects
 are explicit new outside-zone tokens; they remain absent from live state until
 every affected-player selection is complete. The shared layer-6 component

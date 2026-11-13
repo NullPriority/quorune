@@ -201,8 +201,12 @@ class ZoneChangeSubjectSnapshot:
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
     commander_components: tuple[CommanderZoneComponent,...] = ()
     card_components: tuple[CardZoneComponent,...] = ()
+    active_players: tuple[str,...] = ()
 
     def __post_init__(self) -> None:
+        if (type(self.active_players) is not tuple or any(type(p) is not str or not p for p in self.active_players)
+                or len(set(self.active_players))!=len(self.active_players)):
+            raise ZoneReplacementError('Entry participants must be distinct captured player identities')
         object.__setattr__(self,'commander_components',_validated_commander_subject_components(self))
         if not isinstance(self.card_components,(list,tuple)):
             raise ZoneReplacementError('Physical card scope must be an array of captured identities')

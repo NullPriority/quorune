@@ -9,6 +9,7 @@ TRIBUTE_CAPABILITY = 'counter.producer.tribute_entry'
 TRIBUTE_HANDLER = 'replacement.zone.tribute-entry.v1'
 TRIBUTE_ENTRY_EVENT = 'entry.tribute'
 TRIBUTE_ENTRY_OUTCOMES = 'tribute_entry_outcomes'
+TRIBUTE_UNPAID_FIELD = 'tribute_unpaid'
 
 
 def _identity(value, name):

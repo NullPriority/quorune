@@ -1327,6 +1327,7 @@
       "test_suspend_rules",
       "test_temporary_blocker_restrictions",
       "test_temporary_target_interactions",
+      "test_tribute_entry",
       "test_tribute_model",
       "test_tribute_replacement",
       "test_trigger_batches",

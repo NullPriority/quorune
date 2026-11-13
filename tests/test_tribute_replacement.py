@@ -4,7 +4,7 @@ import unittest
 
 from quorune.tribute_model import TributeSpec,TRIBUTE_ENTRY_EVENT
 from quorune.replacement.model import AffectedObject,ReplaceableEvent,ReplacementEventBatch,ReplacementEffect,ReplacementClass
-from quorune.replacement.operations import SetField,operation_from_dict,operation_to_dict
+from quorune.replacement.operations import SetField,AddAmount,operation_from_dict,operation_to_dict
 from quorune.replacement.ordering import advance_replacement_batch,resolve_replacement_batch
 from quorune.replacement.tribute import (tribute_entry_replacements,OpenTributeEntryChoice,
     CompleteTributeEntryChoice,validate_tribute_choice_event)
@@ -59,6 +59,41 @@ class TributeReplacementTests(unittest.TestCase):
         self.assertEqual(TRIBUTE_ENTRY_EVENT,progress.pending.choice.event.kind)
         self.assertFalse(progress.batch.events[0].payload.get('tapped',False))
         self.assertEqual((),progress.batch.events[1].children)
+
+    def test_counter_quantity_replacements_distinguish_the_opponent_from_the_controller(self):
+        # The represented placing-player predicate is exercised independently
+        # of any whole-card support claim for a quantity-replacement source.
+        for placing_player,amount in (('A',3),('C',4)):
+            with self.subTest(placing_player=placing_player):
+                quantity=ReplacementEffect(effect_id='quantity',source_id='counter-source',
+                    event_kind='counter.place',replacement_class=ReplacementClass.OTHER,
+                    conditions={'placing_player':{'eq':placing_player}},operations=(AddAmount('amount',1),))
+                effects=(*self.effects(),quantity)
+                batch=ReplacementEventBatch(batch_id='batch',events=(self.event(),),apnap_order=('A','B','C','D'))
+                root=next(e.effect_id for e in effects if e.effect_id.endswith('opponent:C'))
+                choices=[root,root+':decision']
+                result=advance_replacement_batch(batch,effects,selections=choices)
+                self.assertIsNone(result.pending)
+                tribute,=result.batch.events[0].children
+                counter,=tribute.children
+                self.assertTrue(tribute.payload['accepted'])
+                self.assertEqual(('C','A',amount),(counter.payload['placing_player'],
+                    counter.payload['target_controller'],counter.payload['amount']))
+                self.assertEqual(result.batch,resolve_replacement_batch(batch,effects,selections=result.batch.journal))
+
+    def test_prohibition_automatically_declines_and_cannot_be_overridden_by_a_saved_acceptance(self):
+        from quorune.counter_permission import CounterPermissionSnapshot,CounterProhibitionRule,FixedCounterProhibitionSpec
+        permissions=CounterPermissionSnapshot((CounterProhibitionRule(
+            FixedCounterProhibitionSpec('permanent','any',types_any=('creature',)),'prohibitor','B'),))
+        event=self.event();event=replace(event,payload={**event.payload,'_counter_permissions':permissions.to_dict()})
+        batch=ReplacementEventBatch(batch_id='batch',events=(event,),apnap_order=('A','B','C','D'))
+        effects=self.effects();root=next(e.effect_id for e in effects if e.effect_id.endswith('opponent:C'))
+        result=advance_replacement_batch(batch,effects,selections=[root])
+        self.assertIsNone(result.pending)
+        tribute,=result.batch.events[0].children
+        self.assertFalse(tribute.payload['accepted']);self.assertEqual((),tribute.children)
+        self.assertEqual(result.batch,resolve_replacement_batch(batch,effects,selections=result.batch.journal))
+        with self.assertRaises(ValueError):advance_replacement_batch(batch,effects,selections=[root,root+':decision'])
 
     def test_choice_operations_roundtrip_and_saved_child_binding_rejects_cross_entry_or_self(self):
         spec=TributeSpec(2,'link');ops=(OpenTributeEntryChoice(spec,'B',('A','B'),'choice'),CompleteTributeEntryChoice(spec,True))

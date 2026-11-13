@@ -42361,6 +42361,100 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented Tribute counts or linked instances",
+          "unrepresented independent unpaid bodies",
+          "unknown or malformed entry identities and choice participants"
+        ],
+        "inputs": [
+          "one fixed positive Tribute specification and ability link",
+          "captured entering controller and live participant identities",
+          "canonical entry and counter preparation",
+          "independently closed unpaid result"
+        ],
+        "outputs": [
+          "no partial entry before the opponent decision",
+          "opponent counter placing-player identity",
+          "per-entry outcome independent of later counter totals",
+          "unpaid self-entry event condition and existing result owners"
+        ],
+        "summary": "Stage a controller-selected opponent's fixed Tribute entry choice, attribute counters to that opponent, and retain a per-entry paid fact for independently owned unpaid-entry results."
+      },
+      "blockers": [],
+      "dependencies": [
+        "counter.placement.quantity_replacement"
+      ],
+      "dependency_fail_closed_rationale": "Verified withdrawal prevents original admission; the exact unpaid condition requires its entry capability even without coverage annotations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "counter.producer.tribute_entry",
+      "implementation_components": [
+        "quorune.tribute_model.TributeSpec",
+        "quorune.tribute_model.TributeEntryOutcome",
+        "quorune.replacement.tribute.tribute_entry_replacements",
+        "quorune.semantic_runtime.tribute.TributeEntryHandler",
+        "quorune.compiler.tribute_nodes.tribute_keyword_node",
+        "quorune.compiler.tribute_nodes.tribute_unpaid_entry_node",
+        "quorune.tribute_entry_results.commit_tribute_entry_outcomes",
+        "quorune.tribute_entry_results.tribute_entry_context",
+        "quorune.rules.tribute.tribute_condition_dependencies"
+      ],
+      "implementation_mutation_rationale": "A fresh paid-entry native Snake witness rejects an event provider that unconditionally exposes an unpaid result.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_counter_quantity_replacements_distinguish_the_opponent_from_the_controller",
+        "test_counter_replacements_use_the_chosen_placing_player_and_receiving_controller"
+      ],
+      "multiplayer_tests": [
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger"
+      ],
+      "negative_tests": [
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_descriptor_fields_types_and_unknown_mechanic_bodies_fail_closed",
+        "test_prohibition_automatically_declines_and_cannot_be_overridden_by_a_saved_acceptance",
+        "test_solemnity_makes_tribute_unpayable_and_preserves_the_unpaid_trigger",
+        "test_unpaid_condition_dependency_is_required_without_coverage_annotations",
+        "test_verified_capability_withdrawal_preserves_an_independent_flying_source"
+      ],
+      "official_rules": [
+        "122.6",
+        "400.7",
+        "603.4",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1",
+        "702.104a",
+        "702.104b"
+      ],
+      "positive_tests": [
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_intrinsic_and_unpaid_result_retain_separate_owned_programs"
+      ],
+      "privacy_tests": [
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger"
+      ],
+      "replay_tests": [
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "granted or copied Undying outside trusted typed ability fragments",
           "Oracle-equivalent nonkeyword wording",
           "tokens after their graveyard state action",
@@ -94561,7 +94655,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 847,
+  "registry_version": 848,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

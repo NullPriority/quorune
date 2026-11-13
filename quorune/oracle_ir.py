@@ -180,7 +180,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v1015"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1016"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1077,6 +1077,11 @@ def _activated_or_fixed_event_trigger_node(
         span=span, card_name=card_name, effect_template=trigger_effect_template or effect_template, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     if bargain_entry is not None:return bargain_entry
+    from .compiler.tribute_nodes import tribute_unpaid_entry_node
+    tribute_entry=tribute_unpaid_entry_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        card_name=card_name,effect_template=trigger_effect_template or effect_template,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if tribute_entry is not None:return tribute_entry
     from .compiler.kicked_entry_trigger_nodes import fixed_source_entry_or_step_trigger_node
     source_entry = fixed_source_entry_or_step_trigger_node(
         node_id=node_id, line=line, material_line=material_line, span=span,

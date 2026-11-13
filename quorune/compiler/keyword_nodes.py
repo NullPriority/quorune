@@ -362,6 +362,9 @@ def closed_special_keyword_node(
     }
     split_second=split_second_keyword_node(node_id=node_id,line=line,span=span,mechanics=mechanics,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if split_second is not None:return split_second
+    from .tribute_nodes import tribute_keyword_node
+    tribute=tribute_keyword_node(**values)
+    if tribute is not None:return tribute
     umbra = umbra_armor_keyword_node(**values)
     if umbra is not None:
         return umbra

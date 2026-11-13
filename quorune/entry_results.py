@@ -87,6 +87,9 @@ def commit_prepared_entry_results(
         commit_entry_hand_reveal(host, selection, source_ref=card.ref)
 
     commit_prepared_copy_values(prepared,card,error_type=error_type)
+    from .tribute_entry_results import commit_tribute_entry_outcomes
+    try:commit_tribute_entry_outcomes(prepared,card)
+    except (ValueError,TypeError) as exc:raise error_type(str(exc)) from exc
     from .rules.entry_subtype_grants import entry_subtype_grants,commit_entry_subtype_grants
     try:commit_entry_subtype_grants(host,card,entry_subtype_grants(prepared.event))
     except (ValueError,TypeError) as exc:raise error_type(str(exc)) from exc

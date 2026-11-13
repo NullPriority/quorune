@@ -14883,6 +14883,26 @@
         "test_replacement_event_ordering",
         "test_riot_rules"
       ]
+    },
+    {
+      "id": "tribute-entry-integration",
+      "patterns": [
+        "quorune/semantic_runtime/tribute.py",
+        "quorune/compiler/tribute_nodes.py",
+        "quorune/tribute_entry_results.py",
+        "quorune/rules/tribute.py",
+        "tests/test_tribute_entry.py",
+        "tests/tribute_native_fixture.py",
+        "tests/fixtures/tribute-cards.json"
+      ],
+      "test_modules": [
+        "test_tribute_entry",
+        "test_tribute_model",
+        "test_tribute_replacement",
+        "test_riot_rules",
+        "test_zone_trigger_events",
+        "test_counter_placement_replacements"
+      ]
     }
   ],
   "risk_rules": [

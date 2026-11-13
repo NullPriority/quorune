@@ -103,77 +103,12 @@ def _cost_metric_runtime_requirements(program):
     return required, blockers
 
 
-def _event_query_runtime_requirements(program):
-    """Infer descriptor-owned subscriptions and normalized event queries."""
-    from ..public_history_query_model import public_history_query_dependencies
-    from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies
-    from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
-    from ..saddle import saddle_activation_runtime_dependencies, saddled_attack_runtime_dependencies
-    from ..rules.entry_permanent_results import entry_animation_runtime_dependencies
-    from ..rules.transform_capability_shapes import (
-        PERMANENT_TRANSFORM_CAPABILITY_ID, triggered_source_transform_runtime_dependencies,
-    )
+def _event_subscription_runtime_requirements(program):
+    """Validate normalized subscriptions and their shared intervening condition."""
+    from ..rules.transform_capability_shapes import PERMANENT_TRANSFORM_CAPABILITY_ID
     from ..transform_timestamp_model import TRANSFORM_EVENT
-    from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
-    from ..rules.block_characteristics import qualified_block_runtime_dependencies
-    from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
-    from ..rules.attacked_player_life import attacked_player_life_runtime_dependencies
-    from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies
-    from ..rules.scheduled_turn_skip_shapes import scheduled_turn_skip_event_dependencies
-    from ..rules.combat_defending_players import combat_defending_player_runtime_dependencies
-    from ..rules.event_player_targets import event_player_target_runtime_dependencies
-    from ..rules.per_player_target_sets import per_player_target_runtime_dependencies
-    from ..rules.reanimation_entry_counters import reanimation_entry_counter_runtime_dependencies
-    from ..rules.hand_entry_followup import hand_entry_followup_runtime_dependencies
-    from ..rules.finality_counters import finality_counter_runtime_dependencies
-    from ..rules.target_set_result_sequences import target_set_result_sequence_runtime_dependencies
-    from ..rules.target_player_sequences import target_player_sequence_runtime_dependencies
-    from ..rules.stack_controller_payment_shapes import stack_controller_payment_scope_dependencies
-    from ..rules.fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
-    from ..rules.reflexive_payment_shapes import reflexive_payment_runtime_dependencies
-    from ..cast_event_amounts import cast_mana_value_runtime_dependencies
-    from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
-    from ..rules.casting.spell_mana_payments import expend_runtime_dependencies
-    from ..rules.modal_node_capabilities import modal_event_runtime_dependencies
-    from ..rules.fixed_resolution_mana_shapes import fixed_resolution_mana_runtime_dependencies
-    from ..rules.special_node_shapes import special_result_trigger_runtime_dependencies
-    from ..rules.state_triggers import state_trigger_runtime_dependencies
-    from ..rules.received_damage_events import received_damage_runtime_dependencies
-    from ..rules.designation_events import designation_event_runtime_dependencies
-    from ..rules.room_unlock import room_runtime_dependencies
-    from ..source_entry_cast_information import source_entry_cast_program_dependencies
-    from ..rules.graveyard_return_choices import graveyard_return_choice_runtime_dependencies
-    from ..rules.scheduled_player_shapes import scheduled_player_departure_runtime_dependencies
-    from ..triggered_mana_model import fixed_triggered_mana_runtime_dependencies
-    required,blockers=set(),set()
-    from ..entry_x_amount_model import entry_x_amount_runtime_dependencies
-    try:required.update(entry_x_amount_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_entry_x_amount:invalid:{exc}')
-    from ..ravenous_model import ravenous_runtime_dependencies
-    try:required.update(ravenous_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_ravenous:invalid:{exc}')
-    from ..rules.graveyard_self_return import graveyard_self_return_runtime_dependencies
-    try:required.update(graveyard_self_return_runtime_dependencies(program))
-    except (ValueError,TypeError,KeyError) as exc:blockers.add(f'runtime_graveyard_source_return:invalid:{exc}')
-    from ..rules.spell_owner_targets import spell_owner_target_dependencies
-    try:required.update(spell_owner_target_dependencies(getattr(program,'target_schema',None)))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_owner_target:invalid:{exc}')
-    from ..rules.chosen_color_events import chosen_color_cast_dependencies
-    required.update(chosen_color_cast_dependencies(program))
-    from ..rules.chosen_type_events import chosen_type_event_dependencies
-    required.update(chosen_type_event_dependencies(program))
-    from ..permanent_event_state_model import state_qualified_zone_runtime_dependencies
-    try:required.update(state_qualified_zone_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_permanent_state:invalid:{exc}')
-    from ..permanent_event_state_model import state_qualified_damage_runtime_dependencies
-    try:required.update(state_qualified_damage_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_damage_state:invalid:{exc}')
-    from ..explore_action_model import CREATURE_EXPLORE_EVENT, CREATURE_EXPLORE_CAPABILITY
-    if program.event == CREATURE_EXPLORE_EVENT:required.add(CREATURE_EXPLORE_CAPABILITY)
     from ..mutate_model import MUTATE_EVENT,MUTATE_CAPABILITY
-    if program.event.removesuffix('.self')==MUTATE_EVENT:required.add(MUTATE_CAPABILITY)
-    if program.event==CRIME_EVENT:required.add(CRIME_CAPABILITY)
-    required.update(crime_fact_dependencies((program.handlers,program.event_condition,program.effects,program.cost_schema)))
+    required,blockers=set(),set()
     from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
     from ..counter_placement_event_model import counter_placement_event_dependencies
     from ..player_result_events import player_result_runtime_dependencies
@@ -210,6 +145,80 @@ def _event_query_runtime_requirements(program):
         required.update(face_transition_event_dependencies(program, subscriptions))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_event_subscriptions:invalid:{exc}')
+    return required,blockers
+
+
+def _event_query_runtime_requirements(program):
+    """Infer descriptor-owned subscriptions and normalized event queries."""
+    from ..public_history_query_model import public_history_query_dependencies
+    from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies
+    from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
+    from ..saddle import saddle_activation_runtime_dependencies, saddled_attack_runtime_dependencies
+    from ..rules.entry_permanent_results import entry_animation_runtime_dependencies
+    from ..rules.transform_capability_shapes import triggered_source_transform_runtime_dependencies
+    from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
+    from ..rules.block_characteristics import qualified_block_runtime_dependencies
+    from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
+    from ..rules.attacked_player_life import attacked_player_life_runtime_dependencies
+    from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies
+    from ..rules.scheduled_turn_skip_shapes import scheduled_turn_skip_event_dependencies
+    from ..rules.combat_defending_players import combat_defending_player_runtime_dependencies
+    from ..rules.event_player_targets import event_player_target_runtime_dependencies
+    from ..rules.per_player_target_sets import per_player_target_runtime_dependencies
+    from ..rules.reanimation_entry_counters import reanimation_entry_counter_runtime_dependencies
+    from ..rules.hand_entry_followup import hand_entry_followup_runtime_dependencies
+    from ..rules.finality_counters import finality_counter_runtime_dependencies
+    from ..rules.target_set_result_sequences import target_set_result_sequence_runtime_dependencies
+    from ..rules.target_player_sequences import target_player_sequence_runtime_dependencies
+    from ..rules.stack_controller_payment_shapes import stack_controller_payment_scope_dependencies
+    from ..rules.fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
+    from ..rules.reflexive_payment_shapes import reflexive_payment_runtime_dependencies
+    from ..cast_event_amounts import cast_mana_value_runtime_dependencies
+    from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
+    from ..rules.casting.spell_mana_payments import expend_runtime_dependencies
+    from ..rules.modal_node_capabilities import modal_event_runtime_dependencies
+    from ..rules.fixed_resolution_mana_shapes import fixed_resolution_mana_runtime_dependencies
+    from ..rules.special_node_shapes import special_result_trigger_runtime_dependencies
+    from ..rules.state_triggers import state_trigger_runtime_dependencies
+    from ..rules.received_damage_events import received_damage_runtime_dependencies
+    from ..rules.designation_events import designation_event_runtime_dependencies
+    from ..rules.room_unlock import room_runtime_dependencies
+    from ..source_entry_cast_information import source_entry_cast_program_dependencies
+    from ..rules.tribute import tribute_condition_dependencies
+    from ..rules.graveyard_return_choices import graveyard_return_choice_runtime_dependencies
+    from ..rules.scheduled_player_shapes import scheduled_player_departure_runtime_dependencies
+    from ..triggered_mana_model import fixed_triggered_mana_runtime_dependencies
+    required,blockers=set(),set()
+    from ..entry_x_amount_model import entry_x_amount_runtime_dependencies
+    try:required.update(entry_x_amount_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_entry_x_amount:invalid:{exc}')
+    from ..ravenous_model import ravenous_runtime_dependencies
+    try:required.update(ravenous_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_ravenous:invalid:{exc}')
+    from ..rules.graveyard_self_return import graveyard_self_return_runtime_dependencies
+    try:required.update(graveyard_self_return_runtime_dependencies(program))
+    except (ValueError,TypeError,KeyError) as exc:blockers.add(f'runtime_graveyard_source_return:invalid:{exc}')
+    from ..rules.spell_owner_targets import spell_owner_target_dependencies
+    try:required.update(spell_owner_target_dependencies(getattr(program,'target_schema',None)))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_owner_target:invalid:{exc}')
+    from ..rules.chosen_color_events import chosen_color_cast_dependencies
+    required.update(chosen_color_cast_dependencies(program))
+    from ..rules.chosen_type_events import chosen_type_event_dependencies
+    required.update(chosen_type_event_dependencies(program))
+    from ..permanent_event_state_model import state_qualified_zone_runtime_dependencies
+    try:required.update(state_qualified_zone_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_permanent_state:invalid:{exc}')
+    from ..permanent_event_state_model import state_qualified_damage_runtime_dependencies
+    try:required.update(state_qualified_damage_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_damage_state:invalid:{exc}')
+    from ..explore_action_model import CREATURE_EXPLORE_EVENT, CREATURE_EXPLORE_CAPABILITY
+    if program.event == CREATURE_EXPLORE_EVENT:required.add(CREATURE_EXPLORE_CAPABILITY)
+    from ..mutate_model import MUTATE_EVENT,MUTATE_CAPABILITY
+    if program.event.removesuffix('.self')==MUTATE_EVENT:required.add(MUTATE_CAPABILITY)
+    if program.event==CRIME_EVENT:required.add(CRIME_CAPABILITY)
+    required.update(crime_fact_dependencies((program.handlers,program.event_condition,program.effects,program.cost_schema)))
+    subscriptions,subscription_blockers=_event_subscription_runtime_requirements(program)
+    required.update(subscriptions);blockers.update(subscription_blockers)
     for resolver,value,label in (
         (public_history_query_dependencies,program.event_condition,'public_history'),
         (qualified_spell_ordinal_dependencies,program.event_condition,'qualified_spell_ordinal'),
@@ -246,6 +255,7 @@ def _event_query_runtime_requirements(program):
         (designation_event_runtime_dependencies,program,'designation_event'),
         (room_runtime_dependencies,program,'room'),
         (source_entry_cast_program_dependencies,program,'source_entry_cast'),
+        (tribute_condition_dependencies,program,'tribute_entry'),
         (graveyard_return_choice_runtime_dependencies,program,'graveyard_return_choice'),
         (scheduled_player_departure_runtime_dependencies,program,'scheduled_player_departure'),
         (fixed_triggered_mana_runtime_dependencies,program,'fixed_triggered_mana'),

@@ -313,6 +313,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "combat.block.self_counter_prohibition",
     ),
     _RIOT_MECHANIC: ("counter.producer.riot",),
+    'tribute': ('counter.producer.tribute_entry',),
     _READ_AHEAD_MECHANIC: (
         "counter.producer.saga_lore",
         "state_based.saga_final_chapter",
@@ -1315,6 +1316,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY: FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
         "trigger.source.fixed_maintenance": "fixed-source-maintenance",
         "trigger.entry.fixed_kicked_result": "fixed-kicked-entry-trigger",
+        'counter.producer.tribute_entry': 'tribute',
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',
         'trigger.event.normalized_counter_placement': 'trigger-event-normalized-counter-placement',
         **CAST_FACT_CONDITION_MECHANICS,
