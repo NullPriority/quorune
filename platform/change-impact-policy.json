@@ -14559,6 +14559,24 @@
         "test_mutate_cast_native",
         "test_fixed_library_selection"
       ]
+    },
+    {
+      "id": "depleting-mana-source-results",
+      "patterns": [
+        "quorune/fixed_mana_results.py",
+        "quorune/fixed_mana_abilities.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/mana_mode_effects.py",
+        "quorune/mana_activation.py",
+        "tests/test_depleting_mana_sources.py",
+        "tests/fixtures/depleting-mana-source-cards.json"
+      ],
+      "test_modules": [
+        "test_depleting_mana_sources",
+        "test_fixed_mana_abilities",
+        "test_mana_mode_effects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

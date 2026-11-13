@@ -110,6 +110,9 @@ def fixed_activated_mana_node(
         from ..fixed_mana_results import FIXED_MANA_RESULT_CAPABILITY
         capabilities.append(FIXED_MANA_RESULT_CAPABILITY)
         if spec.result.kind=='skip_actor_untap':capabilities.append('untap.step.exert_player')
+        if spec.result.schema_version == 2:
+            from ..fixed_mana_results import COUNTER_DEPLETION_RESULT_CAPABILITY
+            capabilities.append(COUNTER_DEPLETION_RESULT_CAPABILITY)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     capabilities.extend(activated_ability_cost_capabilities(ability))
@@ -153,7 +156,7 @@ def fixed_activated_mana_node(
         ),
         cost=activated_ability_cost(ability),
         handlers=(fixed_mana_handler_descriptor(spec),),
-        mechanics=(
+        mechanics=(('mana-source-counter-depletion',) if spec.result is not None and spec.result.schema_version == 2 else ()) + (
             ("exhaust",)
             if ability.activation_limit is ActivationLimit.EXHAUST_ONCE
             else ()

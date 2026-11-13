@@ -390,6 +390,17 @@
       "rationale": "The exact five pinned originals and two explicitly constructed cost controls are iterated by fixture Oracle identity; both unsupported original result bodies remain residual.",
       "source": "tests/test_undaunted.py",
       "symbol": "UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/depleting-mana-source-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Iterate the six pinned full original land records in LANDS; no fixture-only card receives delivery credit.",
+      "source": "tests/test_depleting_mana_sources.py",
+      "symbol": "DepletingManaNativeTests.test_six_complete_original_lands_enter_with_exact_counters_and_tap_status"
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",
@@ -567,6 +578,7 @@
     "tests/fixtures/delayed-object-action-cards.json",
     "tests/fixtures/delivery-interaction-boundary-cards.json",
     "tests/fixtures/departure-trigger-limit-cards.json",
+    "tests/fixtures/depleting-mana-source-cards.json",
     "tests/fixtures/designation-event-cards.json",
     "tests/fixtures/designation-prevention-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",

@@ -594,6 +594,7 @@
       "test_counted_activation_costs",
       "test_damage_prevention_shields",
       "test_declared_effect_amounts",
+      "test_depleting_mana_sources",
       "test_draw_coordinator_iteration",
       "test_entry_designations",
       "test_fixed_activated_zone_change_costs",

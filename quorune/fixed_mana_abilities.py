@@ -216,6 +216,10 @@ class FixedActivatedManaAbilitySpec:
             raise FixedManaAbilityError('Fixed mana result must be typed or absent')
         if self.result is not None and self.sacrifice_source:
             raise FixedManaAbilityError('Fixed mana result with source sacrifice requires independent information timing')
+        if self.result is not None and self.result.schema_version == 2:
+            cost = self.source_counter_removal_cost
+            if cost is None or cost.schema_version != 1 or cost.counter_name != self.result.counter_name:
+                raise FixedManaAbilityError('Counter-depletion results require their matching named source-counter cost')
         if (
             not isinstance(self.ability_id, str)
             or _ABILITY_ID.fullmatch(self.ability_id) is None
@@ -608,9 +612,15 @@ def compile_fixed_activated_mana_ability(
         subject=rf'(?:this (?:artifact|creature|land|permanent){named})'
         damage=re.fullmatch(rf'\s*{subject} deals (?P<amount>[1-9][0-9]*) damage to you\.\s*',tail,re.I)
         untap=re.fullmatch(rf"\s*{subject} doesn['’]t untap during your next untap step\.\s*",tail,re.I)
-        if separator and (damage is not None or untap is not None):
+        depletion=re.fullmatch(rf'\s*If there are no (?P<counter>[a-z][a-z -]*) counters on {subject}, sacrifice it\.\s*',tail,re.I)
+        counter_cost=ability.source_counter_removal_cost
+        if depletion is not None and (counter_cost is None or counter_cost.schema_version != 1
+                or counter_cost.counter_name != depletion['counter'].casefold()):return None
+        if separator and (damage is not None or untap is not None or depletion is not None):
             modes=fixed_mana_modes_from_effect(output.strip()+'.')
-            result=FixedManaResultSpec('damage_controller',int(damage['amount'])) if damage is not None else FixedManaResultSpec('skip_actor_untap')
+            result=(FixedManaResultSpec('damage_controller',int(damage['amount'])) if damage is not None
+                    else FixedManaResultSpec('skip_actor_untap') if untap is not None
+                    else FixedManaResultSpec('sacrifice_if_no_counters',schema_version=2,counter_name=counter_cost.counter_name))
     if modes is None or not _restricted_modes_are_closed(
         restriction,
         modes,

@@ -276,6 +276,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'all-kind-counter-doubling': ('counter.producer.all_kind_doubling',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
+    'mana-source-counter-depletion': ('mana.activated.counter_depletion_result',),
     'commander-learn': ('keyword_action.learn.commander',),
     'half-current-player-life-loss': ('life.loss.half_current_player',),
     'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),

@@ -53780,6 +53780,91 @@
     {
       "applicability": {
         "exclusions": [
+          "counter-kind choices",
+          "different-object conditions",
+          "triggers or state-based sacrifice",
+          "unrepresented extra result clauses"
+        ],
+        "inputs": [
+          "exact named source-counter cost",
+          "post-payment named counter count",
+          "original source incarnation",
+          "acting controller"
+        ],
+        "outputs": [
+          "printed fixed mana",
+          "conditional source sacrifice through canonical effect ownership"
+        ],
+        "summary": "A schema-two fixed named-counter result adds mana, then sacrifices the original controlled source if that named counter is absent."
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.activated.fixed_result",
+        "activation.source_counter_removal.fixed",
+        "zone.move.fixed_public_set"
+      ],
+      "dependency_fail_closed_rationale": "Blocking the exact conditional-result owner leaves the whole original mana line residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.activated.counter_depletion_result",
+      "implementation_components": [
+        "quorune.fixed_mana_results.FixedManaResultSpec",
+        "quorune.fixed_mana_abilities.compile_fixed_activated_mana_ability",
+        "quorune.compiler.activated_mana_nodes.fixed_activated_mana_node",
+        "quorune.mana_mode_effects.apply_mana_mode_effects"
+      ],
+      "implementation_mutation_rationale": "Omitting the result from a real last-counter activation leaves the land on the battlefield and is detected independently of its mana output.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner",
+        "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana"
+      ],
+      "multiplayer_tests": [
+        "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner"
+      ],
+      "negative_tests": [
+        "test_counter_depletion_codec_preserves_historical_results_and_rejects_mismatched_cost",
+        "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana",
+        "test_depletion_capability_blocker_and_omitted_result_mutant_are_detected"
+      ],
+      "official_rules": [
+        "602.2b",
+        "605.3b",
+        "608.2c",
+        "701.21a",
+        "122.1",
+        "400.7"
+      ],
+      "positive_tests": [
+        "test_six_complete_original_lands_enter_with_exact_counters_and_tap_status",
+        "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner"
+      ],
+      "privacy_tests": [
+        "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner"
+      ],
+      "replay_tests": [
+        "test_six_complete_original_lands_enter_with_exact_counters_and_tap_status",
+        "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner",
+        "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "triggered mana abilities",
           "dynamic or conditional output",
           "restricted mana",
@@ -93051,7 +93136,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 830,
+  "registry_version": 831,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
