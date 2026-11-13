@@ -14849,6 +14849,23 @@
         "test_creature_power_multiples_compiler",
         "test_creature_power_multiples_native"
       ]
+    },
+    {
+      "id": "grouped-choose-one-modal-targets",
+      "patterns": [
+        "quorune/rules/modal_capability_shapes.py",
+        "tests/test_grouped_choose_one_modes.py",
+        "tests/fixtures/grouped-choose-one-cards.json"
+      ],
+      "test_modules": [
+        "test_grouped_choose_one_modes",
+        "test_fixed_choose_one_modal_spells",
+        "test_fixed_nonrepeating_modal_programs",
+        "test_shared_modal_target_resolution",
+        "test_fixed_creature_power_damage",
+        "test_fixed_library_searches",
+        "test_targeted_counter_effect_clauses"
+      ]
     }
   ],
   "risk_rules": [

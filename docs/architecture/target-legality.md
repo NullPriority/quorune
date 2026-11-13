@@ -234,6 +234,12 @@ it does not expose hidden zones or create a general relational-target grammar.
 
 ## Copied target decisions
 
+For a fixed Choose one spell, the selected mode contributes its complete
+grouped target plan. Group-local predicates and exclusions remain separate,
+while the selected child's global distinctness and same-player constraints
+reach both availability and command validation. Unselected modes contribute
+no targets or constraints. Copying keeps the chosen mode and per-group count.
+
 Separate printed occurrences of `target` retain separate groups. The same
 object may fill each unqualified occurrence when it meets each predicate;
 `another target` in the second of two independent clauses requires distinct

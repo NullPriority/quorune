@@ -3192,6 +3192,12 @@ owner accepts `Choose one`, `Choose one or both`, `Choose one or more`, and
 Mode-qualified target-group IDs, printed-order selection, per-mode target
 feasibility, runtime target rebasing, and exact child-plus-wrapper capability
 closure keep multi-mode execution on the shared target and effect paths.
+The strict Choose one owner also accepts one independently closed grouped
+target plan within a mode. It retains the child's target roles, exclusions,
+distinctness and same-player constraints. Selecting that mode carries its
+plan-level constraints into the shared target plan; unselected modes impose
+none of their targets or effects. Nested modes and grouped multi-selection
+productions remain outside this extension.
 Repeatable, random, conditional-count, selection-linked-cost, selection-history,
 cross-mode-target, unsupported-wrapper, and untyped-branch forms remain
 source-spanned residuals. See ADR 0071 for the preserved strict compatibility

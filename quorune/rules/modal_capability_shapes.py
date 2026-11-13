@@ -37,6 +37,35 @@ FIXED_MODAL_WRAPPER_MECHANICS = frozenset(
 )
 
 
+def _choose_one_target_schema(schema):
+    if schema == {'groups': []}:
+        return True, None
+    if 'modes' in schema:
+        return False, None
+    grouped = 'groups' in schema
+    if grouped:
+        groups = schema['groups']
+        if (set(schema) - {'groups','globally_distinct','same_player_groups'}
+                or not isinstance(groups,(list,tuple)) or not groups
+                or any(not isinstance(g,Mapping) or 'groups' in g or 'modes' in g for g in groups)
+                or 'globally_distinct' in schema and type(schema['globally_distinct']) is not bool):
+            return False, None
+    try:
+        plan = target_plan(schema)
+    except (TypeError,ValueError):
+        return False, None
+    if not plan.groups or not grouped and len(plan.groups) != 1:
+        return False, None
+    if grouped:
+        ids = {g.group_id for g in plan.groups}
+        pairs = schema.get('same_player_groups',())
+        if (not isinstance(pairs,(list,tuple)) or any(not isinstance(p,(list,tuple)) or len(p)!=2
+                or any(type(v) is not str or v not in ids for v in p) for p in pairs)
+                or any(set(g.different_from_groups)-ids for g in plan.groups)):
+            return False, None
+    return True, schema
+
+
 def fixed_choose_one_modal_branches(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -93,18 +122,9 @@ def fixed_choose_one_modal_branches(
             for key, value in definition.items()
             if key not in {"effects", "mechanics"}
         }
-        if child_schema == {"groups": []}:
-            target = None
-        else:
-            if "groups" in child_schema or "modes" in child_schema:
-                return None
-            try:
-                plan = target_plan(child_schema)
-            except (TypeError, ValueError):
-                return None
-            if len(plan.groups) != 1:
-                return None
-            target = child_schema
+        valid, target = _choose_one_target_schema(child_schema)
+        if not valid:
+            return None
         branch_mechanics = tuple(raw_mechanics)
         represented.update(branch_mechanics)
         branches.append(

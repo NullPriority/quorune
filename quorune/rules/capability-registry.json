@@ -21286,7 +21286,6 @@
       "applicability": {
         "exclusions": [
           "choose two, choose one or more, choose one or both, repeatable modes, entwine, spree, escalate, conditional mode counts, nonspell abilities, nonbullet text, nested modes, unsupported or empty modes",
-          "a mode with more than one independent target schema",
           "any mode lacking an existing trusted compiler and runtime owner"
         ],
         "inputs": [
@@ -21294,14 +21293,16 @@
           "an exact Choose one header",
           "two or three ordered bullet modes",
           "one selected stable mode ID",
-          "independently capability-closed effects and targets for every mode"
+          "independently capability-closed effects and targets for every mode",
+          "One independently owned grouped target plan may occur inside a mode; source/recipient roles and all plan constraints remain part of that child contract."
         ],
         "outputs": [
           "one authoritative modal spell program",
           "mode-specific legal target projection",
           "announcement-time mode and target commitment",
           "resolution of only the selected mode",
-          "exact child capability closure"
+          "exact child capability closure",
+          "The selected grouped child retains distinctness, exclusions and same-player constraints through the canonical target plan."
         ],
         "summary": "Compile and announce exactly one mode from an ordinary two- or three-mode Choose one instant or sorcery, then resolve only that mode through its existing typed effect owners."
       },
@@ -21311,47 +21312,75 @@
       "dependency_fail_closed_status": "passed",
       "id": "choice.modal.fixed_one",
       "implementation_components": [
-        "quorune.compiler.modal_templates.FixedChooseOneModalSpellTemplate",
-        "quorune.compiler.modal_templates.fixed_choose_one_modal_spell_template",
-        "quorune.rules.modal_capability_shapes.fixed_choose_one_modal_branches",
-        "quorune.rules.capabilities.capability_dependencies_for_node",
-        "quorune.targets.available_modes",
-        "quorune.targets.target_plan",
-        "quorune.targets.mode_effects",
         "CommanderEngine._cast",
         "CommanderEngine._continue_resolution",
+        "quorune.compiler.modal_templates.FixedChooseOneModalSpellTemplate",
+        "quorune.compiler.modal_templates.fixed_choose_one_modal_spell_template",
+        "quorune.rules.capabilities.capability_dependencies_for_node",
+        "quorune.rules.modal_capability_shapes._choose_one_target_schema",
+        "quorune.rules.modal_capability_shapes.fixed_choose_one_modal_branches",
         "quorune.targets._mode_target_frames",
-        "quorune.targets._rebase_mode_effect"
+        "quorune.targets._rebase_mode_effect",
+        "quorune.targets.available_modes",
+        "quorune.targets.mode_effects",
+        "quorune.targets.target_plan"
       ],
-      "implementation_mutation_rationale": "test_modal_compiler_mutation_is_killed removes modal production and proves the real card returns to material residuals instead of retaining exact trust.",
+      "implementation_mutation_rationale": "Existing modal producer omission remains killed. A fresh grouped native witness kills loss of selected-child global distinctness through an incorrectly available mode; the normal witness also checks rejected self-target rollback.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_brokers_charm_keeps_preparation_when_its_damage_recipient_leaves",
+        "test_actual_bushwhack_search_uses_only_its_owners_library_and_one_shuffle",
         "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_decisive_denial_counter_mode_keeps_the_target_controllers_payment",
+        "test_actual_destroy_and_draw_modes_ignore_the_other_modes_targets_and_effects",
         "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_opponents_copy_keeps_its_mode_and_rebinds_under_the_copy_controller",
         "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+        "test_actual_rebound_cast_can_choose_a_new_legal_mode_without_paying_mana",
         "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_six_originals_resolve_only_the_grouped_damage_mode",
         "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_grouped_global_distinctness_controls_availability_and_accepted_commands",
         "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response"
       ],
       "multiplayer_tests": [
+        "test_actual_brokers_charm_keeps_preparation_when_its_damage_recipient_leaves",
+        "test_actual_bushwhack_search_uses_only_its_owners_library_and_one_shuffle",
         "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_decisive_denial_counter_mode_keeps_the_target_controllers_payment",
+        "test_actual_destroy_and_draw_modes_ignore_the_other_modes_targets_and_effects",
         "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_opponents_copy_keeps_its_mode_and_rebinds_under_the_copy_controller",
+        "test_actual_rebound_cast_can_choose_a_new_legal_mode_without_paying_mana",
         "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_six_originals_resolve_only_the_grouped_damage_mode",
         "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_grouped_global_distinctness_controls_availability_and_accepted_commands",
         "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response"
       ],
       "negative_tests": [
+        "test_actual_brokers_charm_keeps_preparation_when_its_damage_recipient_leaves",
+        "test_actual_bushwhack_search_uses_only_its_owners_library_and_one_shuffle",
+        "test_actual_decisive_denial_counter_mode_keeps_the_target_controllers_payment",
+        "test_actual_destroy_and_draw_modes_ignore_the_other_modes_targets_and_effects",
         "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_opponents_copy_keeps_its_mode_and_rebinds_under_the_copy_controller",
+        "test_actual_rebound_cast_can_choose_a_new_legal_mode_without_paying_mana",
+        "test_actual_six_originals_resolve_only_the_grouped_damage_mode",
+        "test_executable_modal_payload_requires_each_child_without_coverage_annotations",
+        "test_grouped_global_distinctness_controls_availability_and_accepted_commands",
+        "test_malformed_grouped_schemas_nested_modes_and_unowned_children_fail_closed",
         "test_modal_parser_and_capability_shape_fail_closed",
         "test_scoped_modal_reference_uses_only_the_server_captured_current_group",
         "test_unknown_or_mandatory_siblings_multiple_blocks_and_unsupported_keyword_costs_stay_material",
         "test_unsupported_modal_grammars_remain_material_residuals",
+        "test_verified_child_withdrawal_blocks_the_whole_modal_but_retains_life",
         "test_withdrawing_either_existing_owner_keeps_the_complete_source_closed"
       ],
       "official_rules": [
@@ -21361,35 +21390,61 @@
         "700.2a"
       ],
       "positive_tests": [
+        "test_actual_brokers_charm_keeps_preparation_when_its_damage_recipient_leaves",
+        "test_actual_bushwhack_search_uses_only_its_owners_library_and_one_shuffle",
         "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_decisive_denial_counter_mode_keeps_the_target_controllers_payment",
+        "test_actual_destroy_and_draw_modes_ignore_the_other_modes_targets_and_effects",
         "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_actual_fixed_choose_one_corpus_is_capability_closed",
         "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_opponents_copy_keeps_its_mode_and_rebinds_under_the_copy_controller",
+        "test_actual_rebound_cast_can_choose_a_new_legal_mode_without_paying_mana",
         "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_six_originals_resolve_only_the_grouped_damage_mode",
         "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
+        "test_grouped_child_closure_preserves_roles_constraints_and_mode_local_references",
+        "test_grouped_global_distinctness_controls_availability_and_accepted_commands",
+        "test_legacy_untargeted_and_single_target_mode_encodings_keep_their_shape",
         "test_modal_target_sets_use_the_same_implicit_group_ids_and_counts_as_selection",
         "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
         "test_prefix_and_suffix_keywords_retain_separate_source_spans_and_original_line_identities"
       ],
       "privacy_tests": [
+        "test_actual_brokers_charm_keeps_preparation_when_its_damage_recipient_leaves",
+        "test_actual_bushwhack_search_uses_only_its_owners_library_and_one_shuffle",
         "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_decisive_denial_counter_mode_keeps_the_target_controllers_payment",
+        "test_actual_destroy_and_draw_modes_ignore_the_other_modes_targets_and_effects",
         "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_opponents_copy_keeps_its_mode_and_rebinds_under_the_copy_controller",
+        "test_actual_rebound_cast_can_choose_a_new_legal_mode_without_paying_mana",
         "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_six_originals_resolve_only_the_grouped_damage_mode",
         "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_grouped_global_distinctness_controls_availability_and_accepted_commands",
         "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
       ],
       "replay_tests": [
+        "test_actual_brokers_charm_keeps_preparation_when_its_damage_recipient_leaves",
+        "test_actual_bushwhack_search_uses_only_its_owners_library_and_one_shuffle",
         "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_decisive_denial_counter_mode_keeps_the_target_controllers_payment",
+        "test_actual_destroy_and_draw_modes_ignore_the_other_modes_targets_and_effects",
         "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_opponents_copy_keeps_its_mode_and_rebinds_under_the_copy_controller",
+        "test_actual_rebound_cast_can_choose_a_new_legal_mode_without_paying_mana",
         "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_six_originals_resolve_only_the_grouped_damage_mode",
         "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_grouped_global_distinctness_controls_availability_and_accepted_commands",
         "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
       ],
       "required_evidence": [
@@ -21406,7 +21461,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -94506,7 +94561,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 846,
+  "registry_version": 847,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

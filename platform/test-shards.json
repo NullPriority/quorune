@@ -853,6 +853,7 @@
       "test_fixed_source_characteristic_effects",
       "test_game_record_v3",
       "test_graveyard_return_choices",
+      "test_grouped_choose_one_modes",
       "test_legend_rule_exemption_native",
       "test_legend_rule_exemptions",
       "test_legend_state_based_choices",

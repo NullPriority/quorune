@@ -712,13 +712,16 @@ def target_plan(
     group_ids = [group.group_id for group in parsed]
     if len(set(group_ids)) != len(group_ids):
         raise ValueError("Target group ids must be unique")
+    definitions = schema.get('modes')
+    selected = definitions.get(selected_modes[0], {}) if len(selected_modes) == 1 and isinstance(definitions,Mapping) else {}
+    child = selected if isinstance(selected, Mapping) and selected.get('groups') else {}
     return TargetPlan(
         groups=parsed,
         modes=selected_modes,
-        globally_distinct=bool(schema.get("globally_distinct", False)),
+        globally_distinct=bool(schema.get("globally_distinct", False) or child.get('globally_distinct',False)),
         same_player_groups=tuple(
             (str(value[0]), str(value[1]))
-            for value in schema.get("same_player_groups", [])
+            for value in (*schema.get("same_player_groups", []), *child.get('same_player_groups',[]))
             if isinstance(value, (list, tuple)) and len(value) == 2
         ),
     )
