@@ -222,6 +222,10 @@
           "const": 1,
           "type": "integer"
         },
+        "mana_cost_order_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "public_movement_history_version": {
           "const": 1,
           "type": "integer"

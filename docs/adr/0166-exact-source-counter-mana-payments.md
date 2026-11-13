@@ -1,5 +1,5 @@
 ---
-title: "ADR 0166: Exact source-counter mana payments"
+title: "ADR 0166: Exact automatic mana activation costs"
 status: "ADR"
 authoritative_source: "CR 601.2h, 602.2b and 605.3b and the activated counter-cost owner"
 verified: "2026-11-12"
@@ -10,7 +10,7 @@ decision_status: "accepted"
 date: "2026-11-12"
 ---
 
-# ADR 0166: Exact source-counter mana payments
+# ADR 0166: Exact automatic mana activation costs
 
 ## Context
 
@@ -18,6 +18,10 @@ A tap mana ability can require counters from its own source. Automatic payment
 previously represented the output and tap without committing that additional
 cost. Explicit activation already used an identity-pinned counter payment.
 Changing the automatic result also changes recorded authoritative state.
+
+Automatic life payments were also applied after mana output despite being
+activation costs. Printed controller damage correctly follows output. Fixing
+that phase boundary must preserve records from the source-counter repair too.
 
 ## Decision
 
@@ -31,6 +35,11 @@ New state and record-format data declare
 `mana_source_counter_payment_version: 1`. Absent historical data retain their
 execution and omit the field on serialization. Explicit malformed versions or
 manifest/checkpoint mismatches reject. No old command or checkpoint is rewritten.
+
+Life-cost ordering has its own `mana_cost_order_version: 1`. In current games,
+automatic life costs commit before output while damage results follow output.
+Absent historical data retain their earlier phase order. This marker remains
+independent of source-counter payment so each recorded execution is preserved.
 
 ## Alternatives
 

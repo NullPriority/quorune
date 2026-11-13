@@ -53,7 +53,7 @@
       "produced_mana": [],
       "released_at": "2023-08-04",
       "toughness": "5",
-      "type_line": "Legendary Creature \u2014 Sliver"
+      "type_line": "Legendary Creature — Sliver"
     },
     {
       "cmc": 0.0,
@@ -201,7 +201,7 @@
       "produced_mana": [],
       "released_at": "2007-07-13",
       "toughness": "2",
-      "type_line": "Creature \u2014 Bear"
+      "type_line": "Creature — Bear"
     },
     {
       "cmc": 1.0,
@@ -296,24 +296,170 @@
       "released_at": "2024-09-27",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mana Confluence",
+      "oracle_id": "d0ee5bdc-2b69-4b73-9a20-ffcc18783b29",
+      "oracle_text": "{T}, Pay 1 life: Add one mana of any color.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2014-05-02",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Shivan Reef",
+      "oracle_id": "0fe16212-66c3-4e45-a641-7391e9b2e304",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add {U} or {R}. This land deals 1 damage to you.",
+      "power": null,
+      "produced_mana": [
+        "C",
+        "R",
+        "U"
+      ],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
     }
   ],
   "fixture_kind": "original_oracle_cards",
   "rulings": [
     {
-      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn\u2019t provide any additional benefit.",
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit.",
       "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "If you change the creature type of a Sliver you control so it\u2019s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
       "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "Slivers in this set affect only Sliver creatures you control. They don\u2019t grant bonuses to your opponents\u2019 Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
       "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
       "published_at": "2014-07-18",
       "source": "wotc"
@@ -323,6 +469,18 @@
       "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
       "published_at": "2014-07-18",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "0fe16212-66c3-4e45-a641-7391e9b2e304",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "The damage dealt to you is part of the second mana ability. It doesn't use the stack and can't be responded to."
+    },
+    {
+      "oracle_id": "0fe16212-66c3-4e45-a641-7391e9b2e304",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "Like most lands, each land in this cycle is colorless. The damage dealt to you is dealt by a colorless source."
     }
   ],
   "schema_version": 1,

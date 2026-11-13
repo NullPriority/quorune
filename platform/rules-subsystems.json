@@ -9275,14 +9275,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v978-exact-source-counter-mana-payment-repair",
-      "compiler_version": "oracle-ir-v978",
+      "transition_id": "oracle-ir-v979-automatic-mana-life-cost-order-repair",
+      "compiler_version": "oracle-ir-v979",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Repair automatic mana payment so its existing named source-counter cost is planned and paid exactly once, reject exhausted modes, and pin current versus historical execution in GameState and Game Record provenance. Preserve existing whole-card support classifications; this correctness repair claims no card harvest."
+      "non_harvest_reason": "Repair automatic mana activation ordering so printed life costs are paid before mana output, while printed damage stays an after-output result. Independently version this phase boundary to preserve old records, including records from the source-counter repair. Retain existing whole-card support classifications and all prior harvest and non-harvest history; this correctness batch claims no card harvest."
     },
     "forecast_corrections": [
       {
