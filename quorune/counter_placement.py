@@ -98,8 +98,10 @@ def validate_counter_event_subjects(
                 raise CounterPlacementError(
                     "Counter replacement continuation subject changed"
                 )
+        from .tribute_model import TRIBUTE_ENTRY_EVENT
+        containing_event=parent if event.kind==TRIBUTE_ENTRY_EVENT else event
         for child in event.children:
-            validate(child, event)
+            validate(child, containing_event)
 
     for root in events:
         if not isinstance(root, ReplaceableEvent):

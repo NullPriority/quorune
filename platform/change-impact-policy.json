@@ -14887,21 +14887,33 @@
     {
       "id": "tribute-entry-integration",
       "patterns": [
-        "quorune/semantic_runtime/tribute.py",
         "quorune/compiler/tribute_nodes.py",
-        "quorune/tribute_entry_results.py",
+        "quorune/counter_permission_events.py",
+        "quorune/counter_placement.py",
+        "quorune/entry_results.py",
+        "quorune/replacement/tribute.py",
         "quorune/rules/tribute.py",
+        "quorune/semantic_runtime/entry_copy.py",
+        "quorune/semantic_runtime/tribute.py",
+        "quorune/token_creation.py",
+        "quorune/token_creation_events.py",
+        "quorune/tribute_entry_results.py",
+        "tests/fixtures/tribute-cards.json",
         "tests/test_tribute_entry.py",
-        "tests/tribute_native_fixture.py",
-        "tests/fixtures/tribute-cards.json"
+        "tests/tribute_native_fixture.py"
       ],
       "test_modules": [
+        "test_copied_self_entry_counters",
+        "test_counter_permissions",
+        "test_counter_placement_replacements",
+        "test_entry_copy_values",
+        "test_external_entry_counters",
+        "test_replacement_event_tree",
+        "test_riot_rules",
         "test_tribute_entry",
         "test_tribute_model",
         "test_tribute_replacement",
-        "test_riot_rules",
-        "test_zone_trigger_events",
-        "test_counter_placement_replacements"
+        "test_zone_trigger_events"
       ]
     }
   ],

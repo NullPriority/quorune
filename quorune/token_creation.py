@@ -898,8 +898,8 @@ def _commit_token_specs(
         if prepared_entries is not None:
             from .entry_results import commit_entry_designations
             entry = prepared_entries[object_id]
-            from .entry_results import commit_prepared_copy_values
-            commit_prepared_copy_values(entry,host.state.cards[object_id],error_type=TokenCreationError)
+            from .entry_results import commit_prepared_entry_identity_results
+            commit_prepared_entry_identity_results(entry,host.state.cards[object_id],error_type=TokenCreationError)
             commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color, creature_type=entry.entry_chosen_creature_type)
         if plan.aura_target_ref is not None:
             token = host.state.cards[object_id]

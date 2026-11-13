@@ -106,6 +106,80 @@ class TributeReplacementTests(unittest.TestCase):
             with self.subTest(change=change),self.assertRaises(ValueError):
                 validate_tribute_choice_event(replace(child,payload={**child.payload,**change}),pending=True)
 
+    def test_nested_tribute_counters_follow_the_final_zone_destination(self):
+        from quorune.replacement.ordering import replacement_tree_choice,apply_tree_replacement
+        event=self.event();effects=self.effects()
+        root=next(e.effect_id for e in effects if e.effect_id.endswith('opponent:C'))
+        batch=ReplacementEventBatch(batch_id='batch',events=(event,),apnap_order=('A','B','C','D'))
+        entered=advance_replacement_batch(batch,effects,selections=[root,root+':decision']).batch.events[0]
+        redirect=ReplacementEffect(effect_id='redirect',source_id='destination-source',event_kind='zone.change',
+            replacement_class=ReplacementClass.OTHER,operations=(SetField('destination','exile'),))
+        pending=replacement_tree_choice(entered,(redirect,))
+        redirected=apply_tree_replacement(entered,(redirect,),pending,'redirect')
+        counter=redirected.children[0].children[0]
+        self.assertEqual(('exile','card',None),(counter.payload['target_zone'],
+            counter.payload['target_kind'],counter.payload['target_controller']))
+        self.assertIsNone(counter.affected_object.controller)
+        self.assertEqual('C',counter.payload['placing_player'])
+
+    def test_copied_tribute_rebinds_the_shared_occurrence_and_only_its_selected_form(self):
+        from quorune.replacement.tribute import copied_tribute_replacement
+        prefix='copied-entry:original:'
+        effects=tuple(copied_tribute_replacement(e,prefix=prefix,form_key='selected') for e in self.effects())
+        event=self.event();event=replace(event,payload={**event.payload,'entry_copy_form':'other'})
+        batch=ReplacementEventBatch(batch_id='batch',events=(event,),apnap_order=('A','B','C','D'))
+        self.assertEqual((),advance_replacement_batch(batch,effects).batch.events[0].children)
+        event=replace(event,payload={**event.payload,'entry_copy_form':'selected'})
+        batch=replace(batch,events=(event,))
+        root=next(e.effect_id for e in effects if e.effect_id.endswith('opponent:C'))
+        result=advance_replacement_batch(batch,effects,selections=[root,root+':decision'])
+        self.assertIsNone(result.pending)
+        tribute,=result.batch.events[0].children
+        self.assertEqual(root,tribute.payload['replacement_id'])
+        self.assertEqual(('C',3),(tribute.children[0].payload['placing_player'],tribute.children[0].payload['amount']))
+        self.assertEqual(result.batch,resolve_replacement_batch(batch,effects,selections=result.batch.journal))
+        root_effect=next(e for e in effects if e.effect_id==root)
+        for guard in (True,{'eq':True},{'eq':''},{'eq':'selected','extra':1}):
+            with self.subTest(guard=guard),self.assertRaises(ValueError):
+                replace(root_effect,conditions={**root_effect.conditions,'entry_copy_form':guard})
+
+    def test_prospective_nested_counter_keeps_the_containing_zone_identity_and_rejects_tampering(self):
+        from types import SimpleNamespace
+        from quorune.counter_placement import validate_counter_event_subjects
+        event=self.event();event=replace(event,payload={**event.payload,'origin':'outside',
+            'prospective_subject':True,'logical_object_id':'object:entrant@1'})
+        effects=self.effects();root=next(e.effect_id for e in effects if e.effect_id.endswith('opponent:C'))
+        batch=ReplacementEventBatch(batch_id='batch',events=(event,),apnap_order=('A','B','C','D'))
+        entered=advance_replacement_batch(batch,effects,selections=[root,root+':decision']).batch.events[0]
+        host=SimpleNamespace(state=SimpleNamespace(cards={}))
+        validate_counter_event_subjects(host,(entered,))
+        tribute,=entered.children;counter,=tribute.children
+        for change in ({'target_logical_object_id':'another@1'},{'target_zone':'exile'},{'prospective_subject':False}):
+            changed=replace(counter,payload={**counter.payload,**change})
+            with self.subTest(change=change),self.assertRaises(ValueError):
+                validate_counter_event_subjects(host,(replace(entered,children=(replace(tribute,children=(changed,)),)),))
+
+    def test_captured_permissions_refresh_nested_counters_after_entry_retargeting(self):
+        from quorune.counter_permission import CounterPermissionSnapshot,CounterProhibitionRule,FixedCounterProhibitionSpec
+        from quorune.counter_permission_events import refresh_entry_counter_permissions,counter_event_is_prohibited
+        from quorune.replacement.immutable import thaw_value
+        event=self.event();effects=self.effects()
+        root=next(e.effect_id for e in effects if e.effect_id.endswith('opponent:C'))
+        batch=ReplacementEventBatch(batch_id='batch',events=(event,),apnap_order=('A','B','C','D'))
+        entered=advance_replacement_batch(batch,effects,selections=[root,root+':decision']).batch.events[0]
+        permissions=CounterPermissionSnapshot((CounterProhibitionRule(
+            FixedCounterProhibitionSpec('permanent','any',types_any=('creature',)),'prohibitor','B'),))
+        payload={**thaw_value(entered.payload),'_counter_permissions':permissions.to_dict()}
+        children=list(entered.children)
+        refresh_entry_counter_permissions(entered,payload,children)
+        denied=children[0].children[0]
+        self.assertTrue(counter_event_is_prohibited(denied));self.assertEqual(0,denied.payload['amount'])
+        refresh_entry_counter_permissions(entered,{**payload,'destination':'exile','destination_controller':None},children)
+        allowed=children[0].children[0]
+        self.assertFalse(counter_event_is_prohibited(allowed));self.assertEqual(3,allowed.payload['amount'])
+        self.assertEqual(('exile','card',None),(allowed.payload['target_zone'],allowed.payload['target_kind'],allowed.payload['target_controller']))
+        self.assertEqual(3,entered.children[0].children[0].payload['amount'])
+
     def test_shared_occurrences_and_complementary_decisions_cannot_be_forged(self):
         effects=self.effects();root=next(e for e in effects if e.effect_id.endswith('opponent:B'))
         child=next(e for e in effects if e.effect_id==root.effect_id+':decision')

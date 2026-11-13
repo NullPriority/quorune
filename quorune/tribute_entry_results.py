@@ -27,6 +27,11 @@ def commit_tribute_entry_outcomes(prepared,card):
 
 
 def tribute_entry_context(card,occurrence):
+    return tribute_entry_identity_context(card,occurrence.current_logical_object_id)
+
+
+def tribute_entry_identity_context(card,logical_object_id):
+    """Seal entry facts for a known incarnation, including prospective tokens."""
     raw=card.annotations.get(TRIBUTE_ENTRY_OUTCOMES)
     if raw is None:return {}
     if not isinstance(raw,Mapping):raise ValueError('Tribute entry outcomes must be a keyed typed map')
@@ -34,6 +39,6 @@ def tribute_entry_context(card,occurrence):
     for link,value in raw.items():
         outcome=TributeEntryOutcome.from_dict(value)
         if link!=outcome.spec.link_id:raise ValueError('Tribute outcome ability link changed')
-        if outcome.is_unpaid_entry(link_id=link,logical_object_id=occurrence.current_logical_object_id):
+        if outcome.is_unpaid_entry(link_id=link,logical_object_id=logical_object_id):
             unpaid.append(link)
     return {TRIBUTE_UNPAID_FIELD:sorted(unpaid)}

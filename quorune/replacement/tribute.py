@@ -163,9 +163,15 @@ def validate_tribute_replacement(effect,operations,decline):
     if isinstance(op,OpenTributeEntryChoice):
         expected={'object_ref':{'eq':effect.source_id},'destination':{'eq':'battlefield'},
             'destination_controller':{'not_in':[op.opponent]}}
+        conditions=thaw_value(effect.conditions)
+        if 'entry_copy_form' in conditions:
+            guard=conditions['entry_copy_form']
+            if not isinstance(guard,Mapping) or set(guard)!={'eq'} or type(guard['eq']) is not str or not guard['eq']:
+                raise ReplacementEffectError('Copied Tribute requires its exact selected copy form')
+            expected['entry_copy_form']=guard
         if (effect.event_kind!='zone.change' or effect.optional or decline or not effect.occurrence_id
                 or effect.effect_id!=f'{effect.occurrence_id}:opponent:{op.opponent}'
-                or op.choice_id!=effect.effect_id or thaw_value(effect.conditions)!=expected):
+                or op.choice_id!=effect.effect_id or conditions!=expected):
             raise ReplacementEffectError('Tribute opponent variants require one bound shared entry occurrence')
         return
     if not isinstance(op,CompleteTributeEntryChoice):
@@ -207,3 +213,20 @@ def tribute_decision_replacement(spec,*,object_ref,root_id,opponent):
         operations=(CompleteTributeEntryChoice(spec,True),),
         decline_operations=(CompleteTributeEntryChoice(spec,False),),optional=True,
         label=f'Put {spec.amount} +1/+1 counters on {object_ref}',decline_label='Do not pay Tribute')
+
+
+def copied_tribute_replacement(effect,*,prefix,form_key):
+    """Rebind the whole staged decision identity when a copy acquires Tribute."""
+    if len(effect.operations)!=1:return None
+    operation=effect.operations[0]
+    if not isinstance(operation,(OpenTributeEntryChoice,CompleteTributeEntryChoice)):return None
+    if any(type(value) is not str or not value for value in (prefix,form_key)):
+        raise ValueError('Copied Tribute requires its copy identity and selected form')
+    conditions=thaw_value(effect.conditions)
+    if isinstance(operation,OpenTributeEntryChoice):
+        identity=prefix+effect.effect_id
+        return replace(effect,effect_id=identity,occurrence_id=prefix+effect.occurrence_id,
+            operations=(replace(operation,choice_id=identity),),
+            conditions={**conditions,'entry_copy_form':{'eq':form_key}})
+    conditions['replacement_id']={'eq':prefix+conditions['replacement_id']['eq']}
+    return replace(effect,effect_id=prefix+effect.effect_id,conditions=conditions)

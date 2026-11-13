@@ -397,6 +397,12 @@ def _retarget_zone_counter_children(
         else None
     )
     for index, child in enumerate(children):
+        if child.children:
+            from dataclasses import replace
+            nested=list(child.children)
+            _retarget_zone_counter_children(event,payload,nested)
+            child=replace(child,children=tuple(nested))
+            children[index]=child
         if (
             child.kind != "counter.place"
             or child.affected_object is None

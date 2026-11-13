@@ -42375,7 +42375,9 @@
           "no partial entry before the opponent decision",
           "opponent counter placing-player identity",
           "per-entry outcome independent of later counter totals",
-          "unpaid self-entry event condition and existing result owners"
+          "unpaid self-entry event condition and existing result owners",
+          "copied Tribute keeps both staged choice identities bound to the selected form",
+          "simultaneous prospective tokens commit per-incarnation outcomes before entry publication"
         ],
         "summary": "Stage a controller-selected opponent's fixed Tribute entry choice, attribute counters to that opponent, and retain a per-entry paid fact for independently owned unpaid-entry results."
       },
@@ -42387,30 +42389,52 @@
       "dependency_fail_closed_status": "passed",
       "id": "counter.producer.tribute_entry",
       "implementation_components": [
-        "quorune.tribute_model.TributeSpec",
-        "quorune.tribute_model.TributeEntryOutcome",
-        "quorune.replacement.tribute.tribute_entry_replacements",
-        "quorune.semantic_runtime.tribute.TributeEntryHandler",
         "quorune.compiler.tribute_nodes.tribute_keyword_node",
         "quorune.compiler.tribute_nodes.tribute_unpaid_entry_node",
+        "quorune.entry_results.commit_prepared_entry_identity_results",
+        "quorune.replacement.tribute.copied_tribute_replacement",
+        "quorune.replacement.tribute.tribute_entry_replacements",
+        "quorune.rules.tribute.tribute_condition_dependencies",
+        "quorune.semantic_runtime.tribute.TributeEntryHandler",
         "quorune.tribute_entry_results.commit_tribute_entry_outcomes",
         "quorune.tribute_entry_results.tribute_entry_context",
-        "quorune.rules.tribute.tribute_condition_dependencies"
+        "quorune.tribute_entry_results.tribute_entry_identity_context",
+        "quorune.tribute_model.TributeEntryOutcome",
+        "quorune.tribute_model.TributeSpec"
       ],
-      "implementation_mutation_rationale": "A fresh paid-entry native Snake witness rejects an event provider that unconditionally exposes an unpaid result.",
+      "implementation_mutation_rationale": "Fresh native paid-entry and simultaneous-copy witnesses reject unconditional unpaid facts and omitted token-entry outcome commitment, respectively.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_clone_copies_tribute_and_makes_its_own_decision",
         "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_biomancer_and_tribute_both_entry_orders_preserve_distinct_counter_instructions",
+        "test_blink_gets_a_new_opponent_decision_and_old_unpaid_trigger_keeps_its_entry_fact",
+        "test_captured_permissions_refresh_nested_counters_after_entry_retargeting",
+        "test_copied_tribute_rebinds_the_shared_occurrence_and_only_its_selected_form",
         "test_counter_quantity_replacements_distinguish_the_opponent_from_the_controller",
-        "test_counter_replacements_use_the_chosen_placing_player_and_receiving_controller"
+        "test_counter_replacements_use_the_chosen_placing_player_and_receiving_controller",
+        "test_departed_opponent_is_not_offered_and_cannot_submit_an_entry_choice",
+        "test_foreign_owned_reanimated_original_uses_its_entering_controller_and_chosen_opponent",
+        "test_nested_tribute_counters_follow_the_final_zone_destination",
+        "test_prospective_nested_counter_keeps_the_containing_zone_identity_and_rejects_tampering",
+        "test_simultaneous_copied_entries_finish_each_opponent_decision_before_atomic_entry"
       ],
       "multiplayer_tests": [
-        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger"
+        "test_actual_clone_copies_tribute_and_makes_its_own_decision",
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_biomancer_and_tribute_both_entry_orders_preserve_distinct_counter_instructions",
+        "test_blink_gets_a_new_opponent_decision_and_old_unpaid_trigger_keeps_its_entry_fact",
+        "test_departed_opponent_is_not_offered_and_cannot_submit_an_entry_choice",
+        "test_foreign_owned_reanimated_original_uses_its_entering_controller_and_chosen_opponent",
+        "test_simultaneous_copied_entries_finish_each_opponent_decision_before_atomic_entry"
       ],
       "negative_tests": [
         "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_copied_tribute_rebinds_the_shared_occurrence_and_only_its_selected_form",
+        "test_departed_opponent_is_not_offered_and_cannot_submit_an_entry_choice",
         "test_descriptor_fields_types_and_unknown_mechanic_bodies_fail_closed",
         "test_prohibition_automatically_declines_and_cannot_be_overridden_by_a_saved_acceptance",
+        "test_prospective_nested_counter_keeps_the_containing_zone_identity_and_rejects_tampering",
         "test_solemnity_makes_tribute_unpayable_and_preserves_the_unpaid_trigger",
         "test_unpaid_condition_dependency_is_required_without_coverage_annotations",
         "test_verified_capability_withdrawal_preserves_an_independent_flying_source"
@@ -42427,14 +42451,35 @@
         "702.104b"
       ],
       "positive_tests": [
+        "test_actual_ravager_fight_remains_optional_after_unpaid_target_selection",
         "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_actual_targeted_results_select_after_entry_and_paid_entries_never_offer_a_target",
+        "test_actual_untargeted_original_results_and_paid_alternatives",
         "test_intrinsic_and_unpaid_result_retain_separate_owned_programs"
       ],
       "privacy_tests": [
-        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger"
+        "test_actual_clone_copies_tribute_and_makes_its_own_decision",
+        "test_actual_ravager_fight_remains_optional_after_unpaid_target_selection",
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_actual_targeted_results_select_after_entry_and_paid_entries_never_offer_a_target",
+        "test_actual_untargeted_original_results_and_paid_alternatives",
+        "test_biomancer_and_tribute_both_entry_orders_preserve_distinct_counter_instructions",
+        "test_blink_gets_a_new_opponent_decision_and_old_unpaid_trigger_keeps_its_entry_fact",
+        "test_departed_opponent_is_not_offered_and_cannot_submit_an_entry_choice",
+        "test_foreign_owned_reanimated_original_uses_its_entering_controller_and_chosen_opponent",
+        "test_simultaneous_copied_entries_finish_each_opponent_decision_before_atomic_entry"
       ],
       "replay_tests": [
-        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger"
+        "test_actual_clone_copies_tribute_and_makes_its_own_decision",
+        "test_actual_ravager_fight_remains_optional_after_unpaid_target_selection",
+        "test_actual_snake_chosen_opponent_pays_or_declines_before_entry_and_life_trigger",
+        "test_actual_targeted_results_select_after_entry_and_paid_entries_never_offer_a_target",
+        "test_actual_untargeted_original_results_and_paid_alternatives",
+        "test_biomancer_and_tribute_both_entry_orders_preserve_distinct_counter_instructions",
+        "test_blink_gets_a_new_opponent_decision_and_old_unpaid_trigger_keeps_its_entry_fact",
+        "test_departed_opponent_is_not_offered_and_cannot_submit_an_entry_choice",
+        "test_foreign_owned_reanimated_original_uses_its_entering_controller_and_chosen_opponent",
+        "test_simultaneous_copied_entries_finish_each_opponent_decision_before_atomic_entry"
       ],
       "required_evidence": [
         "positive",
@@ -42450,7 +42495,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -94655,7 +94700,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 848,
+  "registry_version": 849,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

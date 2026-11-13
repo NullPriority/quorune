@@ -294,6 +294,26 @@
       "type_line": "Basic Land \u2014 Forest"
     },
     {
+      "oracle_id": "25400000-0000-4000-8000-000000000001",
+      "name": "Generic Entry Two Copies",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create two tokens that are copies of target creature you control.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
       "cmc": 2.0,
       "color_identity": [
         "G"
@@ -856,6 +876,35 @@
       "released_at": "2022-04-29",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000397",
+      "name": "Public Reanimate",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
+      "faces": []
     },
     {
       "cmc": 1.0,

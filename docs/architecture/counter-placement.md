@@ -182,6 +182,15 @@ Committed Tribute outcomes bind the ability link to the entering logical
 incarnation. The normalized entry event exposes that frozen unpaid fact to the
 linked trigger, independently of later counter totals. Unknown unpaid result
 bodies remain residual and prevent whole-card admission.
+
+Acquired Tribute abilities retain a shared replacement occurrence and bound
+opponent-decision identities for the selected copy form. Nested counters follow
+the containing zone event's resolved destination. Prospective subject validation
+passes through the typed Tribute decision while retaining the containing entry's
+physical and logical identity checks. Physical cards and newly created tokens
+share the entry-result owner for committing those facts before observers run;
+simultaneous tokens expose their separate outcomes after the entire group enters.
+
 Prospective objects
 are explicit new outside-zone tokens; they remain absent from live state until
 every affected-player selection is complete. The shared layer-6 component
