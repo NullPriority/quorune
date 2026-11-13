@@ -54275,16 +54275,22 @@
       "implementation_mutation_rationale": "Omitting the result from a real last-counter activation leaves the land on the battlefield and is detected independently of its mana output.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_automatic_payment_removes_the_last_named_counter_before_mana_then_sacrifices_to_its_owner",
+        "test_actual_exhausted_automatic_source_cannot_offer_or_accept_a_spell_and_keeps_the_other_counter",
         "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner",
         "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana"
       ],
       "multiplayer_tests": [
+        "test_actual_automatic_payment_removes_the_last_named_counter_before_mana_then_sacrifices_to_its_owner",
+        "test_actual_exhausted_automatic_source_cannot_offer_or_accept_a_spell_and_keeps_the_other_counter",
         "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner"
       ],
       "negative_tests": [
+        "test_actual_automatic_payment_removes_the_last_named_counter_before_mana_then_sacrifices_to_its_owner",
+        "test_actual_exhausted_automatic_source_cannot_offer_or_accept_a_spell_and_keeps_the_other_counter",
         "test_counter_depletion_codec_preserves_historical_results_and_rejects_mismatched_cost",
-        "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana",
-        "test_depletion_capability_blocker_and_omitted_result_mutant_are_detected"
+        "test_depletion_capability_blocker_and_omitted_result_mutant_are_detected",
+        "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana"
       ],
       "official_rules": [
         "602.2b",
@@ -54295,16 +54301,22 @@
         "400.7"
       ],
       "positive_tests": [
-        "test_six_complete_original_lands_enter_with_exact_counters_and_tap_status",
-        "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner"
+        "test_actual_automatic_payment_removes_the_last_named_counter_before_mana_then_sacrifices_to_its_owner",
+        "test_actual_exhausted_automatic_source_cannot_offer_or_accept_a_spell_and_keeps_the_other_counter",
+        "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner",
+        "test_six_complete_original_lands_enter_with_exact_counters_and_tap_status"
       ],
       "privacy_tests": [
+        "test_actual_automatic_payment_removes_the_last_named_counter_before_mana_then_sacrifices_to_its_owner",
+        "test_actual_exhausted_automatic_source_cannot_offer_or_accept_a_spell_and_keeps_the_other_counter",
         "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner"
       ],
       "replay_tests": [
-        "test_six_complete_original_lands_enter_with_exact_counters_and_tap_status",
+        "test_actual_automatic_payment_removes_the_last_named_counter_before_mana_then_sacrifices_to_its_owner",
+        "test_actual_exhausted_automatic_source_cannot_offer_or_accept_a_spell_and_keeps_the_other_counter",
         "test_explicit_counter_payment_precedes_mana_and_only_last_counter_sacrifices_to_owner",
-        "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana"
+        "test_external_counter_removal_does_not_sacrifice_or_offer_exhausted_mana",
+        "test_six_complete_original_lands_enter_with_exact_counters_and_tap_status"
       ],
       "required_evidence": [
         "positive",
@@ -93791,7 +93803,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 837,
+  "registry_version": 838,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

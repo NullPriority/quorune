@@ -19,6 +19,7 @@ from quorune.rules.capabilities import CapabilityRegistry,load_default_capabilit
 from quorune.oracle_ir import compile_oracle_card
 from scripts.build_test_database import build_fixture_database
 import test_fixed_mana_abilities as actions
+from inherited_composition_fixture import InheritedNativeFixture
 
 LANDS=('Hickory Woodlot','Saprazzan Skerry','Peat Bog','Sandstone Needle','Remote Farm','Gemstone Mine')
 
@@ -51,6 +52,7 @@ class DepletingManaNativeTests(unittest.TestCase):
     ready=actions.FixedManaResultRuntimeTests.ready
     checkpoint=actions.FixedManaResultRuntimeTests.checkpoint
     replay=actions.FixedManaResultRuntimeTests.replay
+    resolve=InheritedNativeFixture.resolve
 
     @classmethod
     def setUpClass(cls):
@@ -138,3 +140,40 @@ class DepletingManaNativeTests(unittest.TestCase):
             accepted=s.act('pilot:A',{'action_id':row['id'],'mana_output':{'G':1}})
         self.assertTrue(accepted.ok,accepted.summary)
         with self.assertRaises(AssertionError):self.assertEqual('graveyard',land.zone)
+
+    def test_actual_automatic_payment_removes_the_last_named_counter_before_mana_then_sacrifices_to_its_owner(self):
+        for name in ('Hickory Woodlot','Gemstone Mine'):
+            with self.subTest(name=name):
+                s,land,key,private=self.scene(name,1)
+                body=self.add(s.engine,'Grizzly Bears',ref='auto-depleting-target')
+                spell=self.add(s.engine,'Giant Growth',zone='hand',ref='auto-depleting-spell')
+                s.state.config.semantic_policy='trusted_only';self.ready(s,land);self.checkpoint(s)
+                self.assertEqual(1,s.state.mana_source_counter_payment_version);self.assertEqual(1,s.state.mana_cost_order_version)
+                command={'action_id':'cast:'+spell.ref,'targets':[body.ref],'pay':'auto'}
+                before=authoritative_state_hash(s.state);self.assertFalse(s.act('pilot:D',command).ok)
+                self.assertEqual(before,authoritative_state_hash(s.state))
+                observed=[];original=s.engine._add_mana_to_pool
+                def add_mana(*args,**kwargs):
+                    observed.append((land.zone,dict(land.counters)));return original(*args,**kwargs)
+                with patch.object(s.engine,'_add_mana_to_pool',side_effect=add_mana):
+                    result=s.act('pilot:A',command)
+                self.assertTrue(result.ok,result.summary);self.assertEqual([('battlefield',{'charge':1})],observed)
+                self.assertIn(land.object_id,s.state.players['D'].zones['graveyard'])
+                self.assertEqual(1 if name=='Hickory Woodlot' else 0,s.state.players['A'].mana_pool['G'])
+                self.assertIsNone(self.resolve(s));self.assertEqual(5,s.engine._numeric_stat(body.object_id,'power'))
+                self.finish(s,private)
+
+    def test_actual_exhausted_automatic_source_cannot_offer_or_accept_a_spell_and_keeps_the_other_counter(self):
+        for name in ('Hickory Woodlot','Gemstone Mine'):
+            with self.subTest(name=name):
+                s,land,key,private=self.scene(name,0)
+                body=self.add(s.engine,'Grizzly Bears',ref='exhausted-depleting-target')
+                spell=self.add(s.engine,'Giant Growth',zone='hand',ref='exhausted-depleting-spell')
+                s.state.config.semantic_policy='trusted_only';self.ready(s,land);self.checkpoint(s)
+                actions=s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                self.assertFalse(any(row['id']=='cast:'+spell.ref for row in actions))
+                before=authoritative_state_hash(s.state)
+                result=s.act('pilot:A',{'action_id':'cast:'+spell.ref,'targets':[body.ref],'pay':'auto'})
+                self.assertFalse(result.ok);self.assertEqual(before,authoritative_state_hash(s.state))
+                self.assertEqual('battlefield',land.zone);self.assertFalse(land.tapped);self.assertEqual(1,land.counters['charge'])
+                self.finish(s,private)
