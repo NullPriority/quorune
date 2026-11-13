@@ -3192,12 +3192,21 @@ owner accepts `Choose one`, `Choose one or both`, `Choose one or more`, and
 Mode-qualified target-group IDs, printed-order selection, per-mode target
 feasibility, runtime target rebasing, and exact child-plus-wrapper capability
 closure keep multi-mode execution on the shared target and effect paths.
-The strict Choose one owner also accepts one independently closed grouped
-target plan within a mode. It retains the child's target roles, exclusions,
-distinctness and same-player constraints. Selecting that mode carries its
-plan-level constraints into the shared target plan; unselected modes impose
-none of their targets or effects. Nested modes and grouped multi-selection
-productions remain outside this extension.
+The strict Choose one and fixed nonrepeating owners also accept independently
+closed grouped target plans within their modes. Each child retains its original
+target schema for capability validation. A nonrepeating grouped mode declares
+`group_scope: "mode"`; the shared target planner qualifies its announcement IDs
+and keeps exclusions, distinctness and same-player constraints within that mode.
+Otherwise legal targets may recur in different selected modes. Unselected modes
+impose none of their targets or effects. Nested mode selections remain residual.
+
+Mode-local scalar and group references rebase into the selected target sequence.
+Characteristic-result minimums validate each mode's own schema. For schemas with
+the explicit grouped-mode scope, token-copy instructions also retain their
+announcement slot, including executable payment wrappers. Copy references and
+departure snapshots bind that slot's selected incarnation; an illegal copy target
+does not affect another selected mode. Legacy modal encodings retain their prior
+copy-reference representation.
 Repeatable, random, conditional-count, selection-linked-cost, selection-history,
 cross-mode-target, unsupported-wrapper, and untyped-branch forms remain
 source-spanned residuals. See ADR 0071 for the preserved strict compatibility

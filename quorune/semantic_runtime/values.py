@@ -27,7 +27,7 @@ from .direct_target_fields import bound_mutation_target_overrides
 
 _INDEX_GROUP = "index"
 _TARGET_GROUP_REFERENCE = re.compile(
-    r"\$target_group\.(?P<group>clause_[0-3]|target_[0-9]+)"
+    r"\$target_group\.(?P<group>clause_[0-3]|target_[0-9]+|mode_[1-5]:[A-Za-z_][A-Za-z0-9_]*)"
     r"(?P<scalar>\.0|(?P<current_controller>\.current_controller\.0))?"
 )
 

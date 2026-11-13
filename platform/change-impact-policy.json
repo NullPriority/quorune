@@ -14915,6 +14915,31 @@
         "test_tribute_replacement",
         "test_zone_trigger_events"
       ]
+    },
+    {
+      "id": "grouped-nonrepeating-mode-targets",
+      "patterns": [
+        "tests/test_grouped_nonrepeating_modes.py",
+        "tests/fixtures/grouped-nonrepeating-cards.json",
+        "quorune/compiler/modal_templates.py",
+        "quorune/rules/modal_capability_shapes.py",
+        "quorune/rules/target_characteristic_sets.py",
+        "quorune/targets.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/token_copy_recipes.py",
+        "quorune/token_copy_references.py",
+        "quorune/token_copy_runtime.py"
+      ],
+      "test_modules": [
+        "test_grouped_nonrepeating_modes",
+        "test_grouped_choose_one_modes",
+        "test_fixed_nonrepeating_modal_programs",
+        "test_shared_modal_target_resolution",
+        "test_fixed_token_creation_effects",
+        "test_power_toughness_switch",
+        "test_spree_mode_costs",
+        "test_fixed_entwine"
+      ]
     }
   ],
   "risk_rules": [

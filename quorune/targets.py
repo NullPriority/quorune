@@ -649,6 +649,37 @@ def available_modes(schema: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(str(name) for name in modes)
 
 
+def has_scoped_modal_targets(schema):
+    definitions=schema.get('modes') if isinstance(schema,Mapping) else None
+    return isinstance(definitions,Mapping) and any(isinstance(d,Mapping)
+        and d.get('group_scope')=='mode' for d in definitions.values())
+
+
+def _scoped_mode_group_data(definition,mode):
+    """Give a mode-local child plan its own announcement IDs and constraints."""
+    raw=definition.get('groups')
+    if definition.get('group_scope')!='mode' or not isinstance(raw,(list,tuple)) or not raw:
+        raise ValueError('Scoped modal targets require a nonempty child plan')
+    parsed=tuple(TargetGroup.from_mapping(g,default_id=f'target_{i}') for i,g in enumerate(raw))
+    ids={g.group_id:f'{mode}:{g.group_id}' for g in parsed}
+    if len(ids)!=len(parsed):raise ValueError('Mode-local target groups must be unique')
+    distinct=definition.get('globally_distinct',False)
+    if type(distinct) is not bool:raise ValueError('Mode-local distinctness must be boolean')
+    groups=[]
+    for value,group in zip(raw,parsed,strict=True):
+        if set(group.different_from_groups)-ids.keys():
+            raise ValueError('A mode-local target exclusion leaves its child plan')
+        different=[ids[g] for g in group.different_from_groups]
+        if distinct:different.extend(ids[g.group_id] for g in parsed if g.group_id!=group.group_id)
+        groups.append({**dict(value),'id':ids[group.group_id],
+            **({'different_from_groups':list(dict.fromkeys(different))} if different else {})})
+    pairs=definition.get('same_player_groups',())
+    if not isinstance(pairs,(list,tuple)) or any(not isinstance(p,(list,tuple)) or len(p)!=2
+            or any(type(g) is not str or g not in ids for g in p) for p in pairs):
+        raise ValueError('Mode-local controller relations require their child groups')
+    return tuple(groups),tuple((ids[p[0]],ids[p[1]]) for p in pairs),ids
+
+
 def target_group_mappings(
     schema: Mapping[str, Any],
     modes: Sequence[str] = (),
@@ -680,6 +711,9 @@ def target_group_mappings(
             definition = mode_definitions.get(mode)
             if not isinstance(definition, Mapping):
                 raise ValueError(f"Unknown target mode {mode!r}")
+            if 'group_scope' in definition:
+                raw_groups.extend(_scoped_mode_group_data(definition,mode)[0])
+                continue
             groups = definition.get("groups")
             if groups is None:
                 groups = [
@@ -714,36 +748,44 @@ def target_plan(
         raise ValueError("Target group ids must be unique")
     definitions = schema.get('modes')
     selected = definitions.get(selected_modes[0], {}) if len(selected_modes) == 1 and isinstance(definitions,Mapping) else {}
-    child = selected if isinstance(selected, Mapping) and selected.get('groups') else {}
+    child = selected if isinstance(selected, Mapping) and selected.get('groups') and 'group_scope' not in selected else {}
+    scoped_pairs=[]
+    if isinstance(definitions,Mapping):
+        for mode in selected_modes:
+            if 'group_scope' in definitions[mode]:scoped_pairs.extend(_scoped_mode_group_data(definitions[mode],mode)[1])
     return TargetPlan(
         groups=parsed,
         modes=selected_modes,
         globally_distinct=bool(schema.get("globally_distinct", False) or child.get('globally_distinct',False)),
         same_player_groups=tuple(
             (str(value[0]), str(value[1]))
-            for value in (*schema.get("same_player_groups", []), *child.get('same_player_groups',[]))
+            for value in (*schema.get("same_player_groups", []), *child.get('same_player_groups',[]),*scoped_pairs)
             if isinstance(value, (list, tuple)) and len(value) == 2
         ),
     )
 
 
-def _rebase_mode_effect(value: Any, offset: int, count: int, group_reference: str | None = None) -> Any:
+def _rebase_mode_effect(value: Any, offset: int, count: int, group_reference: str | None = None, group_ids=None) -> Any:
     """Project one mode-local reference tree into the chosen target sequence."""
     if isinstance(value, Mapping):
         return {
-            key: _rebase_mode_effect(child, offset, count, group_reference)
+            key: _rebase_mode_effect(child, offset, count, group_reference,group_ids)
             for key, child in value.items()
         }
     if isinstance(value, list):
-        return [_rebase_mode_effect(child, offset, count, group_reference) for child in value]
+        return [_rebase_mode_effect(child, offset, count, group_reference,group_ids) for child in value]
     if isinstance(value, tuple):
-        return tuple(_rebase_mode_effect(child, offset, count, group_reference) for child in value)
+        return tuple(_rebase_mode_effect(child, offset, count, group_reference,group_ids) for child in value)
     if value == "$targets":
         if group_reference is not None:
             return group_reference
         return [f"$target.{offset + index}" for index in range(count)]
     if not isinstance(value, str):
         return value
+    if group_ids and value.startswith('$target_group.'):
+        identity=value.removeprefix('$target_group.')
+        local,separator,attribute=identity.partition('.')
+        if local in group_ids:return '$target_group.'+group_ids[local]+(separator+attribute if separator else '')
     match = re.fullmatch(
         r"\$target(?P<attribute>\.(?:controller|owner|mana_value|colors|type_line))?"
         r"(?P<separator>[.\[])(?P<index>\d+)(?P<close>\]?)",
@@ -796,10 +838,16 @@ def mode_effects(
         return []
     effects = []
     target_offset = 0
-    for definition, count, group_reference in _mode_target_frames(schema, modes, target_groups):
-        effects.extend(
-            _rebase_mode_effect(dict(effect), target_offset, count, group_reference)
-            for effect in definition.get('effects', ())
-        )
+    for mode,(definition, count, group_reference) in zip(modes,_mode_target_frames(schema, modes, target_groups),strict=True):
+        group_ids=_scoped_mode_group_data(definition,mode)[2] if 'group_scope' in definition else None
+        for effect in definition.get('effects', ()):
+            rebased=_rebase_mode_effect(dict(effect),target_offset,count,group_reference,group_ids)
+            if has_scoped_modal_targets(schema):
+                from .token_copy_recipes import executable_copy_effects
+                for copy in executable_copy_effects((rebased,)):
+                    if copy['copy_spec'].get('origin')=='target':
+                        if count!=1:raise ValueError('A modal target-copy recipe requires its one declared target')
+                        copy['_copy_target']={'schema_version':1,'index':target_offset}
+            effects.append(rebased)
         target_offset += count
     return effects

@@ -719,6 +719,7 @@
     "tests/fixtures/graveyard-self-return-cards.json",
     "tests/fixtures/group-declaration-rules.json",
     "tests/fixtures/grouped-choose-one-cards.json",
+    "tests/fixtures/grouped-nonrepeating-cards.json",
     "tests/fixtures/half-event-player-result-cards.json",
     "tests/fixtures/half-library-mill-cards.json",
     "tests/fixtures/half-sacrifice-sequence-cards.json",

@@ -273,7 +273,7 @@ def fixed_nonrepeating_modal_template(
         or not mechanics
         or contains_declared_effect_amount(effects)
         or target_schema is not None
-        and ("groups" in target_schema or "modes" in target_schema)
+        and "modes" in target_schema
         for template_id, effects, target_schema, mechanics in compiled
     ):
         return None
@@ -285,6 +285,12 @@ def fixed_nonrepeating_modal_template(
         1,
     ):
         mode_id = f"mode_{index}"
+        if target_schema is not None and 'groups' in target_schema:
+            modes[mode_id]={**deepcopy(dict(target_schema)),'group_scope':'mode',
+                'effects':scope_linked_return_bindings([deepcopy(dict(effect)) for effect in effects],mode_id),
+                'mechanics':list(mechanics)}
+            mechanic_ids.extend(mechanics)
+            continue
         groups: list[dict[str, Any]] = []
         if target_schema is not None:
             group = deepcopy(dict(target_schema))

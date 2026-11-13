@@ -207,22 +207,24 @@ def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCop
     return result
 
 
-def copy_recipes(effects: Sequence[Mapping[str, Any]]) -> tuple[TokenCopyRecipeSpec, ...]:
+def executable_copy_effects(effects: Sequence[Mapping[str, Any]]):
     """Visit executable wrappers, never copied future ability metadata."""
     from .resolution_conditions import CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION
-    found = []
     for effect in effects:
         if effect.get("op") == "create_token" and "copy_spec" in effect:
-            found.append(TokenCopyRecipeSpec.from_dict(effect["copy_spec"]))
+            yield effect
         for field in ("effects", "then_effects"):
             children = effect.get(field)
             if effect.get("op") in {"offer_optional_effect", "offer_optional_mana_payment"} and isinstance(children, (list, tuple)):
-                found.extend(copy_recipes(children))
+                yield from executable_copy_effects(children)
         if (effect.get("op") == "apply_if_public_condition"
                 and type(effect.get("schema_version")) is int
                 and effect["schema_version"] == CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION):
             for field in ("effects", "otherwise_effects"):
                 children = effect.get(field)
                 if isinstance(children, (list, tuple)):
-                    found.extend(copy_recipes(children))
-    return tuple(found)
+                    yield from executable_copy_effects(children)
+
+
+def copy_recipes(effects: Sequence[Mapping[str, Any]]) -> tuple[TokenCopyRecipeSpec, ...]:
+    return tuple(TokenCopyRecipeSpec.from_dict(effect['copy_spec']) for effect in executable_copy_effects(effects))
