@@ -442,6 +442,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "permission.action.library-search-rule",
                 "permission.cast.self-zone",
                 "permission.cast.classic_flash_cleanup",
+                "permission.cast.mana_surcharge_flash",
                 "state_query.devotion.fixed_increase",
                 "replacement.counter.quantity",
                 "replacement.damage.quantity",

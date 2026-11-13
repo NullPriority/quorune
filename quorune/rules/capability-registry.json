@@ -71431,14 +71431,12 @@
         ],
         "summary": "A face-bound intrinsic instant-timing permission is coupled to its fixed additional generic mana cost without granting the Flash keyword."
       },
-      "blockers": [
-        "Implementation and behavioral evidence are in progress."
-      ],
+      "blockers": [],
       "dependencies": [
         "timing.cast.printed_flash"
       ],
       "dependency_fail_closed_rationale": "The intrinsic timing permission and its surcharge must be independently required by runtime binding.",
-      "dependency_fail_closed_status": "not_run",
+      "dependency_fail_closed_status": "passed",
       "id": "timing.cast.mana_surcharge_flash",
       "implementation_components": [
         "quorune.cast_timing.ManaSurchargeFlashSpec",
@@ -71448,10 +71446,32 @@
         "quorune.rules.casting.surcharge_flash_costs.mana_surcharge_flash_variants"
       ],
       "implementation_mutation_rationale": "Removing the paid cost branch or bypassing its ordinary-branch filter must fail actual off-turn payment witnesses.",
-      "implementation_mutation_status": "not_run",
-      "interaction_tests": [],
-      "multiplayer_tests": [],
-      "negative_tests": [],
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_announced_x_adds_surcharge_before_reduction_without_flash_keyword_or_uncounterability",
+        "test_actual_cascade_resolution_uses_its_server_timing_authority_without_the_surcharge",
+        "test_actual_opposing_turn_surcharge_preserves_creature_count_tokens_and_mass_destruction",
+        "test_actual_ordinary_price_is_legal_but_opposing_turn_requires_the_additional_mana",
+        "test_actual_paid_flash_entry_keeps_target_controller_owner_and_linked_return_roles",
+        "test_actual_surcharge_can_cast_the_front_at_night_and_existing_owner_enters_the_back",
+        "test_actual_underpayment_is_unavailable_and_independent_timing_keeps_the_ordinary_branch"
+      ],
+      "multiplayer_tests": [
+        "test_actual_announced_x_adds_surcharge_before_reduction_without_flash_keyword_or_uncounterability",
+        "test_actual_cascade_resolution_uses_its_server_timing_authority_without_the_surcharge",
+        "test_actual_opposing_turn_surcharge_preserves_creature_count_tokens_and_mass_destruction",
+        "test_actual_ordinary_price_is_legal_but_opposing_turn_requires_the_additional_mana",
+        "test_actual_paid_flash_entry_keeps_target_controller_owner_and_linked_return_roles",
+        "test_actual_surcharge_can_cast_the_front_at_night_and_existing_owner_enters_the_back",
+        "test_actual_underpayment_is_unavailable_and_independent_timing_keeps_the_ordinary_branch"
+      ],
+      "negative_tests": [
+        "test_actual_announced_x_adds_surcharge_before_reduction_without_flash_keyword_or_uncounterability",
+        "test_actual_underpayment_is_unavailable_and_independent_timing_keeps_the_ordinary_branch",
+        "test_cost_spec_and_permission_component_are_closed_and_do_not_grant_a_keyword",
+        "test_runtime_permission_minimum_and_missing_price_contribution_cannot_admit_free_timing",
+        "test_unknown_prices_siblings_and_missing_producer_or_dependency_remain_incomplete"
+      ],
       "official_rules": [
         "113.6e",
         "601.2b",
@@ -71459,9 +71479,34 @@
         "609.4",
         "702.8a"
       ],
-      "positive_tests": [],
-      "privacy_tests": [],
-      "replay_tests": [],
+      "positive_tests": [
+        "test_actual_announced_x_adds_surcharge_before_reduction_without_flash_keyword_or_uncounterability",
+        "test_actual_cascade_resolution_uses_its_server_timing_authority_without_the_surcharge",
+        "test_actual_opposing_turn_surcharge_preserves_creature_count_tokens_and_mass_destruction",
+        "test_actual_ordinary_price_is_legal_but_opposing_turn_requires_the_additional_mana",
+        "test_actual_paid_flash_entry_keeps_target_controller_owner_and_linked_return_roles",
+        "test_actual_surcharge_can_cast_the_front_at_night_and_existing_owner_enters_the_back",
+        "test_actual_underpayment_is_unavailable_and_independent_timing_keeps_the_ordinary_branch",
+        "test_complete_price_clause_has_one_face_bound_permission_and_preserves_the_source_span"
+      ],
+      "privacy_tests": [
+        "test_actual_announced_x_adds_surcharge_before_reduction_without_flash_keyword_or_uncounterability",
+        "test_actual_cascade_resolution_uses_its_server_timing_authority_without_the_surcharge",
+        "test_actual_opposing_turn_surcharge_preserves_creature_count_tokens_and_mass_destruction",
+        "test_actual_ordinary_price_is_legal_but_opposing_turn_requires_the_additional_mana",
+        "test_actual_paid_flash_entry_keeps_target_controller_owner_and_linked_return_roles",
+        "test_actual_surcharge_can_cast_the_front_at_night_and_existing_owner_enters_the_back",
+        "test_actual_underpayment_is_unavailable_and_independent_timing_keeps_the_ordinary_branch"
+      ],
+      "replay_tests": [
+        "test_actual_announced_x_adds_surcharge_before_reduction_without_flash_keyword_or_uncounterability",
+        "test_actual_cascade_resolution_uses_its_server_timing_authority_without_the_surcharge",
+        "test_actual_opposing_turn_surcharge_preserves_creature_count_tokens_and_mass_destruction",
+        "test_actual_ordinary_price_is_legal_but_opposing_turn_requires_the_additional_mana",
+        "test_actual_paid_flash_entry_keeps_target_controller_owner_and_linked_return_roles",
+        "test_actual_surcharge_can_cast_the_front_at_night_and_existing_owner_enters_the_back",
+        "test_actual_underpayment_is_unavailable_and_independent_timing_keeps_the_ordinary_branch"
+      ],
       "required_evidence": [
         "positive",
         "negative",
@@ -71470,7 +71515,7 @@
         "privacy",
         "replay"
       ],
-      "status": "blocked",
+      "status": "trusted",
       "supported_profiles": [
         "traditional",
         "commander_duel",

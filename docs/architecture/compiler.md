@@ -429,6 +429,17 @@ program identities and their complete original source span. Unrepresented
 source-attribute conditions, compound numeric timing conditions and cyclic
 keyword conditions remain residual.
 
+`compiler/surcharge_flash_nodes.py` lowers the complete intrinsic as-though-Flash
+clause with a fixed additional generic mana price. Its face-bound timing
+component carries a closed `ManaSurchargeFlashSpec` through the existing
+cast-permission registry. `rules/casting/surcharge_flash_costs.py` adds a marked
+paid cost option before increases and reductions. Outside independent legal
+timing, only paid options remain available to both offers and submissions.
+Independent timing permissions and server-authorized casts during resolution
+retain their ordinary cost options. The permission grants no Flash keyword,
+does not alter mana value, and does not bypass zone access or casting
+prohibitions. Unknown prices and incomplete sibling instructions stay residual.
+
 `compiler/temporary_player_rule_templates.py` also lowers fixed controller-wide
 as-though-Flash effects through the existing cast-permission operation. The
 versioned result uses a separate timing field and the normal cast proposal

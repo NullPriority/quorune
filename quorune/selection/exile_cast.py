@@ -258,6 +258,7 @@ class OneShotExileCastChoiceOwnerMixin:
             program,
             hint=True,
             force_without_mana_cost=True,
+            ignore_timing=True,
         )
         public_options: list[dict[str, Any]] = []
         for option in options:
@@ -403,6 +404,7 @@ class OneShotExileCastChoiceOwnerMixin:
                 hint=True,
                 force_without_mana_cost=True,
                 cast_type_line=type_line,
+                ignore_timing=True,
             )
             for option in options:
                 target_specification = (
