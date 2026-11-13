@@ -252,7 +252,7 @@ class MassDestructionCompilerTests(unittest.TestCase):
         self.assertIsNotNone(mass_destruction_effect_template('Destroy all nonwhite creatures.'))
         self.assertEqual('exact',self.compile('Destroy all nonwhite creatures.').status)
         unsupported = (
-            "Destroy all creatures with mana value 3 or less.",
+            "Destroy each artifact with mana value less than or equal to the number of rust counters on it.",
             "Destroy all nonwhite creatures that attacked this turn.",
             "Destroy all non-Human creatures.",
             "Destroy all creatures that attacked this turn.",

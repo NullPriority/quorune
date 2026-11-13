@@ -770,6 +770,7 @@
     "tests/fixtures/mana-component-composition-cards.json",
     "tests/fixtures/mana-discard-payment-cards.json",
     "tests/fixtures/mana-source-counter-payment-cards.json",
+    "tests/fixtures/mana-value-destruction-cards.json",
     "tests/fixtures/manifest-cards.json",
     "tests/fixtures/material-sibling-admission-cards.json",
     "tests/fixtures/mayhem-cards.json",

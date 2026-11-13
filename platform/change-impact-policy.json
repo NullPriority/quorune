@@ -14776,6 +14776,28 @@
         "test_typed_activated_ability_catalog",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "mana-value-permanent-destruction",
+      "patterns": [
+        "quorune/mana_value_filter.py",
+        "quorune/affected_permanents.py",
+        "quorune/compiler/mana_value_destruction.py",
+        "quorune/compiler/destruction_templates.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/rules/destruction_regeneration_capability_shapes.py",
+        "tests/test_mana_value_destruction.py",
+        "tests/fixtures/mana-value-destruction-cards.json"
+      ],
+      "test_modules": [
+        "test_mana_value_destruction",
+        "test_mass_destruction_effect_clauses",
+        "test_qualified_destruction_queries",
+        "test_declared_effect_amounts",
+        "test_announced_activation_x",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

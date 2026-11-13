@@ -501,6 +501,10 @@ def grammar_source_fingerprint() -> str:
     from ..rules.awaken_shapes import ordinary_awaken_body,awaken_node_capabilities,awaken_result_effects
     from ..resolution_characteristic_model import IndefiniteTargetLandAnimationSpec
     from ..target_clause_binding import scope_clause_target,scope_clause_effect,clause_target_roles_are_exact
+    from .mana_value_destruction import mana_value_destruction_template
+    from .destruction_templates import _singular_set_subject
+    from .declared_effect_amounts import _result_slot
+    from ..mana_value_filter import ManaValueFilter
     from .target_set_result_sequences import target_set_result_sequence_template,_characteristic_prefix_sequence
     from ..rules.target_set_result_sequences import target_set_result_sequence_capabilities,_characteristic_tail_capabilities
     from .prevention_templates import _all_combat_damage
@@ -527,6 +531,8 @@ def grammar_source_fingerprint() -> str:
         awaken_result_effects,FixedManaAwakenSpec.__post_init__,FixedManaAwakenSpec.from_dict,
         IndefiniteTargetLandAnimationSpec.__post_init__,IndefiniteTargetLandAnimationSpec.from_dict,
         scope_clause_target,scope_clause_effect,clause_target_roles_are_exact,
+        mana_value_destruction_template,_singular_set_subject,_result_slot,
+        ManaValueFilter.__post_init__,ManaValueFilter.from_dict,ManaValueFilter.matches,
         target_set_result_sequence_template,_characteristic_prefix_sequence,
         target_set_result_sequence_capabilities,_characteristic_tail_capabilities,
         _all_combat_damage,player_target_schema,targeted_controller_prevention_effect,bound_prevention_player,

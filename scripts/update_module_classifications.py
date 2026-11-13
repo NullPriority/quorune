@@ -149,6 +149,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/cast_source_placement_model.py",
         "quorune/printed_mana_cost_model.py",
         "quorune/mana_source_counter_payment_model.py",
+        "quorune/mana_value_filter.py",
         "quorune/library_order_model.py",
         "quorune/source_entry_cast_information.py",
         "quorune/permanent_composition.py",

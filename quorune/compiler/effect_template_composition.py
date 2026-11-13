@@ -86,6 +86,9 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .mana_value_destruction import mana_value_destruction_template
+        mana_value=mana_value_destruction_template(body,source_name=card_name,cast_x_available=cast_x_available)
+        if mana_value is not None:return mana_value
         duration = match_tapped_source_duration(body, card_name=card_name, source_context=source_context)
         if duration is not None:
             tapped = tapped_source_untap_restraint_template(duration) or tapped_source_characteristics_template(

@@ -200,6 +200,8 @@ def mass_destruction_node_capabilities(
     )
     from .qualified_destruction import qualified_destruction_capabilities
     query_capabilities=qualified_destruction_capabilities(spec.query)
+    if spec.mana_value_filter is not None:
+        query_capabilities=(*query_capabilities,*spec.mana_value_filter.capability_dependencies)
     if targeted:
         if "cr-115-targets" not in mechanics or schema not in valid_player_schemas:
             return ()

@@ -69184,6 +69184,184 @@
     {
       "applicability": {
         "exclusions": [
+          "unknown or per-object dynamic operands",
+          "chosen parity and linked payment quantities",
+          "unresolved operand selection"
+        ],
+        "inputs": [
+          "one public affected-permanent set",
+          "closed equal, at-most or at-least comparison",
+          "nonnegative fixed value or represented unchanged amount"
+        ],
+        "outputs": [
+          "one resolved value before set selection",
+          "conjunctive public-set filtering"
+        ],
+        "summary": "Compare effective public permanent mana value against a closed fixed, announced-X or named source-counter bound."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The filter and represented amount must retain their independent capability owners.",
+      "dependency_fail_closed_status": "passed",
+      "id": "state_query.permanent.mana_value_filter",
+      "implementation_components": [
+        "quorune.mana_value_filter.ManaValueFilter",
+        "quorune.affected_permanents.select_affected_permanents",
+        "quorune.compiler.mana_value_destruction.mana_value_destruction_template"
+      ],
+      "implementation_mutation_rationale": "Removing a predicate or named counter read must expose independently surviving or destroyed boundary controls.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_announced_x_is_paid_and_compares_once_at_zero_and_two",
+        "test_actual_austere_command_keeps_both_complementary_creature_modes_and_canonical_order",
+        "test_actual_brotherhood_artifact_mode_keeps_the_threshold_and_damage_mode_retains_its_own_rules",
+        "test_actual_copied_x_spell_keeps_the_announced_value_without_paying_again",
+        "test_actual_face_down_and_card_copy_mana_values_override_their_printed_front_values",
+        "test_actual_fixed_creature_and_nonland_artifact_threshold_originals_preserve_their_domains",
+        "test_actual_fixed_filter_keeps_lands_and_copied_token_mana_value_but_destroys_zero_and_one",
+        "test_actual_necroplasm_freezes_the_value_before_simultaneously_destroying_itself_and_other_matches",
+        "test_actual_normal_and_cleave_keep_distinct_prices_and_only_normal_has_the_mana_bound",
+        "test_actual_other_counter_sources_keep_charge_and_fuse_names_and_artifact_land_policy",
+        "test_actual_other_x_originals_keep_artifact_creature_and_union_scopes",
+        "test_actual_regeneration_remains_available_unless_the_printed_instruction_prohibits_it",
+        "test_actual_sacrificed_source_uses_named_counter_lki_including_zero_and_does_not_count_other_counters",
+        "test_actual_source_reentry_does_not_replace_the_sacrificed_incarnation_counter_count",
+        "test_actual_sunburst_colors_determine_the_later_counter_bound_independently_of_chosen_x",
+        "test_actual_wave_reads_current_counters_then_preserves_latest_lki_when_its_source_is_destroyed",
+        "test_malformed_runtime_filter_and_unbound_operand_preserve_authoritative_state"
+      ],
+      "multiplayer_tests": [
+        "test_actual_announced_x_is_paid_and_compares_once_at_zero_and_two",
+        "test_actual_austere_command_keeps_both_complementary_creature_modes_and_canonical_order",
+        "test_actual_brotherhood_artifact_mode_keeps_the_threshold_and_damage_mode_retains_its_own_rules",
+        "test_actual_copied_x_spell_keeps_the_announced_value_without_paying_again",
+        "test_actual_face_down_and_card_copy_mana_values_override_their_printed_front_values",
+        "test_actual_fixed_creature_and_nonland_artifact_threshold_originals_preserve_their_domains",
+        "test_actual_fixed_filter_keeps_lands_and_copied_token_mana_value_but_destroys_zero_and_one",
+        "test_actual_necroplasm_freezes_the_value_before_simultaneously_destroying_itself_and_other_matches",
+        "test_actual_normal_and_cleave_keep_distinct_prices_and_only_normal_has_the_mana_bound",
+        "test_actual_other_counter_sources_keep_charge_and_fuse_names_and_artifact_land_policy",
+        "test_actual_other_x_originals_keep_artifact_creature_and_union_scopes",
+        "test_actual_regeneration_remains_available_unless_the_printed_instruction_prohibits_it",
+        "test_actual_sacrificed_source_uses_named_counter_lki_including_zero_and_does_not_count_other_counters",
+        "test_actual_source_reentry_does_not_replace_the_sacrificed_incarnation_counter_count",
+        "test_actual_sunburst_colors_determine_the_later_counter_bound_independently_of_chosen_x",
+        "test_actual_wave_reads_current_counters_then_preserves_latest_lki_when_its_source_is_destroyed",
+        "test_malformed_runtime_filter_and_unbound_operand_preserve_authoritative_state"
+      ],
+      "negative_tests": [
+        "test_actual_announced_x_is_paid_and_compares_once_at_zero_and_two",
+        "test_actual_austere_command_keeps_both_complementary_creature_modes_and_canonical_order",
+        "test_actual_brotherhood_artifact_mode_keeps_the_threshold_and_damage_mode_retains_its_own_rules",
+        "test_actual_copied_x_spell_keeps_the_announced_value_without_paying_again",
+        "test_actual_face_down_and_card_copy_mana_values_override_their_printed_front_values",
+        "test_actual_fixed_creature_and_nonland_artifact_threshold_originals_preserve_their_domains",
+        "test_actual_fixed_filter_keeps_lands_and_copied_token_mana_value_but_destroys_zero_and_one",
+        "test_actual_necroplasm_freezes_the_value_before_simultaneously_destroying_itself_and_other_matches",
+        "test_actual_normal_and_cleave_keep_distinct_prices_and_only_normal_has_the_mana_bound",
+        "test_actual_other_counter_sources_keep_charge_and_fuse_names_and_artifact_land_policy",
+        "test_actual_other_x_originals_keep_artifact_creature_and_union_scopes",
+        "test_actual_regeneration_remains_available_unless_the_printed_instruction_prohibits_it",
+        "test_actual_sacrificed_source_uses_named_counter_lki_including_zero_and_does_not_count_other_counters",
+        "test_actual_source_reentry_does_not_replace_the_sacrificed_incarnation_counter_count",
+        "test_actual_sunburst_colors_determine_the_later_counter_bound_independently_of_chosen_x",
+        "test_actual_wave_reads_current_counters_then_preserves_latest_lki_when_its_source_is_destroyed",
+        "test_counter_operand_is_bound_to_its_source_and_the_payload_minimum_does_not_need_annotations",
+        "test_filter_fields_bounds_and_symbolic_operands_reject_unknown_or_ambiguous_values",
+        "test_fixed_zero_equality_and_inequality_are_closed_and_legacy_sets_keep_their_encoding",
+        "test_literal_and_announced_x_lowering_preserve_all_base_predicates_and_regeneration_policy",
+        "test_malformed_runtime_filter_and_unbound_operand_preserve_authoritative_state",
+        "test_withdrawing_filter_authority_keeps_unfiltered_destruction_available"
+      ],
+      "official_rules": [
+        "107.3a",
+        "107.3g",
+        "202.3",
+        "608.2h",
+        "701.8a",
+        "702.12b"
+      ],
+      "positive_tests": [
+        "test_actual_announced_x_is_paid_and_compares_once_at_zero_and_two",
+        "test_actual_austere_command_keeps_both_complementary_creature_modes_and_canonical_order",
+        "test_actual_brotherhood_artifact_mode_keeps_the_threshold_and_damage_mode_retains_its_own_rules",
+        "test_actual_copied_x_spell_keeps_the_announced_value_without_paying_again",
+        "test_actual_face_down_and_card_copy_mana_values_override_their_printed_front_values",
+        "test_actual_fixed_creature_and_nonland_artifact_threshold_originals_preserve_their_domains",
+        "test_actual_fixed_filter_keeps_lands_and_copied_token_mana_value_but_destroys_zero_and_one",
+        "test_actual_necroplasm_freezes_the_value_before_simultaneously_destroying_itself_and_other_matches",
+        "test_actual_normal_and_cleave_keep_distinct_prices_and_only_normal_has_the_mana_bound",
+        "test_actual_other_counter_sources_keep_charge_and_fuse_names_and_artifact_land_policy",
+        "test_actual_other_x_originals_keep_artifact_creature_and_union_scopes",
+        "test_actual_regeneration_remains_available_unless_the_printed_instruction_prohibits_it",
+        "test_actual_sacrificed_source_uses_named_counter_lki_including_zero_and_does_not_count_other_counters",
+        "test_actual_source_reentry_does_not_replace_the_sacrificed_incarnation_counter_count",
+        "test_actual_sunburst_colors_determine_the_later_counter_bound_independently_of_chosen_x",
+        "test_actual_wave_reads_current_counters_then_preserves_latest_lki_when_its_source_is_destroyed",
+        "test_counter_operand_is_bound_to_its_source_and_the_payload_minimum_does_not_need_annotations",
+        "test_filter_fields_bounds_and_symbolic_operands_reject_unknown_or_ambiguous_values",
+        "test_fixed_zero_equality_and_inequality_are_closed_and_legacy_sets_keep_their_encoding",
+        "test_literal_and_announced_x_lowering_preserve_all_base_predicates_and_regeneration_policy",
+        "test_malformed_runtime_filter_and_unbound_operand_preserve_authoritative_state",
+        "test_withdrawing_filter_authority_keeps_unfiltered_destruction_available"
+      ],
+      "privacy_tests": [
+        "test_actual_announced_x_is_paid_and_compares_once_at_zero_and_two",
+        "test_actual_austere_command_keeps_both_complementary_creature_modes_and_canonical_order",
+        "test_actual_brotherhood_artifact_mode_keeps_the_threshold_and_damage_mode_retains_its_own_rules",
+        "test_actual_copied_x_spell_keeps_the_announced_value_without_paying_again",
+        "test_actual_face_down_and_card_copy_mana_values_override_their_printed_front_values",
+        "test_actual_fixed_creature_and_nonland_artifact_threshold_originals_preserve_their_domains",
+        "test_actual_fixed_filter_keeps_lands_and_copied_token_mana_value_but_destroys_zero_and_one",
+        "test_actual_necroplasm_freezes_the_value_before_simultaneously_destroying_itself_and_other_matches",
+        "test_actual_normal_and_cleave_keep_distinct_prices_and_only_normal_has_the_mana_bound",
+        "test_actual_other_counter_sources_keep_charge_and_fuse_names_and_artifact_land_policy",
+        "test_actual_other_x_originals_keep_artifact_creature_and_union_scopes",
+        "test_actual_regeneration_remains_available_unless_the_printed_instruction_prohibits_it",
+        "test_actual_sacrificed_source_uses_named_counter_lki_including_zero_and_does_not_count_other_counters",
+        "test_actual_source_reentry_does_not_replace_the_sacrificed_incarnation_counter_count",
+        "test_actual_sunburst_colors_determine_the_later_counter_bound_independently_of_chosen_x",
+        "test_actual_wave_reads_current_counters_then_preserves_latest_lki_when_its_source_is_destroyed",
+        "test_malformed_runtime_filter_and_unbound_operand_preserve_authoritative_state"
+      ],
+      "replay_tests": [
+        "test_actual_announced_x_is_paid_and_compares_once_at_zero_and_two",
+        "test_actual_austere_command_keeps_both_complementary_creature_modes_and_canonical_order",
+        "test_actual_brotherhood_artifact_mode_keeps_the_threshold_and_damage_mode_retains_its_own_rules",
+        "test_actual_copied_x_spell_keeps_the_announced_value_without_paying_again",
+        "test_actual_face_down_and_card_copy_mana_values_override_their_printed_front_values",
+        "test_actual_fixed_creature_and_nonland_artifact_threshold_originals_preserve_their_domains",
+        "test_actual_fixed_filter_keeps_lands_and_copied_token_mana_value_but_destroys_zero_and_one",
+        "test_actual_necroplasm_freezes_the_value_before_simultaneously_destroying_itself_and_other_matches",
+        "test_actual_normal_and_cleave_keep_distinct_prices_and_only_normal_has_the_mana_bound",
+        "test_actual_other_counter_sources_keep_charge_and_fuse_names_and_artifact_land_policy",
+        "test_actual_other_x_originals_keep_artifact_creature_and_union_scopes",
+        "test_actual_regeneration_remains_available_unless_the_printed_instruction_prohibits_it",
+        "test_actual_sacrificed_source_uses_named_counter_lki_including_zero_and_does_not_count_other_counters",
+        "test_actual_source_reentry_does_not_replace_the_sacrificed_incarnation_counter_count",
+        "test_actual_sunburst_colors_determine_the_later_counter_bound_independently_of_chosen_x",
+        "test_actual_wave_reads_current_counters_then_preserves_latest_lki_when_its_source_is_destroyed",
+        "test_malformed_runtime_filter_and_unbound_operand_preserve_authoritative_state"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "negative keyword predicates and layer-six dependency expansion",
           "hidden-zone negative-color queries",
           "unrepresented siblings and specialized consumer grammars"
@@ -94031,7 +94209,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 842,
+  "registry_version": 843,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

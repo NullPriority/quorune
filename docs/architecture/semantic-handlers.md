@@ -673,6 +673,14 @@ transactions; none reparses Oracle text or owns the underlying counter or zone
 mutation. Broad legacy exile and return operations remain separate because they
 represent other origins, destinations, quantities, choices, or hidden-zone
 movement outside these closed direct-target grammars.
+Affected-permanent sets can additionally carry a closed `mana_value_filter`
+with a fixed equality or inequality. Stored instructions may use the existing
+announced-X or named source-counter amount at its value field. The amount
+owner materializes that value before selection; unresolved predicates cannot
+select even an empty set. The ordinary destruction transaction freezes the
+resulting membership and retains replacement and regeneration policy. Legacy
+sets omit the optional field and keep their encoded form; explicit null,
+malformed flags, unknown comparisons and unrepresented operands reject.
 
 Closed activated instructions to exile the enchanted creature use the same
 permanent-exile handler after resolving a version-two attachment reference.

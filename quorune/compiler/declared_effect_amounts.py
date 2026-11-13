@@ -66,6 +66,8 @@ def _result_slot(operation: str, path: tuple[str, ...], *, cast_event_counter_ta
     ) or (
         operation == "search" and counted_search_mana_value_slot(path)
     ) or (
+        operation == "destroy_all" and path == ("set", "mana_value_filter", "value")
+    ) or (
         cast_event_counter_targets and operation == "place_counters_on_targets" and path == ("amount",)
     )
 

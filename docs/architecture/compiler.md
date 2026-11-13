@@ -1575,8 +1575,16 @@ existing typed query fields. The descriptor independently requires
 `permanent.destroy.qualified_fixed_set` and each applicable query capability.
 Resolution reads current effective characteristics and delegates replacement,
 Indestructible, regeneration and movement to the existing destruction owners.
-Variable bounds, mana-value queries, attachment-relative unions, chosen types
-and unrepresented follow-up instructions remain residual.
+`compiler/mana_value_destruction.py` adds a versioned mana-value filter to the
+same affected set. Fixed equality and at-most/at-least bounds retain every base
+type, controller and source-exclusion predicate. Announced X and named source
+counter counts use the existing amount evaluator and source snapshots; the
+bound resolves once before the affected set is selected. Sacrificing the source
+does not erase its last-known counter count. Ordinary tokens have mana value
+zero, while copied mana costs and face-down characteristics retain their normal
+owners. The predicate does not override Indestructible or regeneration.
+Per-object quantities, chosen parity, linked payment values, attachment-relative
+unions and unrepresented follow-up instructions remain residual.
 
 `compiler/fixed_homogeneous_target_sets.py` lifts an existing reviewed scalar
 destroy, exile, tap, untap, battlefield-return, own-graveyard-return, or public-

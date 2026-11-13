@@ -137,6 +137,7 @@ class MassDestructionEffectTemplate:
         return (
             "destroy",
             "destroy-fixed-set",
+            *(self.spec.mana_value_filter.mechanic_ids if self.spec.mana_value_filter is not None else ()),
             *(
                 ("cr-115-targets",)
                 if self.target_schema is not None
@@ -231,6 +232,12 @@ def _split_type_list(text: str) -> tuple[str, ...] | None:
 
 
 def _singular_set_subject(subject: str) -> str | None:
+    prefix='other ' if subject.startswith('other ') else ''
+    body=subject.removeprefix(prefix) if prefix else subject
+    terms=body.replace(', and ', ', ').replace(' and ', ', ').split(', ')
+    if (2<=len(terms)<=4 and len(set(terms))==len(terms)
+            and all(term in _MASS_DESTRUCTION_CARD_TYPES for term in terms)):
+        return prefix+', '.join(term+'s' for term in terms)
     match = re.fullmatch(
         r"(?P<prefix>(?:other )?(?:[a-z]+ )?)"
         r"(?P<kind>artifact|battle|creature|enchantment|land|permanent|planeswalker)"

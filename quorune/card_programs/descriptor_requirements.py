@@ -11,6 +11,9 @@ from ..resolution_characteristic_model import (
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    if 'mana_value_filter' in value:
+        from ..mana_value_filter import ManaValueFilter
+        return ManaValueFilter.from_dict(value['mana_value_filter']).capability_dependencies
     from ..rules.cast_cascade_grants import CAST_CASCADE_OPERATION, cast_cascade_payload_dependencies
     from ..rules.next_cast_counter_protection import (
         is_versioned_next_cast_protection, next_cast_protection_payload_dependencies,

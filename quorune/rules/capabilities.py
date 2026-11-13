@@ -420,6 +420,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
     **_query.AMOUNT_MECHANIC_CAPABILITIES,
     "declared-effect-amount": ("quantity_expression.declared_effect_amount",),
+    "mana-value-permanent-filter": ("state_query.permanent.mana_value_filter",),
     FIXED_LIBRARY_SELECTION_MECHANIC: ("library.select.fixed_controller",),
     PARTNER_WITH_SEARCH_MECHANIC_ID: ("library.search.partner_with_named_to_hand",),
     "scry": ("library.scry.fixed_controller",),
