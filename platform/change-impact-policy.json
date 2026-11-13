@@ -14722,6 +14722,24 @@
         "test_awaken_casting",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "positive-fixed-sacrifice-counts",
+      "patterns": [
+        "quorune/compiler/affected_player_sacrifice_templates.py",
+        "quorune/rules/affected_player_sacrifice_capability_shapes.py",
+        "quorune/compiler/event_player_choice_templates.py",
+        "tests/test_fixed_sacrifice_counts.py",
+        "tests/fixtures/fixed-sacrifice-count-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_sacrifice_counts",
+        "test_fixed_affected_player_sacrifices",
+        "test_event_player_sacrifices",
+        "test_monstrous_event_native",
+        "test_fixed_effect_clause_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

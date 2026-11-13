@@ -56,7 +56,7 @@ def fixed_affected_player_sacrifice_node_capabilities(
         or effect.get("actor") != "$controller"
         or effect.get("zone") != "battlefield"
         or type(effect.get("count")) is not int
-        or effect.get("count") not in {1, 2}
+        or effect.get("count") < 1
         or effect.get("then") != "sacrifice"
         or type(effect.get("prompt")) is not str
         or not str(effect.get("prompt")).strip()

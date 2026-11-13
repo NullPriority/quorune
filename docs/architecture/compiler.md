@@ -3088,13 +3088,17 @@ capability declaration and compiler coverage marker.
 `compiler/affected_player_sacrifice_templates.py` owns one mandatory fixed
 affected-player sacrifice leaf shared by spell, triggered, activated, and
 fixed Choose one modal contexts. Target-player, target-opponent, each-player,
-and each-opponent relations select one or two public battlefield permanents
-through a closed `ObjectQuerySpec`. The existing APNAP selection owner collects
+and each-opponent relations select a fixed positive number of public battlefield
+permanents through a closed `ObjectQuerySpec`, including represented canonical
+creature subtype predicates. The existing APNAP selection owner collects
 the affected players' choices without early mutation, then a typed simultaneous
 move intent enters the canonical zone-destination replacement coordinator.
+Each player sacrifices as many qualifying permanents as possible when fewer
+than the printed number are available. Subsequent instructions run after that
+simultaneous move, so tokens created afterward cannot satisfy the earlier choice.
 Optional, variable, all, half, greatest/least, dynamic-characteristic,
-combat-state, subtype, color, linked-result, cost, delayed, and rule-generated
-sacrifice forms remain source-spanned residuals.
+combat-state, color, linked-result, cost, delayed, and rule-generated sacrifice
+forms remain outside this leaf and require an independently closed owner.
 
 `compiler/event_player_choice_templates.py` reuses that sacrifice leaf for
 closed occurrence-player subjects. The established event-player binder chooses

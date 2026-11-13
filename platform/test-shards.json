@@ -1159,6 +1159,7 @@
       "test_fixed_evasion_grants",
       "test_fixed_keyword_entry_counters",
       "test_fixed_library_searches",
+      "test_fixed_sacrifice_counts",
       "test_fixed_target_reanimation",
       "test_fixed_zone_change_additional_costs",
       "test_global_alternative_costs",

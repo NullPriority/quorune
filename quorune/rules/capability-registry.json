@@ -20297,7 +20297,7 @@
     {
       "applicability": {
         "exclusions": [
-          "optional, variable, all, half, greatest, least, historic, dynamic, chosen-quality, color-count, mana-value, power, toughness, or arbitrary-number sacrifices",
+          "optional, variable, all, half, greatest, least, historic, dynamic, chosen-quality, color-count, mana-value, power, toughness sacrifices",
           "attacking or blocking predicates",
           "effects where another player chooses the sacrificed object",
           "linked sacrifice results and conditional follow-ups outside independently closed sequence grammar",
@@ -20305,7 +20305,7 @@
         ],
         "inputs": [
           "one source-spanned controller, target-player, target-opponent, each-player, or each-opponent sacrifice instruction",
-          "one fixed count of one or two",
+          "one printed positive fixed count",
           "one closed public battlefield ObjectQuerySpec",
           "current effective permanent characteristics and controller",
           "stable public object refs",
@@ -20318,7 +20318,7 @@
           "normalized zone-change and sacrifice events",
           "exact continuation replay"
         ],
-        "summary": "Resolve one mandatory fixed controller or affected-player sacrifice by collecting public controlled-permanent choices in APNAP order and committing through one replacement-aware simultaneous zone transaction. Fixed creature subtype predicates inspect current creature types. The public query can exclude land from a permanent scope or a canonical creature subtype from a creature scope."
+        "summary": "Resolve one mandatory fixed controller or affected-player sacrifice by collecting public controlled-permanent choices in APNAP order and committing through one replacement-aware simultaneous zone transaction. Fixed creature subtype predicates inspect current creature types. The public query can exclude land from a permanent scope or a canonical creature subtype from a creature scope. Fixed counts use the canonical positive-integer APNAP contract and do as much as possible when fewer candidates exist."
       },
       "blockers": [],
       "dependencies": [
@@ -20340,29 +20340,49 @@
       "implementation_mutation_rationale": "test_affected_player_sacrifice_compiler_mutant_is_killed removes the shared production and proves direct, activated, triggered, and modal witnesses return to precise residuals.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_gambit_sequences_private_discard_life_loss_and_three_bat_sacrifices_after_departure",
+        "test_actual_hex_and_taste_collect_full_counts_before_sacrificing_then_create_only_later_tokens",
+        "test_actual_monstrous_designation_requires_three_land_choices_and_cannot_trigger_again",
+        "test_actual_six_creature_sacrifices_use_the_canonical_destination_owner_before_token_creation",
+        "test_actual_transformation_keeps_the_opponent_target_and_their_three_sacrifice_choices",
+        "test_actual_wildfire_and_destructive_force_sacrifice_lands_before_damaging_remaining_creatures",
         "test_affected_player_sacrifice_uses_zone_replacement_and_replays",
-        "test_original_upkeep_sacrifice_is_current_controller_scoped_and_replays",
+        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
         "test_original_perilous_research_draws_before_controller_sacrifice_choice",
         "test_original_puppet_upkeep_uses_current_creature_subtype_and_empty_sets",
+        "test_original_upkeep_sacrifice_is_current_controller_scoped_and_replays",
         "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
-        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
         "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
         "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "multiplayer_tests": [
+        "test_actual_gambit_sequences_private_discard_life_loss_and_three_bat_sacrifices_after_departure",
+        "test_actual_hex_and_taste_collect_full_counts_before_sacrificing_then_create_only_later_tokens",
+        "test_actual_monstrous_designation_requires_three_land_choices_and_cannot_trigger_again",
+        "test_actual_six_creature_sacrifices_use_the_canonical_destination_owner_before_token_creation",
+        "test_actual_transformation_keeps_the_opponent_target_and_their_three_sacrifice_choices",
+        "test_actual_wildfire_and_destructive_force_sacrifice_lands_before_damaging_remaining_creatures",
         "test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously",
         "test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
         "test_original_puppet_upkeep_uses_current_creature_subtype_and_empty_sets",
         "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "negative_tests": [
-        "test_unsupported_sacrifice_choices_and_shape_mutations_fail_closed",
+        "test_actual_gambit_sequences_private_discard_life_loss_and_three_bat_sacrifices_after_departure",
+        "test_actual_hex_and_taste_collect_full_counts_before_sacrificing_then_create_only_later_tokens",
+        "test_actual_monstrous_designation_requires_three_land_choices_and_cannot_trigger_again",
+        "test_actual_six_creature_sacrifices_use_the_canonical_destination_owner_before_token_creation",
+        "test_actual_transformation_keeps_the_opponent_target_and_their_three_sacrifice_choices",
+        "test_actual_wildfire_and_destructive_force_sacrifice_lands_before_damaging_remaining_creatures",
         "test_mandatory_controller_sacrifice_uses_affected_player_choice",
-        "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
         "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+        "test_positive_integer_count_is_required_and_legacy_payloads_keep_their_shape",
+        "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
+        "test_unsupported_sacrifice_choices_and_shape_mutations_fail_closed",
         "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner"
       ],
       "official_rules": [
+        "101.3",
         "101.4",
         "115.1",
         "608.2b",
@@ -20371,25 +20391,44 @@
         "701.21a"
       ],
       "positive_tests": [
+        "test_actual_gambit_sequences_private_discard_life_loss_and_three_bat_sacrifices_after_departure",
+        "test_actual_hex_and_taste_collect_full_counts_before_sacrificing_then_create_only_later_tokens",
+        "test_actual_monstrous_designation_requires_three_land_choices_and_cannot_trigger_again",
+        "test_actual_six_creature_sacrifices_use_the_canonical_destination_owner_before_token_creation",
+        "test_actual_transformation_keeps_the_opponent_target_and_their_three_sacrifice_choices",
+        "test_actual_wildfire_and_destructive_force_sacrifice_lands_before_damaging_remaining_creatures",
         "test_fixed_affected_player_sacrifices_compile_across_contexts_and_modes",
         "test_fixed_count_sacrifices_available_objects_and_skips_empty_player",
+        "test_fixed_counts_preserve_the_source_quantity_and_existing_context_owners",
         "test_mandatory_controller_sacrifice_uses_affected_player_choice",
         "test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
         "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
         "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "privacy_tests": [
+        "test_actual_gambit_sequences_private_discard_life_loss_and_three_bat_sacrifices_after_departure",
+        "test_actual_hex_and_taste_collect_full_counts_before_sacrificing_then_create_only_later_tokens",
+        "test_actual_monstrous_designation_requires_three_land_choices_and_cannot_trigger_again",
+        "test_actual_six_creature_sacrifices_use_the_canonical_destination_owner_before_token_creation",
+        "test_actual_transformation_keeps_the_opponent_target_and_their_three_sacrifice_choices",
+        "test_actual_wildfire_and_destructive_force_sacrifice_lands_before_damaging_remaining_creatures",
         "test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously",
         "test_original_perilous_research_draws_before_controller_sacrifice_choice"
       ],
       "replay_tests": [
-        "test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously",
+        "test_actual_gambit_sequences_private_discard_life_loss_and_three_bat_sacrifices_after_departure",
+        "test_actual_hex_and_taste_collect_full_counts_before_sacrificing_then_create_only_later_tokens",
+        "test_actual_monstrous_designation_requires_three_land_choices_and_cannot_trigger_again",
+        "test_actual_six_creature_sacrifices_use_the_canonical_destination_owner_before_token_creation",
+        "test_actual_transformation_keeps_the_opponent_target_and_their_three_sacrifice_choices",
+        "test_actual_wildfire_and_destructive_force_sacrifice_lands_before_damaging_remaining_creatures",
         "test_affected_player_sacrifice_uses_zone_replacement_and_replays",
-        "test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
-        "test_original_upkeep_sacrifice_is_current_controller_scoped_and_replays",
-        "test_original_perilous_research_draws_before_controller_sacrifice_choice",
-        "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
+        "test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously",
         "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+        "test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
+        "test_original_perilous_research_draws_before_controller_sacrifice_choice",
+        "test_original_upkeep_sacrifice_is_current_controller_scoped_and_replays",
+        "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
         "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
         "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
@@ -20407,7 +20446,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 3
+      "version": 4
     },
     {
       "applicability": {
@@ -93885,7 +93924,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 839,
+  "registry_version": 840,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

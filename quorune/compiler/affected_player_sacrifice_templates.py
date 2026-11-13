@@ -12,6 +12,7 @@ from typing import Any, Mapping
 from ..object_predicate import ObjectQuerySpec
 from .creature_subtypes import canonical_creature_subtype_surface
 from ..util import stable_json
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
 FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC = (
@@ -24,7 +25,7 @@ _SACRIFICE_MECHANIC = "sacrifice"
 _TARGETS_MECHANIC = "cr-115-targets"
 _INSTRUCTION = re.compile(
     r"^(?:(?P<subject>target player|target opponent|each player|each opponent|you) )?"
-    r"(?P<verb>sacrifices?) (?P<count>a|an|one|two) (?P<object>.+?)\.?$",
+    rf"(?P<verb>sacrifices?) (?P<count>an|{FIXED_COUNT_PATTERN}) (?P<object>.+?)\.?$",
     re.IGNORECASE,
 )
 
@@ -68,7 +69,7 @@ def _predicate(phrase: str, *, count: int) -> ObjectQuerySpec | None:
         ) + " with flying"
     elif normalized.endswith(" of their choice"):
         normalized = normalized.removesuffix(" of their choice")
-    if count == 2:
+    if count > 1:
         normalized = {
             "artifacts": "artifact",
             "creatures": "creature",
@@ -193,7 +194,7 @@ class FixedAffectedPlayerSacrificeTemplate:
     def __post_init__(self) -> None:
         if not isinstance(self.subject, AffectedPlayerSacrificeSubject):
             raise ValueError("Affected-player sacrifice subject is malformed")
-        if type(self.count) is not int or self.count not in {1, 2}:
+        if type(self.count) is not int or self.count < 1:
             raise ValueError("Affected-player sacrifice count is unsupported")
         if not fixed_affected_player_sacrifice_predicate_is_closed(
             self.predicate.to_dict()
@@ -281,7 +282,9 @@ def fixed_affected_player_sacrifice_effect_template(
     if (subject == "you") != (match.group("verb").casefold() == "sacrifice"):
         return None
     count_word = match.group("count").casefold()
-    count = 2 if count_word == "two" else 1
+    count = fixed_number(count_word)
+    if count < 1:
+        return None
     predicate = _predicate(match.group("object"), count=count)
     if predicate is None:
         return None
