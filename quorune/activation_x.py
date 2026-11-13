@@ -9,7 +9,12 @@ ANNOUNCED_ACTIVATION_X_SACRIFICE_CAPABILITY = 'activation.mana_cost.announced_x_
 ANNOUNCED_ACTIVATION_X_FIELD = 'announced_x_symbols'
 
 
-def activation_x_symbols(cost_text: str, *, allow_source_sacrifice: bool = False) -> int | None:
+def activation_x_symbols(cost_text: str, *, allow_source_sacrifice: bool = False,
+        allow_fixed_discard: bool = False) -> int | None:
+    from .activation_x_discard import activation_x_discard_count
+    if allow_fixed_discard and activation_x_discard_count(cost_text) is not None:
+        cost_text = cost_text.rpartition(', Discard ')[0]
+        allow_source_sacrifice = False
     pattern = r'(?:\{(?:X|\d+|[WUBRGC])\})+(?:, \{T\})?'
     if allow_source_sacrifice:
         pattern += r'(?:, Sacrifice this (?:artifact|battle|creature|enchantment|land|permanent|planeswalker))?'
@@ -19,11 +24,14 @@ def activation_x_symbols(cost_text: str, *, allow_source_sacrifice: bool = False
     return count or None
 
 
-def activation_x_capabilities(*, symbols: int | None, sacrifice_source: bool) -> tuple[str, ...]:
+def activation_x_capabilities(*, symbols: int | None, sacrifice_source: bool,
+        discard_cards: bool = False) -> tuple[str, ...]:
     if symbols is None:
         return ()
+    from .activation_x_discard import ANNOUNCED_X_DISCARD_CAPABILITY
     return (ANNOUNCED_ACTIVATION_X_CAPABILITY,) + (
-        (ANNOUNCED_ACTIVATION_X_SACRIFICE_CAPABILITY,) if sacrifice_source else ())
+        (ANNOUNCED_ACTIVATION_X_SACRIFICE_CAPABILITY,) if sacrifice_source else ()) + (
+        (ANNOUNCED_X_DISCARD_CAPABILITY, 'activation.selected_zone_change.fixed') if discard_cards else ())
 
 
 def validate_activation_x_ability(ability) -> None:
@@ -33,10 +41,11 @@ def validate_activation_x_ability(ability) -> None:
             raise ValueError('An X activation cost requires its retained typed price binding')
         return
     if (type(symbols) is not int or symbols <= 0
-            or activation_x_symbols(ability.cost_text, allow_source_sacrifice=True) != symbols
+            or activation_x_symbols(ability.cost_text, allow_source_sacrifice=True,
+                allow_fixed_discard=True) != symbols
             or ability.zones != ('battlefield',) or ability.mana_ability
             or ability.complex_symbols or ability.uncompiled_costs
-            or ability.choices or ability.mana_cost_options or ability.waterbend is not None
+            or ability.mana_cost_options or ability.waterbend is not None
             or ability.discard_source or ability.exile_source
             or ability.untap_source or ability.life_payment or ability.energy_payment or ability.random_discard_payment
             or ability.loyalty_delta is not None or ability.source_counter_removal_cost is not None):
@@ -49,6 +58,8 @@ def validate_activation_x_ability(ability) -> None:
         raise ValueError('Activation X tap obligation must match its printed cost')
     if ability.sacrifice_source != (', Sacrifice this ' in ability.cost_text):
         raise ValueError('Activation X sacrifice obligation must match its printed cost')
+    from .activation_x_discard import validate_activation_x_discard
+    validate_activation_x_discard(ability)
 
 
 def chosen_activation_x(ability, response) -> int | None:

@@ -264,9 +264,11 @@ def is_closed_announced_target_set_program(program: Any) -> bool:
         cost = program.cost_schema or {}
         if (type(cost.get("announced_x_symbols")) is not int
                 or not set(activation_x_capabilities(symbols=cost.get('announced_x_symbols'),
-                    sacrifice_source=cost.get('sacrifice_source',False))).issubset(program.capability_dependencies)
+                    sacrifice_source=cost.get('sacrifice_source',False),
+                    discard_cards=bool(cost.get('choices')))).issubset(program.capability_dependencies)
                 or activation_x_symbols(str(cost.get("text") or ""),
-                    allow_source_sacrifice=cost.get('sacrifice_source') is True) != cost["announced_x_symbols"]):
+                    allow_source_sacrifice=cost.get('sacrifice_source') is True,
+                    allow_fixed_discard=bool(cost.get('choices'))) != cost["announced_x_symbols"]):
             return False
     required = announced_target_set_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage)

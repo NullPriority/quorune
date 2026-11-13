@@ -2493,6 +2493,115 @@
     {
       "applicability": {
         "exclusions": [
+          "random costs",
+          "typed or X-dependent card predicates",
+          "variable discard counts",
+          "combined source-sacrifice costs",
+          "unrepresented result bodies"
+        ],
+        "inputs": [
+          "ordinary X mana symbols with optional source tap",
+          "one to ten fixed chosen owned-hand cards",
+          "exact closed owned-hand query",
+          "complete trusted card program"
+        ],
+        "outputs": [
+          "all printed X and colored mana priced once",
+          "exact distinct fixed discard paid independently of X",
+          "existing replacement-aware card movement and disclosure",
+          "per-instance stack X retained"
+        ],
+        "summary": "Compose ordinary announced activation X with a fixed chosen-card discard through the canonical owned-hand selected-cost owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.mana_cost.announced_x",
+        "activation.selected_zone_change.fixed"
+      ],
+      "dependency_fail_closed_rationale": "Verified withdrawal keeps the X-discard combination material while ordinary X and fixed discard remain available. Source assurance and executable binding independently infer both the combination and selected-cost dependency.",
+      "dependency_fail_closed_status": "passed",
+      "id": "activation.mana_cost.announced_x_fixed_discard",
+      "implementation_components": [
+        "quorune.activation_x_discard.activation_x_discard_count",
+        "quorune.activation_x_discard.validate_activation_x_discard",
+        "quorune.activation_x.validate_activation_x_ability",
+        "quorune.compiler.activation_x_costs.announced_x_activation_cost",
+        "quorune.compiler.activated_zone_change_costs.fixed_activated_zone_change_cost",
+        "quorune.activation_x.activation_x_capabilities"
+      ],
+      "implementation_mutation_rationale": "Fresh Cackling Witch witnesses kill omitted X mana pricing and omitted fixed-discard producer obligations.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_alexi_exact_targets_and_zero_retain_two_discarded_cards",
+        "test_actual_hammer_mage_destroys_only_artifacts_within_its_paid_x_bound",
+        "test_actual_latulla_pays_two_cards_even_at_zero_and_keeps_colored_price",
+        "test_actual_witch_fixed_discard_and_pump_keep_their_separate_counts"
+      ],
+      "multiplayer_tests": [
+        "test_actual_alexi_exact_targets_and_zero_retain_two_discarded_cards",
+        "test_actual_hammer_mage_destroys_only_artifacts_within_its_paid_x_bound",
+        "test_actual_latulla_pays_two_cards_even_at_zero_and_keeps_colored_price",
+        "test_actual_witch_fixed_discard_and_pump_keep_their_separate_counts"
+      ],
+      "negative_tests": [
+        "test_actual_alexi_exact_targets_and_zero_retain_two_discarded_cards",
+        "test_actual_hammer_mage_destroys_only_artifacts_within_its_paid_x_bound",
+        "test_actual_latulla_pays_two_cards_even_at_zero_and_keeps_colored_price",
+        "test_actual_witch_fixed_discard_and_pump_keep_their_separate_counts",
+        "test_catalog_infers_the_cost_dependency_without_coverage_annotations",
+        "test_closed_discard_obligation_rejects_missing_or_changed_query_count_and_price",
+        "test_insufficient_owned_hand_hides_the_action_and_rejects_without_payment",
+        "test_unrepresented_original_results_do_not_expose_a_new_paid_x_action",
+        "test_verified_withdrawal_and_source_assurance_require_both_cost_owners"
+      ],
+      "official_rules": [
+        "107.3a",
+        "107.3k",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "701.9a",
+        "701.9b"
+      ],
+      "positive_tests": [
+        "test_actual_alexi_exact_targets_and_zero_retain_two_discarded_cards",
+        "test_actual_hammer_mage_destroys_only_artifacts_within_its_paid_x_bound",
+        "test_actual_latulla_pays_two_cards_even_at_zero_and_keeps_colored_price",
+        "test_actual_witch_fixed_discard_and_pump_keep_their_separate_counts",
+        "test_fixed_counts_keep_query_roundtrip_and_independent_repeated_x_price"
+      ],
+      "privacy_tests": [
+        "test_actual_alexi_exact_targets_and_zero_retain_two_discarded_cards",
+        "test_actual_hammer_mage_destroys_only_artifacts_within_its_paid_x_bound",
+        "test_actual_latulla_pays_two_cards_even_at_zero_and_keeps_colored_price",
+        "test_actual_witch_fixed_discard_and_pump_keep_their_separate_counts"
+      ],
+      "replay_tests": [
+        "test_actual_alexi_exact_targets_and_zero_retain_two_discarded_cards",
+        "test_actual_hammer_mage_destroys_only_artifacts_within_its_paid_x_bound",
+        "test_actual_latulla_pays_two_cards_even_at_zero_and_keeps_colored_price",
+        "test_actual_witch_fixed_discard_and_pump_keep_their_separate_counts"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "selected other permanents",
           "variable nonmana payments",
           "mana abilities",
@@ -94326,7 +94435,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 844,
+  "registry_version": 845,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

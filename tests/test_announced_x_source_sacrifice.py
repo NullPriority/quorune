@@ -46,7 +46,7 @@ class AnnouncedXSourceSacrificeModelTests(unittest.TestCase):
     def test_selected_variable_and_unrepresented_costs_stay_residual(self):
         for cost in ('{X}, Sacrifice another creature','{X}, Sacrifice two artifacts',
                 '{X}, Sacrifice this artifact, Sacrifice this artifact',
-                '{X}, Discard a card','{X}, Pay X life',
+                '{X}, Discard a creature card','{X}, Pay X life',
                 '{X}{G/U}, Sacrifice this creature','{X}, Exile this artifact'):
             raw,=parse_activated_abilities(card_name='Generic Source',oracle_text=cost+': You gain X life.')
             self.assertIsNone(announced_x_activation_cost(raw).announced_x_symbols,cost)

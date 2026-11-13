@@ -80,7 +80,7 @@ def bind_semantic_program_runtime(
             from ..activation_x import activation_x_capabilities
             ability = descriptor['ability']
             required.update(activation_x_capabilities(symbols=ability['announced_x_symbols'],
-                sacrifice_source=ability.get('sacrifice_source', False)))
+                sacrifice_source=ability.get('sacrifice_source', False), discard_cards=bool(ability.get('choices'))))
         if descriptor.get("schema_version") != registered["schema_version"]:
             blockers.add(f"runtime_handler:schema_mismatch:{handler_id}")
         if descriptor.get("event") != registered["event"]:

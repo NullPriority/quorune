@@ -378,6 +378,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/attached_prevention_model.py",
         "quorune/attachment_information.py",
         "quorune/activation_x.py",
+        "quorune/activation_x_discard.py",
         "quorune/whole_hand_discard.py",
         "quorune/random_discard.py",
         "quorune/public_quantity_mana_model.py",
@@ -699,7 +700,7 @@ def _owner(relative: str, layer: str) -> str:
         return 'casting_activation_and_costs'
     if relative == 'quorune/static_player_restriction_model.py':
         return 'casting_activation_and_costs'
-    if relative in {'quorune/activation_x.py','quorune/rules/activation/x_costs.py',
+    if relative in {'quorune/activation_x.py','quorune/activation_x_discard.py','quorune/rules/activation/x_costs.py',
             'quorune/activation_cost_modifiers.py','quorune/rules/activation/cost_modifiers.py',
             'quorune/rules/activation/pricing.py'}:
         return 'casting_activation_and_costs'

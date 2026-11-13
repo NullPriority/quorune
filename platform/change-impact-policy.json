@@ -14814,6 +14814,24 @@
         "test_announced_target_cardinality",
         "test_source_sacrifice_payments"
       ]
+    },
+    {
+      "id": "announced-x-fixed-discard",
+      "patterns": [
+        "quorune/activation_x_discard.py",
+        "quorune/activation_x.py",
+        "quorune/compiler/activation_x_costs.py",
+        "tests/test_announced_x_fixed_discard.py",
+        "tests/fixtures/announced-x-fixed-discard-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_x_fixed_discard",
+        "test_announced_activation_x",
+        "test_announced_x_source_sacrifice",
+        "test_counted_activation_costs",
+        "test_announced_target_cardinality",
+        "test_mana_value_destruction"
+      ]
     }
   ],
   "risk_rules": [

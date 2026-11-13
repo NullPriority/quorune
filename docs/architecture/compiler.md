@@ -5070,7 +5070,9 @@ waiving it does not waive the additional price or force that price's X to zero.
 `compiler/activation_x_costs.py` admits ordinary unrestricted battlefield
 activation mana costs with one or more X symbols, optionally a source tap
 and a fixed sacrifice of the source. The sacrifice combination retains its
-own capability dependency and the printed source-sacrifice obligation;
+own capability dependency and the printed source-sacrifice obligation.
+Fixed chosen-card discard costs use the canonical selected-cost query and
+retain both the exact count and a separate combination capability. Other
 selected-object and variable nonmana costs remain outside this grammar.
 The closed catalog retains the symbol count, while the existing declared
 amount projection varies only numeric results and preserves fixed target

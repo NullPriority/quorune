@@ -656,6 +656,7 @@
       "test_amass_rules",
       "test_announced_activation_x",
       "test_announced_hand_discard_costs",
+      "test_announced_x_fixed_discard",
       "test_announced_x_library_search",
       "test_announced_x_source_sacrifice",
       "test_backup_rules",

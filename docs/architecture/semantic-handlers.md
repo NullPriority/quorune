@@ -313,6 +313,13 @@ The canonical activation transaction pays all costs atomically; its stack
 object retains the announced X and source information after sacrifice. Older
 ordinary X and fixed self-sacrifice descriptors keep their encoded forms.
 
+Fixed card-discard costs also compose with announced activation X. They retain
+the existing exact owned-hand query, a count of at most ten, and the canonical
+selected-cost transaction. The discard count is independent of X, including
+zero. The combination rejects random discard, restricted card predicates,
+variable counts and simultaneous source-sacrifice costs. Existing movement,
+replacement, disclosure and rollback owners remain authoritative.
+
 Selected-tap schema two adds fixed ordinary color alternatives to the existing
 controlled untapped permanent query. Its plan retains the ability source's
 allowed zone and logical identity; Forecast can use an owned hand source while

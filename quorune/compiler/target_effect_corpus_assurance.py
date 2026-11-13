@@ -27,6 +27,7 @@ from .attached_granted_ability_nodes import (
 from .activated_mana_nodes import _activated_effect_material
 from .activation_x_costs import announced_x_activation_cost, announced_x_activation_effect
 from ..activation_x import activation_x_capabilities, activation_x_symbols
+from ..activation_x_discard import activation_x_discard_count, validate_activation_x_discard
 from .fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
@@ -553,6 +554,7 @@ def grammar_source_fingerprint() -> str:
         announced_x_activation_effect,
         activation_x_symbols,
         activation_x_capabilities,
+        activation_x_discard_count, validate_activation_x_discard,
         _required_capabilities,
         _composing_event_capabilities,
         _direct_player_attack_composition_capabilities,
@@ -762,7 +764,7 @@ def _compiled_source_template(body, *, record, node, face_index, face_name):
         text=body, compile_fixed=lambda text: _compiled_template(text, card_name=face_name or record.name)
         or (None, (), None, ()))
     return declared or compiled, activation_x_capabilities(symbols=ability.announced_x_symbols,
-        sacrifice_source=ability.sacrifice_source)
+        sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices))
 
 
 def _clause_count(body: str, template_id: str) -> int:

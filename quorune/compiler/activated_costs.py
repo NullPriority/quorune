@@ -95,7 +95,7 @@ def activated_ability_cost_capabilities(
     if ability.announced_x_symbols is not None:
         from ..activation_x import activation_x_capabilities
         additional.extend(activation_x_capabilities(symbols=ability.announced_x_symbols,
-            sacrifice_source=ability.sacrifice_source))
+            sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices)))
     if ability.waterbend is not None:
         from ..waterbend import WATERBEND_CAPABILITY
         additional.append(WATERBEND_CAPABILITY)
