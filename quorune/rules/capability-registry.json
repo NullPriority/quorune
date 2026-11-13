@@ -38485,7 +38485,8 @@
         "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly",
         "test_subtype_entry_trigger_filters_and_uses_replacement_owner",
         "test_targeted_cast_triggers_heroic_and_magecraft_in_one_batch",
-        "test_zone_entry_counter_triggers_apply_typed_subject_relations"
+        "test_zone_entry_counter_triggers_apply_typed_subject_relations",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "multiplayer_tests": [
         "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
@@ -38497,7 +38498,8 @@
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
         "test_death_counter_replacement_is_private_and_replays_exactly",
         "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
-        "test_opponent_death_counter_trigger_uses_previous_controller"
+        "test_opponent_death_counter_trigger_uses_previous_controller",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
@@ -38557,7 +38559,8 @@
         "test_singular_token_entry_batch_variant_mutant_is_killed",
         "test_singular_token_entry_retains_unrepresented_qualifiers_and_unknown_results",
         "test_singular_token_entry_verified_zone_owner_withdrawal_preserves_unrelated_draw",
-        "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly"
+        "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "privacy_tests": [
         "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
@@ -38568,7 +38571,8 @@
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_death_counter_replacement_is_private_and_replays_exactly",
         "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
-        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "replay_tests": [
         "test_actual_hunter_sacrifice_counter_and_decline_preserve_order_and_replay",
@@ -38581,7 +38585,8 @@
         "test_death_counter_replacement_is_private_and_replays_exactly",
         "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
-        "test_pending_sacrifice_trigger_does_not_modify_blinked_source"
+        "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "required_evidence": [
         "positive",
@@ -52578,11 +52583,13 @@
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
         "test_surveil_destination_replacement_resumes_before_public_commit",
         "test_surveil_short_and_empty_library_emit_exact_events",
-        "test_surveil_then_draw_sequence_resumes_in_printed_order"
+        "test_surveil_then_draw_sequence_resumes_in_printed_order",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "multiplayer_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
-        "test_surveil_orders_top_and_graveyard_and_replays_exactly"
+        "test_surveil_orders_top_and_graveyard_and_replays_exactly",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "negative_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
@@ -52604,17 +52611,20 @@
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
         "test_fixed_surveil_compiles_across_spell_trigger_activation_and_sequence",
         "test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
-        "test_surveil_short_and_empty_library_emit_exact_events"
+        "test_surveil_short_and_empty_library_emit_exact_events",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "privacy_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
         "test_surveil_destination_replacement_resumes_before_public_commit",
-        "test_surveil_orders_top_and_graveyard_and_replays_exactly"
+        "test_surveil_orders_top_and_graveyard_and_replays_exactly",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "replay_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
         "test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
-        "test_surveil_orders_top_and_graveyard_and_replays_exactly"
+        "test_surveil_orders_top_and_graveyard_and_replays_exactly",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "required_evidence": [
         "positive",
@@ -72719,7 +72729,9 @@
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "multiplayer_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72744,7 +72756,9 @@
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "negative_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72827,7 +72841,9 @@
         "test_zero_single_reversed_groups_have_complete_nonduplicate_history",
         "test_query_defined_token_stats_require_complete_intrinsic_definitions",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "privacy_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72852,7 +72868,9 @@
         "test_current_power_and_toughness_queries_snapshot_the_new_body",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
-        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests"
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "replay_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -72878,7 +72896,9 @@
         "test_current_power_and_toughness_queries_snapshot_the_new_body",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "required_evidence": [
         "positive",
@@ -73807,20 +73827,26 @@
         "test_actual_destroy_only_spree_mode_does_not_create_unselected_token",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "multiplayer_tests": [
         "test_typed_token_ability_apnap_privacy_and_replay",
         "test_real_token_control_change_uses_current_activator_targets_and_child_program",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "negative_tests": [
         "test_typed_token_ability_grammar_and_dependencies_fail_closed",
         "test_unknown_token_child_and_withdrawn_definition_keep_whole_modal_residual",
         "test_fixed_toxic_token_definition_rejects_mismatched_fragments_and_infers_runtime_owner",
-        "test_query_defined_token_stats_require_complete_intrinsic_definitions"
+        "test_query_defined_token_stats_require_complete_intrinsic_definitions",
+        "test_historical_child_route_keeps_its_program_and_incomplete_named_children_remain_residual",
+        "test_named_child_source_omission_mutant_loses_the_complete_original_composition"
       ],
       "official_rules": [
         "111.2",
@@ -73843,13 +73869,18 @@
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_query_defined_token_stats_require_complete_intrinsic_definitions",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_historical_child_route_keeps_its_program_and_incomplete_named_children_remain_residual",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "privacy_tests": [
         "test_typed_token_ability_apnap_privacy_and_replay",
         "test_actual_spree_token_fresh_tap_guard_haste_activation_expiry_and_replay",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
-        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests"
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "replay_tests": [
         "test_typed_token_ability_apnap_privacy_and_replay",
@@ -73858,7 +73889,9 @@
         "test_actual_destroy_only_spree_mode_does_not_create_unselected_token",
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
-        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "required_evidence": [
         "positive",
@@ -78319,18 +78352,21 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_source_attack_trigger_uses_sealed_transition_and_replays",
-        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "multiplayer_tests": [
         "test_source_attack_trigger_uses_sealed_transition_and_replays",
-        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "negative_tests": [
         "test_fixed_typed_event_effect_trigger_variants_remain_material",
         "test_new_event_bindings_fail_closed_with_event_capability",
         "test_originals_have_complete_admission_and_original_source_spans",
         "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
-        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "official_rules": [
         "508.1",
@@ -78343,15 +78379,18 @@
         "test_source_attack_trigger_uses_sealed_transition_and_replays",
         "test_originals_have_complete_admission_and_original_source_spans",
         "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
-        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "privacy_tests": [
         "test_source_attack_trigger_uses_sealed_transition_and_replays",
-        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "replay_tests": [
         "test_source_attack_trigger_uses_sealed_transition_and_replays",
-        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not"
       ],
       "required_evidence": [
         "positive",
@@ -78675,7 +78714,9 @@
         "test_simultaneous_entry_history_is_complete_before_discovery_in_both_orders",
         "test_simultaneous_history_uses_final_destinations_and_previous_controllers",
         "test_source_land_entry_predicate_uses_committed_tapped_state",
-        "test_source_that_leaves_still_observes_simultaneous_death"
+        "test_source_that_leaves_still_observes_simultaneous_death",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "multiplayer_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
@@ -78700,7 +78741,9 @@
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
         "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
         "test_sacrifice_and_discard_predicates_use_committed_lki",
-        "test_simultaneous_semantic_triggers_use_apnap_and_owner_order"
+        "test_simultaneous_semantic_triggers_use_apnap_and_owner_order",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
@@ -78781,7 +78824,9 @@
         "test_singular_token_entry_verified_zone_owner_withdrawal_preserves_unrelated_draw",
         "test_source_land_entry_predicate_uses_committed_tapped_state",
         "test_spacecraft_self_zone_labels_share_canonical_vehicle_occurrences_without_type_predicates",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "privacy_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
@@ -78804,7 +78849,9 @@
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
         "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
         "test_private_library_to_hand_move_produces_no_public_trigger_event",
-        "test_sacrifice_and_discard_predicates_use_committed_lki"
+        "test_sacrifice_and_discard_predicates_use_committed_lki",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "replay_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
@@ -78836,7 +78883,9 @@
         "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_simultaneous_death_history_replays_from_pre_action_checkpoint",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_actual_redwing_attacks_surveils_for_its_controller_while_falcon_attacks_do_not",
+        "test_actual_zabu_landfall_tracks_the_tokens_current_controller_after_a_real_control_change"
       ],
       "required_evidence": [
         "positive",
@@ -93136,7 +93185,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 831,
+  "registry_version": 832,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

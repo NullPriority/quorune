@@ -14577,6 +14577,22 @@
         "test_mana_mode_effects",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "literal-token-source-names",
+      "patterns": [
+        "quorune/compiler/typed_token_ability_nodes.py",
+        "tests/test_literal_token_source_names.py",
+        "tests/fixtures/literal-token-source-cards.json"
+      ],
+      "test_modules": [
+        "test_literal_token_source_names",
+        "test_additional_token_definitions",
+        "test_additional_token_compiler",
+        "test_source_references",
+        "test_surveil_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

@@ -298,6 +298,7 @@ def _inner_node(
     capability_registry: CapabilityRegistry,
     capability_profile: str,
     copy_recipe: bool = False,
+    token_source_name: str = "Created Token",
 ) -> tuple[OracleNode, str] | None:
     compiled_text = _compile_token_ability_text(
         quoted, type_line=token_type_line
@@ -308,7 +309,7 @@ def _inner_node(
         True, token_types, None
     )
     cleanup = (_copiable_cleanup_child(node_id=node_id, text=compiled_text, span=span,
-        source_name="Created Token", capability_registry=capability_registry, capability_profile=capability_profile)
+        source_name=token_source_name, capability_registry=capability_registry, capability_profile=capability_profile)
         if copy_recipe else None)
     if cleanup is not None:
         return cleanup, compiled_text
@@ -325,7 +326,7 @@ def _inner_node(
             line=compiled_text,
             material_line=compiled_text,
             span=span,
-            card_name="Created Token",
+            card_name=token_source_name,
             type_line=token_type_line,
             keywords=token_keywords,
             trusted_mechanics=trusted_mechanics,
@@ -341,7 +342,7 @@ def _inner_node(
             line=compiled_text,
             material_line=compiled_text,
             span=span,
-            card_name="Created Token",
+            card_name=token_source_name,
             trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
@@ -355,7 +356,7 @@ def _inner_node(
             line=quoted,
             material_line=compiled_text,
             span=span,
-            source_name="Created Token",
+            source_name=token_source_name,
             card_types=frozenset(token_types),
             permanent_card_types=_PERMANENT_CARD_TYPES,
             source_is_class=False,
@@ -410,6 +411,7 @@ def _token_fragments_and_children(
     capability_registry: CapabilityRegistry,
     capability_profile: str,
     copy_recipe: bool = False,
+    literal_source_name: str | None = None,
 ) -> tuple[list[Mapping[str, Any]], list[OracleNode], list[str]] | None:
     from .attached_granted_ability_nodes import attached_granted_ability_plan
 
@@ -424,7 +426,7 @@ def _token_fragments_and_children(
     direct_mechanics: list[str] = []
     for slot, quoted in enumerate(quoted_abilities, 1):
         child_id = f"{node_id}:token-ability:{slot}"
-        compiled = _inner_node(
+        child_inputs = dict(
             node_id=child_id,
             quoted=quoted,
             token_type_line=token_type_line,
@@ -438,6 +440,14 @@ def _token_fragments_and_children(
             capability_profile=capability_profile,
             copy_recipe=copy_recipe,
         )
+        token_source_name = "Created Token"
+        compiled = _inner_node(**child_inputs)
+        # Keep already represented child programs stable before trying the
+        # token definition's printed name through the same source-reference owner.
+        if (compiled is None and not copy_recipe and type(literal_source_name) is str
+                and literal_source_name and literal_source_name != token_source_name):
+            token_source_name = literal_source_name
+            compiled = _inner_node(**child_inputs, token_source_name=token_source_name)
         if compiled is None:
             return None
         inner, compiled_text = compiled
@@ -459,7 +469,7 @@ def _token_fragments_and_children(
             oracle_id=oracle_id,
             face_id=face_id,
             source_line=span.line,
-            card_name="Created Token",
+            card_name=token_source_name,
             keywords=token_keywords,
             node_id=child_id,
             display_text=quoted,
@@ -644,6 +654,7 @@ def typed_token_ability_nodes(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         copy_recipe="copy_spec" in created[0],
+        literal_source_name=created[0].get("name"),
     )
     if compiled is None:
         return None

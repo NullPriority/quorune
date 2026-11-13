@@ -2457,6 +2457,13 @@ retains the red mana through combat and clears it when combat ends. Unclosed
 creation shells, other unquoted event keywords, multiple event keywords and
 unsupported counts remain residual.
 
+Quoted abilities of an explicitly named token may use the printed token name
+as their source reference. The typed child compiler first retains the historical
+`Created Token` route; a previously residual child can then use the pinned name
+from the token-creation definition. The existing source-reference owner binds
+that name to the receiving token. Other named-card references keep their own
+meaning, and token-copy recipes retain their separate exception contract.
+
 Predefined Role definitions compile into separate granted-only static and
 triggered child programs. Enchant and child references are explicit token
 fragments pinned to the creating card program. These child programs cannot
