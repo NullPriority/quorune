@@ -889,6 +889,7 @@ card is no longer in hand. The compiler marks this source contract explicitly
 before composing the existing optional and damage leaves. Targets are announced
 before optional acceptance; global Cycling subjects and variable damage remain
 outside this production.
+
 The closed source-self “blocks or becomes blocked by a creature” head uses
 per-creature subscriptions from [ADR 0141](../adr/0141-block-counterpart-references.md).
 Its fixed untargeted keyword and positive fixed-damage results refer to the
@@ -3742,6 +3743,27 @@ information. Failure to destroy an indestructible target still permits the
 following gift; an entirely illegal target stops resolution. The gifted source
 remains its original battlefield incarnation. Optional targeted exile costs
 and owner-addressed control followups remain outside this producer.
+
+`compiler/owner_control_templates.py` admits fixed all-player restoration for
+creatures or nontoken permanents. Its immutable scope delegates current public
+selection to the existing battlefield query. The control owner captures every
+incarnation and physical owner before staging all recipient groups at one
+resolution timestamp, then synchronizes the shared layer-two journal once.
+Tokens use their creator's ownership; the nontoken scope excludes them. The
+new effect can override an older Aura without detaching it, remains after its
+source leaves, and lets later control effects take precedence. Phased-out
+objects and departed owners are excluded. The old one-recipient control API
+delegates to that same batch while retaining its principal and duration
+contract. Variable or chosen allocations, exchanges, and other scopes remain
+outside this production.
+
+The shared Aura controller reader adds a dependency only when another pending
+control effect changes the Aura's controller. It rechecks that relationship
+after each effect and treats one resolution's recipient groups as a unit.
+Including an Aura whose controller stays unchanged does not move its older
+control effect past a newer owner-restoration effect. Current-incarnation
+checks also apply to dependency discovery, and cycles retain the existing
+timestamp fallback.
 
 `compiler/source_tap_characteristics.py` admits fixed characteristic changes
 for the uninterrupted tapped interval of their original permanent source.

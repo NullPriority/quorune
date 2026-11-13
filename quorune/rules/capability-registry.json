@@ -32606,45 +32606,167 @@
       "dependency_fail_closed_status": "passed",
       "id": "continuous.control.attached_source",
       "implementation_components": [
-        "quorune.rules.attached_control.AttachedControlSpec",
-        "quorune.semantic_runtime.attached_control.AttachedControlHandler",
-        "quorune.compiler.attached_control_templates.attached_control_handler",
+        "quorune.attached_control.control_source_dependencies",
         "quorune.attached_control.layer_two_controller_map",
-        "quorune.control_effects.synchronize_control_effects"
+        "quorune.compiler.attached_control_templates.attached_control_handler",
+        "quorune.control_effects.synchronize_control_effects",
+        "quorune.rules.attached_control.AttachedControlSpec",
+        "quorune.semantic_runtime.attached_control.AttachedControlHandler"
       ],
-      "implementation_mutation_rationale": "Original Aura cast and bounce witnesses independently assert acquisition and restoration; source-control omission and owner substitution are killed by expected custody.",
+      "implementation_mutation_rationale": "Original Aura cast and bounce witnesses independently assert acquisition and restoration; source-control omission and owner substitution are killed by expected custody. A fresh dependency table also kills reintroducing a dependency for an unchanged Aura controller.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
-        "test_overlapping_static_auras_and_later_resolution_share_timestamp_order",
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
         "test_controlling_the_aura_changes_its_recipient_control_and_restores_chain",
-        "test_later_layer_aura_ability_loss_keeps_prior_layer_two_control"
+        "test_later_layer_aura_ability_loss_keeps_prior_layer_two_control",
+        "test_overlapping_static_auras_and_later_resolution_share_timestamp_order",
+        "test_source_dependencies_recheck_real_changes_and_keep_one_restoration_atomic"
       ],
       "multiplayer_tests": [
         "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
         "test_departing_aura_owner_restores_recipient_in_surviving_game"
       ],
       "negative_tests": [
+        "test_constructed_aura_with_unsupported_sibling_stays_out_of_runtime",
+        "test_duplicate_custody_origins_still_fail_closed_before_ordering",
+        "test_fresh_dependency_witness_kills_unchanged_source_controller_dependencies",
         "test_malformed_and_conditional_static_control_remain_closed",
-        "test_constructed_aura_with_unsupported_sibling_stays_out_of_runtime"
+        "test_source_dependencies_recheck_real_changes_and_keep_one_restoration_atomic"
       ],
       "official_rules": [
         "303.4e",
         "611.3b",
         "613.1b",
         "613.7e",
-        "613.8"
+        "613.8",
+        "613.8a",
+        "613.8b",
+        "613.8c"
       ],
       "positive_tests": [
+        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
         "test_exact_attached_control_descriptor_and_source_span",
-        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody"
+        "test_source_dependencies_recheck_real_changes_and_keep_one_restoration_atomic"
       ],
       "privacy_tests": [
-        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody"
+        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura"
       ],
       "replay_tests": [
         "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
         "test_controlling_the_aura_changes_its_recipient_control_and_restores_chain"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "unrepresented variable, targeted, opponent-only or chosen scopes",
+          "exchanges, random allocation and unsupported duration or result riders"
+        ],
+        "inputs": [
+          "exact all-player creatures or nontoken-permanents scope",
+          "resolving actor and original typed source",
+          "current effective battlefield and physical owners"
+        ],
+        "outputs": [
+          "locked incarnation assignments staged as one control batch",
+          "one shared resolution timestamp across acquiring owners",
+          "unchanged ownership and attachment with ordinary control custody"
+        ],
+        "summary": "One fixed resolution instruction restores each active physical owner's current creature or nontoken-permanent set."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.control.fixed_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Closed opcode scopes and source-backed payload minima retain the owner-control capability without coverage labels; malformed or extra fields reject.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.control.fixed_owner_restoration",
+      "implementation_components": [
+        "quorune.attached_control.control_source_dependencies",
+        "quorune.compiler.owner_control_templates.owner_control_effect_template",
+        "quorune.control_effects.execute_owner_control_restoration",
+        "quorune.control_effects.gain_control_of_assignments",
+        "quorune.owner_control_model.OwnerControlSpec",
+        "quorune.owner_control_model.validate_owner_control_effect",
+        "quorune.rules.owner_control_shapes.owner_control_node_capabilities",
+        "quorune.rules.owner_control_shapes.owner_control_runtime_dependencies",
+        "quorune.semantic_runtime.control_handlers.OwnerControlHandler",
+        "quorune.semantic_runtime.control_intents.RestoreOwnerControlIntent"
+      ],
+      "implementation_mutation_rationale": "A fresh actual Homeward Path journey kills substituting the resolving actor for each captured physical owner. A fresh dependency table also kills reintroducing a dependency for an unchanged Aura controller.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
+        "test_homeward_path_restores_multiple_owners_and_tokens_with_one_timestamp",
+        "test_source_dependencies_recheck_real_changes_and_keep_one_restoration_atomic",
+        "test_trostani_and_alicia_keep_their_other_abilities_and_restore_at_actual_end_step"
+      ],
+      "multiplayer_tests": [
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
+        "test_homeward_path_restores_multiple_owners_and_tokens_with_one_timestamp",
+        "test_trostani_and_alicia_keep_their_other_abilities_and_restore_at_actual_end_step"
+      ],
+      "negative_tests": [
+        "test_assignment_batch_rejects_an_invalid_later_recipient_before_any_mutation",
+        "test_duplicate_custody_origins_still_fail_closed_before_ordering",
+        "test_fresh_dependency_witness_kills_unchanged_source_controller_dependencies",
+        "test_fresh_homeward_witness_kills_restoring_all_permanents_to_the_resolving_actor",
+        "test_only_exact_all_player_owner_scopes_have_capability_closure",
+        "test_owner_control_payload_cannot_lose_its_capability_when_coverage_is_removed"
+      ],
+      "official_rules": [
+        "110.2",
+        "111.2",
+        "302.6",
+        "506.4",
+        "608.2c",
+        "608.2f",
+        "611.2a",
+        "611.2c",
+        "613.1b",
+        "613.7b",
+        "613.8a",
+        "613.8b",
+        "613.8c",
+        "800.4a"
+      ],
+      "positive_tests": [
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
+        "test_closed_scopes_lower_to_one_immutable_source_backed_intent",
+        "test_homeward_path_restores_multiple_owners_and_tokens_with_one_timestamp",
+        "test_only_exact_all_player_owner_scopes_have_capability_closure",
+        "test_source_dependencies_recheck_real_changes_and_keep_one_restoration_atomic",
+        "test_trostani_and_alicia_keep_their_other_abilities_and_restore_at_actual_end_step"
+      ],
+      "privacy_tests": [
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
+        "test_homeward_path_restores_multiple_owners_and_tokens_with_one_timestamp",
+        "test_trostani_and_alicia_keep_their_other_abilities_and_restore_at_actual_end_step"
+      ],
+      "replay_tests": [
+        "test_brooding_restores_only_nontokens_after_source_departure_without_detaching_aura",
+        "test_homeward_path_restores_multiple_owners_and_tokens_with_one_timestamp",
+        "test_trostani_and_alicia_keep_their_other_abilities_and_restore_at_actual_end_step"
       ],
       "required_evidence": [
         "positive",
@@ -32878,16 +33000,17 @@
       "dependency_fail_closed_status": "passed",
       "id": "continuous.control.fixed_resolution",
       "implementation_components": [
-        "quorune.control_effects.gain_control_of_refs",
+        "quorune.compiler.fixed_control_templates.FixedControlTemplate",
+        "quorune.control_effects._next_source_expiration",
         "quorune.control_effects.execute_control_set",
+        "quorune.control_effects.gain_control_of_assignments",
+        "quorune.control_effects.gain_control_of_refs",
+        "quorune.control_effects.synchronize_control_effects",
+        "quorune.rules.control_capability_shapes.fixed_control_node_capabilities",
         "quorune.semantic_runtime.control_handlers.FixedControlHandler",
         "quorune.semantic_runtime.control_handlers.FixedControlSetHandler",
         "quorune.semantic_runtime.control_intents.GainControlIntent",
         "quorune.semantic_runtime.control_intents.GainControlSetIntent",
-        "quorune.compiler.fixed_control_templates.FixedControlTemplate",
-        "quorune.rules.control_capability_shapes.fixed_control_node_capabilities",
-        "quorune.control_effects.synchronize_control_effects",
-        "quorune.control_effects._next_source_expiration",
         "quorune.source_continuity.SourceContinuitySnapshot"
       ],
       "implementation_mutation_rationale": "The focused mutation witness removes the live control compiler route and the physical-turn matching predicate; the corresponding positive expectations fail.",
@@ -95046,7 +95169,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 853,
+  "registry_version": 854,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .token_creation_intents import execute_token_creation_intent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
-from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent
+from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,RestoreOwnerControlIntent
 from ..semantic_runtime.connive_intent import ConniveCompletedIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
 
@@ -158,10 +158,11 @@ class SemanticChoiceIntentHostMixin:
         except ControlEffectError as exc:
             raise GameRuleError(str(exc)) from exc
 
-    def gain_control_set_intent(self, intent: GainControlSetIntent):
-        from ..control_effects import execute_control_set, ControlEffectError
+    def gain_control_set_intent(self, intent: GainControlSetIntent | RestoreOwnerControlIntent):
+        from ..control_effects import execute_control_set, execute_owner_control_restoration,ControlEffectError
         try:
-            return execute_control_set(self, intent)
+            return (execute_owner_control_restoration(self,intent) if isinstance(intent,RestoreOwnerControlIntent)
+                else execute_control_set(self, intent))
         except ControlEffectError as exc:
             raise GameRuleError(str(exc)) from exc
 

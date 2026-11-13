@@ -7,6 +7,7 @@ from dataclasses import dataclass,field
 from ..continuous_effect_model import ContinuousEffectDuration
 from ..continuous_effect_state import ResolutionEffectSource
 from ..object_predicate import ObjectQuerySpec
+from ..owner_control_model import OwnerControlSpec
 from ..source_continuity import SourceContinuitySnapshot
 
 
@@ -90,4 +91,16 @@ class GiveControlIntent:
             raise ValueError('Recipient control requires a permanent and explicit acquiring player')
 
 
-ControlIntent = GainControlIntent | GainControlSetIntent | GiveControlIntent
+@dataclass(frozen=True,slots=True)
+class RestoreOwnerControlIntent:
+    actor: str
+    spec: OwnerControlSpec
+    source: ResolutionEffectSource
+    reason: str
+
+    def __post_init__(self):
+        _validate_control(self.actor,self.actor,ContinuousEffectDuration.ZONE_OBJECT,self.source,self.reason)
+        if not isinstance(self.spec,OwnerControlSpec):raise ValueError('Owner control requires its typed scope')
+
+
+ControlIntent = GainControlIntent | GainControlSetIntent | GiveControlIntent | RestoreOwnerControlIntent

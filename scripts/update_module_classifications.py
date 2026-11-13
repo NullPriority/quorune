@@ -46,7 +46,7 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
-    if relative in {'quorune/recipient_control_model.py','quorune/target_controller_reference.py'}:return 'domain'
+    if relative in {'quorune/recipient_control_model.py','quorune/target_controller_reference.py','quorune/owner_control_model.py'}:return 'domain'
     if relative == 'quorune/stack_resolution_inputs.py':return 'domain'
     if relative=='quorune/fixed_dual_damage_model.py':return 'domain'
     if relative=='quorune/graveyard_target_unions.py':return 'rules'
@@ -620,7 +620,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
-    if relative in {'quorune/recipient_control_model.py','quorune/rules/recipient_control_shapes.py'}:return 'continuous_effects'
+    if relative in {'quorune/recipient_control_model.py','quorune/rules/recipient_control_shapes.py',
+            'quorune/owner_control_model.py','quorune/rules/owner_control_shapes.py'}:return 'continuous_effects'
     if relative=='quorune/fixed_dual_damage_model.py':return 'damage'
     if relative=='quorune/graveyard_target_unions.py':return 'graveyard_actions'
     if relative in {'quorune/next_spell_cost_model.py','quorune/next_spell_costs.py'}:

@@ -264,10 +264,24 @@ def gain_control_of_refs(
     history_snapshot: SourceContinuitySnapshot | None = None,
     resolution_timestamp: int | None = None,
 ) -> tuple[str, ...]:
+    """Retain the one-recipient public contract over the shared batch owner."""
+    if controller not in host.active_seats:
+        raise ControlEffectError('Resolution control requires active principals')
+    return gain_control_of_assignments(host,actor=actor,
+        assignments=tuple((ref,controller) for ref in object_refs),duration=duration,source=source,reason=reason,
+        history_snapshot=history_snapshot,resolution_timestamp=resolution_timestamp)
+
+
+def gain_control_of_assignments(
+    host: ControlEffectHost, *, actor: str, assignments: Sequence[tuple[str,str]],
+    duration: ContinuousEffectDuration, source: ResolutionEffectSource, reason: str,
+    history_snapshot: SourceContinuitySnapshot | None = None,
+    resolution_timestamp: int | None = None,
+) -> tuple[str, ...]:
     """Lock the whole original set before any control acquisition commits."""
     if duration not in _DURATIONS or not isinstance(duration, ContinuousEffectDuration):
         raise ControlEffectError("Resolution control duration is unsupported")
-    if actor not in host.active_seats or controller not in host.active_seats:
+    if actor not in host.active_seats:
         raise ControlEffectError("Resolution control requires active principals")
     if not isinstance(source, ResolutionEffectSource):
         raise ControlEffectError("Resolution control requires typed source identity")
@@ -280,7 +294,11 @@ def gain_control_of_refs(
         raise ControlEffectError("Resolution control journal is unavailable")
     if host.state.control_history_version != CONTROL_HISTORY_VERSION:
         raise ControlEffectError("Resolution control requires current retained custody history")
-    refs = tuple(object_refs)
+    assignments=tuple(assignments)
+    if any(not isinstance(entry,(tuple,list)) or len(entry)!=2
+            or type(entry[1]) is not str or entry[1] not in host.active_seats for entry in assignments):
+        raise ControlEffectError('Resolution control assignments require active acquiring players')
+    refs = tuple(ref for ref,_controller in assignments)
     if any(type(ref) is not str or not ref for ref in refs) or len(set(refs)) != len(refs):
         raise ControlEffectError("Resolution control subjects must be unique references")
     cards = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in refs)
@@ -316,17 +334,21 @@ def gain_control_of_refs(
         for card, identity in zip(cards, identities, strict=True)
         if not has_control_origin(host.state, card)
     )
-    prototype = _control_effect(
-        effect_id="control-prototype", source_id=source.object_id or source.stack_ref,
-        timestamp=0, identities=identities, controller=controller, duration=duration,
-        duration_source=(ContinuousObjectIdentity(source_card.object_id, source_card.logical_object_id)
-                         if source_card is not None else None),
+    grouped={}
+    for identity,(_ref,controller) in zip(identities,assignments,strict=True):
+        grouped.setdefault(controller,[]).append(identity)
+    prototypes=tuple(_control_effect(
+        effect_id='control-prototype',source_id=source.object_id or source.stack_ref,
+        timestamp=0,identities=tuple(affected),controller=controller,duration=duration,
+        duration_source=(ContinuousObjectIdentity(source_card.object_id,source_card.logical_object_id) if source_card is not None else None),
         duration_controller=actor if duration.requires_source_controller else None,
         duration_history=source_card.source_continuity.snapshot() if source_card is not None else None,
-    )
-    effect = replace(prototype, effect_id=_EFFECT_PREFIX + host._next_ref("CE"),
-                     timestamp=host._next_zone_timestamp())
-    additions = (*origins, effect)
+    ) for controller,affected in grouped.items())
+    effect_ids=tuple(_EFFECT_PREFIX+host._next_ref('CE') for _prototype in prototypes)
+    timestamp=host._next_zone_timestamp()
+    effects=tuple(replace(prototype,effect_id=effect_id,timestamp=timestamp)
+        for prototype,effect_id in zip(prototypes,effect_ids,strict=True))
+    additions = (*origins,*effects)
     ids = tuple(value.effect_id for value in additions)
     if len(set(ids)) != len(ids) or set(ids).intersection(value.effect_id for value in journal):
         raise ControlEffectError("Resolution control journal identity is already committed")
@@ -338,6 +360,17 @@ def gain_control_of_refs(
             temporary.pop("control_previous", None)
     synchronize_control_effects(host, reason=reason)
     return tuple(card.ref for card in cards)
+
+
+def execute_owner_control_restoration(host: Any,intent: Any) -> tuple[str,...]:
+    """Freeze all owners and incarnations before one layer-two synchronization."""
+    from .continuous_effect_state import matching_battlefield_objects
+    from .owner_control_model import OwnerControlSpec
+    if not isinstance(intent.spec,OwnerControlSpec):raise ControlEffectError('Owner control requires its typed scope')
+    cards=matching_battlefield_objects(host,intent.spec.predicate())
+    assignments=tuple((card.ref,card.owner) for card in cards if card.owner in host.active_seats)
+    return gain_control_of_assignments(host,actor=intent.actor,assignments=assignments,
+        duration=ContinuousEffectDuration.ZONE_OBJECT,source=intent.source,reason=intent.reason)
 
 
 def _controller_map(host: ControlEffectHost, journal: Sequence[ContinuousEffect], static: Sequence[ContinuousEffect]) -> dict[str, str]:
