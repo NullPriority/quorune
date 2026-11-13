@@ -3160,6 +3160,15 @@ cross-mode-target, unsupported-wrapper, and untyped-branch forms remain
 source-spanned residuals. See ADR 0071 for the preserved strict compatibility
 shape and ADR 0082 for the expanded owner.
 
+`compiler/modal_spell_faces.py` composes one contiguous modal spell block with
+independent keyword rows before or after it. Each sibling must lower exactly
+through the existing keyword compiler and have no separate spell-resolution
+body. The modal ability and its siblings retain their original spans and
+distinct node identities. Hand activations, casting payments, characteristics
+and casting lifecycles keep their existing owners. Unknown siblings, mandatory
+nonmodal effects and unrepresented coupled modifiers keep the whole source
+incomplete. Existing complete whole-modal productions retain precedence.
+
 Known normalized public-action and spell-cast-characteristic wrappers compose
 around those same independently closed branches. The event owner remains
 required, and modes and selected targets are committed during trigger

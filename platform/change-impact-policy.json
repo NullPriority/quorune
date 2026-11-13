@@ -14652,6 +14652,26 @@
         "test_mill_rules",
         "test_source_self_optional_results"
       ]
+    },
+    {
+      "id": "modal-independent-keyword-composition",
+      "patterns": [
+        "quorune/compiler/modal_spell_faces.py",
+        "quorune/compiler/whole_modal_templates.py",
+        "quorune/oracle_ir.py",
+        "tests/test_modal_keyword_composition.py",
+        "tests/fixtures/modal-keyword-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_modal_keyword_composition",
+        "test_fixed_choose_one_modal_spells",
+        "test_fixed_nonrepeating_modal_programs",
+        "test_modal_token_programs",
+        "test_convoke_rules",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

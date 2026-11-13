@@ -1199,19 +1199,23 @@
       "implementation_mutation_rationale": "test_fixed_counter_keyword_compiler_mutant_is_killed removes the shared typed lowering, while test_reinforce_sorcery_speed_mutant_is_killed restores the incorrect sorcery restriction; the exact compiler and off-turn combat offer assertions reject both survivors.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_timing_table_keeps_offers_and_commands_in_parity",
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
         "test_compiled_reinforce_responds_and_replays_exactly",
         "test_counter_keyword_quantity_replacement_suspends_and_replays",
-        "test_reinforce_source_cost_replacement_suspends_before_mutation"
+        "test_reinforce_source_cost_replacement_suspends_before_mutation",
+        "test_timing_table_keeps_offers_and_commands_in_parity"
       ],
       "multiplayer_tests": [
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
         "test_counter_keyword_quantity_replacement_suspends_and_replays"
       ],
       "negative_tests": [
-        "test_unsupported_counter_keyword_variants_remain_precise_residuals",
-        "test_scavenge_dynamic_power_and_type_changing_boundary_fail_closed",
         "test_counter_keyword_source_departure_does_not_counter_returned_object",
-        "test_reinforce_invalid_inputs_are_atomic"
+        "test_reinforce_invalid_inputs_are_atomic",
+        "test_scavenge_dynamic_power_and_type_changing_boundary_fail_closed",
+        "test_unknown_or_mandatory_siblings_multiple_blocks_and_unsupported_keyword_costs_stay_material",
+        "test_unsupported_counter_keyword_variants_remain_precise_residuals",
+        "test_withdrawing_either_existing_owner_keeps_the_complete_source_closed"
       ],
       "official_rules": [
         "602.1",
@@ -1223,18 +1227,22 @@
         "702.107a"
       ],
       "positive_tests": [
-        "test_four_fixed_counter_keywords_compile_source_spanned_activations",
-        "test_timing_table_keeps_offers_and_commands_in_parity",
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
         "test_compiled_reinforce_responds_and_replays_exactly",
-        "test_each_fixed_counter_keyword_pays_cost_and_places_counters"
+        "test_each_fixed_counter_keyword_pays_cost_and_places_counters",
+        "test_four_fixed_counter_keywords_compile_source_spanned_activations",
+        "test_prefix_and_suffix_keywords_retain_separate_source_spans_and_original_line_identities",
+        "test_timing_table_keeps_offers_and_commands_in_parity"
       ],
       "privacy_tests": [
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
         "test_reinforce_source_cost_replacement_suspends_before_mutation"
       ],
       "replay_tests": [
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
         "test_compiled_reinforce_responds_and_replays_exactly",
-        "test_scavenge_fixed_power_activation_replays_exactly",
-        "test_counter_keyword_quantity_replacement_suspends_and_replays"
+        "test_counter_keyword_quantity_replacement_suspends_and_replays",
+        "test_scavenge_fixed_power_activation_replays_exactly"
       ],
       "required_evidence": [
         "positive",
@@ -1484,17 +1492,20 @@
       "implementation_mutation_rationale": "test_ordinary_cycling_compiler_mutant_is_killed removes the typed Cycling lowering and the exact hand-zone activation assertion rejects the survivor.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_generic_cycling_discards_before_stack_draw_and_replays_exactly",
-        "test_cycling_discard_replacement_suspends_before_mutation_and_replays"
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_generic_cycling_discards_before_stack_draw_and_replays_exactly"
       ],
       "multiplayer_tests": [
-        "test_four_player_cycling_draw_is_private_and_seat_scoped",
-        "test_cycling_discard_replacement_suspends_before_mutation_and_replays"
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_four_player_cycling_draw_is_private_and_seat_scoped"
       ],
       "negative_tests": [
-        "test_unsupported_cycling_variants_remain_precise_residuals",
         "test_changed_cycling_oracle_fails_closed_without_runtime_reparse",
-        "test_unpayable_cycling_is_not_offered_and_rejects_without_mutation"
+        "test_unknown_or_mandatory_siblings_multiple_blocks_and_unsupported_keyword_costs_stay_material",
+        "test_unpayable_cycling_is_not_offered_and_rejects_without_mutation",
+        "test_unsupported_cycling_variants_remain_precise_residuals"
       ],
       "official_rules": [
         "602.1",
@@ -1508,17 +1519,21 @@
         "702.29b"
       ],
       "positive_tests": [
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_cycling_descriptor_exists_in_every_zone_but_activates_only_from_hand",
         "test_fixed_ordinary_cycling_compiles_typed_hand_activation",
         "test_generic_cycling_discards_before_stack_draw_and_replays_exactly",
-        "test_cycling_descriptor_exists_in_every_zone_but_activates_only_from_hand"
+        "test_prefix_and_suffix_keywords_retain_separate_source_spans_and_original_line_identities"
       ],
       "privacy_tests": [
-        "test_four_player_cycling_draw_is_private_and_seat_scoped",
-        "test_cycling_discard_replacement_suspends_before_mutation_and_replays"
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_four_player_cycling_draw_is_private_and_seat_scoped"
       ],
       "replay_tests": [
-        "test_generic_cycling_discards_before_stack_draw_and_replays_exactly",
-        "test_cycling_discard_replacement_suspends_before_mutation_and_replays"
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_generic_cycling_discards_before_stack_draw_and_replays_exactly"
       ],
       "required_evidence": [
         "positive",
@@ -4639,36 +4654,39 @@
       "implementation_mutation_rationale": "test_activation_zone_cost_resume_mutant_is_killed restores the former activation rejection at the continuation boundary; the focused replacement-resume behavior cannot complete and rejects the survivor.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
         "test_reinforce_source_cost_replacement_suspends_before_mutation",
         "test_selected_self_sacrifice_cost_keeps_the_source_incarnation_and_controller",
         "test_source_sacrifice_replacement_is_private_and_replays",
-        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
-        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once"
       ],
       "multiplayer_tests": [
-        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
-        "test_source_sacrifice_replacement_is_private_and_replays",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_source_sacrifice_replacement_is_private_and_replays"
       ],
       "negative_tests": [
-        "test_activation_zone_change_costs_exclude_mana_abilities",
         "test_activation_source_cost_replacement_journal_fails_closed",
+        "test_activation_zone_change_costs_exclude_mana_abilities",
         "test_rejected_source_cost_activation_rolls_back_mana_and_zone",
         "test_source_zone_cost_rejects_inconsistent_descriptor",
-        "test_unbound_antecedents_variable_counts_and_extra_cost_tails_remain_residual"
+        "test_unbound_antecedents_variable_counts_and_extra_cost_tails_remain_residual",
+        "test_withdrawing_either_existing_owner_keeps_the_complete_source_closed"
       ],
       "official_rules": [
         "400.2",
@@ -4682,40 +4700,43 @@
         "701.21a"
       ],
       "positive_tests": [
-        "test_generic_cycling_discards_before_stack_draw_and_replays_exactly",
-        "test_each_fixed_counter_keyword_pays_cost_and_places_counters",
-        "test_fixed_source_sacrifice_cost_compiles_source_spanned",
-        "test_fixed_source_sacrifice_cost_compiles_and_resolves",
-        "test_five_originals_preserve_raw_cost_text_and_bind_both_existing_owners",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_each_fixed_counter_keyword_pays_cost_and_places_counters",
+        "test_five_originals_preserve_raw_cost_text_and_bind_both_existing_owners",
+        "test_fixed_source_sacrifice_cost_compiles_and_resolves",
+        "test_fixed_source_sacrifice_cost_compiles_source_spanned",
+        "test_generic_cycling_discards_before_stack_draw_and_replays_exactly"
       ],
       "privacy_tests": [
-        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
-        "test_source_sacrifice_replacement_is_private_and_replays",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_source_sacrifice_replacement_is_private_and_replays"
       ],
       "replay_tests": [
-        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
-        "test_source_sacrifice_replacement_is_private_and_replays",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_modal_source_reinforces_on_an_opponents_turn_without_casting_its_spell",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
+        "test_source_sacrifice_replacement_is_private_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -15118,44 +15139,49 @@
       "implementation_mutation_rationale": "Focused compiler, dependency, complete-card lookup, cost-option, commit-revalidation, delayed-identity, creature-spell qualification, counter-transition, and permission-duration mutations are rejected by exact compilation and behavioral assertions.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_dash_and_warp_are_identity_pinned_through_delayed_resolution",
-        "test_dash_commander_offer_commit_tax_and_rollbacks",
-        "test_dash_commander_delayed_return_replacement_persists_and_replays",
-        "test_dash_delayed_return_uses_owner_and_incarnation_after_control_changes",
-        "test_retrace_uses_private_typed_land_discard_and_revalidates",
-        "test_public_modifiers_apply_to_lifecycle_total_costs",
-        "test_upkeep_counter_trigger_countering_and_stale_incarnation",
-        "test_suspend_cast_decline_success_haste_and_control_change",
-        "test_current_ability_removal_and_restoration_gate_suspend_lifecycle",
-        "test_step_begin_collection_adds_suspend_upkeep_to_shared_batch",
         "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit",
+        "test_current_ability_removal_and_restoration_gate_suspend_lifecycle",
+        "test_dash_and_warp_are_identity_pinned_through_delayed_resolution",
+        "test_dash_commander_delayed_return_replacement_persists_and_replays",
+        "test_dash_commander_offer_commit_tax_and_rollbacks",
+        "test_dash_delayed_return_uses_owner_and_incarnation_after_control_changes",
         "test_mayhem_additional_cost_is_required_and_committed_before_entry",
-        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"
+        "test_public_modifiers_apply_to_lifecycle_total_costs",
+        "test_retrace_uses_private_typed_land_discard_and_revalidates",
+        "test_step_begin_collection_adds_suspend_upkeep_to_shared_batch",
+        "test_suspend_cast_decline_success_haste_and_control_change",
+        "test_upkeep_counter_trigger_countering_and_stale_incarnation"
       ],
       "multiplayer_tests": [
-        "test_dash_commander_delayed_return_replacement_persists_and_replays",
-        "test_lifecycle_replay_and_projection_are_deterministic",
-        "test_multiple_upkeep_triggers_use_controller_order_and_private_projection",
-        "test_four_player_projection_save_load_and_exact_replay",
         "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
-        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality"
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_dash_commander_delayed_return_replacement_persists_and_replays",
+        "test_four_player_projection_save_load_and_exact_replay",
+        "test_lifecycle_replay_and_projection_are_deterministic",
+        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality",
+        "test_multiple_upkeep_triggers_use_controller_order_and_private_projection"
       ],
       "negative_tests": [
-        "test_shared_lifecycle_handler_contract_fails_closed_when_a_required_owner_is_blocked",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_cast_lifecycle_open_costs_and_other_families_remain_residual",
-        "test_lifecycle_descriptors_are_closed_and_dependency_gated",
-        "test_partial_card_and_stale_lifecycle_contract_fail_closed",
-        "test_retrace_removed_graveyard_ability_fails_closed",
         "test_dynamic_modified_and_land_suspend_remain_residual",
-        "test_sorcery_timing_flash_partial_stale_and_unpayable_fail_closed",
-        "test_suspend_dependency_and_compiler_mutations_fail_closed",
-        "test_noncreature_suspend_spell_does_not_gain_latent_haste",
-        "test_targetless_final_cast_and_countered_cast_trigger_remain_exiled",
+        "test_lifecycle_descriptors_are_closed_and_dependency_gated",
+        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality",
+        "test_mayhem_permission_omission_mutant_is_killed_by_real_discard_cast",
         "test_mayhem_permission_requires_same_discard_turn_actor_and_adjacent_incarnation",
         "test_mayhem_stale_discard_turn_rejects_prepared_cast_atomically",
-        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality",
+        "test_noncreature_suspend_spell_does_not_gain_latent_haste",
+        "test_partial_card_and_stale_lifecycle_contract_fail_closed",
         "test_replaced_discard_to_exile_and_later_graveyard_move_does_not_grant_mayhem",
-        "test_mayhem_permission_omission_mutant_is_killed_by_real_discard_cast"
+        "test_retrace_removed_graveyard_ability_fails_closed",
+        "test_shared_lifecycle_handler_contract_fails_closed_when_a_required_owner_is_blocked",
+        "test_sorcery_timing_flash_partial_stale_and_unpayable_fail_closed",
+        "test_suspend_dependency_and_compiler_mutations_fail_closed",
+        "test_targetless_final_cast_and_countered_cast_trigger_remain_exiled"
       ],
       "official_rules": [
         "601.2b",
@@ -15172,30 +15198,36 @@
         "702.185"
       ],
       "positive_tests": [
-        "test_fixed_cast_lifecycles_compile_source_spanned_typed_programs",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_buyback_resolves_to_hand_but_countered_spell_does_not",
-        "test_real_buyback_offer_payment_resolution_and_pre_action_replay",
         "test_dash_commander_offer_commit_tax_and_rollbacks",
+        "test_fixed_cast_lifecycles_compile_source_spanned_typed_programs",
         "test_fixed_suspend_compiles_to_the_shared_cast_lifecycle",
-        "test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost",
-        "test_mayhem_fixed_and_bare_descriptors_round_trip_and_reject_open_costs"
+        "test_mayhem_fixed_and_bare_descriptors_round_trip_and_reject_open_costs",
+        "test_real_buyback_offer_payment_resolution_and_pre_action_replay",
+        "test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost"
       ],
       "privacy_tests": [
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_dash_commander_delayed_return_replacement_persists_and_replays",
-        "test_retrace_uses_private_typed_land_discard_and_revalidates",
+        "test_four_player_projection_save_load_and_exact_replay",
         "test_lifecycle_replay_and_projection_are_deterministic",
         "test_multiple_upkeep_triggers_use_controller_order_and_private_projection",
-        "test_four_player_projection_save_load_and_exact_replay",
-        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination"
+        "test_retrace_uses_private_typed_land_discard_and_revalidates"
       ],
       "replay_tests": [
-        "test_real_buyback_offer_payment_resolution_and_pre_action_replay",
-        "test_dash_commander_delayed_return_replacement_persists_and_replays",
-        "test_lifecycle_replay_and_projection_are_deterministic",
-        "test_four_player_projection_save_load_and_exact_replay",
         "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit",
+        "test_dash_commander_delayed_return_replacement_persists_and_replays",
+        "test_four_player_projection_save_load_and_exact_replay",
+        "test_lifecycle_replay_and_projection_are_deterministic",
         "test_mayhem_additional_cost_is_required_and_committed_before_entry",
-        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"
+        "test_real_buyback_offer_payment_resolution_and_pre_action_replay"
       ],
       "required_evidence": [
         "positive",
@@ -15279,28 +15311,33 @@
       "implementation_mutation_rationale": "Focused compiler and runtime tests reject grammar widening, current-ability loss, stale offers and identities, insufficient or duplicate payments, omitted self-replacement, and omitted delayed cast ownership.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit",
+        "test_countered_and_stale_rebound_cards_do_not_receive_a_cast",
         "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability",
         "test_jump_start_discards_then_self_exiles_when_countered",
-        "test_countered_and_stale_rebound_cards_do_not_receive_a_cast",
-        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
-        "test_mayhem_additional_cost_is_required_and_committed_before_entry",
-        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"
+        "test_mayhem_additional_cost_is_required_and_committed_before_entry"
       ],
       "multiplayer_tests": [
-        "test_foretell_private_staging_persists_without_current_ability_and_replays",
         "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_foretell_private_staging_persists_without_current_ability_and_replays",
         "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality"
       ],
       "negative_tests": [
-        "test_open_zone_cast_forms_remain_residual",
-        "test_staging_timing_stale_offer_and_payment_fail_without_mutation",
-        "test_escape_insufficient_and_duplicate_other_card_payments_fail_closed",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_countered_and_stale_rebound_cards_do_not_receive_a_cast",
+        "test_escape_insufficient_and_duplicate_other_card_payments_fail_closed",
+        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality",
+        "test_mayhem_permission_omission_mutant_is_killed_by_real_discard_cast",
         "test_mayhem_permission_requires_same_discard_turn_actor_and_adjacent_incarnation",
         "test_mayhem_stale_discard_turn_rejects_prepared_cast_atomically",
-        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality",
+        "test_open_zone_cast_forms_remain_residual",
         "test_replaced_discard_to_exile_and_later_graveyard_move_does_not_grant_mayhem",
-        "test_mayhem_permission_omission_mutant_is_killed_by_real_discard_cast"
+        "test_staging_timing_stale_offer_and_payment_fail_without_mutation"
       ],
       "official_rules": [
         "601.2b",
@@ -15328,25 +15365,31 @@
         "702.170e"
       ],
       "positive_tests": [
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability",
         "test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
         "test_foretell_private_staging_persists_without_current_ability_and_replays",
-        "test_plot_uses_both_special_action_and_later_cast_timing",
-        "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability",
         "test_jump_start_discards_then_self_exiles_when_countered",
-        "test_rebound_schedules_identity_pinned_optional_free_cast",
-        "test_mayhem_fixed_and_bare_descriptors_round_trip_and_reject_open_costs"
+        "test_mayhem_fixed_and_bare_descriptors_round_trip_and_reject_open_costs",
+        "test_plot_uses_both_special_action_and_later_cast_timing",
+        "test_rebound_schedules_identity_pinned_optional_free_cast"
       ],
       "privacy_tests": [
-        "test_foretell_private_staging_persists_without_current_ability_and_replays",
-        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination"
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_foretell_private_staging_persists_without_current_ability_and_replays"
       ],
       "replay_tests": [
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit",
         "test_foretell_private_staging_persists_without_current_ability_and_replays",
         "test_jump_start_resolution_departure_replays_exactly",
-        "test_rebound_schedules_identity_pinned_optional_free_cast",
-        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
         "test_mayhem_additional_cost_is_required_and_committed_before_entry",
-        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"
+        "test_rebound_schedules_identity_pinned_optional_free_cast"
       ],
       "required_evidence": [
         "positive",
@@ -17071,17 +17114,22 @@
       "implementation_mutation_rationale": "test_convoke_compiler_mutant_is_killed removes the typed compiler node and test_convoke_planner_mutant_is_killed removes whole-vector contribution enumeration; source-spanned compilation and whole-vector affordability assertions reject both survivors.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
+        "test_convoke_creature_cannot_also_activate_for_mana",
         "test_fixed_query_reduction_applies_before_convoke_payment",
-        "test_multicolor_creature_uses_the_payable_colored_assignment",
-        "test_convoke_creature_cannot_also_activate_for_mana"
+        "test_multicolor_creature_uses_the_payable_colored_assignment"
       ],
       "multiplayer_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_four_player_convoke_offer_is_controller_scoped"
       ],
       "negative_tests": [
-        "test_raw_keyword_without_compiled_convoke_fails_closed",
         "test_convoke_descriptor_and_plan_reject_malformed_values",
-        "test_stale_convoke_characteristics_roll_back_before_payment"
+        "test_raw_keyword_without_compiled_convoke_fails_closed",
+        "test_stale_convoke_characteristics_roll_back_before_payment",
+        "test_unknown_or_mandatory_siblings_multiple_blocks_and_unsupported_keyword_costs_stay_material"
       ],
       "official_rules": [
         "601.2f",
@@ -17095,14 +17143,21 @@
         "702.51d"
       ],
       "positive_tests": [
-        "test_ordinary_convoke_compiles_face_pinned_typed_program",
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_convoke_offer_and_submission_share_whole_vector_payment",
+        "test_ordinary_convoke_compiles_face_pinned_typed_program",
+        "test_prefix_and_suffix_keywords_retain_separate_source_spans_and_original_line_identities",
         "test_typed_convoke_pays_colored_x_cost_without_using_mana_sources"
       ],
       "privacy_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_four_player_convoke_offer_is_controller_scoped"
       ],
       "replay_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
         "test_convoke_payment_replays_exactly"
       ],
       "required_evidence": [
@@ -20711,10 +20766,12 @@
       "implementation_mutation_rationale": "test_modal_dependency_and_compiler_mutations_fail_closed removes shared modal production and proves whole-spell and activated witnesses return to material residuals. Removing the recognized public-action wrapper or runtime primitive-event inference is killed by focused closed-program and stripped-declaration witnesses.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -20724,10 +20781,12 @@
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land"
       ],
       "multiplayer_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -20739,6 +20798,7 @@
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -20751,6 +20811,7 @@
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
         "test_runtime_event_mode_and_child_requirements_survive_removed_coverage",
+        "test_unknown_or_mandatory_siblings_multiple_blocks_and_unsupported_keyword_costs_stay_material",
         "test_verified_child_or_event_owner_withdrawal_rejects_the_complete_modal_trigger",
         "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
       ],
@@ -20764,10 +20825,12 @@
         "700.2b"
       ],
       "positive_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -20781,17 +20844,21 @@
         "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
       ],
       "privacy_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
         "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land"
       ],
       "replay_tests": [
+        "test_actual_convoke_both_modes_counter_then_draw_and_discard_through_the_existing_hand_chooser",
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -20860,18 +20927,33 @@
       "implementation_mutation_rationale": "test_modal_compiler_mutation_is_killed removes modal production and proves the real card returns to material residuals instead of retaining exact trust.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
+        "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
-        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
-        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group"
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response"
       ],
       "multiplayer_tests": [
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
+        "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
         "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response"
       ],
       "negative_tests": [
+        "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
         "test_modal_parser_and_capability_shape_fail_closed",
+        "test_scoped_modal_reference_uses_only_the_server_captured_current_group",
+        "test_unknown_or_mandatory_siblings_multiple_blocks_and_unsupported_keyword_costs_stay_material",
         "test_unsupported_modal_grammars_remain_material_residuals",
-        "test_scoped_modal_reference_uses_only_the_server_captured_current_group"
+        "test_withdrawing_either_existing_owner_keeps_the_complete_source_closed"
       ],
       "official_rules": [
         "601.2b",
@@ -20880,15 +20962,34 @@
         "700.2a"
       ],
       "positive_tests": [
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_actual_fixed_choose_one_corpus_is_capability_closed",
+        "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_modal_target_sets_use_the_same_implicit_group_ids_and_counts_as_selection",
-        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+        "test_prefix_and_suffix_keywords_retain_separate_source_spans_and_original_line_identities"
       ],
       "privacy_tests": [
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
+        "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
         "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
       ],
       "replay_tests": [
+        "test_actual_convoke_pays_each_modal_original_with_creatures_and_keeps_unselected_effects_absent",
+        "test_actual_cycling_and_both_spell_modes_use_the_same_complete_original_without_crossing_effects",
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
+        "test_actual_modal_cast_keeps_each_target_mode_separate_from_the_hand_activation",
+        "test_actual_rebound_recasts_with_a_new_mode_and_target_without_repeating_hand_only_exile",
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
         "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
       ],
@@ -24669,27 +24770,30 @@
       "implementation_mutation_rationale": "The focused compiler matrix and open-form boundary reject missing typed lowering, widened cost grammar, wrong trigger ownership, and stale public object identities.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_ninjutsu_reveal_counter_commander_and_unblocked_boundaries",
-        "test_encore_uses_exiled_lki_after_source_departure_and_reentry",
-        "test_encore_countered_commander_and_legacy_effect_payload",
-        "test_encore_group_creation_cleanup_and_replay_are_single_events",
-        "test_encore_cleanup_is_one_simultaneous_sacrifice_event",
-        "test_encore_cleanup_filters_each_recorded_incarnation_as_one_group",
-        "test_encore_group_cleanup_replacement_choice_resumes_atomically",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_blitz_cleanup_is_ability_independent_identity_safe_and_replays",
+        "test_blitz_delayed_sacrifice_requires_its_controller",
+        "test_blitz_draw_ability_restoration_applies_to_later_departure",
         "test_blitz_draw_is_suppressed_by_departure_lki_ability_removal",
         "test_blitz_draw_uses_permanent_graveyard_event_after_type_loss",
-        "test_blitz_draw_ability_restoration_applies_to_later_departure",
-        "test_blitz_delayed_sacrifice_requires_its_controller",
-        "test_blitz_cleanup_is_ability_independent_identity_safe_and_replays"
+        "test_encore_cleanup_filters_each_recorded_incarnation_as_one_group",
+        "test_encore_cleanup_is_one_simultaneous_sacrifice_event",
+        "test_encore_countered_commander_and_legacy_effect_payload",
+        "test_encore_group_cleanup_replacement_choice_resumes_atomically",
+        "test_encore_group_creation_cleanup_and_replay_are_single_events",
+        "test_encore_uses_exiled_lki_after_source_departure_and_reentry",
+        "test_ninjutsu_reveal_counter_commander_and_unblocked_boundaries"
       ],
       "multiplayer_tests": [
-        "test_encore_exiles_source_and_creates_one_haste_copy_per_opponent",
-        "test_encore_group_creation_cleanup_and_replay_are_single_events",
-        "test_encore_group_cleanup_replacement_choice_resumes_atomically",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_blitz_cleanup_is_ability_independent_identity_safe_and_replays",
         "test_blitz_delayed_sacrifice_requires_its_controller",
-        "test_blitz_cleanup_is_ability_independent_identity_safe_and_replays"
+        "test_encore_exiles_source_and_creates_one_haste_copy_per_opponent",
+        "test_encore_group_cleanup_replacement_choice_resumes_atomically",
+        "test_encore_group_creation_cleanup_and_replay_are_single_events"
       ],
       "negative_tests": [
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_open_combat_entry_variants_remain_residual"
       ],
       "official_rules": [
@@ -24716,23 +24820,26 @@
         "702.190b"
       ],
       "positive_tests": [
-        "test_fixed_combat_entry_keyword_contract_matrix",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_blitz_cast_grants_haste_and_graveyard_trigger_draws",
-        "test_blitz_normal_delayed_cleanup_sacrifices_and_draws"
+        "test_blitz_normal_delayed_cleanup_sacrifices_and_draws",
+        "test_fixed_combat_entry_keyword_contract_matrix"
       ],
       "privacy_tests": [
-        "test_ninjutsu_four_player_projection_save_load_and_exact_replay",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
+        "test_encore_group_cleanup_replacement_choice_resumes_atomically",
         "test_encore_group_creation_cleanup_and_replay_are_single_events",
-        "test_encore_group_cleanup_replacement_choice_resumes_atomically"
+        "test_ninjutsu_four_player_projection_save_load_and_exact_replay"
       ],
       "replay_tests": [
-        "test_ninjutsu_four_player_projection_save_load_and_exact_replay",
-        "test_encore_countered_commander_and_legacy_effect_payload",
-        "test_encore_group_creation_cleanup_and_replay_are_single_events",
-        "test_encore_group_cleanup_replacement_choice_resumes_atomically",
-        "test_pre_v220_encore_record_is_explicitly_incompatible",
+        "test_actual_sneak_locks_both_modes_and_pays_the_unblocked_return_in_the_real_blockers_window",
         "test_blitz_cleanup_is_ability_independent_identity_safe_and_replays",
-        "test_blitz_v1_runtime_payloads_preserve_historical_semantics"
+        "test_blitz_v1_runtime_payloads_preserve_historical_semantics",
+        "test_encore_countered_commander_and_legacy_effect_payload",
+        "test_encore_group_cleanup_replacement_choice_resumes_atomically",
+        "test_encore_group_creation_cleanup_and_replay_are_single_events",
+        "test_ninjutsu_four_player_projection_save_load_and_exact_replay",
+        "test_pre_v220_encore_record_is_explicitly_incompatible"
       ],
       "required_evidence": [
         "positive",
@@ -30349,12 +30456,14 @@
       "implementation_mutation_rationale": "Focused compiler and layer-5 mutations remove the typed fragment or color removal, and exact CardProgram plus current color assertions reject both survivors.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_devoid_and_compiled_aura_attachment_compose",
         "test_devoid_executes_while_replacement_siblings_fail_closed",
-        "test_devoid_orders_before_layer_five_color_addition_and_after_copy_values",
-        "test_devoid_feeds_current_colorless_and_colored_predicates"
+        "test_devoid_feeds_current_colorless_and_colored_predicates",
+        "test_devoid_orders_before_layer_five_color_addition_and_after_copy_values"
       ],
       "multiplayer_tests": [
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_devoid_is_colorless_in_every_zone_and_preserves_color_identity"
       ],
       "negative_tests": [
@@ -30368,13 +30477,16 @@
         "702.114a"
       ],
       "positive_tests": [
-        "test_ordinary_devoid_compiles_to_all_zone_characteristic_definition",
-        "test_devoid_is_colorless_in_every_zone_and_preserves_color_identity"
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
+        "test_devoid_is_colorless_in_every_zone_and_preserves_color_identity",
+        "test_ordinary_devoid_compiles_to_all_zone_characteristic_definition"
       ],
       "privacy_tests": [
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_devoid_projection_and_replay_are_identity_safe"
       ],
       "replay_tests": [
+        "test_actual_devoid_is_retained_for_both_modal_exile_and_damage",
         "test_devoid_projection_and_replay_are_identity_safe"
       ],
       "required_evidence": [
@@ -58746,15 +58858,18 @@
       "implementation_mutation_rationale": "Omitting the stack restriction republishes a response spell and nonmana activation during actual Sudden Shock priority and the offer witness rejects it.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_morph_face_up_special_action_remains_legal_during_split_second",
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana",
         "test_cast_trigger_resolves_above_split_second_without_unlocking_priority",
-        "test_split_second_copy_restricts_until_last_spell_copy_leaves",
-        "test_actual_morph_face_up_special_action_remains_legal_during_split_second"
+        "test_split_second_copy_restricts_until_last_spell_copy_leaves"
       ],
       "multiplayer_tests": [
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana"
       ],
       "negative_tests": [
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_malformed_descriptors_and_dependency_omission_fail_closed"
       ],
       "official_rules": [
@@ -58768,15 +58883,18 @@
         "605.1a"
       ],
       "positive_tests": [
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_keyword_is_a_stack_local_source_spanned_static_declaration"
       ],
       "privacy_tests": [
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana"
       ],
       "replay_tests": [
+        "test_actual_morph_face_up_special_action_remains_legal_during_split_second",
+        "test_actual_split_second_still_prevents_an_affordable_response_while_each_mode_resolves",
         "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana",
-        "test_cast_trigger_resolves_above_split_second_without_unlocking_priority",
-        "test_actual_morph_face_up_special_action_remains_legal_during_split_second"
+        "test_cast_trigger_resolves_above_split_second_without_unlocking_priority"
       ],
       "required_evidence": [
         "positive",
@@ -93413,7 +93531,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 835,
+  "registry_version": 836,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

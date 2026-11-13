@@ -180,7 +180,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v1004"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1005"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1169,7 +1169,7 @@ def _typed_whole_spell_face(
         type_line=type_line, keywords=keywords, oracle_text=oracle_text, material_rows=material_rows,
         effect_template=effect_template, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals, compile_inner=_activated_or_fixed_event_trigger_node,
-        trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates)
+        trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates,compile_keyword=_keyword_nodes)
 
 
 def _face_trigger_compiler(record, material_rows, effect_template, face_name, permanent):

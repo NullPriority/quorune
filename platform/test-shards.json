@@ -1288,6 +1288,7 @@
       "test_life_state",
       "test_mana_mode_effects",
       "test_menace_rules",
+      "test_modal_keyword_composition",
       "test_nonmodal_face_mana_value",
       "test_object_query",
       "test_ordered_composition_followups",
