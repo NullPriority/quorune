@@ -1,18 +1,18 @@
 {
   "execution_order": [
     "generated-validation",
-    "functional-02",
-    "functional-01",
-    "functional-11",
-    "functional-05",
-    "functional-12",
-    "functional-06",
     "functional-08",
-    "functional-03",
-    "functional-07",
     "functional-04",
+    "functional-07",
+    "functional-12",
+    "functional-02",
+    "functional-03",
+    "functional-01",
     "functional-10",
-    "functional-09"
+    "functional-05",
+    "functional-06",
+    "functional-09",
+    "functional-11"
   ],
   "overlay_suites": {
     "casting-costs-mana": [
