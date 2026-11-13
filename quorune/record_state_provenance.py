@@ -8,6 +8,7 @@ from .cast_event_type_model import cast_event_type_snapshot_fields, read_cast_ev
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
 from .model import unearth_leave_replacement_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
+from .mana_source_counter_payment_model import mana_source_counter_payment_fields,read_mana_source_counter_payment_version
 from .printed_mana_cost_model import (
     PRINTED_MANA_COST_VERSION_FIELD,
     printed_mana_cost_format_fields,
@@ -59,6 +60,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
            if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
         **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
+        **mana_source_counter_payment_fields(getattr(state,'mana_source_counter_payment_version',None)),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
@@ -110,6 +112,8 @@ def validate_state_versions(
     format_value = manifest.get("format")
     if not isinstance(format_value, Mapping):
         raise ValueError("Record format provenance is malformed")
+    if read_mana_source_counter_payment_version(format_value)!=getattr(state,'mana_source_counter_payment_version',None):
+        raise ValueError('Mana source-counter payment provenance does not match the initial checkpoint')
     stack_authority = format_value.get("stack_resolution_authority_version", 0)
     if (
         type(stack_authority) is not int or stack_authority not in {0, 1}

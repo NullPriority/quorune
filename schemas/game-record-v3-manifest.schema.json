@@ -218,6 +218,10 @@
           ],
           "type": "integer"
         },
+        "mana_source_counter_payment_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "public_movement_history_version": {
           "const": 1,
           "type": "integer"

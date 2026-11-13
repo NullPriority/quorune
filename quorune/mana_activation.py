@@ -331,11 +331,11 @@ def _commit_plan_mode(
     trigger_source = tap_mana_source(host, card, tap_source=mode.tap_source)
     cost_effects = tuple(
         effect for effect in mode.side_effects
-        if effect.get("op") == "sacrifice_source"
+        if effect.get("op") in {"sacrifice_source","remove_source_counters"}
     )
     result_effects = tuple(
         effect for effect in mode.side_effects
-        if effect.get("op") != "sacrifice_source"
+        if effect.get("op") not in {"sacrifice_source","remove_source_counters"}
     )
     if mode.tap_source:
         set_permanent_tapped(host,card.ref,actor=seat,tapped=True,reason="mana ability cost",log=False)

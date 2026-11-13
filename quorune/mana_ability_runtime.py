@@ -147,6 +147,10 @@ def mana_modes_for_ability(
         side_effects.append(
             {"op": "pay_life", "amount": ability.life_payment}
         )
+    from .mana_source_counter_payment_model import exact_mana_source_counter_payment
+    counter_cost=ability.source_counter_removal_cost
+    if exact_mana_source_counter_payment(host.state) and counter_cost is not None and counter_cost.schema_version==1:
+        side_effects.append({'op':'remove_source_counters','cost':counter_cost.to_dict()})
     side_effects.extend(_mana_result_effects(ability))
     restriction = bind_mana_spend_rule(ability.mana_spend_restriction, source)
 

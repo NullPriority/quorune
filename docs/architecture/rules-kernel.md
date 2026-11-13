@@ -613,6 +613,15 @@ sacrifice and loyalty costs commit before resolution; a countered spell adds
 no mana. Typed spending restrictions enter the canonical provenance lots and
 use the same public spell-type predicates for advertised and accepted payment.
 
+Automatic mana payment plans named source-counter costs through the same exact
+counter-removal owner as explicit activation. Discovery excludes an unpaid
+counter mode, and commit rechecks and removes the counters before producing
+mana. A separate free mode remains available. Unspecified counter-kind choices
+remain explicit activations. These costs are not reversible mana taps.
+The checkpoint and record format pin this behavior with
+`mana_source_counter_payment_version: 1`; historical absence retains its recorded
+payment behavior. See [ADR 0166](../adr/0166-exact-source-counter-mana-payments.md).
+
 Granted fixed-output mana abilities use the receiving object's current
 controller, ability presence and activation costs. Their typed spending
 restriction enters the same provenance lots as printed mana abilities.
