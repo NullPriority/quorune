@@ -4372,6 +4372,8 @@ creature target for its fixed counter. Both pay their complete source costs
 before an independent queued result. The same owner lowers canonical fixed
 Investigate. Counted Investigate queues one canonical Clue creation per action,
 with its own token replacements and trigger observation before the next action.
+The spelling `investigate twice` uses the same two-action descriptor as
+`investigate two times`; it preserves two separate creation events.
 The existing variable counts read either committed damage or the controller's
 current opponent count. The owner also lowers fixed Afterlife through
 permanent-graveyard LKI, one current-target copy token, and

@@ -740,6 +740,7 @@
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",
     "tests/fixtures/intrinsic-permanent-death-return-cards.json",
     "tests/fixtures/intrinsic-token-composition-cards.json",
+    "tests/fixtures/investigate-twice-cards.json",
     "tests/fixtures/job-select-cards.json",
     "tests/fixtures/kicked-damage-replacement-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",

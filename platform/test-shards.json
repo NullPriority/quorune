@@ -855,6 +855,7 @@
       "test_graveyard_return_choices",
       "test_grouped_choose_one_modes",
       "test_grouped_nonrepeating_modes",
+      "test_investigate_twice",
       "test_legend_rule_exemption_native",
       "test_legend_rule_exemptions",
       "test_legend_state_based_choices",

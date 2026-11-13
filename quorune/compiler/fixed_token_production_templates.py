@@ -33,8 +33,8 @@ _COLOR_SYMBOLS = {
 }
 _COLOR_ORDER = "WUBRG"
 _FIXED_INVESTIGATE = re.compile(
-    r"^Investigate(?: (?P<count>one|two|three|four|five|six|seven|eight|"
-    r"nine|ten|\d+) times)?\.?$",
+    r"^Investigate(?: (?:(?P<twice>twice)|(?P<count>one|two|three|four|five|six|seven|eight|"
+    r"nine|ten|\d+) times))?\.?$",
     re.IGNORECASE,
 )
 _FIXED_COPY_TOKEN = re.compile(
@@ -118,7 +118,7 @@ def _fixed_investigate_template(
     if match is None:
         return None
     count_text = match.group("count")
-    count = 1 if count_text is None else _positive_fixed_number(count_text)
+    count = 2 if match.group('twice') else 1 if count_text is None else _positive_fixed_number(count_text)
     if count is None:
         return None
     try:

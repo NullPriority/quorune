@@ -50042,7 +50042,7 @@
           "effects that merely create Clues without investigating"
         ],
         "inputs": [
-          "complete Investigate or Investigate N times instruction",
+          "complete Investigate, Investigate twice, or Investigate N times instruction",
           "fixed count from one to twenty or a typed committed-damage or opponent count",
           "resolving controller"
         ],
@@ -50063,26 +50063,37 @@
       "dependency_fail_closed_status": "passed",
       "id": "keyword_action.investigate.fixed",
       "implementation_components": [
-        "quorune.fixed_token_production.FixedInvestigateSpec",
+        "quorune.compiler.fixed_token_production_templates._fixed_investigate_template",
         "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.fixed_token_production.FixedInvestigateSpec",
         "quorune.semantic_choices.investigate.SequentialInvestigateHandler",
-        "quorune.token_creation.create_tokens",
-        "quorune.standard_token_abilities.standard_token_characteristics"
+        "quorune.standard_token_abilities.standard_token_characteristics",
+        "quorune.token_creation.create_tokens"
       ],
-      "implementation_mutation_rationale": "The focused compiler mutation removes Investigate lowering and exact compiler plus Clue behavior assertions reject the survivor.",
+      "implementation_mutation_rationale": "The original compiler omission witness and a fresh native two-Clue witness reject missing Investigate lowering and loss of the second action.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
+        "test_both_originals_investigate_twice_and_their_clues_pay_the_full_draw_cost",
+        "test_evoked_wavesifter_keeps_both_investigations_in_either_trigger_order",
+        "test_ezrim_can_use_one_created_clue_as_its_artifact_cost_without_activating_the_clue",
         "test_investigate_and_predefined_tokens_use_canonical_abilities",
-        "test_token_replacement_order_rollback_and_privacy"
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_twice_reopens_token_replacements_after_the_first_clue_creation_and_saved_choice"
       ],
       "multiplayer_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
-        "test_token_replacement_order_rollback_and_privacy"
+        "test_both_originals_investigate_twice_and_their_clues_pay_the_full_draw_cost",
+        "test_evoked_wavesifter_keeps_both_investigations_in_either_trigger_order",
+        "test_ezrim_can_use_one_created_clue_as_its_artifact_cost_without_activating_the_clue",
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_twice_reopens_token_replacements_after_the_first_clue_creation_and_saved_choice"
       ],
       "negative_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
-        "test_token_production_grammar_and_capability_mutants_fail_closed"
+        "test_open_counts_and_following_unrepresented_clauses_stay_residual",
+        "test_token_production_grammar_and_capability_mutants_fail_closed",
+        "test_verified_investigate_withdrawal_blocks_twice_but_preserves_an_independent_food"
       ],
       "official_rules": [
         "111.10f",
@@ -50093,16 +50104,29 @@
       ],
       "positive_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
+        "test_both_originals_investigate_twice_and_their_clues_pay_the_full_draw_cost",
         "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
-        "test_investigate_and_predefined_tokens_use_canonical_abilities"
+        "test_evoked_wavesifter_keeps_both_investigations_in_either_trigger_order",
+        "test_ezrim_can_use_one_created_clue_as_its_artifact_cost_without_activating_the_clue",
+        "test_investigate_and_predefined_tokens_use_canonical_abilities",
+        "test_twice_preserves_the_existing_two_action_owner_and_source_span",
+        "test_twice_reopens_token_replacements_after_the_first_clue_creation_and_saved_choice"
       ],
       "privacy_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
-        "test_investigate_and_predefined_tokens_use_canonical_abilities"
+        "test_both_originals_investigate_twice_and_their_clues_pay_the_full_draw_cost",
+        "test_evoked_wavesifter_keeps_both_investigations_in_either_trigger_order",
+        "test_ezrim_can_use_one_created_clue_as_its_artifact_cost_without_activating_the_clue",
+        "test_investigate_and_predefined_tokens_use_canonical_abilities",
+        "test_twice_reopens_token_replacements_after_the_first_clue_creation_and_saved_choice"
       ],
       "replay_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
-        "test_investigate_and_predefined_tokens_use_canonical_abilities"
+        "test_both_originals_investigate_twice_and_their_clues_pay_the_full_draw_cost",
+        "test_evoked_wavesifter_keeps_both_investigations_in_either_trigger_order",
+        "test_ezrim_can_use_one_created_clue_as_its_artifact_cost_without_activating_the_clue",
+        "test_investigate_and_predefined_tokens_use_canonical_abilities",
+        "test_twice_reopens_token_replacements_after_the_first_clue_creation_and_saved_choice"
       ],
       "required_evidence": [
         "positive",
@@ -50118,7 +50142,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -94790,7 +94814,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 850,
+  "registry_version": 851,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
