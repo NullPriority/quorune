@@ -1612,6 +1612,13 @@ characteristic result must close against the identical target schema; no new
 target occurrence or public-set query is synthesized. The flattened program
 uses the existing simultaneous target-set handlers in printed order and may
 end with independently closed Draw, Scry or Investigate instructions.
+A bounded fixed characteristic result can also lead the sequence, followed by
+fixed untargeted draw, scry, life change, ordinary token creation or Amass.
+Each follow-up closes through its primitive owner. It runs once after the
+target modifier, including when no targets were chosen; newly created tokens
+are not added to the earlier target set. Activated forms retain their printed
+costs and timing restrictions. Conditional and delayed-combat follow-ups need
+their own represented composition and remain outside this extension.
 The next-untap follow-up binds the same revalidated targets. It taps them
 together, then marks each original permanent to skip its next controller
 untap, including permanents that were already tapped. The marker follows
@@ -1619,8 +1626,8 @@ control of the permanent and expires in that untap step. This form can also
 retain an independent typed token result with its own compiled abilities.
 The runtime binder infers the untap capability directly from the compiled tap
 instruction.
-`resolution.target_set.ordered_results` is inferred from the actual multiple
-target-set leaves independently of sequence annotations. Every leaf retains
+`resolution.target_set.ordered_results` is inferred from multiple target-set
+leaves or the fixed characteristic-prefix sequence independently of annotations. Every leaf retains
 its own exact structural validator and capabilities. Initial zero targets
 permit independent following instructions; all chosen targets becoming
 illegal stop the whole spell. Copies retain their original chosen counts and

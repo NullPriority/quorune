@@ -66932,15 +66932,15 @@
         ],
         "inputs": [
           "one bounded original target set with fixed count or up-to bound through six",
-          "two or more independently closed same-schema target-set leaves",
-          "zero to two closed independent following leaves"
+          "two or more independently closed same-schema target-set leaves, or one fixed characteristic-set prefix",
+          "zero through three independently closed fixed untargeted follow-ups within four total leaves"
         ],
         "outputs": [
           "one shared target announcement and legality authority",
           "ordered existing mutation intents over surviving original incarnations",
           "ordinary empty-set,all-illegal,copy count,private continuation and replay behavior"
         ],
-        "summary": "An ordered bounded program reuses one announced homogeneous public permanent target set for existing tap/untap,counter and fixed-characteristic leaves,with closed independent following draw,Scry or Investigate."
+        "summary": "An ordered bounded program reuses one announced homogeneous public permanent target set for existing tap/untap,counter and fixed-characteristic leaves,with closed independent following draw,Scry or Investigate. A fixed characteristic-set prefix can precede fixed draw, Scry, life change, ordinary token creation or Amass. Zero announced targets still permits those independent results; all announced targets becoming illegal stops the complete program."
       },
       "blockers": [],
       "dependencies": [
@@ -66956,27 +66956,61 @@
         "quorune.compiler.target_set_result_sequences.target_set_result_sequence_template",
         "quorune.rules.target_set_result_sequences.target_set_result_sequence_capabilities",
         "quorune.rules.target_set_result_sequences.target_set_result_sequence_runtime_dependencies",
-        "quorune.selection.targeting.TargetSelectionOwnerMixin"
+        "quorune.selection.targeting.TargetSelectionOwnerMixin",
+        "quorune.compiler.target_set_result_sequences._characteristic_prefix_sequence",
+        "quorune.rules.target_set_result_sequences._characteristic_tail_capabilities"
       ],
       "implementation_mutation_rationale": "Omitting the follow-up result fails independent source-grounded ordered-effect expectations.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_all_chosen_targets_becoming_illegal_stops_each_spell_and_its_independent_result",
+        "test_actual_bleeding_edge_keeps_the_warden_until_resolution_finishes_and_does_not_weaken_the_new_army",
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets",
+        "test_actual_created_food_retains_its_normal_paid_life_ability",
+        "test_actual_created_rat_survives_cleanup_and_cannot_block_an_actual_attacker",
+        "test_actual_elderhall_does_not_offer_its_sorcery_ability_off_turn_despite_available_mana",
+        "test_actual_elderhall_excludes_a_controlled_creature_and_creates_its_elves_after_the_opposing_modifier",
+        "test_actual_elderhall_pays_the_source_and_five_mana_then_resolves_without_targets_after_source_departure",
+        "test_actual_opposing_spell_copy_preserves_target_count_and_gains_life_for_its_own_controller",
         "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
-        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+        "test_actual_two_targets_and_partial_invalidation_keep_one_life_result_then_cleanup_each_modifier",
+        "test_actual_zero_targets_without_any_eligible_creatures_keep_all_four_independent_results"
       ],
       "multiplayer_tests": [
+        "test_actual_all_chosen_targets_becoming_illegal_stops_each_spell_and_its_independent_result",
+        "test_actual_bleeding_edge_keeps_the_warden_until_resolution_finishes_and_does_not_weaken_the_new_army",
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets",
+        "test_actual_created_food_retains_its_normal_paid_life_ability",
+        "test_actual_created_rat_survives_cleanup_and_cannot_block_an_actual_attacker",
+        "test_actual_elderhall_does_not_offer_its_sorcery_ability_off_turn_despite_available_mana",
+        "test_actual_elderhall_excludes_a_controlled_creature_and_creates_its_elves_after_the_opposing_modifier",
+        "test_actual_elderhall_pays_the_source_and_five_mana_then_resolves_without_targets_after_source_departure",
+        "test_actual_opposing_spell_copy_preserves_target_count_and_gains_life_for_its_own_controller",
         "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
-        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+        "test_actual_two_targets_and_partial_invalidation_keep_one_life_result_then_cleanup_each_modifier",
+        "test_actual_zero_targets_without_any_eligible_creatures_keep_all_four_independent_results"
       ],
       "negative_tests": [
-        "test_new_choices_variable_sets_and_unknown_followups_remain_residual",
-        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations",
-        "test_sequence_followup_omission_mutation_is_killed",
-        "test_verified_sequence_withdrawal_preserves_the_ordinary_target_set_leaf",
+        "test_actual_all_chosen_targets_becoming_illegal_stops_each_spell_and_its_independent_result",
+        "test_actual_bleeding_edge_keeps_the_warden_until_resolution_finishes_and_does_not_weaken_the_new_army",
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
-        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets",
+        "test_actual_created_food_retains_its_normal_paid_life_ability",
+        "test_actual_created_rat_survives_cleanup_and_cannot_block_an_actual_attacker",
+        "test_actual_elderhall_does_not_offer_its_sorcery_ability_off_turn_despite_available_mana",
+        "test_actual_elderhall_excludes_a_controlled_creature_and_creates_its_elves_after_the_opposing_modifier",
+        "test_actual_elderhall_pays_the_source_and_five_mana_then_resolves_without_targets_after_source_departure",
+        "test_actual_opposing_spell_copy_preserves_target_count_and_gains_life_for_its_own_controller",
+        "test_actual_two_targets_and_partial_invalidation_keep_one_life_result_then_cleanup_each_modifier",
+        "test_actual_zero_targets_without_any_eligible_creatures_keep_all_four_independent_results",
+        "test_new_choices_variable_sets_and_unknown_followups_remain_residual",
+        "test_payload_minimum_survives_annotation_omission_and_rejects_unbound_or_malformed_tails",
+        "test_sequence_followup_omission_mutation_is_killed",
+        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations",
+        "test_verified_sequence_withdrawal_keeps_the_independent_characteristic_leaf",
+        "test_verified_sequence_withdrawal_preserves_the_ordinary_target_set_leaf"
       ],
       "official_rules": [
         "115.6",
@@ -66990,19 +67024,50 @@
         "707.10c"
       ],
       "positive_tests": [
-        "test_same_set_counter_and_characteristic_results_are_ordered_and_fully_owned",
-        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations",
+        "test_actual_all_chosen_targets_becoming_illegal_stops_each_spell_and_its_independent_result",
+        "test_actual_bleeding_edge_keeps_the_warden_until_resolution_finishes_and_does_not_weaken_the_new_army",
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets",
+        "test_actual_created_food_retains_its_normal_paid_life_ability",
+        "test_actual_created_rat_survives_cleanup_and_cannot_block_an_actual_attacker",
+        "test_actual_elderhall_does_not_offer_its_sorcery_ability_off_turn_despite_available_mana",
+        "test_actual_elderhall_excludes_a_controlled_creature_and_creates_its_elves_after_the_opposing_modifier",
+        "test_actual_elderhall_pays_the_source_and_five_mana_then_resolves_without_targets_after_source_departure",
+        "test_actual_opposing_spell_copy_preserves_target_count_and_gains_life_for_its_own_controller",
         "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
-        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+        "test_actual_two_targets_and_partial_invalidation_keep_one_life_result_then_cleanup_each_modifier",
+        "test_actual_zero_targets_without_any_eligible_creatures_keep_all_four_independent_results",
+        "test_characteristic_prefix_and_every_independent_leaf_keep_their_own_capabilities",
+        "test_same_set_counter_and_characteristic_results_are_ordered_and_fully_owned",
+        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations"
       ],
       "privacy_tests": [
-        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load"
+        "test_actual_all_chosen_targets_becoming_illegal_stops_each_spell_and_its_independent_result",
+        "test_actual_bleeding_edge_keeps_the_warden_until_resolution_finishes_and_does_not_weaken_the_new_army",
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_created_food_retains_its_normal_paid_life_ability",
+        "test_actual_created_rat_survives_cleanup_and_cannot_block_an_actual_attacker",
+        "test_actual_elderhall_does_not_offer_its_sorcery_ability_off_turn_despite_available_mana",
+        "test_actual_elderhall_excludes_a_controlled_creature_and_creates_its_elves_after_the_opposing_modifier",
+        "test_actual_elderhall_pays_the_source_and_five_mana_then_resolves_without_targets_after_source_departure",
+        "test_actual_opposing_spell_copy_preserves_target_count_and_gains_life_for_its_own_controller",
+        "test_actual_two_targets_and_partial_invalidation_keep_one_life_result_then_cleanup_each_modifier",
+        "test_actual_zero_targets_without_any_eligible_creatures_keep_all_four_independent_results"
       ],
       "replay_tests": [
+        "test_actual_all_chosen_targets_becoming_illegal_stops_each_spell_and_its_independent_result",
+        "test_actual_bleeding_edge_keeps_the_warden_until_resolution_finishes_and_does_not_weaken_the_new_army",
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets",
+        "test_actual_created_food_retains_its_normal_paid_life_ability",
+        "test_actual_created_rat_survives_cleanup_and_cannot_block_an_actual_attacker",
+        "test_actual_elderhall_does_not_offer_its_sorcery_ability_off_turn_despite_available_mana",
+        "test_actual_elderhall_excludes_a_controlled_creature_and_creates_its_elves_after_the_opposing_modifier",
+        "test_actual_elderhall_pays_the_source_and_five_mana_then_resolves_without_targets_after_source_departure",
+        "test_actual_opposing_spell_copy_preserves_target_count_and_gains_life_for_its_own_controller",
         "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
-        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+        "test_actual_two_targets_and_partial_invalidation_keep_one_life_result_then_cleanup_each_modifier",
+        "test_actual_zero_targets_without_any_eligible_creatures_keep_all_four_independent_results"
       ],
       "required_evidence": [
         "positive",
@@ -67018,7 +67083,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -93966,7 +94031,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 841,
+  "registry_version": 842,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

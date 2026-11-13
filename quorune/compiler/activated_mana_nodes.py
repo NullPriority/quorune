@@ -469,6 +469,7 @@ def _activated_effect_dependency_gate(
                 "fixed-controller-effect-sequence",
                 "fixed-target-player-effect-sequence",
                 "fixed-counter-controller-effect-sequence",
+                "shared-target-set-result-sequence",
                 "fixed-resolution-control",
                 "fixed-effect-clause-sequence",
                 "fixed-extra-turn-after-current",

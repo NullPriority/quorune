@@ -14757,6 +14757,25 @@
         "test_entry_copy_values",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "characteristic-target-set-followups",
+      "patterns": [
+        "quorune/compiler/target_set_result_sequences.py",
+        "quorune/rules/target_set_result_sequences.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "tests/test_characteristic_set_followups.py",
+        "tests/fixtures/characteristic-set-followup-cards.json"
+      ],
+      "test_modules": [
+        "test_characteristic_set_followups",
+        "test_target_set_result_sequences",
+        "test_target_characteristic_sets",
+        "test_resolved_target_set_zero",
+        "test_fixed_effect_clause_sequences",
+        "test_typed_activated_ability_catalog",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

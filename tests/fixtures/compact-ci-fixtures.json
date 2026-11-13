@@ -493,6 +493,7 @@
     "tests/fixtures/casualty-cards.json",
     "tests/fixtures/champion-cards.json",
     "tests/fixtures/characteristic-query-union-cards.json",
+    "tests/fixtures/characteristic-set-followup-cards.json",
     "tests/fixtures/chosen-aura-protection-cards.json",
     "tests/fixtures/chosen-color-event-cards.json",
     "tests/fixtures/chosen-color-mana-cards.json",
