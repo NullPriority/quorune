@@ -320,11 +320,26 @@ def _excluded_direct_type_fields(phrase: str) -> dict[str, Any] | None:
     return {**fields,'types_none':(match['excluded'],)} if fields is not None else None
 
 
+def _nontoken_subject_body(phrase: str) -> str | None:
+    if phrase.startswith('nontoken '):
+        body = phrase.removeprefix('nontoken ')
+    else:
+        combined = re.fullmatch(r'(?P<excluded>nonland|noncreature),? nontoken (?P<body>.+)', phrase)
+        if combined is None:
+            return None
+        body = combined['excluded']+' '+combined['body']
+    return None if {'token', 'nontoken'}.intersection(body.split()) else body
+
+
 def _closed_direct_characteristic_fields(
     phrase: str,
 ) -> dict[str, Any] | None:
     """Parse the bounded reusable public-characteristic target grammar."""
 
+    body = _nontoken_subject_body(phrase)
+    if body is not None:
+        fields = _closed_direct_characteristic_fields(body)
+        return {**fields, 'token': False} if fields is not None and 'token' not in fields else None
     if phrase == (
         "legendary permanent that's an artifact, creature, or enchantment"
     ):
@@ -356,8 +371,6 @@ def _closed_direct_characteristic_fields(
         return {"token": True}
     if phrase == "token creature":
         return {"types_any": ("creature",), "token": True}
-    if phrase == "nontoken artifact":
-        return {"types_any": ("artifact",), "token": False}
     token_type = phrase.removesuffix(" token")
     if token_type != phrase and token_type in _DIRECT_TYPE_ANY_VALUES:
         return {"types_any": (token_type,), "token": True}
@@ -646,9 +659,8 @@ def _validate_direct_color_predicates(
 def _validate_direct_target_flags(
     spec: "DirectPermanentTargetSpec",
 ) -> None:
-    if not (spec.token is None or spec.token is True
-            or (spec.token is False and spec.types_any == ("artifact",))):
-        raise ValueError("Direct permanent token predicates require a token or nontoken artifact")
+    if spec.token is not None and type(spec.token) is not bool:
+        raise ValueError("Direct permanent token predicates require a strict boolean")
     if spec.controller_relation not in {"any", "you", "opponent"}:
         raise ValueError("Direct permanent target controller relation is unsupported")
     if spec.controller_seat is not None and (

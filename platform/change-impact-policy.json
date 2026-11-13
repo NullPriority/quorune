@@ -14740,6 +14740,23 @@
         "test_fixed_effect_clause_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "nontoken-permanent-targets",
+      "patterns": [
+        "quorune/compiler/direct_target.py",
+        "tests/test_nontoken_targets.py",
+        "tests/fixtures/nontoken-target-cards.json"
+      ],
+      "test_modules": [
+        "test_nontoken_targets",
+        "test_fixed_direct_target_predicates",
+        "test_fixed_target_effect_sequences",
+        "test_linked_exile_return",
+        "test_token_copy_values",
+        "test_entry_copy_values",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

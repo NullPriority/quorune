@@ -61,6 +61,12 @@ A direct token target checks token status independently of card type. A printed
 creature or artifact qualifier adds that type test. Controller, tapped status,
 and entry during the current turn use the same public predicates at selection
 and resolution.
+The same predicate can exclude tokens from a represented permanent domain.
+Nontoken type disjunctions exclude tokens from every branch; nonland and
+nontoken qualifiers remain independent requirements. Copying a card does not
+make a token into a nontoken, and copying a token does not change a card's
+nontoken identity. The compiler emits a strict Boolean token field and retains
+all other controller, source-exclusion, type and timing restrictions.
 
 Target snapshots retain the selected object's identity and zone-change counter.
 During resolution, `semantic_runtime/direct_target_fields.py` checks that

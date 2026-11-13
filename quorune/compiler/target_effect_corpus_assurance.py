@@ -35,6 +35,7 @@ from .direct_target import (
     DIRECT_NONCREATURE_SUBTYPES,
     DirectPermanentTargetSpec,
     direct_permanent_target_spec,
+    _nontoken_subject_body, _closed_direct_characteristic_fields, _validate_direct_target_flags,
 )
 from .fixed_target_effect_sequences import (
     FIXED_TARGET_CHARACTERISTIC_KEYWORDS,
@@ -511,6 +512,7 @@ def grammar_source_fingerprint() -> str:
         DirectPermanentTargetSpec.from_target_schema,
         DirectPermanentTargetSpec.to_target_schema,
         direct_permanent_target_spec,
+        _nontoken_subject_body, _closed_direct_characteristic_fields, _validate_direct_target_flags,
         fixed_target_characteristics_effect_template,
         fixed_target_effect_sequence_template,
         fixed_target_characteristics_node_capabilities,
