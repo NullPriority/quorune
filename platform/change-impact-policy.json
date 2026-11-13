@@ -14635,6 +14635,23 @@
         "test_card_program_trust",
         "test_cascade_rules"
       ]
+    },
+    {
+      "id": "optional-targeted-player-results",
+      "patterns": [
+        "quorune/compiler/optional_effect_templates.py",
+        "quorune/semantic_choices/optional_effect.py",
+        "tests/test_optional_player_results.py",
+        "tests/fixtures/optional-player-result-cards.json"
+      ],
+      "test_modules": [
+        "test_optional_player_results",
+        "test_fixed_optional_effect_choices",
+        "test_fixed_affected_player_discards",
+        "test_random_discard",
+        "test_mill_rules",
+        "test_source_self_optional_results"
+      ]
     }
   ],
   "risk_rules": [

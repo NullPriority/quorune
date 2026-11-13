@@ -27,7 +27,7 @@ EffectCompiler = Callable[[str], CompiledEffectTemplate]
 _OPTIONAL_EFFECT = re.compile(r"you may (?P<body>.+)", re.IGNORECASE)
 _OPTIONAL_HAVE_RESULT = re.compile(
     r"have (?P<subject>this (?:creature|artifact|enchantment|permanent)|target [^,.]+?) "
-    r"(?P<verb>deal|gain|get|lose) (?P<result>.+)", re.IGNORECASE,
+    r"(?P<verb>deal|gain|get|lose|draw|discard|mill) (?P<result>.+)", re.IGNORECASE,
 )
 
 
@@ -124,7 +124,8 @@ def fixed_optional_effect_template(
     body = match.group("body").strip()
     have_result = _OPTIONAL_HAVE_RESULT.fullmatch(body)
     if have_result is not None:
-        verb = {"deal": "deals", "gain": "gains", "get": "gets", "lose": "loses"}[
+        verb = {"deal": "deals", "gain": "gains", "get": "gets", "lose": "loses",
+                "draw": "draws", "discard": "discards", "mill": "mills"}[
             have_result["verb"].casefold()
         ]
         body = f"{have_result['subject']} {verb} {have_result['result']}"

@@ -42,6 +42,19 @@ def _represented_payment_player_selection(effect, *, actor, query):
     if not owned:raise SemanticChoiceError('Optional affected-player selection is outside its closed primitive')
 
 
+def _represented_targeted_player_discard(effect, *, actor, query):
+    from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
+    players=effect.get('players');target=effect.get('target')
+    if (effect.get('actor')!=actor or not isinstance(players,(list,tuple)) or len(players)!=1
+            or type(target)is not str or target not in query.active_seats or tuple(players)!=(target,)):
+        raise SemanticChoiceError('Optional targeted discard requires its one bound affected player')
+    symbolic={**effect,'actor':'$controller','players':['$target.0'],'target':'$target.0'}
+    schema={'zones':['player'],'categories':['player'],'player_relation':'any','count':1}
+    if not fixed_affected_player_discard_node_capabilities(effects=(symbolic,),target_schema=schema,
+            mechanic_ids=('fixed-affected-player-discard','cr-402-hand','cr-115-targets')):
+        raise SemanticChoiceError('Optional targeted discard lacks its closed result owner')
+
+
 def _represented_effect(
     effect: Mapping[str, Any],
     *,
@@ -83,12 +96,15 @@ def _represented_effect(
         from ..random_discard import random_discard_node_capabilities
         restored = {**effect, "actor": "$controller", "players": ["$controller"]}
         if (effect.get("actor") != actor or not isinstance(effect.get("players"), (list, tuple))
-                or list(effect["players"]) != [actor]
+                or len(effect["players"])!=1 or effect["players"][0] not in query.active_seats
                 or not random_discard_node_capabilities(effects=(restored,), target_schema=None,
                     mechanic_ids=("fixed-random-discard", "cr-402-hand"))):
-            raise SemanticChoiceError("Optional controller random discard instruction is malformed")
+            raise SemanticChoiceError("Optional single-player random discard instruction is malformed")
         return
     if operation == "choose_cards_apnap":
+        if 'target' in effect and effect.get('then')=='discard':
+            _represented_targeted_player_discard(effect,actor=actor,query=query)
+            return
         if allow_event_player_results and effect.get('players') not in ([actor],(actor,)):
             _represented_payment_player_selection(effect,actor=actor,query=query)
             return

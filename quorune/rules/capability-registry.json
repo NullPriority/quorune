@@ -19938,20 +19938,29 @@
       "implementation_mutation_rationale": "test_affected_player_discard_compiler_mutant_is_killed removes the broad affected-player production, while test_sequence_compiler_and_shape_mutants_are_killed removes the controller-sequence leaf; direct, activated, triggered, modal, and controller-sequence witnesses return to precise residuals.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_discard_choice_resumes_following_typed_effect",
-        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
-        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_controller_discard_then_draw_commits_in_printed_order",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_discard_choice_resumes_following_typed_effect",
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay"
       ],
       "multiplayer_tests": [
-        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_draw_then_controller_discard_is_private_and_replays_exactly",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay"
       ],
       "negative_tests": [
+        "test_actual_optional_trigger_offers_no_resolution_choice_after_its_only_target_concedes",
         "test_controller_discard_leaf_and_sequence_shape_are_closed",
         "test_fixed_affected_player_discard_generated_registration_promotes_closed_owner",
+        "test_missing_optional_or_child_owner_and_unknown_siblings_do_not_admit_the_source",
+        "test_resolved_foreign_player_children_require_the_exact_single_player_and_closed_primitive",
         "test_stale_controller_discard_choice_rolls_back_without_resuming",
         "test_target_discard_dependency_fails_closed",
         "test_unsupported_discard_choices_and_shape_mutations_fail_closed"
@@ -19966,22 +19975,31 @@
         "701.9c"
       ],
       "positive_tests": [
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_controller_discard_leaf_and_sequence_shape_are_closed",
         "test_draw_then_controller_discard_is_private_and_replays_exactly",
         "test_fixed_affected_player_discard_generated_registration_promotes_closed_owner",
         "test_fixed_affected_player_discards_compile_across_contexts_and_modes",
-        "test_fixed_count_discard_uses_available_cards_and_skips_empty_hand",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_fixed_count_discard_uses_available_cards_and_skips_empty_hand"
       ],
       "privacy_tests": [
-        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_draw_then_controller_discard_is_private_and_replays_exactly",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay"
       ],
       "replay_tests": [
-        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_draw_then_controller_discard_is_private_and_replays_exactly",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -46130,14 +46148,23 @@
         "test_actual_broodhatch_morph_does_not_gain_a_receiving_trigger_retroactively",
         "test_actual_clearwater_sunburst_counts_four_colors_and_optional_upkeep_gains_all_or_zero",
         "test_actual_cold_eyed_and_warped_starwinder_draw_all_actual_combat_damage_or_none",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_actual_gorion_and_chancellor_copy_adventure_face_without_copy_permission_or_normal_face_trigger",
         "test_actual_kinscaer_announces_target_before_optional_flying_removal_and_accepts_nonflying_target",
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_mirror_sigil_checks_blue_twice_and_copies_departed_source_with_retriggering_ability",
+        "test_actual_optional_trigger_offers_no_resolution_choice_after_its_only_target_concedes",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_surrakar_optional_counter_then_combat_draw_reads_departed_source_counter_lki",
         "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
@@ -46165,14 +46192,23 @@
         "test_actual_broodhatch_morph_does_not_gain_a_receiving_trigger_retroactively",
         "test_actual_clearwater_sunburst_counts_four_colors_and_optional_upkeep_gains_all_or_zero",
         "test_actual_cold_eyed_and_warped_starwinder_draw_all_actual_combat_damage_or_none",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_actual_gorion_and_chancellor_copy_adventure_face_without_copy_permission_or_normal_face_trigger",
         "test_actual_kinscaer_announces_target_before_optional_flying_removal_and_accepts_nonflying_target",
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_mirror_sigil_checks_blue_twice_and_copies_departed_source_with_retriggering_ability",
+        "test_actual_optional_trigger_offers_no_resolution_choice_after_its_only_target_concedes",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_surrakar_optional_counter_then_combat_draw_reads_departed_source_counter_lki",
         "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
@@ -46198,14 +46234,20 @@
         "test_actual_broodhatch_morph_does_not_gain_a_receiving_trigger_retroactively",
         "test_actual_clearwater_sunburst_counts_four_colors_and_optional_upkeep_gains_all_or_zero",
         "test_actual_cold_eyed_and_warped_starwinder_draw_all_actual_combat_damage_or_none",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
         "test_actual_gorion_and_chancellor_copy_adventure_face_without_copy_permission_or_normal_face_trigger",
         "test_actual_kinscaer_announces_target_before_optional_flying_removal_and_accepts_nonflying_target",
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_mirror_sigil_checks_blue_twice_and_copies_departed_source_with_retriggering_ability",
+        "test_actual_optional_trigger_offers_no_resolution_choice_after_its_only_target_concedes",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_surrakar_optional_counter_then_combat_draw_reads_departed_source_counter_lki",
         "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
@@ -46213,6 +46255,7 @@
         "test_bound_optional_event_quantity_and_source_copy_keep_owned_children",
         "test_cycled_damage_source_rebase_is_opt_in_and_requires_committed_identity",
         "test_linked_dynamic_random_and_other_player_variants_stay_residual",
+        "test_missing_optional_or_child_owner_and_unknown_siblings_do_not_admit_the_source",
         "test_optional_control_validation_requires_and_preserves_immutable_resolving_provenance",
         "test_optional_cycled_damage_rejects_other_card_pronouns_and_variable_amounts",
         "test_optional_draw_discard_retains_new_leaf_owner_and_legacy_shape",
@@ -46230,6 +46273,7 @@
         "test_original_removal_offers_only_its_affected_controller_the_optional_search",
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
+        "test_resolved_foreign_player_children_require_the_exact_single_player_and_closed_primitive",
         "test_unestablished_or_new_object_pronouns_are_not_rebound_to_source",
         "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary"
       ],
@@ -46251,14 +46295,23 @@
         "test_actual_broodhatch_morph_does_not_gain_a_receiving_trigger_retroactively",
         "test_actual_clearwater_sunburst_counts_four_colors_and_optional_upkeep_gains_all_or_zero",
         "test_actual_cold_eyed_and_warped_starwinder_draw_all_actual_combat_damage_or_none",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_actual_gorion_and_chancellor_copy_adventure_face_without_copy_permission_or_normal_face_trigger",
         "test_actual_kinscaer_announces_target_before_optional_flying_removal_and_accepts_nonflying_target",
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_mirror_sigil_checks_blue_twice_and_copies_departed_source_with_retriggering_ability",
+        "test_actual_optional_trigger_offers_no_resolution_choice_after_its_only_target_concedes",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_surrakar_optional_counter_then_combat_draw_reads_departed_source_counter_lki",
         "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
@@ -46285,7 +46338,8 @@
         "test_original_removal_offers_only_its_affected_controller_the_optional_search",
         "test_original_slice_and_dice_cycles_through_mass_damage_before_its_draw",
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
-        "test_spell_trigger_and_activation_share_optional_effect_lowering"
+        "test_spell_trigger_and_activation_share_optional_effect_lowering",
+        "test_targeted_player_verbs_preserve_optional_ownership_source_span_and_exact_child"
       ],
       "privacy_tests": [
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
@@ -46293,13 +46347,22 @@
         "test_actual_broodhatch_morph_does_not_gain_a_receiving_trigger_retroactively",
         "test_actual_clearwater_sunburst_counts_four_colors_and_optional_upkeep_gains_all_or_zero",
         "test_actual_cold_eyed_and_warped_starwinder_draw_all_actual_combat_damage_or_none",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_actual_gorion_and_chancellor_copy_adventure_face_without_copy_permission_or_normal_face_trigger",
         "test_actual_kinscaer_announces_target_before_optional_flying_removal_and_accepts_nonflying_target",
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_mirror_sigil_checks_blue_twice_and_copies_departed_source_with_retriggering_ability",
+        "test_actual_optional_trigger_offers_no_resolution_choice_after_its_only_target_concedes",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_surrakar_optional_counter_then_combat_draw_reads_departed_source_counter_lki",
         "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
@@ -46320,14 +46383,23 @@
         "test_actual_broodhatch_morph_does_not_gain_a_receiving_trigger_retroactively",
         "test_actual_clearwater_sunburst_counts_four_colors_and_optional_upkeep_gains_all_or_zero",
         "test_actual_cold_eyed_and_warped_starwinder_draw_all_actual_combat_damage_or_none",
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
+        "test_actual_conditional_entry_and_untap_triggers_preserve_their_independent_conditions",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_entry_targets_before_optional_choice_and_only_the_affected_opponent_discards",
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_actual_gorion_and_chancellor_copy_adventure_face_without_copy_permission_or_normal_face_trigger",
         "test_actual_kinscaer_announces_target_before_optional_flying_removal_and_accepts_nonflying_target",
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_mirror_sigil_checks_blue_twice_and_copies_departed_source_with_retriggering_ability",
+        "test_actual_optional_trigger_offers_no_resolution_choice_after_its_only_target_concedes",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_surrakar_optional_counter_then_combat_draw_reads_departed_source_counter_lki",
         "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
@@ -86887,19 +86959,22 @@
       "implementation_mutation_rationale": "A fixed seed witness distinguishes uniform sampling from selecting the first hand members, and removing the compiler production restores a material residual.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
         "test_real_optional_random_discard_apply_decline_and_pending_reload",
+        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
         "test_two_random_instructions_keep_distinct_persisted_sampling_keys"
       ],
       "multiplayer_tests": [
-        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
-        "test_original_entry_and_combat_random_discard_keep_source_and_recipient"
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
+        "test_original_entry_and_combat_random_discard_keep_source_and_recipient",
+        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands"
       ],
       "negative_tests": [
         "test_fixed_random_discard_closes_target_controller_and_apnap_sets",
+        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
         "test_random_subset_is_deterministic_distinct_and_fails_on_unknown_membership",
-        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay"
+        "test_resolved_foreign_player_children_require_the_exact_single_player_and_closed_primitive"
       ],
       "official_rules": [
         "101.4",
@@ -86911,21 +86986,24 @@
         "701.9c"
       ],
       "positive_tests": [
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_fixed_random_discard_closes_target_controller_and_apnap_sets",
-        "test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
         "test_original_entry_and_combat_random_discard_keep_source_and_recipient",
-        "test_original_goblin_lore_draws_before_random_discard_and_replays"
+        "test_original_goblin_lore_draws_before_random_discard_and_replays",
+        "test_original_hymn_trusted_target_rollback_private_survivors_and_replay"
       ],
       "privacy_tests": [
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
         "test_random_discard_replacement_pending_selection_reload_rollback_and_replay"
       ],
       "replay_tests": [
-        "test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
-        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
-        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+        "test_actual_foreign_owned_upkeep_source_keeps_optional_random_discard_and_token_choices_with_its_controller",
         "test_original_entry_and_combat_random_discard_keep_source_and_recipient",
+        "test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
+        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
         "test_real_optional_random_discard_apply_decline_and_pending_reload",
+        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
         "test_two_random_instructions_keep_distinct_persisted_sampling_keys"
       ],
       "required_evidence": [
@@ -87478,6 +87556,7 @@
       "implementation_mutation_rationale": "test_draw_commit_mutant_is_killed removes the ordinary draw commit, test_draw_restriction_mutant_is_killed removes live prohibition collection, and test_fixed_activated_draw_capability_gate_mutant_is_killed removes capability-shaped fixed-draw lowering; authoritative state and compiler-closure assertions reject all survivors. The 2,000-event coordinator regressions also kill recursive per-card and per-instruction control-flow survivors through the normal Python recursion limit. Fresh native witnesses kill controller inclusion in an opponent-only instruction and controller-first ordering in a shared different-count instruction before a real Dredge replacement pause.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_fox_departure_draws_different_counts_in_apnap_order_and_replays",
@@ -87515,6 +87594,7 @@
         "test_veil_conditional_draw_pauses_for_dredge_before_permissions"
       ],
       "multiplayer_tests": [
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_fox_departure_draws_different_counts_in_apnap_order_and_replays",
@@ -87569,6 +87649,7 @@
         "702.52b"
       ],
       "positive_tests": [
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
@@ -87597,11 +87678,13 @@
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_targeted_player_verbs_preserve_optional_ownership_source_span_and_exact_child",
         "test_two_draw_doublers_modify_instruction_before_individual_draws",
         "test_two_thousand_prevented_draws_do_not_recurse",
         "test_two_thousand_replacement_free_draws_do_not_recurse"
       ],
       "privacy_tests": [
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_fox_departure_draws_different_counts_in_apnap_order_and_replays",
@@ -87626,6 +87709,7 @@
         "test_resumed_multi_draw_sequence_is_private_and_replays_exactly"
       ],
       "replay_tests": [
+        "test_actual_colored_entry_keeps_blue_draw_and_black_affected_player_discard_distinct",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_fox_departure_draws_different_counts_in_apnap_order_and_replays",
@@ -90722,30 +90806,39 @@
       "implementation_mutation_rationale": "test_sequential_player_mill_mutant_is_killed_by_original_bell replaces the batch owner with separate player commits and fails at the explicit simultaneous-commit assertion. Existing destination and trigger-authority omissions remain fail closed.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
         "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
         "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-        "test_target_mill_revalidates_and_zone_replacement_preserves_actual_result",
-        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker"
+        "test_target_mill_revalidates_and_zone_replacement_preserves_actual_result"
       ],
       "multiplayer_tests": [
+        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_four_player_target_mill_is_public_privacy_safe_and_replays",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
         "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
-        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker"
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays"
       ],
       "negative_tests": [
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
         "test_all_player_mill_missing_destination_and_trigger_authority_stays_residual",
         "test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
+        "test_defending_player_occurrence_binder_preserves_blocked_and_unblocked_and_rejects_blocker_role",
+        "test_defending_player_scope_rejects_wrong_events_and_unproved_attacker_identity",
         "test_dynamic_optional_group_and_linked_mill_remain_residual",
         "test_malformed_all_player_mill_and_inactive_batch_fail_atomically",
         "test_opponent_mill_closed_handler_excludes_controller_departed_and_empty_roster",
         "test_opponent_mill_scope_dependency_and_compiler_omission_fail_closed",
         "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-        "test_stale_plan_and_malformed_intent_fail_before_mutation",
-        "test_defending_player_scope_rejects_wrong_events_and_unproved_attacker_identity",
-        "test_defending_player_occurrence_binder_preserves_blocked_and_unblocked_and_rejects_blocker_role"
+        "test_stale_plan_and_malformed_intent_fail_before_mutation"
       ],
       "official_rules": [
         "400.7",
@@ -90762,6 +90855,12 @@
         "109.5"
       ],
       "positive_tests": [
+        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
+        "test_blocked_and_unblocked_fixed_results_bind_the_actual_defending_player",
         "test_each_opponent_mill_has_closed_simultaneous_scope",
         "test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope",
         "test_fixed_mill_compiles_across_spell_trigger_and_activation",
@@ -90770,23 +90869,29 @@
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
         "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
         "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-        "test_real_zero_mill_and_scry_consume_price_without_library_mutation",
-        "test_blocked_and_unblocked_fixed_results_bind_the_actual_defending_player",
-        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker"
+        "test_real_zero_mill_and_scry_consume_price_without_library_mutation"
       ],
       "privacy_tests": [
+        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_four_player_target_mill_is_public_privacy_safe_and_replays",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
         "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
-        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker"
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays"
       ],
       "replay_tests": [
+        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker",
+        "test_actual_draw_trigger_can_apply_or_decline_mill_without_revealing_the_drawn_card",
+        "test_actual_other_creature_departure_queues_mill_after_bounce_and_retains_its_chooser_after_source_departure",
+        "test_actual_snow_entry_excludes_the_source_and_an_ordinary_permanent_before_milling",
+        "test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
         "test_four_player_target_mill_is_public_privacy_safe_and_replays",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
         "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
-        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
-        "test_actual_blocked_results_keep_each_defender_private_choices_and_once_per_attacker"
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -93308,7 +93413,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 834,
+  "registry_version": 835,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

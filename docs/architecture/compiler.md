@@ -2725,13 +2725,20 @@ schema and mechanic dependencies, adds only the generic controller choice,
 and is shared by spell, normalized-trigger, activated, and bounded sequence
 contexts. Existing specialized optional owners retain precedence and semantic
 identity. Finite `You may have` clauses with an explicit source or target subject
-and deal, gain, get, or lose normalize to that same independently closed atomic
-body. Targets are chosen before the resolution-time apply-or-decline choice;
+and the represented deal, gain, get, lose, draw, discard, and mill verbs
+normalize to the same independently closed atomic body. Targets are chosen
+before the resolution-time apply-or-decline choice;
 target reentry cannot substitute a new incarnation. Optional costs, permissions,
 replacements, pay wording, unbound event pronouns,
 modal or repeated choices, linked or conditional results, multiple effects in
 one optional body, and bodies without an independently exact typed owner remain
 source-spanned residuals.
+
+For a targeted player discard, the resolution validator requires one active
+affected player matching the bound target and validates the original typed
+discard shape. The controller chooses whether to apply the effect; the
+affected player makes any subsequent hand selection. A fixed random discard
+uses the same single-player boundary and the existing random-subset owner.
 
 `compiler/counter_templates.py` also owns a closed target-controller payment
 leaf over the existing stack-target vocabulary. Its v2 form resolves a fixed
