@@ -2493,6 +2493,123 @@
     {
       "applicability": {
         "exclusions": [
+          "selected other permanents",
+          "variable nonmana payments",
+          "mana abilities",
+          "hybrid, Phyrexian and snow costs",
+          "unrepresented result bodies"
+        ],
+        "inputs": [
+          "one or more ordinary X mana symbols",
+          "optional printed source tap",
+          "exact fixed source-sacrifice suffix",
+          "complete trusted card program"
+        ],
+        "outputs": [
+          "every X symbol priced before payment",
+          "source sacrificed exactly once to its owner graveyard",
+          "stack retains independent X and source information"
+        ],
+        "summary": "Compose ordinary announced-X activation mana with a fixed sacrifice of the source through canonical payment and source-independent stack ownership."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.mana_cost.announced_x"
+      ],
+      "dependency_fail_closed_rationale": "Verified withdrawal keeps self-sacrifice X material; executable catalog binding infers the combination dependency without coverage annotations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "activation.mana_cost.announced_x_source_sacrifice",
+      "implementation_components": [
+        "quorune.activation_x.validate_activation_x_ability",
+        "quorune.activation_x.activation_x_capabilities",
+        "quorune.compiler.activation_x_costs.announced_x_activation_cost",
+        "quorune.rules.activation.proposal.build_activation_proposal",
+        "quorune.rules.activation.commit._activation_stack_item"
+      ],
+      "implementation_mutation_rationale": "Actual Snake Basket witnesses kill omitted chosen-X pricing and omitted source-sacrifice lowering.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_basket_counts_snakes_and_keeps_sorcery_timing",
+        "test_actual_deed_and_dismantler_resolve_the_chosen_bound_after_source_payment",
+        "test_actual_elementals_keep_paid_x_and_damage_source_after_sacrifice",
+        "test_actual_mask_sizes_one_golem_and_unearth_replaces_the_second_sacrifice",
+        "test_actual_settlers_prices_double_x_and_requires_exact_distinct_land_targets",
+        "test_actual_vault_double_x_and_zero_cannot_reuse_its_tap_for_mana"
+      ],
+      "multiplayer_tests": [
+        "test_actual_basket_counts_snakes_and_keeps_sorcery_timing",
+        "test_actual_deed_and_dismantler_resolve_the_chosen_bound_after_source_payment",
+        "test_actual_elementals_keep_paid_x_and_damage_source_after_sacrifice",
+        "test_actual_mask_sizes_one_golem_and_unearth_replaces_the_second_sacrifice",
+        "test_actual_settlers_prices_double_x_and_requires_exact_distinct_land_targets",
+        "test_actual_vault_double_x_and_zero_cannot_reuse_its_tap_for_mana"
+      ],
+      "negative_tests": [
+        "test_actual_basket_counts_snakes_and_keeps_sorcery_timing",
+        "test_actual_deed_and_dismantler_resolve_the_chosen_bound_after_source_payment",
+        "test_actual_elementals_keep_paid_x_and_damage_source_after_sacrifice",
+        "test_actual_mask_sizes_one_golem_and_unearth_replaces_the_second_sacrifice",
+        "test_actual_settlers_prices_double_x_and_requires_exact_distinct_land_targets",
+        "test_actual_vault_double_x_and_zero_cannot_reuse_its_tap_for_mana",
+        "test_catalog_requires_the_combination_dependency_without_coverage_annotations",
+        "test_partial_originals_cannot_expose_a_paid_x_action_or_lose_a_source",
+        "test_selected_variable_and_unrepresented_costs_stay_residual",
+        "test_verified_withdrawal_and_source_assurance_require_the_combination_owner"
+      ],
+      "official_rules": [
+        "107.3a",
+        "107.3k",
+        "113.7a",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "602.2b",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_actual_basket_counts_snakes_and_keeps_sorcery_timing",
+        "test_actual_deed_and_dismantler_resolve_the_chosen_bound_after_source_payment",
+        "test_actual_elementals_keep_paid_x_and_damage_source_after_sacrifice",
+        "test_actual_mask_sizes_one_golem_and_unearth_replaces_the_second_sacrifice",
+        "test_actual_settlers_prices_double_x_and_requires_exact_distinct_land_targets",
+        "test_actual_vault_double_x_and_zero_cannot_reuse_its_tap_for_mana",
+        "test_closed_cost_roundtrip_retains_every_x_and_exact_source_obligations"
+      ],
+      "privacy_tests": [
+        "test_actual_basket_counts_snakes_and_keeps_sorcery_timing",
+        "test_actual_deed_and_dismantler_resolve_the_chosen_bound_after_source_payment",
+        "test_actual_elementals_keep_paid_x_and_damage_source_after_sacrifice",
+        "test_actual_mask_sizes_one_golem_and_unearth_replaces_the_second_sacrifice",
+        "test_actual_settlers_prices_double_x_and_requires_exact_distinct_land_targets",
+        "test_actual_vault_double_x_and_zero_cannot_reuse_its_tap_for_mana"
+      ],
+      "replay_tests": [
+        "test_actual_basket_counts_snakes_and_keeps_sorcery_timing",
+        "test_actual_deed_and_dismantler_resolve_the_chosen_bound_after_source_payment",
+        "test_actual_elementals_keep_paid_x_and_damage_source_after_sacrifice",
+        "test_actual_mask_sizes_one_golem_and_unearth_replaces_the_second_sacrifice",
+        "test_actual_settlers_prices_double_x_and_requires_exact_distinct_land_targets",
+        "test_actual_vault_double_x_and_zero_cannot_reuse_its_tap_for_mana"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "X, energy, half, infinity, chaos, and other open or nonmana symbols",
           "selected-object, untyped, random, optional, repeated, or independently unsupported choice costs",
           "generic cost reductions combined with complex symbols",
@@ -94209,7 +94326,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 843,
+  "registry_version": 844,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

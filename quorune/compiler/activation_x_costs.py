@@ -12,7 +12,7 @@ from .declared_effect_amounts import declared_effect_amount_template
 def announced_x_activation_cost(ability):
     if ability.announced_x_symbols is not None:
         return ability
-    symbols = activation_x_symbols(ability.cost_text)
+    symbols = activation_x_symbols(ability.cost_text, allow_source_sacrifice=True)
     if (symbols is None or ability.zones != ('battlefield',) or ability.mana_ability
             or set(ability.complex_symbols) != {'X'} or ability.uncompiled_costs
             or ability.choices or ability.mana_cost_options or ability.waterbend is not None

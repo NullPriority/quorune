@@ -26,7 +26,7 @@ from .attached_granted_ability_nodes import (
 )
 from .activated_mana_nodes import _activated_effect_material
 from .activation_x_costs import announced_x_activation_cost, announced_x_activation_effect
-from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY, activation_x_symbols
+from ..activation_x import activation_x_capabilities, activation_x_symbols
 from .fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
@@ -552,6 +552,7 @@ def grammar_source_fingerprint() -> str:
         announced_x_activation_cost,
         announced_x_activation_effect,
         activation_x_symbols,
+        activation_x_capabilities,
         _required_capabilities,
         _composing_event_capabilities,
         _direct_player_attack_composition_capabilities,
@@ -748,19 +749,20 @@ def _compiled_source_template(body, *, record, node, face_index, face_name):
     """Recover declared activation X from its complete printed cost owner."""
     compiled = _compiled_template(body, card_name=face_name or record.name)
     if node.kind != "activated_ability":
-        return compiled, None
+        return compiled, ()
     abilities = parse_activated_abilities(card_name=face_name or record.name,
         oracle_text=_without_parenthetical_reminder(node.text),
         keywords=_face_keywords(record, face_index))
     if len(abilities) != 1:
-        return compiled, None
+        return compiled, ()
     ability = announced_x_activation_cost(abilities[0])
     if ability.announced_x_symbols is None:
-        return compiled, None
+        return compiled, ()
     declared = announced_x_activation_effect(ability, source_name=face_name or record.name,
         text=body, compile_fixed=lambda text: _compiled_template(text, card_name=face_name or record.name)
         or (None, (), None, ()))
-    return declared or compiled, ANNOUNCED_ACTIVATION_X_CAPABILITY
+    return declared or compiled, activation_x_capabilities(symbols=ability.announced_x_symbols,
+        sacrifice_source=ability.sacrifice_source)
 
 
 def _clause_count(body: str, template_id: str) -> int:
@@ -937,7 +939,7 @@ def _observation(
     face_name: str,
     body: str,
 ) -> TargetEffectObservation:
-    compiled, cost_capability = _compiled_source_template(body, record=record, node=node,
+    compiled, cost_capabilities = _compiled_source_template(body, record=record, node=node,
         face_index=face_index, face_name=face_name)
     if compiled is None or (
         compiled[0] != node.template_id
@@ -971,8 +973,7 @@ def _observation(
             "promoted target-effect node is outside the closed capability shape: "
             f"{record.oracle_id}:{face_id}:{node.node_id}"
         )
-    if cost_capability is not None:
-        required = tuple(sorted({*required, cost_capability}))
+    required = tuple(sorted({*required, *cost_capabilities}))
     required = tuple(sorted({*required, *_composing_event_capabilities(node,record=record,
         face_id=face_id,face_index=face_index,face_name=face_name)}))
     missing = sorted(set(required) - set(node.capability_dependencies))

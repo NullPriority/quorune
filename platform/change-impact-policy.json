@@ -14798,6 +14798,22 @@
         "test_scalar_effect_amounts",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "announced-x-source-sacrifice",
+      "patterns": [
+        "quorune/activation_x.py",
+        "quorune/compiler/activation_x_costs.py",
+        "tests/test_announced_x_source_sacrifice.py",
+        "tests/fixtures/announced-x-source-sacrifice-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_x_source_sacrifice",
+        "test_announced_activation_x",
+        "test_mana_value_destruction",
+        "test_announced_target_cardinality",
+        "test_source_sacrifice_payments"
+      ]
     }
   ],
   "risk_rules": [

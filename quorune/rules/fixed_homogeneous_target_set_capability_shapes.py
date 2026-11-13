@@ -260,11 +260,13 @@ def is_closed_announced_target_set_program(program: Any) -> bool:
     spell = str(getattr(program,"ability_id","")).startswith("spell:") and event == "resolve"
     if not spell:
         if event != "activate":return False
-        from ..activation_x import activation_x_symbols, ANNOUNCED_ACTIVATION_X_CAPABILITY
+        from ..activation_x import activation_x_symbols, activation_x_capabilities
         cost = program.cost_schema or {}
-        if (ANNOUNCED_ACTIVATION_X_CAPABILITY not in program.capability_dependencies
-                or type(cost.get("announced_x_symbols")) is not int
-                or activation_x_symbols(str(cost.get("text") or "")) != cost["announced_x_symbols"]):
+        if (type(cost.get("announced_x_symbols")) is not int
+                or not set(activation_x_capabilities(symbols=cost.get('announced_x_symbols'),
+                    sacrifice_source=cost.get('sacrifice_source',False))).issubset(program.capability_dependencies)
+                or activation_x_symbols(str(cost.get("text") or ""),
+                    allow_source_sacrifice=cost.get('sacrifice_source') is True) != cost["announced_x_symbols"]):
             return False
     required = announced_target_set_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage)

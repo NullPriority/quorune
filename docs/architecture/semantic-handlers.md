@@ -305,6 +305,14 @@ Consecutive upkeep steps retain the disclosure. Ending it preserves learned
 identity and independent public-hand permissions. A later hand incarnation
 gets independent usage and reveal state.
 
+Announced activation X can compose with a fixed sacrifice of its own source,
+with or without a printed tap cost. The catalog keeps both the X symbol count
+and the existing sacrifice flag, validated against the entire printed cost.
+The combination requires its own capability as well as the ordinary X owner.
+The canonical activation transaction pays all costs atomically; its stack
+object retains the announced X and source information after sacrifice. Older
+ordinary X and fixed self-sacrifice descriptors keep their encoded forms.
+
 Selected-tap schema two adds fixed ordinary color alternatives to the existing
 controlled untapped permanent query. Its plan retains the ability source's
 allowed zone and logical identity; Forecast can use an owned hand source while
