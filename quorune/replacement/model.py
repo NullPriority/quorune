@@ -29,6 +29,9 @@ def _validate_shared_entry_occurrence(effect, operations, decline_operations):
             or (effect.replacement_class is not ReplacementClass.ENTERS_COPY
                 and effect.replacement_class is not ReplacementClass.OTHER)):
         raise ReplacementEffectError('Shared replacement occurrence requires an entry identity')
+    from .tribute import OpenTributeEntryChoice
+    if len(operations)==1 and isinstance(operations[0],OpenTributeEntryChoice):
+        return  # The Tribute operation validator binds this entire shared scope.
     if effect.replacement_class is ReplacementClass.OTHER and (
             len(operations) != 1 or not isinstance(operations[0], SetField)
             or operations[0].field != 'tapped' or type(operations[0].value) is not bool
@@ -303,6 +306,11 @@ class ReplaceableEvent:
             raise ReplacementEffectError(
                 "Nested replaceable event IDs must be unique"
             )
+        from ..tribute_model import TRIBUTE_ENTRY_EVENT
+        if self.kind==TRIBUTE_ENTRY_EVENT:
+            from .tribute import validate_tribute_choice_event
+            try:validate_tribute_choice_event(self)
+            except (ValueError,TypeError) as exc:raise ReplacementEffectError(str(exc)) from exc
 
     @property
     def chooser(self) -> str:
@@ -476,6 +484,8 @@ class ReplacementEffect:
             raise ReplacementEffectError(
                 "Replacement effects require operations"
             )
+        from .tribute import validate_tribute_replacement
+        validate_tribute_replacement(self,lowered,lowered_decline)
         _validate_shared_entry_occurrence(self, lowered, lowered_decline)
         if self.application_group_id is not None and (
             len(lowered) != 1

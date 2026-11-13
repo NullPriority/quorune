@@ -19,6 +19,8 @@ from .model import (
 )
 from .operations import (
     AmplifyEntryOperation,
+    OpenTributeEntryChoice,
+    CompleteTributeEntryChoice,
     DevourEntryOperation,
     ENTRY_OBJECT_SELECTION_OPERATIONS,
     AddAmount,
@@ -645,7 +647,8 @@ def _apply_operation(
             )
         )
         return entry_scope
-    if isinstance(operation,(ApplyEntryCounterReplacement,CreateAffectedObjectCounter,GrantAffectedObjectSubtype,GrantAffectedObjectKeyword)):
+    if isinstance(operation,(ApplyEntryCounterReplacement,CreateAffectedObjectCounter,GrantAffectedObjectSubtype,GrantAffectedObjectKeyword,
+            OpenTributeEntryChoice,CompleteTributeEntryChoice)):
         from .entry_counter_application import apply_entry_counter_operation
         apply_entry_counter_operation(event,payload,children,operation,effect_id=effect_id)
         return entry_scope

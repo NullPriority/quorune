@@ -14866,6 +14866,23 @@
         "test_fixed_library_searches",
         "test_targeted_counter_effect_clauses"
       ]
+    },
+    {
+      "id": "staged-tribute-entry-decisions",
+      "patterns": [
+        "quorune/tribute_model.py",
+        "quorune/replacement/tribute.py",
+        "tests/test_tribute_model.py",
+        "tests/test_tribute_replacement.py"
+      ],
+      "test_modules": [
+        "test_tribute_model",
+        "test_tribute_replacement",
+        "test_replacement_model_hardening",
+        "test_replacement_event_tree",
+        "test_replacement_event_ordering",
+        "test_riot_rules"
+      ]
     }
   ],
   "risk_rules": [
