@@ -9,6 +9,16 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Conditional preparation of a creature target lowers separately from its
+following fight or one-way power damage. The version-sixteen wrapper binds
+the first target and a current controller, target-characteristic, or night
+condition. It selects fixed stats, keywords, or counters through the existing
+effect cursor; a false predicate still permits the following damage instruction.
+Both instructions retain the ordinary target revalidation and mutation owners.
+An illegal opposing target does not suppress an applicable bonus to a legal
+first target. Cast-time conditions and nested modal programs remain separate
+composition boundaries.
+
 Reciprocal source and target power damage lowers to two ordered damage
 instructions. Each instruction reads its own source's power when reached;
 the first instruction retains the original ability source's last known

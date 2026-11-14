@@ -169,6 +169,9 @@ def validate_resolution_condition_instruction(
 ) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get('schema_version') == 16:
+        from .conditional_target_preparation_model import validate_preparation_instruction
+        return validate_preparation_instruction(effect)
     if effect.get("schema_version") == PAID_SACRIFICE_CONDITION_VERSION:
         return validate_paid_sacrifice_instruction(effect)
     if effect.get('schema_version') == 12:

@@ -59,6 +59,12 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
                     and COUNTER_DESTINATION_FIELD in effects[0]):
                 return None
     if spell:
+        if 'instead if ' in material_line.casefold() and re.search(r'\bThen (?:it|that creature) (?:fights|deals damage equal to its power to) ', material_line, re.I):
+            from ..rules.conditional_target_preparation import conditional_prepared_power_capabilities
+            compiled = compile_effect(material_line, card_name=source_name)
+            if compiled[0] == 'conditional-target-power-preparation-v1' and conditional_prepared_power_capabilities(
+                    effects=compiled[1], target_schema=compiled[2], mechanic_ids=compiled[3]):
+                return None
         from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
         if conditional_reanimation_entry_counter_template(material_line) is not None:
             return None

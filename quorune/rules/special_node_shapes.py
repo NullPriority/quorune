@@ -63,6 +63,9 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    if 'conditional-target-power-preparation' in mechanics or any(e.get('op') == 'apply_if_public_condition' and e.get('schema_version') == 16 for e in effects):
+        from .conditional_target_preparation import conditional_prepared_power_capabilities
+        return conditional_prepared_power_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if 'fixed-awaken-paid-body' in mechanics or isinstance(cost_schema,MappingABC) and 'awaken' in cost_schema:
         from .awaken_shapes import awaken_node_capabilities
         awaken=awaken_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)

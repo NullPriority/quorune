@@ -305,6 +305,11 @@ def _value_runtime_requirements(program):
     values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
     required = set(characteristic_quantity_capabilities((*values, program.event_condition)))
     blockers = set()
+    from ..rules.conditional_target_preparation import conditional_preparation_runtime_dependencies
+    try:
+        required.update(conditional_preparation_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_conditional_target_preparation:invalid:{exc}')
     from ..reciprocal_power_damage import reciprocal_power_damage_runtime_dependencies
     try:
         required.update(reciprocal_power_damage_runtime_dependencies(program))
