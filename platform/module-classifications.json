@@ -8315,6 +8315,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/sequential_public_conditions.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/shared_characteristic_queries.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -19981,6 +19996,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/sequential_condition_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/single_object_zone_transition.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -27613,5 +27642,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "499b4559dc7b2578d282fc987b3529e536172e8ee6c664bc7dd8bee02a3c27fa"
+  "fingerprint": "43e19dc54851dd84bcb33c2a7f7d8e38d85cc3cb0c5f464082aa140ec6c16b42"
 }

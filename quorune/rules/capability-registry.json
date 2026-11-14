@@ -33014,7 +33014,8 @@
           "resolving actor and original source provenance",
           "one removal target controller information reference for its original source followup",
           "one targeted recipient and the current actor-controlled permanent set excluding the original source",
-          "one permanent target with a v2 untargeted opponent choice after a scalar draw"
+          "one permanent target with a v2 untargeted opponent choice after a scalar draw",
+          "explicit another-player target-subject handoff in choice version3 with false opponent-only flag"
         ],
         "outputs": [
           "separate resolving actor, acquiring controller and physical owner",
@@ -33034,6 +33035,7 @@
       "implementation_components": [
         "quorune.compiler.player_maximum_templates.player_maximum_control_result",
         "quorune.compiler.program_generation._is_closed_fixed_control_program",
+        "quorune.compiler.recipient_control_templates._chosen_other_player_handoff",
         "quorune.compiler.recipient_control_templates._target_mana_value_handoff",
         "quorune.compiler.recipient_control_templates.recipient_control_effect_template",
         "quorune.compiler.recipient_control_templates.source_bound_recipient_control_result",
@@ -33067,11 +33069,13 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_illegal_original_treasure_prevents_choice_transfer_and_draw",
         "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_original_financier_upkeep_choice_transfer_and_private_draw_follow_printed_order",
         "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
@@ -33098,11 +33102,13 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_illegal_original_treasure_prevents_choice_transfer_and_draw",
         "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_original_financier_upkeep_choice_transfer_and_private_draw_follow_printed_order",
         "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
@@ -33124,10 +33130,13 @@
         "test_fresh_sky_blink_witness_kills_excluding_the_returned_physical_source",
         "test_gift_and_choice_payloads_require_the_recipient_owner_without_coverage",
         "test_handoff_illegal_control_relation_or_returned_target_stops_draw_and_gift",
+        "test_illegal_original_treasure_prevents_choice_transfer_and_draw",
         "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_malformed_recipient_subject_and_version_roles_have_no_capability_closure",
         "test_metric_and_intervening_authority_and_matching_condition_survive_coverage_removal",
         "test_new_recipient_set_and_target_choice_require_authority_without_coverage",
+        "test_other_choice_still_requires_recipient_authority_and_target_schema_without_labels",
+        "test_other_player_choice_is_versioned_and_old_opponent_choices_remain_strict",
         "test_permanent_metric_uses_current_controller_type_and_phasing",
         "test_registered_recipient_handler_is_closed_and_null_target_is_a_noop",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
@@ -33183,6 +33192,8 @@
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_new_recipient_intent_keeps_the_old_acquiring_actor_contract_strict",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
+        "test_original_financier_upkeep_choice_transfer_and_private_draw_follow_printed_order",
+        "test_other_player_choice_is_versioned_and_old_opponent_choices_remain_strict",
         "test_permanent_metric_uses_current_controller_type_and_phasing",
         "test_removal_followup_binds_the_target_controller_without_a_second_player_target",
         "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
@@ -33211,11 +33222,13 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_illegal_original_treasure_prevents_choice_transfer_and_draw",
         "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_original_financier_upkeep_choice_transfer_and_private_draw_follow_printed_order",
         "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
@@ -33242,11 +33255,13 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_illegal_original_treasure_prevents_choice_transfer_and_draw",
         "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_original_financier_upkeep_choice_transfer_and_private_draw_follow_printed_order",
         "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
@@ -66343,6 +66358,87 @@
     {
       "applicability": {
         "exclusions": [
+          "nested conditionals, mandatory prefixes and alternative branches",
+          "targeted or unrepresented component results and unknown siblings"
+        ],
+        "inputs": [
+          "bounded public condition and complete fixed body per leaf",
+          "locked resolving actor and normal effect cursor"
+        ],
+        "outputs": [
+          "one current read per reached condition after earlier clauses commit",
+          "complete independent leaf and aggregate sequence capability closure"
+        ],
+        "summary": "Two through four independently closed targetless public conditional instructions in printed order."
+      },
+      "blockers": [],
+      "dependencies": [
+        "resolution.effect.public_condition",
+        "resolution.effect_program.closed_components"
+      ],
+      "dependency_fail_closed_rationale": "Payload/provenance minimums infer sequence and every complete leaf owner without coverage labels, rejecting malformed/nested/unbounded variants.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.effect_program.sequential_public_conditions",
+      "implementation_components": [
+        "quorune.compiler.sequential_public_conditions.sequential_public_condition_template",
+        "quorune.rules.sequential_condition_shapes.sequential_condition_node_capabilities",
+        "quorune.rules.sequential_condition_shapes.sequential_condition_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "A fresh native changed-state witness kills reusing the initial comparison after an earlier instruction creates a creature, observing the specifically forbidden private draw.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
+        "test_later_condition_observes_the_earlier_created_creature",
+        "test_original_beza_true_false_and_each_independent_condition_result"
+      ],
+      "multiplayer_tests": [
+        "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
+        "test_later_condition_observes_the_earlier_created_creature",
+        "test_original_beza_true_false_and_each_independent_condition_result"
+      ],
+      "negative_tests": [
+        "test_sequence_leaf_and_comparator_authority_are_required_without_labels",
+        "test_unknown_siblings_and_alternative_branches_do_not_gain_sequence_closure"
+      ],
+      "official_rules": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "608.2h"
+      ],
+      "positive_tests": [
+        "test_four_complete_leaves_keep_conditions_results_and_printed_order",
+        "test_original_beza_true_false_and_each_independent_condition_result"
+      ],
+      "privacy_tests": [
+        "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
+        "test_later_condition_observes_the_earlier_created_creature",
+        "test_original_beza_true_false_and_each_independent_condition_result"
+      ],
+      "replay_tests": [
+        "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
+        "test_later_condition_observes_the_earlier_created_creature",
+        "test_original_beza_true_false_and_each_independent_condition_result"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "ambiguous antecedents",
           "optional or multiple targets",
           "unknown siblings or token definitions",
@@ -95490,7 +95586,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 857,
+  "registry_version": 858,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

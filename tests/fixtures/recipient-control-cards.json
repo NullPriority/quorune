@@ -3942,6 +3942,24 @@
       "type_line": "Sorcery"
     },
     {
+      "oracle_id": "fixture:sequential-condition-witness",
+      "name": "Sequential Condition Witness",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Beast",
+      "oracle_text": "When this creature enters, create a 1/1 white Soldier creature token if an opponent controls more creatures than you. Draw a card if an opponent controls more creatures than you.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
       "cmc": 1.0,
       "color_identity": [],
       "colors": [],

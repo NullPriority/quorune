@@ -20,9 +20,10 @@ def recipient_control_node_capabilities(*,effects,target_schema,mechanic_ids):
                 or 'cr-115-targets' not in mechanic_ids or not _player_schema(target_schema)):return ()
         return (RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution','target.revalidate_resolution')
     if effect.get('op')==CHOOSE_CONTROL_RECIPIENT_OPERATION:
-        if effect.get('schema_version')==2:
-            expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':2,'player':'$controller','card':'$target.0','opponent_only':True}
-            if (dict(effect)!=expected or type(effect['schema_version']) is not int or effect['opponent_only'] is not True
+        if type(effect.get('schema_version')) is int and effect['schema_version'] in {2,3}:
+            version=effect['schema_version'];opponent_only=version!=3
+            expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':version,'player':'$controller','card':'$target.0','opponent_only':opponent_only}
+            if (dict(effect)!=expected or type(effect['schema_version']) is not int or effect['opponent_only'] is not opponent_only
                     or 'cr-115-targets' not in mechanic_ids or not direct_permanent_target_schema_is_closed(target_schema)):return ()
             return tuple(sorted({RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution','target.revalidate_resolution',
                 *direct_target_predicate_capabilities(target_schema)}))
@@ -74,12 +75,12 @@ def recipient_control_runtime_dependencies(program):
                 required.add(RECIPIENT_CONTROL_CAPABILITY)
             elif value.get('op')==CHOOSE_CONTROL_RECIPIENT_OPERATION:
                 version=value.get('schema_version')
-                if type(version) is not int or version not in {1,2}:raise ValueError('Recipient control choice schema is unsupported')
-                card='$target.0' if version==2 else '$source.zone_object'
-                expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':version,'player':'$controller','card':card,'opponent_only':True}
-                if dict(value)!=expected or type(value['schema_version']) is not int or value['opponent_only'] is not True:
+                if type(version) is not int or version not in {1,2,3}:raise ValueError('Recipient control choice schema is unsupported')
+                card='$target.0' if version in {2,3} else '$source.zone_object';opponent_only=version!=3
+                expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':version,'player':'$controller','card':card,'opponent_only':opponent_only}
+                if dict(value)!=expected or type(value['schema_version']) is not int or value['opponent_only'] is not opponent_only:
                     raise ValueError('Recipient control choice payload lost its bound scope')
-                if version==2 and not direct_permanent_target_schema_is_closed(schema):
+                if version in {2,3} and not direct_permanent_target_schema_is_closed(schema):
                     raise ValueError('Target-subject control choice lost its closed permanent target schema')
                 required.add(RECIPIENT_CONTROL_CAPABILITY)
             elif value.get('op')==GIVE_CONTROL_SET_OPERATION:

@@ -315,6 +315,11 @@ def reviewed_effect_template_composition(
         )
         if conditional is not None:
             return conditional
+        from .sequential_public_conditions import sequential_public_condition_template
+        sequential=sequential_public_condition_template(text,source_name=source_name,compile_component=lambda body:
+            reviewed_effect_template_composition(body,source_name=source_name,compile_atomic=compile_atomic,
+                compile_fixed=compile_fixed,cast_x_available=cast_x_available,forbid_public_x=forbid_public_x,allow_conditions=False))
+        if sequential is not None:return sequential
     query_amount = public_query_effect_amount_template(
         text, source_name=source_name, compile_fixed=compile_fixed,
     )

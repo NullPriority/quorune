@@ -39,6 +39,9 @@ def closed_effect_program_node_capabilities(
     """Own a bounded ordered program when every flattened effect is closed."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from .sequential_condition_shapes import sequential_condition_node_capabilities,SEQUENTIAL_CONDITION_MECHANIC
+    if SEQUENTIAL_CONDITION_MECHANIC in mechanics:
+        return sequential_condition_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     if "bound-effect-program" in mechanics:
         return bound_effect_program_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
@@ -83,6 +86,9 @@ def closed_effect_program_node_capabilities(
 def closed_effect_program_runtime_dependencies(program):
     """Keep the persisted ordered-program kind bound to its mutation owner."""
     from .target_recipient_results import target_recipient_result_runtime_dependencies
+    from .sequential_condition_shapes import sequential_condition_runtime_dependencies
+    sequential=sequential_condition_runtime_dependencies(program)
+    if sequential:return sequential
     recipient=target_recipient_result_runtime_dependencies(program)
     if recipient:return recipient
     schema=getattr(program,'target_schema',None)

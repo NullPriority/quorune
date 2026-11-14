@@ -3774,6 +3774,22 @@ instruction. Search eligibility, optional choices, destinations, tappedness,
 reveal and shuffle still belong to the existing search owners. The typed fact
 retains its comparator capability requirement without coverage labels.
 
+`compiler/sequential_public_conditions.py` composes two through four complete,
+targetless public conditional instructions in printed order. Each condition
+is evaluated when the normal effect cursor reaches it, after prior clauses
+commit. The sequence does not freeze all outcomes at the start. Every leaf
+keeps its own fixed result mechanics and condition closure; payload minimums
+retain the sequence, leaf and comparator owners even without coverage labels.
+Nested conditions, mandatory prefixes, alternatives and unknown siblings stay
+outside this bounded composition.
+
+An explicit "Choose another player" followed by a targeted permanent handoff
+and controller draw uses version three of the existing recipient choice. Its
+false `opponent_only` flag is distinct from the strict opponent-only versions
+one and two. Only the resolving controller chooses; the permanent is targeted
+at announcement, and the player is chosen at resolution. The transfer precedes
+the original resolver's private draw. An illegal original target stops both.
+
 A removal followed by its target's controller gaining the source uses the
 existing bound target-result composition. Version two of `give_control` carries
 the closed target-controller information reference; version one retains its

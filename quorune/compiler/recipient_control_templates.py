@@ -7,7 +7,7 @@ from .direct_target import direct_permanent_target_spec
 
 
 def recipient_control_effect_template(text,*,card_name,source_is_permanent=None):
-    handoff=_target_mana_value_handoff(text)
+    handoff=_target_mana_value_handoff(text) or _chosen_other_player_handoff(text)
     if handoff is not None:return handoff
     match=re.fullmatch(r'(?P<recipient>target (?:player|opponent)|an opponent) gains control of (?P<subject>.+?)\.?',text.strip(),re.I)
     if match is None:return None
@@ -51,6 +51,21 @@ def _target_mana_value_handoff(text):
         'player':'$controller','card':'$target.0','opponent_only':True},),schema,
         (RECIPIENT_CONTROL_MECHANIC,'cr-115-targets','cr-611-continuous-effects'))
     program=_program((query,gift),schema=schema)
+    return program.compiled() if program is not None else None
+
+
+def _chosen_other_player_handoff(text):
+    match=re.fullmatch(r'Choose another player\. That player gains control of (?P<target>target [^.]+)\. You draw a card\.',text.strip(),re.I)
+    if match is None:return None
+    target=direct_permanent_target_spec(match['target'])
+    if target is None:return None
+    from .bound_effect_programs import _program
+    schema=target.to_target_schema()
+    gift=('fixed-chosen-other-player-target-control-v3',({'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':3,
+        'player':'$controller','card':'$target.0','opponent_only':False},),schema,
+        (RECIPIENT_CONTROL_MECHANIC,'cr-115-targets','cr-611-continuous-effects'))
+    draw=('fixed-controller-draw-v1',({'op':'draw','player':'$controller','count':1,'private':True},),None,('cr-121-drawing-a-card',))
+    program=_program((gift,draw),schema=schema)
     return program.compiled() if program is not None else None
 
 
