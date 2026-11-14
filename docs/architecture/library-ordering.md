@@ -325,6 +325,21 @@ search does not shuffle; searching for a stated quality and finding nothing
 does. Other placement branches and unsupported condition bindings remain
 explicit compiler boundaries.
 
+## Ordered search allocations
+
+Version-five fixed searches assign found cards in response order to two
+printed destinations. The first group takes as many as its printed count
+allows, followed by the remainder group. A short search cannot redirect the
+first group's cards into the remainder destination. The ordered choice form
+labels the groups and uses the existing reorder controls.
+
+Both groups move through one simultaneous zone transaction, with tappedness
+and entry control specified for each entering object. Replacement resumption
+retains the original ordered selection; completion shuffles once before any
+following instruction. Revealed hand cards remain known. An unqualified
+private search keeps its hand result private while ordinary graveyard
+movement exposes only the graveyard result.
+
 ## Library search restrictions
 
 `LibrarySearchRuleSpec` represents current source prohibitions and fixed

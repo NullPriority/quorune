@@ -239,6 +239,9 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .search_allocation_templates import search_allocation_template
+    allocation = search_allocation_template(text)
+    if allocation is not None:return allocation
     from .conditional_search_templates import conditional_search_effect_template
     conditional_search=conditional_search_effect_template(text,source_name='This source')
     if conditional_search is not None:return conditional_search

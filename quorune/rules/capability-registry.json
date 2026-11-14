@@ -53490,6 +53490,128 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented BF qualifiers or multiple optional entry-life choices",
+          "opponent-chosen allocations, variable counts, different-name/shared-type constraints",
+          "unrepresented count overrides and source-identity shortcuts"
+        ],
+        "inputs": [
+          "one count2..3 fixed search and explicit first count1..2",
+          "battlefield/hand basic lands and a single Gate entry, or hand/graveyard cards",
+          "ordered original searching-player selection, reveal flag, per-object tapped entry and replacement selections"
+        ],
+        "outputs": [
+          "first min(found,first_count) cards take first destination and rest take second",
+          "single atomic zone batch, final shuffle and ordinary continuation",
+          "ordered choice label and existing reorder controls, public revealed results and principal-private unrevealed hand"
+        ],
+        "summary": "One ordered fixed library search allocation and one simultaneous multi-destination result."
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.search.fixed_counted"
+      ],
+      "dependency_fail_closed_rationale": "Version5 complete allocation codec and payload-derived search minimum require ordered allocation and base search, plus disjunction/tapped owners where present, without coverage labels.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.search.ordered_destination_allocation",
+      "implementation_components": [
+        "quorune.search_allocation_model.SearchAllocationSpec",
+        "quorune.search_allocation.move_allocated_search_results",
+        "quorune.compiler.search_allocation_templates.search_allocation_template",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Fresh original Cultivate witness specifically detects reversing destinations relative to submitted ordered search_cards.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_bounded_search_window_and_payload_minimum_remain_authoritative",
+        "test_commander_destination_replacement_preserves_entire_allocation_after_reload",
+        "test_original_cultivate_reach_and_flare_keep_ordered_revealed_destinations",
+        "test_original_dreamscape_uses_ordered_discard_and_land_price_slots",
+        "test_original_flare_alternative_price_and_kicked_copy_preserve_search_results",
+        "test_original_hand_graveyard_searches_preserve_qualified_failure_and_private_hand",
+        "test_original_peregrination_shuffles_before_independent_scry",
+        "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
+        "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+      ],
+      "multiplayer_tests": [
+        "test_bounded_search_window_and_payload_minimum_remain_authoritative",
+        "test_commander_destination_replacement_preserves_entire_allocation_after_reload",
+        "test_original_cultivate_reach_and_flare_keep_ordered_revealed_destinations",
+        "test_original_dreamscape_uses_ordered_discard_and_land_price_slots",
+        "test_original_flare_alternative_price_and_kicked_copy_preserve_search_results",
+        "test_original_hand_graveyard_searches_preserve_qualified_failure_and_private_hand",
+        "test_original_peregrination_shuffles_before_independent_scry",
+        "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
+        "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+      ],
+      "negative_tests": [
+        "test_bounded_search_window_and_payload_minimum_remain_authoritative",
+        "test_grammar_keeps_counts_reveal_scope_and_unknown_neighbors",
+        "test_versioned_allocation_round_trip_frozen_values_and_closed_legacy_forms"
+      ],
+      "official_rules": [
+        "109.5",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "701.23a",
+        "701.23b",
+        "701.23c",
+        "903.9b"
+      ],
+      "positive_tests": [
+        "test_grammar_keeps_counts_reveal_scope_and_unknown_neighbors",
+        "test_original_cultivate_reach_and_flare_keep_ordered_revealed_destinations",
+        "test_original_dreamscape_uses_ordered_discard_and_land_price_slots",
+        "test_original_flare_alternative_price_and_kicked_copy_preserve_search_results",
+        "test_original_hand_graveyard_searches_preserve_qualified_failure_and_private_hand",
+        "test_versioned_allocation_round_trip_frozen_values_and_closed_legacy_forms"
+      ],
+      "privacy_tests": [
+        "test_bounded_search_window_and_payload_minimum_remain_authoritative",
+        "test_commander_destination_replacement_preserves_entire_allocation_after_reload",
+        "test_original_cultivate_reach_and_flare_keep_ordered_revealed_destinations",
+        "test_original_dreamscape_uses_ordered_discard_and_land_price_slots",
+        "test_original_flare_alternative_price_and_kicked_copy_preserve_search_results",
+        "test_original_hand_graveyard_searches_preserve_qualified_failure_and_private_hand",
+        "test_original_peregrination_shuffles_before_independent_scry",
+        "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
+        "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+      ],
+      "replay_tests": [
+        "test_bounded_search_window_and_payload_minimum_remain_authoritative",
+        "test_commander_destination_replacement_preserves_entire_allocation_after_reload",
+        "test_original_cultivate_reach_and_flare_keep_ordered_revealed_destinations",
+        "test_original_dreamscape_uses_ordered_discard_and_land_price_slots",
+        "test_original_flare_alternative_price_and_kicked_copy_preserve_search_results",
+        "test_original_hand_graveyard_searches_preserve_qualified_failure_and_private_hand",
+        "test_original_peregrination_shuffles_before_independent_scry",
+        "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
+        "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "named Partner variants other than Partner with",
           "more than one name or selected card",
           "searches of a zone other than the targeted player's library",
@@ -95895,7 +96017,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 861,
+  "registry_version": 862,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

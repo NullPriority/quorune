@@ -126,7 +126,7 @@ def counted_search_mana_value_slot(path: tuple[str, ...]) -> bool:
 
 def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
     selector = effect.get("selector")
-    return effect.get("schema_version") in (2, 3, 4) or (
+    return effect.get("schema_version") in (2, 3, 4, 5) or (
         isinstance(selector, Mapping) and SEARCH_ALTERNATIVES in selector
     )
 
@@ -135,6 +135,9 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     """Validate disjunctions and persisted X bounds before search opens."""
     if effect.get("op") != "search":
         return ()
+    if effect.get('schema_version') == 5:
+        from .search_allocation_model import SearchAllocationSpec
+        return SearchAllocationSpec.from_effect(effect).capabilities()
     if effect.get('schema_version')==4:
         from .conditional_search_model import ConditionalSearchSpec
         return ConditionalSearchSpec.from_effect(effect).capabilities()
@@ -303,6 +306,9 @@ class FixedCountedLibrarySearchTemplate:
 
     @classmethod
     def from_effect(cls, effect: Mapping[str, Any]) -> "FixedCountedLibrarySearchTemplate":
+        if isinstance(effect, Mapping) and effect.get('schema_version') == 5:
+            from .search_allocation_model import SearchAllocationSpec
+            return SearchAllocationSpec.from_effect(effect).search
         if isinstance(effect,Mapping) and effect.get('schema_version')==4:
             from .conditional_search_model import ConditionalSearchSpec
             return ConditionalSearchSpec.from_effect(effect).search

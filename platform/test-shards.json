@@ -1482,6 +1482,7 @@
       "test_reciprocal_power_damage",
       "test_ring_temptation_choices",
       "test_ring_temptation_model",
+      "test_search_allocations",
       "test_selected_counter_costs",
       "test_self_public_zone_casting",
       "test_sequential_public_conditions",

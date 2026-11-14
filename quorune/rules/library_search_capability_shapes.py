@@ -72,6 +72,11 @@ def fixed_counted_library_search_node_capabilities(
         or target_schema is not None or len(effects) != 1
     ):
         return ()
+    if effects[0].get('schema_version') == 5:
+        from ..search_allocation_model import SearchAllocationSpec, SEARCH_ALLOCATION_MECHANIC
+        if SEARCH_ALLOCATION_MECHANIC not in mechanic_ids:return ()
+        try:return SearchAllocationSpec.from_effect(effects[0]).capabilities()
+        except (ValueError, TypeError, KeyError):return ()
     if effects[0].get('schema_version')==4:
         from ..conditional_search_model import ConditionalSearchSpec,CONDITIONAL_SEARCH_MECHANIC
         if CONDITIONAL_SEARCH_MECHANIC not in mechanic_ids:return ()
