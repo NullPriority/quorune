@@ -72,11 +72,16 @@ def _fixed_public_single_target_schema(schema: Mapping[str, Any]) -> bool:
 def _bounded_public_target_set_schema(schema: Mapping[str, Any]) -> bool:
     if schema.get('zones') != ['battlefield'] or schema.get('categories') != ['permanent'] or schema.get('types_any') != ['creature']:
         return False
-    if set(schema) - {'zones','categories','types_any','up_to','support_source_context','source_exclusion','controller_relation'}:
+    if set(schema) - {'zones','categories','types_any','up_to','min','max','support_source_context','source_exclusion','controller_relation'}:
         return False
     if schema.get('controller_relation', 'any') not in ('any', 'you', 'opponent'):
         return False
-    count = schema.get('up_to')
+    if 'up_to' in schema:
+        if {'min','max'}&set(schema):return False
+        count=schema['up_to']
+    else:
+        if type(schema.get('min')) is not int or schema['min']!=0:return False
+        count=schema.get('max')
     if type(count) is not int or not 1 <= count <= 5:
         return False
     context = schema.get('support_source_context')
@@ -94,8 +99,11 @@ def _composed_target_schema(schemas: Sequence[Mapping[str, Any]], *, distinct: b
         return dict(schemas[0])
     if len(schemas) > 4 or any(not (_fixed_public_single_target_schema(schema) or _bounded_public_target_set_schema(schema)) for schema in schemas):
         return None
-    return {'groups': [{**{k:v for k,v in schema.items() if k not in {'count','up_to'}},
-        'id': 'clause_' + str(index), 'min': 0 if 'up_to' in schema else 1, 'max': schema.get('up_to',1)} for index,schema in enumerate(schemas)],
+    from ..targets import target_plan
+    bounds=[target_plan(schema).groups[0] for schema in schemas]
+    return {'groups': [{**{k:v for k,v in schema.items() if k not in {'count','up_to','min','max'}},
+        'id': 'clause_' + str(index), 'min': group.min_targets, 'max': group.max_targets}
+        for index,(schema,group) in enumerate(zip(schemas,bounds,strict=True))],
         **({'globally_distinct':True} if distinct else {})}
 
 

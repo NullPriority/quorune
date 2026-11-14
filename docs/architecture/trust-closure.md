@@ -129,6 +129,15 @@ handler schema/event drift, untrusted closure, or a fingerprint mismatch fail
 closed. The global inventories are metadata aggregations; family registries
 remain the execution owners.
 
+A component whose historical registration inventories several typed variants
+requires the dependencies of its validated represented variant. The inventory
+still retains every variant; an unknown payload or unregistered variant fails
+closed. Composed effects validate their original child target scope and source
+span before combining requirements. Quantity, condition and token producers
+retain the dependencies of the complete represented model. A typed normal and
+paid Overload pair can replace an unbound reviewed alternative only after both
+variants bind strictly and their source hashes, costs, targets and effects agree.
+
 An activation-catalogue carrier with no resolution effects is structural
 discovery metadata, not a hidden legacy rules program. Preflight may recognize a printed Equip through its source-matching trusted keyword owner on the exact parsed ability line. The fixed price, target restriction and sorcery timing must agree; provisional discovery catalogs do not establish coverage. Source drift and missing keyword capability retain the residual. Preflight also uses the canonical activation-cost specializer for its normalized printed abilities. Complete keyword-only static lines are covered only by their trusted printed keyword owner; unrelated static siblings and unknown cost symbols keep their residuals. Binding validates its
 registered closed descriptor and schema/event identity without inventing a

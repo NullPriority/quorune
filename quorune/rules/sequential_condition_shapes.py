@@ -27,6 +27,10 @@ def sequential_condition_runtime_dependencies(program):
     effects=program.effects
     marked=getattr(program,'provenance',{}).get('template_id')==SEQUENTIAL_CONDITION_TEMPLATE
     if not marked and not (len(effects)>1 and all(e.get('op')==RESOLUTION_CONDITION_OPERATION for e in effects)):return ()
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+    composed=composed_spell_family_runtime_dependencies(program,capability=SEQUENTIAL_CONDITION_CAPABILITY,
+        mechanic=SEQUENTIAL_CONDITION_MECHANIC)
+    if composed is not None:return composed
     required=sequential_condition_node_capabilities(effects=effects,target_schema=program.target_schema,
         mechanic_ids=(SEQUENTIAL_CONDITION_MECHANIC,CLOSED_EFFECT_PROGRAM_MECHANIC))
     if not required:raise ValueError('Sequential conditions lost their bounded complete leaf closure')

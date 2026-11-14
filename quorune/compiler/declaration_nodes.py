@@ -50,6 +50,21 @@ PUBLIC_STATE_DECLARATION_CAPABILITY_ID = (
 )
 
 
+def _typed_declaration_dependencies(templates):
+    from ..city_blessing_model import CITYS_BLESSING_CAPABILITY
+    from ..crime_model import crime_fact_dependencies
+    from ..continuous_conditions import FixedPublicStateConditionKind
+    required={DECLARATION_COMPONENT_CAPABILITY_ID}
+    for template in templates:
+        condition=getattr(template,'condition',None)
+        if not isinstance(condition,FixedPublicStateConditionSpec):continue
+        required.add(PUBLIC_STATE_DECLARATION_CAPABILITY_ID)
+        required.update(crime_fact_dependencies(condition.to_dict()))
+        if any(leaf.kind is FixedPublicStateConditionKind.CONTROLLER_HAS_CITYS_BLESSING for leaf in condition.leaf_conditions()):
+            required.add(CITYS_BLESSING_CAPABILITY)
+    return tuple(sorted(required))
+
+
 def fixed_declaration_fragment_sequence(
     text: str,
     *,
@@ -135,17 +150,7 @@ def _typed_declaration_node(
 ) -> OracleNode:
     dependencies = template.mechanics
     gate = explicit_capabilities_gate(
-        (
-            DECLARATION_COMPONENT_CAPABILITY_ID,
-            *(
-                (PUBLIC_STATE_DECLARATION_CAPABILITY_ID,)
-                if isinstance(
-                    getattr(template, "condition", None),
-                    FixedPublicStateConditionSpec,
-                )
-                else ()
-            ),
-        ),
+        _typed_declaration_dependencies((template,)),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -208,20 +213,7 @@ def _typed_declaration_fragment_sequence_node(
     capability_profile: str,
 ) -> OracleNode:
     gate = explicit_capabilities_gate(
-        (
-            DECLARATION_COMPONENT_CAPABILITY_ID,
-            *(
-                (PUBLIC_STATE_DECLARATION_CAPABILITY_ID,)
-                if any(
-                    isinstance(
-                        getattr(template, "condition", None),
-                        FixedPublicStateConditionSpec,
-                    )
-                    for template in templates
-                )
-                else ()
-            ),
-        ),
+        _typed_declaration_dependencies(templates),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )

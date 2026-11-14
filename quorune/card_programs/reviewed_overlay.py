@@ -370,7 +370,9 @@ def shadowed_reviewed_program_keys(
     from .trigger_view_equivalence import shadowed_reviewed_trigger_view_keys
     from .activation_view_equivalence import shadowed_reviewed_activation_view_keys
     from .attached_grant_equivalence import shadowed_reviewed_attached_grant_keys
-    return shadowed_reviewed_multi_event_keys(
+    from .overload_view_equivalence import shadowed_reviewed_overload_keys
+    return shadowed_reviewed_overload_keys(record,generated,reviewed,capability_registry=capability_registry,
+        capability_profile=capability_profile) | shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(
         record, generated, reviewed,

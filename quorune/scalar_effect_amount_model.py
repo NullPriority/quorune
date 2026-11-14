@@ -157,6 +157,11 @@ class ScalarEffectAmountSpec:
     def history_count_capabilities(self) -> tuple[str, ...]:
         return self.history_count.capability_dependencies if self.history_count is not None else ()
 
+    @property
+    def referenced_quantity_capabilities(self) -> tuple[str, ...]:
+        return tuple(sorted({*self.history_count_capabilities,
+            *(self.aggregate.capability_dependencies if self.aggregate is not None else ())}))
+
     def to_dict(self) -> dict[str, Any]:
         return {"kind": SCALAR_AMOUNT_KIND, "schema_version": self.schema_version,
                 **self.producer_identity, "coefficient": self.coefficient,

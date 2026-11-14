@@ -72,7 +72,9 @@ def bind_semantic_program_runtime(
             blockers.add(f"runtime_handler:unregistered:{handler_id}")
             continue
         component_identities.append(registered)
-        required.update(registered["capability_dependencies"])
+        from ..rules.keyword_runtime_requirements import registered_component_capabilities
+        try:required.update(registered_component_capabilities(descriptor,registered))
+        except (ValueError,TypeError) as exc:blockers.add(f'runtime_handler:invalid:{handler_id}:{exc}')
         if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('power_up') is not None:
             from ..power_up_model import POWER_UP_CAPABILITY
             required.add(POWER_UP_CAPABILITY)

@@ -1201,7 +1201,7 @@ def capability_dependencies_for_node(
     from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, scalar_amount_specs
     if SCALAR_AMOUNT_MECHANIC in mechanics:
         for spec in scalar_amount_specs(effects):
-            dependencies.update(spec.history_count_capabilities)
+            dependencies.update(spec.referenced_quantity_capabilities)
     from .random_discard_additional_cost import random_spell_cost_dependencies
     dependencies.update(random_spell_cost_dependencies(cost_schema))
     from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC

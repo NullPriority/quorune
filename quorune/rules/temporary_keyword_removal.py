@@ -90,6 +90,14 @@ def temporary_keyword_removal_capabilities(*,effects,target_schema,mechanic_ids)
 
 def temporary_keyword_removal_runtime_dependencies(program):
     if not any(effect.get('op')==OPERATION and effect.get('schema_version')==11 for effect in program.effects):return ()
+    if any(effect.get('card')=='$event.permanent_object' for effect in program.effects):
+        from .occurrence_object_results import occurrence_object_runtime_dependencies
+        owned=occurrence_object_runtime_dependencies(program)
+        if CAPABILITY not in owned:raise ValueError('Temporary removal lacks its sealed occurrence owner')
+        return owned
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+    composed=composed_spell_family_runtime_dependencies(program,capability=CAPABILITY,mechanic=MECHANIC)
+    if composed is not None:return composed
     dependencies=temporary_keyword_removal_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
     if not dependencies:raise ValueError('Temporary keyword removal lacks complete selection/result closure')
     return dependencies

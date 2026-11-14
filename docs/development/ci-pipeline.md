@@ -210,6 +210,24 @@ Keep at most two substantive branches active:
 - Slot B holds the next card batch in a separate worktree on an unpublished
   branch. Keep developing it while Slot A runs.
 
+With user-authorized shared development, two developers use the same Slot B
+checkout and branch, each owning a complete mechanic family. Follow the
+[shared editing protocol](../../AGENTS.md): atomic whole-file claims, brief
+central-file integration claims, one Git transaction mutex, and acknowledged
+freezes for shared checkout-wide mutations. Resolve the local helper and its
+operational state from the Git common directory; timestamps never authorize
+claim theft. Both developers continue card work, while only the publisher
+controls publication, full generation, protected merges and release blockers.
+
+At a delivery boundary, freeze briefly, commit a coherent source checkpoint and
+record its cut point. Establish that checkpoint on a separate candidate ref in
+Slot A; Git must never check out the development branch twice. Generation and
+bundle installation run only in the frozen candidate checkout. Both developers
+resume in Slot B during CI. Reconcile required candidate corrections under the
+normal ownership rules and, after the protected squash merge, carry only the
+preserved post-cut work onto verified main. Count distinct gained Oracle IDs
+once across the combined batch; there is no per-developer delivery quota.
+
 Alternate a consolidated defect-only pull request with a card-support pull
 request that adds at least 500 net distinct capability-closed cards. Group
 reproduced defects and keep each fix and its evidence independently reviewable.

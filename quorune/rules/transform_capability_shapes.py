@@ -44,7 +44,7 @@ def triggered_source_transform_runtime_dependencies(program) -> tuple[str, ...]:
         return ()
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
     from ..spell_history_transform_model import SPELL_HISTORY_TRANSFORM_COVERAGE
-    from .fixed_effect_clause_shapes import fixed_optional_effect_node_capabilities
+    from .fixed_effect_clause_shapes import fixed_optional_effect_node_capabilities,fixed_optional_mana_payment_node_capabilities
 
     if program.active_zone != "battlefield" or not {
         "fixed-typed-event-effect-trigger",
@@ -53,7 +53,7 @@ def triggered_source_transform_runtime_dependencies(program) -> tuple[str, ...]:
     }.issubset(program.coverage):
         raise ValueError("Triggered source transformation requires its source and transform-count snapshots")
     effects = program.effects
-    optional = len(effects) == 1 and effects[0].get("op") == "offer_optional_effect"
+    optional = len(effects) == 1 and effects[0].get("op") in {"offer_optional_effect","offer_optional_mana_payment"}
     required = source_transform_node_capabilities(
         effects=effects[0].get("effects", ()) if optional else effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage,
@@ -61,7 +61,9 @@ def triggered_source_transform_runtime_dependencies(program) -> tuple[str, ...]:
     if not required:
         raise ValueError("Triggered source transformation requires one closed source instruction")
     if optional:
-        wrapper = fixed_optional_effect_node_capabilities(
+        resolve=(fixed_optional_mana_payment_node_capabilities if effects[0]['op']=='offer_optional_mana_payment'
+            else fixed_optional_effect_node_capabilities)
+        wrapper = resolve(
             effects=effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
         )
         if not wrapper:
