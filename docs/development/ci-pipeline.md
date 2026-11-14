@@ -730,8 +730,10 @@ core.hooksPath`.
 The installer sets the local `core.hooksPath` to `.githooks` and refuses to
 overwrite another hook policy. The hook is a backstop that uses the
 worktree-local Python. It first runs `scripts/test_shards.py validate`, because
-an unassigned discovered test module makes PR planning fail before any matrix
-job can run. It next runs
+an unassigned discovered test module or an unknown module or suite reference in
+the change-impact policy makes PR planning fail before any matrix job can run.
+These references are checked before test collection and dependency inspection.
+It next runs
 `scripts/build_test_database.py validate-ci-dependencies`, so a compact-database
 card, Oracle ID, deck, fixture, or shard-closure omission fails before the push.
 It accepts the exact existing receipt before inferring another database. A

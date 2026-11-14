@@ -97,6 +97,22 @@ def discovered_modules(root: Path = TESTS) -> tuple[str, ...]:
     return tuple(sorted(path.stem for path in root.glob("test_*.py")))
 
 
+def validate_impact_references(manifest: Mapping, policy: Mapping) -> None:
+    """Reject dangling selection references before dependency checks or collection."""
+    modules = {module for assigned in manifest['primary_shards'].values() for module in assigned}
+    suites = set(manifest['primary_shards']) | set(manifest['overlay_suites'])
+    unknown = []
+    for group in ('path_rules', 'symbol_rules'):
+        for rule in policy.get(group, ()):
+            missing_modules = sorted(set(rule.get('test_modules', ())) - modules)
+            missing_suites = sorted(set(rule.get('test_suites', ())) - suites)
+            if missing_modules or missing_suites:
+                unknown.append({'group': group, 'rule': rule['id'],
+                    'unknown_modules': missing_modules, 'unknown_suites': missing_suites})
+    if unknown:
+        raise TestShardError('Unknown change-impact test references: ' + json.dumps(unknown, sort_keys=True))
+
+
 def validate_semantic_program_fixture_identities(
     tests_root: Path = TESTS,
 ) -> int:
@@ -810,6 +826,8 @@ def main() -> int:
 
     try:
         manifest = load_manifest()
+        validate_impact_references(manifest, json.loads(
+            (ROOT / 'platform/change-impact-policy.json').read_text(encoding='utf-8')))
         summary = validate_partition(manifest)
         if args.operation == "validate":
             print(json.dumps({"ok": True, **summary}, sort_keys=True))
