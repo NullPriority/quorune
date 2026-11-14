@@ -1654,11 +1654,22 @@ predicates retain that explicit card domain when the battlefield parser's
 permanent zone would otherwise make it implicit. The owner adds only one
 shared count and resolution-revalidation capability, and supports a single-
 graveyard constraint through target ownership. The same scalar leaves also feed
-the existing optional and closed-sequence compilers. Heterogeneous roles,
-divided or dynamic quantities, linked results, compound or conditional tails,
+the existing optional and closed-sequence compilers. Mixed origins,
+divided or dynamic quantities, linked results, unrepresented conditional tails,
 multiple-target hand returns from other players' graveyards, destinations
 without a reviewed scalar owner, and unsupported characteristic dependencies
 remain source-spanned residuals.
+
+`compiler/compound_target_sets.py` composes two to four independently
+constrained battlefield target roles under one Destroy, Exile or Return
+instruction. Each role reuses its complete scalar predicate. Separate target
+instances may select the same object; the explicit `target_roles` result
+projects the legal roles to distinct objects before the existing simultaneous
+set handler commits. The same batching retains departing trigger and
+replacement sources. A destruction result can carry its separately owned
+regeneration prohibition. The result also composes inside the existing modal,
+additional-cost and optional-result owners. Unsupported mixed origins,
+operations and independent opponent selections retain their residuals.
 
 Single-target public graveyard returns use an any-owner card predicate and a
 versioned result that shares the replacement-aware owner-hand commit. The

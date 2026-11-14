@@ -96,6 +96,9 @@ def fixed_homogeneous_target_set_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
+    if any('target_roles' in effect for effect in effects):
+        from .compound_target_sets import compound_target_set_node_capabilities
+        return compound_target_set_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not {
         FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,

@@ -1052,6 +1052,7 @@
       "test_chosen_aura_protection",
       "test_closed_effect_programs",
       "test_committed_occurrence_history",
+      "test_compound_target_sets",
       "test_cost_defined_x",
       "test_counted_spell_additional_costs",
       "test_damage_death_exile",

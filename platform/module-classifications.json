@@ -3527,6 +3527,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/compound_target_sets.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/conditional_chosen_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -17475,6 +17490,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/compound_target_sets.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/conditional_free_cast_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -27850,5 +27879,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b8e7f6479f7bcf075a1aeea7666f2f21ee05a94bc011fc72a86b2572fc99cd17"
+  "fingerprint": "269eacacadf2e6a8597d74579bdad3584820f3e3878524b703fe8daa646e5b30"
 }

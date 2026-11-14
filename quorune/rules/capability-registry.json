@@ -65092,6 +65092,133 @@
     {
       "applicability": {
         "exclusions": [
+          "mixed origins or operations",
+          "optional, variable or independently chosen opponent targets",
+          "unknown tails and unrepresented predicates"
+        ],
+        "inputs": [
+          "two to four exact scalar battlefield target predicates",
+          "one common operation and destination",
+          "current role-by-role target legality"
+        ],
+        "outputs": [
+          "separate mandatory target groups",
+          "one deterministic distinct legal object set",
+          "one simultaneous destruction or movement with existing replacement/source snapshots"
+        ],
+        "summary": "Lower one Destroy, Exile or Return instruction with2..4 independently constrained required battlefield target roles to one simultaneous set operation. Separate target instances may reuse one object; resolve each legal object once."
+      },
+      "blockers": [],
+      "dependencies": [
+        "resolution.effect.fixed_homogeneous_target_set"
+      ],
+      "dependency_fail_closed_rationale": "Every role must validate through its existing exact scalar predicate owner. The explicit target_roles selector independently requires compound authority even without producer coverage labels. Regeneration prohibition retains its own authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.effect.fixed_compound_target_set",
+      "implementation_components": [
+        "quorune.compiler.compound_target_sets.compound_target_set_effect_template",
+        "quorune.rules.compound_target_sets.compound_target_set_node_capabilities",
+        "quorune.rules.compound_target_sets.compound_target_payload_dependencies",
+        "quorune.semantic_runtime.fixed_target_set_handlers._fixed_target_fields",
+        "quorune.semantic_runtime.fixed_target_set_handlers.DestroyPermanentTargetSetHandler",
+        "quorune.semantic_runtime.fixed_target_set_handlers.MoveFixedTargetSetHandler"
+      ],
+      "implementation_mutation_rationale": "A fresh native dying-observer witness detects a simultaneous instruction split into sequential mutation intents.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_decimate_accepts_one_object_in_two_roles_and_moves_it_once",
+        "test_actual_grip_keeps_a_legal_role_after_response_and_preserves_the_paid_cast",
+        "test_actual_return_roles_use_current_controller_predicates_and_physical_owners",
+        "test_actual_destruction_distinguishes_regeneration_prohibition_and_indestructible",
+        "test_actual_simultaneous_departure_keeps_the_dying_observer_for_every_creature",
+        "test_actual_modal_grouped_branch_uses_only_its_selected_roles",
+        "test_actual_destination_choice_holds_the_whole_batch_and_uses_departing_sources"
+      ],
+      "multiplayer_tests": [
+        "test_actual_decimate_accepts_one_object_in_two_roles_and_moves_it_once",
+        "test_actual_grip_keeps_a_legal_role_after_response_and_preserves_the_paid_cast",
+        "test_actual_return_roles_use_current_controller_predicates_and_physical_owners",
+        "test_actual_destruction_distinguishes_regeneration_prohibition_and_indestructible",
+        "test_actual_simultaneous_departure_keeps_the_dying_observer_for_every_creature",
+        "test_actual_modal_grouped_branch_uses_only_its_selected_roles",
+        "test_actual_destination_choice_holds_the_whole_batch_and_uses_departing_sources"
+      ],
+      "negative_tests": [
+        "test_roles_keep_independent_constraints_and_one_batch_operation",
+        "test_role_projection_deduplicates_only_the_new_instruction_and_keeps_flags_closed",
+        "test_complete_originals_bind_and_coverage_independent_role_authority_cannot_be_omitted",
+        "test_fresh_sequential_batch_and_duplicate_projection_omissions_are_killed",
+        "test_actual_decimate_accepts_one_object_in_two_roles_and_moves_it_once",
+        "test_actual_grip_keeps_a_legal_role_after_response_and_preserves_the_paid_cast",
+        "test_actual_return_roles_use_current_controller_predicates_and_physical_owners",
+        "test_actual_destruction_distinguishes_regeneration_prohibition_and_indestructible",
+        "test_actual_simultaneous_departure_keeps_the_dying_observer_for_every_creature",
+        "test_actual_modal_grouped_branch_uses_only_its_selected_roles",
+        "test_actual_destination_choice_holds_the_whole_batch_and_uses_departing_sources"
+      ],
+      "official_rules": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "400.7",
+        "603.10a",
+        "700.1",
+        "701.8a",
+        "701.8b",
+        "701.8c"
+      ],
+      "positive_tests": [
+        "test_roles_keep_independent_constraints_and_one_batch_operation",
+        "test_role_projection_deduplicates_only_the_new_instruction_and_keeps_flags_closed",
+        "test_complete_originals_bind_and_coverage_independent_role_authority_cannot_be_omitted",
+        "test_actual_decimate_accepts_one_object_in_two_roles_and_moves_it_once",
+        "test_actual_grip_keeps_a_legal_role_after_response_and_preserves_the_paid_cast",
+        "test_actual_return_roles_use_current_controller_predicates_and_physical_owners",
+        "test_actual_destruction_distinguishes_regeneration_prohibition_and_indestructible",
+        "test_actual_simultaneous_departure_keeps_the_dying_observer_for_every_creature",
+        "test_actual_modal_grouped_branch_uses_only_its_selected_roles",
+        "test_actual_destination_choice_holds_the_whole_batch_and_uses_departing_sources"
+      ],
+      "privacy_tests": [
+        "test_actual_decimate_accepts_one_object_in_two_roles_and_moves_it_once",
+        "test_actual_grip_keeps_a_legal_role_after_response_and_preserves_the_paid_cast",
+        "test_actual_return_roles_use_current_controller_predicates_and_physical_owners",
+        "test_actual_destruction_distinguishes_regeneration_prohibition_and_indestructible",
+        "test_actual_simultaneous_departure_keeps_the_dying_observer_for_every_creature",
+        "test_actual_modal_grouped_branch_uses_only_its_selected_roles",
+        "test_actual_destination_choice_holds_the_whole_batch_and_uses_departing_sources"
+      ],
+      "replay_tests": [
+        "test_actual_decimate_accepts_one_object_in_two_roles_and_moves_it_once",
+        "test_actual_grip_keeps_a_legal_role_after_response_and_preserves_the_paid_cast",
+        "test_actual_return_roles_use_current_controller_predicates_and_physical_owners",
+        "test_actual_destruction_distinguishes_regeneration_prohibition_and_indestructible",
+        "test_actual_simultaneous_departure_keeps_the_dying_observer_for_every_creature",
+        "test_actual_modal_grouped_branch_uses_only_its_selected_roles",
+        "test_actual_destination_choice_holds_the_whole_batch_and_uses_departing_sources"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "heterogeneous target roles",
           "divided quantities",
           "dynamic target counts",
@@ -96344,7 +96471,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 866,
+  "registry_version": 867,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

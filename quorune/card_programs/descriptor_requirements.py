@@ -11,6 +11,8 @@ from ..resolution_characteristic_model import (
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    from ..rules.compound_target_sets import compound_target_payload_dependencies
+    if compound := compound_target_payload_dependencies(value):return compound
     if value.get('op') == 'fixed_library_selection':
         from ..rules.library_selection_capability_shapes import fixed_library_selection_node_capabilities
         owners = fixed_library_selection_node_capabilities(effects=(value,), target_schema=None, mechanic_ids=('fixed-library-selection',))

@@ -425,6 +425,8 @@ def typed_resolution_effect_template(
     from .per_player_target_sets import per_player_target_set_template
     per_player=per_player_target_set_template(text)
     if per_player is not None:return per_player
+    from .compound_target_sets import compound_target_set_effect_template
+    if compound := compound_target_set_effect_template(text):return compound
     fixed_homogeneous_target_set = (
         fixed_homogeneous_target_set_effect_template(text)
     )
