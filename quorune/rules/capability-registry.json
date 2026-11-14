@@ -44756,6 +44756,144 @@
     },
     {
       "applicability": {
+        "exclusions": [
+          "variable damage amounts",
+          "opponent-selected recipients",
+          "unknown target bounds, tails and source scopes"
+        ],
+        "inputs": [
+          "fixed positive amounts and matching target-role bounds",
+          "canonical per-role scalar damage target schemas",
+          "original choices and revalidated target slots"
+        ],
+        "outputs": [
+          "one canonical allocated damage batch",
+          "unchanged per-role shares after partial target loss",
+          "combined amounts only for permitted repeated recipients"
+        ],
+        "summary": "Bind fixed printed amounts to two to four target roles, retaining closed optional later groups, role distinctness and one simultaneous allocated damage batch."
+      },
+      "blockers": [],
+      "dependencies": [
+        "damage.batch.fixed_set",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Independent payload admission requires the fixed role owner without coverage labels, validates every role through canonical scalar legality, and rejects changed totals, bounds and schemas.",
+      "dependency_fail_closed_status": "passed",
+      "id": "damage.batch.fixed_target_roles",
+      "implementation_components": [
+        "quorune.fixed_damage_role_model.FixedDamageRoleSpec",
+        "quorune.fixed_damage_role_model.fixed_damage_role_spec",
+        "quorune.compiler.fixed_damage_roles.fixed_damage_role_template",
+        "quorune.rules.fixed_damage_roles.fixed_damage_role_node_capabilities",
+        "quorune.rules.fixed_damage_roles.fixed_damage_role_runtime_dependencies",
+        "quorune.rules.fixed_damage_roles.bind_fixed_damage_roles"
+      ],
+      "implementation_mutation_rationale": "A fresh native dying-observer witness detects loss of a printed damage share before the canonical simultaneous batch.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
+        "test_actual_partial_role_loss_keeps_the_surviving_share_and_paid_cast",
+        "test_actual_optional_roles_allow_zero_and_combine_only_unqualified_reuse",
+        "test_actual_companion_draw_and_mana_follow_the_complete_damage_instruction",
+        "test_actual_simultaneous_damage_keeps_a_dying_observer_for_both_creatures",
+        "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
+        "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
+        "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+      ],
+      "multiplayer_tests": [
+        "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
+        "test_actual_partial_role_loss_keeps_the_surviving_share_and_paid_cast",
+        "test_actual_optional_roles_allow_zero_and_combine_only_unqualified_reuse",
+        "test_actual_companion_draw_and_mana_follow_the_complete_damage_instruction",
+        "test_actual_simultaneous_damage_keeps_a_dying_observer_for_both_creatures",
+        "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
+        "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
+        "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+      ],
+      "negative_tests": [
+        "test_roles_preserve_amounts_cardinality_distinctness_and_canonical_scalar_legality",
+        "test_unrepresented_amounts_choosers_recipients_ordinals_and_tails_stay_residual",
+        "test_originals_bind_normally_and_payload_authority_survives_removed_labels",
+        "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
+        "test_actual_partial_role_loss_keeps_the_surviving_share_and_paid_cast",
+        "test_actual_optional_roles_allow_zero_and_combine_only_unqualified_reuse",
+        "test_actual_companion_draw_and_mana_follow_the_complete_damage_instruction",
+        "test_actual_simultaneous_damage_keeps_a_dying_observer_for_both_creatures",
+        "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
+        "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
+        "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+      ],
+      "official_rules": [
+        "115.3",
+        "115.6",
+        "120.2b",
+        "120.4",
+        "120.4b",
+        "120.4c",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "616.1",
+        "704.3"
+      ],
+      "positive_tests": [
+        "test_roles_preserve_amounts_cardinality_distinctness_and_canonical_scalar_legality",
+        "test_unrepresented_amounts_choosers_recipients_ordinals_and_tails_stay_residual",
+        "test_originals_bind_normally_and_payload_authority_survives_removed_labels",
+        "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
+        "test_actual_partial_role_loss_keeps_the_surviving_share_and_paid_cast",
+        "test_actual_optional_roles_allow_zero_and_combine_only_unqualified_reuse",
+        "test_actual_companion_draw_and_mana_follow_the_complete_damage_instruction",
+        "test_actual_simultaneous_damage_keeps_a_dying_observer_for_both_creatures",
+        "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
+        "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
+        "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+      ],
+      "privacy_tests": [
+        "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
+        "test_actual_partial_role_loss_keeps_the_surviving_share_and_paid_cast",
+        "test_actual_optional_roles_allow_zero_and_combine_only_unqualified_reuse",
+        "test_actual_companion_draw_and_mana_follow_the_complete_damage_instruction",
+        "test_actual_simultaneous_damage_keeps_a_dying_observer_for_both_creatures",
+        "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
+        "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
+        "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+      ],
+      "replay_tests": [
+        "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
+        "test_actual_partial_role_loss_keeps_the_surviving_share_and_paid_cast",
+        "test_actual_optional_roles_allow_zero_and_combine_only_unqualified_reuse",
+        "test_actual_companion_draw_and_mana_follow_the_complete_damage_instruction",
+        "test_actual_simultaneous_damage_keeps_a_dying_observer_for_both_creatures",
+        "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
+        "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
+        "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
         "exclusions": [],
         "inputs": [
           "combat assignment",
@@ -96597,7 +96735,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 868,
+  "registry_version": 869,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

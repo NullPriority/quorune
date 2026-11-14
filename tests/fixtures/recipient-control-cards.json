@@ -10372,7 +10372,629 @@
       "toughness": null,
       "type_line": "Instant"
     }
+  ,
+{
+  "oracle_id": "f1c26b25-371e-4fbf-a43d-7fd59a364d3a",
+  "name": "Arc Trail",
+  "mana_cost": "{1}{R}",
+  "cmc": 2.0,
+  "type_line": "Sorcery",
+  "oracle_text": "Arc Trail deals 2 damage to any target and 1 damage to any other target.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
   ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2016-11-25",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "not_legal",
+    "predh": "legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "30a9ad0e-1b23-41ce-bacc-3b27f78ef628",
+  "name": "Boulder Dash",
+  "mana_cost": "{1}{R}",
+  "cmc": 2.0,
+  "type_line": "Sorcery",
+  "oracle_text": "Boulder Dash deals 2 damage to any target and 1 damage to any other target.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2026-01-23",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "0369627e-3b83-4e5b-a8af-a99f944443b3",
+  "name": "Conduct Electricity",
+  "mana_cost": "{4}{R}",
+  "cmc": 5.0,
+  "type_line": "Instant",
+  "oracle_text": "Conduct Electricity deals 6 damage to target creature and 2 damage to up to one target creature token.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2024-08-02",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "62879f3d-ed6d-4004-8196-f3fd7f614695",
+  "name": "Cone of Flame",
+  "mana_cost": "{3}{R}{R}",
+  "cmc": 5.0,
+  "type_line": "Sorcery",
+  "oracle_text": "Cone of Flame deals 1 damage to any target, 2 damage to another target, and 3 damage to a third target.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2016-04-08",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "legal",
+    "premodern": "legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "a01491b7-89c8-4d6e-a516-431440ff3e88",
+  "name": "Cunning Strike",
+  "mana_cost": "{3}{U}{R}",
+  "cmc": 5.0,
+  "type_line": "Instant",
+  "oracle_text": "Cunning Strike deals 2 damage to target creature and 2 damage to target player or planeswalker.\nDraw a card.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R",
+    "U"
+  ],
+  "color_identity": [
+    "R",
+    "U"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2015-01-23",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "060deaff-44d6-4f03-9568-bcb7add80255",
+  "name": "Drakuseth, Maw of Flames",
+  "mana_cost": "{4}{R}{R}{R}",
+  "cmc": 7.0,
+  "type_line": "Legendary Creature — Dragon",
+  "oracle_text": "Flying\nWhenever Drakuseth attacks, it deals 4 damage to any target and 3 damage to each of up to two other targets.",
+  "power": "7",
+  "toughness": "7",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [
+    "Flying"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2026-04-24",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "ac27ccb8-81e2-42e2-a340-0b0ce9609688",
+  "name": "Explosive Welcome",
+  "mana_cost": "{7}{R}",
+  "cmc": 8.0,
+  "type_line": "Instant",
+  "oracle_text": "Explosive Welcome deals 5 damage to any target and 3 damage to any other target. Add {R}{R}{R}.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [
+    "R"
+  ],
+  "layout": "normal",
+  "released_at": "2021-04-23",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "a2c00788-14e7-4ab5-8c71-2a176621a177",
+  "name": "Hungry Flames",
+  "mana_cost": "{2}{R}",
+  "cmc": 3.0,
+  "type_line": "Instant",
+  "oracle_text": "Hungry Flames deals 3 damage to target creature and 2 damage to target player or planeswalker.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2020-07-17",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "5e642112-9592-475f-ba03-d71544270cfa",
+  "name": "Lunge",
+  "mana_cost": "{2}{R}",
+  "cmc": 3.0,
+  "type_line": "Instant",
+  "oracle_text": "Lunge deals 2 damage to target creature and 2 damage to target player or planeswalker.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "1999-10-04",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "not_legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "legal",
+    "pioneer": "not_legal",
+    "predh": "legal",
+    "premodern": "legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "09f73f77-a9bc-4718-be7d-ba6e08576e3a",
+  "name": "Punish the Enemy",
+  "mana_cost": "{4}{R}",
+  "cmc": 5.0,
+  "type_line": "Instant",
+  "oracle_text": "Punish the Enemy deals 3 damage to target player or planeswalker and 3 damage to target creature.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2013-05-03",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "a43500ed-4aa6-49de-8a6e-a1781301b108",
+  "name": "Shower of Sparks",
+  "mana_cost": "{R}",
+  "cmc": 1.0,
+  "type_line": "Instant",
+  "oracle_text": "Shower of Sparks deals 1 damage to target creature and 1 damage to target player or planeswalker.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2013-09-06",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "not_legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "not_legal",
+    "pioneer": "not_legal",
+    "predh": "legal",
+    "premodern": "legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "843c8485-21b8-45ef-9a0c-4967f07278bb",
+  "name": "Trick Shot",
+  "mana_cost": "{4}{R}",
+  "cmc": 5.0,
+  "type_line": "Instant",
+  "oracle_text": "Trick Shot deals 6 damage to target creature and 2 damage to up to one other target creature token.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2024-04-19",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+}
+,
+{
+  "oracle_id": "3d960d33-623a-4415-ae00-f8cffbc15f5a",
+  "name": "Dictate of the Twin Gods",
+  "mana_cost": "{3}{R}{R}",
+  "cmc": 5.0,
+  "type_line": "Enchantment",
+  "oracle_text": "Flash\nIf a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [
+    "Flash",
+    "Double"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2014-05-02",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+}
+],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
     {
@@ -11719,7 +12341,93 @@
       "published_at": "2024-02-02",
       "source": "wotc"
     }
-  ],
+  ,
+{
+  "oracle_id": "0369627e-3b83-4e5b-a8af-a99f944443b3",
+  "published_at": "2024-07-26",
+  "source": "wotc",
+  "comment": "The two targets can be the same creature as long as that creature is a token."
+},
+{
+  "oracle_id": "62879f3d-ed6d-4004-8196-f3fd7f614695",
+  "published_at": "2014-07-18",
+  "source": "wotc",
+  "comment": "If one or two of Cone of Flame’s targets are illegal when it resolves, you can’t change how much damage will be dealt to the remaining legal targets."
+},
+{
+  "oracle_id": "62879f3d-ed6d-4004-8196-f3fd7f614695",
+  "published_at": "2014-07-18",
+  "source": "wotc",
+  "comment": "Each of the three targets must be different. If there aren’t three different legal targets available, you can’t cast the spell."
+},
+{
+  "oracle_id": "a01491b7-89c8-4d6e-a516-431440ff3e88",
+  "published_at": "2014-11-24",
+  "source": "wotc",
+  "comment": "You can’t cast Cunning Strike unless you target both a creature and a player. If one target (but not both) is illegal as Cunning Strike resolves, it deals damage to the remaining legal target and you draw a card. If both targets are illegal, the spell won’t resolve and none of its effects will happen. You won’t draw a card in that case."
+},
+{
+  "oracle_id": "060deaff-44d6-4f03-9568-bcb7add80255",
+  "published_at": "2019-07-12",
+  "source": "wotc",
+  "comment": "You can't choose the same target multiple times to have it be dealt 6, 7, or 10 damage."
+},
+{
+  "oracle_id": "060deaff-44d6-4f03-9568-bcb7add80255",
+  "published_at": "2023-07-28",
+  "source": "wotc",
+  "comment": "If Drakuseth attacks a planeswalker and that planeswalker is reduced to 0 loyalty from the damage caused by Drakuseth's ability, Drakuseth continues to attack. It can be blocked, and it won't deal any combat damage if it's not blocked. The same is true if Drakuseth attacks a battle and that battle is reduced to 0 defense from the damage caused by Drakuseth's ability."
+},
+{
+  "oracle_id": "a2c00788-14e7-4ab5-8c71-2a176621a177",
+  "published_at": "2017-02-09",
+  "source": "wotc",
+  "comment": "You can’t cast Hungry Flames unless you target both a creature and a player. If one target is illegal as Hungry Flames resolves, the spell deals damage to the remaining legal target."
+},
+{
+  "oracle_id": "09f73f77-a9bc-4718-be7d-ba6e08576e3a",
+  "published_at": "2013-04-15",
+  "source": "wotc",
+  "comment": "If one of Punish the Enemy’s targets is illegal when it tries to resolve, it will still deal damage to the remaining legal target."
+},
+{
+  "oracle_id": "09f73f77-a9bc-4718-be7d-ba6e08576e3a",
+  "published_at": "2013-04-15",
+  "source": "wotc",
+  "comment": "You must be able to target a player and a creature in order to cast Punish the Enemy."
+},
+{
+  "oracle_id": "a43500ed-4aa6-49de-8a6e-a1781301b108",
+  "published_at": "2004-10-04",
+  "source": "wotc",
+  "comment": "If the creature leaves the battlefield before this resolves, it still damages the player."
+}
+,
+{
+  "oracle_id": "3d960d33-623a-4415-ae00-f8cffbc15f5a",
+  "published_at": "2014-04-26",
+  "source": "wotc",
+  "comment": "If more than one Dictate of the Twin Gods is on the battlefield, damage dealt will double for each one (two of them will end up multiplying the damage by four, three of them by eight, and four of them by sixteen)."
+},
+{
+  "oracle_id": "3d960d33-623a-4415-ae00-f8cffbc15f5a",
+  "published_at": "2014-04-26",
+  "source": "wotc",
+  "comment": "The source of the damage doesn't change. A spell that deals damage will specify the source of the damage, often the spell itself. An ability that deals damage will also specify the source of the damage, although the ability itself will never be that source. Often the source of the ability is also the source of the damage."
+},
+{
+  "oracle_id": "3d960d33-623a-4415-ae00-f8cffbc15f5a",
+  "published_at": "2014-04-26",
+  "source": "wotc",
+  "comment": "If multiple effects modify how damage will be dealt, the player being dealt damage or the controller of the permanent being dealt damage chooses the order to apply the effects. For example, the ability of Decorated Griffin says “Prevent the next 1 combat damage that would be dealt to you this turn.” Suppose you would be dealt 3 combat damage and you activate the ability of Decorated Griffin. You can either (a) prevent 1 damage first and then let Dictate of the Twin Gods's effect double the remaining 2 damage, for a result of being dealt 4 damage, or (b) double the damage to 6 and then prevent 1 damage, for a result of being dealt 5 damage."
+},
+{
+  "oracle_id": "3d960d33-623a-4415-ae00-f8cffbc15f5a",
+  "published_at": "2014-04-26",
+  "source": "wotc",
+  "comment": "Dictate of the Twin Gods applies to any damage, not just combat damage. It also doesn't matter who controls the source of the damage that's being dealt."
+}
+],
   "schema_version": 1,
   "source": "Scryfall Oracle/rulings subset for offline tests"
 }

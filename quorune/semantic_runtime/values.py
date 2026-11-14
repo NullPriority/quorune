@@ -197,6 +197,9 @@ def _resolve_effect_mapping(host, value, item):
     from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
+        if 'fixed_target_role_damage' in value:
+            from ..rules.fixed_damage_roles import bind_fixed_damage_roles
+            value=bind_fixed_damage_roles(host,value,item)
         if 'fixed_target_controller_damage' in value:
             from ..rules.fixed_dual_damage import bind_fixed_dual_damage
             value = {**value,'fixed_target_controller_damage':bind_fixed_dual_damage(host,value,item)}

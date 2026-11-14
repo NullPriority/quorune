@@ -1288,6 +1288,7 @@
       "test_explore_mode_native",
       "test_fixed_conspire",
       "test_fixed_creature_power_damage",
+      "test_fixed_damage_roles",
       "test_fixed_mass_damage",
       "test_fixed_player_counter_placement_effects",
       "test_fixed_query_keyword_grants",

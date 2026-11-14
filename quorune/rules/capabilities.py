@@ -264,6 +264,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-target-color-scope': ('zone.object.fixed_resolution_color_scope',),
     'fixed-compound-target-set': ('resolution.effect.fixed_compound_target_set',),
+    'fixed-target-role-damage': ('damage.batch.fixed_target_roles',),
     'conditional-library-search-placement':('library.search.conditional_placement',),
     'sequential-public-conditions':('resolution.effect_program.sequential_public_conditions',),
     'fixed-recipient-control':('continuous.control.fixed_recipient',),

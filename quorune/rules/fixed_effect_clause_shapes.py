@@ -244,6 +244,7 @@ _COMPONENT_RESOLVERS = (
 
 
 def _contains_target_reference(value: Any) -> bool:
+    if isinstance(value,Mapping) and 'fixed_target_role_damage' in value:return True
     if isinstance(value, str):
         return (
             value in {"$target", "$targets"}

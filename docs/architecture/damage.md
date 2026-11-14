@@ -78,6 +78,17 @@ identity; the wire decoder still rejects malformed collections and identities.
 Face-down source snapshots withhold hidden Oracle identity. Legacy frames
 without a represented physical source retain their existing compatibility path.
 
+`compiler/fixed_damage_roles.py` lowers fixed printed amounts for separate target
+roles into one simultaneous instruction. Its immutable descriptor records each
+role's amount and cardinality; the ordinary target plan owns legal choices and
+explicit distinctness. Optional later roles may select zero, one, or two targets
+only when represented by that descriptor. Resolution retains each legal role's
+share without reallocating damage from illegal targets. Permitted repeated
+recipients receive the combined amount. `rules/fixed_damage_roles.py` binds these
+shares to the existing allocated damage batch after revalidation, preserving
+replacement choices, source snapshots, privacy, and replay. Printed damage shares
+are independent of player-chosen damage allocations.
+
 Creature-power damage retains a separate numeric source-power snapshot. The
 same rollback-safe, pre-mutation departure boundary refreshes matching stack
 and waiting-trigger frames before any member of a simultaneous batch moves.

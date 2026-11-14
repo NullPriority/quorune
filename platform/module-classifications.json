@@ -5177,6 +5177,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/fixed_damage_roles.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/fixed_dual_damage_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12559,6 +12574,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/fixed_damage_role_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/fixed_damage_set.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -18472,6 +18499,20 @@
     },
     {
       "file": "quorune/rules/fixed_controller_effect_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/fixed_damage_roles.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -27922,5 +27963,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "c1cec3d7687a9b165a327f15f7262b0abdad951e658678fd596e4744a2094a14"
+  "fingerprint": "a18faea4787b4d2d6220d7cca833106b10d37fa6f0ac0bee9ec6b7361711e012"
 }
