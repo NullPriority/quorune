@@ -770,7 +770,7 @@ def _fixed_equip_keyword_ability(
         effect_text=(
             "Attach this Equipment to target creature you control. "
             "Activate only as a sorcery."
-        ),
+        ) + (' ' + spec.local_cost_text if spec.local_cost_text else ''),
         zones=("battlefield",),
         mana=cost.mana,
         complex_symbols=cost.complex_symbols,

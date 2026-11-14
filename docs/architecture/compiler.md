@@ -4078,15 +4078,21 @@ complete fixed-mana Equip child is recognized by the shared typed grammar for
 compiler classification and activation catalogs; labels add no payment,
 targeting or timing permissions. Unsupported costs and restrictions retain
 their residuals.
-`compiler/nonmana_equip_nodes.py` lowers closed nonmana Equip through the same
+`compiler/nonmana_equip_nodes.py` lowers catalog-backed Equip through the same
 typed activation catalog and attachment owner. Fixed hand discard, controlled
 creature or artifact sacrifice, another nonland permanent sacrifice, life,
 energy, and one source charge counter are paid before an attachment can
 resolve. Target legality, sorcery timing, source incarnation, and any printed
 once-per-turn limit remain ordinary activation constraints. The cost descriptor
 requires its own runtime capability independently of keyword recognition.
-Alternative and variable prices and unsupported companion abilities remain
-residual.
+Fixed complex mana symbols and two ordinary mana alternatives reuse the
+activation payment options. A closed ability-local reduction retains its
+quantity in that catalog and shares current pricing between offers and commands.
+An Equip restriction can name a union of creature subtypes; any listed subtype
+qualifies, and each printed Equip ability retains its own price and target
+schema. These targeting restrictions do not become attachment restrictions.
+Mixed mana/nonmana alternatives, unrepresented variable prices and unsupported
+companion abilities remain residual.
 
 A syntactically complete but unsupported Enchant line produces one precise
 restriction residual instead of a second generic mechanic blocker. Numeric

@@ -69,14 +69,21 @@ def nonmana_equip_runtime_dependencies(program):
         activated_abilities_from_descriptors, is_structural_activated_ability_catalog_program,
     )
     if program.event != 'activate' or is_structural_activated_ability_catalog_program(program):return ()
-    from ..rules.attachment_actions import FIXED_NONMANA_EQUIP_CAPABILITY
+    from ..rules.attachment_actions import FIXED_NONMANA_EQUIP_CAPABILITY, FIXED_RESTRICTED_EQUIP_CAPABILITY
+    required = set()
     for ability in activated_abilities_from_descriptors(program.handlers):
-        if ability.builtin_semantic_key == 'builtin:equip' and (
+        if ability.builtin_semantic_key != 'builtin:equip':continue
+        required.update(('attachment.action.fixed_source', 'target.revalidate_resolution'))
+        if (
             ability.life_payment or ability.energy_payment or ability.choices
             or ability.source_counter_removal_cost is not None
         ):
-            return (FIXED_NONMANA_EQUIP_CAPABILITY,)
-    return ()
+            required.add(FIXED_NONMANA_EQUIP_CAPABILITY)
+        else:
+            restricted = (ability.activation_limit is not None or ability.target_schema is not None
+                and set(ability.target_schema) - {'zones', 'categories', 'controller', 'creature', 'count'})
+            required.add(FIXED_RESTRICTED_EQUIP_CAPABILITY if restricted else 'attachment.equip.fixed_mana')
+    return tuple(sorted(required))
 
 
 def _cost_metric_runtime_requirements(program):

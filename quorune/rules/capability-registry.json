@@ -2203,18 +2203,24 @@
         "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
         "test_actual_mobilized_district_keeps_the_price_on_its_animation",
         "test_actual_source_counter_discount_locks_before_sacrifice",
-        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "multiplayer_tests": [
         "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
         "test_actual_mobilized_district_keeps_the_price_on_its_animation",
-        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "negative_tests": [
         "test_ability_local_discount_closes_only_its_cost_and_catalog",
         "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
         "test_actual_mobilized_district_keeps_the_price_on_its_animation",
-        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects",
+        "test_subtype_union_and_local_cost_grammar_preserve_the_whole_clause",
+        "test_catalog_equip_retains_independent_cost_and_attachment_authority",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment",
+        "test_fresh_local_price_and_complex_payment_omissions_are_killed"
       ],
       "official_rules": [
         "109.5",
@@ -2229,16 +2235,20 @@
         "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
         "test_actual_mobilized_district_keeps_the_price_on_its_animation",
         "test_actual_source_counter_discount_locks_before_sacrifice",
-        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects",
+        "test_originals_bind_normally_and_roundtrip_their_complete_price_catalogs",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "privacy_tests": [
-        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee"
+        "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "replay_tests": [
         "test_actual_pteramander_uses_current_own_graveyard_and_keeps_blue_fee",
         "test_actual_mobilized_district_keeps_the_price_on_its_animation",
         "test_actual_source_counter_discount_locks_before_sacrifice",
-        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects"
+        "test_actual_domain_and_other_artifact_prices_use_distinct_public_objects",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "required_evidence": [
         "positive",
@@ -2254,7 +2264,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -2742,7 +2752,7 @@
           "current source ability and option revalidation",
           "exact replay without raw mana-source identity projection"
         ],
-        "summary": "Compile fixed colored-hybrid, two-brid, Phyrexian, and snow symbols on otherwise typed nonmana activated abilities into immutable payment options consumed by the canonical activation offer, commit, mana, life, and provenance owners. Also compile two complete ordinary mana alternatives with the same source-tap cost into the same immutable option model."
+        "summary": "Compile fixed colored-hybrid, two-brid, Phyrexian, and snow symbols on otherwise typed nonmana activated abilities into immutable payment options consumed by the canonical activation offer, commit, mana, life, and provenance owners. Also compile two complete ordinary mana alternatives with the same source-tap cost into the same immutable option model. Printed Equip can use two ordinary mana alternatives without a source-tap cost."
       },
       "blockers": [],
       "dependencies": [
@@ -2786,7 +2796,9 @@
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
         "test_actual_suppression_field_increase_applies_separately_to_both_arms",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
-        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage"
+        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw"
       ],
       "multiplayer_tests": [
         "test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
@@ -2796,7 +2808,9 @@
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
         "test_actual_suppression_field_increase_applies_separately_to_both_arms",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
-        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage"
+        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw"
       ],
       "negative_tests": [
         "test_option_model_and_unsupported_symbols_fail_closed",
@@ -2806,7 +2820,12 @@
         "test_stale_snow_provenance_rolls_back_before_tap",
         "test_unsupported_resource_branches_variable_symbols_and_independent_result_stay_residual",
         "test_runtime_cannot_omit_the_mana_option_owner",
-        "test_mana_option_dependency_reader_rejects_incomplete_or_duplicate_descriptors"
+        "test_mana_option_dependency_reader_rejects_incomplete_or_duplicate_descriptors",
+        "test_subtype_union_and_local_cost_grammar_preserve_the_whole_clause",
+        "test_catalog_equip_retains_independent_cost_and_attachment_authority",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw",
+        "test_fresh_local_price_and_complex_payment_omissions_are_killed"
       ],
       "official_rules": [
         "106.3",
@@ -2831,7 +2850,10 @@
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
         "test_actual_suppression_field_increase_applies_separately_to_both_arms",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
-        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage"
+        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+        "test_originals_bind_normally_and_roundtrip_their_complete_price_catalogs",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw"
       ],
       "privacy_tests": [
         "test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
@@ -2841,7 +2863,9 @@
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
         "test_actual_suppression_field_increase_applies_separately_to_both_arms",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
-        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage"
+        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw"
       ],
       "replay_tests": [
         "test_snow_payment_uses_current_source_provenance_and_replays",
@@ -2851,7 +2875,9 @@
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
         "test_actual_suppression_field_increase_applies_separately_to_both_arms",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
-        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage"
+        "test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw"
       ],
       "required_evidence": [
         "positive",
@@ -2867,7 +2893,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -6145,7 +6171,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Equip costs containing X, hybrid, Phyrexian, snow, or nonmana costs",
+          "Equip X and costs without an independently closed typed payment owner",
           "Equip variants with different target restrictions",
           "instant-speed Equip permissions",
           "Equipment controlled by another player",
@@ -6165,7 +6191,7 @@
           "live reciprocal attachment relation",
           "new attachment timestamp when the relation changes"
         ],
-        "summary": "Activate an Equipment's printed Equip ability with a fixed ordinary mana cost at sorcery speed, target a creature its controller controls, and attach the live Equipment on resolution. Decorative leading flavor labels preserve the original source span while the same complete fixed-mana Equip shape supplies both offers and commands."
+        "summary": "Activate an Equipment's printed Equip ability with a fixed ordinary mana cost at sorcery speed, target a creature its controller controls, and attach the live Equipment on resolution. Decorative leading flavor labels preserve the original source span while the same complete fixed-mana Equip shape supplies both offers and commands. Catalog-backed Equip composes independently closed complex or alternative mana prices and public-count reductions without changing sorcery timing or attachment ownership."
       },
       "blockers": [],
       "dependencies": [],
@@ -6177,7 +6203,10 @@
         "quorune.attachments.attach_objects",
         "quorune.effect_runtime.zones_and_attachments._apply_attach",
         "quorune.rules.activation.resolution.builtin_activation_resolution",
-        "quorune.rules.attachment_actions.fixed_equip_ability_spec"
+        "quorune.rules.attachment_actions.fixed_equip_ability_spec",
+        "quorune.compiler.nonmana_equip_nodes.fixed_nonmana_equip_keyword_node",
+        "quorune.compiler.nonmana_equip_nodes.is_closed_nonmana_equip_program",
+        "quorune.card_programs.runtime_requirements.nonmana_equip_runtime_dependencies"
       ],
       "implementation_mutation_rationale": "test_generic_equip_resolution_mutant_is_killed removes recognition of the typed built-in Equip resolution and the exact attach operation assertion rejects the survivor. Flavored Equip remains covered by the actual principal-issued Paladin action, full four-mana payment, target change, foreign rollback and replay.",
       "implementation_mutation_status": "killed",
@@ -6185,16 +6214,30 @@
         "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
         "test_generic_fixed_equip_activation_attaches_and_applies_characteristics",
         "test_live_generic_equipment_effect_moves_detaches_and_tracks_control",
-        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback"
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "multiplayer_tests": [
         "test_multiple_sources_apply_independently_in_four_player_game",
-        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback"
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "negative_tests": [
         "test_equip_resolves_without_effect_after_equipment_leaves",
         "test_fixed_equip_keyword_has_exact_bounded_capability",
-        "test_hero_profile_source_span_and_flavored_equip_keep_closed_values"
+        "test_hero_profile_source_span_and_flavored_equip_keep_closed_values",
+        "test_subtype_union_and_local_cost_grammar_preserve_the_whole_clause",
+        "test_catalog_equip_retains_independent_cost_and_attachment_authority",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "official_rules": [
         "301.5",
@@ -6211,15 +6254,28 @@
         "test_fixed_equip_parser_exposes_only_executable_target_contract",
         "test_generic_fixed_equip_activation_attaches_and_applies_characteristics",
         "test_hero_profile_source_span_and_flavored_equip_keep_closed_values",
-        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback"
+        "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
+        "test_originals_bind_normally_and_roundtrip_their_complete_price_catalogs",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "privacy_tests": [
         "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
-        "test_projection_hides_relation_identity_and_replay_is_exact"
+        "test_projection_hides_relation_identity_and_replay_is_exact",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "replay_tests": [
         "test_native_hero_and_flavored_equip_actions_resume_with_private_rollback",
-        "test_projection_hides_relation_identity_and_replay_is_exact"
+        "test_projection_hides_relation_identity_and_replay_is_exact",
+        "test_actual_lashwrithe_offers_all_phyrexian_payments_then_moves_off_its_germ",
+        "test_actual_crown_accepts_both_prices_and_retains_its_death_draw",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body",
+        "test_actual_plate_counts_only_other_controlled_equipment_and_revalidates_after_payment"
       ],
       "required_evidence": [
         "positive",
@@ -6235,7 +6291,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -6368,10 +6424,10 @@
     {
       "applicability": {
         "exclusions": [
-          "variable, hybrid, Phyrexian, snow, energy, life, and nonmana costs",
-          "Equip cost reductions and instant-speed permissions",
-          "more than one restriction or activation limit",
-          "restrictions other than creature token, commander, legendary creature, or one creature subtype",
+          "costs without an independently closed typed payment owner",
+          "unrepresented cost reductions and instant-speed permissions",
+          "conjunctive or unrepresented target restrictions",
+          "restrictions beyond creature token, commander, legendary creature, or an explicit canonical creature subtype union",
           "reconfigure, fortify, and copied or granted Equip"
         ],
         "inputs": [
@@ -6388,7 +6444,7 @@
           "resolution-time target and source revalidation",
           "one canonical attachment transition"
         ],
-        "summary": "Activate one fixed ordinary-mana Equip ability restricted to a controlled creature token, commander, legendary creature, or single canonical creature subtype, or one fixed Equip ability limited to once each turn."
+        "summary": "Activate one fixed ordinary-mana Equip ability restricted to a controlled creature token, commander, legendary creature, or canonical creature subtype or explicit subtype union, or one fixed Equip ability limited to once each turn."
       },
       "blockers": [],
       "dependencies": [
@@ -6408,13 +6464,18 @@
       "implementation_mutation_rationale": "test_attachment_action_compiler_and_runtime_mutants_are_killed removes the shared restricted parser and exact target-schema assertions reject the survivor.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_restricted_equip_offer_commit_and_current_target_revalidation"
+        "test_restricted_equip_offer_commit_and_current_target_revalidation",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body"
       ],
       "multiplayer_tests": [
-        "test_four_player_restricted_equip_projection_and_replay"
+        "test_four_player_restricted_equip_projection_and_replay",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body"
       ],
       "negative_tests": [
-        "test_adjacent_attachment_grammar_remains_fail_closed"
+        "test_adjacent_attachment_grammar_remains_fail_closed",
+        "test_subtype_union_and_local_cost_grammar_preserve_the_whole_clause",
+        "test_catalog_equip_retains_independent_cost_and_attachment_authority",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body"
       ],
       "official_rules": [
         "301.5",
@@ -6428,13 +6489,17 @@
       ],
       "positive_tests": [
         "test_restricted_equip_variants_share_one_activation_contract",
-        "test_restricted_equip_offer_commit_and_current_target_revalidation"
+        "test_restricted_equip_offer_commit_and_current_target_revalidation",
+        "test_originals_bind_normally_and_roundtrip_their_complete_price_catalogs",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body"
       ],
       "privacy_tests": [
-        "test_four_player_restricted_equip_projection_and_replay"
+        "test_four_player_restricted_equip_projection_and_replay",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body"
       ],
       "replay_tests": [
-        "test_four_player_restricted_equip_projection_and_replay"
+        "test_four_player_restricted_equip_projection_and_replay",
+        "test_actual_robe_restricted_price_accepts_each_subtype_and_rejects_an_unqualified_body"
       ],
       "required_evidence": [
         "positive",
@@ -6450,7 +6515,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -96132,7 +96197,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 863,
+  "registry_version": 864,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

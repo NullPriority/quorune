@@ -786,6 +786,7 @@
       "test_optional_combat_followups",
       "test_optional_draw_choices",
       "test_optional_life_cost_reductions",
+      "test_priced_equip",
       "test_public_activation_conditions",
       "test_public_scalar_stat_definitions",
       "test_rampage_rules",
