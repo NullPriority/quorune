@@ -1,4 +1,4 @@
-"""Use the existing paid-stat grammar for a closed activation life result."""
+"""Use paid creature facts only in already-owned nonmana result slots."""
 from collections.abc import Mapping
 from dataclasses import replace
 
@@ -30,8 +30,7 @@ def activation_paid_sacrifice_result(ability, *, source_name, text, compile_fixe
     if compiled is None:
         return None
     template, effects, schema, mechanics = compiled
-    if (schema is not None or len(effects) != 1 or effects[0].get('op') != 'life'
-            or effects[0].get('player') != '$controller'):
+    if not effects or any(effect.get('op') == 'mana' for effect in effects):
         return None
     def convert(value):
         if isinstance(value, Mapping):

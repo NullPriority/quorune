@@ -27,6 +27,9 @@ _REWRITES = (
     (re.compile(rf'(?P<verb>deals?) damage to (?P<target>[^.]+?) equal to {_STAT}(?=\.)', re.I),
      r'\g<verb> X damage to \g<target>'),
     (re.compile(rf'(?P<verb>draws?) cards equal to {_STAT}', re.I), r'\g<verb> X cards'),
+    (re.compile(rf'(?P<verb>mills?) cards equal to {_STAT}', re.I), r'\g<verb> X cards'),
+    (re.compile(rf'Put a number of (?P<counter>\+1/\+1) counters on (?P<target>[^.]+?) equal to {_STAT}', re.I),
+     r'Put X \g<counter> counters on \g<target>'),
     (re.compile(rf'(?P<verb>gains?) life equal to {_STAT}', re.I), r'\g<verb> X life'),
 )
 _PAID_PERMANENT = r'the sacrificed (?P<permanent_type>artifact|creature|permanent)'

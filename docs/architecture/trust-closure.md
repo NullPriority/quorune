@@ -150,6 +150,12 @@ with the paid incarnation, source and semantic key. Resolution validates that
 fact against the committed cost; an ability copy retains it without another
 payment. The previous spell-cost scalar version keeps its spell-only scope.
 Unknown results, multi-creature prices and absent historical facts fail closed.
+Represented nonmana results may use that same fact in draw, mill, damage,
+token quantity or characteristics, source modifiers, counters and ordered
+fixed clauses. Projection validates every complete fixed result through its
+existing primitive owner and preserves the original target schema. A paid
+quantity does not confer target-selection, mana-ability or unknown-result
+authority. Source results remain bound to the activation's original incarnation.
 
 An activation-catalogue carrier with no resolution effects is structural
 discovery metadata, not a hidden legacy rules program. Preflight may recognize a printed Equip through its source-matching trusted keyword owner on the exact parsed ability line. The fixed price, target restriction and sorcery timing must agree; provisional discovery catalogs do not establish coverage. Source drift and missing keyword capability retain the residual. Preflight also uses the canonical activation-cost specializer for its normalized printed abilities. Complete keyword-only static lines are covered only by their trusted printed keyword owner; unrelated static siblings and unknown cost symbols keep their residuals. Binding validates its
