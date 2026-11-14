@@ -34,6 +34,9 @@ _TARGET_GROUP_REFERENCE = re.compile(
 
 class SemanticValueHost(Protocol):
     state: Any
+    semantics: Any
+
+    def _stack_target_schema(self, item: Any, program: Any) -> Mapping[str, Any] | None: ...
 
     def _stack_source_ref(self, item: Any) -> str | None: ...
 
@@ -42,6 +45,20 @@ class SemanticValueHost(Protocol):
     def _type_parts(
         self, type_line: str
     ) -> tuple[set[str], set[str], set[str]]: ...
+
+
+def _empty_scalar_target_is_optional(host: SemanticValueHost, item: Any, name: str) -> bool:
+    from ..targets import target_plan
+    try:
+        program = host.semantics.get(item.semantic_key)
+        schema = host._stack_target_schema(item, program)
+        if schema is None:
+            return False
+        group = next((group for group in target_plan(schema, item.modes).groups
+            if group.group_id == name), None)
+    except (AttributeError, TypeError, ValueError, KeyError):
+        return False
+    return group is not None and group.min_targets == 0 and group.max_targets == 1
 
 
 def _resolve_target_group_reference(host: SemanticValueHost, match: re.Match[str], item: Any) -> Any:
@@ -60,6 +77,9 @@ def _resolve_target_group_reference(host: SemanticValueHost, match: re.Match[str
     if not match['scalar']:
         return [ref for ref in refs if ref is not None]
     original = original_groups.get(name) if isinstance(original_groups, Mapping) else None
+    if isinstance(original, (list, tuple)) and not original and not refs:
+        if _empty_scalar_target_is_optional(host, item, name):
+            return None
     if not isinstance(original, (list, tuple)) or len(original) != 1 or len(refs) > 1:
         raise SemanticNodeError('Scoped scalar target requires its one fixed role')
     ref = refs[0] if refs else None

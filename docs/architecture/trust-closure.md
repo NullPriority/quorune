@@ -137,6 +137,11 @@ span before combining requirements. Quantity, condition and token producers
 retain the dependencies of the complete represented model. A typed normal and
 paid Overload pair can replace an unbound reviewed alternative only after both
 variants bind strictly and their source hashes, costs, targets and effects agree.
+An empty scoped scalar target resolves to no object only when the canonical
+stack target schema declares that exact group optional with a maximum of one.
+Missing target authority, mandatory roles, larger sets and substituted targets
+retain their rejection; an omitted optional attachment cannot block another
+independently legal instruction.
 
 An activation-catalogue carrier with no resolution effects is structural
 discovery metadata, not a hidden legacy rules program. Preflight may recognize a printed Equip through its source-matching trusted keyword owner on the exact parsed ability line. The fixed price, target restriction and sorcery timing must agree; provisional discovery catalogs do not establish coverage. Source drift and missing keyword capability retain the residual. Preflight also uses the canonical activation-cost specializer for its normalized printed abilities. Complete keyword-only static lines are covered only by their trusted printed keyword owner; unrelated static siblings and unknown cost symbols keep their residuals. Binding validates its

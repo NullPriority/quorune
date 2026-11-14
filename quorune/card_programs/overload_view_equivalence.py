@@ -1,6 +1,7 @@
 """Retire an unbound compatibility view only for its verified typed pair."""
 from collections.abc import Mapping
 from dataclasses import replace
+import hashlib
 
 from ..overload_model import FixedManaOverloadSpec,overload_body_fingerprint,OVERLOAD_NORMAL,OVERLOAD_PAID
 from ..targets import target_plan
@@ -25,6 +26,7 @@ def shadowed_reviewed_overload_keys(record,generated,reviewed,*,capability_regis
     if capability_registry is None:return set()
     from .binding import bind_semantic_program_runtime
     values=tuple(generated);shadowed=set()
+    oracle_hash=hashlib.sha256(record.oracle_text.encode('utf-8')).hexdigest()
     def strict(p):return bind_semantic_program_runtime(p,capability_registry=capability_registry,profile=capability_profile)['strict']
     for normal in values:
         if (normal.oracle_id!=record.oracle_id or OVERLOAD_NORMAL not in normal.coverage
@@ -37,6 +39,9 @@ def shadowed_reviewed_overload_keys(record,generated,reviewed,*,capability_regis
                 or overload_body_fingerprint(normal.effects,normal.target_schema)!=spec.normal_fingerprint
                 or overload_body_fingerprint(paid.effects,paid.target_schema)!=spec.overloaded_fingerprint
                 or not strict(normal) or not strict(paid)):continue
+        if (normal.provenance.get('source_oracle_hash')!=oracle_hash
+                or not str(normal.provenance.get('authored_by','')).startswith('oracle-ir-v')
+                or normal.provenance.get('authored_by')!=paid.provenance.get('authored_by')):continue
         if any(not normal.provenance.get(field) or normal.provenance[field]!=paid.provenance.get(field)
                 for field in ('source_oracle_hash','source_rulings_hash')):continue
         for old in reviewed:
