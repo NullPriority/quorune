@@ -9,6 +9,16 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Private hand collections use a versioned selection for up to two or any number
+of creature, land, permanent, or non-Saga permanent cards. The ability controller
+chooses a private set of current hand incarnations, including zero. One sealed
+instruction revalidates that set and delegates simultaneous entry, replacement
+choices, and pre-entry Aura attachment choices to the existing zone owner.
+Newcomers see the complete entering group; an Aura cannot attach to a member
+of that same group. Scalar private hand-entry payloads retain their existing
+codec. Other origins, exact mandatory counts, variable maxima, and face-down
+or attacking collection entries remain material.
+
 Count-only search replacements and shared library-procedure tails lower to
 two complete literal procedures before their existing condition owner selects
 a branch. Reveal, placement, selected-card count, remainder order and shuffle

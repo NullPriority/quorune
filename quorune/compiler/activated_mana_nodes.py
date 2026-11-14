@@ -429,7 +429,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "lose_life_each_opponent",
     "mill",
     "move_public_zone_set",
-    "put_card_from_hand", "move",
+    "put_card_from_hand", "put_cards_from_hand", "move",
     "modify_all_matching_permanents_until_end_of_turn",
     "modify_stats_until_end_of_turn",
     "scry", "set_public_tap_state",

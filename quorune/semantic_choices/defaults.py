@@ -22,6 +22,7 @@ from .extort import ExtortChoiceHandler
 from .actual_life_transfer import ActualLifeTransferHandler
 from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
 from .object_selection import OBJECT_SELECTION_HANDLERS
+from .hand_entry_collections import PrivateHandCollectionHandler
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
 from .ordering import ORDERING_CHOICE_HANDLERS
 from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
@@ -121,6 +122,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,
+            PrivateHandCollectionHandler(),
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,
             *ORDERING_CHOICE_HANDLERS,
             *FIXED_TOP_ORDER_HANDLERS,

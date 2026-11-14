@@ -400,6 +400,7 @@ from .zone_replacements import (
 
 @lru_cache(maxsize=1)
 def default_semantic_handler_registry() -> SemanticHandlerRegistry:
+    from .private_hand_collections import SelectedHandEntryHandler
     from .distributed_token_creation import DistributedTokenCreationHandler
     from .earthbend_handlers import EARTHBEND_HANDLERS
     from .emblem_creation import CreateCompiledEmblemHandler
@@ -409,6 +410,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .combat_removal_handler import CombatRemovalHandler
     registry = SemanticHandlerRegistry(
         (
+            SelectedHandEntryHandler(),
             CreateCompiledEmblemHandler(),
             DistributedTokenCreationHandler(),
             RevealEachLibraryTopHandler(),

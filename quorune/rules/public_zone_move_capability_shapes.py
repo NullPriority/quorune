@@ -427,6 +427,12 @@ def fixed_public_zone_move_set_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     mechanic_ids = tuple(mechanic_ids)
+    from .private_hand_entry_shapes import private_hand_collection_node_capabilities
+    collection = private_hand_collection_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+    if collection:
+        return collection
     private_hand = fixed_private_hand_entry_node_capabilities(
         effects=effects,
         target_schema=target_schema,

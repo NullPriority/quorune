@@ -1240,6 +1240,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/card_programs/overload_view_equivalence.py",
+      "layer": "semantics",
+      "owning_subsystem": "card_programs",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/card_programs/resolution_mana_overlay.py",
       "layer": "semantics",
       "owning_subsystem": "card_programs",
@@ -5868,6 +5883,21 @@
     },
     {
       "file": "quorune/compiler/graveyard_self_return.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/hand_entry_collection_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -14363,6 +14393,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/private_hand_entry_model.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/profiles.py",
       "layer": "adapter",
       "owning_subsystem": "legacy_adapter",
@@ -19717,6 +19761,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/private_hand_entry_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/prototype.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -22296,6 +22354,21 @@
       "file": "quorune/semantic_choices/graveyard_return.py",
       "layer": "semantics",
       "owning_subsystem": "search_target_and_choice",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_choices/hand_entry_collections.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
       "allowed_dependency_layers": [
         "adapter",
         "domain",
@@ -25248,6 +25321,36 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/private_hand_collections.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/private_hand_entry_intent.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/prototype.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -27978,5 +28081,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "8f7e1a29fcf04025d994046987aed1aa34587f291a66bc40d7213fb85e89d3f8"
+  "fingerprint": "b37ac6af8af6df5e11a86050c551f4cd72a8998f48f5553cf65b1f21c765bbfd"
 }

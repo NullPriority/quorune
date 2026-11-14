@@ -211,6 +211,10 @@ def _source_context_resolution_template(
     if as_unblocked is not None:return as_unblocked
     permission=temporary_defender_permission_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=tuple(source_card_types))
     if permission is not None:return permission
+    from .hand_entry_collection_templates import private_hand_collection_template
+    collection = private_hand_collection_template(text)
+    if collection is not None:
+        return collection
     hand_entry=(fixed_attacking_card_entry_template(text) or fixed_private_hand_entry_followup_template(text)
         or fixed_draw_then_hand_entry_template(text))
     if hand_entry is not None:return hand_entry

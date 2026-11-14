@@ -94787,6 +94787,104 @@
     {
       "applicability": {
         "exclusions": [
+          "other players or origins",
+          "mandatory exact counts and variable maxima",
+          "face-down or attacking entries",
+          "per-card costs and correlated follow-up instructions",
+          "unsupported whole-card siblings"
+        ],
+        "inputs": [
+          "complete version-one private hand selection",
+          "closed creature, land, permanent or non-Saga permanent predicate",
+          "resolved ability controller and private legal identities",
+          "ordinary or tapped battlefield entry"
+        ],
+        "outputs": [
+          "private set choice including zero",
+          "one simultaneous replacement-aware entry batch",
+          "sealed identity revalidation",
+          "precommit Aura attachment choices",
+          "exact pending and pre-action replay"
+        ],
+        "summary": "Resolve one actor-private choice of up to two or any number of matching hand cards, seal their incarnations, and enter the chosen collection simultaneously through the canonical zone owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.move.fixed_private_hand_choice",
+        "zone.change.destination_replacement",
+        "attachment.aura.typed_restriction"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the collection, destination or Aura authority prevents exact collection compilation; shared choice/runtime handlers require this capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.move.private_hand_collection",
+      "implementation_components": [
+        "quorune.private_hand_entry_model.PrivateHandCollectionSpec",
+        "quorune.compiler.hand_entry_collection_templates.private_hand_collection_template",
+        "quorune.rules.private_hand_entry_shapes.private_hand_collection_node_capabilities",
+        "quorune.semantic_choices.hand_entry_collections.PrivateHandCollectionHandler",
+        "quorune.semantic_runtime.private_hand_collections.SelectedHandEntryHandler",
+        "quorune.semantic_runtime.private_hand_entry_intent.PrivateHandEntryIntent",
+        "quorune.semantic_choices.simultaneous_movement.commit_simultaneous_movement",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the compiler production rejects the grammar; omitting the canonical batch commit is detected by the original Ghalta actions and independent entry/life consequences.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_ghalta_private_choice_enters_one_group_and_newcomers_see_each_other",
+        "test_permanent_batch_collects_aura_choices_before_any_member_moves",
+        "test_simultaneously_entering_scales_does_not_replace_other_entrants_counters"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ghalta_private_choice_enters_one_group_and_newcomers_see_each_other",
+        "test_permanent_batch_collects_aura_choices_before_any_member_moves"
+      ],
+      "negative_tests": [
+        "test_private_collection_unsupported_neighbors_remain_material",
+        "test_bounded_selection_rejects_three_and_accepts_zero_without_leaking_hand",
+        "test_collection_dependencies_are_required"
+      ],
+      "official_rules": [
+        "303.4f",
+        "303.4g",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2d",
+        "614.12",
+        "614.12a"
+      ],
+      "positive_tests": [
+        "test_private_collection_grammar_preserves_bounds_and_entry_policy",
+        "test_actual_ghalta_private_choice_enters_one_group_and_newcomers_see_each_other"
+      ],
+      "privacy_tests": [
+        "test_actual_ghalta_private_choice_enters_one_group_and_newcomers_see_each_other",
+        "test_bounded_selection_rejects_three_and_accepts_zero_without_leaking_hand"
+      ],
+      "replay_tests": [
+        "test_actual_ghalta_private_choice_enters_one_group_and_newcomers_see_each_other",
+        "test_permanent_batch_collects_aura_choices_before_any_member_moves",
+        "test_simultaneously_entering_scales_does_not_replace_other_entrants_counters"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "variable colors or added colors",
           "nonspell stack objects",
           "unrepresented target groups and durations"
@@ -96854,7 +96952,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 871,
+  "registry_version": 872,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

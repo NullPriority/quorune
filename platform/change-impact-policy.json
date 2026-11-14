@@ -15018,6 +15018,28 @@
         "test_fixed_query_quoted_ability_grants",
         "test_source_counter_quantity_sequences"
       ]
+    },
+    {
+      "id": "private-hand-collection-contract",
+      "patterns": [
+        "quorune/private_hand_entry_model.py",
+        "quorune/compiler/hand_entry_collection_templates.py",
+        "quorune/semantic_choices/hand_entry_collections.py",
+        "quorune/semantic_runtime/private_hand_collections.py",
+        "quorune/semantic_runtime/private_hand_entry_intent.py",
+        "quorune/rules/private_hand_entry_shapes.py",
+        "tests/fixtures/private-hand-collection-cards.json",
+        "tests/test_private_hand_collections.py"
+      ],
+      "test_modules": [
+        "test_private_hand_collections",
+        "test_hand_entry_expansion",
+        "test_fixed_public_zone_moves",
+        "test_aura_targeting_entry",
+        "test_riot_rules",
+        "test_card_program_trust",
+        "test_rules_scheduler"
+      ]
     }
   ],
   "risk_rules": [
