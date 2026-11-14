@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+A source Equipment attachment can be followed by fixed temporary characteristics
+or tap state for the same chosen creature. The attachment owner first validates
+its existing scalar target codec; an equivalent typed creature predicate then
+proves each following component. The stored target and effect payloads retain
+their existing forms. Attachment failure leaves an otherwise legal followup
+intact, and source reentry cannot redirect the older attachment instruction.
+Optional or independent targets, reflexive results, and unowned conditional
+bodies remain separate composition boundaries.
+
 Private hand collections use a versioned selection for up to two or any number
 of creature, land, permanent, or non-Saga permanent cards. The ability controller
 chooses a private set of current hand incarnations, including zero. One sealed

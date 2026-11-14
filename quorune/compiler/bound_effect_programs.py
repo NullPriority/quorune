@@ -158,6 +158,8 @@ def target_controller_zone_result_prefix_matches(effect: Mapping[str, Any]) -> b
 def _target_type_is_guaranteed(schema: Mapping[str, Any], kind: str) -> bool:
     if kind == "permanent" or kind in schema.get("types_all", ()):
         return True
+    if kind == "creature" and schema.get("creature") is True:
+        return True
     if tuple(schema.get("types_any", ())) == (kind,):
         return True
     land_choices = set(schema.get("subtypes_any", ()))

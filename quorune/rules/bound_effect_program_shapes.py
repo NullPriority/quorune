@@ -148,6 +148,8 @@ def bound_effect_program_node_capabilities(
     if (BOUND_EFFECT_PROGRAM_MECHANIC not in mechanics or not 2 <= len(effects) <= 8
         or any(not isinstance(effect, Mapping) for effect in effects)):
         return ()
+    component_schema = target_schema
+    legacy_attachment = False
     if target_schema is not None:
         if type(target_schema.get("count")) is not int or target_schema.get("count") != 1:
             return ()
@@ -156,7 +158,19 @@ def bound_effect_program_node_capabilities(
         }
         if dict(target_schema) not in (player_schema, {**player_schema, "player_relation": "opponent"}):
             if not direct_permanent_target_schema_is_closed(target_schema):
-                return ()
+                legacy = {"zones": ["battlefield"], "categories": ["permanent"],
+                          "creature": True, "controller": "you", "count": 1}
+                if dict(target_schema) != legacy or target_schema.get("creature") is not True:
+                    return ()
+                from .attachment_action_capability_shapes import fixed_attachment_action_node_capabilities
+                if (effects[0].get("attachment_kind") != "equipment"
+                        or not fixed_attachment_action_node_capabilities(
+                            effects=effects[:1], target_schema=target_schema, mechanic_ids=mechanics)):
+                    return ()
+                from ..compiler.direct_target import DirectPermanentTargetSpec
+                component_schema = DirectPermanentTargetSpec(
+                    types_any=("creature",), controller_relation="you").to_target_schema()
+                legacy_attachment = True
     target_seen = False
     dependencies = {BOUND_EFFECT_PROGRAM_CAPABILITY, "resolution.effect_program.closed_components"}
     if has_target_controller_search_role(effects[1]):
@@ -165,7 +179,7 @@ def bound_effect_program_node_capabilities(
     if any(has_target_controller_recipient(effect) for effect in effects):
         pair = _target_controller_pair_dependencies(effects, target_schema, mechanics)
         return tuple(sorted(dependencies.union(pair))) if pair else ()
-    for effect in effects:
+    for index, effect in enumerate(effects):
         if not isinstance(effect, Mapping) or not _target_zero_only(effect):
             return ()
         targeted = _contains_target_reference(effect)
@@ -173,7 +187,8 @@ def bound_effect_program_node_capabilities(
             return ()
         target_seen |= targeted
         component = closed_effect_component_capabilities(
-            (effect,), target_schema=target_schema if targeted else None, mechanics=mechanics,
+            (effect,), target_schema=(target_schema if legacy_attachment and index == 0 else component_schema)
+            if targeted else None, mechanics=mechanics,
         )
         if not component:
             return ()

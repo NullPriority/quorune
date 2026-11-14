@@ -973,6 +973,7 @@
       "test_application_protocol",
       "test_as_unblocked_assignment",
       "test_attached_pt_keyword_removal",
+      "test_attachment_followup_bindings",
       "test_bound_effect_programs",
       "test_cleanup_step_rules",
       "test_combat_evasion_restrictions",
@@ -1044,6 +1045,7 @@
       "test_vanishing_rules"
     ],
     "functional-07": [
+      "test_activation_paid_sacrifice_stats",
       "test_all_counter_self_costs",
       "test_announced_target_cardinality",
       "test_attached_occurrences",

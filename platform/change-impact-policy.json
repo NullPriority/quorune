@@ -15040,6 +15040,22 @@
         "test_card_program_trust",
         "test_rules_scheduler"
       ]
+    },
+    {
+      "id": "source-attachment-followup-binding",
+      "patterns": [
+        "quorune/compiler/bound_effect_programs.py",
+        "quorune/rules/bound_effect_program_shapes.py",
+        "tests/test_attachment_followup_bindings.py",
+        "tests/fixtures/attachment-followup-cards.json"
+      ],
+      "test_modules": [
+        "test_attachment_followup_bindings",
+        "test_bound_effect_programs",
+        "test_fixed_attachment_actions",
+        "test_temporary_keyword_removal",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
