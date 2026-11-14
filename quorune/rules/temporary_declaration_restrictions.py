@@ -81,6 +81,12 @@ def temporary_declaration_restriction(
     """Decode one closed prohibition, blocker predicate or all-blocker requirement."""
 
     if isinstance(kind, Mapping):
+        from ..temporary_attack_requirement_model import TEMPORARY_ATTACK_REQUIREMENT_KIND, TemporaryAttackRequirementSpec
+        if kind.get('kind') == TEMPORARY_ATTACK_REQUIREMENT_KIND:
+            try:
+                return TemporaryAttackRequirementSpec.from_dict(kind).to_requirement()
+            except (TypeError, ValueError) as exc:
+                raise TemporaryDeclarationRestrictionError(str(exc)) from exc
         from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND, TemporaryAllBlockerSpec
         if kind.get('kind') == TEMPORARY_ALL_BLOCKER_KIND:
             try:

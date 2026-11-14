@@ -93,10 +93,10 @@ class ResolutionDeclarationRuleEffect:
         defender_permission = isinstance(self.restriction, DefenderAttackPermission)
         if requirement and (
             self.restriction.schema_version != 1
-            or self.restriction.kind != 'all_able_blockers'
+            or self.restriction.kind not in {'all_able_blockers', 'attack_each_combat'}
             or self.live_query is not None
         ):
-            raise ContinuousEffectError('Resolved requirements need one locked all-able-blocker subject')
+            raise ContinuousEffectError('Resolved requirements need one locked attack or all-able-blocker subject')
         if not (requirement or defender_permission or isinstance(self.restriction, DeclarationRestrictionTemplate)):
             raise ContinuousEffectError(
                 "Declaration-rule effects require a typed restriction, requirement or permission"

@@ -15141,6 +15141,23 @@
         "test_self_cast_restrictions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "resolved-attack-this-turn",
+      "patterns": [
+        "quorune/temporary_attack_requirement_model.py",
+        "quorune/compiler/temporary_attack_requirements.py",
+        "quorune/rules/temporary_attack_requirements.py",
+        "quorune/declaration_requirement_runtime.py",
+        "tests/test_resolved_attack_requirements.py",
+        "tests/fixtures/resolved-attack-requirement-cards.json"
+      ],
+      "test_modules": [
+        "test_resolved_attack_requirements",
+        "test_declare_attackers_rules",
+        "test_temporary_declaration_restriction_effects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

@@ -63,6 +63,14 @@ attackers or turn-wide history. Attacks on planeswalkers and battles do not
 satisfy that player requirement. Withdrawing the restriction owner or its
 compiler contribution leaves the complete source unready.
 
+Resolved single-creature attack requirements use the existing declaration-rule
+journal and maximum-requirement solver. Their closed instruction, creature
+target, declaration owner, duration and resolution revalidation dependencies
+are checked independently of declared coverage. They add no haste, override no
+attack restriction, and do not require optional attack payments. The resolved
+entry follows its recipient's battlefield incarnation through every combat of
+the turn and expires through ordinary cleanup.
+
 ## Closure layers
 
 Implementation-component resolution caches immutable export names by exact

@@ -22,12 +22,18 @@ def typed_attacker_requirements(
 
     result: list[DeclarationRequirement] = []
     from .rules.bound_static_declarations import bound_declaration_requirements
+    from .continuous_effect_state import active_resolution_declaration_rule_effects
+    from .declaration_fragments import DeclarationRequirementTemplate
     intrinsic=tuple(enumerate(
         declaration_requirement_specs(
             host._effective_ability_fragments(attacker, error_type=error_type)
         )
     ))
-    for index, requirement in (*intrinsic,*bound_declaration_requirements(host,attacker,error_type=error_type)):
+    resolved = tuple((f'resolved:{effect.effect_id}', effect.restriction)
+        for effect in sorted(active_resolution_declaration_rule_effects(host.state, attacker),
+            key=lambda effect: (effect.timestamp, effect.effect_id))
+        if isinstance(effect.restriction, DeclarationRequirementTemplate))
+    for index, requirement in (*intrinsic,*bound_declaration_requirements(host,attacker,error_type=error_type),*resolved):
         if requirement.kind != "attack_each_combat":
             continue
         result.append(

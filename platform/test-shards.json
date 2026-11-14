@@ -1220,6 +1220,7 @@
       "test_reanimation_entry_counters",
       "test_reanimation_followup",
       "test_resolution_mana_compositions",
+      "test_resolved_attack_requirements",
       "test_scaled_cast_x_amounts",
       "test_semantic_handlers",
       "test_shared_modal_target_resolution",

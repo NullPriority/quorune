@@ -1062,13 +1062,17 @@ expires end-of-turn entries, and a new zone incarnation ends that object's
 entry. These entries affect current characteristics independently of copiable
 values.
 
-A resolved all-able-blocker requirement uses the additive exact
+A resolved attack-if-able or all-able-blocker requirement uses the additive exact
 `schema_version: 3` shape. Its `requirement` field replaces `restriction` and
 contains the historical self-scoped typed requirement payload. It locks exactly
 one battlefield incarnation and has no `live_query`. Unknown fields, mixed
 restriction and requirement payloads, other requirement kinds and malformed
 versions reject. It shares the same until-end-of-turn duration, cleanup,
 rollback and replay owner as the older forms.
+An attack-if-able entry contributes to each declare-attackers step during its
+turn, respects attack restrictions and optional costs, and leaves the defender
+choice to the attacking controller. Source departure does not end the entry;
+a new incarnation of the recipient does not inherit it.
 
 Resolved Detain uses `schema_version: 4` and `forbid_activations: true` on a
 locked attack-and-block prohibition. `expires_on_next_turn_of` binds the entry

@@ -1200,6 +1200,10 @@ def temporary_declaration_restriction_node_capabilities(
         return (*dependencies, NEXT_TURN_EFFECT_CAPABILITY) if dependencies else ()
     kind = effect.get("restriction")
     if isinstance(kind, Mapping):
+        from ..temporary_attack_requirement_model import TEMPORARY_ATTACK_REQUIREMENT_KIND
+        if kind.get('kind') == TEMPORARY_ATTACK_REQUIREMENT_KIND:
+            from .temporary_attack_requirements import temporary_attack_requirement_node_capabilities
+            return temporary_attack_requirement_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
         from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND
         if kind.get('kind') == TEMPORARY_ALL_BLOCKER_KIND:
             from .temporary_all_blockers import temporary_all_blocker_node_capabilities

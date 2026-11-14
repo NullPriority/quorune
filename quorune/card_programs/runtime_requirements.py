@@ -498,6 +498,9 @@ def program_dynamic_runtime_requirements(program):
     from ..rules.temporary_all_blockers import temporary_all_blocker_runtime_dependencies
     try:required.update(temporary_all_blocker_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_all_blocker:invalid:{exc}')
+    from ..rules.temporary_attack_requirements import temporary_attack_requirement_runtime_dependencies
+    try:required.update(temporary_attack_requirement_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_attack_requirement:invalid:{exc}')
     from ..rules.occurrence_object_results import occurrence_object_runtime_dependencies
     try:required.update(occurrence_object_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_occurrence_object:invalid:{exc}')

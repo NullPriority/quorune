@@ -26366,6 +26366,103 @@
     {
       "applicability": {
         "exclusions": [
+          "goad or chosen defender requirements",
+          "group recipients",
+          "other durations and linked conditions"
+        ],
+        "inputs": [
+          "exact complete this-turn creature instruction",
+          "one canonical creature target",
+          "resolving source and existing continuous-effect journal"
+        ],
+        "outputs": [
+          "shared offered and accepted declaration requirement",
+          "canonical duration, cleanup, rollback and replay"
+        ],
+        "summary": "One creature target receives an incarnation-locked attack-if-able requirement for every combat of this turn, independently of source presence, respecting restrictions and optional attack costs."
+      },
+      "blockers": [],
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "continuous.resolution.declaration_rules_until_end_of_turn",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Runtime inference independently requires the exact target schema, instruction shape, declaration, duration and revalidation owners; withholding compiler or any owner leaves whole sources unready.",
+      "dependency_fail_closed_status": "passed",
+      "id": "combat.requirement.resolved_attack_this_turn",
+      "implementation_components": [
+        "quorune.temporary_attack_requirement_model.TemporaryAttackRequirementSpec",
+        "quorune.compiler.temporary_attack_requirements.temporary_attack_requirement_template",
+        "quorune.rules.temporary_attack_requirements.temporary_attack_requirement_node_capabilities",
+        "quorune.rules.temporary_attack_requirements.temporary_attack_requirement_runtime_dependencies",
+        "quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect",
+        "quorune.declaration_requirement_runtime.typed_attacker_requirements",
+        "quorune.effect_runtime.declaration_effects._apply_grant_declaration_restriction_until_end_of_turn"
+      ],
+      "implementation_mutation_rationale": "A fresh original Boiling Blood witness kills omitted resolved-requirement projection through real attack offers and accepted declaration commands.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_a_blinked_creature_is_a_new_incarnation_even_when_it_can_attack",
+        "test_actual_arcane_splice_preserves_the_requirement_and_selected_source_in_hand",
+        "test_optional_attack_costs_are_not_forced_and_attack_prohibitions_win",
+        "test_same_turn_additional_combat_requires_another_attack_then_requirement_expires"
+      ],
+      "multiplayer_tests": [
+        "test_all_six_original_spells_and_activations_require_an_attack_without_forcing_a_defender",
+        "test_same_turn_additional_combat_requires_another_attack_then_requirement_expires"
+      ],
+      "negative_tests": [
+        "test_closed_versioned_spec_and_existing_journal_round_trip",
+        "test_illegal_sole_target_creates_no_requirement_on_a_recast_creature",
+        "test_optional_attack_costs_are_not_forced_and_attack_prohibitions_win",
+        "test_runtime_minimum_owners_and_compiler_producer_cannot_be_withheld",
+        "test_unrepresented_duration_recipient_and_extra_demand_remain_material"
+      ],
+      "official_rules": [
+        "400.7",
+        "508.1a",
+        "508.1c",
+        "508.1d",
+        "611.2a",
+        "611.2c",
+        "514.2"
+      ],
+      "positive_tests": [
+        "test_actual_arcane_splice_preserves_the_requirement_and_selected_source_in_hand",
+        "test_all_six_original_spells_and_activations_require_an_attack_without_forcing_a_defender",
+        "test_closed_versioned_spec_and_existing_journal_round_trip",
+        "test_fresh_original_witness_requires_the_runtime_requirement_owner",
+        "test_six_originals_compile_the_complete_this_turn_requirement"
+      ],
+      "privacy_tests": [
+        "test_actual_arcane_splice_preserves_the_requirement_and_selected_source_in_hand",
+        "test_all_six_original_spells_and_activations_require_an_attack_without_forcing_a_defender"
+      ],
+      "replay_tests": [
+        "test_a_blinked_creature_is_a_new_incarnation_even_when_it_can_attack",
+        "test_actual_arcane_splice_preserves_the_requirement_and_selected_source_in_hand",
+        "test_all_six_original_spells_and_activations_require_an_attack_without_forcing_a_defender",
+        "test_same_turn_additional_combat_requires_another_attack_then_requirement_expires"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "conditional or rules-text-equivalent Battle Cry wording",
           "granted, copied, or face-down Battle Cry outside trusted typed fragments",
           "unsupported attack costs that remove a declared attacker",
@@ -97279,7 +97376,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 876,
+  "registry_version": 877,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

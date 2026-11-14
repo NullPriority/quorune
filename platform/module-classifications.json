@@ -9404,6 +9404,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/temporary_attack_requirements.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/temporary_cast_restrictions.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -21033,6 +21048,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/temporary_attack_requirements.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/temporary_cast_restrictions.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -27211,6 +27240,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/temporary_attack_requirement_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/temporary_cast_rule_model.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -28219,5 +28260,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "dc24c9e60a96daae12af3968121a4d10ccd33438cf919dbfd723cab111df1732"
+  "fingerprint": "290aed5597ab5ac4823ff9ef58eaff971914bcb463c527ac07bf1f11a671247d"
 }
