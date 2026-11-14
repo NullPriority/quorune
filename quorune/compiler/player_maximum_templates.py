@@ -12,6 +12,7 @@ def _metric(verb,subject):
     if verb in {'has','with'}:
         return {'life':'life','cards in hand':'hand_count'}.get(subject)
     if subject=='creatures':return 'creature_count'
+    if subject=='lands':return 'land_count'
     subtype=canonical_creature_subtype_surface(subject)
     return 'subtype:'+subtype if subtype else None
 
@@ -23,6 +24,15 @@ def player_maximum_condition(text):
     if metric is None:return None
     return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
         amount=1,schema_version=4,fact=FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM,fact_parameter=metric)
+
+
+def opponent_more_metric_condition(text):
+    match=re.fullmatch(r'an opponent (?P<verb>has|controls) more (?P<subject>.+?) than you',text.strip(),re.I)
+    if match is None:return None
+    metric=_metric(match['verb'].casefold(),match['subject'])
+    if metric is None:return None
+    return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+        amount=1,schema_version=4,fact=FixedPublicStateFact.OPPONENT_HAS_GREATER_METRIC,fact_parameter=metric)
 
 
 def player_maximum_control_result(binding,body,*,card_name):

@@ -3,7 +3,7 @@ from .player_maximum_model import PlayerMaximumSpec
 from .object_query import object_matches_query
 
 
-def current_player_maximum(state,spec,*,public_object_resolver=None):
+def current_player_metric_values(state,spec,*,public_object_resolver=None):
     if not isinstance(spec,PlayerMaximumSpec):raise ValueError('Player maximum requires its typed metric')
     values={}
     for seat in state.turn_order:
@@ -31,8 +31,19 @@ def current_player_maximum(state,spec,*,public_object_resolver=None):
             row=public_object_resolver(card)
             if row is None:raise ValueError('Player maximum object facts are unavailable')
             if object_matches_query(row,query):values[card.controller]+=1
+    return tuple(values.items())
+
+
+def current_player_maximum(state,spec,*,public_object_resolver=None):
+    values=dict(current_player_metric_values(state,spec,public_object_resolver=public_object_resolver))
     greatest=max(values.values());winners=[seat for seat,value in values.items() if value==greatest]
     return winners[0] if len(winners)==1 else None
+
+
+def opponent_has_greater_metric(state,controller,spec,*,public_object_resolver=None):
+    values=dict(current_player_metric_values(state,spec,public_object_resolver=public_object_resolver))
+    if controller not in values:raise ValueError('Relative player metric resolver is unavailable')
+    return any(value>values[controller] for seat,value in values.items() if seat!=controller)
 
 
 def resolve_player_maximum(host,value,item):

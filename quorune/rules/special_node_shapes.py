@@ -53,6 +53,7 @@ def special_result_trigger_runtime_dependencies(program):
                 required.add('trigger.condition.fixed_public_state')
                 if spec.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:required.add('condition.creature.fixed_numeric_exists')
                 if getattr(spec.fact,'value',None)=='unique_player_maximum':required.add('condition.player.unique_maximum')
+                if getattr(spec.fact,'value',None)=='opponent_has_greater_metric':required.add('condition.player.opponent_greater_metric')
             for child in value.values():condition(child)
         elif isinstance(value,(list,tuple)):
             for child in value:condition(child)

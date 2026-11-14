@@ -3762,6 +3762,18 @@ remain a runtime blocker even without coverage labels. Lowest-player and
 tie-breaking choices, as well as static conditional characteristic producers,
 remain outside this production.
 
+The same public metric reader supplies closed opponent-greater-than-controller
+conditions. Each active opponent is compared individually with the locked
+resolver; two smaller opponents do not form one larger count. Life and hand
+size remain public scalar values, while land, creature and named subtype
+counts use current control and effective public types. Intervening triggers
+recheck the comparison at resolution. Activation restrictions use it for both
+offers and acceptance; an already accepted ability does not acquire a later
+intervening check. Conditional spell results evaluate it at their printed
+instruction. Search eligibility, optional choices, destinations, tappedness,
+reveal and shuffle still belong to the existing search owners. The typed fact
+retains its comparator capability requirement without coverage labels.
+
 A removal followed by its target's controller gaining the source uses the
 existing bound target-result composition. Version two of `give_control` carries
 the closed target-controller information reference; version one retains its

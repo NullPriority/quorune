@@ -27453,6 +27453,112 @@
     {
       "applicability": {
         "exclusions": [
+          "summed opponents, unrepresented private facts or unknown metrics",
+          "unrepresented comparison directions or amount arithmetic"
+        ],
+        "inputs": [
+          "locked resolver and active players",
+          "current life, public hand size, or controlled land/creature/subtype count"
+        ],
+        "outputs": [
+          "true only when at least one individual opponent exceeds the resolver",
+          "known ties and empty counts are false; unavailable data rejects",
+          "current controlled objects independent of physical ownership"
+        ],
+        "summary": "A closed current public metric comparison against each active opponent individually."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "A closed version4 boolean public fact validates the metric parameter and independently infers comparator authority without coverage labels.",
+      "dependency_fail_closed_status": "passed",
+      "id": "condition.player.opponent_greater_metric",
+      "implementation_components": [
+        "quorune.player_maximum_model.PlayerMaximumSpec",
+        "quorune.player_maximum.current_player_metric_values",
+        "quorune.player_maximum.opponent_has_greater_metric",
+        "quorune.compiler.player_maximum_templates.opponent_more_metric_condition",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._condition_quantity"
+      ],
+      "implementation_mutation_rationale": "A fresh 3-vs-2-and-2 counterexample kills summing opponents instead of individual comparison.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_four_original_plains_search_entries_preserve_basic_filters_and_tappedness",
+        "test_gift_and_tax_search_different_three_card_sets_and_reveal_the_results",
+        "test_lander_can_be_used_and_its_land_entry_triggers_the_original_landfall",
+        "test_original_ticket_tortoise_compares_each_opponent_and_rechecks_after_response",
+        "test_source_control_change_keeps_comparison_and_token_creation_on_the_locked_actor",
+        "test_wayfarer_offer_acceptance_and_accepted_search_use_their_correct_timing"
+      ],
+      "multiplayer_tests": [
+        "test_four_original_plains_search_entries_preserve_basic_filters_and_tappedness",
+        "test_gift_and_tax_search_different_three_card_sets_and_reveal_the_results",
+        "test_lander_can_be_used_and_its_land_entry_triggers_the_original_landfall",
+        "test_original_ticket_tortoise_compares_each_opponent_and_rechecks_after_response",
+        "test_source_control_change_keeps_comparison_and_token_creation_on_the_locked_actor",
+        "test_wayfarer_offer_acceptance_and_accepted_search_use_their_correct_timing"
+      ],
+      "negative_tests": [
+        "test_closed_boolean_codec_and_comparison_grammar",
+        "test_comparison_authority_is_required_for_trigger_spell_and_activation_without_labels",
+        "test_comparison_is_per_opponent_not_sum_tie_or_ownership"
+      ],
+      "official_rules": [
+        "109.5",
+        "110.2",
+        "205.1a",
+        "400.7",
+        "603.4",
+        "608.2c",
+        "608.2h",
+        "701.23",
+        "800.4a"
+      ],
+      "positive_tests": [
+        "test_closed_boolean_codec_and_comparison_grammar",
+        "test_comparison_is_per_opponent_not_sum_tie_or_ownership",
+        "test_four_original_plains_search_entries_preserve_basic_filters_and_tappedness",
+        "test_gift_and_tax_search_different_three_card_sets_and_reveal_the_results",
+        "test_lander_can_be_used_and_its_land_entry_triggers_the_original_landfall",
+        "test_original_ticket_tortoise_compares_each_opponent_and_rechecks_after_response",
+        "test_public_life_hand_and_legacy_maximum_remain_distinct",
+        "test_source_control_change_keeps_comparison_and_token_creation_on_the_locked_actor",
+        "test_wayfarer_offer_acceptance_and_accepted_search_use_their_correct_timing"
+      ],
+      "privacy_tests": [
+        "test_four_original_plains_search_entries_preserve_basic_filters_and_tappedness",
+        "test_gift_and_tax_search_different_three_card_sets_and_reveal_the_results",
+        "test_lander_can_be_used_and_its_land_entry_triggers_the_original_landfall",
+        "test_original_ticket_tortoise_compares_each_opponent_and_rechecks_after_response",
+        "test_source_control_change_keeps_comparison_and_token_creation_on_the_locked_actor",
+        "test_wayfarer_offer_acceptance_and_accepted_search_use_their_correct_timing"
+      ],
+      "replay_tests": [
+        "test_four_original_plains_search_entries_preserve_basic_filters_and_tappedness",
+        "test_gift_and_tax_search_different_three_card_sets_and_reveal_the_results",
+        "test_lander_can_be_used_and_its_land_entry_triggers_the_original_landfall",
+        "test_original_ticket_tortoise_compares_each_opponent_and_rechecks_after_response",
+        "test_source_control_change_keeps_comparison_and_token_creation_on_the_locked_actor",
+        "test_wayfarer_offer_acceptance_and_accepted_search_use_their_correct_timing"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "minimums, tie-breaking choices, thresholds or mismatched metrics",
           "unrepresented private data or source lifetimes",
           "static conditional characteristic producers using this new fact"
@@ -27475,14 +27581,15 @@
       "dependency_fail_closed_status": "passed",
       "id": "condition.player.unique_maximum",
       "implementation_components": [
-        "quorune.player_maximum_model.PlayerMaximumSpec",
-        "quorune.player_maximum_model.validate_player_maximum_fact",
-        "quorune.player_maximum.current_player_maximum",
-        "quorune.player_maximum.resolve_player_maximum",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._condition_quantity",
         "quorune.compiler.player_maximum_templates.player_maximum_condition",
         "quorune.compiler.player_maximum_templates.player_maximum_control_result",
-        "quorune.rules.player_maximum_shapes.player_maximum_control_dependencies",
-        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._condition_quantity"
+        "quorune.player_maximum.current_player_maximum",
+        "quorune.player_maximum.current_player_metric_values",
+        "quorune.player_maximum.resolve_player_maximum",
+        "quorune.player_maximum_model.PlayerMaximumSpec",
+        "quorune.player_maximum_model.validate_player_maximum_fact",
+        "quorune.rules.player_maximum_shapes.player_maximum_control_dependencies"
       ],
       "implementation_mutation_rationale": "Fresh metric and changed-winner witnesses kill selecting a tied maximum and using the occurrence-time winner after a response.",
       "implementation_mutation_status": "killed",
@@ -95383,7 +95490,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 856,
+  "registry_version": 857,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

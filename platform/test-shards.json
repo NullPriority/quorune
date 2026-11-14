@@ -1462,6 +1462,7 @@
       "test_linked_ability_exile_state",
       "test_mixed_stack_counter_targets",
       "test_multisentence_effect_components",
+      "test_opponent_greater_metrics",
       "test_opponent_keyword_prohibition",
       "test_owner_control_restoration",
       "test_packet_privacy_assertions",

@@ -94,6 +94,7 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    OPPONENT_HAS_GREATER_METRIC = 'opponent_has_greater_metric'
     UNIQUE_PLAYER_MAXIMUM = 'unique_player_maximum'
     CONTROLLER_COMPLETED_A_DUNGEON = "controller_completed_a_dungeon"
     CONTROLLER_HAS_NOT_COMPLETED_NAMED_DUNGEON = "controller_has_not_completed_named_dungeon"
@@ -301,7 +302,7 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
-    if fact is FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM:
+    if fact in {FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM,FixedPublicStateFact.OPPONENT_HAS_GREATER_METRIC}:
         from .player_maximum_model import validate_player_maximum_fact
         validate_player_maximum_fact(schema_version=schema_version,amount=amount,parameter=parameter)
         return
