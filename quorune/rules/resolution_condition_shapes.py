@@ -39,6 +39,9 @@ def resolution_condition_node_capabilities(
 ) -> tuple[str, ...]:
     from .capabilities import capability_dependencies_for_node
 
+    if effects and effects[-1].get('schema_version') == 17:
+        from .target_replacements import current_target_replacement_capabilities
+        return current_target_replacement_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if effects and effects[-1].get('schema_version') == 12:
         from .declared_cost_condition_shapes import declared_cost_condition_capabilities
         return declared_cost_condition_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema)
@@ -162,6 +165,19 @@ def resolution_condition_node_capabilities(
 
 
 def bound_resolution_condition_runtime_dependencies(program):
+    if any(effect.get('op') == RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') == 17
+           for effect in program.effects):
+        from .target_replacements import current_target_replacement_capabilities
+        from ..target_replacement_model import CURRENT_TARGET_REPLACEMENT_MECHANIC
+        mechanics = {CURRENT_TARGET_REPLACEMENT_MECHANIC, RESOLUTION_CONDITION_MECHANIC}
+        for effect in program.effects:
+            mechanics.update(effect.get('mechanic_ids', ()))
+            mechanics.update(effect.get('otherwise_mechanic_ids', ()))
+        dependencies = current_target_replacement_capabilities(effects=program.effects,
+            target_schema=program.target_schema, mechanic_ids=mechanics)
+        if not dependencies:
+            raise ValueError('Current target replacement needs both complete owned branches and its original target')
+        return dependencies
     if any(e.get('op') == RESOLUTION_CONDITION_OPERATION and e.get('schema_version') == 3 for e in program.effects):
         mechanics = {RESOLUTION_CONDITION_MECHANIC, *program.coverage}
         for effect in program.effects:
@@ -172,7 +188,7 @@ def bound_resolution_condition_runtime_dependencies(program):
             mechanic_ids=mechanics, cost_schema=program.cost_schema)
         if not dependencies:raise ValueError('Public self-replacement requires complete branches and controller binding')
         return dependencies
-    bound_versions = {5, 8, 9, 10, 11, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION}
+    bound_versions = {5, 8, 9, 10, 11, 17, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION}
     if not any(effect.get("op") == RESOLUTION_CONDITION_OPERATION and effect.get("schema_version") in bound_versions
                for effect in program.effects):
         return ()

@@ -26,6 +26,7 @@ def public_replacement_material_rows(rows, *, oracle_text, source_name, compile_
             templates = {
                 "fixed-public-self-replacement-v1", "public-same-target-self-replacement-v1",
                 "public-source-self-replacement-v1",
+                "current-target-self-replacement-v1",
             }
         compiled = compile_effect(combined, card_name=source_name)
         if compiled[0] not in templates:

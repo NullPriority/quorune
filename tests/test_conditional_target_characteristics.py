@@ -130,8 +130,8 @@ class ConditionalTargetCharacteristicRegistrationTests(unittest.TestCase):
     def test_full_original_sources_close_and_different_referents_remain_material(self):
         admitted = ("Hidden Blade", "Built to Last", "Vampire's Zeal", "Unchecked Growth", "Yip Yip!",
             "Built to Smash", "Rush the Room", "Blacksmith's Skill", "Ingenious Leonin", "Griffin Canyon",
-            "Wedding Invitation", "Hazardroot Herbalist")
-        excluded = ("Flare of Faith", "Joint Assault", "Regent's Authority", "Ray of Enfeeblement")
+            "Wedding Invitation", "Hazardroot Herbalist", "Flare of Faith", "Regent's Authority", "Ray of Enfeeblement")
+        excluded = ("Joint Assault",)
         registry = load_default_capability_registry()
         semantics = SemanticRegistry()
         with tempfile.TemporaryDirectory() as directory:

@@ -554,7 +554,9 @@ class SemanticChoiceCoordinationMixin:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
                 if choice_effect["player"] != actor:
                     raise SemanticChoiceError("Resolution condition controller binding changed")
-                if choice_effect.get('schema_version') == 16:
+                if choice_effect.get('schema_version') == 17:
+                    matched = self.state.day_night == 'night' if condition.scope == 'night' else False
+                elif choice_effect.get('schema_version') == 16:
                     from ..conditional_target_preparation import preparation_condition_matches
                     matched = preparation_condition_matches(self, actor, choice_effect)
                 else:

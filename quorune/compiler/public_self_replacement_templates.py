@@ -52,8 +52,11 @@ def normalize_public_replacement_text(text):
 
 
 def is_fixed_public_self_replacement(text,source_name,compile_effect):
-    return fixed_public_self_replacement_template(text,source_name=source_name,
-        compile_component=lambda body:compile_effect(body,card_name=source_name)) is not None
+    from .target_replacements import current_target_replacement_template
+    compile_component=lambda body:compile_effect(body,card_name=source_name)
+    return (fixed_public_self_replacement_template(text,source_name=source_name,
+        compile_component=compile_component) is not None
+        or current_target_replacement_template(text,compile_component=compile_component) is not None)
 
 
 def _alternative_body(base,alternative):
