@@ -31,6 +31,11 @@ def recipient_control_node_capabilities(*,effects,target_schema,mechanic_ids):
         return (RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution')
     try:validate_recipient_control_effect(effect)
     except (ValueError,TypeError):return ()
+    if effect['schema_version']==3:
+        from ..player_maximum_model import PLAYER_MAXIMUM_CAPABILITY,PLAYER_MAXIMUM_MECHANIC
+        if (effect['source']!='$source' or effect['card']!='$source.zone_object' or target_schema is not None
+                or PLAYER_MAXIMUM_MECHANIC not in mechanic_ids):return ()
+        return (RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution',PLAYER_MAXIMUM_CAPABILITY)
     if effect['controller']!='$target.0' or effect['source']!='$source' or 'cr-115-targets' not in mechanic_ids:return ()
     required={RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution','target.revalidate_resolution'}
     if effect['card']=='$source.zone_object':
@@ -54,7 +59,12 @@ def recipient_control_runtime_dependencies(program):
             if 'target_schema' in value:schema=value['target_schema']
             if value.get('op')==GIVE_CONTROL_OPERATION:
                 validate_recipient_control_effect(value)
-                if value['schema_version']==2:
+                if value['schema_version']==3:
+                    from .player_maximum_shapes import player_maximum_control_dependencies
+                    if value['source']!='$source' or value['card']!='$source.zone_object':
+                        raise ValueError('Unique maximum control lost its original source role')
+                    required.update(player_maximum_control_dependencies(program,value['controller']))
+                elif value['schema_version']==2:
                     from ..target_controller_information import TARGET_CONTROLLER_INFORMATION_CAPABILITY
                     if value['source']!='$source' or value['card']!='$source.zone_object':
                         raise ValueError('Target-controller control requires its original source subject')

@@ -18,6 +18,9 @@ from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .player_maximum_templates import player_maximum_control_result
+    maximum=player_maximum_control_result(binding,body,card_name=card_name)
+    if maximum is not None:return maximum,False
     from .recipient_control_templates import source_bound_recipient_control_result
     gift=source_bound_recipient_control_result(binding,body,card_name=card_name)
     if gift is not None:return gift,False

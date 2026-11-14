@@ -12,10 +12,14 @@ def validate_recipient_control_effect(effect,*,allow_reason=False,resolved=False
     fields={'op','schema_version','card','controller','source'}
     if (not isinstance(effect,Mapping) or not fields<=set(effect)
             or set(effect)-fields-({'reason'} if allow_reason else set())
-            or effect['op']!=GIVE_CONTROL_OPERATION or type(effect['schema_version']) is not int or effect['schema_version'] not in {1,2}):
+            or effect['op']!=GIVE_CONTROL_OPERATION or type(effect['schema_version']) is not int or effect['schema_version'] not in {1,2,3}):
         raise ValueError('Recipient control requires its closed versioned fields')
     for field in ('card','controller'):
         value=effect[field]
+        if field=='controller' and effect['schema_version']==3 and not resolved:
+            from .player_maximum_model import PlayerMaximumSpec
+            PlayerMaximumSpec.from_reference(value)
+            continue
         if field=='controller' and effect['schema_version']==2 and not resolved:
             from .target_controller_reference import controller_reference_index
             if controller_reference_index(value)!=0:
@@ -30,7 +34,9 @@ def validate_recipient_control_effect(effect,*,allow_reason=False,resolved=False
 
 
 def recipient_control_effect(*,card,controller,source='$source'):
-    effect={'op':GIVE_CONTROL_OPERATION,'schema_version':2 if isinstance(controller,Mapping) else 1,
+    from .player_maximum_model import PLAYER_MAXIMUM_REFERENCE
+    version=3 if isinstance(controller,Mapping) and controller.get('kind')==PLAYER_MAXIMUM_REFERENCE else 2 if isinstance(controller,Mapping) else 1
+    effect={'op':GIVE_CONTROL_OPERATION,'schema_version':version,
         'card':card,'controller':controller,'source':source}
     validate_recipient_control_effect(effect)
     return effect

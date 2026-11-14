@@ -1466,6 +1466,7 @@
       "test_owner_control_restoration",
       "test_packet_privacy_assertions",
       "test_permissions_projection",
+      "test_player_maximum_control",
       "test_player_target_protection",
       "test_predefined_token_view_equivalence",
       "test_public_any_counters",

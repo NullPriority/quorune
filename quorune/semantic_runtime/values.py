@@ -119,6 +119,10 @@ def _resolve_attachment_reference(
 
 def _resolve_typed_semantic_value(host, value, item):
     """Delegate typed amounts and public predicates to their narrow owners."""
+    if value['kind']=='unique_player_maximum':
+        from ..player_maximum import resolve_player_maximum
+        try:return resolve_player_maximum(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value['kind']=='source_entry_x_amount':
         from ..entry_x_amount_model import resolve_entry_x_amount
         try:return resolve_entry_x_amount(value,item)
@@ -258,7 +262,7 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','unique_player_maximum'):
         return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)

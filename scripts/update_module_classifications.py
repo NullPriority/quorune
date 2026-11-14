@@ -46,7 +46,8 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
-    if relative in {'quorune/recipient_control_model.py','quorune/target_controller_reference.py','quorune/owner_control_model.py'}:return 'domain'
+    if relative in {'quorune/recipient_control_model.py','quorune/target_controller_reference.py','quorune/owner_control_model.py','quorune/player_maximum_model.py'}:return 'domain'
+    if relative=='quorune/player_maximum.py':return 'rules'
     if relative == 'quorune/stack_resolution_inputs.py':return 'domain'
     if relative=='quorune/fixed_dual_damage_model.py':return 'domain'
     if relative=='quorune/graveyard_target_unions.py':return 'rules'
@@ -620,6 +621,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative in {'quorune/player_maximum_model.py','quorune/player_maximum.py','quorune/rules/player_maximum_shapes.py'}:return 'targets_and_choices'
     if relative in {'quorune/recipient_control_model.py','quorune/rules/recipient_control_shapes.py',
             'quorune/owner_control_model.py','quorune/rules/owner_control_shapes.py'}:return 'continuous_effects'
     if relative=='quorune/fixed_dual_damage_model.py':return 'damage'

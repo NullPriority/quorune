@@ -818,6 +818,8 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
 
             own = (*own, *source_relative_count_capabilities(value))
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
+        if value.get('kind')=='unique_player_maximum' or value.get('fact')=='unique_player_maximum':
+            own=(*own,'condition.player.unique_maximum')
         if (value.get('schema_version')==4 and value.get('scope') in {'controller_life_total','opponent_poison_counters','attached_object'}
                 and {'scope','query','counter_name','exclude_source'}<=set(value)):
             if value['scope'] in {'controller_life_total','opponent_poison_counters'}:

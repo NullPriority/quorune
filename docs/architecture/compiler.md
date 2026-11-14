@@ -3748,6 +3748,20 @@ incarnation prevent a returned or otherwise illegal subject from being given
 away. Missing recipient or scalar authority still fails closed without
 coverage labels.
 
+`compiler/player_maximum_templates.py` binds matching unique-maximum upkeep
+conditions and control recipients. The closed public metric is life, hand
+size, controlled creature count, or controlled named creature subtype count.
+The shared intervening-condition owner checks uniqueness when the upkeep
+occurs and again at resolution. The version-three recipient reference reads
+the current winner; it does not retain the player who led at occurrence.
+Ties suppress the trigger or its result. Hand counts expose no card identities,
+and battlefield counts use current control and effective types while excluding
+phased-out objects and departed players. The original source incarnation is
+still the controlled subject. Missing or mismatched upkeep/metric conditions
+remain a runtime blocker even without coverage labels. Lowest-player and
+tie-breaking choices, as well as static conditional characteristic producers,
+remain outside this production.
+
 A removal followed by its target's controller gaining the source uses the
 existing bound target-result composition. Version two of `give_control` carries
 the closed target-controller information reference; version one retains its

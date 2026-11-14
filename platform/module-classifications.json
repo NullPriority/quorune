@@ -6995,6 +6995,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/player_maximum_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/player_speed_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -13966,6 +13981,32 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/player_maximum.py",
+      "layer": "rules",
+      "owning_subsystem": "targets_and_choices",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/player_maximum_model.py",
+      "layer": "domain",
+      "owning_subsystem": "targets_and_choices",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/player_result_events.py",
       "layer": "rules",
       "owning_subsystem": "trigger_processing",
@@ -19285,6 +19326,20 @@
       "file": "quorune/rules/permanent_predicate_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/player_maximum_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "targets_and_choices",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -27558,5 +27613,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "73b56df0200e88740daa633eef59e33e55d3e7c7a13de745fd549d302b6bc0b2"
+  "fingerprint": "499b4559dc7b2578d282fc987b3529e536172e8ee6c664bc7dd8bee02a3c27fa"
 }

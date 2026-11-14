@@ -27453,6 +27453,115 @@
     {
       "applicability": {
         "exclusions": [
+          "minimums, tie-breaking choices, thresholds or mismatched metrics",
+          "unrepresented private data or source lifetimes",
+          "static conditional characteristic producers using this new fact"
+        ],
+        "inputs": [
+          "all active players' current life or public hand size",
+          "current controlled creature or named creature subtype counts",
+          "a matching original-source control instruction"
+        ],
+        "outputs": [
+          "no trigger or transfer on a tied maximum",
+          "rechecked current winner rather than pinned occurrence winner",
+          "private-hand-safe current counts with immutable metric references"
+        ],
+        "summary": "A matching upkeep intervening condition and current unique-maximum control recipient over closed public player metrics."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "Versioned metric references and matching complete upkeep/intervening descriptors remain required with coverage stripped; unknown metric and unavailable facts reject.",
+      "dependency_fail_closed_status": "passed",
+      "id": "condition.player.unique_maximum",
+      "implementation_components": [
+        "quorune.player_maximum_model.PlayerMaximumSpec",
+        "quorune.player_maximum_model.validate_player_maximum_fact",
+        "quorune.player_maximum.current_player_maximum",
+        "quorune.player_maximum.resolve_player_maximum",
+        "quorune.compiler.player_maximum_templates.player_maximum_condition",
+        "quorune.compiler.player_maximum_templates.player_maximum_control_result",
+        "quorune.rules.player_maximum_shapes.player_maximum_control_dependencies",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._condition_quantity"
+      ],
+      "implementation_mutation_rationale": "Fresh metric and changed-winner witnesses kill selecting a tied maximum and using the occurrence-time winner after a response.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners"
+      ],
+      "multiplayer_tests": [
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners"
+      ],
+      "negative_tests": [
+        "test_closed_metric_condition_and_reference_codecs_and_matching_production",
+        "test_fresh_changed_winner_witness_kills_using_the_occurrence_time_winner",
+        "test_fresh_metric_witness_kills_selecting_a_tied_maximum",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
+        "test_metric_and_intervening_authority_and_matching_condition_survive_coverage_removal",
+        "test_permanent_metric_uses_current_controller_type_and_phasing",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_unique_maximum_uses_all_active_public_values_and_rejects_unavailable_data"
+      ],
+      "official_rules": [
+        "109.5",
+        "110.2",
+        "113.7a",
+        "205.3m",
+        "400.7",
+        "603.4",
+        "611.2a",
+        "613.1b",
+        "800.4a"
+      ],
+      "positive_tests": [
+        "test_closed_metric_condition_and_reference_codecs_and_matching_production",
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
+        "test_permanent_metric_uses_current_controller_type_and_phasing",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
+        "test_unique_maximum_uses_all_active_public_values_and_rejects_unavailable_data",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners"
+      ],
+      "privacy_tests": [
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners"
+      ],
+      "replay_tests": [
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "copied spells, unsupported source timing and unrepresented grant conditions",
           "retroactive trigger creation after the cast"
         ],
@@ -32816,6 +32925,7 @@
       "dependency_fail_closed_status": "passed",
       "id": "continuous.control.fixed_recipient",
       "implementation_components": [
+        "quorune.compiler.player_maximum_templates.player_maximum_control_result",
         "quorune.compiler.program_generation._is_closed_fixed_control_program",
         "quorune.compiler.recipient_control_templates._target_mana_value_handoff",
         "quorune.compiler.recipient_control_templates.recipient_control_effect_template",
@@ -32826,6 +32936,7 @@
         "quorune.recipient_control_model.validate_recipient_control_effect",
         "quorune.recipient_control_model.validate_recipient_control_set_effect",
         "quorune.rules.control_capability_shapes.resolution_control_node_capabilities",
+        "quorune.rules.player_maximum_shapes.player_maximum_control_dependencies",
         "quorune.rules.recipient_control_shapes.recipient_control_node_capabilities",
         "quorune.rules.recipient_control_shapes.recipient_control_runtime_dependencies",
         "quorune.semantic_choices.control_recipient.ControlRecipientChoiceHandler",
@@ -32840,6 +32951,7 @@
         "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
         "test_bazaar_trader_targets_only_its_controlled_permanent_union",
         "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
         "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
         "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
         "test_handoff_draws_before_untargeted_choice_and_reads_prototype_and_battlefield_x_mana_value",
@@ -32848,10 +32960,12 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
         "test_sky_uses_the_resolving_actor_current_set_including_response_tokens_and_keeps_attachments",
@@ -32859,6 +32973,8 @@
         "test_starke_does_not_give_a_returned_source_or_resolve_against_a_returned_target",
         "test_starke_gives_control_even_when_indestructibility_prevents_destruction",
         "test_starke_uses_the_departure_controller_after_a_response_changes_control",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners",
         "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
         "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
       ],
@@ -32866,6 +32982,7 @@
         "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
         "test_bazaar_trader_targets_only_its_controlled_permanent_union",
         "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
         "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
         "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
         "test_handoff_draws_before_untargeted_choice_and_reads_prototype_and_battlefield_x_mana_value",
@@ -32874,10 +32991,12 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
         "test_sky_uses_the_resolving_actor_current_set_including_response_tokens_and_keeps_attachments",
@@ -32885,34 +33004,47 @@
         "test_starke_does_not_give_a_returned_source_or_resolve_against_a_returned_target",
         "test_starke_gives_control_even_when_indestructibility_prevents_destruction",
         "test_starke_uses_the_departure_controller_after_a_response_changes_control",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners",
         "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
         "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
       ],
       "negative_tests": [
+        "test_closed_metric_condition_and_reference_codecs_and_matching_production",
+        "test_fresh_changed_winner_witness_kills_using_the_occurrence_time_winner",
         "test_fresh_handoff_witness_kills_giving_the_target_back_to_the_resolver",
+        "test_fresh_metric_witness_kills_selecting_a_tied_maximum",
         "test_fresh_sky_blink_witness_kills_excluding_the_returned_physical_source",
         "test_gift_and_choice_payloads_require_the_recipient_owner_without_coverage",
         "test_handoff_illegal_control_relation_or_returned_target_stops_draw_and_gift",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_malformed_recipient_subject_and_version_roles_have_no_capability_closure",
+        "test_metric_and_intervening_authority_and_matching_condition_survive_coverage_removal",
         "test_new_recipient_set_and_target_choice_require_authority_without_coverage",
+        "test_permanent_metric_uses_current_controller_type_and_phasing",
         "test_registered_recipient_handler_is_closed_and_null_target_is_a_noop",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_starke_does_not_give_a_returned_source_or_resolve_against_a_returned_target",
         "test_starke_payload_requires_target_information_even_when_coverage_is_removed",
         "test_target_controller_control_payloads_reject_changed_roles_and_keep_v1_strict",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_unique_maximum_uses_all_active_public_values_and_rejects_unavailable_data",
         "test_unsupported_sets_and_mismatched_handoff_subjects_stay_residual",
         "test_unsupported_untargeted_mana_side_effect_does_not_gain_normal_activation_admission",
         "test_untargeted_choice_is_controller_owned_live_opponent_scoped_and_incarnation_bound",
         "test_verified_recipient_withdrawal_rejects_gifts_but_keeps_classic_acquisition"
       ],
       "official_rules": [
+        "109.5",
         "110.2",
         "113.7a",
         "115.1d",
         "202.3e",
+        "205.3m",
         "302.6",
         "400.7",
         "506.4",
+        "603.4",
         "608.2b",
         "608.2c",
         "608.2d",
@@ -32928,8 +33060,10 @@
       "positive_tests": [
         "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
         "test_bazaar_trader_targets_only_its_controlled_permanent_union",
+        "test_closed_metric_condition_and_reference_codecs_and_matching_production",
         "test_closed_player_set_and_target_subject_choice_keep_their_distinct_schemas",
         "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
         "test_fixed_set_separates_actor_recipient_and_original_source",
         "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
         "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
@@ -32942,7 +33076,9 @@
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_new_recipient_intent_keeps_the_old_acquiring_actor_contract_strict",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
+        "test_permanent_metric_uses_current_controller_type_and_phasing",
         "test_removal_followup_binds_the_target_controller_without_a_second_player_target",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
         "test_sky_uses_the_resolving_actor_current_set_including_response_tokens_and_keeps_attachments",
         "test_sleeper_entry_target_is_chosen_before_priority_and_uses_the_new_controller",
@@ -32950,6 +33086,8 @@
         "test_starke_gives_control_even_when_indestructibility_prevents_destruction",
         "test_starke_uses_the_departure_controller_after_a_response_changes_control",
         "test_targeted_player_and_permanent_roles_have_distinct_owned_slots",
+        "test_unique_maximum_uses_all_active_public_values_and_rejects_unavailable_data",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners",
         "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
         "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
       ],
@@ -32957,6 +33095,7 @@
         "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
         "test_bazaar_trader_targets_only_its_controlled_permanent_union",
         "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
         "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
         "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
         "test_handoff_draws_before_untargeted_choice_and_reads_prototype_and_battlefield_x_mana_value",
@@ -32965,10 +33104,12 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
         "test_sky_uses_the_resolving_actor_current_set_including_response_tokens_and_keeps_attachments",
@@ -32976,6 +33117,8 @@
         "test_starke_does_not_give_a_returned_source_or_resolve_against_a_returned_target",
         "test_starke_gives_control_even_when_indestructibility_prevents_destruction",
         "test_starke_uses_the_departure_controller_after_a_response_changes_control",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners",
         "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
         "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
       ],
@@ -32983,6 +33126,7 @@
         "test_avarice_amulet_targets_a_recipient_after_its_attached_creature_dies",
         "test_bazaar_trader_targets_only_its_controlled_permanent_union",
         "test_donate_offering_and_wrong_turn_separate_actor_recipient_owner_and_subject",
+        "test_five_originals_transfer_to_the_current_unique_maximum_at_actual_upkeep",
         "test_giver_departure_does_not_end_the_gift_but_recipient_departure_restores_base_controller",
         "test_goblin_cadets_gifts_the_source_and_removes_it_from_combat_after_becoming_blocked",
         "test_handoff_draws_before_untargeted_choice_and_reads_prototype_and_battlefield_x_mana_value",
@@ -32991,10 +33135,12 @@
         "test_humble_defector_draws_for_the_resolver_before_giving_its_original_incarnation",
         "test_humble_draws_but_does_not_give_a_returned_source_and_illegal_player_stops_all_results",
         "test_humble_queued_actor_keeps_the_draw_even_after_someone_else_controls_its_source",
+        "test_initial_life_tie_does_not_trigger_and_source_reentry_is_not_given_away",
         "test_jinxed_artifact_costs_are_paid_by_the_actor_before_source_control_changes",
         "test_new_controller_upkeeps_apply_sleeper_loss_and_horse_opponent_token_roles",
         "test_opponent_copy_rebinds_controlled_subject_under_the_copy_actor_and_keeps_the_recipient",
         "test_opponent_handoff_copy_rebinds_target_amount_drawer_and_resolution_chooser",
+        "test_responses_change_the_winning_life_hand_creature_and_wizard_player",
         "test_sky_illegal_recipient_prevents_the_entire_set_transfer",
         "test_sky_original_trigger_includes_the_returned_source_after_the_new_trigger_resolves",
         "test_sky_uses_the_resolving_actor_current_set_including_response_tokens_and_keeps_attachments",
@@ -33002,6 +33148,8 @@
         "test_starke_does_not_give_a_returned_source_or_resolve_against_a_returned_target",
         "test_starke_gives_control_even_when_indestructibility_prevents_destruction",
         "test_starke_uses_the_departure_controller_after_a_response_changes_control",
+        "test_tied_life_hand_and_creature_maximum_on_resolution_prevents_control",
+        "test_wild_dogs_cycling_and_new_controller_bushido_keep_their_original_owners",
         "test_wishclaw_searches_and_shuffles_for_the_actor_before_choosing_a_control_recipient",
         "test_witch_engine_is_not_a_mana_ability_and_adds_for_the_original_actor_before_gifting"
       ],
@@ -95235,7 +95383,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 855,
+  "registry_version": 856,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
