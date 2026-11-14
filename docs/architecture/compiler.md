@@ -1580,7 +1580,7 @@ the existing cursor, which preserves private discard and public sacrifice as
 separate choices. State-based actions wait until the whole effect resolves.
 
 `compiler/fixed_effect_clause_sequences.py` owns the general closed
-two-sentence composition boundary. It accepts exactly two top-level,
+two-clause composition boundary. It accepts exactly two top-level,
 period-separated clauses when each clause independently lowers to
 one effect through an existing reviewed atomic owner and the pair contains at
 most one target schema. Direct targets and bounded optional target sets are
@@ -1589,7 +1589,13 @@ component must remain nontargeted. The composed node preserves printed order
 and the exact union of both component capabilities across spell, triggered,
 and activated contexts. One clause may use the fixed optional-effect owner
 described below; its choice wraps only that clause, so a mandatory sibling
-remains outside the choice. Modal, conditional, linked-result, pronoun,
+remains outside the choice. `compiler/fixed_damage_life_sequences.py` also
+separates fixed damage followed by an independent fixed life gain joined by
+`and you gain`. The existing source-entry, source-departure, activation, and
+bound-trigger owners compile each child in its original context. Bound
+`it`, `he`, and `she` preserve that source identity. The gain occurs once and
+does not depend on damage actually dealt or the number of recipients.
+Modal, conditional, linked-result, unbound-pronoun,
 variable, repeated, independently targeted, unsupported optional, quoted-boundary,
 parenthetical-boundary, and larger sequences remain source-spanned residuals.
 

@@ -14997,6 +14997,27 @@
         "test_shared_modal_target_resolution",
         "test_static_attached_control"
       ]
+    },
+    {
+      "id": "fixed-damage-independent-life-composition",
+      "patterns": [
+        "quorune/compiler/fixed_damage_life_sequences.py",
+        "quorune/compiler/fixed_effect_clause_sequences.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/source_counter_quantity_sequences.py",
+        "quorune/compiler/damage_templates.py",
+        "tests/test_fixed_damage_life_sequences.py"
+      ],
+      "test_modules": [
+        "test_fixed_damage_life_sequences",
+        "test_fixed_effect_clause_sequences",
+        "test_fixed_mass_damage",
+        "test_card_program_trust",
+        "test_oracle_ir",
+        "test_card_program_v2",
+        "test_fixed_query_quoted_ability_grants",
+        "test_source_counter_quantity_sequences"
+      ]
     }
   ],
   "risk_rules": [

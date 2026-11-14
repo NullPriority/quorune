@@ -677,6 +677,7 @@
       "test_exact_keyword_families",
       "test_exact_land_families",
       "test_extort_rules",
+      "test_fixed_damage_life_sequences",
       "test_fixed_effect_clause_sequences",
       "test_fixed_extra_turns",
       "test_fixed_library_selection",

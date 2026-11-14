@@ -695,6 +695,10 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
+    sequence=fixed_damage_life_sequence_template(text,compile_clause=lambda clause:_compiled_activated_effect(
+        clause,card_name=card_name,effect_template=effect_template))
+    if sequence is not None:return sequence
     if text.casefold().startswith("add "):
         from .fixed_stack_spell_copy import next_cast_copy_template
 

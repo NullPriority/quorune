@@ -47886,7 +47886,8 @@
         "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
         "test_actual_combat_uses_the_buried_physical_commander_when_the_live_root_is_not_that_card",
         "test_plural_source_updates_each_ledger_without_duplicating_life_damage",
-        "test_prepared_merged_source_keeps_its_physical_commander_after_departure"
+        "test_prepared_merged_source_keeps_its_physical_commander_after_departure",
+        "test_actual_gendered_entry_sources_keep_the_tapped_opponent_predicate"
       ],
       "multiplayer_tests": [
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
@@ -47912,7 +47913,8 @@
         "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
         "test_actual_combat_uses_the_buried_physical_commander_when_the_live_root_is_not_that_card",
         "test_plural_source_updates_each_ledger_without_duplicating_life_damage",
-        "test_prepared_merged_source_keeps_its_physical_commander_after_departure"
+        "test_prepared_merged_source_keeps_its_physical_commander_after_departure",
+        "test_actual_gendered_entry_sources_keep_the_tapped_opponent_predicate"
       ],
       "negative_tests": [
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
@@ -47937,7 +47939,9 @@
         "test_waiting_batches_pin_once_and_failed_snapshot_preparation_publishes_no_updates",
         "test_actual_combat_uses_the_buried_physical_commander_when_the_live_root_is_not_that_card",
         "test_plural_source_updates_each_ledger_without_duplicating_life_damage",
-        "test_closed_identity_codec_rejects_duplicate_unknown_boolean_and_contradictory_sources"
+        "test_closed_identity_codec_rejects_duplicate_unknown_boolean_and_contradictory_sources",
+        "test_actual_gendered_entry_sources_keep_the_tapped_opponent_predicate",
+        "test_literal_conjunction_keeps_two_closed_instructions_and_source_pronouns_stay_bound"
       ],
       "official_rules": [
         "113.7a",
@@ -47988,7 +47992,9 @@
         "test_plural_source_updates_each_ledger_without_duplicating_life_damage",
         "test_prepared_merged_source_keeps_its_physical_commander_after_departure",
         "test_closed_identity_codec_rejects_duplicate_unknown_boolean_and_contradictory_sources",
-        "test_absence_retains_ordinary_snapshot_shape_and_legacy_single_ledger_keys"
+        "test_absence_retains_ordinary_snapshot_shape_and_legacy_single_ledger_keys",
+        "test_actual_gendered_entry_sources_keep_the_tapped_opponent_predicate",
+        "test_literal_conjunction_keeps_two_closed_instructions_and_source_pronouns_stay_bound"
       ],
       "privacy_tests": [
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
@@ -48002,7 +48008,8 @@
         "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
         "test_original_deem_worthy_cycle_retains_new_zone_source_before_damage_and_private_draw",
         "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
-        "test_actual_combat_uses_the_buried_physical_commander_when_the_live_root_is_not_that_card"
+        "test_actual_combat_uses_the_buried_physical_commander_when_the_live_root_is_not_that_card",
+        "test_actual_gendered_entry_sources_keep_the_tapped_opponent_predicate"
       ],
       "replay_tests": [
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
@@ -48028,7 +48035,8 @@
         "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
         "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
         "test_actual_combat_uses_the_buried_physical_commander_when_the_live_root_is_not_that_card",
-        "test_absence_retains_ordinary_snapshot_shape_and_legacy_single_ledger_keys"
+        "test_absence_retains_ordinary_snapshot_shape_and_legacy_single_ledger_keys",
+        "test_actual_gendered_entry_sources_keep_the_tapped_opponent_predicate"
       ],
       "required_evidence": [
         "positive",
@@ -67647,7 +67655,7 @@
           "replacement-aware suspension and resume",
           "exact replay across component boundaries"
         ],
-        "summary": "Two independently owned instructions in printed order, including top-level comma-then and period-Then, with explicit closed player-subject inheritance and complete existing target schema."
+        "summary": "Two independently owned instructions in printed order, including top-level comma-then and period-Then, with explicit closed player-subject inheritance and complete existing target schema. Fixed damage and an independent fixed life gain may be joined by and-you-gain; each child retains its already bound source context."
       },
       "blockers": [],
       "dependencies": [],
@@ -67659,7 +67667,10 @@
         "quorune.compiler.fixed_effect_clause_sequences.fixed_effect_clause_sequence_template",
         "quorune.rules.fixed_effect_clause_shapes.fixed_effect_clause_sequence_node_capabilities",
         "CommanderEngine._continue_resolution",
-        "quorune.rules.fixed_effect_clause_shapes.source_characteristic_tap_runtime_dependencies"
+        "quorune.rules.fixed_effect_clause_shapes.source_characteristic_tap_runtime_dependencies",
+        "quorune.compiler.fixed_damage_life_sequences.fixed_damage_life_clauses",
+        "quorune.compiler.fixed_damage_life_sequences.fixed_damage_life_sequence_template",
+        "quorune.compiler.fixed_damage_life_sequences.binding_damage_life_result"
       ],
       "implementation_mutation_rationale": "test_sequence_compiler_mutation_is_killed removes the sequence production and proves an otherwise closed two-sentence ability returns to a material residual. New executable separator-omission and elided-player-loss mutants distinguish exact parsing from correctly scoped composition.",
       "implementation_mutation_status": "killed",
@@ -67684,7 +67695,14 @@
         "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
         "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
         "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
-        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources",
+        "test_actual_source_dies_then_prevented_damage_still_gains_the_fixed_life_once",
+        "test_actual_entry_damage_and_life_gain_prohibition_are_independent",
+        "test_actual_granted_receiver_damage_and_fixed_gain_keep_separate_controllers",
+        "test_actual_attack_hits_each_opponent_but_gains_only_one_life",
+        "test_actual_hybrid_mutation_uses_its_merged_source_and_fixed_gain",
+        "test_actual_sacrificed_activation_resumes_damage_replacements_then_gains_once",
+        "test_actual_illegal_death_trigger_target_prevents_both_instructions"
       ],
       "multiplayer_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -67695,7 +67713,14 @@
         "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
         "test_actual_elf_can_pay_while_tapped_and_protection_expires_without_preventing_zero_toughness",
         "test_actual_elf_blink_does_not_tap_or_protect_the_returned_incarnation",
-        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not"
+        "test_actual_predator_tap_triggers_once_and_already_tapped_activation_does_not",
+        "test_actual_source_dies_then_prevented_damage_still_gains_the_fixed_life_once",
+        "test_actual_entry_damage_and_life_gain_prohibition_are_independent",
+        "test_actual_granted_receiver_damage_and_fixed_gain_keep_separate_controllers",
+        "test_actual_attack_hits_each_opponent_but_gains_only_one_life",
+        "test_actual_hybrid_mutation_uses_its_merged_source_and_fixed_gain",
+        "test_actual_sacrificed_activation_resumes_damage_replacements_then_gains_once",
+        "test_actual_illegal_death_trigger_target_prevents_both_instructions"
       ],
       "negative_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -67715,7 +67740,17 @@
         "test_actual_created_tokens_join_later_counter_set_and_replacement_applies",
         "test_target_implicit_subject_unknown_body_and_unrepresented_siblings_remain_material",
         "test_verified_composition_source_and_tap_withdrawal_retain_independent_draw",
-        "test_normal_binding_cannot_omit_source_characteristic_or_tap_authority"
+        "test_normal_binding_cannot_omit_source_characteristic_or_tap_authority",
+        "test_literal_conjunction_keeps_two_closed_instructions_and_source_pronouns_stay_bound",
+        "test_unknown_linked_amounts_nested_text_and_extra_tails_are_not_reinterpreted",
+        "test_originals_bind_normally_and_sequence_authority_cannot_be_omitted",
+        "test_actual_source_dies_then_prevented_damage_still_gains_the_fixed_life_once",
+        "test_actual_entry_damage_and_life_gain_prohibition_are_independent",
+        "test_actual_granted_receiver_damage_and_fixed_gain_keep_separate_controllers",
+        "test_actual_attack_hits_each_opponent_but_gains_only_one_life",
+        "test_actual_hybrid_mutation_uses_its_merged_source_and_fixed_gain",
+        "test_actual_sacrificed_activation_resumes_damage_replacements_then_gains_once",
+        "test_actual_illegal_death_trigger_target_prevents_both_instructions"
       ],
       "official_rules": [
         "608.2b",
@@ -67744,7 +67779,17 @@
         "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
         "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
         "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
-        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources",
+        "test_literal_conjunction_keeps_two_closed_instructions_and_source_pronouns_stay_bound",
+        "test_unknown_linked_amounts_nested_text_and_extra_tails_are_not_reinterpreted",
+        "test_originals_bind_normally_and_sequence_authority_cannot_be_omitted",
+        "test_actual_source_dies_then_prevented_damage_still_gains_the_fixed_life_once",
+        "test_actual_entry_damage_and_life_gain_prohibition_are_independent",
+        "test_actual_granted_receiver_damage_and_fixed_gain_keep_separate_controllers",
+        "test_actual_attack_hits_each_opponent_but_gains_only_one_life",
+        "test_actual_hybrid_mutation_uses_its_merged_source_and_fixed_gain",
+        "test_actual_sacrificed_activation_resumes_damage_replacements_then_gains_once",
+        "test_actual_illegal_death_trigger_target_prevents_both_instructions"
       ],
       "privacy_tests": [
         "test_private_scry_follows_token_creation_in_four_players",
@@ -67758,7 +67803,14 @@
         "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
         "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
         "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
-        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources",
+        "test_actual_source_dies_then_prevented_damage_still_gains_the_fixed_life_once",
+        "test_actual_entry_damage_and_life_gain_prohibition_are_independent",
+        "test_actual_granted_receiver_damage_and_fixed_gain_keep_separate_controllers",
+        "test_actual_attack_hits_each_opponent_but_gains_only_one_life",
+        "test_actual_hybrid_mutation_uses_its_merged_source_and_fixed_gain",
+        "test_actual_sacrificed_activation_resumes_damage_replacements_then_gains_once",
+        "test_actual_illegal_death_trigger_target_prevents_both_instructions"
       ],
       "replay_tests": [
         "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
@@ -67776,7 +67828,14 @@
         "test_actual_trawler_and_sphinx_hexproof_fizzle_opponent_bounce_but_allow_controller_target",
         "test_actual_battalion_uses_declaration_and_survives_another_attacker_leaving",
         "test_actual_blistercoil_untaps_and_grows_before_own_instant_with_nonmatching_controls",
-        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources"
+        "test_actual_icehide_uses_snow_sources_and_rejects_ordinary_green_sources",
+        "test_actual_source_dies_then_prevented_damage_still_gains_the_fixed_life_once",
+        "test_actual_entry_damage_and_life_gain_prohibition_are_independent",
+        "test_actual_granted_receiver_damage_and_fixed_gain_keep_separate_controllers",
+        "test_actual_attack_hits_each_opponent_but_gains_only_one_life",
+        "test_actual_hybrid_mutation_uses_its_merged_source_and_fixed_gain",
+        "test_actual_sacrificed_activation_resumes_damage_replacements_then_gains_once",
+        "test_actual_illegal_death_trigger_target_prevents_both_instructions"
       ],
       "required_evidence": [
         "positive",
@@ -67792,7 +67851,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 4
+      "version": 5
     },
     {
       "applicability": {
@@ -96735,7 +96794,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 869,
+  "registry_version": 870,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

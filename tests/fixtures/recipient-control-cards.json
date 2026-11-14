@@ -10994,6 +10994,347 @@
     "vintage": "legal"
   }
 }
+,
+{
+  "oracle_id": "bbd84035-3efd-4301-9778-913898efd57a",
+  "name": "Boomerang, Blade Flinger",
+  "mana_cost": "{1}{B}",
+  "cmc": 2.0,
+  "type_line": "Legendary Creature — Human Villain",
+  "oracle_text": "Whenever Boomerang attacks, he deals 1 damage to each opponent and you gain 1 life.",
+  "power": "1",
+  "toughness": "3",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "B"
+  ],
+  "color_identity": [
+    "B"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2026-06-26",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "not_legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "not_legal",
+    "pioneer": "not_legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "3724cc42-1bbd-4a11-8469-ab8492ddba52",
+  "name": "Fear of Lost Teeth",
+  "mana_cost": "{B}",
+  "cmc": 1.0,
+  "type_line": "Enchantment Creature — Nightmare",
+  "oracle_text": "When this creature dies, it deals 1 damage to any target and you gain 1 life.",
+  "power": "1",
+  "toughness": "1",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "B"
+  ],
+  "color_identity": [
+    "B"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2024-09-27",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "d185ad9f-c7fc-41f0-b852-4fe2cde0a8ae",
+  "name": "Gastal Thrillseeker",
+  "mana_cost": "{B}{R}",
+  "cmc": 2.0,
+  "type_line": "Creature — Lizard Berserker",
+  "oracle_text": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nWhen this creature enters, it deals 1 damage to target opponent and you gain 1 life.\nMax speed — This creature has deathtouch and haste.",
+  "power": "2",
+  "toughness": "3",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "B",
+    "R"
+  ],
+  "color_identity": [
+    "B",
+    "R"
+  ],
+  "keywords": [
+    "Max speed",
+    "Start your engines!"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2025-02-14",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "84e8ca5e-730e-468b-943c-7c6358ade95c",
+  "name": "Ill-Gotten Inheritance",
+  "mana_cost": "{3}{B}",
+  "cmc": 4.0,
+  "type_line": "Enchantment",
+  "oracle_text": "At the beginning of your upkeep, this enchantment deals 1 damage to each opponent and you gain 1 life.\n{5}{B}, Sacrifice this enchantment: It deals 4 damage to target opponent and you gain 4 life.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "B"
+  ],
+  "color_identity": [
+    "B"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2024-01-12",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "legal",
+    "paupercommander": "legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "334f673e-7cfa-432c-93aa-41adfbb99113",
+  "name": "Lavabelly Sliver",
+  "mana_cost": "{1}{R}{W}",
+  "cmc": 3.0,
+  "type_line": "Creature — Sliver",
+  "oracle_text": "Sliver creatures you control have \"When this creature enters, it deals 1 damage to target player or planeswalker and you gain 1 life.\"",
+  "power": "2",
+  "toughness": "2",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R",
+    "W"
+  ],
+  "color_identity": [
+    "R",
+    "W"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2023-08-04",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "not_legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "8854222e-590f-4fc0-b5d7-bf3d986b8507",
+  "name": "Momo, Rambunctious Rascal",
+  "mana_cost": "{2}{W}",
+  "cmc": 3.0,
+  "type_line": "Legendary Creature — Lemur Bat Ally",
+  "oracle_text": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nWhen Momo enters, he deals 4 damage to target tapped creature an opponent controls.",
+  "power": "1",
+  "toughness": "1",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "W"
+  ],
+  "color_identity": [
+    "W"
+  ],
+  "keywords": [
+    "Flying"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2025-11-21",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "not_legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "not_legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "8d35c7c8-1342-40b7-82ec-2f7973ee8af8",
+  "name": "The Wasp, Janet Van Dyne",
+  "mana_cost": "{2}{W}",
+  "cmc": 3.0,
+  "type_line": "Legendary Creature — Human Hero",
+  "oracle_text": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nWhen The Wasp enters, she deals 4 damage to target tapped creature an opponent controls.",
+  "power": "1",
+  "toughness": "1",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "W"
+  ],
+  "color_identity": [
+    "W"
+  ],
+  "keywords": [
+    "Flying"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2026-06-26",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "not_legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "not_legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+}
 ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
@@ -12426,6 +12767,55 @@
   "published_at": "2014-04-26",
   "source": "wotc",
   "comment": "Dictate of the Twin Gods applies to any damage, not just combat damage. It also doesn't matter who controls the source of the damage that's being dealt."
+}
+,
+{
+  "oracle_id": "3724cc42-1bbd-4a11-8469-ab8492ddba52",
+  "published_at": "2024-09-20",
+  "source": "wotc",
+  "comment": "If the target of Fear of Lost Teeth's ability is an illegal target as the ability tries to resolve, it won't resolve and none of its effects will happen. You won't gain life."
+},
+{
+  "oracle_id": "d185ad9f-c7fc-41f0-b852-4fe2cde0a8ae",
+  "published_at": "2025-02-07",
+  "source": "wotc",
+  "comment": "If an effect needs to know what a player’s speed is and that player doesn’t have a speed, their speed is considered 0."
+},
+{
+  "oracle_id": "d185ad9f-c7fc-41f0-b852-4fe2cde0a8ae",
+  "published_at": "2025-02-07",
+  "source": "wotc",
+  "comment": "A player “has max speed” if their speed is 4."
+},
+{
+  "oracle_id": "d185ad9f-c7fc-41f0-b852-4fe2cde0a8ae",
+  "published_at": "2025-02-07",
+  "source": "wotc",
+  "comment": "Start your engines! isn’t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls."
+},
+{
+  "oracle_id": "d185ad9f-c7fc-41f0-b852-4fe2cde0a8ae",
+  "published_at": "2025-02-07",
+  "source": "wotc",
+  "comment": "“Max speed — [ability]” means “As long as you have max speed, this object has [ability].” If the granted ability functions in a zone other than the battlefield, the max speed ability does too."
+},
+{
+  "oracle_id": "d185ad9f-c7fc-41f0-b852-4fe2cde0a8ae",
+  "published_at": "2025-02-07",
+  "source": "wotc",
+  "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed."
+},
+{
+  "oracle_id": "d185ad9f-c7fc-41f0-b852-4fe2cde0a8ae",
+  "published_at": "2025-02-07",
+  "source": "wotc",
+  "comment": "Your speed doesn’t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn’t affect your speed."
+},
+{
+  "oracle_id": "84e8ca5e-730e-468b-943c-7c6358ade95c",
+  "published_at": "2019-01-25",
+  "source": "wotc",
+  "comment": "In a Two-Headed Giant game, Ill-Gotten Inheritance’s first ability causes the opposing team to lose 2 life and you gain 1 life."
 }
 ],
   "schema_version": 1,

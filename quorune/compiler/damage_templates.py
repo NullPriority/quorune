@@ -724,10 +724,10 @@ def fixed_damage_effect_template(
 def source_pronoun_damage_effect_template(
     text: str,
 ) -> FixedDamageEffectTemplate | FixedMassDamageEffectTemplate | None:
-    """Recognize ``It deals`` only after a source identity is established."""
+    """Recognize a source pronoun only after its identity is established."""
 
     source = re.fullmatch(
-        r"it deals (?P<amount>[1-9][0-9]*) damage to "
+        r"(?:it|he|she) deals (?P<amount>[1-9][0-9]*) damage to "
         r"(?P<recipient>.+?)\.?",
         text.strip(),
         re.IGNORECASE,

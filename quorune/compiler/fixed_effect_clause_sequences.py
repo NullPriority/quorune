@@ -77,6 +77,8 @@ def _top_level_scope_text(text: str) -> str:
 
 def _two_sentence_clauses(text: str) -> tuple[str, str] | None:
     """Retain period grammar and close two top-level printed-order clauses."""
+    from .fixed_damage_life_sequences import fixed_damage_life_clauses
+    if damage_life:=fixed_damage_life_clauses(text):return damage_life
     existing = _period_sentence_clauses(text)
     if existing is not None:
         source = re.fullmatch(r'(?P<subject>this [A-Za-z]+) (?:gets|gains) [^.]+\.',existing[0],re.I)
