@@ -461,6 +461,23 @@ def _zone_move_runtime_requirements(program, required, blockers):
             blockers.add(f'runtime_{label}:invalid:{exc}')
 
 
+def _declaration_rule_runtime_requirements(program, required, blockers):
+    """Aggregate independent declaration owners without changing their diagnostics."""
+    from ..rules.temporary_all_blockers import temporary_all_blocker_runtime_dependencies
+    from ..rules.temporary_attack_requirements import temporary_attack_requirement_runtime_dependencies
+
+    for resolver, label in (
+        (source_block_pair_runtime_dependencies, 'source_block_pair'),
+        (fixed_blocker_runtime_dependencies, 'fixed_blocker'),
+        (temporary_all_blocker_runtime_dependencies, 'temporary_all_blocker'),
+        (temporary_attack_requirement_runtime_dependencies, 'temporary_attack_requirement'),
+    ):
+        try:
+            required.update(resolver(program))
+        except (ValueError, TypeError) as exc:
+            blockers.add(f'runtime_{label}:invalid:{exc}')
+
+
 def program_dynamic_runtime_requirements(program):
     from ..preparation import preparation_runtime_dependencies
     from ..rules.fuse_shapes import fuse_runtime_requirements
@@ -491,16 +508,7 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_emblem_program:invalid:{exc}')
     try:required.update(nonmana_buyback_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_nonmana_buyback:invalid:{exc}')
-    try:required.update(source_block_pair_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_source_block_pair:invalid:{exc}')
-    try:required.update(fixed_blocker_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_fixed_blocker:invalid:{exc}')
-    from ..rules.temporary_all_blockers import temporary_all_blocker_runtime_dependencies
-    try:required.update(temporary_all_blocker_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_all_blocker:invalid:{exc}')
-    from ..rules.temporary_attack_requirements import temporary_attack_requirement_runtime_dependencies
-    try:required.update(temporary_attack_requirement_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_attack_requirement:invalid:{exc}')
+    _declaration_rule_runtime_requirements(program, required, blockers)
     from ..rules.occurrence_object_results import occurrence_object_runtime_dependencies
     try:required.update(occurrence_object_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_occurrence_object:invalid:{exc}')
