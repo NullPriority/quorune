@@ -5,6 +5,7 @@ RECIPIENT_CONTROL_CAPABILITY='continuous.control.fixed_recipient'
 RECIPIENT_CONTROL_MECHANIC='fixed-recipient-control'
 GIVE_CONTROL_OPERATION='give_control'
 CHOOSE_CONTROL_RECIPIENT_OPERATION='choose_control_recipient'
+GIVE_CONTROL_SET_OPERATION='give_control_set'
 
 
 def validate_recipient_control_effect(effect,*,allow_reason=False,resolved=False):
@@ -33,3 +34,19 @@ def recipient_control_effect(*,card,controller,source='$source'):
         'card':card,'controller':controller,'source':source}
     validate_recipient_control_effect(effect)
     return effect
+
+
+def validate_recipient_control_set_effect(effect,*,allow_reason=False):
+    fields={'op','schema_version','scope','controller','exclude_source','source'}
+    if (not isinstance(effect,Mapping) or not fields<=set(effect)
+            or set(effect)-fields-({'reason'} if allow_reason else set())
+            or effect['op']!=GIVE_CONTROL_SET_OPERATION or type(effect['schema_version']) is not int or effect['schema_version']!=1
+            or effect['scope']!='other_controlled_permanents'):
+        raise ValueError('Recipient control set requires its closed actor-controlled scope')
+    for field in ('controller','exclude_source'):
+        if effect[field] is not None and (type(effect[field]) is not str or not effect[field]):
+            raise ValueError('Recipient control set requires explicit player and source references')
+    if type(effect['source']) is not str or not effect['source']:
+        raise ValueError('Recipient control set requires resolving source provenance')
+    if 'reason' in effect and (type(effect['reason']) is not str or not effect['reason']):
+        raise ValueError('Recipient control set requires a nonempty reason')

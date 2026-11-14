@@ -92,6 +92,22 @@ class GiveControlIntent:
 
 
 @dataclass(frozen=True,slots=True)
+class GiveControlSetIntent:
+    actor: str
+    controller: str
+    exclude_source_ref: str | None
+    source: ResolutionEffectSource
+    reason: str
+
+    def __post_init__(self):
+        _validate_control(self.actor,self.actor,ContinuousEffectDuration.ZONE_OBJECT,self.source,self.reason)
+        if type(self.controller) is not str or not self.controller:
+            raise ValueError('Recipient control set requires an explicit acquiring player')
+        if self.exclude_source_ref is not None and (type(self.exclude_source_ref) is not str or not self.exclude_source_ref):
+            raise ValueError('Recipient control set requires its original source reference')
+
+
+@dataclass(frozen=True,slots=True)
 class RestoreOwnerControlIntent:
     actor: str
     spec: OwnerControlSpec
@@ -103,4 +119,4 @@ class RestoreOwnerControlIntent:
         if not isinstance(self.spec,OwnerControlSpec):raise ValueError('Owner control requires its typed scope')
 
 
-ControlIntent = GainControlIntent | GainControlSetIntent | GiveControlIntent | RestoreOwnerControlIntent
+ControlIntent = GainControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent

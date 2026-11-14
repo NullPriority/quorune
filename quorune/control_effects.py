@@ -373,6 +373,15 @@ def execute_owner_control_restoration(host: Any,intent: Any) -> tuple[str,...]:
         duration=ContinuousEffectDuration.ZONE_OBJECT,source=intent.source,reason=intent.reason)
 
 
+def execute_recipient_control_set(host: Any,intent: Any) -> tuple[str,...]:
+    """Capture the resolving actor's current set, excluding the original source."""
+    from .continuous_effect_state import matching_battlefield_objects
+    query=ObjectQuerySpec(zones=('battlefield',),controller=intent.actor,exclude_ref=intent.exclude_source_ref)
+    cards=matching_battlefield_objects(host,query)
+    return gain_control_of_refs(host,actor=intent.actor,object_refs=tuple(card.ref for card in cards),
+        controller=intent.controller,duration=ContinuousEffectDuration.ZONE_OBJECT,source=intent.source,reason=intent.reason)
+
+
 def _controller_map(host: ControlEffectHost, journal: Sequence[ContinuousEffect], static: Sequence[ContinuousEffect]) -> dict[str, str]:
     controllers=layer_two_controller_map(host,journal,static)
     if any(type(controller) is not str or controller not in host.state.players for controller in controllers.values()):

@@ -15,7 +15,7 @@ from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
-from .control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,RestoreOwnerControlIntent
+from .control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..rules.discard_results import execute_discard_result
@@ -254,7 +254,7 @@ class SemanticIntentSink(
 
     def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent) -> object: ...
 
-    def gain_control_set_intent(self, intent: GainControlSetIntent | RestoreOwnerControlIntent) -> object: ...
+    def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent | RestoreOwnerControlIntent) -> object: ...
 
     def place_counters_intent(
         self,
@@ -402,7 +402,7 @@ def prepare_draw_resolution(
 PermanentObjectIntent = (
     SelectMutateMergeIntent |
     ResumeCompositionOrderIntent |
-    PairSoulbondIntent | GainControlIntent | GainControlSetIntent | GiveControlIntent | RestoreOwnerControlIntent | CreateRegenerationShieldIntent
+    PairSoulbondIntent | GainControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | CreateRegenerationShieldIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | EncodeCipherIntent
     | PrepareSourceIntent
@@ -423,7 +423,7 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     PrepareSourceIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
-    GainControlIntent, GainControlSetIntent,GiveControlIntent,RestoreOwnerControlIntent,
+    GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent,
     CreateRegenerationShieldIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
@@ -467,7 +467,7 @@ def _execute_permanent_object_intent(
         return 'pair', pair.pair_id
     if isinstance(intent, (GainControlIntent,GiveControlIntent)):
         return intent.object_ref, sink.gain_control_intent(intent)
-    if isinstance(intent, (GainControlSetIntent,RestoreOwnerControlIntent)):
+    if isinstance(intent, (GainControlSetIntent,GiveControlSetIntent,RestoreOwnerControlIntent)):
         return intent.actor, sink.gain_control_set_intent(intent)
     if isinstance(intent, CreateRegenerationShieldIntent):
         return (

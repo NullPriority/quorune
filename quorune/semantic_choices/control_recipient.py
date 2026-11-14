@@ -13,10 +13,10 @@ _RESPONSE={'recipient','action','action_id','a','cap','reason','plan','next','ch
 
 def _validate(effect):
     if (not isinstance(effect,Mapping) or set(effect)!=_FIELDS or effect['op']!=CHOOSE_CONTROL_RECIPIENT_OPERATION
-            or type(effect['schema_version']) is not int or effect['schema_version']!=1
+            or type(effect['schema_version']) is not int or effect['schema_version'] not in {1,2}
             or effect['opponent_only'] is not True or type(effect['player']) is not str or not effect['player']
             or effect['card'] is not None and (type(effect['card']) is not str or not effect['card'])):
-        raise SemanticChoiceError('Opponent control choice requires its closed source-bound fields')
+        raise SemanticChoiceError('Opponent control choice requires its closed versioned subject fields')
 
 
 @dataclass(frozen=True,slots=True)

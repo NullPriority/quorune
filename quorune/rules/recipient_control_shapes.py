@@ -1,7 +1,8 @@
 """Independent closure of a recipient, controlled subject and source role."""
 from collections.abc import Mapping
 from ..recipient_control_model import (RECIPIENT_CONTROL_CAPABILITY,RECIPIENT_CONTROL_MECHANIC,
-    GIVE_CONTROL_OPERATION,CHOOSE_CONTROL_RECIPIENT_OPERATION,validate_recipient_control_effect)
+    GIVE_CONTROL_OPERATION,CHOOSE_CONTROL_RECIPIENT_OPERATION,validate_recipient_control_effect,
+    GIVE_CONTROL_SET_OPERATION,validate_recipient_control_set_effect)
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed,direct_target_predicate_capabilities
 
 
@@ -12,7 +13,19 @@ def _player_schema(schema):
 def recipient_control_node_capabilities(*,effects,target_schema,mechanic_ids):
     if len(effects)!=1 or not {RECIPIENT_CONTROL_MECHANIC,'cr-611-continuous-effects'}<=set(mechanic_ids):return ()
     effect=effects[0]
+    if effect.get('op')==GIVE_CONTROL_SET_OPERATION:
+        try:validate_recipient_control_set_effect(effect)
+        except (TypeError,ValueError):return ()
+        if (effect['controller']!='$target.0' or effect['source']!='$source' or effect['exclude_source']!='$source.zone_object'
+                or 'cr-115-targets' not in mechanic_ids or not _player_schema(target_schema)):return ()
+        return (RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution','target.revalidate_resolution')
     if effect.get('op')==CHOOSE_CONTROL_RECIPIENT_OPERATION:
+        if effect.get('schema_version')==2:
+            expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':2,'player':'$controller','card':'$target.0','opponent_only':True}
+            if (dict(effect)!=expected or type(effect['schema_version']) is not int or effect['opponent_only'] is not True
+                    or 'cr-115-targets' not in mechanic_ids or not direct_permanent_target_schema_is_closed(target_schema)):return ()
+            return tuple(sorted({RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution','target.revalidate_resolution',
+                *direct_target_predicate_capabilities(target_schema)}))
         expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':1,'player':'$controller','card':'$source.zone_object','opponent_only':True}
         if dict(effect)!=expected or type(effect.get('schema_version')) is not int or effect.get('opponent_only') is not True or target_schema is not None:return ()
         return (RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution')
@@ -36,8 +49,9 @@ def recipient_control_node_capabilities(*,effects,target_schema,mechanic_ids):
 def recipient_control_runtime_dependencies(program):
     """Retain recipient authority from payloads even without coverage labels."""
     required=set()
-    def visit(value):
+    def visit(value,schema):
         if isinstance(value,Mapping):
+            if 'target_schema' in value:schema=value['target_schema']
             if value.get('op')==GIVE_CONTROL_OPERATION:
                 validate_recipient_control_effect(value)
                 if value['schema_version']==2:
@@ -49,12 +63,23 @@ def recipient_control_runtime_dependencies(program):
                     raise ValueError('Recipient control payload lost its subject or recipient role')
                 required.add(RECIPIENT_CONTROL_CAPABILITY)
             elif value.get('op')==CHOOSE_CONTROL_RECIPIENT_OPERATION:
-                expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':1,'player':'$controller','card':'$source.zone_object','opponent_only':True}
+                version=value.get('schema_version')
+                if type(version) is not int or version not in {1,2}:raise ValueError('Recipient control choice schema is unsupported')
+                card='$target.0' if version==2 else '$source.zone_object'
+                expected={'op':CHOOSE_CONTROL_RECIPIENT_OPERATION,'schema_version':version,'player':'$controller','card':card,'opponent_only':True}
                 if dict(value)!=expected or type(value['schema_version']) is not int or value['opponent_only'] is not True:
                     raise ValueError('Recipient control choice payload lost its bound scope')
+                if version==2 and not direct_permanent_target_schema_is_closed(schema):
+                    raise ValueError('Target-subject control choice lost its closed permanent target schema')
                 required.add(RECIPIENT_CONTROL_CAPABILITY)
-            for child in value.values():visit(child)
+            elif value.get('op')==GIVE_CONTROL_SET_OPERATION:
+                validate_recipient_control_set_effect(value)
+                if value['controller']!='$target.0' or value['source']!='$source' or value['exclude_source']!='$source.zone_object':
+                    raise ValueError('Recipient control set lost its recipient or original source')
+                if not _player_schema(schema):raise ValueError('Recipient control set lost its closed player target schema')
+                required.add(RECIPIENT_CONTROL_CAPABILITY)
+            for child in value.values():visit(child,schema)
         elif isinstance(value,(list,tuple)):
-            for child in value:visit(child)
-    visit((program.effects,program.target_schema))
+            for child in value:visit(child,schema)
+    visit((program.effects,program.target_schema),program.target_schema)
     return tuple(sorted(required))

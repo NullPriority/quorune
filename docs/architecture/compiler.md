@@ -3731,6 +3731,23 @@ of the giver alone does not end the gift. Payload-derived recipient requirements
 remain mandatory when coverage annotations are absent. The original acquiring-
 actor control instruction retains its existing field and principal contract.
 
+A targeted recipient can also acquire the resolving actor's current permanent
+set, excluding the original source incarnation. The closed `give_control_set`
+instruction snapshots that set through the existing battlefield query and
+commits through the same control batch. Source control changes do not change
+the resolving actor. A source that leaves and returns is a new object and can
+belong to the affected set. Attachments keep their existing recipients.
+
+Version two of the untargeted opponent choice carries a permanent target;
+version one remains source-bound. A complete mana-value draw followed by that
+handoff composes the existing target scalar reader with this choice. The
+resolving controller draws first, then chooses an opponent during resolution.
+The target's current mana value includes represented prototype characteristics
+and treats battlefield X as zero. Target revalidation and the choice's pinned
+incarnation prevent a returned or otherwise illegal subject from being given
+away. Missing recipient or scalar authority still fails closed without
+coverage labels.
+
 A removal followed by its target's controller gaining the source uses the
 existing bound target-result composition. Version two of `give_control` carries
 the closed target-controller information reference; version one retains its
