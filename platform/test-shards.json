@@ -689,6 +689,7 @@
       "test_intrinsic_death_return_permanents",
       "test_kicked_damage_replacements",
       "test_library_selection_knowledge",
+      "test_local_public_activation_prices",
       "test_mill_rules",
       "test_modal_token_programs",
       "test_modular_rules",

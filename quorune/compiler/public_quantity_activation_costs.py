@@ -7,7 +7,7 @@ import re
 
 from ..activation_cost_modifiers import (FixedActivationCostModifierSpec, ACTIVATION_GENERIC_COST_EVENT,
     PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_CAPABILITY,
-    ConditionalActivationReduction, ability_local_reduction_origin_is_supported,
+    ConditionalActivationReduction, AbilityLocalPublicManaAdjustment, ability_local_reduction_origin_is_supported,
     validate_ability_local_mana_reduction)
 from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
@@ -20,10 +20,12 @@ from .public_state_queries import fixed_battlefield_query_subject, fixed_public_
 from .activation_cost_modifier_templates import _modifier_subject
 from .public_characteristic_aggregates import public_characteristic_aggregate
 from .query_characteristic_templates import query_characteristic_quantity
+from ..util import mana_cost_to_vector
+from ..replacement.immutable import FrozenMap
 
 
 _ABILITY_LOCAL_REDUCTION = re.compile(
-    r'\.\s+This ability costs \{(?P<amount>[1-9][0-9]*|X)\} less to activate'
+    r'\.\s+This ability costs (?P<mana>(?:\{(?:[1-9][0-9]*|[WUBRGC]|X)\})+) (?P<direction>less|more) to activate'
     r'(?: for each (?P<count>[^.]+)| if (?P<condition>[^.]+)| during (?P<turn>your turn)'
     r'|, where X is (?P<aggregate>[^.]+))\.', re.I,
 )
@@ -42,7 +44,13 @@ def _activation_discount_quantity(text, *, source_name):
 
 
 def _activation_discount_operand(match, *, source_name):
-    amount = match['amount'].upper()
+    printed = match['mana'].upper()
+    amount = printed[1:-1] if re.fullmatch(r'\{(?:[1-9][0-9]*|X)\}', printed) else None
+    if match['direction'].casefold() == 'more':
+        quantity = _activation_discount_quantity(match['count'], source_name=source_name) if match['count'] else None
+        mana, complex_symbols = mana_cost_to_vector(printed)
+        if quantity is None or complex_symbols:return None
+        return AbilityLocalPublicManaAdjustment(FrozenMap(mana), 'increase', quantity=quantity)
     if match['count'] is not None and amount == '1':
         return _activation_discount_quantity(match['count'], source_name=source_name)
     if match['aggregate'] is not None and amount == 'X':
@@ -56,12 +64,18 @@ def _activation_discount_operand(match, *, source_name):
         quantity = _activation_discount_quantity('legendary creatures you control', source_name=source_name)
         condition = FixedPublicStateConditionSpec(FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
                                                   amount=1, quantity=quantity, schema_version=2)
-    return ConditionalActivationReduction(int(amount), condition) if condition is not None else None
+    if condition is None:return None
+    if amount is not None:
+        try:return ConditionalActivationReduction(int(amount), condition)
+        except ValueError:pass
+    mana, complex_symbols = mana_cost_to_vector(printed)
+    return (AbilityLocalPublicManaAdjustment(FrozenMap(mana), 'reduce', condition=condition)
+        if not complex_symbols else None)
 
 
 def compile_ability_local_mana_reduction(ability, *, source_name):
     material = ability.effect_text
-    if (' less to activate' not in material.casefold() or ability.mana_ability
+    if (not any(word in material.casefold() for word in (' less to activate', ' more to activate')) or ability.mana_ability
             or ability.complex_symbols
             or ability.mana_cost_options or ability.announced_x_symbols is not None
             or not ability.mana.get('GENERIC')):

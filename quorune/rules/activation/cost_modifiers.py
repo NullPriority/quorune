@@ -7,7 +7,7 @@ from dataclasses import replace
 from ...ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ...activation_cost_modifiers import (ACTIVATION_GENERIC_COST_EVENT, ACTIVATION_GENERIC_COST_HANDLER,
     TARGETED_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, ActivationCostModifierSource,
-    ConditionalActivationReduction, FixedActivationCostModifierSpec)
+    ConditionalActivationReduction, AbilityLocalPublicManaAdjustment, ActivationManaReduction, FixedActivationCostModifierSpec)
 from ...card_program_faces import program_matches_face
 from ...object_query import object_matches_query
 from ...public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
@@ -21,6 +21,11 @@ def _ability_local_mana_modifiers(host, seat, source, ability):
     if reduction is None:
         return []
     provider = source if source.controller == seat else replace(source, controller=seat)
+    if isinstance(reduction, AbilityLocalPublicManaAdjustment):
+        if reduction.direction == 'reduce':return []
+        from ...dynamic_characteristics import query_characteristic_count
+        count = query_characteristic_count(host, provider, reduction.quantity)
+        return [FixedActivationCostModifierSpec(reduction.mana['GENERIC'] * count, subject_relation='any')] if count else []
     if isinstance(reduction, ConditionalActivationReduction):
         from .public_state_conditions import current_activation_public_state_matches
 
@@ -34,6 +39,15 @@ def _ability_local_mana_modifiers(host, seat, source, ability):
 
         count = query_characteristic_count(host, provider, reduction)
     return [FixedActivationCostModifierSpec(-count, subject_relation='any')] if count else []
+
+
+def ability_local_mana_reductions(host, seat, source, ability):
+    reduction = getattr(ability, 'ability_local_mana_reduction', None)
+    if not isinstance(reduction, AbilityLocalPublicManaAdjustment) or reduction.direction != 'reduce':return ()
+    from .public_state_conditions import current_activation_public_state_matches
+    provider = source if source.controller == seat else replace(source, controller=seat)
+    return ((ActivationManaReduction(reduction.mana),)
+        if current_activation_public_state_matches(host, provider, reduction.condition) else ())
 
 
 def current_activation_cost_modifiers(host, seat, source, ability):

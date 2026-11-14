@@ -434,6 +434,17 @@ while the price is determined. A printed discard-source activation from hand
 can use a controlled battlefield count. The normal cost owner locks the
 generic reduction before mana abilities or other payments change that state.
 
+The version-two public adjustment retains an ordinary mana vector and a closed
+controller hand-size or current-turn draw threshold. A qualifying reduction
+can remove colored as well as generic mana. A generic increase can instead
+count the controller's entire hand without querying card identities. Both
+forms use the shared activation price owner, which applies increases before
+reductions and preserves mandatory targets, taps, timing and use limits.
+Actual draws in the current turn supply draw thresholds; another player's
+draws and earlier turns do not qualify. Historical quantity and condition
+descriptors retain their existing payloads. Identity-filtered hand queries,
+conditional increases and unrepresented predicates remain residuals.
+
 `compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
 face of a preparation card to closed inset instant or sorcery characteristics.
 The entry replacement and source-only preparation results require complete-card

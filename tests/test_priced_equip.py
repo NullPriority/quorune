@@ -38,7 +38,10 @@ class PricedEquipCompilerTests(unittest.TestCase):
                 'Equip {X}', 'Equip {2}. Invent an unknown result.'):
             self.assertIsNone(fixed_equip_ability_spec(text), text)
         registry = load_default_capability_registry()
-        for suffix in ('if you have one or fewer cards in hand.',
+        hand_price = replace(records.card_record('Equip {3}. This ability costs {1} less to activate if you have one or fewer cards in hand.',
+            type_line='Artifact — Equipment'), keywords=('Equip',))
+        self.assertEqual('exact', compile_oracle_card(hand_price, capability_registry=registry).status)
+        for suffix in ('if an opponent has one or fewer cards in hand.',
                 'for each other Equipment you control. Invent an unknown result.'):
             card = replace(records.card_record('Equip {3}. This ability costs {1} less to activate ' + suffix,
                 type_line='Artifact — Equipment'), keywords=('Equip',))

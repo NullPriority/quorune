@@ -2269,9 +2269,10 @@
     {
       "applicability": {
         "exclusions": [
-          "hidden-zone counts",
+          "identity-filtered hidden-zone counts",
           "target-dependent prices",
-          "unrepresented timing or sibling text"
+          "unrepresented timing or sibling text",
+          "conditional increases and unrepresented variable prices"
         ],
         "inputs": [
           "complete ordinary activated ability",
@@ -2279,16 +2280,17 @@
           "validated activation origin"
         ],
         "outputs": [
-          "same locked generic price for an offer and accepted activation",
-          "unchanged colored fees and mandatory nonmana costs"
+          "same locked ordinary mana price for an offer and accepted activation",
+          "all mandatory nonmana costs, target authority, timing and use limits retained",
+          "public hand size without identities and current-turn actual draws only"
         ],
-        "summary": "Determine a typed ability-local generic reduction from a fixed current public condition, a controlled statistic aggregate, or a controlled battlefield count for an ordinary discard-source activation from hand."
+        "summary": "Determine a typed ability-local generic reduction from a fixed current public condition, a controlled statistic aggregate, or a controlled battlefield count for an ordinary discard-source activation from hand. A version-two public adjustment reduces an ordinary mana vector at a controller hand-size or current-turn draw threshold, or increases generic mana per unqualified controller hand card. The same canonical pricing path locks increases before reductions."
       },
       "blockers": [],
       "dependencies": [
         "activation.mana_cost.ability_local_public_count"
       ],
-      "dependency_fail_closed_rationale": "A hidden or target-dependent query and an unsupported origin withhold this price. The cost and activation catalog must agree.",
+      "dependency_fail_closed_rationale": "Unsupported predicates and origins withhold the complete price; cost and catalog descriptors must agree and retain public-value authority independently of coverage labels.",
       "dependency_fail_closed_status": "passed",
       "id": "activation.mana_cost.ability_local_public_value",
       "implementation_components": [
@@ -2296,33 +2298,53 @@
         "quorune.semantic_runtime.activated_abilities.ability_local_mana_reduction_runtime_dependencies",
         "quorune.rules.activation.cost_modifiers.current_activation_cost_modifiers",
         "quorune.rules.activation.pricing.select_ordinary_activation_price",
-        "quorune.rules.activation.public_state_conditions.current_activation_public_state_matches"
+        "quorune.rules.activation.public_state_conditions.current_activation_public_state_matches",
+        "quorune.activation_cost_modifiers.AbilityLocalPublicManaAdjustment",
+        "quorune.rules.activation.cost_modifiers.ability_local_mana_reductions",
+        "quorune.rules.activation.pricing._ordinary_prices"
       ],
-      "implementation_mutation_rationale": "The original Sewer Crocodile witness detects a price incorrectly reduced by an always-true condition.",
+      "implementation_mutation_rationale": "The original Sewer Crocodile witness detects a price incorrectly reduced by an always-true condition. Fresh native hand-tax and conditional Equip witnesses also detect omitted own-hand increases and omitted ordinary-mana reductions.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_fixed_activation_reductions_read_own_current_permanents",
         "test_actual_crocodile_uses_distinct_graveyard_values_and_locks_before_mana",
         "test_actual_baru_reads_live_wurm_power_and_keeps_the_green_fee",
-        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price"
+        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price",
+        "test_actual_stone_prices_current_own_hand_then_pays_taps_and_draws_three",
+        "test_actual_anchor_locks_paid_cost_then_offers_free_equip_and_keeps_combat_loot",
+        "test_actual_kami_uses_third_controller_draw_removes_black_and_resets_next_turn"
       ],
       "multiplayer_tests": [
         "test_actual_fixed_activation_reductions_read_own_current_permanents",
         "test_actual_crocodile_uses_distinct_graveyard_values_and_locks_before_mana",
         "test_actual_baru_reads_live_wurm_power_and_keeps_the_green_fee",
-        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price"
+        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price",
+        "test_actual_stone_prices_current_own_hand_then_pays_taps_and_draws_three",
+        "test_actual_anchor_locks_paid_cost_then_offers_free_equip_and_keeps_combat_loot",
+        "test_actual_kami_uses_third_controller_draw_removes_black_and_resets_next_turn"
       ],
       "negative_tests": [
         "test_ability_local_public_value_roundtrips_and_rejects_open_conditions",
         "test_actual_fixed_activation_reductions_read_own_current_permanents",
         "test_actual_crocodile_uses_distinct_graveyard_values_and_locks_before_mana",
         "test_actual_baru_reads_live_wurm_power_and_keeps_the_green_fee",
-        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price"
+        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price",
+        "test_typed_adjustments_roundtrip_and_reject_hidden_counts_or_unknown_conditions",
+        "test_increases_precede_colored_reductions_and_both_minimum_orders_remain_legal",
+        "test_compiler_preserves_complete_cost_clauses_and_nearest_exclusions",
+        "test_originals_have_complete_normal_binding_and_independent_runtime_minima",
+        "test_fresh_hand_tax_and_conditional_reduction_omissions_are_killed",
+        "test_actual_stone_prices_current_own_hand_then_pays_taps_and_draws_three",
+        "test_actual_anchor_locks_paid_cost_then_offers_free_equip_and_keeps_combat_loot",
+        "test_actual_kami_uses_third_controller_draw_removes_black_and_resets_next_turn"
       ],
       "official_rules": [
         "109.5",
         "118.7",
         "118.7a",
+        "118.7b",
+        "121.2",
+        "402.3",
         "601.2f",
         "601.2g",
         "602.2b"
@@ -2332,16 +2354,29 @@
         "test_actual_fixed_activation_reductions_read_own_current_permanents",
         "test_actual_crocodile_uses_distinct_graveyard_values_and_locks_before_mana",
         "test_actual_baru_reads_live_wurm_power_and_keeps_the_green_fee",
-        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price"
+        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price",
+        "test_typed_adjustments_roundtrip_and_reject_hidden_counts_or_unknown_conditions",
+        "test_increases_precede_colored_reductions_and_both_minimum_orders_remain_legal",
+        "test_compiler_preserves_complete_cost_clauses_and_nearest_exclusions",
+        "test_originals_have_complete_normal_binding_and_independent_runtime_minima",
+        "test_actual_stone_prices_current_own_hand_then_pays_taps_and_draws_three",
+        "test_actual_anchor_locks_paid_cost_then_offers_free_equip_and_keeps_combat_loot",
+        "test_actual_kami_uses_third_controller_draw_removes_black_and_resets_next_turn"
       ],
       "privacy_tests": [
-        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price"
+        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price",
+        "test_actual_stone_prices_current_own_hand_then_pays_taps_and_draws_three",
+        "test_actual_anchor_locks_paid_cost_then_offers_free_equip_and_keeps_combat_loot",
+        "test_actual_kami_uses_third_controller_draw_removes_black_and_resets_next_turn"
       ],
       "replay_tests": [
         "test_actual_fixed_activation_reductions_read_own_current_permanents",
         "test_actual_crocodile_uses_distinct_graveyard_values_and_locks_before_mana",
         "test_actual_baru_reads_live_wurm_power_and_keeps_the_green_fee",
-        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price"
+        "test_actual_eiganjo_keeps_hand_discard_target_authority_and_public_price",
+        "test_actual_stone_prices_current_own_hand_then_pays_taps_and_draws_three",
+        "test_actual_anchor_locks_paid_cost_then_offers_free_equip_and_keeps_combat_loot",
+        "test_actual_kami_uses_third_controller_draw_removes_black_and_resets_next_turn"
       ],
       "required_evidence": [
         "positive",
@@ -2357,7 +2392,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -96197,7 +96232,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 864,
+  "registry_version": 865,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

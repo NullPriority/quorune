@@ -8,7 +8,7 @@ from ...activation_cost_modifiers import (
 )
 from ...activation_x import chosen_activation_x
 from ...replacement.immutable import FrozenMap
-from .cost_modifiers import current_activation_cost_modifiers
+from .cost_modifiers import current_activation_cost_modifiers, ability_local_mana_reductions
 from .targeted_costs import activation_modifier_witnesses
 
 
@@ -23,7 +23,8 @@ def _ordinary_prices(host, seat, source, ability, modifiers, response=None):
     coefficient = ability.generic_reduction_per_legendary_creature
     reduction = coefficient * max(0, host._legendary_creatures_controlled(seat)) if coefficient else 0
     prices = activation_cost_prices(base, modifiers,
-        own_reductions=(ActivationManaReduction(FrozenMap({'GENERIC': reduction})),))
+        own_reductions=(ActivationManaReduction(FrozenMap({'GENERIC': reduction})),
+            *ability_local_mana_reductions(host, seat, source, ability)))
     return prices, value, modifiers
 
 
