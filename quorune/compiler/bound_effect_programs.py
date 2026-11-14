@@ -275,10 +275,18 @@ def _single_target_reference(text: str, compile_component: ComponentCompiler, *,
         if first[0] is None or not _public_single_target(schema):
             continue
         assert schema is not None
-        if conditional_tail is not None and (
-            clauses[-1] != conditional_tail[0] or not _target_type_is_guaranteed(schema, "creature")
-        ):
-            continue
+        if conditional_tail is not None:
+            if clauses[-1] != conditional_tail[0] or schema.get("categories") != ["permanent"]:
+                continue
+            if not _target_type_is_guaranteed(schema, "creature"):
+                from ..rules.temporary_target_interactions import TargetConditionSpec
+                try:
+                    conditions = tuple(TargetConditionSpec.from_dict(effect.get("target_condition"))
+                                       for effect in conditional_tail[1][1])
+                except (TypeError, ValueError):
+                    continue
+                if not conditions or not all(condition.guarantees_creature for condition in conditions):
+                    continue
         if len(clauses) == 2:
             tail = _target_controller_damage_tail(first, clauses[1], compile_component)
             if tail is not None:

@@ -9,6 +9,16 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Additive current-target trait riders preserve the target domain established by
+the first instruction. Canonical subtype alternatives and the existing public
+creature, artifact-creature, token, legendary, counter, and enchantment predicates
+feed the existing target-condition model. A broad permanent target requires an
+explicit creature-only proof before a creature result is lowered. Conditions
+read current information when reached; a resulting temporary grant remains
+bound to that incarnation until its normal duration ends. The earlier subtype
+stat production keeps its payload and identity. `Instead`, paired-creature
+references, additional targets, and unowned predicates remain separate.
+
 A source Equipment attachment can be followed by fixed temporary characteristics
 or tap state for the same chosen creature. The attachment owner first validates
 its existing scalar target codec; an equivalent typed creature predicate then

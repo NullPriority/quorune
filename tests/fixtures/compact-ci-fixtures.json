@@ -401,6 +401,17 @@
       "rationale": "The explicit admitted and excluded tables register complete original Equipment sources from this pinned fixture; every original and unsupported sibling remains present.",
       "source": "tests/test_attachment_followup_bindings.py",
       "symbol": "AttachmentFollowupRegistrationTests.test_complete_originals_admit_only_the_closed_direct_followups"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/conditional-target-characteristic-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Explicit positive and separate-neighbor tables register complete pinned original records owned by this fixture; no unsupported sibling is removed.",
+      "source": "tests/test_conditional_target_characteristics.py",
+      "symbol": "ConditionalTargetCharacteristicRegistrationTests.test_full_original_sources_close_and_different_referents_remain_material"
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",
@@ -409,6 +420,7 @@
     "tests/fixtures/ability-label-composition-cards.json",
     "tests/fixtures/ability-source-counter-cards.json",
     "tests/fixtures/activated-self-transform-cards.json",
+    "tests/fixtures/activation-paid-result-slot-cards.json",
     "tests/fixtures/activation-paid-sacrifice-stat-cards.json",
     "tests/fixtures/activation-public-state-cards.json",
     "tests/fixtures/activation-restriction-material-cards.json",
@@ -544,6 +556,7 @@
     "tests/fixtures/conditional-reanimation-entry-counter-cards.json",
     "tests/fixtures/conditional-receiver-union-cards.json",
     "tests/fixtures/conditional-recipient-cards.json",
+    "tests/fixtures/conditional-target-characteristic-cards.json",
     "tests/fixtures/conditioned-multi-event-cards.json",
     "tests/fixtures/controlled-counter-cost-cards.json",
     "tests/fixtures/controlled-keyword-target-cards.json",

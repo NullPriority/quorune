@@ -129,9 +129,9 @@ class AttachmentFollowupRegistrationTests(unittest.TestCase):
         admitted = (
             "Squire's Lightblade", "Barbed Bloodletter", "Quick-Draw Dagger", "Celestial Armor",
             "Stolen Stark Tech", "Super Suit", "Twin Blades", "Galadhrim Bow", "Silver Shroud Costume",
-            "Bladed Battle-Fan", "Illvoi Light Jammer", "Coral Sword", "Hidden Footblade",
+            "Bladed Battle-Fan", "Illvoi Light Jammer", "Coral Sword", "Hidden Footblade", "Hidden Blade",
         )
-        excluded = ("Hidden Blade", "Phantom Blade", "Novel Nunchaku", "Hunter's Bow", "Assassin Gauntlet")
+        excluded = ("Phantom Blade", "Novel Nunchaku", "Hunter's Bow", "Assassin Gauntlet")
         registry = load_default_capability_registry()
         semantics = SemanticRegistry()
         with tempfile.TemporaryDirectory() as directory:

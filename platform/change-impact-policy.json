@@ -15072,6 +15072,38 @@
         "test_paid_sacrifice_creature_stats",
         "test_scalar_effect_amounts"
       ]
+    },
+    {
+      "id": "conditional-current-target-characteristics",
+      "patterns": [
+        "quorune/compiler/temporary_target_interactions.py",
+        "quorune/compiler/bound_effect_programs.py",
+        "quorune/rules/temporary_target_interactions.py",
+        "tests/test_conditional_target_characteristics.py",
+        "tests/fixtures/conditional-target-characteristic-cards.json"
+      ],
+      "test_modules": [
+        "test_conditional_target_characteristics",
+        "test_temporary_target_interactions",
+        "test_bound_effect_programs",
+        "test_attachment_followup_bindings",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "activation-paid-creature-stat-result-slots",
+      "patterns": [
+        "quorune/compiler/activation_paid_sacrifice_results.py",
+        "quorune/rules/activation/paid_characteristic_results.py",
+        "tests/test_activation_paid_result_slots.py",
+        "tests/fixtures/activation-paid-result-slot-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_paid_result_slots",
+        "test_activation_paid_sacrifice_stats",
+        "test_paid_sacrifice_creature_stats",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
