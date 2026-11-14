@@ -216,6 +216,12 @@ reproduced defects and keep each fix and its evidence independently reviewable.
 Resolve release blockers before merging affected work. Continue building card
 support when no defect batch is ready.
 
+Use certification waits for private card implementation and focused evidence.
+Keep a reproduced, reviewable defect queue so the next defect batch is ready
+without repeatedly interrupting card delivery for individual repairs. Measure
+throughput by retained whole-card gains per elapsed day, including time spent
+on defects, generation, certification and rework.
+
 Create Slot B from verified `origin/main` while Slot A is running:
 
 ```powershell

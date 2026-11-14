@@ -262,6 +262,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'conditional-library-search-placement':('library.search.conditional_placement',),
     'sequential-public-conditions':('resolution.effect_program.sequential_public_conditions',),
     'fixed-recipient-control':('continuous.control.fixed_recipient',),
     'public-player-unique-maximum':('condition.player.unique_maximum',),
@@ -527,6 +528,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'ordered-graveyard-library-targets',
         'fixed-untargeted-land-untap',
         'fixed-recipient-control',
+        'conditional-library-search-placement',
         'sequential-public-conditions',
         'public-player-unique-maximum',
         'fixed-owner-control-restoration',

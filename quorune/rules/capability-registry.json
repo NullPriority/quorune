@@ -52836,6 +52836,109 @@
     {
       "applicability": {
         "exclusions": [
+          "multiple found-card allocation, alternate destinations or unrepresented predicates",
+          "source-relative conditions or unknown result siblings"
+        ],
+        "inputs": [
+          "closed single permanent selector and hand fallback",
+          "public resolution condition or selected-card mana-value/type predicate",
+          "original searching actor and original chosen object"
+        ],
+        "outputs": [
+          "one reached branch materialized as the existing search effect",
+          "ordinary reveal/movement/replacement and exactly one final shuffle",
+          "no search/shuffle on outer optional decline"
+        ],
+        "summary": "One revealed library selection followed by closed conditional battlefield-or-hand placement."
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.search.fixed_counted"
+      ],
+      "dependency_fail_closed_rationale": "Search schema4 has a complete conditional descriptor; payload-derived minimums require placement, base search and conditional-comparator authority even without coverage.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.search.conditional_placement",
+      "implementation_components": [
+        "quorune.conditional_search_model.ConditionalSearchSpec",
+        "quorune.conditional_search_placement.materialize_conditional_search",
+        "quorune.compiler.conditional_search_templates.conditional_search_effect_template",
+        "quorune.selection.searching.HiddenSearchOwnerMixin._complete_semantic_search"
+      ],
+      "implementation_mutation_rationale": "A fresh original Stoic witness kills forcing a reached battlefield result back into hand.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_current_placement_is_read_after_response_and_uses_the_original_actor",
+        "test_optional_decline_and_failure_to_find_have_different_shuffle_results",
+        "test_original_archdruid_other_modes_keep_counter_current_power_damage_and_exile",
+        "test_original_archdruid_search_mode_places_land_tapped_and_creature_in_hand",
+        "test_original_guidelight_found_mana_value_two_vs_three_controls_placement",
+        "test_original_stoic_farmer_searches_even_when_condition_false_and_preserves_both_destinations"
+      ],
+      "multiplayer_tests": [
+        "test_current_placement_is_read_after_response_and_uses_the_original_actor",
+        "test_optional_decline_and_failure_to_find_have_different_shuffle_results",
+        "test_original_archdruid_other_modes_keep_counter_current_power_damage_and_exile",
+        "test_original_archdruid_search_mode_places_land_tapped_and_creature_in_hand",
+        "test_original_guidelight_found_mana_value_two_vs_three_controls_placement",
+        "test_original_stoic_farmer_searches_even_when_condition_false_and_preserves_both_destinations"
+      ],
+      "negative_tests": [
+        "test_conditional_payload_round_trips_and_old_search_versions_remain_closed",
+        "test_conditional_search_authority_and_comparator_are_required_without_coverage"
+      ],
+      "official_rules": [
+        "109.5",
+        "202.3e",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "701.23a",
+        "701.23b",
+        "701.23c"
+      ],
+      "positive_tests": [
+        "test_conditional_payload_round_trips_and_old_search_versions_remain_closed",
+        "test_original_archdruid_other_modes_keep_counter_current_power_damage_and_exile",
+        "test_original_archdruid_search_mode_places_land_tapped_and_creature_in_hand",
+        "test_original_stoic_farmer_searches_even_when_condition_false_and_preserves_both_destinations",
+        "test_selected_card_predicates_and_unknown_search_siblings_are_closed"
+      ],
+      "privacy_tests": [
+        "test_current_placement_is_read_after_response_and_uses_the_original_actor",
+        "test_optional_decline_and_failure_to_find_have_different_shuffle_results",
+        "test_original_archdruid_other_modes_keep_counter_current_power_damage_and_exile",
+        "test_original_archdruid_search_mode_places_land_tapped_and_creature_in_hand",
+        "test_original_guidelight_found_mana_value_two_vs_three_controls_placement",
+        "test_original_stoic_farmer_searches_even_when_condition_false_and_preserves_both_destinations"
+      ],
+      "replay_tests": [
+        "test_current_placement_is_read_after_response_and_uses_the_original_actor",
+        "test_optional_decline_and_failure_to_find_have_different_shuffle_results",
+        "test_original_archdruid_other_modes_keep_counter_current_power_damage_and_exile",
+        "test_original_archdruid_search_mode_places_land_tapped_and_creature_in_hand",
+        "test_original_guidelight_found_mana_value_two_vs_three_controls_placement",
+        "test_original_stoic_farmer_searches_even_when_condition_false_and_preserves_both_destinations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "independent counts for the individual alternatives",
           "nested disjunctions and open qualifiers",
           "split destinations and nonland multi-card battlefield results",
@@ -95586,7 +95689,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 858,
+  "registry_version": 859,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

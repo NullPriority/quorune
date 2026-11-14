@@ -1431,6 +1431,7 @@
       "test_composite_quoted_grants",
       "test_conditional_flash",
       "test_conditional_free_casts",
+      "test_conditional_search_placement",
       "test_controller_sacrifices",
       "test_created_token_counters",
       "test_declare_blockers_rules",

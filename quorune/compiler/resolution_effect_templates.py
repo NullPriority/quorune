@@ -239,6 +239,9 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .conditional_search_templates import conditional_search_effect_template
+    conditional_search=conditional_search_effect_template(text,source_name='This source')
+    if conditional_search is not None:return conditional_search
     from .graveyard_copy_cast_templates import graveyard_copy_cast_template
     from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
     from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template

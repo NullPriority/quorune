@@ -554,7 +554,7 @@ class HiddenSearchOwnerMixin:
                 ),
             },
         }
-        if entry_choice and str(effect.get("destination")) == "battlefield":
+        if entry_choice and (str(effect.get("destination")) == "battlefield" or effect.get('schema_version')==4):
             choice_schema["entry_pay_life"] = "boolean"
             choice_schema["example"]["entry_pay_life"] = False
         return choice_schema
@@ -1263,6 +1263,8 @@ class HiddenSearchOwnerMixin:
     def _complete_semantic_search(self, decision: Any) -> None:
         context = self._semantic_search_completion_context(decision)
         values, search_zones = self._semantic_search_selected_values(context)
+        from ..conditional_search_placement import materialize_conditional_search
+        context=materialize_conditional_search(self,context,values)
         destination_spec, destination, position = (
             self._semantic_search_destination(context.effect)
         )

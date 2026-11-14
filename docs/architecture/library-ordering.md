@@ -308,6 +308,23 @@ search shuffles once.
 The version-three selector carries the separate branches. The original
 version-two form retains its single predicate.
 
+## Searches with conditional placement
+
+A version-four single-card search reveals the selected permanent card and
+chooses between the battlefield and hand when placement is reached. The
+typed predicate reads the selected card's mana value or type, or a supported
+current public-state condition relative to the original searching player.
+Changing control of the source does not change that player. A false placement
+condition still permits the search and puts a found card into hand.
+
+The existing search owner validates the private selection and materializes
+the destination before entering its shared zone transaction. A replacement
+choice resumes that materialized result. Reveal, tapped entry, shuffle,
+rollback and replay retain their existing owners. Declining an optional
+search does not shuffle; searching for a stated quality and finding nothing
+does. Other placement branches and unsupported condition bindings remain
+explicit compiler boundaries.
+
 ## Library search restrictions
 
 `LibrarySearchRuleSpec` represents current source prohibitions and fixed
