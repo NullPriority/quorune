@@ -1,11 +1,18 @@
 """Prove both replacement branches through existing fixed result owners."""
 
 from ..conditional_target_preparation import preparation_branch_capabilities
+from ..object_query import ObjectQueryResult, object_matches_query
 from ..replacement.immutable import thaw_value
 from ..target_replacement_model import (
     CURRENT_TARGET_REPLACEMENT_CAPABILITY, CURRENT_TARGET_REPLACEMENT_MECHANIC,
     validate_current_target_replacement,
 )
+
+
+def current_target_replacement_matches(condition, row):
+    if condition.scope != "target" or not isinstance(row, ObjectQueryResult):
+        raise ValueError("A current target predicate requires typed public characteristics")
+    return any(object_matches_query(row, query) for query in condition.queries_any)
 
 
 def current_target_replacement_branch_capabilities(effects, mechanics, binding, *, subject="$target.0"):

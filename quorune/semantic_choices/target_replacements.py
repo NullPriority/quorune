@@ -1,7 +1,7 @@
 """Choose exactly one replacement branch from the immutable current query."""
 
 from ..replacement.immutable import FrozenMap
-from ..rules.target_replacements import current_target_replacement_branch_capabilities
+from ..rules.target_replacements import current_target_replacement_branch_capabilities, current_target_replacement_matches
 from ..target_replacement_model import validate_current_target_replacement
 from .model import AutoContinue, SemanticChoiceError, SemanticChoicePreparation
 
@@ -21,7 +21,7 @@ def prepare_current_target_replacement(effect, context):
             branch = ()
         else:
             matched = (context.query.resolution_condition_matches(condition.to_dict())
-                       if condition.scope == "night" else condition.matches(row))
+                       if condition.scope == "night" else current_target_replacement_matches(condition, row))
             branch = effects if matched else effect["otherwise_effects"]
         return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
             auto_continue=AutoContinue(reason="current target self-replacement",

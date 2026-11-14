@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from .conditional_target_preparation_model import preparation_results_are_closed
 from .creature_subtypes import canonical_creature_subtype
 from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
-from .object_query import ObjectQueryResult, object_matches_query
 from .replacement.immutable import thaw_value
 
 CURRENT_TARGET_REPLACEMENT_VERSION = 17
@@ -58,12 +57,6 @@ class TargetReplacementCondition:
         if not isinstance(value["queries_any"], (list, tuple)):
             raise ValueError("Current target predicates require an array of typed queries")
         return cls(value["scope"], tuple(ObjectQuerySpec.from_dict(query) for query in value["queries_any"]))
-
-    def matches(self, row: ObjectQueryResult) -> bool:
-        if self.scope != "target" or not isinstance(row, ObjectQueryResult):
-            raise ValueError("A current target predicate requires typed public characteristics")
-        return any(object_matches_query(row, query) for query in self.queries_any)
-
 
 def validate_current_target_replacement(effect):
     fields = {"op", "schema_version", "player", "condition", "condition_target", "target_binding",

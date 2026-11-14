@@ -276,9 +276,8 @@ class CurrentTargetReplacementRuntimeTests(unittest.TestCase):
         self.replay(session, load=True)
 
     def test_runtime_branch_omission_mutant_is_killed(self):
-        from quorune.target_replacement_model import TargetReplacementCondition
         session, spell, target, _, _ = self.setup_spell(294160, "Flare of Faith", "Generic Conditional Construct")
-        with patch.object(TargetReplacementCondition, "matches", return_value=True):
+        with patch("quorune.semantic_choices.target_replacements.current_target_replacement_matches", return_value=True):
             self.cast_offered(session, spell, targets=(target.ref,))
             self.assertIsNone(self.resolve(session))
             with self.assertRaises(AssertionError):
