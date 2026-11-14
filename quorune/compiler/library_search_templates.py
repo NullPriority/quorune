@@ -304,6 +304,7 @@ def fixed_counted_library_search_effect_template(
     text: str,
 ) -> FixedCountedLibrarySearchTemplate | None:
     normalized = " ".join(text.strip().split())
+    normalized = re.sub(r'^Search your library for any card(?=,)', 'Search your library for a card', normalized, flags=re.I)
     match = _COUNTED_MOVE.fullmatch(normalized) or _COUNTED_TOP.fullmatch(normalized)
     if match is None:
         return None

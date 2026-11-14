@@ -162,6 +162,16 @@ def resolution_condition_node_capabilities(
 
 
 def bound_resolution_condition_runtime_dependencies(program):
+    if any(e.get('op') == RESOLUTION_CONDITION_OPERATION and e.get('schema_version') == 3 for e in program.effects):
+        mechanics = {RESOLUTION_CONDITION_MECHANIC, *program.coverage}
+        for effect in program.effects:
+            if effect.get('op') == RESOLUTION_CONDITION_OPERATION:
+                for field in ('mechanic_ids', 'otherwise_mechanic_ids', 'prefix_mechanic_ids'):
+                    mechanics.update(effect.get(field, ()))
+        dependencies = resolution_condition_node_capabilities(effects=program.effects, target_schema=program.target_schema,
+            mechanic_ids=mechanics, cost_schema=program.cost_schema)
+        if not dependencies:raise ValueError('Public self-replacement requires complete branches and controller binding')
+        return dependencies
     bound_versions = {5, 8, 9, 10, 11, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION}
     if not any(effect.get("op") == RESOLUTION_CONDITION_OPERATION and effect.get("schema_version") in bound_versions
                for effect in program.effects):

@@ -46,6 +46,9 @@ def _replacement_component(alternative, normal, compile_component,source_name):
 
 
 def kicked_self_replacement_template(text, *, source_name,compile_component):
+    from .procedure_variants import literal_procedure_variant
+    procedure = literal_procedure_variant(text)
+    if procedure is not None and procedure.condition.casefold() == 'this spell was kicked':text = procedure.expanded()
     positions=_top_level_positions(text.strip(),'If ')
     if positions is None or len(positions)!=1:
         return None

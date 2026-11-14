@@ -95,6 +95,57 @@
       "type_line": "Sorcery"
     },
     {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Fight",
+        "Bargain"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}",
+      "name": "Agatha's Champion",
+      "oracle_id": "debdfab7-454f-4fec-9ee8-aa5b570ea7fb",
+      "oracle_text": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nTrample\nWhen this creature enters, if it was bargained, it fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2023-09-08",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Human Knight"
+    },
+    {
       "cmc": 4.0,
       "color_identity": [],
       "colors": [],
@@ -1495,6 +1546,29 @@
       "type_line": "Creature \u2014 Lizard"
     },
     {
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "name": "Cremate",
+      "mana_cost": "{B}",
+      "type_line": "Instant",
+      "oracle_text": "Exile target card from a graveyard.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "cmc": 1.0,
+      "card_faces": []
+    },
+    {
       "cmc": 3.0,
       "color_identity": [],
       "colors": [],
@@ -1719,6 +1793,105 @@
       "released_at": "2010-10-01",
       "toughness": "1",
       "type_line": "Artifact Creature \u2014 Myr"
+    },
+    {
+      "oracle_id": "2e0b838d-c858-4aa5-999e-c4ef9d29571b",
+      "name": "Demon of Catastrophes",
+      "mana_cost": "{2}{B}{B}",
+      "cmc": 4.0,
+      "type_line": "Creature \u2014 Demon",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nFlying, trample",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "712e3479-722c-40a1-9b61-d5bdde93042b",
+      "name": "Demonic Counsel",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for a Demon card, reveal it, put it into your hand, then shuffle.\nDelirium \u2014 If there are four or more card types among cards in your graveyard, instead search your library for any card, put it into your hand, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Delirium"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     },
     {
       "cmc": 3.0,
@@ -2063,6 +2236,55 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Bargain"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Farsight Ritual",
+      "oracle_id": "7de66ba3-6e97-4e0a-928e-7ce45dee278b",
+      "oracle_text": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nLook at the top four cards of your library. If this spell was bargained, look at the top eight cards of your library instead. Put two of them into your hand and the rest on the bottom of your library in a random order.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-09-08",
+      "toughness": null,
+      "type_line": "Instant"
     },
     {
       "cmc": 4.0,
@@ -4520,6 +4742,149 @@
       }
     },
     {
+      "oracle_id": "e83236f8-1c45-4d31-8937-1c76db549955",
+      "name": "Nissa's Pilgrimage",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for up to two basic Forest cards, reveal those cards, and put one onto the battlefield tapped and the rest into your hand. Then shuffle.\nSpell mastery \u2014 If there are two or more instant and/or sorcery cards in your graveyard, search your library for up to three basic Forest cards instead of two.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Spell mastery"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8d4ef98d-228e-41ff-9133-53f0987e58d8",
+      "name": "Nissa's Triumph",
+      "mana_cost": "{G}{G}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for up to two basic Forest cards. If you control a Nissa planeswalker, instead search your library for up to three land cards. Reveal those cards, put them into your hand, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b0f36bf7-bdde-4576-9eca-ec02d41326ab",
+      "name": "Nissa, Voice of Zendikar",
+      "mana_cost": "{1}{G}{G}",
+      "cmc": 3.0,
+      "type_line": "Legendary Planeswalker \u2014 Nissa",
+      "oracle_text": "+1: Create a 0/1 green Plant creature token.\n\u22122: Put a +1/+1 counter on each creature you control.\n\u22127: You gain X life and draw X cards, where X is the number of lands you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "3",
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-09-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "cmc": 6.0,
       "color_identity": [
         "U"
@@ -4855,6 +5220,55 @@
       "released_at": "2020-11-20",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "oracle_id": "ce6f3c67-8806-416d-9156-6f5bb63d5f4c",
+      "name": "Reclaim the Wastes",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nSearch your library for a basic land card, reveal it, put it into your hand, then shuffle. If this spell was kicked, search your library for two basic land cards instead of one.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Kicker"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     },
     {
       "cmc": 2.0,
@@ -5646,6 +6060,53 @@
       "type_line": "Legendary Creature \u2014 Sliver"
     },
     {
+      "oracle_id": "5f0d3be8-e63e-4ade-ae58-6b0c14f2ce6d",
+      "name": "Snow-Covered Forest",
+      "mana_cost": "",
+      "type_line": "Basic Snow Land \u2014 Forest",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
       "cmc": 0.0,
       "color_identity": [
         "W"
@@ -6081,6 +6542,55 @@
       "released_at": "2001-02-05",
       "toughness": "4",
       "type_line": "Legendary Creature \u2014 Minotaur Warrior"
+    },
+    {
+      "oracle_id": "f413a83d-a40d-434c-b20a-4c707c0527fa",
+      "name": "Temple Garden",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land \u2014 Forest Plains",
+      "oracle_text": "({T}: Add {G} or {W}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     },
     {
       "card_faces": [

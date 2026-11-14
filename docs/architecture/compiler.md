@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Count-only search replacements and shared library-procedure tails lower to
+two complete literal procedures before their existing condition owner selects
+a branch. Reveal, placement, selected-card count, remainder order and shuffle
+remain part of each validated procedure. The original search count must match
+an explicit `instead of` reference. Public conditions read current state;
+Kicker and Bargain retain their sealed casting declarations, including copies.
+Unknown tails or independently requested slots remain material.
+
 Conditional preparation of a creature target lowers separately from its
 following fight or one-way power damage. The version-sixteen wrapper binds
 the first target and a current controller, target-characteristic, or night

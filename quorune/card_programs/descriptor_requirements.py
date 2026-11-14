@@ -11,6 +11,11 @@ from ..resolution_characteristic_model import (
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    if value.get('op') == 'fixed_library_selection':
+        from ..rules.library_selection_capability_shapes import fixed_library_selection_node_capabilities
+        owners = fixed_library_selection_node_capabilities(effects=(value,), target_schema=None, mechanic_ids=('fixed-library-selection',))
+        if not owners:raise ValueError('Fixed library selection requires its complete owned descriptor')
+        return owners
     if 'mana_value_filter' in value:
         from ..mana_value_filter import ManaValueFilter
         return ManaValueFilter.from_dict(value['mana_value_filter']).capability_dependencies

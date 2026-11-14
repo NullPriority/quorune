@@ -1473,6 +1473,7 @@
       "test_player_maximum_control",
       "test_player_target_protection",
       "test_predefined_token_view_equivalence",
+      "test_procedure_variants",
       "test_public_any_counters",
       "test_public_compositions",
       "test_qualified_public_history",

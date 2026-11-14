@@ -7175,6 +7175,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/procedure_variants.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/program_composition.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -27823,5 +27838,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "6ce57f3ef9ac633eff375ff1ab8166e614af1ce00d621df197550ffc100ef7e7"
+  "fingerprint": "66e5e2f9c8ee7235db288ae522bbcdcc2caa728c0c1ae08160f75c1e85fccfb3"
 }
