@@ -9,6 +9,17 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Reciprocal source and target power damage lowers to two ordered damage
+instructions. Each instruction reads its own source's power when reached;
+the first instruction retains the original ability source's last known
+information after departure. Damage, prevention, replacement and continuation
+use their ordinary owners. The version-four return instruction binds its
+recipient to the original source incarnation supplied by the interpreter;
+a blink cannot redirect that damage to the returned permanent.
+This production preserves the difference from
+Fight's simultaneous damage and source-presence requirement. Optional pairs,
+intervening source-presence conditions and unconsumed siblings remain material.
+
 An explicit source characteristic clause can be followed by `Tap it` or
 `Untap it`. The compiler binds that pronoun to the same source incarnation,
 then delegates both complete clauses to their existing characteristic and

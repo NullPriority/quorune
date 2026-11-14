@@ -1478,6 +1478,7 @@
       "test_receiver_query_unions",
       "test_recipient_control",
       "test_recipient_control_sets",
+      "test_reciprocal_power_damage",
       "test_ring_temptation_choices",
       "test_ring_temptation_model",
       "test_selected_counter_costs",

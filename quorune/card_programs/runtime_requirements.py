@@ -305,6 +305,11 @@ def _value_runtime_requirements(program):
     values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
     required = set(characteristic_quantity_capabilities((*values, program.event_condition)))
     blockers = set()
+    from ..reciprocal_power_damage import reciprocal_power_damage_runtime_dependencies
+    try:
+        required.update(reciprocal_power_damage_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_reciprocal_power_damage:invalid:{exc}')
     from ..rules.stack_counter_followup import stack_counter_followup_runtime_dependencies
     try:
         required.update(stack_counter_followup_runtime_dependencies(program))

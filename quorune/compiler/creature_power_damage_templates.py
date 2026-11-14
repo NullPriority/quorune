@@ -603,6 +603,10 @@ def fixed_creature_power_damage_effect_template(
 ) -> FixedCreaturePowerDamageTemplate | None:
     """Lower one closed Fight or creature-power damage instruction."""
 
+    from .reciprocal_power_damage import reciprocal_power_damage_template
+    reciprocal = reciprocal_power_damage_template(text, card_name=card_name, allow_source_pronoun=allow_source_pronoun)
+    if reciprocal is not None:
+        return reciprocal
     normalized = " ".join(_REMINDER.sub("", text).split())
     stat_prep = _STAT_PREP_FIGHT.fullmatch(normalized)
     if stat_prep is not None:

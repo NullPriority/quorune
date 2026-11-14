@@ -429,28 +429,18 @@
       "type_line": "Creature \u2014 Goblin"
     },
     {
-      "oracle_id": "020de6d7-f5a2-4036-ad25-451e5977b4d4",
-      "name": "Beza, the Bounding Spring",
-      "mana_cost": "{2}{W}{W}",
       "cmc": 4.0,
-      "type_line": "Legendary Creature \u2014 Elemental Elk",
-      "oracle_text": "When Beza enters, create a Treasure token if an opponent controls more lands than you. You gain 4 life if an opponent has more life than you. Create two 1/1 blue Fish creature tokens if an opponent controls more creatures than you. Draw a card if an opponent has more cards in hand than you.",
-      "power": "4",
-      "toughness": "5",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Treasure"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2024-08-02",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -475,7 +465,17 @@
         "timeless": "legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Beza, the Bounding Spring",
+      "oracle_id": "020de6d7-f5a2-4036-ad25-451e5977b4d4",
+      "oracle_text": "When Beza enters, create a Treasure token if an opponent controls more lands than you. You gain 4 life if an opponent has more life than you. Create two 1/1 blue Fish creature tokens if an opponent controls more creatures than you. Draw a card if an opponent has more cards in hand than you.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-08-02",
+      "toughness": "5",
+      "type_line": "Legendary Creature \u2014 Elemental Elk"
     },
     {
       "cmc": 2.0,
@@ -870,28 +870,18 @@
       "type_line": "Creature \u2014 Human"
     },
     {
-      "oracle_id": "18f0cd0b-3e4f-4637-a62e-75dd1b2f3fce",
-      "name": "Claim Jumper",
-      "mana_cost": "{2}{W}",
       "cmc": 3.0,
-      "type_line": "Creature \u2014 Rabbit Mercenary",
-      "oracle_text": "Vigilance\nWhen this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card and put it onto the battlefield tapped. Then if an opponent controls more lands than you, repeat this process once. If you search your library this way, shuffle.",
-      "power": "3",
-      "toughness": "3",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Vigilance"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2026-04-24",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -916,7 +906,17 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Claim Jumper",
+      "oracle_id": "18f0cd0b-3e4f-4637-a62e-75dd1b2f3fce",
+      "oracle_text": "Vigilance\nWhen this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card and put it onto the battlefield tapped. Then if an opponent controls more lands than you, repeat this process once. If you search your library this way, shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Rabbit Mercenary"
     },
     {
       "cmc": 1.0,
@@ -1056,28 +1056,18 @@
       "type_line": "Land"
     },
     {
-      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
-      "name": "Control Magic",
-      "mana_cost": "{2}{U}{U}",
       "cmc": 4.0,
-      "type_line": "Enchantment \u2014 Aura",
-      "oracle_text": "Enchant creature\nYou control enchanted creature.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "U"
-      ],
       "color_identity": [
         "U"
       ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
       "keywords": [
         "Enchant"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2017-06-09",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -1102,7 +1092,17 @@
         "timeless": "legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Control Magic",
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-06-09",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
     },
     {
       "cmc": 2.0,
@@ -1390,21 +1390,13 @@
       "type_line": "Enchantment \u2014 Aura"
     },
     {
-      "oracle_id": "a2529491-7389-4cfa-92d2-145eda779603",
-      "name": "Darksteel Ingot",
-      "mana_cost": "{3}",
       "cmc": 3.0,
-      "type_line": "Artifact",
-      "oracle_text": "Indestructible (Effects that say \"destroy\" don't destroy this artifact.)\n{T}: Add one mana of any color.",
-      "power": null,
-      "toughness": null,
-      "colors": [],
       "color_identity": [],
+      "colors": [],
       "keywords": [
         "Indestructible"
       ],
       "layout": "normal",
-      "released_at": "2024-04-19",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -1429,7 +1421,15 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "mana_cost": "{3}",
+      "name": "Darksteel Ingot",
+      "oracle_id": "a2529491-7389-4cfa-92d2-145eda779603",
+      "oracle_text": "Indestructible (Effects that say \"destroy\" don't destroy this artifact.)\n{T}: Add one mana of any color.",
+      "power": null,
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Artifact"
     },
     {
       "cmc": 3.0,
@@ -1477,34 +1477,18 @@
       "type_line": "Artifact Creature \u2014 Myr"
     },
     {
-      "oracle_id": "734a5186-caa6-4811-b6d7-91b7b32fc403",
-      "name": "Discerning Financier",
-      "mana_cost": "{2}{W}",
       "cmc": 3.0,
-      "type_line": "Creature \u2014 Human Noble",
-      "oracle_text": "At the beginning of your upkeep, if an opponent controls more lands than you, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n{2}{W}: Choose another player. That player gains control of target Treasure you control. You draw a card.",
-      "power": "2",
-      "toughness": "3",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Treasure"
       ],
-      "produced_mana": [
-        "B",
-        "G",
-        "R",
-        "U",
-        "W"
-      ],
       "layout": "normal",
-      "released_at": "2023-09-08",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -1529,7 +1513,23 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Discerning Financier",
+      "oracle_id": "734a5186-caa6-4811-b6d7-91b7b32fc403",
+      "oracle_text": "At the beginning of your upkeep, if an opponent controls more lands than you, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n{2}{W}: Choose another player. That player gains control of target Treasure you control. You draw a card.",
+      "power": "2",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2023-09-08",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human Noble"
     },
     {
       "cmc": 4.0,
@@ -1626,30 +1626,18 @@
       "type_line": "Sorcery"
     },
     {
-      "oracle_id": "406f1982-5d0c-4dba-9010-28b1c6a3602c",
-      "name": "Dora Milaje Elite",
-      "mana_cost": "{1}{W}",
       "cmc": 2.0,
-      "type_line": "Creature \u2014 Human Warrior",
-      "oracle_text": "First strike\nWhen this creature enters, if an opponent controls more lands than you, create a tapped Vibranium token. (It's an artifact with indestructible and \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")\nSacrifice this creature: Legendary permanents you control gain indestructible until end of turn.",
-      "power": "2",
-      "toughness": "2",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "First strike"
       ],
-      "produced_mana": [
-        "C"
-      ],
       "layout": "normal",
-      "released_at": "2026-06-26",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -1674,7 +1662,19 @@
         "timeless": "not_legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Dora Milaje Elite",
+      "oracle_id": "406f1982-5d0c-4dba-9010-28b1c6a3602c",
+      "oracle_text": "First strike\nWhen this creature enters, if an opponent controls more lands than you, create a tapped Vibranium token. (It's an artifact with indestructible and \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")\nSacrifice this creature: Legendary permanents you control gain indestructible until end of turn.",
+      "power": "2",
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Warrior"
     },
     {
       "cmc": 2.0,
@@ -1961,26 +1961,16 @@
       "type_line": "Enchantment \u2014 Aura"
     },
     {
-      "oracle_id": "381fa2a9-69fc-4558-a0ac-fb99c6f8d77f",
-      "name": "Fugitive Wizard",
-      "mana_cost": "{U}",
       "cmc": 1.0,
-      "type_line": "Creature \u2014 Human Wizard",
-      "oracle_text": "",
-      "power": "1",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "U"
-      ],
       "color_identity": [
         "U"
       ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2014-07-18",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -2005,7 +1995,17 @@
         "timeless": "not_legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Fugitive Wizard",
+      "oracle_id": "381fa2a9-69fc-4558-a0ac-fb99c6f8d77f",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2014-07-18",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Wizard"
     },
     {
       "cmc": 1.0,
@@ -2055,26 +2055,63 @@
       "type_line": "Creature \u2014 Ogre"
     },
     {
-      "oracle_id": "1bd70be6-752c-4ecb-a3e8-2bacec4b94fc",
-      "name": "Gift of Estates",
-      "mana_cost": "{1}{W}",
-      "cmc": 2.0,
-      "type_line": "Sorcery",
-      "oracle_text": "If an opponent controls more lands than you, search your library for up to three Plains cards, reveal them, put them into your hand, then shuffle.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
       ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2014-11-07",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -2099,7 +2136,17 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Gift of Estates",
+      "oracle_id": "1bd70be6-752c-4ecb-a3e8-2bacec4b94fc",
+      "oracle_text": "If an opponent controls more lands than you, search your library for up to three Plains cards, reveal them, put them into your hand, then shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-11-07",
+      "toughness": null,
+      "type_line": "Sorcery"
     },
     {
       "cmc": 1.0,
@@ -2243,31 +2290,21 @@
       "type_line": "Creature \u2014 Bear"
     },
     {
-      "oracle_id": "f8103865-5086-4f16-a35a-a56acdab1547",
-      "name": "Guidelight Pathmaker",
-      "mana_cost": "{4}{W}{U}",
       "cmc": 6.0,
-      "type_line": "Artifact \u2014 Vehicle",
-      "oracle_text": "Vigilance\nWhen this Vehicle enters, you may search your library for an artifact card and reveal it. Put it onto the battlefield if its mana value is 2 or less. Otherwise, put it into your hand. If you search your library this way, shuffle.\nCrew 2",
-      "power": "6",
-      "toughness": "5",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "U",
-        "W"
-      ],
       "color_identity": [
         "U",
         "W"
       ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Vigilance",
         "Crew"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2025-02-14",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -2292,20 +2329,30 @@
         "timeless": "legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}{U}",
+      "name": "Guidelight Pathmaker",
+      "oracle_id": "f8103865-5086-4f16-a35a-a56acdab1547",
+      "oracle_text": "Vigilance\nWhen this Vehicle enters, you may search your library for an artifact card and reveal it. Put it onto the battlefield if its mana value is 2 or less. Otherwise, put it into your hand. If you search your library this way, shuffle.\nCrew 2",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "5",
+      "type_line": "Artifact \u2014 Vehicle"
     },
     {
-      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
-      "name": "Hardened Scales",
-      "mana_cost": "{G}",
-      "type_line": "Enchantment",
-      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
+      "card_faces": [],
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
       "defense": null,
+      "keywords": [],
       "layout": "normal",
-      "released_at": "2026-04-24",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -2331,16 +2378,16 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "cmc": 1.0,
-      "colors": [
-        "G"
-      ],
-      "color_identity": [
-        "G"
-      ],
-      "keywords": [],
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Hardened Scales",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
       "produced_mana": [],
-      "card_faces": []
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Enchantment"
     },
     {
       "cmc": 3.0,
@@ -2440,27 +2487,17 @@
       "type_line": "Creature \u2014 Avatar"
     },
     {
-      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
-      "name": "Hill Giant",
-      "mana_cost": "{3}{R}",
-      "type_line": "Creature \u2014 Giant",
-      "oracle_text": "",
-      "power": "3",
-      "toughness": "3",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "R"
-      ],
+      "cmc": 4.0,
       "color_identity": [
         "R"
       ],
-      "keywords": [],
-      "produced_mana": [],
-      "layout": "normal",
-      "released_at": "2007-07-13",
+      "colors": [
+        "R"
+      ],
+      "defense": null,
       "faces": [],
-      "cmc": 4.0,
+      "keywords": [],
+      "layout": "normal",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -2485,7 +2522,17 @@
         "timeless": "not_legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Giant"
     },
     {
       "cmc": 2.0,
@@ -3054,6 +3101,53 @@
       "type_line": "Legendary Creature \u2014 Avatar"
     },
     {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Karplusan Yeti",
+      "oracle_id": "d6d84884-4a58-4187-aa5c-20b39b379590",
+      "oracle_text": "{T}: This creature deals damage equal to its power to target creature. That creature deals damage equal to its power to this creature.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2005-07-29",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Yeti"
+    },
+    {
       "cmc": 4.0,
       "color_identity": [
         "R"
@@ -3105,28 +3199,18 @@
       "type_line": "Legendary Creature \u2014 Astartes Berserker"
     },
     {
-      "oracle_id": "7d0efc64-151f-45b4-8c0b-c32609f9d862",
-      "name": "Knight of the White Orchid",
-      "mana_cost": "{W}{W}",
       "cmc": 2.0,
-      "type_line": "Creature \u2014 Human Knight",
-      "oracle_text": "First strike\nWhen this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.",
-      "power": "2",
-      "toughness": "2",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "First strike"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2023-04-21",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -3151,29 +3235,29 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{W}",
+      "name": "Knight of the White Orchid",
+      "oracle_id": "7d0efc64-151f-45b4-8c0b-c32609f9d862",
+      "oracle_text": "First strike\nWhen this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Knight"
     },
     {
-      "oracle_id": "d2d9ecea-7925-420e-98b9-2f87f41f387c",
-      "name": "Land Tax",
-      "mana_cost": "{W}",
       "cmc": 1.0,
-      "type_line": "Enchantment",
-      "oracle_text": "At the beginning of your upkeep, if an opponent controls more lands than you, you may search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2026-04-24",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -3198,7 +3282,66 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Land Tax",
+      "oracle_id": "d2d9ecea-7925-420e-98b9-2f87f41f387c",
+      "oracle_text": "At the beginning of your upkeep, if an opponent controls more lands than you, you may search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Lifelink",
+      "oracle_id": "4fe8316a-9cff-43e9-a1d5-993a0c9daf3a",
+      "oracle_text": "Enchant creature\nEnchanted creature has lifelink. (Damage dealt by the creature also causes its controller to gain that much life.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-07-15",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
     },
     {
       "cmc": 2.0,
@@ -3248,28 +3391,18 @@
       "type_line": "Creature \u2014 Elephant Soldier"
     },
     {
-      "oracle_id": "cc6a83c7-e645-4a53-9550-be79b42cd851",
-      "name": "Loyal Warhound",
-      "mana_cost": "{1}{W}",
       "cmc": 2.0,
-      "type_line": "Creature \u2014 Dog",
-      "oracle_text": "Vigilance\nWhen this creature enters, if an opponent controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
-      "power": "3",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Vigilance"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2021-07-23",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -3294,7 +3427,17 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Loyal Warhound",
+      "oracle_id": "cc6a83c7-e645-4a53-9550-be79b42cd851",
+      "oracle_text": "Vigilance\nWhen this creature enters, if an opponent controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Dog"
     },
     {
       "cmc": 4.0,
@@ -3344,28 +3487,28 @@
       "type_line": "Enchantment"
     },
     {
-      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
-      "name": "Mind Stone",
-      "mana_cost": "{2}",
       "cmc": 2.0,
-      "type_line": "Artifact",
-      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
       "color_identity": [],
+      "colors": [],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [
-        "C"
-      ],
       "layout": "normal",
-      "released_at": "2026-11-09",
       "legalities": {
         "commander": "legal",
         "duel": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Mind Stone",
+      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-11-09",
+      "toughness": null,
+      "type_line": "Artifact"
     },
     {
       "cmc": 0.0,
@@ -3557,6 +3700,55 @@
       "type_line": "Sorcery"
     },
     {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Predatory Urge",
+      "oracle_id": "f6175cca-0e19-4db8-a175-3369fb650f24",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"{T}: This creature deals damage equal to its power to target creature. That creature deals damage equal to its power to this creature.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-11-25",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
       "cmc": 0.0,
       "color_identity": [],
       "colors": [],
@@ -3653,25 +3845,16 @@
       "type_line": "Instant"
     },
     {
-      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
-      "name": "Reverberate",
-      "mana_cost": "{R}{R}",
-      "type_line": "Instant",
-      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "R"
-      ],
+      "cmc": 2.0,
       "color_identity": [
         "R"
       ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2012-07-13",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -3697,28 +3880,28 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "cmc": 2.0
+      "loyalty": null,
+      "mana_cost": "{R}{R}",
+      "name": "Reverberate",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Instant"
     },
     {
-      "oracle_id": "b1385b03-cb4b-4812-857f-7421f1df39af",
-      "name": "Revitalize",
-      "mana_cost": "{1}{W}",
-      "type_line": "Instant",
-      "oracle_text": "You gain 3 life.\nDraw a card.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
+      "cmc": 2.0,
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2021-02-05",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -3744,7 +3927,16 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "cmc": 2.0
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Revitalize",
+      "oracle_id": "b1385b03-cb4b-4812-857f-7421f1df39af",
+      "oracle_text": "You gain 3 life.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-02-05",
+      "toughness": null,
+      "type_line": "Instant"
     },
     {
       "cmc": 6.0,
@@ -3892,26 +4084,63 @@
       "type_line": "Legendary Creature \u2014 Kobold"
     },
     {
-      "oracle_id": "ca9f9017-c952-4e89-b284-02396e6be0af",
-      "name": "Sand Scout",
-      "mana_cost": "{1}{W}",
       "cmc": 2.0,
-      "type_line": "Creature \u2014 Human Scout",
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Sand Scout",
+      "oracle_id": "ca9f9017-c952-4e89-b284-02396e6be0af",
       "oracle_text": "When this creature enters, if an opponent controls more lands than you, search your library for a Desert card, put it onto the battlefield tapped, then shuffle.\nWhenever one or more land cards are put into your graveyard from anywhere, create a 1/1 red, green, and white Sand Warrior creature token. This ability triggers only once each turn.",
       "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
       "toughness": "2",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
+      "type_line": "Creature \u2014 Human Scout"
+    },
+    {
+      "cmc": 2.0,
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2024-04-19",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -3936,79 +4165,32 @@
         "timeless": "not_legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
-    },
-    {
-      "oracle_id": "3c7ea603-c985-4107-806b-a467b5fcca36",
-      "name": "Scholar of New Horizons",
+      },
+      "loyalty": null,
       "mana_cost": "{1}{W}",
-      "cmc": 2.0,
-      "type_line": "Creature \u2014 Human Scout",
+      "name": "Scholar of New Horizons",
+      "oracle_id": "3c7ea603-c985-4107-806b-a467b5fcca36",
       "oracle_text": "This creature enters with a +1/+1 counter on it.\n{T}, Remove a counter from a permanent you control: Search your library for a Plains card and reveal it. If an opponent controls more lands than you, you may put that card onto the battlefield tapped. If you don't put the card onto the battlefield, put it into your hand. Then shuffle.",
       "power": "1",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
-      "color_identity": [
-        "W"
-      ],
-      "keywords": [],
       "produced_mana": [],
-      "layout": "normal",
       "released_at": "2022-11-18",
-      "legalities": {
-        "alchemy": "not_legal",
-        "brawl": "not_legal",
-        "commander": "legal",
-        "competitivebrawl": "not_legal",
-        "duel": "legal",
-        "future": "not_legal",
-        "gladiator": "not_legal",
-        "historic": "not_legal",
-        "legacy": "legal",
-        "modern": "not_legal",
-        "oathbreaker": "legal",
-        "oldschool": "not_legal",
-        "pauper": "not_legal",
-        "paupercommander": "not_legal",
-        "penny": "not_legal",
-        "pioneer": "not_legal",
-        "predh": "not_legal",
-        "premodern": "not_legal",
-        "standard": "not_legal",
-        "standardbrawl": "not_legal",
-        "timeless": "not_legal",
-        "tlr": "legal",
-        "vintage": "legal"
-      }
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Scout"
     },
     {
-      "oracle_id": "0f96c48f-aceb-4554-8b06-cca162151a64",
-      "name": "Scouting Hawk",
-      "mana_cost": "{2}{W}",
       "cmc": 3.0,
-      "type_line": "Creature \u2014 Bird",
-      "oracle_text": "Flying\nKeen Sight \u2014 When this creature enters, if an opponent controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
-      "power": "1",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Flying",
         "Keen Sight"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2022-06-10",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -4033,7 +4215,17 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Scouting Hawk",
+      "oracle_id": "0f96c48f-aceb-4554-8b06-cca162151a64",
+      "oracle_text": "Flying\nKeen Sight \u2014 When this creature enters, if an opponent controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Bird"
     },
     {
       "cmc": 8.0,
@@ -4083,22 +4275,71 @@
       "type_line": "Sorcery"
     },
     {
-      "oracle_id": "fixture:sequential-condition-witness",
-      "name": "Sequential Condition Witness",
-      "mana_cost": "{1}",
       "cmc": 1,
-      "type_line": "Creature \u2014 Beast",
-      "oracle_text": "When this creature enters, create a 1/1 white Soldier creature token if an opponent controls more creatures than you. Draw a card if an opponent controls more creatures than you.",
-      "power": "2",
-      "toughness": "2",
-      "colors": [],
       "color_identity": [],
+      "colors": [],
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
       "legalities": {
         "commander": "legal"
-      }
+      },
+      "mana_cost": "{1}",
+      "name": "Sequential Condition Witness",
+      "oracle_id": "fixture:sequential-condition-witness",
+      "oracle_text": "When this creature enters, create a 1/1 white Soldier creature token if an opponent controls more creatures than you. Draw a card if an opponent controls more creatures than you.",
+      "power": "2",
+      "produced_mana": [],
+      "toughness": "2",
+      "type_line": "Creature \u2014 Beast"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Serra Ascendant",
+      "oracle_id": "27ad3e00-6ffb-48f7-8469-8868d066d1e2",
+      "oracle_text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)\nAs long as you have 30 or more life, this creature gets +5/+5 and has flying.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Monk"
     },
     {
       "cmc": 1.0,
@@ -4346,30 +4587,20 @@
       "type_line": "Creature \u2014 Ogre Samurai Mercenary"
     },
     {
-      "oracle_id": "6b7fb630-79eb-4337-a698-626e585a495f",
-      "name": "Space Marine Scout",
-      "mana_cost": "{2}{W}",
       "cmc": 3.0,
-      "type_line": "Creature \u2014 Astartes Scout",
-      "oracle_text": "First strike, vigilance\nConcealed Position \u2014 When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
-      "power": "2",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Vigilance",
         "First strike",
         "Concealed Position"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2022-10-07",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -4394,7 +4625,17 @@
         "timeless": "not_legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Space Marine Scout",
+      "oracle_id": "6b7fb630-79eb-4337-a698-626e585a495f",
+      "oracle_text": "First strike, vigilance\nConcealed Position \u2014 When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-10-07",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Astartes Scout"
     },
     {
       "cmc": 3.0,
@@ -4493,28 +4734,18 @@
       "type_line": "Legendary Creature \u2014 Moogle"
     },
     {
-      "oracle_id": "42820e09-f817-4485-a96a-ac2b0b798269",
-      "name": "Stoic Farmer",
-      "mana_cost": "{3}{W}",
       "cmc": 4.0,
-      "type_line": "Creature \u2014 Dwarf Peasant",
-      "oracle_text": "When this creature enters, search your library for a basic Plains card and reveal it. If an opponent controls more lands than you, put it onto the battlefield tapped. Otherwise, put it into your hand. Then shuffle.\nForetell {1}{W} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
-      "power": "3",
-      "toughness": "3",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Foretell"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2021-02-05",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -4539,31 +4770,31 @@
         "timeless": "not_legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Stoic Farmer",
+      "oracle_id": "42820e09-f817-4485-a96a-ac2b0b798269",
+      "oracle_text": "When this creature enters, search your library for a basic Plains card and reveal it. If an opponent controls more lands than you, put it onto the battlefield tapped. Otherwise, put it into your hand. Then shuffle.\nForetell {1}{W} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2021-02-05",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Dwarf Peasant"
     },
     {
-      "oracle_id": "944a91ab-c217-4c1d-b920-2e5503c34546",
-      "name": "Sunstar Expansionist",
-      "mana_cost": "{1}{W}",
       "cmc": 2.0,
-      "type_line": "Creature \u2014 Human Knight",
-      "oracle_text": "When this creature enters, if an opponent controls more lands than you, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")\nLandfall \u2014 Whenever a land you control enters, this creature gets +1/+0 until end of turn.",
-      "power": "2",
-      "toughness": "3",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
-      ],
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "Landfall"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2025-08-01",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -4588,7 +4819,66 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Sunstar Expansionist",
+      "oracle_id": "944a91ab-c217-4c1d-b920-2e5503c34546",
+      "oracle_text": "When this creature enters, if an opponent controls more lands than you, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")\nLandfall \u2014 Whenever a land you control enters, this creature gets +1/+0 until end of turn.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human Knight"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Tahngarth, Talruum Hero",
+      "oracle_id": "c5b4131e-13aa-4a22-b8f5-e5f9d366cb4f",
+      "oracle_text": "Vigilance\n{1}{R}, {T}: Tahngarth deals damage equal to its power to target creature. That creature deals damage equal to its power to Tahngarth.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2001-02-05",
+      "toughness": "4",
+      "type_line": "Legendary Creature \u2014 Minotaur Warrior"
     },
     {
       "card_faces": [
@@ -4716,31 +5006,15 @@
       "type_line": "Creature \u2014 Bird Beast"
     },
     {
-      "oracle_id": "952083c5-9ffa-4cd9-915f-b7de7f3e5326",
-      "name": "Ticket Tortoise",
-      "mana_cost": "{2}",
       "cmc": 2.0,
-      "type_line": "Artifact Creature \u2014 Turtle",
-      "oracle_text": "Defender\nWhen this creature enters, if an opponent controls more lands than you, you create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
-      "power": "3",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
       "color_identity": [],
+      "colors": [],
+      "defense": null,
       "keywords": [
         "Treasure",
         "Defender"
       ],
-      "produced_mana": [
-        "B",
-        "G",
-        "R",
-        "U",
-        "W"
-      ],
       "layout": "normal",
-      "released_at": "2025-02-14",
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -4765,7 +5039,70 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Ticket Tortoise",
+      "oracle_id": "952083c5-9ffa-4cd9-915f-b7de7f3e5326",
+      "oracle_text": "Defender\nWhen this creature enters, if an opponent controls more lands than you, you create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": "3",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2025-02-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature \u2014 Turtle"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Tracker",
+      "oracle_id": "86260d53-a68e-43cb-88ba-6a97c0b2f4f4",
+      "oracle_text": "{G}{G}, {T}: This creature deals damage equal to its power to target creature. That creature deals damage equal to its power to this creature.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human"
     },
     {
       "cmc": 2.0,
@@ -4866,27 +5203,15 @@
       "type_line": "Legendary Creature \u2014 Dryad"
     },
     {
-      "oracle_id": "02418479-9455-417f-a6a1-004356faff37",
-      "name": "Tundra",
-      "mana_cost": "",
-      "type_line": "Land \u2014 Plains Island",
-      "oracle_text": "({T}: Add {W} or {U}.)",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
+      "cmc": 0.0,
       "color_identity": [
         "U",
         "W"
       ],
+      "colors": [],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [
-        "U",
-        "W"
-      ],
       "layout": "normal",
-      "released_at": "2014-06-16",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -4912,7 +5237,19 @@
         "tlr": "legal",
         "vintage": "legal"
       },
-      "cmc": 0.0
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Tundra",
+      "oracle_id": "02418479-9455-417f-a6a1-004356faff37",
+      "oracle_text": "({T}: Add {W} or {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U",
+        "W"
+      ],
+      "released_at": "2014-06-16",
+      "toughness": null,
+      "type_line": "Land \u2014 Plains Island"
     },
     {
       "cmc": 5.0,
@@ -5009,24 +5346,14 @@
       "type_line": "Instant"
     },
     {
-      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
-      "name": "Universal Automaton",
-      "mana_cost": "{1}",
       "cmc": 1.0,
-      "type_line": "Artifact Creature \u2014 Shapeshifter",
-      "oracle_text": "Changeling (This card is every creature type.)",
-      "power": "1",
-      "toughness": "1",
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
       "color_identity": [],
+      "colors": [],
+      "defense": null,
       "keywords": [
         "Changeling"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2019-06-14",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "legal",
@@ -5051,7 +5378,17 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Universal Automaton",
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature \u2014 Shapeshifter"
     },
     {
       "cmc": 1.0,
@@ -5101,28 +5438,68 @@
       "type_line": "Instant"
     },
     {
-      "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
-      "name": "Verge Rangers",
-      "mana_cost": "{2}{W}",
-      "cmc": 3.0,
-      "type_line": "Creature \u2014 Human Scout Ranger",
-      "oracle_text": "First strike\nYou may look at the top card of your library any time.\nAs long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)",
-      "power": "3",
-      "toughness": "3",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "W"
+      "cmc": 6.0,
+      "color_identity": [
+        "B",
+        "R"
       ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}{B}",
+      "name": "Vein Drinker",
+      "oracle_id": "705d89f6-13a8-4f40-a01a-3d5d0ce4f34e",
+      "oracle_text": "Flying\n{R}, {T}: This creature deals damage equal to its power to target creature. That creature deals damage equal to its power to this creature.\nWhenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2017-08-25",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Vampire"
+    },
+    {
+      "cmc": 3.0,
       "color_identity": [
         "W"
       ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
       "keywords": [
         "First strike"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2024-09-27",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -5147,7 +5524,17 @@
         "timeless": "not_legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Verge Rangers",
+      "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
+      "oracle_text": "First strike\nYou may look at the top card of your library any time.\nAs long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human Scout Ranger"
     },
     {
       "cmc": 0.0,
@@ -5191,6 +5578,55 @@
       "released_at": "2020-08-07",
       "toughness": "0",
       "type_line": "Artifact Creature \u2014 Construct"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Wall of Stone",
+      "oracle_id": "cd4cadb4-3156-49bd-b36e-12ba5c85938b",
+      "oracle_text": "Defender (This creature can't attack.)",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2003-07-28",
+      "toughness": "8",
+      "type_line": "Creature \u2014 Wall"
     },
     {
       "cmc": 1.0,
@@ -5435,26 +5871,16 @@
       "type_line": "Creature \u2014 Horror"
     },
     {
-      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
-      "name": "Witch Hunt",
-      "mana_cost": "{4}{R}",
       "cmc": 5.0,
-      "type_line": "Enchantment",
-      "oracle_text": "Players can't gain life.\nAt the beginning of your upkeep, this enchantment deals 4 damage to you.\nAt the beginning of your end step, target opponent chosen at random gains control of this enchantment.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "R"
-      ],
       "color_identity": [
         "R"
       ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2013-11-01",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -5479,7 +5905,17 @@
         "timeless": "not_legal",
         "tlr": "not_legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}",
+      "name": "Witch Hunt",
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "oracle_text": "Players can't gain life.\nAt the beginning of your upkeep, this enchantment deals 4 damage to you.\nAt the beginning of your end step, target opponent chosen at random gains control of this enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2013-11-01",
+      "toughness": null,
+      "type_line": "Enchantment"
     },
     {
       "cmc": 3.0,
@@ -6847,10 +7283,10 @@
       "source": "wotc"
     },
     {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
       "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
       "published_at": "2016-06-08",
-      "source": "wotc",
-      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+      "source": "wotc"
     },
     {
       "comment": "A casting cost of {X}{X} means that you pay twice X. If you want X to be 3, you pay {6} to cast Walking Ballista.",
@@ -6865,166 +7301,166 @@
       "source": "wotc"
     },
     {
+      "comment": "You compare the number of lands you control with the number of lands each opponent controls as Beza's ability resolves. At that time, if at least one opponent controls more lands than you, you'll create a Treasure token. Similarly, you compare life totals, creatures controlled, and cards in hand with each opponent as Beza's ability resolves. If at least one opponent has more life, creatures, or cards in hand than you, you'll get the appropriate bonus. It doesn't matter if you qualified for any of the previous bonuses or not.",
       "oracle_id": "020de6d7-f5a2-4036-ad25-451e5977b4d4",
-      "source": "wotc",
       "published_at": "2024-07-26",
-      "comment": "You compare the number of lands you control with the number of lands each opponent controls as Beza's ability resolves. At that time, if at least one opponent controls more lands than you, you'll create a Treasure token. Similarly, you compare life totals, creatures controlled, and cards in hand with each opponent as Beza's ability resolves. If at least one opponent has more life, creatures, or cards in hand than you, you'll get the appropriate bonus. It doesn't matter if you qualified for any of the previous bonuses or not."
+      "source": "wotc"
     },
     {
+      "comment": "In a multiplayer game, you consider each opponent. If you have fewer lands than one opponent and less life than another, for example, you'll get both of those bonuses.",
       "oracle_id": "020de6d7-f5a2-4036-ad25-451e5977b4d4",
-      "source": "wotc",
       "published_at": "2024-07-26",
-      "comment": "In a multiplayer game, you consider each opponent. If you have fewer lands than one opponent and less life than another, for example, you'll get both of those bonuses."
+      "source": "wotc"
     },
     {
+      "comment": "No player may take any actions while Beza's ability is resolving. For example, you can't use the Treasure token to try and change the outcome of any of the other comparisons. However, in some unusual cases, that Treasure token might enter as a creature, in which case it might impact whether you get Fish or not.",
       "oracle_id": "020de6d7-f5a2-4036-ad25-451e5977b4d4",
-      "source": "wotc",
       "published_at": "2024-07-26",
-      "comment": "No player may take any actions while Beza's ability is resolving. For example, you can't use the Treasure token to try and change the outcome of any of the other comparisons. However, in some unusual cases, that Treasure token might enter as a creature, in which case it might impact whether you get Fish or not."
+      "source": "wotc"
     },
     {
+      "comment": "When Claim Jumper enters the battlefield, its triggered ability will check to see if at least one opponent controls more lands than you. If none do, the ability won't trigger at all. If the ability does trigger, it will check again as it tries to resolve. If there's no longer an opponent that controls more lands than you, the ability won't do anything.",
       "oracle_id": "18f0cd0b-3e4f-4637-a62e-75dd1b2f3fce",
-      "source": "wotc",
       "published_at": "2024-04-12",
-      "comment": "When Claim Jumper enters the battlefield, its triggered ability will check to see if at least one opponent controls more lands than you. If none do, the ability won't trigger at all. If the ability does trigger, it will check again as it tries to resolve. If there's no longer an opponent that controls more lands than you, the ability won't do anything."
+      "source": "wotc"
     },
     {
+      "comment": "For example, say you control three lands, one opponent controls four lands, and another opponent controls five lands. As Claim Jumper's ability resolves, at least one opponent controls more lands than you, so you search for a Plains card and put it onto the battlefield tapped. Now you control four lands, but there's still an opponent who controls more lands than you, so you repeat the process once, searching for another Plains. You end up controlling five lands (two tapped Plains plus your original three, which you probably tapped to cast Claim Jumper in the first place).",
       "oracle_id": "18f0cd0b-3e4f-4637-a62e-75dd1b2f3fce",
-      "source": "wotc",
       "published_at": "2024-04-12",
-      "comment": "For example, say you control three lands, one opponent controls four lands, and another opponent controls five lands. As Claim Jumper's ability resolves, at least one opponent controls more lands than you, so you search for a Plains card and put it onto the battlefield tapped. Now you control four lands, but there's still an opponent who controls more lands than you, so you repeat the process once, searching for another Plains. You end up controlling five lands (two tapped Plains plus your original three, which you probably tapped to cast Claim Jumper in the first place)."
+      "source": "wotc"
     },
     {
+      "comment": "You can find nonbasic lands if they have the Plains land type, such as dual lands (Tundra, et al).",
       "oracle_id": "1bd70be6-752c-4ecb-a3e8-2bacec4b94fc",
-      "source": "wotc",
       "published_at": "2005-08-01",
-      "comment": "You can find nonbasic lands if they have the Plains land type, such as dual lands (Tundra, et al)."
+      "source": "wotc"
     },
     {
+      "comment": "Gift of Estates does nothing if each of your opponents has the same number of lands or fewer as you.",
       "oracle_id": "1bd70be6-752c-4ecb-a3e8-2bacec4b94fc",
-      "source": "wotc",
       "published_at": "2005-08-01",
-      "comment": "Gift of Estates does nothing if each of your opponents has the same number of lands or fewer as you."
+      "source": "wotc"
     },
     {
+      "comment": "You may choose to put the card into your hand rather than onto the battlefield even if an opponent controls more lands than you.",
       "oracle_id": "3c7ea603-c985-4107-806b-a467b5fcca36",
-      "source": "wotc",
       "published_at": "2022-10-14",
-      "comment": "You may choose to put the card into your hand rather than onto the battlefield even if an opponent controls more lands than you."
+      "source": "wotc"
     },
     {
+      "comment": "If you\u2019re casting a foretold card from exile for its foretell cost, you can\u2019t choose to cast it for any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, those must be paid to cast the spell.",
       "oracle_id": "42820e09-f817-4485-a96a-ac2b0b798269",
-      "source": "wotc",
       "published_at": "2021-02-05",
-      "comment": "If you\u2019re casting a foretold card from exile for its foretell cost, you can\u2019t choose to cast it for any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, those must be paid to cast the spell."
+      "source": "wotc"
     },
     {
+      "comment": "Casting a foretold card from exile follows the timing rules for that card. If you foretell an instant card, you can cast it as soon as the next player\u2019s turn. In most cases, if you foretell a card that isn\u2019t an instant (or doesn\u2019t have flash), you\u2019ll have to wait until your next turn to cast it.",
       "oracle_id": "42820e09-f817-4485-a96a-ac2b0b798269",
-      "source": "wotc",
       "published_at": "2021-02-05",
-      "comment": "Casting a foretold card from exile follows the timing rules for that card. If you foretell an instant card, you can cast it as soon as the next player\u2019s turn. In most cases, if you foretell a card that isn\u2019t an instant (or doesn\u2019t have flash), you\u2019ll have to wait until your next turn to cast it."
+      "source": "wotc"
     },
     {
+      "comment": "Because exiling a card with foretell from your hand is a special action, you can do so any time you have priority during your turn, including in response to spells and abilities. Once you announce you\u2019re taking the action, no other player can respond by trying to remove the card from your hand.",
       "oracle_id": "42820e09-f817-4485-a96a-ac2b0b798269",
-      "source": "wotc",
       "published_at": "2021-02-05",
-      "comment": "Because exiling a card with foretell from your hand is a special action, you can do so any time you have priority during your turn, including in response to spells and abilities. Once you announce you\u2019re taking the action, no other player can respond by trying to remove the card from your hand."
+      "source": "wotc"
     },
     {
+      "comment": "Space Marine Scout's triggered ability has an \"intervening if clause,\" which means that it checks to see whether or not an opponent controls more lands than you both when it triggers and when it resolves. If it isn't true both times, you won't search your library for a Plains card.",
       "oracle_id": "6b7fb630-79eb-4337-a698-626e585a495f",
-      "source": "wotc",
       "published_at": "2022-10-07",
-      "comment": "Space Marine Scout's triggered ability has an \"intervening if clause,\" which means that it checks to see whether or not an opponent controls more lands than you both when it triggers and when it resolves. If it isn't true both times, you won't search your library for a Plains card."
+      "source": "wotc"
     },
     {
+      "comment": "Knight of the White Orchid's triggered ability has an \u201cintervening \u2018if' clause.\u201d That means (1) the ability won't trigger at all unless any one of your opponents controls more lands than you, and (2) the ability will do nothing if you control at least as many lands as each of your opponents by the time it resolves.",
       "oracle_id": "7d0efc64-151f-45b4-8c0b-c32609f9d862",
-      "source": "wotc",
       "published_at": "2008-10-01",
-      "comment": "Knight of the White Orchid's triggered ability has an \u201cintervening \u2018if' clause.\u201d That means (1) the ability won't trigger at all unless any one of your opponents controls more lands than you, and (2) the ability will do nothing if you control at least as many lands as each of your opponents by the time it resolves."
+      "source": "wotc"
     },
     {
+      "comment": "The Plains you search for doesn't have to be basic. For example, you could put a Sacred Foundry onto the battlefield.",
       "oracle_id": "7d0efc64-151f-45b4-8c0b-c32609f9d862",
-      "source": "wotc",
       "published_at": "2015-06-22",
-      "comment": "The Plains you search for doesn't have to be basic. For example, you could put a Sacred Foundry onto the battlefield."
+      "source": "wotc"
     },
     {
+      "comment": "Verge Rangers doesn't allow you to play additional lands.",
       "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
-      "source": "wotc",
       "published_at": "2020-04-17",
-      "comment": "Verge Rangers doesn't allow you to play additional lands."
+      "source": "wotc"
     },
     {
+      "comment": "Verge Rangers lets you look at the top card of your library whenever you want (with one restriction; see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand.",
       "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
-      "source": "wotc",
       "published_at": "2020-04-17",
-      "comment": "Verge Rangers lets you look at the top card of your library whenever you want (with one restriction; see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand."
+      "source": "wotc"
     },
     {
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you play a land from the top of your library and it has a replacement effect that requires you to make a decision (such as that of Temple Garden), you must make that decision without knowing the next card of your library.",
       "oracle_id": "aece819e-3678-48bc-9677-d06ebfa58b4e",
-      "source": "wotc",
       "published_at": "2020-04-17",
-      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you play a land from the top of your library and it has a replacement effect that requires you to make a decision (such as that of Temple Garden), you must make that decision without knowing the next card of your library."
+      "source": "wotc"
     },
     {
+      "comment": "Sand Scout must be on the battlefield for its last ability to trigger. If it is put into your graveyard at the same time as one or more land cards you own, its ability won\u2019t trigger.",
       "oracle_id": "ca9f9017-c952-4e89-b284-02396e6be0af",
-      "source": "wotc",
       "published_at": "2024-04-12",
-      "comment": "Sand Scout must be on the battlefield for its last ability to trigger. If it is put into your graveyard at the same time as one or more land cards you own, its ability won\u2019t trigger."
+      "source": "wotc"
     },
     {
+      "comment": "You can fetch any of the \"Snow-Covered\" lands, since they all also have the supertype basic.",
       "oracle_id": "d2d9ecea-7925-420e-98b9-2f87f41f387c",
-      "source": "wotc",
       "published_at": "2006-10-15",
-      "comment": "You can fetch any of the \"Snow-Covered\" lands, since they all also have the supertype basic."
+      "source": "wotc"
     },
     {
+      "comment": "This ability has an \"intervening 'if' clause.\" That means (1) the ability won't trigger at all unless any one of your opponents controls more lands than you, and (2) the ability will do nothing if you control at least as many lands as each of your opponents by the time it resolves.",
       "oracle_id": "d2d9ecea-7925-420e-98b9-2f87f41f387c",
-      "source": "wotc",
       "published_at": "2009-10-01",
-      "comment": "This ability has an \"intervening 'if' clause.\" That means (1) the ability won't trigger at all unless any one of your opponents controls more lands than you, and (2) the ability will do nothing if you control at least as many lands as each of your opponents by the time it resolves."
+      "source": "wotc"
     },
     {
+      "comment": "You shuffle your library if you search, even if you don't put any basic land cards into your hand.",
       "oracle_id": "d2d9ecea-7925-420e-98b9-2f87f41f387c",
-      "source": "wotc",
       "published_at": "2009-10-01",
-      "comment": "You shuffle your library if you search, even if you don't put any basic land cards into your hand."
+      "source": "wotc"
     },
     {
+      "comment": "This has the mana abilities associated with both of its basic land types.",
       "oracle_id": "02418479-9455-417f-a6a1-004356faff37",
-      "source": "wotc",
       "published_at": "2008-10-01",
-      "comment": "This has the mana abilities associated with both of its basic land types."
+      "source": "wotc"
     },
     {
+      "comment": "This has basic land types, but it isn't a basic land. Things that affect basic lands don't affect it. Things that affect basic land types do.",
       "oracle_id": "02418479-9455-417f-a6a1-004356faff37",
-      "source": "wotc",
       "published_at": "2008-10-01",
-      "comment": "This has basic land types, but it isn't a basic land. Things that affect basic lands don't affect it. Things that affect basic land types do."
+      "source": "wotc"
     },
     {
+      "comment": "Guidelight Pathmaker has received an update to its Oracle text. Specifically, you'll only shuffle if you choose to search your library.",
       "oracle_id": "f8103865-5086-4f16-a35a-a56acdab1547",
-      "source": "wotc",
       "published_at": "2025-02-07",
-      "comment": "Guidelight Pathmaker has received an update to its Oracle text. Specifically, you'll only shuffle if you choose to search your library."
+      "source": "wotc"
     },
     {
+      "comment": "You can't choose the second mode for Archdruid's Charm unless you and another player have creatures to target.",
       "oracle_id": "3c1ef404-e2c6-486d-a5a2-d5779c71d498",
-      "source": "wotc",
       "published_at": "2024-02-02",
-      "comment": "You can't choose the second mode for Archdruid's Charm unless you and another player have creatures to target."
+      "source": "wotc"
     },
     {
+      "comment": "If you choose the second mode and your creature is not a legal target as Archdruid's Charm resolves, you won't put a +1/+1 counter on it, and no damage will be dealt.",
       "oracle_id": "3c1ef404-e2c6-486d-a5a2-d5779c71d498",
-      "source": "wotc",
       "published_at": "2024-02-02",
-      "comment": "If you choose the second mode and your creature is not a legal target as Archdruid's Charm resolves, you won't put a +1/+1 counter on it, and no damage will be dealt."
+      "source": "wotc"
     },
     {
+      "comment": "If you choose the second mode and the creature you don't control is not a legal target as Archdruid's Charm resolves, you'll still put a +1/+1 counter on your creature.",
       "oracle_id": "3c1ef404-e2c6-486d-a5a2-d5779c71d498",
-      "source": "wotc",
       "published_at": "2024-02-02",
-      "comment": "If you choose the second mode and the creature you don't control is not a legal target as Archdruid's Charm resolves, you'll still put a +1/+1 counter on your creature."
+      "source": "wotc"
     }
   ],
   "schema_version": 1,

@@ -235,6 +235,9 @@ def fixed_creature_power_damage_node_capabilities(
     """Recognize only the compiler-owned Fight and bite instruction shape."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from ..reciprocal_power_damage import RECIPROCAL_POWER_MECHANIC, reciprocal_power_damage_capabilities
+    if RECIPROCAL_POWER_MECHANIC in mechanics:
+        return reciprocal_power_damage_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if not {
         CREATURE_POWER_DAMAGE_MECHANIC,
         "cr-115-targets",

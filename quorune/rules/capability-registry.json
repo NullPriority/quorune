@@ -44960,6 +44960,109 @@
     {
       "applicability": {
         "exclusions": [
+          "optional pairs or source-presence conditional",
+          "multiple recipients, divided or simultaneous fight damage",
+          "unknown result siblings"
+        ],
+        "inputs": [
+          "one normally validated creature target",
+          "original source identity and existing source LKI binding",
+          "two complete bite instructions",
+          "explicit version4 return recipient bound to authoritative original semantic source context"
+        ],
+        "outputs": [
+          "two ordinary ordered damage transactions with current power per instruction",
+          "damage keywords and life changes before second read",
+          "no intermediate state-based action or target transfer to a new source incarnation"
+        ],
+        "summary": "One source-to-target creature power damage followed by target-to-original-source power damage in printed order."
+      },
+      "blockers": [],
+      "dependencies": [
+        "damage.creature_power.fixed_interaction"
+      ],
+      "dependency_fail_closed_rationale": "Complete paired shape and payload-derived reverse-damage minimum require reciprocal and base damage authority even without coverage labels.",
+      "dependency_fail_closed_status": "passed",
+      "id": "damage.creature_power.reciprocal_sequence",
+      "implementation_components": [
+        "quorune.compiler.reciprocal_power_damage.reciprocal_power_damage_template",
+        "quorune.creature_power_damage.resolve_creature_power_damage",
+        "quorune.reciprocal_power_damage.original_source_recipient_matches",
+        "quorune.reciprocal_power_damage.reciprocal_power_damage_capabilities",
+        "quorune.reciprocal_power_damage.reciprocal_power_damage_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "Fresh Yeti/Lifelink/Serra Ascendant threshold world specifically detects simultaneous Fight substitution through wrong current-power life consequences.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_illegal_target_new_incarnation_prevents_both_instructions",
+        "test_original_activated_cards_keep_both_damage_instructions_and_vein_followup",
+        "test_original_lifelink_threshold_changes_second_power_after_first_damage",
+        "test_original_predatory_urge_grants_the_creature_controller_its_own_source",
+        "test_self_target_deals_two_events_before_lethal_state_based_actions",
+        "test_source_blink_uses_original_last_power_without_hitting_returned_copy"
+      ],
+      "multiplayer_tests": [
+        "test_illegal_target_new_incarnation_prevents_both_instructions",
+        "test_original_activated_cards_keep_both_damage_instructions_and_vein_followup",
+        "test_original_lifelink_threshold_changes_second_power_after_first_damage",
+        "test_original_predatory_urge_grants_the_creature_controller_its_own_source",
+        "test_self_target_deals_two_events_before_lethal_state_based_actions",
+        "test_source_blink_uses_original_last_power_without_hitting_returned_copy"
+      ],
+      "negative_tests": [
+        "test_complete_pair_preserves_order_and_requires_both_closed_instructions",
+        "test_normal_compiler_retains_source_names_and_rejects_unconsumed_neighbors",
+        "test_payload_minimum_retains_sequence_authority_without_coverage"
+      ],
+      "official_rules": [
+        "120.3f",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.14a",
+        "701.14b",
+        "704.4"
+      ],
+      "positive_tests": [
+        "test_complete_pair_preserves_order_and_requires_both_closed_instructions",
+        "test_normal_compiler_retains_source_names_and_rejects_unconsumed_neighbors",
+        "test_original_activated_cards_keep_both_damage_instructions_and_vein_followup"
+      ],
+      "privacy_tests": [
+        "test_illegal_target_new_incarnation_prevents_both_instructions",
+        "test_original_activated_cards_keep_both_damage_instructions_and_vein_followup",
+        "test_original_lifelink_threshold_changes_second_power_after_first_damage",
+        "test_original_predatory_urge_grants_the_creature_controller_its_own_source",
+        "test_self_target_deals_two_events_before_lethal_state_based_actions",
+        "test_source_blink_uses_original_last_power_without_hitting_returned_copy"
+      ],
+      "replay_tests": [
+        "test_illegal_target_new_incarnation_prevents_both_instructions",
+        "test_original_activated_cards_keep_both_damage_instructions_and_vein_followup",
+        "test_original_lifelink_threshold_changes_second_power_after_first_damage",
+        "test_original_predatory_urge_grants_the_creature_controller_its_own_source",
+        "test_self_target_deals_two_events_before_lethal_state_based_actions",
+        "test_source_blink_uses_original_last_power_without_hitting_returned_copy"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented damage compositions",
           "other replacement destinations or durations",
           "unresolved target references"
@@ -95689,7 +95792,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 859,
+  "registry_version": 860,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

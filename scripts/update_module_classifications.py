@@ -471,6 +471,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/damage_received_events.py",
         "quorune/damage_turn_history.py",
         "quorune/creature_power_damage.py",
+        "quorune/reciprocal_power_damage.py",
         "quorune/damage_prevention.py",
         "quorune/damage_transaction.py",
         "quorune/damage_values.py",
@@ -623,6 +624,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == 'quorune/reciprocal_power_damage.py':return 'damage'
     if relative in {'quorune/conditional_search_model.py','quorune/conditional_search_placement.py'}:return 'library_search'
     if relative in {'quorune/player_maximum_model.py','quorune/player_maximum.py','quorune/rules/player_maximum_shapes.py'}:return 'targets_and_choices'
     if relative in {'quorune/recipient_control_model.py','quorune/rules/recipient_control_shapes.py',
