@@ -33,6 +33,9 @@ def ability_local_mana_reduction_runtime_dependencies(program: Any) -> tuple[str
     reduction = ability_local_mana_reduction_from_dict(thaw_value(cost[field]))
     if not ability_local_reduction_origin_is_supported((program.active_zone,), cost.get('discard_source'), reduction):
         raise ValueError('Ability-local reduction requires a supported activation origin')
+    from ..activation_target_values import TargetActivationReduction
+    from ..rules.activation.targeted_costs import single_creature_target_price_plan
+    if isinstance(reduction, TargetActivationReduction):single_creature_target_price_plan(program.target_schema)
     if any(field not in ability or ability_local_mana_reduction_from_dict(thaw_value(ability[field])) != reduction
            for ability in catalogs):
         raise ValueError('Ability-local reduction differs between the catalog and activation cost')

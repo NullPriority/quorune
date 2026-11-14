@@ -20,6 +20,10 @@ def _ability_local_mana_modifiers(host, seat, source, ability):
     reduction = getattr(ability, 'ability_local_mana_reduction', None)
     if reduction is None:
         return []
+    from ...activation_target_values import TargetActivationReduction
+    if isinstance(reduction, TargetActivationReduction):
+        from .targeted_costs import ability_local_target_cost_modifiers
+        return list(ability_local_target_cost_modifiers(host, seat, source, ability))
     provider = source if source.controller == seat else replace(source, controller=seat)
     if isinstance(reduction, AbilityLocalPublicManaAdjustment):
         if reduction.direction == 'reduce':return []

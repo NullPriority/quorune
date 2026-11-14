@@ -22,6 +22,7 @@ from .public_characteristic_aggregates import public_characteristic_aggregate
 from .query_characteristic_templates import query_characteristic_quantity
 from ..util import mana_cost_to_vector
 from ..replacement.immutable import FrozenMap
+from ..activation_target_values import TargetActivationReduction
 
 
 _ABILITY_LOCAL_REDUCTION = re.compile(
@@ -46,6 +47,14 @@ def _activation_discount_quantity(text, *, source_name):
 def _activation_discount_operand(match, *, source_name):
     printed = match['mana'].upper()
     amount = printed[1:-1] if re.fullmatch(r'\{(?:[1-9][0-9]*|X)\}', printed) else None
+    if match['direction'].casefold() == 'less':
+        if match['aggregate'] and match['aggregate'].casefold() == 'the power of the creature it targets' and amount == 'X':
+            return TargetActivationReduction('power')
+        if match['count'] and match['count'].casefold() == 'color of the creature it targets' and amount and amount.isdigit():
+            return TargetActivationReduction('color_count', int(amount))
+        threshold = re.fullmatch(r'it targets a creature with power (-?[0-9]+) or less', match['condition'] or '', re.I)
+        if threshold is not None and amount and amount.isdigit():
+            return TargetActivationReduction('power_at_most', int(amount), int(threshold[1]))
     if match['direction'].casefold() == 'more':
         quantity = _activation_discount_quantity(match['count'], source_name=source_name) if match['count'] else None
         mana, complex_symbols = mana_cost_to_vector(printed)

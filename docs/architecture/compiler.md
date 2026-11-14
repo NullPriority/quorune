@@ -414,8 +414,18 @@ rejects that version. Equip discounts use the canonical ability-kind selector,
 and an Equipment's own conditional equip discount retains its provider identity.
 Shared target witnesses drive both affordable target projection and the exact
 accepted price. Generic reductions preserve colored and nonmana obligations.
-Variable adjustment amounts and hidden, temporal or numerical target predicates
+Unrepresented adjustment amounts and hidden, temporal or numerical target predicates
 remain residuals. This production does not lower granted spell-tax abilities.
+
+An ability-local target-value operand separately represents a generic discount
+from the current power, color count or fixed power threshold of one required
+creature target. Its cost and activation catalog retain the same version-three
+operand. The single-target shape is checked during lowering and independently
+at runtime admission. Quotes read complete current characteristics, then use
+the existing target-cost witnesses to expose affordable alternatives and price
+the selected command. Payment locks that quote before mana abilities and later
+responses change the target. Optional, multiple, modal, noncreature and
+nonbattlefield target plans remain outside this production.
 
 The printed clause “This ability costs {1} less to activate for each …” binds
 one public quantity to the activated ability's cost and catalog descriptor.

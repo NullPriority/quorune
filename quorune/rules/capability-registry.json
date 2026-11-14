@@ -2397,6 +2397,118 @@
     {
       "applicability": {
         "exclusions": [
+          "optional, multiple, modal, noncreature or nonbattlefield target plans",
+          "unrepresented scalar metrics or conditions",
+          "colored, complex or X activation prices",
+          "unrepresented sibling effects"
+        ],
+        "inputs": [
+          "closed schema-three target-value operand in both cost and activation catalog",
+          "one nonmodal required battlefield creature target",
+          "current complete numeric characteristics or current colors"
+        ],
+        "outputs": [
+          "one scoped generic adjustment for each current legal target quote",
+          "all affordable target alternatives and selected-target accepted price",
+          "unchanged nonmana costs and resolution-time incarnation validation"
+        ],
+        "summary": "Determine one ordinary activation generic reduction from the current power, color count or fixed power threshold of its single required creature target; share canonical target witnesses, affordable offers, selected-target payment and cost lock."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.mana_cost.target_dependent_generic"
+      ],
+      "dependency_fail_closed_rationale": "Typed price fields agree between the activation catalog and cost; malformed target plans fail both compiler lowering and independent runtime admission, and withdrawing the target-value owner blocks the complete source.",
+      "dependency_fail_closed_status": "passed",
+      "id": "activation.mana_cost.ability_local_target_value",
+      "implementation_components": [
+        "quorune.activation_target_values.TargetActivationReduction",
+        "quorune.rules.activation.targeted_costs.single_creature_target_price_plan",
+        "quorune.compiler.public_quantity_activation_costs.compile_ability_local_mana_reduction",
+        "quorune.rules.activation.targeted_costs.ability_local_target_cost_modifiers",
+        "quorune.rules.activation.targeted_costs.activation_modifier_witnesses",
+        "quorune.rules.activation.pricing.activation_target_price_preview",
+        "quorune.semantic_runtime.activated_abilities.ability_local_mana_reduction_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "Fresh native threshold and current-color quote witnesses detect omitted target reductions before an underpayment can commit.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_raft_reads_layer_seven_power_and_does_not_tap_a_blinked_copy",
+        "test_actual_belt_keeps_affordable_targets_and_reads_growth_before_its_own_setting",
+        "test_actual_belt_locks_power_before_mana_sacrifice_changes_the_target",
+        "test_actual_dragonfire_uses_current_colors_and_keeps_monocolored_hexproof"
+      ],
+      "multiplayer_tests": [
+        "test_actual_raft_reads_layer_seven_power_and_does_not_tap_a_blinked_copy",
+        "test_actual_belt_keeps_affordable_targets_and_reads_growth_before_its_own_setting",
+        "test_actual_belt_locks_power_before_mana_sacrifice_changes_the_target",
+        "test_actual_dragonfire_uses_current_colors_and_keeps_monocolored_hexproof"
+      ],
+      "negative_tests": [
+        "test_typed_target_prices_use_independent_boundary_tables_and_closed_fields",
+        "test_optional_multiple_noncreature_and_unknown_price_grammar_stay_residual",
+        "test_originals_bind_normally_and_target_price_minima_survive_missing_labels",
+        "test_fresh_target_scalar_and_threshold_omissions_are_killed",
+        "test_actual_raft_reads_layer_seven_power_and_does_not_tap_a_blinked_copy",
+        "test_actual_belt_keeps_affordable_targets_and_reads_growth_before_its_own_setting",
+        "test_actual_belt_locks_power_before_mana_sacrifice_changes_the_target",
+        "test_actual_dragonfire_uses_current_colors_and_keeps_monocolored_hexproof"
+      ],
+      "official_rules": [
+        "105.2",
+        "105.2a",
+        "105.2b",
+        "105.2c",
+        "107.1b",
+        "118.7a",
+        "400.7",
+        "601.2c",
+        "601.2f",
+        "602.2b",
+        "608.2b",
+        "613.1g",
+        "702.6a"
+      ],
+      "positive_tests": [
+        "test_typed_target_prices_use_independent_boundary_tables_and_closed_fields",
+        "test_optional_multiple_noncreature_and_unknown_price_grammar_stay_residual",
+        "test_originals_bind_normally_and_target_price_minima_survive_missing_labels",
+        "test_actual_raft_reads_layer_seven_power_and_does_not_tap_a_blinked_copy",
+        "test_actual_belt_keeps_affordable_targets_and_reads_growth_before_its_own_setting",
+        "test_actual_belt_locks_power_before_mana_sacrifice_changes_the_target",
+        "test_actual_dragonfire_uses_current_colors_and_keeps_monocolored_hexproof"
+      ],
+      "privacy_tests": [
+        "test_actual_raft_reads_layer_seven_power_and_does_not_tap_a_blinked_copy",
+        "test_actual_belt_keeps_affordable_targets_and_reads_growth_before_its_own_setting",
+        "test_actual_belt_locks_power_before_mana_sacrifice_changes_the_target",
+        "test_actual_dragonfire_uses_current_colors_and_keeps_monocolored_hexproof"
+      ],
+      "replay_tests": [
+        "test_actual_raft_reads_layer_seven_power_and_does_not_tap_a_blinked_copy",
+        "test_actual_belt_keeps_affordable_targets_and_reads_growth_before_its_own_setting",
+        "test_actual_belt_locks_power_before_mana_sacrifice_changes_the_target",
+        "test_actual_dragonfire_uses_current_colors_and_keeps_monocolored_hexproof"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "text-defined X, spend-only restrictions and X-not-zero clauses",
           "variable target domains/cardinalities and unrepresented result bodies",
           "hybrid/Phyrexian/snow, variable nonmana, mana abilities and nonbattlefield variants"
@@ -96232,7 +96344,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 865,
+  "registry_version": 866,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

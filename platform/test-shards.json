@@ -1082,6 +1082,7 @@
       "test_library_search_qualifiers",
       "test_live_battlefield_quantities",
       "test_live_modifier_quantities",
+      "test_local_target_activation_prices",
       "test_loyalty_abilities",
       "test_nested_entry_copy",
       "test_paid_graveyard_casts",

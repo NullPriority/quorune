@@ -287,8 +287,16 @@ def _activated_effect_residuals(
     line: str,
     span: SourceSpan,
     residuals: list[OracleResidual],
+    target_schema=None,
 ) -> list[str]:
     residual_ids: list[str] = []
+    from ..activation_target_values import TargetActivationReduction
+    from ..rules.activation.targeted_costs import single_creature_target_price_plan
+    if isinstance(ability.ability_local_mana_reduction, TargetActivationReduction):
+        try:single_creature_target_price_plan(target_schema)
+        except ValueError as exc:
+            residual_ids.append(append_residual(residuals, kind='cost', text=line, span=span,
+                reason=str(exc), blockers=('one required creature target for ability-local price',)))
     if not ability.compiled_cost:
         residual_ids.append(
             append_residual(
@@ -817,6 +825,7 @@ def activated_oracle_node(
         line=line,
         span=span,
         residuals=residuals,
+        target_schema=target_schema,
     )
     lowerable = not residual_ids and (
         template is not None or ability.mana_ability

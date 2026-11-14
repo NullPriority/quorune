@@ -17,6 +17,7 @@ from .public_characteristic_aggregate_model import PublicCharacteristicAggregate
 from .target_cost_subject import TargetCostSubjectSpec
 from .power_up_model import reduce_power_up_requirements
 from .replacement.immutable import FrozenMap, thaw_value
+from .activation_target_values import TargetActivationReduction, TARGET_ACTIVATION_VALUE_CAPABILITY
 
 
 ACTIVATION_GENERIC_COST_CAPABILITY = 'activation.mana_cost.static_generic'
@@ -114,11 +115,11 @@ class AbilityLocalPublicManaAdjustment:
 
 
 AbilityLocalManaReduction = (CharacteristicQuantitySpec | ConditionalActivationReduction
-    | PublicCharacteristicAggregateSpec | AbilityLocalPublicManaAdjustment)
+    | PublicCharacteristicAggregateSpec | AbilityLocalPublicManaAdjustment | TargetActivationReduction)
 
 
 def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -> None:
-    if isinstance(quantity, (ConditionalActivationReduction, AbilityLocalPublicManaAdjustment)):
+    if isinstance(quantity, (ConditionalActivationReduction, AbilityLocalPublicManaAdjustment, TargetActivationReduction)):
         return
     if isinstance(quantity, PublicCharacteristicAggregateSpec):
         if quantity.schema_version != 1 or quantity.controller_relation != 'source_controller':
@@ -140,7 +141,9 @@ def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -
 def ability_local_mana_reduction_from_dict(value: Mapping[str, Any]) -> AbilityLocalManaReduction:
     if not isinstance(value, Mapping):
         raise ValueError('Ability-local mana reduction must be a descriptor')
-    if 'direction' in value or 'mana' in value:
+    if 'target_metric' in value:
+        reduction = TargetActivationReduction.from_dict(value)
+    elif 'direction' in value or 'mana' in value:
         reduction = AbilityLocalPublicManaAdjustment.from_dict(value)
     elif 'condition' in value or 'generic' in value:
         reduction = ConditionalActivationReduction.from_dict(value)
@@ -158,6 +161,7 @@ def ability_local_reduction_origin_is_supported(zones, discard_source, reduction
 
 
 def ability_local_mana_reduction_capabilities(reduction: AbilityLocalManaReduction, zone: str) -> tuple[str, ...]:
+    if isinstance(reduction, TargetActivationReduction):return (TARGET_ACTIVATION_VALUE_CAPABILITY,)
     if isinstance(reduction, CharacteristicQuantitySpec) and zone == 'battlefield':
         return (ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,)
     raw = reduction.to_dict()
