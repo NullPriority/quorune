@@ -219,17 +219,41 @@ class ResolvedAttackRequirementNativeTests(InheritedNativeFixture, unittest.Test
         self.impose(s, source, target); self.assertIsNone(self.resolve(s)); self.attack(s, [(target, 'B')])
         self.until(s, lambda current: current.state.phase == 'postcombat_main'
             and current.state.pending_decision is not None and current.state.pending_decision.kind == 'priority')
-        self.cast(s, 'A', assault); s = self.replay(s, load=True); self.assertIsNone(self.resolve(s))
+        s = self.replay(s, load=True)
+        # Prepared public owner boundary: extra-combat card production is outside
+        # this family. Keep the same physical turn and the actual resolved rule,
+        # then exercise real offers/commands from a fresh combat checkpoint.
+        from quorune.model import CombatState
+        from quorune.tap_state import untap_permanent
+        untap_permanent(s.engine, s.state.cards[target.object_id], actor='A', reason='Prepared second-combat fixture')
+        s.engine.permissions.invalidate_current(); s.state.pending_decision = None
+        s.state.priority_player = None; s.state.priority_passes = []
+        s.state.phase_index = 5; s.state.phase = 'combat'; s.state.step = 'declare_attackers'
+        s.state.combat = CombatState(); s.engine.pump(); self.checkpoint(s)
         self.assertFalse(s.state.cards[target.object_id].tapped); self.omit(s, allowed=False)
         self.attack(s, [(s.state.cards[target.object_id], 'C')])
         self.assertEqual(('C',), s.state.combat.declared_player_attacks.players)
-        self.until(s, lambda current: current.state.active_player == 'B'
-            and current.state.step == 'upkeep')
+        self.finish_current_turn(s)
         from quorune.declaration_rule_effects import ResolutionDeclarationRuleEffect
         self.assertFalse(any(isinstance(effect, ResolutionDeclarationRuleEffect)
             and getattr(effect.restriction, 'kind', None) == 'attack_each_combat'
             for effect in s.state.continuous_effects or ()))
         self.finish(s, private)
+
+    def finish_current_turn(self, s):
+        turn = s.state.turn_sequence
+        for _ in range(100):
+            s.engine.pump()
+            if s.state.turn_sequence > turn: return
+            decision = s.state.pending_decision; principal = s.pending_principals()[0]
+            if decision.kind == 'cleanup.discard':
+                ctx = s.packet(principal, full=True)['decision']['ctx']
+                command = {'action_id': 'discard', 'cards': [row['id'] for row in ctx['hand'][:ctx['count']]]}
+            elif decision.kind == 'priority': command = {'action_id': 'pass'}
+            elif decision.kind == 'combat.blockers': command = {'action_id': 'block', 'blocks': {}}
+            else: self.fail('Unexpected prepared-combat ending decision '+decision.kind)
+            result = s.act(principal, command); self.assertTrue(result.ok, result.summary)
+        self.fail('Prepared combat turn did not complete')
 
 
 class ResolvedAttackRequirementModelTests(unittest.TestCase):
