@@ -29,6 +29,7 @@ from .mana_source_counter_payment_model import (
     mana_cost_order_fields,read_mana_cost_order_version,
 )
 from .ability_source_information import ability_source_information_version
+from .declare_attack_cast_model import DeclaredPlayerAttackFact, declare_attack_cast_version
 from .qualified_attack_model import QUALIFIED_ATTACK_FULL_STATS_VERSION, qualified_attack_facts_version
 from .permanent_event_state_model import ZONE_EVENT_NUMERICS_VERSION, permanent_event_state_version
 from .battle_cry_resolution_model import battle_cry_resolution_version
@@ -1032,6 +1033,7 @@ class CombatState:
     blockers_declared: bool = False
     # Historical CR 508.8 predicate. It survives removal from combat.
     had_attacking_creature: bool = False
+    declared_player_attacks: DeclaredPlayerAttackFact | None = None
     attackers: dict[str, str] = field(default_factory=dict)  # attacker object -> defender seat/object
     # The defending-player relationship and attacked-object kind are fixed
     # when an attacker is declared.  They remain available if an attacked
@@ -1059,12 +1061,20 @@ class CombatState:
     attack_bands: tuple = ()
 
     def __post_init__(self):
+        if isinstance(self.declared_player_attacks, Mapping):
+            self.declared_player_attacks = DeclaredPlayerAttackFact.from_dict(self.declared_player_attacks)
+        elif self.declared_player_attacks is not None and not isinstance(self.declared_player_attacks, DeclaredPlayerAttackFact):
+            raise ValueError('Combat declaration facts require a typed snapshot')
         self.blocking_requirements=normalize_blocking_requirements(self.blocking_requirements)
         self.attack_bands=normalize_attack_bands(self.attack_bands)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         # Historical Game Record v3 checkpoints predate this additive field.
+        if self.declared_player_attacks is None:
+            payload.pop('declared_player_attacks')
+        else:
+            payload['declared_player_attacks'] = self.declared_player_attacks.to_dict()
         # Omitting the empty value preserves their canonical serialization.
         if self.damage_sequence_id is None:
             payload.pop("damage_sequence_id")
@@ -1285,6 +1295,7 @@ class GameState:
     mana_source_counter_payment_version: int | None = 1
     mana_cost_order_version: int | None = 1
     ability_source_information_version: int | None = 1
+    declare_attack_cast_version: int | None = 1
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
     target_announcement_timing_version: int | None = None
@@ -1368,6 +1379,7 @@ class GameState:
             self.counter_quantity_provenance_version
         )
         ability_source_information_version(self.ability_source_information_version)
+        declare_attack_cast_version(self.declare_attack_cast_version)
         phasing_version = phasing_lifecycle_version(self.phasing_lifecycle_version)
         explore_action_version(self.explore_action_version)
         transform_timestamp_version(self.transform_timestamp_version)
@@ -1415,6 +1427,7 @@ class GameState:
             **mana_source_counter_payment_fields(self.mana_source_counter_payment_version),
             **mana_cost_order_fields(self.mana_cost_order_version),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
+            **({'declare_attack_cast_version':self.declare_attack_cast_version} if self.declare_attack_cast_version is not None else {}),
             **event_versions,
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
             **(
@@ -1556,6 +1569,7 @@ class GameState:
             mana_source_counter_payment_version=read_mana_source_counter_payment_version(data),
             mana_cost_order_version=read_mana_cost_order_version(data),
             ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
+            declare_attack_cast_version=declare_attack_cast_version(data.get('declare_attack_cast_version')),
             cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
             permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),

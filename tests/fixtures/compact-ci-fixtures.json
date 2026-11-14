@@ -15,12 +15,34 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/attachment-followup-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The explicit admitted and excluded tables register complete original Equipment sources from this pinned fixture; every original and unsupported sibling remains present.",
+      "source": "tests/test_attachment_followup_bindings.py",
+      "symbol": "AttachmentFollowupRegistrationTests.test_complete_originals_admit_only_the_closed_direct_followups"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/closed-effect-program-cards.json"
       ],
       "oracle_ids": [],
       "rationale": "The exact 53-card measured cohort is iterated by name from the dedicated pinned fixture.",
       "source": "tests/test_closed_effect_programs.py",
       "symbol": "ClosedEffectProgramCompilerTests.test_measured_corpus_lower_bound_is_capability_closed"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/conditional-target-characteristic-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Explicit positive and separate-neighbor tables register complete pinned original records owned by this fixture; no unsupported sibling is removed.",
+      "source": "tests/test_conditional_target_characteristics.py",
+      "symbol": "ConditionalTargetCharacteristicRegistrationTests.test_full_original_sources_close_and_different_referents_remain_material"
     },
     {
       "card_names": [],
@@ -45,6 +67,17 @@
       "rationale": "The per-test life-upkeep reader returns directly constructed synthetic keyword-body records and delegates other Oracle IDs to these finite focused inputs; the same reader remains active for pending replay and load.",
       "source": "tests/test_cumulative_upkeep_counter_placement.py",
       "symbol": "CumulativeUpkeepRuntimeTests.queue_life_upkeep"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/current-target-replacement-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The exact five original candidate sources and five excluded complete neighbors are read from ADMITTED/EXCLUDED by full source registration.",
+      "source": "tests/test_current_target_replacements.py",
+      "symbol": "CurrentTargetReplacementRegistrationTests.test_complete_original_sources_and_excluded_neighbors"
     },
     {
       "card_names": [],
@@ -390,28 +423,6 @@
       "rationale": "The exact five pinned originals and two explicitly constructed cost controls are iterated by fixture Oracle identity; both unsupported original result bodies remain residual.",
       "source": "tests/test_undaunted.py",
       "symbol": "UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies"
-    },
-    {
-      "card_names": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/attachment-followup-cards.json"
-      ],
-      "oracle_ids": [],
-      "rationale": "The explicit admitted and excluded tables register complete original Equipment sources from this pinned fixture; every original and unsupported sibling remains present.",
-      "source": "tests/test_attachment_followup_bindings.py",
-      "symbol": "AttachmentFollowupRegistrationTests.test_complete_originals_admit_only_the_closed_direct_followups"
-    },
-    {
-      "card_names": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/conditional-target-characteristic-cards.json"
-      ],
-      "oracle_ids": [],
-      "rationale": "Explicit positive and separate-neighbor tables register complete pinned original records owned by this fixture; no unsupported sibling is removed.",
-      "source": "tests/test_conditional_target_characteristics.py",
-      "symbol": "ConditionalTargetCharacteristicRegistrationTests.test_full_original_sources_close_and_different_referents_remain_material"
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",
@@ -584,12 +595,14 @@
     "tests/fixtures/creature-subtype-addition-cards.json",
     "tests/fixtures/crew-power-bonus-cards.json",
     "tests/fixtures/crime-cards.json",
+    "tests/fixtures/current-target-replacement-cards.json",
     "tests/fixtures/cycle-or-discard-event-cards.json",
     "tests/fixtures/damage-death-exile-cards.json",
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/damage-source-identity-cards.json",
     "tests/fixtures/dealt-damage-recipient-cards.json",
     "tests/fixtures/decayed-cards.json",
+    "tests/fixtures/declare-attack-cast-window-cards.json",
     "tests/fixtures/declared-impulse-access-cards.json",
     "tests/fixtures/defender-declaration-numeric-cards.json",
     "tests/fixtures/defender-permission-cards.json",

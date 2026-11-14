@@ -71,6 +71,15 @@ boundary and remains absent when serialized. Checkpoint and manifest markers
 must agree; unknown and boolean values reject. The ordinary continuous-effect
 record still pins only the creatures affected at resolution.
 
+`declare_attack_cast_version: 1` captures the players directly attacked by a
+completed declaration in the current combat's `declared_player_attacks` fact.
+The fact survives attackers leaving combat and excludes attacks on a player's
+planeswalkers or battles, and creatures entering attacking. A new combat starts
+without the earlier declaration fact. Printed declare-attackers casting
+restrictions consume this occurrence only in that step after declaration.
+Historical absence stays absent and creates no new declaration fact. Unknown
+or boolean versions and manifest/checkpoint mismatches reject before replay.
+
 Ordinary fixed attacking-token results use
 `choose_fixed_attacking_token_destinations` with `token_entry_version: 1`.
 Their continuation retains the printed definition and tapped state, the

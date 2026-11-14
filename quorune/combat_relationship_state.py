@@ -106,6 +106,7 @@ def commit_attack_declaration(
     assignments: Sequence[AttackDeclarationAssignment],
     bands: tuple = (),
     preserve_bands: bool = False,
+    capture_declared_players: bool = False,
 ) -> tuple[AttackDeclarationAssignment, ...]:
     """Commit already-validated attackers that survived declaration costs."""
 
@@ -119,6 +120,8 @@ def commit_attack_declaration(
         )
     if type(preserve_bands) is not bool or preserve_bands and bands:
         raise CombatRelationshipStateError("An entering attacker cannot declare new attack bands")
+    if type(capture_declared_players) is not bool or capture_declared_players and preserve_bands:
+        raise CombatRelationshipStateError('Only a normal declaration can capture declared-player history')
     values = tuple(assignments)
     if any(not isinstance(value, AttackDeclarationAssignment) for value in values):
         raise CombatRelationshipStateError(
@@ -163,6 +166,10 @@ def commit_attack_declaration(
     # The complete batch is validated before the canonical owner performs its
     # first write. This keeps the owner transactional even when it is exercised
     # independently of the engine's command-level rollback boundary.
+    if capture_declared_players:
+        from .declare_attack_cast_model import DeclaredPlayerAttackFact
+        combat.declared_player_attacks = DeclaredPlayerAttackFact(tuple(sorted({
+            assignment.target for assignment in committed if assignment.target_kind == 'player'})))
     for assignment in committed:
         attacker = cards[assignment.attacker_object_id]
         attacker.attacking = assignment.target

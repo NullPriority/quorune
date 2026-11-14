@@ -54,6 +54,15 @@ An accepted arbiter action supplies the instructions for unregistered
 resolution. Its continuation carries those instructions and records no
 registered program use.
 
+Printed declare-attackers casting restrictions have a separate typed runtime
+component and capability from the resolution body. Both advertised actions and
+accepted casting proposals check the selected face and actual caster before
+payment. A requirement that the caster was attacked consumes a versioned,
+immutable declaration fact from the current combat, rather than current
+attackers or turn-wide history. Attacks on planeswalkers and battles do not
+satisfy that player requirement. Withdrawing the restriction owner or its
+compiler contribution leaves the complete source unready.
+
 ## Closure layers
 
 Implementation-component resolution caches immutable export names by exact

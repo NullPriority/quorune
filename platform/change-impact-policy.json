@@ -15104,6 +15104,43 @@
         "test_paid_sacrifice_creature_stats",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "current-target-self-replacements",
+      "patterns": [
+        "quorune/target_replacement_model.py",
+        "quorune/compiler/target_replacements.py",
+        "quorune/rules/target_replacements.py",
+        "quorune/semantic_choices/target_replacements.py",
+        "tests/test_current_target_replacements.py",
+        "tests/fixtures/current-target-replacement-cards.json"
+      ],
+      "test_modules": [
+        "test_current_target_replacements",
+        "test_resolution_public_conditions",
+        "test_conditional_target_characteristics",
+        "test_conditional_target_preparation",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "declare-attackers-cast-window",
+      "patterns": [
+        "quorune/declare_attack_cast_model.py",
+        "quorune/semantic_runtime/declare_attack_cast.py",
+        "quorune/compiler/self_cast_restriction_nodes.py",
+        "quorune/compiled_cast_timing.py",
+        "quorune/attack_transition_engine_adapter.py",
+        "quorune/combat_relationship_state.py",
+        "tests/test_declare_attack_cast_windows.py",
+        "tests/fixtures/declare-attack-cast-window-cards.json"
+      ],
+      "test_modules": [
+        "test_declare_attack_cast_windows",
+        "test_declare_attackers_rules",
+        "test_self_cast_restrictions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

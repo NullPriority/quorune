@@ -7639,7 +7639,7 @@
           "hidden origin zones",
           "unrepresented card predicates",
           "unrepresented chained mechanics",
-          "returns to the resolving controller’s hand"
+          "returns to the resolving controller\u2019s hand"
         ],
         "inputs": [
           "one source-spanned mandatory target clause",
@@ -7652,7 +7652,7 @@
           "one owner-hand zone request and replacement-aware destination",
           "new logical object identity and principal-scoped hand projection"
         ],
-        "summary": "Return one legal physical card from any public graveyard to its owner’s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
+        "summary": "Return one legal physical card from any public graveyard to its owner\u2019s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
       },
       "blockers": [],
       "dependencies": [
@@ -19733,6 +19733,90 @@
         "negative",
         "interaction",
         "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "other steps or attack-history conditions",
+          "attacks on planeswalkers or battles qualifying their controllers",
+          "entering attacking counting as a declaration"
+        ],
+        "inputs": [
+          "selected-face typed restriction",
+          "versioned direct-player declaration occurrence",
+          "actual casting principal and current step"
+        ],
+        "outputs": [
+          "shared offered and accepted casting legality before payment"
+        ],
+        "summary": "Printed declare-attackers-only casting, optionally requiring the actual caster to have been directly attacked by a declaration in this combat step."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "Runtime binding independently requires its typed restriction capability; withdrawing compiler or capability leaves original complete sources residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.restriction.declare_attackers_window",
+      "implementation_components": [
+        "quorune.declare_attack_cast_model.DeclareAttackCastSpec",
+        "quorune.declare_attack_cast_model.DeclaredPlayerAttackFact",
+        "quorune.combat_relationship_state.commit_attack_declaration",
+        "quorune.attack_transition_engine_adapter.commit_engine_attack_declaration",
+        "quorune.compiled_cast_timing.compiled_self_cast_restriction_reason",
+        "quorune.compiler.self_cast_restriction_nodes.self_cast_restriction_nodes",
+        "quorune.semantic_runtime.declare_attack_cast.DeclareAttackCastRestrictionHandler"
+      ],
+      "implementation_mutation_rationale": "Fresh original witness without child subtests kills omitted shared cast guard and omitted canonical declaration capture.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_declared_attack_still_qualifies_after_the_attacker_leaves_combat",
+        "test_unconditional_teleport_window_does_not_require_an_attack_on_its_caster"
+      ],
+      "multiplayer_tests": [
+        "test_originals_cast_only_in_the_printed_window_and_execute_complete_bodies",
+        "test_other_player_or_planeswalker_attack_does_not_mean_caster_was_attacked"
+      ],
+      "negative_tests": [
+        "test_handler_decodes_only_its_complete_versioned_restriction",
+        "test_later_step_does_not_keep_the_attackers_step_permission",
+        "test_other_player_or_planeswalker_attack_does_not_mean_caster_was_attacked",
+        "test_runtime_dependency_withdrawal_and_compiler_omission_fail_closed",
+        "test_unknown_phase_and_incompatible_history_clauses_remain_material"
+      ],
+      "official_rules": [
+        "117.1a",
+        "508.1",
+        "508.2",
+        "508.4",
+        "601.3"
+      ],
+      "positive_tests": [
+        "test_fresh_original_witness_includes_declared_occurrence_and_shared_guard",
+        "test_originals_cast_only_in_the_printed_window_and_execute_complete_bodies",
+        "test_printed_step_and_declared_player_attack_are_complete_intrinsic_restrictions"
+      ],
+      "privacy_tests": [
+        "test_originals_cast_only_in_the_printed_window_and_execute_complete_bodies"
+      ],
+      "replay_tests": [
+        "test_checkpoint_and_manifest_keep_historical_absence_and_reject_mismatch",
+        "test_declared_attack_still_qualifies_after_the_attacker_leaves_combat",
+        "test_originals_cast_only_in_the_printed_window_and_execute_complete_bodies"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
         "privacy",
         "replay"
       ],
@@ -34478,7 +34562,7 @@
           "shared combat and activation legality",
           "expiry at the controller-relative turn boundary"
         ],
-        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller’s next turn."
+        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller\u2019s next turn."
       },
       "blockers": [],
       "dependencies": [
@@ -36227,7 +36311,7 @@
         ],
         "outputs": [
           "one locked attack, block, and all-activation prohibition",
-          "expiry at the resolving controller’s next turn"
+          "expiry at the resolving controller\u2019s next turn"
         ],
         "summary": "Bind the printed next-turn attack, block, and activation prohibition to one revalidated creature incarnation."
       },
@@ -41770,7 +41854,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Modularâ€”Sunburst",
+          "Modular\u00e2\u20ac\u201dSunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -43032,7 +43116,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modularâ€”Sunburst variable linkage",
+          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ],
         "inputs": [
@@ -52808,7 +52892,7 @@
           "one optional cast during current resolution",
           "unused cards stay in exile"
         ],
-        "summary": "Exile from the resolving controller’s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
+        "summary": "Exile from the resolving controller\u2019s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
       },
       "blockers": [],
       "dependencies": [
@@ -65174,6 +65258,110 @@
     {
       "applicability": {
         "exclusions": [
+          "new or narrowed target domains",
+          "cast-history or paid-cast conditions",
+          "paired other objects, damage-power quantities, death replacement and phasing alternatives",
+          "optional, recursive, variable or otherwise unowned branches"
+        ],
+        "inputs": [
+          "one unrestricted battlefield creature target with the original sealed incarnation",
+          "one current subtype, color, blocking, enchantment-creature or legendary-creature disjunction, or night designation",
+          "complete fixed stat, keyword and +1/+1-counter default/replacement branches"
+        ],
+        "outputs": [
+          "exactly one ordered branch selected at resolution",
+          "counter prohibitions and characteristic duration retain their ordinary owners",
+          "original target availability, revalidation, atomic rejection, private projections and replay"
+        ],
+        "summary": "Choose exactly one fixed branch from the current traits of one unchanged creature target, or the current night designation, before executing ordinary result owners."
+      },
+      "blockers": [],
+      "dependencies": [
+        "resolution.effect.public_condition",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "Exact complete bindings, independently owned children, capability withdrawals and payload-derived runtime minima retain revalidation and the replacement owner even without coverage.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.effect.current_target_self_replacement",
+      "implementation_components": [
+        "quorune.target_replacement_model.TargetReplacementCondition",
+        "quorune.target_replacement_model.validate_current_target_replacement",
+        "quorune.compiler.target_replacements.current_target_replacement_template",
+        "quorune.rules.target_replacements.current_target_replacement_capabilities",
+        "quorune.rules.target_replacements.current_target_replacement_branch_capabilities",
+        "quorune.semantic_choices.target_replacements.prepare_current_target_replacement"
+      ],
+      "implementation_mutation_rationale": "Fresh compiler, branch-owner and runtime-predicate omissions are killed by complete source admission and an actual legal non-Human target result.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_alternatives_preserve_true_false_and_single_result",
+        "test_current_traits_are_read_after_real_type_change_and_then_locked",
+        "test_regent_counter_precedes_stat_and_survives_expiry_with_prohibition",
+        "test_night_designation_selects_one_result_without_changing_designation",
+        "test_departed_target_executes_neither_branch_and_replays",
+        "test_blocking_uses_actual_declarations_after_attacker_leaves_and_cycling_remains",
+        "test_public_trait_branch_does_not_expose_opponent_hidden_cards"
+      ],
+      "multiplayer_tests": [
+        "test_original_alternatives_preserve_true_false_and_single_result",
+        "test_blocking_uses_actual_declarations_after_attacker_leaves_and_cycling_remains",
+        "test_public_trait_branch_does_not_expose_opponent_hidden_cards"
+      ],
+      "negative_tests": [
+        "test_different_referents_unowned_conditions_and_new_targets_are_rejected",
+        "test_instruction_validation_requires_exact_binding_and_both_owned_branches",
+        "test_compiler_and_owner_omission_are_detected",
+        "test_capability_withdrawals_preserve_fail_closed_admission",
+        "test_payload_minimum_rejects_missing_owner_without_coverage"
+      ],
+      "official_rules": [
+        "109.5",
+        "509.1g",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "611.2c",
+        "614.15",
+        "122.1",
+        "702.29a",
+        "731.1",
+        "731.2c"
+      ],
+      "positive_tests": [
+        "test_exact_alternatives_keep_one_unqualified_creature_target",
+        "test_complete_original_sources_and_excluded_neighbors"
+      ],
+      "privacy_tests": [
+        "test_public_trait_branch_does_not_expose_opponent_hidden_cards"
+      ],
+      "replay_tests": [
+        "test_original_alternatives_preserve_true_false_and_single_result",
+        "test_current_traits_are_read_after_real_type_change_and_then_locked",
+        "test_regent_counter_precedes_stat_and_survives_expiry_with_prohibition",
+        "test_night_designation_selects_one_result_without_changing_designation",
+        "test_departed_target_executes_neither_branch_and_replays",
+        "test_blocking_uses_actual_declarations_after_attacker_leaves_and_cycling_remains",
+        "test_public_trait_branch_does_not_expose_opponent_hidden_cards"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Unrepresented trigger envelopes and result references",
           "Current counts on a replacement incarnation"
         ],
@@ -75199,7 +75387,7 @@
     {
       "applicability": {
         "exclusions": [
-          "another player’s turn for lands",
+          "another player\u2019s turn for lands",
           "extra land plays or new source zones",
           "copies and noncreature lands"
         ],
@@ -75212,7 +75400,7 @@
           "shared instant casting and legal land-play timing",
           "single consumption on the next matching play"
         ],
-        "summary": "Apply the resolving controller’s instant-timing permission to their next physical creature-card play this turn."
+        "summary": "Apply the resolving controller\u2019s instant-timing permission to their next physical creature-card play this turn."
       },
       "blockers": [],
       "dependencies": [
@@ -77556,7 +77744,7 @@
       "applicability": {
         "exclusions": [
           "creatures put onto the battlefield attacking",
-          "other objects’ saddled facts",
+          "other objects\u2019 saddled facts",
           "resolution-time if-saddled clauses"
         ],
         "inputs": [
@@ -93788,7 +93976,7 @@
           "ordinary play of captured exile cards",
           "expiry before priority at the matching step"
         ],
-        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller’s next actual end step."
+        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller\u2019s next actual end step."
       },
       "blockers": [],
       "dependencies": [
@@ -97091,7 +97279,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 874,
+  "registry_version": 876,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

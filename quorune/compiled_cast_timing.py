@@ -85,6 +85,8 @@ def compiled_self_cast_restriction_reason(host, actor, card, *, face_name=None):
         SELF_CAST_RESTRICTION_EVENT, SELF_CAST_RESTRICTION_HANDLER,
     )
     from .semantic_runtime.context import SemanticNodeError
+    from .declare_attack_cast_model import DECLARE_ATTACK_CAST_HANDLER
+    from .semantic_runtime.declare_attack_cast import DeclareAttackCastRestrictionHandler
 
     record = host.card_record(card)
     if record is None:
@@ -96,6 +98,13 @@ def compiled_self_cast_restriction_reason(host, actor, card, *, face_name=None):
                 or str(program.provenance.get('face_id') or '') != expected_face):
             continue
         for descriptor in program.handlers:
+            if descriptor.get('handler_id') == DECLARE_ATTACK_CAST_HANDLER:
+                if actor not in host.state.players:
+                    raise SemanticNodeError('Combat cast restriction requires the authenticated caster')
+                restriction = DeclareAttackCastRestrictionHandler().validate(descriptor)
+                if not restriction.permits(host.state, actor):
+                    return 'declare_attackers_cast_window'
+                continue
             if descriptor.get('handler_id') != SELF_CAST_RESTRICTION_HANDLER:
                 continue
             if actor not in host.state.players:
