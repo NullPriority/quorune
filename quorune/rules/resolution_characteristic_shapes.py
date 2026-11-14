@@ -51,6 +51,10 @@ def continuous_resolution_covered_mechanics(supplied: set[str]) -> set[str]:
 
 
 def fixed_target_color_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..resolution_color_model import TARGET_COLOR_VERSIONS
+    if any(e.get('schema_version') in TARGET_COLOR_VERSIONS for e in effects):
+        from .resolution_colors import resolution_color_node_capabilities
+        return resolution_color_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if (len(effects) != 1 or target_schema != fixed_target_color_schema()
             or not {FIXED_TARGET_COLOR_MECHANIC, "cr-611-continuous-effects", "cr-115-targets"} <= set(mechanic_ids)):
         return ()
@@ -62,7 +66,8 @@ def fixed_target_color_node_capabilities(*, effects, target_schema, mechanic_ids
 
 
 def fixed_target_color_runtime_dependencies(program):
-    required = set()
+    from .resolution_colors import resolution_color_runtime_dependencies
+    required = set(resolution_color_runtime_dependencies(program))
 
     def visit(value):
         if isinstance(value, Mapping):

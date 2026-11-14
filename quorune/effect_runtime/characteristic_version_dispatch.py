@@ -10,6 +10,10 @@ from ..rules.fixed_stat_multipliers import is_fixed_stat_multiplier
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     version=effect.get('schema_version')
+    from ..resolution_color_model import TARGET_COLOR_VERSIONS
+    if version in TARGET_COLOR_VERSIONS:
+        from ..rules.resolution_colors import apply_resolution_color
+        return True,apply_resolution_color(host,effect,actor=actor,reason=reason)
     if version == FIXED_TARGET_COLOR_VERSION:
         from ..continuous_effect_state import apply_fixed_target_color
         return True, apply_fixed_target_color(host, effect, actor=actor, reason=reason)

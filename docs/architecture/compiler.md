@@ -3557,6 +3557,17 @@ resolution revalidation. The layer-five journal follows the same permanent
 spell through entry, including a spell copy that becomes a token. Copy target
 selection uses the copy's own copiable values.
 
+`compiler/scoped_target_colors.py` extends fixed colors to a separately typed
+creature, permanent, or spell target. Version twenty-two distinguishes replacing
+colors from adding a printed color and retains independently compiled same-target
+stat, keyword, tap, untap, damage, and draw companions. Version twenty-three
+changes a distinct creature target set. Its version-three announced cardinality
+requires at least one selection and takes its upper bound from the authoritative
+object universe. Target-tax previews retain that positive minimum while legacy
+optional counts continue to permit zero. Both forms use the existing layer-five journal and incarnation
+and duration rules. Each companion retains its own capability dependencies;
+unknown tails keep the source residual. Version fourteen remains unchanged.
+
 `compiler/reanimation_entry_counter_templates.py` composes that scalar target
 with one fixed numeric or ordinary keyword counter instruction. Version-three
 `reanimate` retains the original announced target snapshot and supplies typed

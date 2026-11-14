@@ -1075,7 +1075,7 @@ def fixed_source_characteristics_node_capabilities(
         from .defender_permission_effect import temporary_defender_permission_capabilities
         return temporary_defender_permission_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if any(effect.get('op') == CHARACTERISTIC_OPERATION
-           and effect.get('schema_version') == FIXED_TARGET_COLOR_VERSION for effect in effects):
+           and effect.get('schema_version') in {FIXED_TARGET_COLOR_VERSION,22,23} for effect in effects):
         from .resolution_characteristic_shapes import fixed_target_color_node_capabilities
         return fixed_target_color_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(effect.get('op') == CHARACTERISTIC_OPERATION

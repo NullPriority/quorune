@@ -489,6 +489,7 @@ def _activated_effect_dependency_gate(
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
                 "temporary-source-protection-choice",
+                "fixed-target-color-scope",
                 "opposing-graveyard-return-then-targeted-result",
             }.intersection(mechanics)
         )

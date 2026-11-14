@@ -355,6 +355,11 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .scoped_target_colors import scoped_target_color_template
+    color=scoped_target_color_template(text,compile_leaf=lambda clause:typed_resolution_effect_template(clause,
+        card_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types,
+        source_attachment_relation=source_attachment_relation))
+    if color is not None:return color
     suspect = suspect_effect_template(text, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
     if suspect is not None:
         return suspect

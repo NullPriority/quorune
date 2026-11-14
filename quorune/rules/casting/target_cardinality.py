@@ -49,20 +49,26 @@ def target_count_cost_preview(host, seat, card, program, option):
     """Expose minimal tax witnesses without substituting zero for every X.
 
     Target tax ownership still selects and prices each source combination. A
-    temporary up-to schema permits the minimal witness for each combination;
-    ordinary execution always uses the exact schema bound to the submitted X.
+    temporary up-to schema permits the minimal witness for each X combination;
+    minimum-one schemas retain that positive minimum. Ordinary execution uses
+    the declaration's bound schema.
     """
     if "target_count_parameter" not in option or option.get("x_value_policy") == "zero":
         return option
     from ...target_source import spell_targeting_source
     schema = dict(option["target_schema"])
-    schema.pop("count", None); schema.pop("up_to", None)
-    schema["up_to"] = len(host.state.cards)
+    spec = AnnouncedTargetCardinality.from_dict(option["target_count_parameter"])
+    for field in ("count", "up_to", "min", "max"):
+        schema.pop(field, None)
+    bound_field = "max" if spec.selection == "one_or_more" else "up_to"
+    if spec.selection == "one_or_more":
+        schema["min"] = 1
+    schema[bound_field] = len(host.state.cards)
     public = host._public_target_schema(seat, schema,
         acting_source=spell_targeting_source(host, card), source_ref=card.ref)
     if public is None:
         return option
-    schema["up_to"] = len(public.get("legal_refs", ()))
+    schema[bound_field] = len(public.get("legal_refs", ()))
     from .targeted_costs import targeted_spell_cost_sources
     return {**option, **({"target_schema": schema} if targeted_spell_cost_sources(host, seat,card=card,spell_program=program) else {}),
         "target_count_preview_limit": len(public.get("legal_refs", ()))}

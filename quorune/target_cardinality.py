@@ -30,15 +30,20 @@ class AnnouncedTargetCardinality:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise TargetCardinalityError("Unsupported announced target-count schema")
-        if self.schema_version == 2:
+        if self.schema_version == 3:
+            if self.parameter!='any_number' or self.selection!='one_or_more':
+                raise TargetCardinalityError('One-or-more cardinality requires its unrestricted minimum-one selector')
+        elif self.schema_version == 2:
             if type(self.parameter) is not str or self.parameter != "any_number" or self.selection != "up_to":
                 raise TargetCardinalityError("Any-number cardinality requires unrestricted optional selection")
         elif type(self.parameter) is not str or self.parameter != "x":
             raise TargetCardinalityError("Target cardinality requires the declared X parameter")
-        if type(self.selection) is not str or self.selection not in {"exact", "up_to"}:
+        if type(self.selection) is not str or self.selection not in {"exact", "up_to",'one_or_more'}:
             raise TargetCardinalityError("Target cardinality requires exact or up-to selection")
+        if self.schema_version!=3 and self.selection=='one_or_more':
+            raise TargetCardinalityError('Historical cardinality reserves the minimum-one selector')
 
     def bounds(self, declared_x: Any) -> tuple[int, int]:
         if self.parameter == "any_number" and declared_x is None:
@@ -46,7 +51,7 @@ class AnnouncedTargetCardinality:
         value = 0 if declared_x is None else declared_x
         if type(value) is not int or value < 0:
             raise TargetCardinalityError("Target-count X must be a nonnegative integer")
-        return (value if self.selection == "exact" else 0), value
+        return (value if self.selection == "exact" else 1 if self.selection=='one_or_more' else 0), value
 
     def to_dict(self) -> dict[str, Any]:
         return {"schema_version": self.schema_version, "parameter": self.parameter,
@@ -74,8 +79,9 @@ def bind_announced_target_schema(schema: Mapping[str, Any], declared_x: Any) -> 
     if set(result).intersection({"count", "min", "max", "minimum", "maximum", "up_to", "groups", "modes"}):
         raise TargetCardinalityError("Announced target count cannot mix fixed, grouped or modal cardinality")
     spec = AnnouncedTargetCardinality.from_dict(result.pop("count_parameter"))
-    _minimum, maximum = spec.bounds(declared_x)
-    result["count" if spec.selection == "exact" else "up_to"] = maximum
+    minimum, maximum = spec.bounds(declared_x)
+    if spec.selection=='one_or_more':result.update(min=minimum,max=maximum)
+    else:result["count" if spec.selection == "exact" else "up_to"] = maximum
     return result
 
 

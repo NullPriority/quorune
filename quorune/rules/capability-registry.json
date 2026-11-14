@@ -7627,7 +7627,7 @@
           "hidden origin zones",
           "unrepresented card predicates",
           "unrepresented chained mechanics",
-          "returns to the resolving controller\u2019s hand"
+          "returns to the resolving controller’s hand"
         ],
         "inputs": [
           "one source-spanned mandatory target clause",
@@ -7640,7 +7640,7 @@
           "one owner-hand zone request and replacement-aware destination",
           "new logical object identity and principal-scoped hand projection"
         ],
-        "summary": "Return one legal physical card from any public graveyard to its owner\u2019s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
+        "summary": "Return one legal physical card from any public graveyard to its owner’s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
       },
       "blockers": [],
       "dependencies": [
@@ -34466,7 +34466,7 @@
           "shared combat and activation legality",
           "expiry at the controller-relative turn boundary"
         ],
-        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller\u2019s next turn."
+        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller’s next turn."
       },
       "blockers": [],
       "dependencies": [
@@ -36215,7 +36215,7 @@
         ],
         "outputs": [
           "one locked attack, block, and all-activation prohibition",
-          "expiry at the resolving controller\u2019s next turn"
+          "expiry at the resolving controller’s next turn"
         ],
         "summary": "Bind the printed next-turn attack, block, and activation prohibition to one revalidated creature incarnation."
       },
@@ -41758,7 +41758,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Modular\u00e2\u20ac\u201dSunburst",
+          "Modularâ€”Sunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -43014,7 +43014,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
+          "Modularâ€”Sunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ],
         "inputs": [
@@ -52632,7 +52632,7 @@
           "one optional cast during current resolution",
           "unused cards stay in exile"
         ],
-        "summary": "Exile from the resolving controller\u2019s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
+        "summary": "Exile from the resolving controller’s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
       },
       "blockers": [],
       "dependencies": [
@@ -74809,7 +74809,7 @@
     {
       "applicability": {
         "exclusions": [
-          "another player\u2019s turn for lands",
+          "another player’s turn for lands",
           "extra land plays or new source zones",
           "copies and noncreature lands"
         ],
@@ -74822,7 +74822,7 @@
           "shared instant casting and legal land-play timing",
           "single consumption on the next matching play"
         ],
-        "summary": "Apply the resolving controller\u2019s instant-timing permission to their next physical creature-card play this turn."
+        "summary": "Apply the resolving controller’s instant-timing permission to their next physical creature-card play this turn."
       },
       "blockers": [],
       "dependencies": [
@@ -77166,7 +77166,7 @@
       "applicability": {
         "exclusions": [
           "creatures put onto the battlefield attacking",
-          "other objects\u2019 saddled facts",
+          "other objects’ saddled facts",
           "resolution-time if-saddled clauses"
         ],
         "inputs": [
@@ -93392,7 +93392,7 @@
           "ordinary play of captured exile cards",
           "expiry before priority at the matching step"
         ],
-        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller\u2019s next actual end step."
+        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller’s next actual end step."
       },
       "blockers": [],
       "dependencies": [
@@ -94600,6 +94600,132 @@
         "test_recolored_permanent_spell_copy_keeps_its_color_as_the_same_token",
         "test_white_recolor_revalidates_original_spell_and_copy_uses_its_own_color",
         "test_colored_face_down_permanent_exposes_its_color_and_keeps_its_identity_private"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "chosen or variable colors",
+          "unrepresented target groups or companion tails",
+          "adding colorlessness"
+        ],
+        "inputs": [
+          "one canonical scalar target or distinct creature set",
+          "a fixed color or colorless and an explicit set/add mode",
+          "represented duration and independently closed companions"
+        ],
+        "outputs": [
+          "one incarnation-bound layer-five journal record",
+          "current public color queries and timestamp ordering",
+          "unchanged legacy version-fourteen payloads"
+        ],
+        "summary": "Apply a fixed replacing or additive layer-five color to one declared public object or a minimum-one creature target set, retaining exact same-target companions."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.object.fixed_resolution_color"
+      ],
+      "dependency_fail_closed_rationale": "Versioned operands independently require scoped color authority without coverage labels; target-set cardinality retains its separate dependency and all companions remain closed.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.object.fixed_resolution_color_scope",
+      "implementation_components": [
+        "quorune.resolution_color_model.decode_resolution_color",
+        "quorune.compiler.scoped_target_colors.scoped_target_color_template",
+        "quorune.rules.resolution_colors.resolution_color_node_capabilities",
+        "quorune.rules.resolution_colors.resolution_color_runtime_dependencies",
+        "quorune.rules.resolution_colors.apply_resolution_color",
+        "quorune.target_cardinality.AnnouncedTargetCardinality"
+      ],
+      "implementation_mutation_rationale": "A fresh real activated sequence fails when the canonical continuous journal is omitted.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_wisps_preserve_color_and_all_printed_companions_then_expire",
+        "test_actual_additive_and_replacing_colors_follow_timestamps_and_change_equip_quotes",
+        "test_actual_spell_colorless_setting_follows_resolution_but_not_a_new_incarnation",
+        "test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+        "test_actual_damage_and_shadow_companions_remain_complete",
+        "test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+        "test_actual_target_tax_preview_preserves_minimum_one_and_pays_the_selected_price"
+      ],
+      "multiplayer_tests": [
+        "test_actual_wisps_preserve_color_and_all_printed_companions_then_expire",
+        "test_actual_additive_and_replacing_colors_follow_timestamps_and_change_equip_quotes",
+        "test_actual_spell_colorless_setting_follows_resolution_but_not_a_new_incarnation",
+        "test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+        "test_actual_damage_and_shadow_companions_remain_complete",
+        "test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+        "test_actual_target_tax_preview_preserves_minimum_one_and_pays_the_selected_price"
+      ],
+      "negative_tests": [
+        "test_new_color_operands_are_closed_and_legacy_color_bytes_are_unchanged",
+        "test_minimum_one_has_no_fixed_upper_bound_and_old_zero_selection_is_retained",
+        "test_originals_bind_normally_and_color_authority_cannot_be_removed_with_labels",
+        "test_actual_wisps_preserve_color_and_all_printed_companions_then_expire",
+        "test_actual_additive_and_replacing_colors_follow_timestamps_and_change_equip_quotes",
+        "test_actual_spell_colorless_setting_follows_resolution_but_not_a_new_incarnation",
+        "test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+        "test_actual_damage_and_shadow_companions_remain_complete",
+        "test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+        "test_actual_target_tax_preview_preserves_minimum_one_and_pays_the_selected_price"
+      ],
+      "official_rules": [
+        "105.2",
+        "105.3",
+        "400.7",
+        "400.7a",
+        "514.2",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2c",
+        "613.1e",
+        "613.7b"
+      ],
+      "positive_tests": [
+        "test_new_color_operands_are_closed_and_legacy_color_bytes_are_unchanged",
+        "test_minimum_one_has_no_fixed_upper_bound_and_old_zero_selection_is_retained",
+        "test_originals_bind_normally_and_color_authority_cannot_be_removed_with_labels",
+        "test_actual_wisps_preserve_color_and_all_printed_companions_then_expire",
+        "test_actual_additive_and_replacing_colors_follow_timestamps_and_change_equip_quotes",
+        "test_actual_spell_colorless_setting_follows_resolution_but_not_a_new_incarnation",
+        "test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+        "test_actual_damage_and_shadow_companions_remain_complete",
+        "test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+        "test_actual_target_tax_preview_preserves_minimum_one_and_pays_the_selected_price"
+      ],
+      "privacy_tests": [
+        "test_actual_wisps_preserve_color_and_all_printed_companions_then_expire",
+        "test_actual_additive_and_replacing_colors_follow_timestamps_and_change_equip_quotes",
+        "test_actual_spell_colorless_setting_follows_resolution_but_not_a_new_incarnation",
+        "test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+        "test_actual_damage_and_shadow_companions_remain_complete",
+        "test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+        "test_actual_target_tax_preview_preserves_minimum_one_and_pays_the_selected_price"
+      ],
+      "replay_tests": [
+        "test_actual_wisps_preserve_color_and_all_printed_companions_then_expire",
+        "test_actual_additive_and_replacing_colors_follow_timestamps_and_change_equip_quotes",
+        "test_actual_spell_colorless_setting_follows_resolution_but_not_a_new_incarnation",
+        "test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+        "test_actual_damage_and_shadow_companions_remain_complete",
+        "test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+        "test_actual_target_tax_preview_preserves_minimum_one_and_pays_the_selected_price"
       ],
       "required_evidence": [
         "positive",
@@ -96471,7 +96597,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 867,
+  "registry_version": 868,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

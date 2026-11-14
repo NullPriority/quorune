@@ -1321,6 +1321,7 @@
       "test_riot_rules",
       "test_rules_primitives",
       "test_scheduled_half_life",
+      "test_scoped_target_colors",
       "test_scry_rules",
       "test_selection_ownership",
       "test_semantic_choice_model",
