@@ -736,7 +736,7 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
     def test_adjacent_attachment_grammar_remains_fail_closed(self):
         base = record("Boundary Harness", "Equip {2}", keywords=("Equip",))
         for oracle_text in (
-            "Equip Human {W/U}",
+            "Equip Human {W/unknown}",
             "Equip Human\N{EM DASH}Discard a card",
             "When this Equipment enters, attach it to target creature an opponent controls.",
             "Living Weapon \N{EM DASH} Create two Germ tokens.",
@@ -747,6 +747,31 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                     replace(base, oracle_text=oracle_text)
                 )
                 self.assertNotEqual("exact", compiled.status)
+
+    def test_restricted_hybrid_equip_retains_both_complete_prices_and_human_target(self):
+        from copy import deepcopy
+        from quorune.rules.capabilities import CapabilityRegistry
+        source = record('Hybrid Human Harness', 'Equip Human {W/U}', keywords=('Equip',))
+        ir = self.compile(source)
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual('fixed-priced-equip-activation-v1', node.template_id)
+        self.assertEqual(['human'], node.target_schema['subtypes_any'])
+        self.assertEqual('you', node.target_schema['controller'])
+        options = node.cost['mana_cost_options']
+        self.assertEqual({(1, 0), (0, 1)}, {
+            (o['requirements']['W'], o['requirements']['U']) for o in options})
+        self.assertTrue(all(sum(o['requirements'].values()) == 1
+            and o['life_payment'] == o['snow_payment'] == 0 for o in options))
+        self.assertIn('activation.mana_cost.fixed_complex', node.capability_dependencies)
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for cap in ('activation.mana_cost.fixed_complex', 'attachment.equip.fixed_restricted'):
+            changed = deepcopy(raw)
+            next(r for r in changed['capabilities'] if r['id'] == cap).update(
+                status='blocked', blockers=['Withheld hybrid restricted Equip owner'])
+            blocked = compile_oracle_card(source, capability_registry=CapabilityRegistry(changed),
+                capability_profile='commander_review')
+            self.assertNotEqual('exact', blocked.status)
 
     def test_printed_source_equipment_activations_share_closed_effect_admission(self):
         for subject, price in (("you control", "{B}{B}"), ("an opponent controls", "{1}")):
