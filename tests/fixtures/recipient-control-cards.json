@@ -11335,6 +11335,613 @@
     "vintage": "legal"
   }
 }
+,
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "name": "Bloomvine Regent // Claim Territory",
+  "mana_cost": "{3}{G}{G} // {2}{G}",
+  "cmc": 5.0,
+  "type_line": "Creature — Dragon // Sorcery — Omen",
+  "oracle_text": "Bloomvine Regent: Flying\nWhenever this creature or another Dragon you control enters, you gain 3 life.\n//\nClaim Territory: Search your library for up to two basic Forest cards, reveal them, put one onto the battlefield tapped and the other into your hand, then shuffle. (Also shuffle this card.)",
+  "power": "4",
+  "toughness": "5",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "G"
+  ],
+  "color_identity": [
+    "G"
+  ],
+  "keywords": [
+    "Flying"
+  ],
+  "produced_mana": [],
+  "layout": "adventure",
+  "released_at": "2025-04-11",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  },
+  "card_faces": [
+    {
+      "colors": [],
+      "defense": null,
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Bloomvine Regent",
+      "oracle_text": "Flying\nWhenever this creature or another Dragon you control enters, you gain 3 life.",
+      "power": "4",
+      "toughness": "5",
+      "type_line": "Creature — Dragon"
+    },
+    {
+      "colors": [],
+      "defense": null,
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Claim Territory",
+      "oracle_text": "Search your library for up to two basic Forest cards, reveal them, put one onto the battlefield tapped and the other into your hand, then shuffle. (Also shuffle this card.)",
+      "power": null,
+      "toughness": null,
+      "type_line": "Sorcery — Omen"
+    }
+  ]
+},
+{
+  "oracle_id": "248d7759-aa73-4430-aa86-d45dc607944b",
+  "name": "Burning Sun's Avatar",
+  "mana_cost": "{3}{R}{R}{R}",
+  "cmc": 6.0,
+  "type_line": "Creature — Dinosaur Avatar",
+  "oracle_text": "When this creature enters, it deals 3 damage to target opponent or planeswalker and 3 damage to up to one target creature.",
+  "power": "6",
+  "toughness": "6",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2017-09-29",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "name": "Emeritus of Truce // Swords to Plowshares",
+  "mana_cost": "{1}{W}{W} // {W}",
+  "cmc": 3.0,
+  "type_line": "Creature — Cat Cleric // Instant",
+  "oracle_text": "Emeritus of Truce: When this creature enters, target player creates a 1/1 white and black Inkling creature token with flying. Then if an opponent controls more creatures than you, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)\n//\nSwords to Plowshares: Exile target creature. Its controller gains life equal to its power.",
+  "power": "3",
+  "toughness": "3",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "W"
+  ],
+  "color_identity": [
+    "W"
+  ],
+  "keywords": [
+    "Prepared"
+  ],
+  "produced_mana": [],
+  "layout": "prepare",
+  "released_at": "2026-04-24",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  },
+  "card_faces": [
+    {
+      "colors": [],
+      "defense": null,
+      "loyalty": null,
+      "mana_cost": "{1}{W}{W}",
+      "name": "Emeritus of Truce",
+      "oracle_text": "When this creature enters, target player creates a 1/1 white and black Inkling creature token with flying. Then if an opponent controls more creatures than you, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": "3",
+      "toughness": "3",
+      "type_line": "Creature — Cat Cleric"
+    },
+    {
+      "colors": [],
+      "defense": null,
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Swords to Plowshares",
+      "oracle_text": "Exile target creature. Its controller gains life equal to its power.",
+      "power": null,
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ]
+},
+{
+  "oracle_id": "d4d3cba8-562d-4208-ab0a-c82b4dd8e959",
+  "name": "Githzerai Monk",
+  "mana_cost": "{4}{W}",
+  "cmc": 5.0,
+  "type_line": "Creature — Gith Monk",
+  "oracle_text": "Flash\nFlying\nPsychic Defense — When this creature enters, tap all creatures you don't control.",
+  "power": "3",
+  "toughness": "2",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "W"
+  ],
+  "color_identity": [
+    "W"
+  ],
+  "keywords": [
+    "Flying",
+    "Psychic Defense",
+    "Flash"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2022-06-10",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "not_legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "not_legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "name": "Joined Researchers // Secret Rendezvous",
+  "mana_cost": "{1}{W} // {1}{W}{W}",
+  "cmc": 2.0,
+  "type_line": "Creature — Human Cleric Wizard // Sorcery",
+  "oracle_text": "Joined Researchers: First strike\nAt the beginning of each end step, if an opponent has more cards in hand than you, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)\n//\nSecret Rendezvous: You and target opponent each draw three cards.",
+  "power": "2",
+  "toughness": "2",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "W"
+  ],
+  "color_identity": [
+    "W"
+  ],
+  "keywords": [
+    "First strike",
+    "Prepared"
+  ],
+  "produced_mana": [],
+  "layout": "prepare",
+  "released_at": "2026-04-24",
+  "legalities": {
+    "alchemy": "legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "legal",
+    "standardbrawl": "legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  },
+  "card_faces": [
+    {
+      "colors": [],
+      "defense": null,
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Joined Researchers",
+      "oracle_text": "First strike\nAt the beginning of each end step, if an opponent has more cards in hand than you, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": "2",
+      "toughness": "2",
+      "type_line": "Creature — Human Cleric Wizard"
+    },
+    {
+      "colors": [],
+      "defense": null,
+      "loyalty": null,
+      "mana_cost": "{1}{W}{W}",
+      "name": "Secret Rendezvous",
+      "oracle_text": "You and target opponent each draw three cards.",
+      "power": null,
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ]
+},
+{
+  "oracle_id": "64f5689d-504d-40e9-bdb5-36dcefd257e2",
+  "name": "Linvala, the Preserver",
+  "mana_cost": "{4}{W}{W}",
+  "cmc": 6.0,
+  "type_line": "Legendary Creature — Angel",
+  "oracle_text": "Flying\nWhen Linvala enters, if an opponent has more life than you, you gain 5 life.\nWhen Linvala enters, if an opponent controls more creatures than you, create a 3/3 white Angel creature token with flying.",
+  "power": "5",
+  "toughness": "5",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "W"
+  ],
+  "color_identity": [
+    "W"
+  ],
+  "keywords": [
+    "Flying"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2016-01-22",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "18ec721f-c1ac-4581-a61d-2f0b09d6bf92",
+  "name": "Plague Wind",
+  "mana_cost": "{7}{B}{B}",
+  "cmc": 9.0,
+  "type_line": "Sorcery",
+  "oracle_text": "Destroy all creatures you don't control. They can't be regenerated.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "B"
+  ],
+  "color_identity": [
+    "B"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2018-03-16",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "not_legal",
+    "commander": "legal",
+    "competitivebrawl": "not_legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "not_legal",
+    "historic": "not_legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "not_legal",
+    "predh": "legal",
+    "premodern": "legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "not_legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "f81327c2-a0e4-475d-bb89-8a42b1ddc93c",
+  "name": "Rakdos Firewheeler",
+  "mana_cost": "{B}{B}{R}{R}",
+  "cmc": 4.0,
+  "type_line": "Creature — Human Rogue",
+  "oracle_text": "When this creature enters, it deals 2 damage to target opponent and 2 damage to up to one target creature or planeswalker.",
+  "power": "4",
+  "toughness": "3",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "B",
+    "R"
+  ],
+  "color_identity": [
+    "B",
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2024-01-12",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "not_legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "d7e2b2ba-cb5e-41f1-ad33-baf56c0b72ed",
+  "name": "Reckless Rage",
+  "mana_cost": "{R}",
+  "cmc": 1.0,
+  "type_line": "Instant",
+  "oracle_text": "Reckless Rage deals 4 damage to target creature you don't control and 2 damage to target creature you control.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "R"
+  ],
+  "color_identity": [
+    "R"
+  ],
+  "keywords": [],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2018-01-19",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "2fb13687-0518-4ba0-a5ae-dd609464b026",
+  "name": "Roadside Reliquary",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Land",
+  "oracle_text": "{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Draw a card if you control an artifact. Draw a card if you control an enchantment.",
+  "power": null,
+  "toughness": null,
+  "loyalty": null,
+  "defense": null,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "produced_mana": [
+    "C"
+  ],
+  "layout": "normal",
+  "released_at": "2022-02-18",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "not_legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+},
+{
+  "oracle_id": "ff8f5a4b-112a-425e-b489-7ee26d1d9fb3",
+  "name": "Voracious Hydra",
+  "mana_cost": "{X}{G}{G}",
+  "cmc": 2.0,
+  "type_line": "Creature — Hydra",
+  "oracle_text": "Trample\nThis creature enters with X +1/+1 counters on it.\nWhen this creature enters, choose one —\n• Double the number of +1/+1 counters on this creature.\n• This creature fights target creature you don't control.",
+  "power": "0",
+  "toughness": "1",
+  "loyalty": null,
+  "defense": null,
+  "colors": [
+    "G"
+  ],
+  "color_identity": [
+    "G"
+  ],
+  "keywords": [
+    "Trample",
+    "Fight",
+    "Double"
+  ],
+  "produced_mana": [],
+  "layout": "normal",
+  "released_at": "2019-07-12",
+  "legalities": {
+    "alchemy": "not_legal",
+    "brawl": "legal",
+    "commander": "legal",
+    "competitivebrawl": "legal",
+    "duel": "legal",
+    "future": "not_legal",
+    "gladiator": "legal",
+    "historic": "legal",
+    "legacy": "legal",
+    "modern": "legal",
+    "oathbreaker": "legal",
+    "oldschool": "not_legal",
+    "pauper": "not_legal",
+    "paupercommander": "not_legal",
+    "penny": "legal",
+    "pioneer": "legal",
+    "predh": "not_legal",
+    "premodern": "not_legal",
+    "standard": "not_legal",
+    "standardbrawl": "not_legal",
+    "timeless": "legal",
+    "tlr": "legal",
+    "vintage": "legal"
+  }
+}
 ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
@@ -12816,6 +13423,319 @@
   "published_at": "2019-01-25",
   "source": "wotc",
   "comment": "In a Two-Headed Giant game, Ill-Gotten Inheritance’s first ability causes the opposing team to lose 2 life and you gain 1 life."
+}
+,
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "If Bloomvine Regent enters at the same time as one or more other Dragons you control, its triggered ability will trigger for each of those Dragons, including itself."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "If a spell is cast as an Omen, its controller shuffles it into its owner’s library instead of putting it into its owner’s graveyard as it resolves."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "If an Omen spell is copied, that copy is also an Omen and is shuffled into its owner’s library as it resolves. Its owner still shuffles their library, but the copy ceases to exist as a state-based action."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "If you cast an omen card as an Omen, use only its alternative characteristics to determine whether it’s legal to cast that spell. For example, if you control Thundermane Dragon (“You may cast creature spells with power 4 or greater from the top of your library.”) and Twinmaw Stormbrood is on top of your library, you can cast Twinmaw Stormbrood, but not Charring Bite."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "An omen card is a creature card in every zone except the stack, as well as while on the stack if not cast as an Omen. Ignore its alternative characteristics in those cases. For example, while it’s in your graveyard, Twinmaw Stormbrood is a white creature card whose mana value is 6. It can’t be the target of the reflexive ability created by Kishla Trawlers’s triggered ability (“…When you do, return target instant or sorcery card from your graveyard to your hand.”)."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "If an Omen spell has one or more targets and all of those targets are illegal when the spell tries to resolve, it won’t resolve. None of its effects will happen, and it will be put into its owner’s graveyard. It won’t be shuffled into its owner’s library."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "When casting a spell as an Omen, use the alternative characteristics and ignore all of the card’s normal characteristics. The spell’s color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "If an effect instructs you to choose a card name, you may choose the alternative Omen name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "As a player casts an omen card, the player chooses whether they cast the card normally or as an Omen."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "Casting a card as an Omen isn’t casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Omen."
+},
+{
+  "oracle_id": "da1e019c-2ffb-412d-90d7-f2e5e5c44c4b",
+  "published_at": "2025-04-04",
+  "source": "wotc",
+  "comment": "If an Omen spell is countered or an effect causes it to otherwise leave the stack, it won’t be shuffled into its owner’s library."
+},
+{
+  "oracle_id": "248d7759-aa73-4430-aa86-d45dc607944b",
+  "published_at": "2017-09-29",
+  "source": "wotc",
+  "comment": "The ability of Burning Sun’s Avatar can target any creature, not just one controlled by the target opponent."
+},
+{
+  "oracle_id": "248d7759-aa73-4430-aa86-d45dc607944b",
+  "published_at": "2017-09-29",
+  "source": "wotc",
+  "comment": "If the ability of Burning Sun’s Avatar has two targets and one becomes illegal, the other will still be dealt damage."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "A creature with a prepare spell can't become prepared more than once at the same time. For example, Emeritus of Ideation is on the battlefield and is prepared. When it attacks, its last ability triggers. When that ability resolves, its controller may still exile eight cards from their graveyard, but doing so won't cause Emeritus of Ideation to become prepared a second time or create a second copy of Ancestral Recall in exile."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If a prepared creature stops being a creature, it will still be prepared, and the copy of its prepare spell will remain in exile. That permanent's controller will still be able to cast it. The same is true if a prepared creature becomes a copy of something else, even if it's then a permanent without a prepare spell."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Creating a copy of a creature's prepare spell in exile ignores copy exceptions applied to that creature that would affect the copiable values of that spell. For example, say a player casts Croaking Counterpart (a sorcery that says \"Create a token that's a copy of target non-Frog creature, except it's a 1/1 green Frog.\") targeting Goblin Glasswright. The token copy of Goblin Glasswright will enter prepared as a 1/1 green Frog creature, but the copy of Craft with Pride in exile will still be a red sorcery. The copy of Craft with Pride won't be green, a creature, or a Frog, and it won't have power or toughness."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If a prepare spell with one or more targets has no legal targets when it tries to resolve, it won't resolve and none of its effects will happen. Since the spell was cast, the associated permanent will still not be prepared."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If an effect instructs you to choose a card name, you may choose the alternative prepare spell's name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Casting a copy of a prepare spell from exile isn't casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to a copy of a prepare spell cast from exile."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If a prepared creature loses all abilities, it won't stop being prepared, and nothing will happen to its alternative characteristics or to the copy of its prepare spell in exile."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "A creature without a prepare spell can't become prepared."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If an effect causes a creature to become unprepared, a prepared creature stops being prepared and the associated copy of its prepare spell in exile ceases to exist. If it wasn't prepared at that time, nothing happens."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Only the current controller of a prepared creature can cast the copy of its prepare spell in exile. It doesn't matter who owns that creature or who controlled it when it became prepared."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "While copies of spells in zones other than the stack cease to exist when state-based actions are checked, this does not apply to copies of prepare spells in exile that were created as a creature became prepared."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "As an effect causes a creature with a prepare spell to become prepared (including effects that state that a creature \"enters prepared\"), that creature's controller creates a copy of that creature's prepare spell in exile. That copy remains in exile for as long as that permanent is on the battlefield and is prepared. That creature's controller may cast that copy as long as it remains in exile. As they cast it, that creature stops being prepared."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Being prepared isn't a copiable value. If a permanent becomes a copy of a prepared creature, it won't be prepared. That permanent will have the alternative characteristics, though, and some other effect could cause it to become prepared later."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "A preparation card is a creature card in every zone. For example, while it's in your graveyard, Emeritus of Ideation is a blue creature whose mana value is 5. It can't be the target of Zealous Lorecaster's triggered ability (\"When this creature enters, return target instant or sorcery card from your graveyard to your hand.\")."
+},
+{
+  "oracle_id": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Preparation cards can only be cast with their base characteristics."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If an effect instructs you to choose a card name, you may choose the alternative prepare spell's name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Being prepared isn't a copiable value. If a permanent becomes a copy of a prepared creature, it won't be prepared. That permanent will have the alternative characteristics, though, and some other effect could cause it to become prepared later."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "A preparation card is a creature card in every zone. For example, while it's in your graveyard, Emeritus of Ideation is a blue creature whose mana value is 5. It can't be the target of Zealous Lorecaster's triggered ability (\"When this creature enters, return target instant or sorcery card from your graveyard to your hand.\")."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If a prepared creature loses all abilities, it won't stop being prepared, and nothing will happen to its alternative characteristics or to the copy of its prepare spell in exile."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Only the current controller of a prepared creature can cast the copy of its prepare spell in exile. It doesn't matter who owns that creature or who controlled it when it became prepared."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If a prepare spell with one or more targets has no legal targets when it tries to resolve, it won't resolve and none of its effects will happen. Since the spell was cast, the associated permanent will still not be prepared."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Preparation cards can only be cast with their base characteristics."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "A creature with a prepare spell can't become prepared more than once at the same time. For example, Emeritus of Ideation is on the battlefield and is prepared. When it attacks, its last ability triggers. When that ability resolves, its controller may still exile eight cards from their graveyard, but doing so won't cause Emeritus of Ideation to become prepared a second time or create a second copy of Ancestral Recall in exile."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Creating a copy of a creature's prepare spell in exile ignores copy exceptions applied to that creature that would affect the copiable values of that spell. For example, say a player casts Croaking Counterpart (a sorcery that says \"Create a token that's a copy of target non-Frog creature, except it's a 1/1 green Frog.\") targeting Goblin Glasswright. The token copy of Goblin Glasswright will enter prepared as a 1/1 green Frog creature, but the copy of Craft with Pride in exile will still be a red sorcery. The copy of Craft with Pride won't be green, a creature, or a Frog, and it won't have power or toughness."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If an effect causes a creature to become unprepared, a prepared creature stops being prepared and the associated copy of its prepare spell in exile ceases to exist. If it wasn't prepared at that time, nothing happens."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Joined Researchers's last ability will check as each end step starts to see if an opponent has more cards in hand than you. If none do, the ability won't trigger at all. It's not possible to discard cards or cause an opponent to draw cards during an end step in time to have the ability trigger. If it does trigger, the ability will check again as it tries to resolve. If no opponent has more cards in hand than you at that time, the ability won't resolve and none of its effects will happen."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "If a prepared creature stops being a creature, it will still be prepared, and the copy of its prepare spell will remain in exile. That permanent's controller will still be able to cast it. The same is true if a prepared creature becomes a copy of something else, even if it's then a permanent without a prepare spell."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "While copies of spells in zones other than the stack cease to exist when state-based actions are checked, this does not apply to copies of prepare spells in exile that were created as a creature became prepared."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "As an effect causes a creature with a prepare spell to become prepared (including effects that state that a creature \"enters prepared\"), that creature's controller creates a copy of that creature's prepare spell in exile. That copy remains in exile for as long as that permanent is on the battlefield and is prepared. That creature's controller may cast that copy as long as it remains in exile. As they cast it, that creature stops being prepared."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "Casting a copy of a prepare spell from exile isn't casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to a copy of a prepare spell cast from exile."
+},
+{
+  "oracle_id": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+  "published_at": "2026-03-20",
+  "source": "wotc",
+  "comment": "A creature without a prepare spell can't become prepared."
+},
+{
+  "oracle_id": "64f5689d-504d-40e9-bdb5-36dcefd257e2",
+  "published_at": "2016-01-22",
+  "source": "wotc",
+  "comment": "In a multiplayer game, it's possible for the condition to be true at both times but with respect to two different opponents."
+},
+{
+  "oracle_id": "64f5689d-504d-40e9-bdb5-36dcefd257e2",
+  "published_at": "2016-01-22",
+  "source": "wotc",
+  "comment": "For each triggered ability, the game checks to see if the condition is true at the moment the ability would trigger. If the condition isn't true, the ability won't trigger. If the ability does trigger, the game will check again to see if the condition is true as the ability tries to resolve. If it's not true at that time, the ability won't do anything."
+},
+{
+  "oracle_id": "f81327c2-a0e4-475d-bb89-8a42b1ddc93c",
+  "published_at": "2019-01-25",
+  "source": "wotc",
+  "comment": "If you can't target any opponent with Rakdos Firewheeler's ability, the ability doesn't go on the stack. You can't have it deal 2 damage to any creature or planeswalker. On the other hand, if you do choose two legal targets but either target is illegal when the ability tries to resolve, the other is still affected as appropriate."
+},
+{
+  "oracle_id": "d7e2b2ba-cb5e-41f1-ad33-baf56c0b72ed",
+  "published_at": "2018-01-19",
+  "source": "wotc",
+  "comment": "You can’t cast Reckless Rage unless you choose both a creature you control and a creature you don’t control as targets."
+},
+{
+  "oracle_id": "d7e2b2ba-cb5e-41f1-ad33-baf56c0b72ed",
+  "published_at": "2018-01-19",
+  "source": "wotc",
+  "comment": "If either target is an illegal target as Reckless Rage resolves, the other will still be dealt damage."
+},
+{
+  "oracle_id": "2fb13687-0518-4ba0-a5ae-dd609464b026",
+  "published_at": "2022-02-18",
+  "source": "wotc",
+  "comment": "If you control both an artifact and an enchantment, you will draw two cards. If a single permanent is both an artifact and an enchantment, that counts as controlling both."
+},
+{
+  "oracle_id": "ff8f5a4b-112a-425e-b489-7ee26d1d9fb3",
+  "published_at": "2019-07-12",
+  "source": "wotc",
+  "comment": "Because fighting isn't combat damage, trample has no effect during the fight."
+},
+{
+  "oracle_id": "ff8f5a4b-112a-425e-b489-7ee26d1d9fb3",
+  "published_at": "2019-07-12",
+  "source": "wotc",
+  "comment": "If the target of Voracious Hydra's second mode isn't a legal target as the ability resolves, or if Voracious Hydra has left the battlefield, neither creature will deal or be dealt damage. The ability won't change to the first mode if the target is illegal."
 }
 ],
   "schema_version": 1,

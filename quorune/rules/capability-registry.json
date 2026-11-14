@@ -7341,20 +7341,26 @@
         "test_actual_aviator_trigger_ignores_the_returned_incarnation",
         "test_actual_leech_prepares_once_per_turn_then_casts_its_inset",
         "test_actual_ideation_payment_keeps_one_prepared_copy",
-        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset"
+        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset",
+        "test_actual_emeritus_checks_after_token_creation_then_casts_its_owned_inset",
+        "test_actual_researchers_prepare_at_end_step_and_draw_only_for_the_selected_pair"
       ],
       "multiplayer_tests": [
         "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
         "test_actual_leech_prepares_once_per_turn_then_casts_its_inset",
         "test_actual_ideation_payment_keeps_one_prepared_copy",
-        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset"
+        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset",
+        "test_actual_emeritus_checks_after_token_creation_then_casts_its_owned_inset",
+        "test_actual_researchers_prepare_at_end_step_and_draw_only_for_the_selected_pair"
       ],
       "negative_tests": [
         "test_source_preparation_pins_the_result_and_rejects_other_referents",
         "test_source_preparation_withdrawal_rejects_a_complete_program",
         "test_actual_aviator_trigger_ignores_the_returned_incarnation",
         "test_paid_source_preparation_promotes_only_its_complete_battlefield_program",
-        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset"
+        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset",
+        "test_actual_emeritus_checks_after_token_creation_then_casts_its_owned_inset",
+        "test_actual_researchers_prepare_at_end_step_and_draw_only_for_the_selected_pair"
       ],
       "official_rules": [
         "113.7a",
@@ -7370,18 +7376,24 @@
         "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
         "test_actual_leech_prepares_once_per_turn_then_casts_its_inset",
         "test_paid_source_preparation_promotes_only_its_complete_battlefield_program",
-        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset"
+        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset",
+        "test_actual_emeritus_checks_after_token_creation_then_casts_its_owned_inset",
+        "test_actual_researchers_prepare_at_end_step_and_draw_only_for_the_selected_pair"
       ],
       "privacy_tests": [
         "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
-        "test_actual_ideation_payment_keeps_one_prepared_copy"
+        "test_actual_ideation_payment_keeps_one_prepared_copy",
+        "test_actual_emeritus_checks_after_token_creation_then_casts_its_owned_inset",
+        "test_actual_researchers_prepare_at_end_step_and_draw_only_for_the_selected_pair"
       ],
       "replay_tests": [
         "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
         "test_actual_aviator_trigger_ignores_the_returned_incarnation",
         "test_actual_leech_prepares_once_per_turn_then_casts_its_inset",
         "test_actual_ideation_payment_keeps_one_prepared_copy",
-        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset"
+        "test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset",
+        "test_actual_emeritus_checks_after_token_creation_then_casts_its_owned_inset",
+        "test_actual_researchers_prepare_at_end_step_and_draw_only_for_the_selected_pair"
       ],
       "required_evidence": [
         "positive",
@@ -41899,14 +41911,17 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_surge_adds_then_doubles_current_target_count_with_replay",
-        "test_quantity_replacement_modifies_additional_count_once"
+        "test_quantity_replacement_modifies_additional_count_once",
+        "test_actual_hydra_replaces_entry_and_doubling_counters_and_fights_without_trample_damage"
       ],
       "multiplayer_tests": [
-        "test_actual_surge_adds_then_doubles_current_target_count_with_replay"
+        "test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+        "test_actual_hydra_replaces_entry_and_doubling_counters_and_fights_without_trample_damage"
       ],
       "negative_tests": [
         "test_named_counter_requests_reject_unknown_invalid_or_unpinned_subjects",
-        "test_named_doubling_grammar_and_amount_shape_stay_closed"
+        "test_named_doubling_grammar_and_amount_shape_stay_closed",
+        "test_actual_hydra_replaces_entry_and_doubling_counters_and_fights_without_trample_damage"
       ],
       "official_rules": [
         "701.10e",
@@ -41921,14 +41936,17 @@
       "positive_tests": [
         "test_named_counter_request_snapshots_add_original_counts_and_skip_zero",
         "test_named_doubling_grammar_and_amount_shape_stay_closed",
-        "test_actual_surge_adds_then_doubles_current_target_count_with_replay"
+        "test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+        "test_actual_hydra_replaces_entry_and_doubling_counters_and_fights_without_trample_damage"
       ],
       "privacy_tests": [
-        "test_actual_surge_adds_then_doubles_current_target_count_with_replay"
+        "test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+        "test_actual_hydra_replaces_entry_and_doubling_counters_and_fights_without_trample_damage"
       ],
       "replay_tests": [
         "test_actual_surge_adds_then_doubles_current_target_count_with_replay",
-        "test_quantity_replacement_modifies_additional_count_once"
+        "test_quantity_replacement_modifies_additional_count_once",
+        "test_actual_hydra_replaces_entry_and_doubling_counters_and_fights_without_trample_damage"
       ],
       "required_evidence": [
         "positive",
@@ -44800,7 +44818,9 @@
         "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
         "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
         "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
-        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares",
+        "test_actual_shooters_announce_each_printed_role_and_optional_amount",
+        "test_actual_reckless_rage_keeps_opposing_controller_predicates_and_fixed_shares"
       ],
       "multiplayer_tests": [
         "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
@@ -44811,7 +44831,9 @@
         "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
         "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
         "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
-        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares",
+        "test_actual_shooters_announce_each_printed_role_and_optional_amount",
+        "test_actual_reckless_rage_keeps_opposing_controller_predicates_and_fixed_shares"
       ],
       "negative_tests": [
         "test_roles_preserve_amounts_cardinality_distinctness_and_canonical_scalar_legality",
@@ -44825,7 +44847,9 @@
         "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
         "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
         "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
-        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares",
+        "test_actual_shooters_announce_each_printed_role_and_optional_amount",
+        "test_actual_reckless_rage_keeps_opposing_controller_predicates_and_fixed_shares"
       ],
       "official_rules": [
         "115.3",
@@ -44852,7 +44876,9 @@
         "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
         "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
         "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
-        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares",
+        "test_actual_shooters_announce_each_printed_role_and_optional_amount",
+        "test_actual_reckless_rage_keeps_opposing_controller_predicates_and_fixed_shares"
       ],
       "privacy_tests": [
         "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
@@ -44863,7 +44889,9 @@
         "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
         "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
         "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
-        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares",
+        "test_actual_shooters_announce_each_printed_role_and_optional_amount",
+        "test_actual_reckless_rage_keeps_opposing_controller_predicates_and_fixed_shares"
       ],
       "replay_tests": [
         "test_actual_cone_requires_three_distinct_targets_and_keeps_each_printed_amount",
@@ -44874,7 +44902,9 @@
         "test_actual_attack_trigger_announces_optional_roles_then_uses_departed_source_facts",
         "test_actual_fixed_shares_resume_one_atomic_replacement_batch_after_pending_reload",
         "test_actual_all_illegal_roles_fizzle_without_producing_the_printed_mana",
-        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares"
+        "test_actual_copy_changes_targets_without_changing_or_reallocating_printed_shares",
+        "test_actual_shooters_announce_each_printed_role_and_optional_amount",
+        "test_actual_reckless_rage_keeps_opposing_controller_predicates_and_fixed_shares"
       ],
       "required_evidence": [
         "positive",
@@ -53941,7 +53971,8 @@
         "test_original_peregrination_shuffles_before_independent_scry",
         "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
         "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
-        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles",
+        "test_actual_omen_allocation_reveals_ordered_forests_and_keeps_both_shuffles"
       ],
       "multiplayer_tests": [
         "test_bounded_search_window_and_payload_minimum_remain_authoritative",
@@ -53953,12 +53984,14 @@
         "test_original_peregrination_shuffles_before_independent_scry",
         "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
         "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
-        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles",
+        "test_actual_omen_allocation_reveals_ordered_forests_and_keeps_both_shuffles"
       ],
       "negative_tests": [
         "test_bounded_search_window_and_payload_minimum_remain_authoritative",
         "test_grammar_keeps_counts_reveal_scope_and_unknown_neighbors",
-        "test_versioned_allocation_round_trip_frozen_values_and_closed_legacy_forms"
+        "test_versioned_allocation_round_trip_frozen_values_and_closed_legacy_forms",
+        "test_actual_omen_allocation_reveals_ordered_forests_and_keeps_both_shuffles"
       ],
       "official_rules": [
         "109.5",
@@ -53977,7 +54010,8 @@
         "test_original_dreamscape_uses_ordered_discard_and_land_price_slots",
         "test_original_flare_alternative_price_and_kicked_copy_preserve_search_results",
         "test_original_hand_graveyard_searches_preserve_qualified_failure_and_private_hand",
-        "test_versioned_allocation_round_trip_frozen_values_and_closed_legacy_forms"
+        "test_versioned_allocation_round_trip_frozen_values_and_closed_legacy_forms",
+        "test_actual_omen_allocation_reveals_ordered_forests_and_keeps_both_shuffles"
       ],
       "privacy_tests": [
         "test_bounded_search_window_and_payload_minimum_remain_authoritative",
@@ -53989,7 +54023,8 @@
         "test_original_peregrination_shuffles_before_independent_scry",
         "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
         "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
-        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles",
+        "test_actual_omen_allocation_reveals_ordered_forests_and_keeps_both_shuffles"
       ],
       "replay_tests": [
         "test_bounded_search_window_and_payload_minimum_remain_authoritative",
@@ -54001,7 +54036,8 @@
         "test_original_peregrination_shuffles_before_independent_scry",
         "test_original_untapped_basic_searches_and_both_kicker_cost_paths",
         "test_original_viewpoint_two_first_slots_and_navigation_gate_source_controller",
-        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles"
+        "test_short_searches_force_first_group_and_empty_qualified_search_still_shuffles",
+        "test_actual_omen_allocation_reveals_ordered_forests_and_keeps_both_shuffles"
       ],
       "required_evidence": [
         "positive",
@@ -59074,11 +59110,13 @@
       "interaction_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
         "test_regeneration_prohibition_preserves_other_destruction_protections",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_uncontrolled_mass_destruction_preserves_own_and_indestructible_creatures"
       ],
       "multiplayer_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
-        "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays"
+        "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
+        "test_actual_uncontrolled_mass_destruction_preserves_own_and_indestructible_creatures"
       ],
       "negative_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
@@ -59086,7 +59124,8 @@
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
         "test_regeneration_prohibition_shape_and_intent_mutants_fail_closed",
         "test_unsupported_regeneration_grammar_remains_residual",
-        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary"
+        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
+        "test_actual_uncontrolled_mass_destruction_preserves_own_and_indestructible_creatures"
       ],
       "official_rules": [
         "701.8",
@@ -59102,17 +59141,20 @@
         "test_exact_fixed_regeneration_and_prohibition_grammar_compiles",
         "test_receiver_destroy_heads_keep_no_targets_and_per_child_subscriptions",
         "test_regeneration_prohibition_preserves_other_destruction_protections",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_uncontrolled_mass_destruction_preserves_own_and_indestructible_creatures"
       ],
       "privacy_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
         "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_uncontrolled_mass_destruction_preserves_own_and_indestructible_creatures"
       ],
       "replay_tests": [
         "test_actual_receiver_destruction_distinguishes_regeneration_prohibition_and_indestructible",
         "test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
-        "test_actual_damn_prevents_regeneration_and_preserves_indestructible"
+        "test_actual_damn_prevents_regeneration_and_preserves_indestructible",
+        "test_actual_uncontrolled_mass_destruction_preserves_own_and_indestructible_creatures"
       ],
       "required_evidence": [
         "positive",
@@ -60234,13 +60276,16 @@
         "test_public_tap_state_set_uses_current_query_stun_and_replays",
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
-        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures",
+        "test_actual_uncontrolled_entry_tap_uses_current_controller_not_owner"
       ],
       "multiplayer_tests": [
-        "test_public_tap_state_set_uses_current_query_stun_and_replays"
+        "test_public_tap_state_set_uses_current_query_stun_and_replays",
+        "test_actual_uncontrolled_entry_tap_uses_current_controller_not_owner"
       ],
       "negative_tests": [
-        "test_public_tap_state_set_matrix_compiles_through_shared_query"
+        "test_public_tap_state_set_matrix_compiles_through_shared_query",
+        "test_actual_uncontrolled_entry_tap_uses_current_controller_not_owner"
       ],
       "official_rules": [
         "109.2",
@@ -60253,18 +60298,21 @@
         "test_public_tap_state_set_matrix_compiles_through_shared_query",
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
-        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures",
+        "test_actual_uncontrolled_entry_tap_uses_current_controller_not_owner"
       ],
       "privacy_tests": [
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
-        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures",
+        "test_actual_uncontrolled_entry_tap_uses_current_controller_not_owner"
       ],
       "replay_tests": [
         "test_public_tap_state_set_uses_current_query_stun_and_replays",
         "test_actual_blustersquall_affects_three_opponents_and_a_later_creature",
         "test_actual_attack_and_end_step_untap_retain_source_exclusion_and_player_scope",
-        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures"
+        "test_actual_ready_half_and_fused_willing_untap_and_lock_only_current_creatures",
+        "test_actual_uncontrolled_entry_tap_uses_current_controller_not_owner"
       ],
       "required_evidence": [
         "positive",
@@ -67420,16 +67468,19 @@
       "interaction_tests": [
         "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
         "test_later_condition_observes_the_earlier_created_creature",
-        "test_original_beza_true_false_and_each_independent_condition_result"
+        "test_original_beza_true_false_and_each_independent_condition_result",
+        "test_actual_reliquary_allows_no_result_and_reads_each_condition_after_responses"
       ],
       "multiplayer_tests": [
         "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
         "test_later_condition_observes_the_earlier_created_creature",
-        "test_original_beza_true_false_and_each_independent_condition_result"
+        "test_original_beza_true_false_and_each_independent_condition_result",
+        "test_actual_reliquary_allows_no_result_and_reads_each_condition_after_responses"
       ],
       "negative_tests": [
         "test_sequence_leaf_and_comparator_authority_are_required_without_labels",
-        "test_unknown_siblings_and_alternative_branches_do_not_gain_sequence_closure"
+        "test_unknown_siblings_and_alternative_branches_do_not_gain_sequence_closure",
+        "test_actual_reliquary_allows_no_result_and_reads_each_condition_after_responses"
       ],
       "official_rules": [
         "109.5",
@@ -67439,17 +67490,20 @@
       ],
       "positive_tests": [
         "test_four_complete_leaves_keep_conditions_results_and_printed_order",
-        "test_original_beza_true_false_and_each_independent_condition_result"
+        "test_original_beza_true_false_and_each_independent_condition_result",
+        "test_actual_reliquary_allows_no_result_and_reads_each_condition_after_responses"
       ],
       "privacy_tests": [
         "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
         "test_later_condition_observes_the_earlier_created_creature",
-        "test_original_beza_true_false_and_each_independent_condition_result"
+        "test_original_beza_true_false_and_each_independent_condition_result",
+        "test_actual_reliquary_allows_no_result_and_reads_each_condition_after_responses"
       ],
       "replay_tests": [
         "test_beza_source_control_change_does_not_change_comparator_or_result_actor",
         "test_later_condition_observes_the_earlier_created_creature",
-        "test_original_beza_true_false_and_each_independent_condition_result"
+        "test_original_beza_true_false_and_each_independent_condition_result",
+        "test_actual_reliquary_allows_no_result_and_reads_each_condition_after_responses"
       ],
       "required_evidence": [
         "positive",
@@ -77679,14 +77733,16 @@
         "test_public_entry_threshold_replays_actions_and_full_draw",
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
         "test_source_state_intervening_condition_and_current_ability_fail_closed",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_actual_linvala_intervening_conditions_recheck_different_opponents"
       ],
       "multiplayer_tests": [
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
         "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_actual_linvala_intervening_conditions_recheck_different_opponents"
       ],
       "negative_tests": [
         "test_absent_history_is_unavailable_not_known_empty",
@@ -77705,7 +77761,8 @@
         "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
         "test_special_trigger_runtime_owners_are_inferred_after_annotations_are_removed",
         "test_unrepresented_history_conditions_remain_residual",
-        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell"
+        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell",
+        "test_actual_linvala_intervening_conditions_recheck_different_opponents"
       ],
       "official_rules": [
         "109.5",
@@ -77727,14 +77784,16 @@
         "test_shared_history_conditions_compile_with_exact_thresholds",
         "test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
         "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_actual_linvala_intervening_conditions_recheck_different_opponents"
       ],
       "privacy_tests": [
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
         "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_actual_linvala_intervening_conditions_recheck_different_opponents"
       ],
       "replay_tests": [
         "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
@@ -77744,7 +77803,8 @@
         "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
         "test_public_entry_threshold_replays_actions_and_full_draw",
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_actual_linvala_intervening_conditions_recheck_different_opponents"
       ],
       "required_evidence": [
         "positive",
@@ -96794,7 +96854,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 870,
+  "registry_version": 871,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

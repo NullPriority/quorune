@@ -980,6 +980,7 @@
       "test_commander_damage_identity",
       "test_commander_match_readiness",
       "test_composed_spell_text",
+      "test_delivery_composition_native",
       "test_devour",
       "test_discard_result_native",
       "test_enchanted_player_statics",
