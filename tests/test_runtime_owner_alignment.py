@@ -170,6 +170,27 @@ class RuntimeOwnerAlignmentTests(InheritedNativeFixture, unittest.TestCase):
         with self.assertRaises(SemanticNodeError):
             resolve_semantic_value(host, '$target_group.clause_1.0', item)
 
+    def test_composed_type_addition_retains_its_distinct_owner_and_rejects_its_withdrawal(self):
+        from test_bound_effect_programs import record
+        from quorune.resolution_characteristic_model import TARGET_CARD_TYPE_ADDITION_CAPABILITY
+        from quorune.rules.fixed_resolution_characteristic_shapes import FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY
+        class NoRulings:
+            def rulings(self, card):
+                return ()
+        card = record('Target permanent becomes an artifact in addition to its other types until end of turn.\nDraw a card.')
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+        assembled = _compile_best_available_card_program_from_ir(NoRulings(), card, ir,
+            semantic_registry=SemanticRegistry(), capability_registry=self.registry,
+            capability_profile='commander_review')
+        ability, = assembled.abilities
+        self.assertIn(TARGET_CARD_TYPE_ADDITION_CAPABILITY, ability.capability_dependencies)
+        self.assertNotIn(FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, ability.capability_dependencies)
+        self.assertTrue(self.binding(ability)['strict'])
+        deps = tuple(c for c in ability.capability_dependencies if c != TARGET_CARD_TYPE_ADDITION_CAPABILITY)
+        stripped = replace(ability, capability_dependencies=deps,
+            capability_closure=self.registry.closure(deps, profile='commander_review').to_dict())
+        self.assertFalse(self.binding(stripped)['strict'])
+
     def test_actual_riot_keeps_the_creature_target_separate_from_target_player_creatures(self):
         def before(s, source):
             return {'menace': self.add(s.engine, 'Darksteel Myr', seat='B'),
@@ -185,6 +206,24 @@ class RuntimeOwnerAlignmentTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(0, s.engine._numeric_stat(extra['menace'].object_id, 'power'))
         self.assertEqual(4, s.engine._numeric_stat(extra['boost'].object_id, 'power'))
         self.assertEqual(1, s.engine._numeric_stat(extra['other'].object_id, 'power'))
+        self.finish(s, private)
+
+    def test_actual_argent_mutation_retains_types_draw_and_cleanup_expiry(self):
+        def before(s, source):
+            s.engine.move_card(s.state.players['A'].zones['hand'][0], 'library', log=False)
+            return {'land': self.add(s.engine, 'Forest', seat='B')}
+        s, source, private, extra = self.scene('Argent Mutation', before)
+        hand = len(s.state.players['A'].zones['hand'])
+        self.cast(s, 'A', source, [extra['land'].ref])
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        def types():
+            return s.engine._type_parts(s.engine._effective_card_data(
+                s.state.cards[extra['land'].object_id])['type_line'])[0]
+        self.assertEqual({'artifact', 'land'}, types())
+        self.assertEqual(hand, len(s.state.players['A'].zones['hand']))
+        self.until(s, lambda session: session.state.active_player == 'B' and session.state.step == 'upkeep')
+        self.assertEqual({'land'}, types())
         self.finish(s, private)
 
     def test_actual_wildspeaker_aggregate_uses_current_nonhuman_power_and_empty_zero(self):
