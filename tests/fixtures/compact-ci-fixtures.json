@@ -409,6 +409,7 @@
     "tests/fixtures/ability-label-composition-cards.json",
     "tests/fixtures/ability-source-counter-cards.json",
     "tests/fixtures/activated-self-transform-cards.json",
+    "tests/fixtures/activation-paid-sacrifice-stat-cards.json",
     "tests/fixtures/activation-public-state-cards.json",
     "tests/fixtures/activation-restriction-material-cards.json",
     "tests/fixtures/activation-result-views-cards.json",

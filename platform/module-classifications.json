@@ -178,6 +178,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/activation_paid_characteristic_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/activation_restriction_composition.py",
       "layer": "rules",
       "owning_subsystem": "activated_abilities",
@@ -2433,6 +2445,21 @@
     },
     {
       "file": "quorune/compiler/activation_mana_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/activation_paid_sacrifice_results.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -15771,6 +15798,34 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/activation/paid_characteristic_price.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/activation/paid_characteristic_results.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/activation/payment_commit.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -28081,5 +28136,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b37ac6af8af6df5e11a86050c551f4cd72a8998f48f5553cf65b1f21c765bbfd"
+  "fingerprint": "147ea189b660c30007bfea96e74e53134ebd7b86fa83c4b4c00d8ec9cdb530d3"
 }

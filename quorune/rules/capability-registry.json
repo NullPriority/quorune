@@ -7639,7 +7639,7 @@
           "hidden origin zones",
           "unrepresented card predicates",
           "unrepresented chained mechanics",
-          "returns to the resolving controller’s hand"
+          "returns to the resolving controller\u2019s hand"
         ],
         "inputs": [
           "one source-spanned mandatory target clause",
@@ -7652,7 +7652,7 @@
           "one owner-hand zone request and replacement-aware destination",
           "new logical object identity and principal-scoped hand projection"
         ],
-        "summary": "Return one legal physical card from any public graveyard to its owner’s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
+        "summary": "Return one legal physical card from any public graveyard to its owner\u2019s hand. The public target scope and versioned result compose through the shared replacement-aware graveyard return owner."
       },
       "blockers": [],
       "dependencies": [
@@ -34478,7 +34478,7 @@
           "shared combat and activation legality",
           "expiry at the controller-relative turn boundary"
         ],
-        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller’s next turn."
+        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller\u2019s next turn."
       },
       "blockers": [],
       "dependencies": [
@@ -36227,7 +36227,7 @@
         ],
         "outputs": [
           "one locked attack, block, and all-activation prohibition",
-          "expiry at the resolving controller’s next turn"
+          "expiry at the resolving controller\u2019s next turn"
         ],
         "summary": "Bind the printed next-turn attack, block, and activation prohibition to one revalidated creature incarnation."
       },
@@ -41770,7 +41770,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Modularâ€”Sunburst",
+          "Modular\u00e2\u20ac\u201dSunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -43032,7 +43032,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modularâ€”Sunburst variable linkage",
+          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ],
         "inputs": [
@@ -52808,7 +52808,7 @@
           "one optional cast during current resolution",
           "unused cards stay in exile"
         ],
-        "summary": "Exile from the resolving controller’s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
+        "summary": "Exile from the resolving controller\u2019s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
       },
       "blockers": [],
       "dependencies": [
@@ -62922,6 +62922,98 @@
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "multiple selected creatures",
+          "targeted results",
+          "unknown result siblings",
+          "unversioned activation facts"
+        ],
+        "inputs": [
+          "one selected creature sacrifice in a closed nonmana activation",
+          "signed battlefield characteristics immediately before sacrifice"
+        ],
+        "outputs": [
+          "versioned fact bound to paid incarnation, source and semantic key",
+          "controller life scalar retained by ability copies"
+        ],
+        "summary": "Resolve controller life results from the creature sacrificed to the activated ability."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.scalar_effect_amount",
+        "activation.selected_zone_change.fixed"
+      ],
+      "dependency_fail_closed_rationale": "Withheld activation stat authority leaves a residual; runtime minima require the actual fixed activation price.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.paid_activation_creature_stat",
+      "implementation_components": [
+        "quorune.activation_paid_characteristic_model.ActivationPaidCreatureFact",
+        "quorune.compiler.activation_paid_sacrifice_results.activation_paid_sacrifice_result",
+        "quorune.rules.activation.paid_characteristic_results.capture_activation_paid_creature_fact",
+        "quorune.activation_paid_characteristic_model.resolve_activation_paid_creature_stat"
+      ],
+      "implementation_mutation_rationale": "Omitting pre-sacrifice capture breaks the actual Diamond Valley command consequence.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_originals_pay_printed_cost_and_keep_last_battlefield_toughness",
+        "test_actual_ability_survives_source_departure_and_countering_does_not_refund_cost",
+        "test_actual_creature_token_can_pay_and_its_disappearance_keeps_paid_stat"
+      ],
+      "multiplayer_tests": [
+        "test_actual_originals_pay_printed_cost_and_keep_last_battlefield_toughness",
+        "test_actual_ability_survives_source_departure_and_countering_does_not_refund_cost",
+        "test_actual_creature_token_can_pay_and_its_disappearance_keeps_paid_stat"
+      ],
+      "negative_tests": [
+        "test_unbound_aggregate_and_unknown_sacrifice_results_stay_material",
+        "test_paid_activation_binding_keeps_the_actual_price_and_payload_minimum",
+        "test_withdrawn_activation_stat_capability_keeps_the_result_unresolved",
+        "test_activation_fact_is_immutable_closed_and_tied_to_actual_cost_and_source",
+        "test_new_scalar_keeps_old_spell_paid_stat_scope_and_missing_history_closed",
+        "test_paid_price_requires_one_actual_creature_and_valid_fixed_cost_fields",
+        "test_unpayable_complete_price_is_neither_offered_nor_accepted"
+      ],
+      "official_rules": [
+        "107.1b",
+        "113.7a",
+        "400.7",
+        "601.2h",
+        "602.2b",
+        "608.2h",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_fixed_activation_sacrifice_life_result_requires_the_complete_price",
+        "test_actual_originals_pay_printed_cost_and_keep_last_battlefield_toughness"
+      ],
+      "privacy_tests": [
+        "test_actual_originals_pay_printed_cost_and_keep_last_battlefield_toughness",
+        "test_actual_ability_survives_source_departure_and_countering_does_not_refund_cost",
+        "test_actual_creature_token_can_pay_and_its_disappearance_keeps_paid_stat"
+      ],
+      "replay_tests": [
+        "test_actual_originals_pay_printed_cost_and_keep_last_battlefield_toughness",
+        "test_actual_ability_survives_source_departure_and_countering_does_not_refund_cost",
+        "test_actual_creature_token_can_pay_and_its_disappearance_keeps_paid_stat"
       ],
       "required_evidence": [
         "positive",
@@ -75060,7 +75152,7 @@
     {
       "applicability": {
         "exclusions": [
-          "another player’s turn for lands",
+          "another player\u2019s turn for lands",
           "extra land plays or new source zones",
           "copies and noncreature lands"
         ],
@@ -75073,7 +75165,7 @@
           "shared instant casting and legal land-play timing",
           "single consumption on the next matching play"
         ],
-        "summary": "Apply the resolving controller’s instant-timing permission to their next physical creature-card play this turn."
+        "summary": "Apply the resolving controller\u2019s instant-timing permission to their next physical creature-card play this turn."
       },
       "blockers": [],
       "dependencies": [
@@ -77417,7 +77509,7 @@
       "applicability": {
         "exclusions": [
           "creatures put onto the battlefield attacking",
-          "other objects’ saddled facts",
+          "other objects\u2019 saddled facts",
           "resolution-time if-saddled clauses"
         ],
         "inputs": [
@@ -93649,7 +93741,7 @@
           "ordinary play of captured exile cards",
           "expiry before priority at the matching step"
         ],
-        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller’s next actual end step."
+        "summary": "Expire fixed own-library impulse access at the beginning of the permission controller\u2019s next actual end step."
       },
       "blockers": [],
       "dependencies": [
@@ -96952,7 +97044,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 872,
+  "registry_version": 873,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

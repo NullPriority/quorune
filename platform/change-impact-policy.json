@@ -15056,6 +15056,22 @@
         "test_temporary_keyword_removal",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "activation-paid-creature-stat-contract",
+      "patterns": [
+        "quorune/activation_paid_characteristic_model.py",
+        "quorune/compiler/activation_paid_sacrifice_results.py",
+        "quorune/rules/activation/paid_characteristic_results.py",
+        "tests/test_activation_paid_sacrifice_stats.py",
+        "tests/fixtures/activation-paid-sacrifice-stat-cards.json",
+        "quorune/rules/activation/paid_characteristic_price.py"
+      ],
+      "test_modules": [
+        "test_activation_paid_sacrifice_stats",
+        "test_paid_sacrifice_creature_stats",
+        "test_scalar_effect_amounts"
+      ]
     }
   ],
   "risk_rules": [

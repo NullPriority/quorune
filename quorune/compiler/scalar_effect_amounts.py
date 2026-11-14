@@ -339,6 +339,7 @@ def scalar_amount_shape_context(effects, mechanics):
     if not count:
         return None
     from ..scalar_effect_amount_model import PAID_SACRIFICE_STAT_MECHANIC, TARGET_HAND_COUNT_MECHANIC
+    from ..activation_paid_characteristic_model import ACTIVATION_PAID_STAT_MECHANIC
     from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC
     from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC
     from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
@@ -346,4 +347,5 @@ def scalar_amount_shape_context(effects, mechanics):
         SCALAR_AMOUNT_MECHANIC, "declared-effect-amount", TARGET_HAND_COUNT_MECHANIC,
         MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, CAST_MANA_VALUE_MECHANIC,
         PAID_SACRIFICE_STAT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
+        ACTIVATION_PAID_STAT_MECHANIC,
     }

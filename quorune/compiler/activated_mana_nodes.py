@@ -812,14 +812,10 @@ def activated_oracle_node(
         mechanics = ("self-zone-move",)
         handlers = (self_zone_move_handler_descriptor(self_zone_move),)
     else:
-        from .activation_x_costs import announced_x_activation_effect
-        compiled_x = announced_x_activation_effect(ability, source_name=card_name, text=effect_material,
+        from .activation_paid_sacrifice_results import compile_activation_result
+        template, effects, target_schema, mechanics = compile_activation_result(
+            ability, source_name=card_name, text=effect_material,
             compile_fixed=lambda text: _compiled_activated_effect(text, card_name=card_name, effect_template=effect_template))
-        template, effects, target_schema, mechanics = compiled_x or _compiled_activated_effect(
-            effect_material,
-            card_name=card_name,
-            effect_template=effect_template,
-        )
     from .waterbend_costs import closed_waterbend_source_result
     template,effects,target_schema,mechanics=closed_waterbend_source_result(ability,(template,effects,target_schema,mechanics))
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:

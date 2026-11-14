@@ -46,6 +46,7 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
+    if relative == 'quorune/activation_paid_characteristic_model.py':return 'domain'
     if relative == "quorune/private_hand_entry_model.py":
         return "rules"
     if relative=='quorune/fixed_damage_role_model.py':return 'domain'

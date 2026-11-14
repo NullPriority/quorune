@@ -378,6 +378,14 @@ def _value_runtime_requirements(program):
             from ..rules.mill_capability_shapes import validate_half_mill_program_scope
             validate_half_mill_program_scope(program)
         paid = PAID_SACRIFICE_STAT_CAPABILITY in amounts
+        from ..activation_paid_characteristic_model import (
+            ACTIVATION_PAID_STAT_CAPABILITY, ACTIVATION_PAID_STAT_MECHANIC,
+        )
+        from ..rules.activation.paid_characteristic_results import activation_paid_stat_program_is_closed
+        paid_activation = ACTIVATION_PAID_STAT_CAPABILITY in amounts
+        if (paid_activation != (ACTIVATION_PAID_STAT_MECHANIC in program.coverage)
+                or paid_activation and not activation_paid_stat_program_is_closed(program)):
+            raise ValueError('Paid activation stats require their closed activation price and result')
         if paid != (PAID_SACRIFICE_STAT_MECHANIC in program.coverage) or (paid and (
             program.event != 'resolve' or not program.ability_id.startswith('spell:')
             or not fixed_creature_sacrifice_price(program.cost_schema)

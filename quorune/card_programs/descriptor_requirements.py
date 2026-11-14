@@ -184,9 +184,11 @@ def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, 
     )
 
     spec = ScalarEffectAmountSpec.from_dict(value)
+    from ..activation_paid_characteristic_model import ACTIVATION_PAID_STAT_CAPABILITY
     origin_capabilities = {
         ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE: SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
         ScalarAmountOrigin.PAID_SACRIFICE_CREATURE: PAID_SACRIFICE_STAT_CAPABILITY,
+        ScalarAmountOrigin.PAID_ACTIVATION_CREATURE: ACTIVATION_PAID_STAT_CAPABILITY,
         ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE: PAID_SACRIFICE_MANA_VALUE_CAPABILITY,
         ScalarAmountOrigin.CAST_SPELL_MANA_VALUE: CAST_MANA_VALUE_CAPABILITY,
     }
