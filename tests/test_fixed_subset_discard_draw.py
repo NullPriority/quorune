@@ -34,8 +34,10 @@ class FixedSubsetDiscardDrawCompilerTests(unittest.TestCase):
             self.assertEqual('discard_draw_up_to',ir.faces[0].nodes[0].effects[0]['op'])
         compiled=discard_result_draw_template('Discard up to two cards, then draw that many cards.')
         self.assertEqual(({'op':'discard_draw_up_to','schema_version':2,'maximum':2},),compiled[1])
-        for text in ('Discard any number of cards, then draw that many cards.',
-                'Each player discards up to two cards, then draws that many cards.',
+        variable=discard_result_draw_template('Discard any number of cards, then draw that many cards.')
+        self.assertEqual(({'op':'discard_draw_up_to','schema_version':3,'maximum':'hand_size','draw_offset':0},),variable[1])
+        self.assertEqual(('variable-subset-discard-draw',),variable[3])
+        for text in ('Each player discards up to two cards, then draws that many cards.',
                 'Discard up to X cards, then draw that many cards.',
                 'Discard up to two cards, then draw that many cards. Rewrite history.'):
             self.assertIsNone(discard_result_draw_template(text))
