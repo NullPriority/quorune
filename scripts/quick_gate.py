@@ -186,6 +186,7 @@ def build_plan(
                     'tests/test_public_condition_self_replacements.py',
                     'tests/test_optional_counter_payments.py',
                     'tests/test_continuous_compiler_hardening.py', 'tests/test_scoped_target_colors.py',
+                    'tests/test_fixed_damage_effect_clauses.py', 'tests/test_discard_results.py',
                     'platform/reusable-piece-interaction-evidence.json'}.intersection(paths)):
             steps.append(QuickStep(
                 'interaction-boundary-promotion-contract',
@@ -208,7 +209,9 @@ def build_plan(
                  'tests.test_public_condition_self_replacements.PublicConditionSelfReplacementTests.test_current_target_color_replacement_keeps_both_results_and_one_target_binding',
                  'tests.test_optional_counter_payments.OptionalCounterPaymentCompilerTests.test_cost_clause_stays_whole_and_ordinary_optional_counter_keeps_legacy_shape',
                  'tests.test_continuous_compiler_hardening.ClosedContinuousGrammarTests.test_original_commander_anthem_promotes_without_approximating_sibling',
-                 'tests.test_scoped_target_colors.ScopedColorCompilerTests.test_new_color_operands_are_closed_and_legacy_color_bytes_are_unchanged'),
+                 'tests.test_scoped_target_colors.ScopedColorCompilerTests.test_new_color_operands_are_closed_and_legacy_color_bytes_are_unchanged',
+                 'tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_whole_source_damage_life_composition_preserves_source_and_controller_roles',
+                 'tests.test_discard_results.DiscardResultCompilerTests.test_discard_result_compiler_rejects_filtered_unknown_and_unbound_counts'),
             ))
         if {'quorune/compiler/target_player_sequences.py',
                 'quorune/compiler/bound_effect_programs.py',

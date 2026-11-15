@@ -15026,7 +15026,8 @@
         "test_oracle_ir",
         "test_card_program_v2",
         "test_fixed_query_quoted_ability_grants",
-        "test_source_counter_quantity_sequences"
+        "test_source_counter_quantity_sequences",
+        "test_fixed_damage_effect_clauses"
       ]
     },
     {
