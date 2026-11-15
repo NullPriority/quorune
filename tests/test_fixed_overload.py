@@ -374,7 +374,8 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
 
     def test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration(self):
         expected = {'Mind Rake', 'Scale Up', 'Stirring Address', 'Mizzium Mortars', 'Dynacharge',
-                    'Electrickery', 'Dragonshift', "Mizzix's Mastery"}
+                    'Electrickery', 'Dragonshift', "Mizzix's Mastery", 'Blustersquall', 'Cyclonic Rift',
+                    'Damn', 'Downsize', 'Mizzium Skin', 'Vandalblast', 'Weapon Surge'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if 'Overload' in r.get('keywords', ())]
         self.assertEqual(27, len(rows))
         for row in rows:
@@ -417,8 +418,8 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
             self.reject(session, 'cast:' + source.ref, cost_option='normal', targets=[], pay='auto')
 
     def test_overload_price_omission_preserves_admission_but_fails_native_underpayment_contract(self):
-        from quorune.rules.casting import overload_costs as owner
-        original = owner.overload_cost_options
+        from quorune.rules.casting import fixed_text_variant_costs as owner
+        original = owner.fixed_variant_cost_options
         changed = []
         def omitted(*args, **kwargs):
             result = original(*args, **kwargs)
@@ -428,7 +429,7 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
             return result
         result = unittest.TestResult()
         witness = type(self)('test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature')
-        with mock.patch.object(owner, 'overload_cost_options', omitted):
+        with mock.patch.object(owner, 'fixed_variant_cost_options', omitted):
             witness.run(result)
         self.assertTrue(changed)
         self.assertFalse(result.errors)

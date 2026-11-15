@@ -132,7 +132,7 @@ class SingularPublicSetNativeTests(InheritedNativeFixture,unittest.TestCase):
             else:self.assertNotIn(private.ref,json.dumps(packet))
         self.replay(session,load=True)
 
-    def test_vandalblast_retains_its_reviewed_admission_boundary(self):
+    def test_vandalblast_current_complete_source_has_capability_closed_admission(self):
         record=self.db.lookup('Vandalblast',fuzzy=False)
         ir=compile_oracle_card(record,capability_registry=self.registry,capability_profile='commander_review')
         self.assertEqual('exact',ir.status,ir.material_residuals)
@@ -140,8 +140,8 @@ class SingularPublicSetNativeTests(InheritedNativeFixture,unittest.TestCase):
             capability_registry=self.registry,capability_profile='commander_review')
         binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
         self.assertTrue(binding['compatible_ready'])
-        self.assertFalse(binding['strict_capability_ready'])
-        self.assertEqual('mixed',binding['trust_basis'])
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+        self.assertEqual('capability_closed',binding['trust_basis'])
 
     def test_actual_blustersquall_affects_three_opponents_and_a_later_creature(self):
         session=self.session(997010); source=self.add(session.engine,'Blustersquall',zone='hand')
