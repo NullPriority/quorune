@@ -196,6 +196,12 @@ def fixed_effect_clause_sequence_template(
         for template_id, effects, _target_schema, mechanics in compiled
     ):
         return None
+    from .fixed_damage_life_sequences import fixed_damage_life_clauses
+    if (fixed_damage_life_clauses(text) is not None
+            and compiled[0][1][0].get('op') not in {'damage', 'damage_fixed_set', 'damage_each_opponent'}):
+        # A conjoined life result inside a payment, optional result or condition
+        # belongs to that instruction, rather than the surrounding trigger.
+        return None
     targeted = tuple(
         target_schema
         for _template_id, _effects, target_schema, _mechanics in compiled

@@ -518,6 +518,7 @@
     "tests/fixtures/casting-activation-metadata-cards.json",
     "tests/fixtures/casting-payment-keywords-cards.json",
     "tests/fixtures/casualty-cards.json",
+    "tests/fixtures/census-admission-retention-cards.json",
     "tests/fixtures/champion-cards.json",
     "tests/fixtures/characteristic-query-union-cards.json",
     "tests/fixtures/characteristic-set-followup-cards.json",

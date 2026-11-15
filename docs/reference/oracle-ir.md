@@ -10,6 +10,13 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+The compiler preserves the ownership boundary of optional and paid results.
+An optional discard followed by a printed if-paid draw can retain a mandatory
+discard instruction inside an optional result, including a successful-action
+turn limit. A payment or reflexive prefix remains attached to its complete
+child body; a damage-and-life conjunction is an independent sequence only
+when its first lowered operation is direct damage.
+
 `fixed-source-characteristic-tap-sequence-v1` binds a closed source
 characteristic clause and a tap or untap instruction to `$source.zone_object`.
 Runtime admission requires the ordered pair's leaf and keyword capabilities.

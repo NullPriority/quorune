@@ -41,11 +41,13 @@ fixed_counter_target_schema_is_closed = direct_permanent_target_schema_is_closed
 
 def direct_target_predicate_capabilities(
     target_schema: Mapping[str, Any],
+    *, allow_commander: bool = False,
 ) -> tuple[str, ...]:
     """Return the characteristic and public-state owners for one target."""
 
-    target_spec = DirectPermanentTargetSpec.from_target_schema(target_schema)
+    target_spec = DirectPermanentTargetSpec.from_target_schema(target_schema, allow_commander=allow_commander)
     return (
+        *(("state_query.commander.permanent_designation",) if target_spec.commander else ()),
         *object_query_capabilities(target_spec.state_predicate),
         *(
             ("target.permanent.characteristic_predicate",)

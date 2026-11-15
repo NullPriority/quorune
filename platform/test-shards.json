@@ -1054,6 +1054,7 @@
       "test_attack_keyword_compiler",
       "test_aura_targeting_entry",
       "test_block_keyword_compiler",
+      "test_census_admission_retention",
       "test_champion_choices",
       "test_chosen_aura_protection",
       "test_closed_effect_programs",

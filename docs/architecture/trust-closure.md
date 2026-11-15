@@ -73,6 +73,19 @@ the turn and expires through ordinary cleanup.
 
 ## Closure layers
 
+An intrinsic Ascend spell declaration is checked independently before binding
+the following public self-replacement. It is not an unowned branch prefix;
+both the declaration and complete alternative branches retain their required
+capabilities. Fixed counter groups likewise declare every validated recipient
+predicate, including actual commander designation for optional commander targets.
+
+Optional discard payments under an action-limited trigger retain the outer
+optional-result owner and the independently closed mandatory payment. A
+conjoined damage/life result can be split only when its first compiled result
+is direct damage. Payments, conditions and reflexive instructions retain their
+complete child result, so declining a payment or countering the sole target
+cannot produce a life result outside that child.
+
 Implementation-component resolution caches immutable export names by exact
 decoded Python source in a bounded LRU. The capacity retains the registry's
 working set across repeated validation. A source edit, malformed replacement,
