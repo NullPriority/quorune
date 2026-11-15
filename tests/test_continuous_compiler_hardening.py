@@ -415,9 +415,23 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
         self.assertTrue(anthem.exact)
         self.assertIs(True, anthem.handlers[0]["condition"]["predicate"]["commander"])
         self.assertIn("state_query.commander.designation", anthem.capability_dependencies)
-        self.assertNotEqual("exact", ir.status, "The unrepresented noncreature commander sibling remains material")
-        self.assertTrue(any(residual.text == "Commanders you control have hexproof."
-            and residual.material for face in ir.faces for residual in face.residuals))
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        hexproof=next(node for face in ir.faces for node in face.nodes
+            if node.text=="Commanders you control have hexproof.")
+        self.assertTrue(hexproof.exact)
+        handler,=hexproof.handlers;predicate=handler['condition']['predicate']
+        self.assertIs(True,predicate['commander'])
+        self.assertEqual([],predicate['types_all']);self.assertEqual([],predicate['types_any'])
+        self.assertEqual('source_controller',handler['condition']['target_controller'])
+        self.assertEqual({'add_abilities':['Hexproof']},handler['modifier'])
+        self.assertIn('state_query.commander.permanent_designation',hexproof.capability_dependencies)
+        boundary=replace(record,oracle_id='fixture:commander-unrepresented-hexproof',
+            name='Constructed Commander Hexproof Boundary',oracle_text=record.oracle_text.replace(
+                'Commanders you control have hexproof.',
+                'Commanders you control have hexproof from a color secretly chosen by an opponent.'))
+        blocked=compile_oracle_card(boundary,capability_registry=load_default_capability_registry(),
+            capability_profile='commander_review')
+        self.assertNotEqual('exact',blocked.status);self.assertTrue(blocked.material_residuals)
 
 
 if __name__ == "__main__":

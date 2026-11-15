@@ -26,7 +26,7 @@ class QuickGatePlanTests(unittest.TestCase):
                                       'external_entry_tapped','external_entry_tapped','fixed_cleave',
                                       'source_tap_duration','activation_result_authority','activation_result_authority',
                                       'public_condition_self_replacements','public_condition_self_replacements',
-                                      'optional_counter_payments'),
+                                      'optional_counter_payments','continuous_compiler_hardening','scoped_target_colors'),
                                      tuple(command.split('.')[1].removeprefix('test_') for command in admission.command[3:]))
                     self.assertTrue(all(command.startswith('tests.test_') for command in admission.command[3:]))
                     if phase == 'pre-corpus':

@@ -4840,7 +4840,8 @@
         "test_continuous_effect_duration",
         "test_fixed_source_characteristic_effects",
         "test_card_program_trust",
-        "test_game_record_v3"
+        "test_game_record_v3",
+        "test_scoped_target_colors"
       ]
     },
     {
@@ -14249,7 +14250,8 @@
         "test_public_state_condition_compiler",
         "test_public_state_condition_runtime",
         "test_oracle_ir",
-        "test_card_program_v2"
+        "test_card_program_v2",
+        "test_continuous_compiler_hardening"
       ]
     },
     {

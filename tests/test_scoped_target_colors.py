@@ -36,7 +36,13 @@ class ScopedColorCompilerTests(unittest.TestCase):
         self.assertEqual({'op':'apply_source_characteristics_until_end_of_turn','schema_version':14,
             'card':'$target.0','colors':['U'],'duration':'zone_object'},old[1][0])
         self.assertEqual(3,len(decode_fixed_target_color(old[1][0])))
-        for text in ('Target creature becomes red until end of turn and attacks this turn if able.',
+        compelled=typed_resolution_effect_template(
+            'Target creature becomes red until end of turn and attacks this turn if able.',card_name='Witness')
+        color,requirement=compelled[1]
+        self.assertEqual(('R',),decode_resolution_color(color)[1])
+        self.assertEqual({'op':'grant_declaration_restriction_until_end_of_turn','card':'$target.0',
+            'restriction':{'schema_version':1,'kind':'attack_each_combat_this_turn'}},requirement)
+        for text in ('Target creature becomes red until end of turn and attacks this turn if able unless its controller pays {1}.',
                 'Target creature becomes a color of your choice until end of turn.',
                 'Target creature becomes blue until your next turn.',
                 'Target creature becomes blue until end of turn. Exile target artifact.'):
@@ -63,7 +69,7 @@ class ScopedColorNativeTests(InheritedNativeFixture,unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         names={*NAMES,'Sliver Hivelord','Generic Bound Plains','Grizzly Bears','Counterspell','Fusion Elemental',
-            'Dragonfire Blade','Thoughtlace','Unsummon','Island','Forest','Fervor','Ornithopter','Boreal Elemental'}
+            'Dragonfire Blade','Thoughtlace','Unsummon','Island','Forest','Fervor','Ornithopter','Boreal Elemental','Incite'}
         paths=(*compact_ci_fixture_paths(root=ROOT),ROOT/'tests/fixtures/bound-effect-program-cards.json')
         docs=[json.loads(p.read_text(encoding='utf-8')) for p in paths]
         cards={r['name']:r for d in docs for r in d['cards'] if r['name'] in names};assert set(cards)==names,names-set(cards)
@@ -150,6 +156,22 @@ class ScopedColorNativeTests(InheritedNativeFixture,unittest.TestCase):
         quotes={p['requirements']['GENERIC'] for p in row['target_costs']['prices'] if any(body.ref in refs for refs in p['targets'].values())}
         self.assertEqual({2},quotes)
         self.finish_turn(s);self.assertEqual({'G'},self.colors(s,body));self.finish(s,private)
+
+    def test_actual_incite_sets_color_and_requires_its_target_to_attack_before_cleanup(self):
+        def before(s,source,body):body.acquired_control_turn_count=-1
+        s,source,body,private,_=self.scene('Incite',before)
+        self.assertEqual({'G'},self.colors(s,body));red=s.state.players['A'].mana_pool['R']
+        self.cast(s,'A',source,[body.ref]);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        self.assertEqual(red-1,s.state.players['A'].mana_pool['R'])
+        self.assertEqual({'R'},self.colors(s,body))
+        self.until(s,lambda cur:cur.state.pending_decision is not None and cur.state.pending_decision.kind=='combat.attackers')
+        command={'action_id':'attack','attackers':{}}
+        self.reject(s,'B',command);self.reject(s,'A',command)
+        life=s.state.players['B'].life
+        s=self.replay(s,load=True);self.attack(s,[(s.state.cards[body.object_id],'B')])
+        self.finish_turn(s)
+        self.assertEqual(life-2,s.state.players['B'].life)
+        self.assertEqual({'G'},self.colors(s,body));self.finish(s,private)
 
     def test_actual_spell_colorless_setting_follows_resolution_but_not_a_new_incarnation(self):
         def before(s,source,body):return {'spell':self.add(s.engine,'Grizzly Bears',zone='hand',ref='colorless-bear-spell'),
