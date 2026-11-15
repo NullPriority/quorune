@@ -13,6 +13,22 @@ from scripts.quick_gate import build_plan
 
 class QuickGatePlanTests(unittest.TestCase):
     @patch('scripts.quick_gate.validate_partition')
+    def test_artifact_guard_precedes_expensive_checks_and_both_push_paths(self, _partition):
+        for phase in ('normal', 'pre-corpus'):
+            with self.subTest(phase=phase):
+                steps = build_plan(('docs/index.md',), phase=phase)['steps']
+                guard, = [step for step in steps if step.name == 'repository-artifacts']
+                self.assertEqual(('scripts/validate_repository.py', '--tracked-only'), guard.command[-2:])
+                self.assertLess(steps.index(guard), next(i for i, step in enumerate(steps)
+                    if step.name == 'generated-owner-plan'))
+        root = Path(__file__).resolve().parents[1]
+        hook = (root / '.githooks' / 'pre-push').read_text(encoding='utf-8')
+        guard = hook.index('"$ROOT/scripts/validate_repository.py" --tracked-only')
+        self.assertLess(guard, hook.index('validate-ci-dependencies'))
+        self.assertLess(guard, hook.index('QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON'))
+        self.assertLess(guard, hook.index('--verify-receipt'))
+
+    @patch('scripts.quick_gate.validate_partition')
     def test_grammar_and_trust_changes_run_self_hosted_interaction_promotion_contract(self, _partition):
         for source in ('quorune/compiler/fixed_damage_roles.py', 'quorune/rules/temporary_keyword_removal.py',
                        'tests/high_risk_interaction_support.py', 'platform/reusable-piece-interaction-evidence.json'):

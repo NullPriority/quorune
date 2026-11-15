@@ -81,6 +81,7 @@ def build_plan(
     database = ROOT / "local" / "quick-gate" / "test-ci.sqlite3"
     steps = [
         QuickStep("python-runtime", (python, "scripts/validate_python_runtime.py")),
+        QuickStep("repository-artifacts", (python, "scripts/validate_repository.py", "--tracked-only")),
         QuickStep(
             "compile",
             (

@@ -44,6 +44,10 @@ evidence class, and fully qualified test identity. Decoding restores every
 declaration in its original order before the existing schema, fingerprint, and
 trust checks. Flat historical documents remain readable. Malformed envelopes,
 duplicate or missing ordinals, and ambiguous groups fail closed.
+The deterministic writer keeps each group's shared metadata compact and each
+reference on one line. This preserves reviewable reference changes while
+keeping both files within the repository's source-blob limit. JSON values,
+ordinals, and the storage schema are unchanged by this layout.
 
 Use `read_evidence_document(path)` when reading either file. For declaration
 edits, update its expanded `declarations` list and serialize it with

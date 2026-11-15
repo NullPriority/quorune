@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from contextlib import redirect_stdout
+import io
+import json
 from pathlib import Path
 import subprocess
 import tempfile
@@ -74,6 +77,31 @@ class RepositoryHistoryTests(unittest.TestCase):
         self.git('add', 'oversized.json')
         with self.assertRaisesRegex(ValueError, 'tracked file exceeds 10 MiB: oversized.json'):
             repository.validate_tracked_files()
+
+    def test_tracked_only_cli_checks_real_artifacts_without_generated_work(self):
+        output = io.StringIO()
+        with patch('sys.argv', ['validate_repository.py', '--tracked-only']), \
+                patch.object(repository, 'validate_python_runtime', return_value='fixture'), \
+                patch.object(repository, 'validate_schemas', side_effect=AssertionError('generated work')), \
+                patch.object(repository.subprocess, 'run', side_effect=repository.subprocess.run) as run, \
+                redirect_stdout(output):
+            self.assertEqual(0, repository.main())
+        report = json.loads(output.getvalue())
+        self.assertEqual(1, report['tracked_files_checked'])
+        self.assertEqual('pass', report['history_artifact_scan'])
+        self.assertEqual('pass', report['secret_and_capability_scan'])
+        self.assertTrue(all(call.args[0][0] == 'git' for call in run.call_args_list))
+
+    def test_tracked_only_cli_rejects_oversized_history_before_generated_work(self):
+        path = self.oversized()
+        self.commit('Add oversized history')
+        path.unlink()
+        self.commit('Remove current oversized file')
+        with patch('sys.argv', ['validate_repository.py', '--tracked-only']), \
+                patch.object(repository, 'validate_python_runtime', return_value='fixture'), \
+                patch.object(repository, 'validate_schemas', side_effect=AssertionError('generated work')):
+            with self.assertRaisesRegex(ValueError, 'historical blob exceeds 10 MiB: oversized.json'):
+                repository.main()
 
 
 if __name__ == '__main__':

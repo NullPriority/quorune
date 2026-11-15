@@ -209,8 +209,21 @@ def validate_documentation_policy() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.parse_args()
+    parser.add_argument('--tracked-only', action='store_true',
+        help='Check tracked files and HEAD ancestry before expensive generated checks')
+    args = parser.parse_args()
     runtime = validate_python_runtime(ROOT)
+    if args.tracked_only:
+        tracked, scanned_bytes = validate_tracked_files()
+        print(json.dumps({
+            'ok': True,
+            'python_runtime': runtime,
+            'tracked_files_checked': tracked,
+            'tracked_bytes_scanned': scanned_bytes,
+            'secret_and_capability_scan': 'pass',
+            'history_artifact_scan': 'pass',
+        }, indent=2, sort_keys=True))
+        return 0
     schemas = validate_schemas()
     validate_public_fixture()
     validate_generated_platform_status()

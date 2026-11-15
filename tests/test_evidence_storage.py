@@ -35,6 +35,40 @@ class EvidenceStorageTests(unittest.TestCase):
         self.assertEqual(stored, pack_evidence_document(stored))
         self.assertEqual(evidence_document_text(value), evidence_document_text(stored))
 
+    def test_reference_lines_preserve_nested_json_types_unicode_and_escaping(self):
+        value = self.document()
+        value['declarations'][0]['metadata'] = {
+            'nested': [None, True, 1, 1.0, {'quoted': '"é"\nnext\\line'}],
+        }
+        before = deepcopy(value)
+        text = evidence_document_text(value)
+        stored = pack_evidence_document(value)
+        self.assertEqual(stored, json.loads(text))
+        # Compare serialized expanded values as well as equality: bool, int and
+        # float values must retain their JSON types through storage.
+        canonical = lambda item: json.dumps(item, ensure_ascii=False, sort_keys=True)
+        decoded = unpack_evidence_document(json.loads(text))
+        self.assertEqual(canonical(value), canonical(decoded))
+        lines = {line.strip().removesuffix(',') for line in text.splitlines()}
+        for group in stored['groups']:
+            for reference in group['references']:
+                self.assertIn(json.dumps(reference, ensure_ascii=False,
+                    separators=(',', ':')), lines)
+        decoded['declarations'][0]['metadata']['nested'][-1]['quoted'] = 'changed'
+        self.assertEqual(before, value)
+        self.assertEqual(stored, json.loads(text))
+
+    def test_current_evidence_documents_fit_the_repository_blob_budget(self):
+        from scripts.validate_repository import MAX_SOURCE_BLOB_BYTES
+        root = Path(__file__).resolve().parents[1]
+        for relative in ('platform/capability-evidence-declarations.json',
+                         'quorune/rules/capability-evidence.json'):
+            with self.subTest(path=relative):
+                value = read_evidence_document(root / relative)
+                text = evidence_document_text(value)
+                self.assertLessEqual(len(text.encode('utf-8')), MAX_SOURCE_BLOB_BYTES)
+                self.assertEqual(value, unpack_evidence_document(json.loads(text)))
+
     def test_decoded_metadata_arrays_are_independent_across_rows_and_input(self):
         stored = pack_evidence_document(self.document())
         before = deepcopy(stored)

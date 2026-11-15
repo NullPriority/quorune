@@ -705,8 +705,19 @@ metadata. The pre-push hook verifies that receipt and blocks publication on
 either generated drift or architecture-policy failure without repeating the
 full corpus when the finalized inputs and outputs are identical.
 Before accepting either receipt or checkpoint push paths, the hook runs the
-existing changed-file text-I/O sentinel. A current generated receipt therefore
-cannot skip explicit-encoding validation for changed Python sources.
+repository's tracked-file and HEAD-ancestry safety scan before dependency
+validation, followed by the existing changed-file text-I/O sentinel. The same
+artifact scan starts both quick-gate plans, including cloud pre-corpus checks.
+It rejects oversized current or historical blobs, forbidden paths, and exposed
+secrets before costly generation. A current generated receipt cannot skip these
+checks. To run only this early scan:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_repository.py --tracked-only
+```
+
+The default repository validator still performs all generated, architecture,
+documentation, and safety checks.
 
 Both ordinary receipt-based pushes and source checkpoints run the same cheap
 pre-corpus sentinels against the branch's main base. A current generated receipt
