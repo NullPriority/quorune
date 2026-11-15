@@ -230,8 +230,11 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
         self.assertEqual(["return_permanent_targets_to_owner_hand", "draw"],
                          [effect["op"] for effect in node.effects])
         self.assertIn(FIXED_HOMOGENEOUS_TARGET_SET_CAPABILITY, node.capability_dependencies)
+        mixed = "Destroy target creature and target land."
+        self.assertIsNone(fixed_homogeneous_target_set_effect_template(mixed))
+        self.assertEqual("exact", self.compile(mixed).status)
         unsupported = (
-            "Destroy target creature and target land.",
+            "Destroy target creature and target land with the chosen name.",
             "Exile up to X target cards from a graveyard.",
             "Return two target creatures to their owners' hands, then rewrite history.",
             "Return up to three target creature cards with total mana value 3 or less from your graveyard to the battlefield.",

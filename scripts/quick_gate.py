@@ -175,6 +175,16 @@ def build_plan(
                 ),
             )
         )
+        if (any(path.startswith(('quorune/compiler/', 'quorune/rules/', 'quorune/card_programs/',
+                                'quorune/semantic_runtime/')) for path in paths)
+                or {'quorune/oracle_ir.py', 'tests/high_risk_interaction_support.py',
+                    'tests/test_high_risk_interaction_assurance.py',
+                    'platform/reusable-piece-interaction-evidence.json'}.intersection(paths)):
+            steps.append(QuickStep(
+                'interaction-boundary-promotion-contract',
+                (python, '-m', 'unittest', 'discover', '-s', 'tests', '-p',
+                 'test_high_risk_interaction_assurance.py', '-k', 'HighRiskPromotionSentinelTests'),
+            ))
         if {'quorune/compiler/target_player_sequences.py',
                 'quorune/compiler/bound_effect_programs.py',
                 'quorune/compiler/effect_template_composition.py'}.intersection(paths):

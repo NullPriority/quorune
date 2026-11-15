@@ -8582,7 +8582,7 @@
         "mana.production.fixed_resolution_choice"
       ],
       "interaction_order": 2,
-      "assertion": "Original Avatar Roku retains exact resolution mana choice but its unrepresented Saga/chapter bodies reject whole-card admission and activation before mutation. An explicit constructed control preserves mana-choice plus replacement rejection. Actual Quirion Sentinel chooses mana through normal commands, with private projection, rejected-command rollback and replay."
+      "assertion": "An explicit constructed Saga keeps unrepresented chapter binding and a variable-firebending token action beside exact mana choice; the unowned action is unavailable before payment. A separate constructed replacement retains mana-choice rejection. Actual Quirion Sentinel retains normal commands, privacy, rollback and replay; promoted original Avatar Roku retains normal admission and its paid fixed-token action."
     },
     {
       "evidence_class": "interaction",
@@ -8596,7 +8596,7 @@
         "mana.production.fixed_resolution_choice"
       ],
       "interaction_order": 2,
-      "assertion": "Original Avatar Roku retains exact resolution mana choice but its unrepresented Saga/chapter bodies reject whole-card admission and activation before mutation. An explicit constructed control preserves mana-choice plus replacement rejection. Actual Quirion Sentinel chooses mana through normal commands, with private projection, rejected-command rollback and replay."
+      "assertion": "An explicit constructed Saga keeps unrepresented chapter binding and a variable-firebending token action beside exact mana choice; the unowned action is unavailable before payment. A separate constructed replacement retains mana-choice rejection. Actual Quirion Sentinel retains normal commands, privacy, rollback and replay; promoted original Avatar Roku retains normal admission and its paid fixed-token action."
     },
     {
       "evidence_class": "interaction",
@@ -20038,7 +20038,7 @@
         "zone.single_owner_move.fixed_destination"
       ],
       "interaction_order": 2,
-      "assertion": "Original Shadow Guildmage retains unsupported separate damage recipients beside its exact owner-library move. Canonical whole-program binding rejects the unresolved complete card."
+      "assertion": "A constructed source-move boundary retains an exact owner-library move beside unrepresented variable target-and-controller damage; whole-program runtime admission rejects the material sibling."
     },
     {
       "evidence_class": "interaction",
@@ -21782,7 +21782,7 @@
         "continuous.control.fixed_resolution"
       ],
       "interaction_order": 3,
-      "assertion": "Original The Shattered States Era retains fixed control, while complete material Saga chapter binding remains unresolved and blocks strict and compatible whole-card admission."
+      "assertion": "A constructed Saga retains exact fixed control beside an unrepresented greatest-power regeneration chapter; complete material chapter binding blocks strict and compatible whole-card admission."
     },
     {
       "evidence_class": "interaction",
@@ -21959,7 +21959,7 @@
         "mana.production.fixed_resolution_choice"
       ],
       "interaction_order": 3,
-      "assertion": "Original The Legend of Roku/Avatar Roku retains an exact mana-choice leaf while ordinary Saga/chapter residuals keep the complete program unresolved. Its advertised and submitted activation stays unavailable before payment; actual Quirion Sentinel retains normal mana choice, private projection, rollback and replay."
+      "assertion": "An explicit constructed Saga keeps unrepresented chapter binding and a variable-firebending token action beside exact mana choice; the unowned action is unavailable before payment. A separate constructed replacement retains mana-choice rejection. Actual Quirion Sentinel retains normal commands, privacy, rollback and replay; promoted original Avatar Roku retains normal admission and its paid fixed-token action."
     },
     {
       "evidence_class": "interaction",

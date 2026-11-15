@@ -158,6 +158,26 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 )
                 self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
 
+    def test_promoted_original_damage_and_chapter_compositions_have_normal_complete_admission(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        for name in ('Cunning Strike', 'Shadow Guildmage', 'The Shattered States Era // Nameless Conqueror'):
+            with self.subTest(name=name):
+                card = self.db.lookup(name)
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(),
+                    capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('capability_closed', program.trust_closure['trust_basis'])
+                binding = bind_card_program_runtime(program, capability_registry=registry, profile='commander_review')
+                self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+                self.assertFalse(binding['blockers'])
+
     def test_original_caldera_devour_damage_closes_while_variable_entry_payment_remains_residual(self):
         from high_risk_interaction_support import _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime
@@ -253,7 +273,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         from quorune.semantics import SemanticRegistry
 
         expected = {
-            'The Shattered States Era // Nameless Conqueror': (
+            'control-saga-chapter-boundary': (
                 'capability.continuous.control.fixed_resolution',
                 'residual.card_form.ordinary-saga-chapter-event-binding',
                 'residual.effect_clause.exact-typed-chapter-effect-body'),
@@ -309,12 +329,12 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                             'residual.replacement.regeneration'),
             'Grim Reminder':('capability.zone.self_move.activated',
                              'residual.target_or_choice.target-predicate'),
-            'Shadow Guildmage':('capability.zone.single_owner_move.fixed_destination',
+            'source-move-variable-damage-boundary':('capability.zone.single_owner_move.fixed_destination',
                                 'residual.target_or_choice.multiple-damage-recipients'),
         }
         for name,pieces in expected.items():
             with self.subTest(name=name):
-                card=self.db.lookup(name)
+                card=boundary_record(self.db,name)
                 ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
                 program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
                     capability_registry=registry,capability_profile='commander_review')
@@ -970,6 +990,32 @@ class CountedSearchSagaCarrierTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self, (REANIMATION_RESIDUAL_BOUNDARY_PAIRS[0],), database=self.db,
         )
+
+
+class HighRiskPromotionSentinelTests(unittest.TestCase):
+    """Run the current boundary contracts before an expensive corpus census."""
+
+    @classmethod
+    def setUpClass(cls):
+        import tempfile
+        from pathlib import Path
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'interaction-promotions.sqlite3'
+        fixture = Path(__file__).resolve().parents[1] / 'tests/fixtures/interaction-promotion-sentinel-cards.json'
+        build_fixture_database(fixture, path)
+        cls.db = CardDatabase(path)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_current_residual_boundaries_and_promoted_original_admission(self):
+        HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary(self)
+        HighRiskInteractionAssuranceTests.test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries(self)
+        HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission(self)
+        HighRiskInteractionAssuranceTests.test_promoted_original_damage_and_chapter_compositions_have_normal_complete_admission(self)
 
 
 if __name__ == "__main__":

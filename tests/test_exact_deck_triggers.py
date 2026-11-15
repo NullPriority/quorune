@@ -523,7 +523,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             "pilot:B",
             {
                 "action_id": "choose",
-                "choice": "return",
+                "choice": "apply",
                 "plan": "DEVELOP_ENGINE",
                 "reason": "Return Bloodghast as reusable sacrifice fodder.",
             },

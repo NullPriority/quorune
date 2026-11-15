@@ -13,6 +13,21 @@ from scripts.quick_gate import build_plan
 
 class QuickGatePlanTests(unittest.TestCase):
     @patch('scripts.quick_gate.validate_partition')
+    def test_grammar_and_trust_changes_run_self_hosted_interaction_promotion_contract(self, _partition):
+        for source in ('quorune/compiler/fixed_damage_roles.py', 'quorune/rules/temporary_keyword_removal.py',
+                       'tests/high_risk_interaction_support.py', 'platform/reusable-piece-interaction-evidence.json'):
+            for phase in ('normal', 'pre-corpus'):
+                with self.subTest(source=source, phase=phase):
+                    plan = build_plan((source,), phase=phase)
+                    step, = [s for s in plan['steps'] if s.name == 'interaction-boundary-promotion-contract']
+                    self.assertEqual(('test_high_risk_interaction_assurance.py', '-k', 'HighRiskPromotionSentinelTests'), step.command[-3:])
+                    if phase == 'pre-corpus':
+                        self.assertNotIn('affected-tests', [s.name for s in plan['steps']])
+                        self.assertNotIn('build-test-database', [s.name for s in plan['steps']])
+        unrelated = build_plan(('docs/index.md',), phase='pre-corpus')
+        self.assertNotIn('interaction-boundary-promotion-contract', [s.name for s in unrelated['steps']])
+
+    @patch('scripts.quick_gate.validate_partition')
     def test_player_sequence_changes_select_existing_compiler_consumers_before_census(self, _partition_validation):
         # This unit checks routing. Real partition validation remains covered by
         # the manifest owner and the normal/pre-corpus integration check below.

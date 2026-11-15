@@ -405,9 +405,9 @@ database census in the same finalization run:
 to GitHub-hosted runners. Source-changing pull-request events and every `main`
 push first derive an affected-owner plan from schema-5 input declarations. A
 pre-corpus quick-gate phase records the affected tests for the ordinary PR
-matrix, but executes only runtime/compile validation, the generated manifest
-plan, compiler-identity sentinel and canonical semantic-transition policy
-validation before any census. The canonical mechanic-contract loader validates
+matrix, and runs runtime/compile validation, the generated manifest plan,
+compiler-identity and semantic-transition sentinels, and bounded owner
+contracts before any census. The canonical mechanic-contract loader validates
 the pinned effective date, source hash and rule references without opening the
 card database. Changed Python text readers require explicit encoding so Windows
 code pages cannot turn valid UTF-8 data into a late matrix failure. Gate processes
@@ -421,6 +421,10 @@ integrity, including both source-bound paid spell bodies and the combined
 cycle/discard public-action boundary, hybrid face-down probes and reviewed
 legacy text alternatives. Shared quantity grammar changes select only the exact adjacent
 exclusion and public-condition contract witnesses, not their whole modules.
+Compiler, rules, runtime and CardProgram changes also run the self-hosted
+interaction-promotion contract. Its small pinned fixture checks promoted
+original-card admission and genuinely unrepresented neighboring scopes before
+the corpus starts. The complete public regression matrix remains mandatory.
 The reusable-piece policy sentinel also validates interaction evidence against
 the statically discovered test inventory before any corpus generation. Exact
 qualified test IDs and existing legacy leaf IDs are retained; a wrong module

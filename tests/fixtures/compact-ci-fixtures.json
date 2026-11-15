@@ -325,29 +325,27 @@
     {
       "card_names": [
         "Grim Reminder",
-        "Orcish Healer",
-        "Shadow Guildmage"
+        "Orcish Healer"
       ],
       "deck_files": [],
       "fixture_files": [
         "tests/fixtures/new-support-residual-boundaries.json"
       ],
       "oracle_ids": [],
-      "rationale": "The exact bounded original-card dictionary exercises whole-program rejection of residual regeneration, targeting and separate-damage siblings.",
+      "rationale": "Orcish Healer and Grim Reminder retain original material siblings; an explicit constructed owner-move and variable-damage source preserves the multiple-recipient boundary after the original Shadow Guildmage promotion.",
       "source": "tests/test_high_risk_interaction_assurance.py",
       "symbol": "HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission"
     },
     {
       "card_names": [
-        "The Legend of Kyoshi // Avatar Kyoshi",
-        "The Shattered States Era // Nameless Conqueror"
+        "The Legend of Kyoshi // Avatar Kyoshi"
       ],
       "deck_files": [],
       "fixture_files": [
         "tests/fixtures/batched-support-assurance-cards.json"
       ],
       "oracle_ids": [],
-      "rationale": "The bounded original-card dictionary verifies remaining transformed Saga replacement siblings reject complete runtime admission beside fixed control and public-quantity mana leaves.",
+      "rationale": "A constructed control Saga retains an unowned chapter; the original Kyoshi Saga retains the independent quantity-mana chapter boundary.",
       "source": "tests/test_high_risk_interaction_assurance.py",
       "symbol": "HighRiskInteractionAssuranceTests.test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries"
     },
@@ -570,6 +568,7 @@
     "tests/fixtures/conditional-recipient-cards.json",
     "tests/fixtures/conditional-target-characteristic-cards.json",
     "tests/fixtures/conditioned-multi-event-cards.json",
+    "tests/fixtures/constructed-resolution-mana-saga-boundary.json",
     "tests/fixtures/controlled-counter-cost-cards.json",
     "tests/fixtures/controlled-keyword-target-cards.json",
     "tests/fixtures/controlled-return-choice-cards.json",
@@ -764,6 +763,7 @@
     "tests/fixtures/independent-target-clause-cards.json",
     "tests/fixtures/inherited-rule-composition-cards.json",
     "tests/fixtures/initiative-dungeon-cards.json",
+    "tests/fixtures/interaction-promotion-sentinel-cards.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/intrinsic-empty-spell-resolution-cards.json",
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",

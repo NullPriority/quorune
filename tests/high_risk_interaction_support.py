@@ -48,7 +48,7 @@ _WITNESSES = {
         "Generic Discard Damage Boundary Fixture",
         "Artifact",
         "{1}: Target opponent discards two cards and loses 4 life.\n"
-        "{T}: Generic Discard Damage Boundary Fixture deals 1 damage to "
+        "{X}, {T}: This artifact deals X damage to "
         "target creature and 1 damage to target opponent.",
         "{2}",
     ),
@@ -604,12 +604,27 @@ _WITNESSES = {
         "targets.\nDraw a card.",
         "{X}{U}{R}",
     ),
-    "cunning-strike": _Witness(
-        "Cunning Strike",
+    "variable-role-damage-draw-boundary": _Witness(
+        "Generic Variable Role Damage Draw Boundary",
         "Instant",
-        "Cunning Strike deals 2 damage to target creature and 2 damage to target "
+        "This spell deals X damage to target creature and 1 damage to target "
         "player or planeswalker.\nDraw a card.",
-        "{3}{U}{R}",
+        "{X}{U}{R}",
+    ),
+    "source-move-variable-damage-boundary": _Witness(
+        "Generic Source Move Variable Damage Boundary",
+        "Creature — Wizard",
+        "{U}, {T}: Put target creature you control on top of its owner's library.\n"
+        "{X}, {T}: This creature deals X damage to any target and 1 damage to you.",
+        "{B}", power="1", toughness="1",
+    ),
+    "control-saga-chapter-boundary": _Witness(
+        "Generic Control Saga Chapter Boundary",
+        "Enchantment — Saga",
+        "I — Gain control of target creature until end of turn. Untap it. It gains haste until end of turn.\n"
+        "II — Regenerate each creature with the greatest power.\n"
+        "III — Creatures you control get +1/+0 until end of turn.",
+        "{3}{R}",
     ),
     "blink-draw-target-predicate": _Witness(
         "Generic Blink Draw Target Predicate Fixture",
@@ -711,7 +726,8 @@ _WITNESSES = {
         'Creature — Human Wizard',
         'At the beginning of your third main phase, if you discarded more creature cards than noncreature cards this turn, draw a card.\n'
         "When this creature enters, sacrifice it unless you return three basic lands you control to their owner's hand.\n"
-        "{T}, Return this creature to its owner's hand: Destroy target creature. It can't be regenerated. That creature's controller creates a 0/1 green Sheep creature token.",
+        "{T}, Return this creature to its owner's hand: Destroy target creature. It can't be regenerated. That creature's controller creates a 0/1 green Sheep creature token.\n"
+        "{U}: Creatures with power greater than the number of cards in your hand can't be regenerated this turn.",
         '{2}{U}',
         power='0',
         toughness='1',
@@ -1624,7 +1640,7 @@ _bind(
 _bind("dauthi-voidwalker", ZONE_AND_CHOICE_PAIRS[0])
 _bind("sphinxs-insight", ZONE_AND_CHOICE_PAIRS[1])
 _bind("variable-divided-damage-draw-boundary", ZONE_AND_CHOICE_PAIRS[2], ZONE_AND_CHOICE_PAIRS[4])
-_bind("cunning-strike", ZONE_AND_CHOICE_PAIRS[3])
+_bind("variable-role-damage-draw-boundary", ZONE_AND_CHOICE_PAIRS[3])
 _bind("blink-draw-target-predicate", ZONE_AND_CHOICE_PAIRS[5])
 _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])
 _bind("bretagard-stronghold", ZONE_AND_CHOICE_PAIRS[7])
