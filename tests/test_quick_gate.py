@@ -23,7 +23,8 @@ class QuickGatePlanTests(unittest.TestCase):
                     self.assertEqual(('test_high_risk_interaction_assurance.py', '-k', 'HighRiskPromotionSentinelTests'), step.command[-3:])
                     admission, = [s for s in plan['steps'] if s.name == 'compiler-promotion-admission-contract']
                     self.assertEqual(('fixed_subset_discard_draw','fixed_entwine','fixed_overload',
-                                      'external_entry_tapped','external_entry_tapped'),
+                                      'external_entry_tapped','external_entry_tapped','fixed_cleave',
+                                      'source_tap_duration','activation_result_authority','activation_result_authority'),
                                      tuple(command.split('.')[1].removeprefix('test_') for command in admission.command[3:]))
                     self.assertTrue(all(command.startswith('tests.test_') for command in admission.command[3:]))
                     if phase == 'pre-corpus':

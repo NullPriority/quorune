@@ -181,6 +181,8 @@ def build_plan(
                     'tests/test_high_risk_interaction_assurance.py',
                     'tests/test_fixed_subset_discard_draw.py', 'tests/test_fixed_entwine.py',
                     'tests/test_fixed_overload.py', 'tests/test_external_entry_tapped.py',
+                    'tests/test_fixed_cleave.py', 'tests/test_source_tap_duration.py',
+                    'tests/test_activation_result_authority.py',
                     'platform/reusable-piece-interaction-evidence.json'}.intersection(paths)):
             steps.append(QuickStep(
                 'interaction-boundary-promotion-contract',
@@ -194,7 +196,11 @@ def build_plan(
                  'tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_entwine_originals_require_complete_modes_and_normal_registration',
                  'tests.test_fixed_overload.FixedOverloadRuntimeTests.test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration',
                  'tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_originals_admit_only_the_complete_external_entry_family',
-                 'tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_external_entry_unrepresented_target_domain_blocks_complete_admission'),
+                 'tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_external_entry_unrepresented_target_domain_blocks_complete_admission',
+                 'tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_all_original_cleave_sources_require_both_programs_and_normal_registration',
+                 'tests.test_source_tap_duration.SourceTapCompilerTests.test_nontoken_artifact_target_has_explicit_boolean_and_source_exclusion',
+                 'tests.test_activation_result_authority.ActivationResultAuthorityTests.test_catalogue_without_result_has_no_offer_and_rejects_before_payment',
+                 'tests.test_activation_result_authority.ActivationResultAuthorityTests.test_actual_cloudchaser_has_offered_and_accepted_color_result_authority'),
             ))
         if {'quorune/compiler/target_player_sequences.py',
                 'quorune/compiler/bound_effect_programs.py',

@@ -27,7 +27,8 @@ class ActivationResultAuthorityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'activation-results.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/qualified-attack-cards.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/qualified-attack-cards.json',
+            ROOT/'tests/fixtures/constructed-activation-result-boundary.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Result authority',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
 
@@ -41,7 +42,7 @@ class ActivationResultAuthorityTests(unittest.TestCase):
         self.assertTrue(result.ok,result.summary)
 
     def test_catalogue_without_result_has_no_offer_and_rejects_before_payment(self):
-        session=self.session(602629060);source=self.add(session.engine,'Cloudchaser Kestrel')
+        session=self.session(602629060);source=self.add(session.engine,'Constructed Unrepresented Activation')
         session.state.config.semantic_policy='trusted_only'
         self.prepare(session,mana={'W':1});self.checkpoint(session)
         ability=next(a for a in session.engine._activated_abilities(session.state.cards[source.object_id]) if not a.mana_ability)
@@ -73,7 +74,7 @@ class ActivationResultAuthorityTests(unittest.TestCase):
         self.replay(session,load=True)
 
     def test_missing_result_authority_mutant_is_killed_by_the_invalid_offer(self):
-        session=self.session(602629080);source=self.add(session.engine,'Cloudchaser Kestrel')
+        session=self.session(602629080);source=self.add(session.engine,'Constructed Unrepresented Activation')
         session.state.config.semantic_policy='trusted_only'
         self.prepare(session,mana={'W':1});self.checkpoint(session)
         from quorune.rules.activation.proposal import build_activation_offer
@@ -85,7 +86,7 @@ class ActivationResultAuthorityTests(unittest.TestCase):
     def test_explicit_arbitration_policy_retains_its_unresolved_proposal_workflow(self):
         from quorune.rules.activation.proposal import build_activation_offer,build_activation_proposal
         from quorune.rules.activation.model import ActivationProposalRequest
-        session=self.session(602630090);source=self.add(session.engine,'Cloudchaser Kestrel')
+        session=self.session(602630090);source=self.add(session.engine,'Constructed Unrepresented Activation')
         self.assertEqual('arbitrate_or_pause',session.state.config.semantic_policy)
         self.prepare(session,mana={'W':1});self.checkpoint(session)
         ability=next(a for a in session.engine._activated_abilities(session.state.cards[source.object_id]) if not a.mana_ability)
@@ -94,6 +95,17 @@ class ActivationResultAuthorityTests(unittest.TestCase):
         request=ActivationProposalRequest(actor='A',source_ref=source.ref,zones=('battlefield',),ability_selector=ability.ability_id)
         proposal=build_activation_proposal(session.engine,request)
         self.assertIsNotNone(proposal);self.assertEqual(before,authoritative_state_hash(session.state))
+
+    def test_actual_cloudchaser_has_offered_and_accepted_color_result_authority(self):
+        session=self.session(602630100);source=self.add(session.engine,'Cloudchaser Kestrel')
+        target=self.add(session.engine,'Grizzly Bears',seat='B')
+        session.state.config.semantic_policy='trusted_only'
+        self.prepare(session,mana={'W':1});self.checkpoint(session)
+        self.assertEqual({'G'},set(session.engine._effective_card_data(target)['colors']))
+        self.activate(session,source,[target]);self.assertIsNone(self.resolve(session))
+        self.assertEqual(0,session.state.players['A'].mana_pool['W'])
+        self.assertEqual({'W'},set(session.engine._effective_card_data(session.state.cards[target.object_id])['colors']))
+        self.replay(session,load=True)
 
     def test_shared_result_guard_preserves_explicit_typed_execution_owners(self):
         from quorune.rules.activation.proposal import activation_result_is_represented

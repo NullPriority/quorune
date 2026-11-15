@@ -98,7 +98,12 @@ class SourceTapCompilerTests(unittest.TestCase):
         self.assertEqual(spec, DirectPermanentTargetSpec.from_target_schema(schema))
         with self.assertRaises(ValueError):
             DirectPermanentTargetSpec.from_target_schema({**schema, 'token': 0})
-        self.assertIsNone(direct_permanent_target_spec('Target nontoken artifact or creature'))
+        union=direct_permanent_target_spec('Target nontoken artifact or creature')
+        self.assertEqual(('artifact','creature'),union.types_any)
+        self.assertIs(union.token,False)
+        self.assertEqual(union,DirectPermanentTargetSpec.from_target_schema(union.to_target_schema()))
+        self.assertIsNone(direct_permanent_target_spec(
+            'Target nontoken artifact or creature with a name secretly chosen by an opponent'))
 
 
 class SourceTapNativeTests(InheritedNativeFixture, unittest.TestCase):

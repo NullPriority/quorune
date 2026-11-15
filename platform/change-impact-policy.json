@@ -3519,7 +3519,8 @@
         "test_any_number_targets",
         "test_announced_target_cardinality",
         "test_oracle_ir",
-        "test_card_program_v2"
+        "test_card_program_v2",
+        "test_activation_result_authority"
       ]
     },
     {
@@ -13355,7 +13356,8 @@
         "test_card_program_trust",
         "test_fixed_direct_target_predicates",
         "test_fixed_token_production",
-        "test_token_copy_values"
+        "test_token_copy_values",
+        "test_source_tap_duration"
       ]
     },
     {
@@ -14817,7 +14819,8 @@
         "test_declared_effect_amounts",
         "test_announced_activation_x",
         "test_scalar_effect_amounts",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_fixed_cleave"
       ]
     },
     {

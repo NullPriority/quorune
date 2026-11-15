@@ -378,6 +378,7 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
                     'Damn', 'Downsize', 'Mizzium Skin', 'Vandalblast', 'Weapon Surge'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if 'Overload' in r.get('keywords', ())]
         self.assertEqual(27, len(rows))
+        session = self.session(70296008)
         for row in rows:
             with self.subTest(name=row['name']):
                 record = self.db.by_oracle_id(row['oracle_id'])
@@ -386,8 +387,7 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
                 self.assertEqual(row['name'] in expected, binding['strict_capability_ready'], binding)
                 if row['name'] in expected:
-                    session = self.session(70296008)
-                    source = self.add(session.engine, row['name'], zone='hand', ref='overload-original-table')
+                    source = self.add(session.engine, row['name'], zone='hand', ref='overload-original-table-'+record.oracle_id)
                     self.assert_closed(session, source)
                     from quorune.rules.casting.overload_costs import normal_overload_program, select_overload_cast_program
                     normal = session.engine.semantics.get(record.oracle_id + ':spell:front')

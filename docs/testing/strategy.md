@@ -60,6 +60,12 @@ edited capability or evidence inputs use fresh invocations rather than that
 fixture snapshot. Production trust checks retain their existing validation
 scope.
 
+An admission table that only registers cards and checks program binding may
+reuse one fixture game across its rows. Give each card a distinct object
+reference and retain every original's independent compilation, normal
+registration and runtime-binding assertions. Gameplay witnesses keep their
+own games, command sequences, consequences and replay checks.
+
 The bound-effect fixture can opt into `register_fixture_cards_on_add` when
 profiling shows that bulk registration dominates setup. Session creation still
 registers every deck record. Each extra card is then registered through the

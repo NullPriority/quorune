@@ -311,9 +311,10 @@ class FixedCleaveRuntimeTests(unittest.TestCase):
 
     def test_all_original_cleave_sources_require_both_programs_and_normal_registration(self):
         expected = {'Winged Portent', 'Fierce Retribution', "Alchemist's Retrieval", 'Dig Up', 'Lunar Rejection',
-            'Parasitic Grasp', 'Dread Fugue'}
+            'Parasitic Grasp', 'Dread Fugue', 'Path of Peril'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if 'Cleave' in r.get('keywords', ())]
         self.assertEqual(12, len(rows))
+        session = self.session(70214809)
         for row in rows:
             with self.subTest(name=row['name']):
                 record = self.db.by_oracle_id(row['oracle_id'])
@@ -322,8 +323,7 @@ class FixedCleaveRuntimeTests(unittest.TestCase):
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
                 self.assertEqual(row['name'] in expected, binding['strict_capability_ready'], binding)
                 if row['name'] in expected:
-                    session = self.session(70214809)
-                    source = self.add(session.engine, row['name'], zone='hand', ref='cleave-original-table')
+                    source = self.add(session.engine, row['name'], zone='hand', ref='cleave-original-table-'+record.oracle_id)
                     self.assert_closed(session, source)
                     pairs = [p for p in session.engine.semantics.programs_for_oracle(record.oracle_id)
                         if 'fixed_cleave_cast_variant' in p.coverage]
@@ -343,8 +343,8 @@ class FixedCleaveRuntimeTests(unittest.TestCase):
                 profile='commander_review')['strict_capability_ready'])
 
     def test_cleave_price_omission_preserves_admission_but_changes_native_payment(self):
-        from quorune.rules.casting import cleave_costs as owner
-        original = owner.cleave_cost_options
+        from quorune.rules.casting import fixed_text_variant_costs as owner
+        original = owner.fixed_variant_cost_options
         changed = []
         def omitted(*args, **kwargs):
             result = original(*args, **kwargs)
@@ -354,7 +354,7 @@ class FixedCleaveRuntimeTests(unittest.TestCase):
             return result
         result = unittest.TestResult()
         witness = type(self)('test_actual_fierce_retribution_cleave_targets_nonattacker_with_empty_mode_list')
-        with mock.patch.object(owner, 'cleave_cost_options', omitted):
+        with mock.patch.object(owner, 'fixed_variant_cost_options', omitted):
             witness.run(result)
         self.assertTrue(changed)
         self.assertFalse(result.errors)

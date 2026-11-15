@@ -568,6 +568,7 @@
     "tests/fixtures/conditional-recipient-cards.json",
     "tests/fixtures/conditional-target-characteristic-cards.json",
     "tests/fixtures/conditioned-multi-event-cards.json",
+    "tests/fixtures/constructed-activation-result-boundary.json",
     "tests/fixtures/constructed-resolution-mana-saga-boundary.json",
     "tests/fixtures/controlled-counter-cost-cards.json",
     "tests/fixtures/controlled-keyword-target-cards.json",
