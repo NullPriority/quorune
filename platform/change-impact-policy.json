@@ -15034,6 +15034,7 @@
       ],
       "test_modules": [
         "test_private_hand_collections",
+        "test_fixed_entwine",
         "test_hand_entry_expansion",
         "test_fixed_public_zone_moves",
         "test_aura_targeting_entry",

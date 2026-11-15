@@ -239,7 +239,7 @@ class FixedEntwineRuntimeTests(unittest.TestCase):
     def test_entwine_originals_require_complete_modes_and_normal_registration(self):
         expected={"Rain of Rust","Mirage Mockery","Abuna's Chant","Dream's Grip","Flourishing Strike",
             "Roar of the Kha","One Dozen Eyes","Unbounded Potential","Reap and Sow","Barbed Lightning","Goblin War Party",
-            "Gravedig","Twisted Reflection"}
+            "Gravedig","Twisted Reflection","Tooth and Nail"}
         for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if 'Entwine' not in raw.get('keywords',[]):continue
             with self.subTest(name=raw['name']):
@@ -250,3 +250,44 @@ class FixedEntwineRuntimeTests(unittest.TestCase):
                 program=compile_best_available_card_program(self.db,card,semantic_registry=registry,capability_registry=self.registry,capability_profile='commander_review')
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
                 self.assertEqual(raw['name'] in expected,binding['strict_capability_ready'],binding['blockers'])
+
+    def test_actual_tooth_and_nail_resumes_hand_collection_after_revealed_search(self):
+        # CR 702.42b / 608.2c: search first, then choose the hand collection.
+        session=self.session(70204220);engine=session.engine
+        source=self.add(engine,'Tooth and Nail',zone='hand')
+        found=[self.add(engine,'Generic Bound Body',zone='library',ref='entwine-found-'+str(i)) for i in range(2)]
+        held=self.add(engine,'Generic Bound Body',zone='hand',ref='entwine-held')
+        private=self.add(engine,'Generic Bound Body',seat='B',zone='hand',ref='entwine-other-hand')
+        self.assert_closed(session,source)
+        self.prepare(session,mana={'C':7,'G':2});self.checkpoint(session)
+        offered=next(row for row in session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                     if row['id']=='cast:'+source.ref)
+        modes=['mode_1','mode_2']
+        self.reject(session,offered['id'],modes=modes,pay='manual',payment={'C':5,'G':2})
+        result=session.act('pilot:A',{'action_id':offered['id'],'modes':list(reversed(modes)),'pay':'auto'})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual(0,sum(session.state.players['A'].mana_pool.values()))
+        self.assertEqual(modes,session.state.stack[-1].modes)
+        self.assertEqual('semantic.search',self.resolve(session).kind)
+        session=self.replay(session,load=True)
+        shuffles=session.state.players['A'].stats.get('shuffle_count',0)
+        result=session.act('pilot:A',{'action_id':'choose','search_cards':[card.ref for card in found]})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual('semantic.choice',self.resolve(session).kind)
+        self.assertEqual(shuffles+1,session.state.players['A'].stats['shuffle_count'])
+        for card in found:self.assertEqual('hand',session.state.cards[card.object_id].zone)
+        self.assertIn(held.ref,str(session.packet('pilot:A',full=True)['decision']))
+        self.assertNotIn(private.ref,str(session.packet('pilot:A',full=True)))
+        for viewer in 'BCD':self.assertNotIn(held.ref,str(session.packet('pilot:'+viewer,full=True)))
+        self.reject(session,'choose','B',cards=[found[0].ref])
+        self.reject(session,'choose',cards=[card.ref for card in [*found,held]])
+        self.reject(session,'choose',cards=[private.ref])
+        session=self.replay(session,load=True)
+        result=session.act('pilot:A',{'action_id':'choose','cards':[card.ref for card in found]})
+        self.assertTrue(result.ok,result.summary);self.resolve(session)
+        for card in found:self.assertEqual('battlefield',session.state.cards[card.object_id].zone)
+        self.assertEqual(session.state.cards[found[0].object_id].zone_timestamp,
+                         session.state.cards[found[1].object_id].zone_timestamp)
+        self.assertEqual('hand',session.state.cards[held.object_id].zone)
+        self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+        self.replay(session,load=True)
