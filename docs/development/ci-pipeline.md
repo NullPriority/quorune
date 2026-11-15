@@ -716,6 +716,10 @@ checks. To run only this early scan:
 .\.venv\Scripts\python.exe scripts\validate_repository.py --tracked-only
 ```
 
+Cloud source resolution checks out complete blob history so this ancestry scan
+can read historical object sizes directly. A blob-filtered checkout would fetch
+each missing historical blob separately while the scan runs.
+
 The default repository validator still performs all generated, architecture,
 documentation, and safety checks.
 

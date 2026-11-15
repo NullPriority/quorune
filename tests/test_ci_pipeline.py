@@ -1240,7 +1240,11 @@ class CiPipelineTests(unittest.TestCase):
             self.assertNotIn("fetch-depth: 0", sections[name])
         for name in ("plan", "scheduler"):
             self.assertIn("fetch-depth: 0", sections[name])
-            self.assertIn("filter: blob:none", sections[name])
+        # The source sentinel reads historical blob sizes. Partial history
+        # would turn that complete safety scan into one fetch per missing blob.
+        self.assertIn("--phase pre-corpus", sections["plan"])
+        self.assertNotIn("filter:", sections["plan"])
+        self.assertIn("filter: blob:none", sections["scheduler"])
         self.assertIn("fetch-depth: 0", sections["bundle"])
         self.assertNotIn("filter: blob:none", sections["bundle"])
         reusable = sections["reusable"]

@@ -36,7 +36,6 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
-          filter: blob:none
       - id: source
         name: Pin exact source commit
         env:
