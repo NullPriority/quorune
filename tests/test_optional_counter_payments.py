@@ -24,7 +24,7 @@ class OptionalCounterPaymentCompilerTests(unittest.TestCase):
         registry = load_default_capability_registry()
         for prefix, operation in (
             ('you may sacrifice another creature. If you do, ', 'offer_optional_mana_payment'),
-            ('you may discard a card. If you do, ', 'offer_optional_mana_payment'),
+            ('you may discard a card. If you do, ', 'offer_optional_effect'),
             ('you may pay {1}. If you do, ', 'offer_optional_mana_payment'),
             ('you may ', 'offer_optional_counter_placement'),
         ):
@@ -34,6 +34,16 @@ class OptionalCounterPaymentCompilerTests(unittest.TestCase):
                 self.assertEqual('exact', ir.status, ir.material_residuals)
                 effect = ir.faces[0].nodes[0].effects[0]
                 self.assertEqual(operation, effect['op'])
+                if prefix.startswith('you may discard'):
+                    self.assertEqual('$controller',effect['player'])
+                    effect,=effect['effects']
+                    self.assertEqual('offer_optional_mana_payment',effect['op'])
+                    self.assertEqual(2,effect['schema_version'])
+                    self.assertEqual(8,effect['payment']['schema_version'])
+                    self.assertEqual('discard',effect['payment']['kind'])
+                    self.assertEqual(1,effect['payment']['amount'])
+                    self.assertEqual(['hand'],effect['payment']['predicate']['zones'])
+                    self.assertEqual('$controller',effect['payment']['predicate']['owner'])
                 counter = effect.get('effects', [effect.get('effect')])[0]
                 self.assertEqual('place_counters', counter['op'])
                 self.assertEqual('$source.zone_object', counter['card'])

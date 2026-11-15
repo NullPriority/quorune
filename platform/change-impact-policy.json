@@ -14280,7 +14280,8 @@
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/binding_optional_results.py",
         "tests/test_optional_counter_payments.py",
-        "tests/fixtures/optional-counter-payment-cards.json"
+        "tests/fixtures/optional-counter-payment-cards.json",
+        "quorune/compiler/optional_payment_templates.py"
       ],
       "test_modules": [
         "test_optional_counter_payments",
@@ -15128,7 +15129,8 @@
         "test_resolution_public_conditions",
         "test_conditional_target_characteristics",
         "test_conditional_target_preparation",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_public_condition_self_replacements"
       ]
     },
     {

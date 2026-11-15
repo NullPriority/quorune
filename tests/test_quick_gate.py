@@ -24,7 +24,9 @@ class QuickGatePlanTests(unittest.TestCase):
                     admission, = [s for s in plan['steps'] if s.name == 'compiler-promotion-admission-contract']
                     self.assertEqual(('fixed_subset_discard_draw','fixed_entwine','fixed_overload',
                                       'external_entry_tapped','external_entry_tapped','fixed_cleave',
-                                      'source_tap_duration','activation_result_authority','activation_result_authority'),
+                                      'source_tap_duration','activation_result_authority','activation_result_authority',
+                                      'public_condition_self_replacements','public_condition_self_replacements',
+                                      'optional_counter_payments'),
                                      tuple(command.split('.')[1].removeprefix('test_') for command in admission.command[3:]))
                     self.assertTrue(all(command.startswith('tests.test_') for command in admission.command[3:]))
                     if phase == 'pre-corpus':

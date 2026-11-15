@@ -183,6 +183,8 @@ def build_plan(
                     'tests/test_fixed_overload.py', 'tests/test_external_entry_tapped.py',
                     'tests/test_fixed_cleave.py', 'tests/test_source_tap_duration.py',
                     'tests/test_activation_result_authority.py',
+                    'tests/test_public_condition_self_replacements.py',
+                    'tests/test_optional_counter_payments.py',
                     'platform/reusable-piece-interaction-evidence.json'}.intersection(paths)):
             steps.append(QuickStep(
                 'interaction-boundary-promotion-contract',
@@ -200,7 +202,10 @@ def build_plan(
                  'tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_all_original_cleave_sources_require_both_programs_and_normal_registration',
                  'tests.test_source_tap_duration.SourceTapCompilerTests.test_nontoken_artifact_target_has_explicit_boolean_and_source_exclusion',
                  'tests.test_activation_result_authority.ActivationResultAuthorityTests.test_catalogue_without_result_has_no_offer_and_rejects_before_payment',
-                 'tests.test_activation_result_authority.ActivationResultAuthorityTests.test_actual_cloudchaser_has_offered_and_accepted_color_result_authority'),
+                 'tests.test_activation_result_authority.ActivationResultAuthorityTests.test_actual_cloudchaser_has_offered_and_accepted_color_result_authority',
+                 'tests.test_public_condition_self_replacements.PublicConditionSelfReplacementTests.test_same_target_source_schemas_and_opaque_siblings_fail_closed',
+                 'tests.test_public_condition_self_replacements.PublicConditionSelfReplacementTests.test_current_target_color_replacement_keeps_both_results_and_one_target_binding',
+                 'tests.test_optional_counter_payments.OptionalCounterPaymentCompilerTests.test_cost_clause_stays_whole_and_ordinary_optional_counter_keeps_legacy_shape'),
             ))
         if {'quorune/compiler/target_player_sequences.py',
                 'quorune/compiler/bound_effect_programs.py',
