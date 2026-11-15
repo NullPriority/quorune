@@ -7617,7 +7617,7 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "test_dauntless_dismantler_unrepresented_target_domain_blocks_complete_admission",
+      "test_id": "test_external_entry_unrepresented_target_domain_blocks_complete_admission",
       "piece_ids": [
         "capability.zone.entry.tapped_state.external_source",
         "residual.target_or_choice.target-predicate"
@@ -7626,7 +7626,22 @@
         "zone.entry.tapped_state.external_source"
       ],
       "interaction_order": 2,
-      "assertion": "The original Dauntless Dismantler has a represented external tapped-entry replacement beside its unrepresented variable mass-destruction target domain. The actual compiled source retains material residuals, no construction error, and unresolved strict runtime admission. The exact thirteen complete originals still bind normally."
+      "assertion": "A deliberately constructed source combines a represented external tapped-entry replacement with an unrepresented secret-name target predicate. Its complete program retains material residuals, no construction error, and unresolved strict runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_dauntless_dismantler_admits_external_entry_and_announced_destruction",
+      "piece_ids": [
+        "capability.permanent.destroy.fixed_set",
+        "capability.zone.entry.tapped_state.external_source"
+      ],
+      "capability_ids": [
+        "permanent.destroy.fixed_set",
+        "zone.entry.tapped_state.external_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "The complete original Dauntless Dismantler admits its external tapped-entry replacement and separately owned announced-X source-sacrifice destruction through normal stored and runtime capability closure."
     },
     {
       "evidence_class": "interaction",

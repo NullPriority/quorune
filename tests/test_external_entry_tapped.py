@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
@@ -153,14 +154,37 @@ class ExternalEntryTappedRuntimeTests(unittest.TestCase):
                 program=compile_best_available_card_program(self.db,self.db.lookup(row['name']),semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry,capability_profile='commander_review')
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
-                # These two originals close through the independent entry-copy owner.
-                expected_closed = row['name'] in CLOSED or row['name'] in {'Echoing Deeps', 'Vesuva'}
+                # Complete original siblings also use the entry-copy, public
+                # graveyard-entry and announced-X destruction owners.
+                expected_closed = row['name'] in CLOSED or row['name'] in {
+                    'Echoing Deeps','Vesuva','Open the Vaults','Dauntless Dismantler'}
                 self.assertEqual(expected_closed,binding['strict_capability_ready'],binding['blockers'])
 
-    def test_dauntless_dismantler_unrepresented_target_domain_blocks_complete_admission(self):
+    def test_dauntless_dismantler_admits_external_entry_and_announced_destruction(self):
         from high_risk_interaction_support import _observed_piece_ids
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
-        original = self.db.lookup('Dauntless Dismantler')
+        original=self.db.lookup('Dauntless Dismantler')
+        ir=compile_oracle_card(original,capability_registry=self.registry,capability_profile='commander_review')
+        program=compile_best_available_card_program(self.db,original,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile='commander_review')
+        row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')
+        self.assertEqual('exact',ir.status);self.assertFalse(ir.material_residuals)
+        self.assertLessEqual({'capability.zone.entry.tapped_state.external_source',
+            'capability.permanent.destroy.fixed_set','capability.activation.mana_cost.announced_x_source_sacrifice'},
+            _observed_piece_ids(row))
+        self.assertEqual('trusted',row['card_program_status']);self.assertIsNone(row['hard_construction_failure'])
+        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+        self.assertEqual('capability_closed',binding['trust_basis'])
+
+    def test_external_entry_unrepresented_target_domain_blocks_complete_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        # A constructed boundary keeps the genuinely unowned target predicate.
+        original=replace(record('Artifacts your opponents control enter tapped.\n'
+            '{1}: Destroy target artifact with a name secretly chosen by an opponent.',
+            'Creature — Human Artificer'),oracle_id='fixture:external-entry-unowned-target',
+            name='Constructed Entry Target Boundary')
         ir = compile_oracle_card(original, capability_registry=self.registry, capability_profile='commander_review')
         program = compile_best_available_card_program(self.db, original, semantic_registry=SemanticRegistry(),
             capability_registry=self.registry, capability_profile='commander_review')

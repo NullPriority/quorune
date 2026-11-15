@@ -21,6 +21,11 @@ class QuickGatePlanTests(unittest.TestCase):
                     plan = build_plan((source,), phase=phase)
                     step, = [s for s in plan['steps'] if s.name == 'interaction-boundary-promotion-contract']
                     self.assertEqual(('test_high_risk_interaction_assurance.py', '-k', 'HighRiskPromotionSentinelTests'), step.command[-3:])
+                    admission, = [s for s in plan['steps'] if s.name == 'compiler-promotion-admission-contract']
+                    self.assertEqual(('fixed_subset_discard_draw','fixed_entwine','fixed_overload',
+                                      'external_entry_tapped','external_entry_tapped'),
+                                     tuple(command.split('.')[1].removeprefix('test_') for command in admission.command[3:]))
+                    self.assertTrue(all(command.startswith('tests.test_') for command in admission.command[3:]))
                     if phase == 'pre-corpus':
                         self.assertNotIn('affected-tests', [s.name for s in plan['steps']])
                         self.assertNotIn('build-test-database', [s.name for s in plan['steps']])

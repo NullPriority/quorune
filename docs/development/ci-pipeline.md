@@ -424,7 +424,10 @@ exclusion and public-condition contract witnesses, not their whole modules.
 Compiler, rules, runtime and CardProgram changes also run the self-hosted
 interaction-promotion contract. Its small pinned fixture checks promoted
 original-card admission and genuinely unrepresented neighboring scopes before
-the corpus starts. The complete public regression matrix remains mandatory.
+the corpus starts. Self-hosted Entwine, Overload and external-entry admission
+tables also run with the fixed/variable discard boundary. These bounded checks
+catch obsolete exclusions before full generation and the public regression
+matrix, which remains mandatory.
 The reusable-piece policy sentinel also validates interaction evidence against
 the statically discovered test inventory before any corpus generation. Exact
 qualified test IDs and existing legacy leaf IDs are retained; a wrong module

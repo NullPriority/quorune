@@ -179,11 +179,22 @@ def build_plan(
                                 'quorune/semantic_runtime/')) for path in paths)
                 or {'quorune/oracle_ir.py', 'tests/high_risk_interaction_support.py',
                     'tests/test_high_risk_interaction_assurance.py',
+                    'tests/test_fixed_subset_discard_draw.py', 'tests/test_fixed_entwine.py',
+                    'tests/test_fixed_overload.py', 'tests/test_external_entry_tapped.py',
                     'platform/reusable-piece-interaction-evidence.json'}.intersection(paths)):
             steps.append(QuickStep(
                 'interaction-boundary-promotion-contract',
                 (python, '-m', 'unittest', 'discover', '-s', 'tests', '-p',
                  'test_high_risk_interaction_assurance.py', '-k', 'HighRiskPromotionSentinelTests'),
+            ))
+            steps.append(QuickStep(
+                'compiler-promotion-admission-contract',
+                (python, '-m', 'unittest',
+                 'tests.test_fixed_subset_discard_draw.FixedSubsetDiscardDrawCompilerTests.test_fixed_subset_route_is_versioned_and_rejects_adjacent_variants',
+                 'tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_entwine_originals_require_complete_modes_and_normal_registration',
+                 'tests.test_fixed_overload.FixedOverloadRuntimeTests.test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration',
+                 'tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_originals_admit_only_the_complete_external_entry_family',
+                 'tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_external_entry_unrepresented_target_domain_blocks_complete_admission'),
             ))
         if {'quorune/compiler/target_player_sequences.py',
                 'quorune/compiler/bound_effect_programs.py',
