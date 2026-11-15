@@ -268,6 +268,11 @@ def fixed_query_keyword_grant_handler(
     parsed = fixed_characteristic_battlefield_query_subject(
         match.group("subject"),allow_negative_keyword=allow_disjoint_negative
     )
+    commander = re.fullmatch(r'(?P<other>Other )?Commanders you (?P<relation>own|control)',
+                             match.group('subject'), re.I)
+    if commander is not None:
+        parsed = ('source_owner' if commander['relation'].casefold() == 'own' else 'source_controller',
+                  ObjectQuerySpec(zones=('battlefield',), commander=True), bool(commander['other']))
     if parsed is None:
         return None
     relation, predicate, exclude_source = parsed
@@ -287,16 +292,21 @@ def fixed_query_keyword_grant_handler(
     capabilities = {
         "continuous.ability.fixed_query_keyword_grant",
         *_attached_ability_capabilities(abilities),
-        *(('state_query.commander.designation',) if predicate.commander is True else ()),
+        *(('state_query.commander.designation',) if predicate.commander is True and predicate.types_all else ()),
         *(('continuous.ability.disjoint_negative_keyword_grant',) if negative else ()),
     }
+    from ..rules.commander_keyword_grants import (
+        COMMANDER_KEYWORD_GRANT_HANDLER, commander_permanent_query_dependencies,
+    )
+    capabilities.update(commander_permanent_query_dependencies(predicate.to_dict()))
     return (
         "continuous-fixed-query-keyword-grant-v2",
         {
-            "handler_id": ('continuous.ability.disjoint-negative-keyword-grant.v1' if negative else
+            "handler_id": (COMMANDER_KEYWORD_GRANT_HANDLER if commander is not None else
+                           'continuous.ability.disjoint-negative-keyword-grant.v1' if negative else
                            'continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
                            else "continuous.ability.fixed-query-keyword-grant.v1"),
-            "schema_version": 2 if 'Protection' in abilities else 1,
+            "schema_version": 1 if commander is not None else 2 if 'Protection' in abilities else 1,
             "event": "characteristics.evaluate",
             "condition": {
                 "target_controller": relation,

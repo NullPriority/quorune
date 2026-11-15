@@ -14,6 +14,7 @@ from .util import stable_json
 class SpellTextVariantKind(str, Enum):
     OVERLOAD = 'overload'
     CLEAVE = 'cleave'
+    AWAKEN = 'awaken'
 
     @property
     def capability(self):
@@ -30,6 +31,11 @@ class SpellTextVariantKind(str, Enum):
     @property
     def paid_role(self):
         return self.value + '_body_paid'
+
+    @property
+    def paid_fingerprint_field(self):
+        return {self.OVERLOAD:'overloaded_fingerprint',self.CLEAVE:'cleaved_fingerprint',
+                self.AWAKEN:'awakened_fingerprint'}[self]
 
 
 def spell_body_fingerprint(effects, target_schema):

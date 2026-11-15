@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-"""Resolution-owned player prohibitions with shared casting-legality queries."""
+"""Resolution-owned player casting rules with shared legality and cost queries."""
 
 from typing import Mapping
 
 from ..temporary_cast_rule_model import (CAPABILITY,MECHANIC,OPERATION,TemporaryCastRestrictionSpec,ResolvedCastRestriction)
 from ..continuous_effect_state import commit_continuous_effect
+from ..next_spell_cost_model import MECHANIC as NEXT_COST_MECHANIC, OPERATION as NEXT_COST_OPERATION, next_spell_cost_node_capabilities, validate_next_spell_cost_instruction
 
 
 def apply_temporary_cast_restriction(host,*,actor,restriction,target_player,source_id):
@@ -31,6 +32,8 @@ def restriction_matches_spell(effect,row):
 
 
 def temporary_cast_node_capabilities(*,effects,target_schema,mechanic_ids,**kwargs):
+    if NEXT_COST_MECHANIC in mechanic_ids:
+        return next_spell_cost_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if MECHANIC not in mechanic_ids or len(effects)!=1:return ()
     effect=effects[0]
     if set(effect)!={'op','actor','restriction','player'} or effect['op']!=OPERATION or effect['actor']!='$controller':return ()
@@ -51,6 +54,7 @@ def temporary_cast_runtime_dependencies(program):
         if isinstance(value,Mapping):
             if value.get('op') == STACK_COUNTER_FOLLOWUP_OPERATION:
                 return {CAPABILITY} & set(stack_counter_followup_runtime_dependencies(program))
+            if value.get('op')==NEXT_COST_OPERATION:return set(validate_next_spell_cost_instruction(value)[1])
             if value.get('op')==OPERATION:
                 spec=TemporaryCastRestrictionSpec.from_dict(value.get('restriction'))
                 required=temporary_cast_node_capabilities(effects=(value,),target_schema=program.target_schema if spec.player_scope=='target' else None,mechanic_ids=program.coverage)

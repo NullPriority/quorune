@@ -17,6 +17,16 @@ def control_covered_mechanics(supplied: set[str]) -> set[str]:
     return {FIXED_CONTROL_MECHANIC, "cr-611-continuous-effects"} if FIXED_CONTROL_CAPABILITY in supplied else set()
 
 
+def resolution_control_node_capabilities(*,effects,target_schema,mechanic_ids):
+    """Keep both strictly shaped recipient families on the shared control owner."""
+    owned=fixed_control_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+    if owned:return owned
+    from .recipient_control_shapes import recipient_control_node_capabilities
+    from .owner_control_shapes import owner_control_node_capabilities
+    return (recipient_control_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+        or owner_control_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids))
+
+
 def fixed_control_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],

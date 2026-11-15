@@ -116,15 +116,17 @@ class CardProgramTrustTests(unittest.TestCase):
 
     def test_intrinsic_classification_retains_descriptor_admission_blockers(self):
         from dataclasses import replace
+        from unittest.mock import patch
+        import quorune.card_programs.adapters as adapters
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.card_programs.commands import _CardProgramCoverageCollector
         from quorune.oracle_ir import compile_oracle_card
         collector = _CardProgramCoverageCollector(self.capabilities, 'commander_review')
-        for text, kind, blocker in (
+        for text, kind, expected_capability in (
                 ('Target creature loses shadow until end of turn.\nDraw a card.', 'Instant',
-                 'runtime_temporary_keyword_removal:invalid:'),
+                 'continuous.resolution.fixed_keyword_removal'),
                 ('You may exert this creature as it attacks. When you do, target creature gets +X/+X until end of turn, where X is the number of counters on permanents you control.',
-                 'Creature — Human', None)):
+                 'Creature — Human', 'quantity_expression.public_counter_total')):
             with self.subTest(text=text):
                 record = replace(_bolt(), name='Generic Admission Witness', type_line=kind,
                                  oracle_text=text, power='2' if kind.startswith('Creature') else None,
@@ -138,19 +140,37 @@ class CardProgramTrustTests(unittest.TestCase):
                 trust = program.trust_closure
                 binding = bind_card_program_runtime(program, capability_registry=self.capabilities,
                                                     profile='commander_review')
-                closed = blocker is None
-                self.assertEqual('capability_closed' if closed else 'unresolved', trust['trust_basis'])
-                self.assertEqual(closed, trust['strict_capability_ready'])
-                self.assertEqual(closed, binding['strict_capability_ready'])
-                if closed:
-                    self.assertFalse(trust['blockers'], trust)
-                    self.assertTrue(any('quantity_expression.public_counter_total' in row['declared_capabilities']
-                                        for row in binding['ability_bindings']), binding)
-                else:
-                    self.assertTrue(any(blocker in value for value in trust['blockers']), trust)
+                self.assertEqual('capability_closed', trust['trust_basis'])
+                self.assertTrue(trust['strict_capability_ready'])
+                self.assertTrue(binding['strict_capability_ready'])
+                self.assertFalse(trust['blockers'], trust)
+                self.assertTrue(any(expected_capability in row['declared_capabilities']
+                                    for row in binding['ability_bindings']), binding)
                 collector.observe(record, program)
-        self.assertEqual({'unresolved': 1, 'capability_closed': 1}, dict(collector.trust_bases))
-        self.assertEqual({'untrusted': 1, 'trusted': 1}, dict(collector.statuses))
+                if kind == 'Instant':
+                    # The composition is supported. A producer that omits its
+                    # keyword-removal authority must still fail runtime admission
+                    # even though the independently compiled Oracle IR is exact.
+                    generate = adapters._generated_programs_from_ir
+                    def omit_keyword_owner(*args, **kwargs):
+                        for ability in generate(*args, **kwargs):
+                            if expected_capability in ability.capability_dependencies:
+                                deps = [cap for cap in ability.capability_dependencies if cap != expected_capability]
+                                ability = replace(ability, capability_dependencies=deps,
+                                    capability_closure=self.capabilities.closure(deps, profile='commander_review').to_dict())
+                            yield ability
+                    with patch.object(adapters, '_generated_programs_from_ir', side_effect=omit_keyword_owner):
+                        blocked = compile_best_available_card_program(self.db, record,
+                            semantic_registry=SemanticRegistry(), capability_registry=self.capabilities,
+                            capability_profile='commander_review')
+                    self.assertEqual('unresolved', blocked.trust_closure['trust_basis'])
+                    self.assertTrue(any('runtime_temporary_keyword_removal:invalid:' in value
+                        for value in blocked.trust_closure['blockers']), blocked.trust_closure)
+                    self.assertFalse(bind_card_program_runtime(blocked, capability_registry=self.capabilities,
+                        profile='commander_review')['strict_capability_ready'])
+                    collector.observe(record, blocked)
+        self.assertEqual({'unresolved': 1, 'capability_closed': 2}, dict(collector.trust_bases))
+        self.assertEqual({'untrusted': 1, 'trusted': 2}, dict(collector.statuses))
 
     def test_reviewed_pack_is_compatibility_not_capability_closed(self):
         program = SemanticRegistry().card_program_for_oracle(
@@ -279,6 +299,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.flash",
                 "ability.static.conditional_flash",
                 "ability.static.self_cast_restriction",
+                "ability.static.declare_attackers_cast_restriction",
                 "ability.static.all_creature_types_characteristic_definition",
                 "ability.static.all_colors_characteristic_definition",
                 "ability.static.ascend",
@@ -387,6 +408,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.fixed_query_ability_grant",
                 "continuous.fixed_query_characteristic_grant",
                 "continuous.fixed_query_keyword_grant",
+                "continuous.ability.commander_permanent_keywords",
                 "continuous.opponent_keyword_prohibition",
                 "continuous.attached.fixed_characteristics",
                 "continuous.attached.source_chosen_color_protection",
@@ -441,6 +463,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "permission.action.library-search-rule",
                 "permission.cast.self-zone",
                 "permission.cast.classic_flash_cleanup",
+                "permission.cast.mana_surcharge_flash",
                 "state_query.devotion.fixed_increase",
                 "replacement.counter.quantity",
                 "replacement.damage.quantity",
@@ -470,6 +493,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.dynamic-self-entry-counter",
                 "replacement.zone.read-ahead-entry-choice",
                 "replacement.zone.riot-entry-choice",
+                "replacement.zone.tribute-entry",
                 "replacement.zone.devour",
                 "replacement.zone.prepared_entry",
                 "ability.static.target_prohibition",

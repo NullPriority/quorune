@@ -28,6 +28,8 @@ class ConditionalRecipientSpec:
 
 
 def validate_conditional_recipient_descriptor(row):
+    if not isinstance(row,Mapping) or not {'recipient','source_condition','target'}<=set(row):
+        raise ValueError('Conditional recipient requires its role, condition and target')
     from .continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind as Kind
     from .object_predicate import ObjectQuerySpec
     from .characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
@@ -51,10 +53,10 @@ def validate_conditional_recipient_descriptor(row):
 
 
 def conditional_recipient_capabilities(value):
-    from .continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateFact
+    from .continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateFact,FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
     if isinstance(value, Mapping):
         own = set()
-        if 'recipient' in value:
+        if value.get('handler_id')==FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID and 'recipient' in value:
             _spec, condition = validate_conditional_recipient_descriptor(value)
             own.add(CONDITIONAL_RECIPIENT_CAPABILITY)
             if any(leaf.fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER for leaf in condition.leaf_conditions()):

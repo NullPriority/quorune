@@ -74,6 +74,10 @@ def resolution_condition_template(
     )
     if replacement is not None:
         return replacement
+    from .target_replacements import current_target_replacement_template
+    replacement = current_target_replacement_template(normalized, compile_component=compile_component)
+    if replacement is not None:
+        return replacement
     alternative = _top_level_positions(normalized, _OTHERWISE) if _OTHERWISE in normalized else ()
     if alternative is None or len(alternative) > 1:
         return None

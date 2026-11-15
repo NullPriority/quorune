@@ -21,7 +21,7 @@ _INSTRUCTION = re.compile(
     r"^Exile (?P<subject>.+?)(?:, then |\. (?:Then )?)"
     r"(?:(?P<early>At the beginning of (?:the next|your next) end step, )?)"
     r"[Rr]eturn (?P<reference>it|that card|those cards|them) to the battlefield"
-    r"(?P<tapped> tapped)?(?: under (?P<controller>its owner's|their owner's|their owners'|your) control)?"
+    r"(?P<tapped> tapped)?(?P<transformed> transformed)?(?: under (?P<controller>its owner's|their owner's|their owners'|your) control)?"
     r"(?: with (?P<count>a|one|two|three) (?P<counter>\+1/\+1|flying|vigilance|lifelink) counters? on (?:it|them))?"
     r"(?P<late> at the beginning of (?:the next|your next) end step)?\.?(?P<tail>.*)$",
     re.IGNORECASE,
@@ -109,7 +109,11 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
         return None
     subject = match["subject"]
     self_type = source_self_permanent_type(subject)
-    self_subject = self_type is not None or SourceReferenceSpec(card_name).matches(subject)
+    transformed = bool(match["transformed"])
+    self_subject = self_type is not None or SourceReferenceSpec(card_name).matches(subject) or (
+        transformed and subject.casefold() == "this saga")
+    if transformed and not self_subject:
+        return None
     schema = None
     cards: Any = "$source.zone_object"
     if self_subject:
@@ -148,7 +152,8 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
         if not keywords:
             return None
     try:
-        spec = LinkedExileReturnSpec(timing=timing, controller="actor" if match["controller"] == "your" else "owner",
+        spec = LinkedExileReturnSpec(timing=timing, controller="actor" if (match["controller"] or "").casefold() == "your" else "owner",
+                                    transformed=transformed, schema_version=4 if transformed else 1,
                                     tapped=bool(match["tapped"]), keywords=keywords,
                                     entry_counters=((match["counter"].casefold(), {"a":1,"one":1,"two":2,"three":3}[match["count"].casefold()]),) if match["counter"] else ())
     except ValueError:

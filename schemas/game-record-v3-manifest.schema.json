@@ -95,6 +95,10 @@
     "format": {
       "additionalProperties": true,
       "properties": {
+        "declare_attack_cast_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "battle_cry_resolution_version": {
           "enum": [
             0,

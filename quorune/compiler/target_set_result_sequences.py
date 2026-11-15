@@ -10,6 +10,7 @@ TARGET_SET_SEQUENCE_MECHANIC='shared-target-set-result-sequence'
 TARGET_SET_SEQUENCE_CAPABILITY='resolution.target_set.ordered_results'
 _FIRST=re.compile(r'(?P<verb>Tap|Untap) (?P<count>up to (?:one|two|three|four|five|six)|one or two|two|three|four|five|six) target (?P<subject>[^.]+)\.',re.I)
 _REFERENCE=r'(?:them|those creatures|those permanents|those artifacts)'
+CHARACTERISTIC_TAIL_OPERATIONS=frozenset({'draw','scry','life','lose_life','create_token','amass'})
 _NEXT_UNTAP = re.compile(
     r"(?:(?:They|Those (?P<plural>[a-z]+)s) don['’]t untap during their "
     r"(?:controller['’]s|controllers['’]) next untap steps?|"
@@ -45,7 +46,34 @@ def _tap_set_next_untap_template(base, clauses, *, compile_independent):
             tuple(dict.fromkeys((TARGET_SET_SEQUENCE_MECHANIC, *mechanics, *tail[3]))))
 
 
+def _characteristic_prefix_sequence(text, *, compile_independent):
+    from .oracle_source_text import without_parenthetical_reminder
+    from ..rules.target_set_result_sequences import target_set_result_sequence_capabilities
+    for clauses in _candidate_partitions(without_parenthetical_reminder(text)):
+        if not 2<=len(clauses)<=4:
+            continue
+        first=target_characteristic_set_template(clauses[0])
+        if first is None:
+            continue
+        _name, effects, schema, mechanics=first
+        effects=list(effects);mechanics=list(mechanics)
+        for clause in clauses[1:]:
+            result=compile_independent(re.sub(r'^(?:Then|And)\s+','',clause,flags=re.I))
+            if (result[0] is None or result[2] is not None or len(result[1])!=1
+                    or result[1][0].get('op') not in CHARACTERISTIC_TAIL_OPERATIONS):
+                break
+            effects.extend(result[1]);mechanics.extend(result[3])
+        else:
+            mechanics=tuple(dict.fromkeys((TARGET_SET_SEQUENCE_MECHANIC,*mechanics)))
+            if target_set_result_sequence_capabilities(effects=effects,target_schema=schema,mechanic_ids=mechanics):
+                return 'shared-target-set-result-sequence-v1',tuple(effects),schema,mechanics
+    return None
+
+
 def target_set_result_sequence_template(text,*,compile_independent):
+    characteristic=_characteristic_prefix_sequence(text,compile_independent=compile_independent)
+    if characteristic is not None:
+        return characteristic
     partitions=list(_candidate_partitions(text))
     for clauses in tuple(partitions):
         split=re.fullmatch(r'(?P<first>(?:Tap|Untap) .+?) and (?P<rest>put .+)\.',clauses[0],re.I)

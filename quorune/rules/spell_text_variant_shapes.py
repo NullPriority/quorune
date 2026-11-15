@@ -12,6 +12,9 @@ def variant_spec(kind, value):
     if kind is SpellTextVariantKind.CLEAVE:
         from ..cleave_model import FixedManaCleaveSpec
         return FixedManaCleaveSpec.from_dict(value)
+    if kind is SpellTextVariantKind.AWAKEN:
+        from ..awaken_model import FixedManaAwakenSpec
+        return FixedManaAwakenSpec.from_dict(value)
     raise ValueError('Unrepresented spell-text variant')
 
 
@@ -43,7 +46,7 @@ def fixed_variant_program_is_closed(program, kind):
         if kind is SpellTextVariantKind.OVERLOAD and program.target_schema is None:
             return False
     elif role == {kind.paid_role}:
-        expected = spec.overloaded_fingerprint if kind is SpellTextVariantKind.OVERLOAD else spec.cleaved_fingerprint
+        expected = getattr(spec,kind.paid_fingerprint_field)
         if program.ability_id != 'spell:front:' + kind.value:
             return False
         if kind is SpellTextVariantKind.OVERLOAD and program.target_schema is not None:
@@ -54,9 +57,22 @@ def fixed_variant_program_is_closed(program, kind):
         return False
     if spell_body_fingerprint(program.effects, program.target_schema) != expected:
         return False
+    if kind is SpellTextVariantKind.AWAKEN:
+        if role=={kind.normal_role} and spec.normal_targeted!=(program.target_schema is not None):return False
+        if role=={kind.paid_role}:
+            from .awaken_shapes import ordinary_awaken_body
+            try:ordinary_awaken_body(spec,program.effects,program.target_schema)
+            except (TypeError,ValueError,KeyError):return False
     from .capabilities import capability_dependencies_for_node
     mechanics = coverage - {'generated_oracle_ir', 'spell_resolution', kind.value, kind.boundary,
         kind.normal_role, kind.paid_role}
+    if kind is SpellTextVariantKind.AWAKEN:
+        from ..awaken_model import AWAKEN_PAID_MECHANIC
+        from ..resolution_characteristic_model import INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC
+        expected_mechanics=set(spec.normal_mechanics)
+        if role=={kind.paid_role}:expected_mechanics.update({'cr-122-counters','cr-611-continuous-effects',
+            'cr-115-targets',INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC,AWAKEN_PAID_MECHANIC})
+        if mechanics!=expected_mechanics:return False
     required = capability_dependencies_for_node(effects=program.effects, target_schema=program.target_schema,
-        mechanic_ids=mechanics)
+        mechanic_ids=mechanics,cost_schema=program.cost_schema if kind is SpellTextVariantKind.AWAKEN else None)
     return bool(required) and set(required).issubset(program.capability_dependencies) and kind.capability in program.capability_dependencies

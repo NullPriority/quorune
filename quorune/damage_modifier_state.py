@@ -980,6 +980,7 @@ class DamagePreventionScope:
     combat_pair: bool = False
     target_colors_any: tuple[str,...] = ()
     shared_color: bool = False
+    source_controller: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.shared_color) is not bool:raise DamageModifierError('Prevention shared color must be a boolean')
@@ -989,6 +990,9 @@ class DamagePreventionScope:
         if type(self.combat_pair) is not bool:
             raise DamageModifierError('Prevention combat pair must be a boolean')
         relations = {"any", "source_controller", "opponent"}
+        if self.source_controller is not None and (
+            type(self.source_controller)is not str or not self.source_controller or self.source_controller_relation!='any'):
+            raise DamageModifierError('A bound prevention source controller must be one unambiguous player')
         if (
             self.source_controller_relation not in relations
             or self.target_controller_relation not in relations
@@ -1090,6 +1094,7 @@ class DamagePreventionScope:
         )
         if source_controller is not None:
             result["source_controller"] = source_controller
+        if self.source_controller is not None:result['source_controller']={'eq':self.source_controller}
         target_controller = self._relation(
             self.target_controller_relation, controller
         )
@@ -1133,6 +1138,7 @@ class DamagePreventionScope:
             **({'combat_pair':True} if self.combat_pair else {}),
             **({'target_colors_any':list(self.target_colors_any)} if self.target_colors_any else {}),
             **({'shared_color':True} if self.shared_color else {}),
+            **({'source_controller':self.source_controller} if self.source_controller is not None else {}),
             "source_controller_relation": self.source_controller_relation,
             "target_controller_relation": self.target_controller_relation,
             "target_kinds": list(self.target_kinds),
@@ -1155,13 +1161,17 @@ class DamagePreventionScope:
         combat_pair=value.get('combat_pair',False)
         target_colors=value.get('target_colors_any',())
         shared_color=value.get('shared_color',False)
-        value={key:val for key,val in value.items() if key not in {'combat_pair','target_colors_any','shared_color'}}
+        source_controller=value.get('source_controller')
+        if 'source_controller' in value and (type(source_controller)is not str or not source_controller):
+            raise DamageModifierError('A stored prevention source controller cannot be null or empty')
+        value={key:val for key,val in value.items() if key not in {'combat_pair','target_colors_any','shared_color','source_controller'}}
         expected = set(cls().to_dict())
         _exact_fields(value, expected, label="Damage prevention scope")
         return cls(
             combat_pair=combat_pair,
             target_colors_any=target_colors,
             shared_color=shared_color,
+            source_controller=source_controller,
             source_controller_relation=str(value["source_controller_relation"]),
             target_controller_relation=str(value["target_controller_relation"]),
             target_kinds=_strings(value["target_kinds"], label="scope target kinds"),

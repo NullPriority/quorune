@@ -262,6 +262,7 @@ class FixedCounterPlacementGroupCompilerTests(unittest.TestCase):
         expected = {
             "counter.producer.fixed_permanent_group_effect",
             "counter.producer.fixed_effect",
+            "state_query.commander.permanent_designation",
             "target.revalidate_resolution",
         }
         self.assertEqual(

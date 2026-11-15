@@ -3998,8 +3998,10 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status, ir.material_residuals)
                 self.assertIn("choice.controller.bounded_return_owner_hand", ir.faces[0].nodes[0].capability_dependencies)
 
+        public_set = "When this creature enters, return each other creature you control to its owner's hand."
+        self.assertEqual('exact', self.compile(public_set, type_line='Creature — Test').status)
         exclusions = (
-            "When this creature enters, return each other creature you control to its owner's hand.",
+            "When this creature enters, return each other creature you control with the chosen name to its owner's hand.",
             "When this creature enters, you may return another creature you control with power 5 or greater to its owner's hand.",
             "When this creature enters, return X creatures you control to their owner's hand.",
             "When this creature enters, return another creature you control with power 5 or greater to its owner's hand, then draw a card.",

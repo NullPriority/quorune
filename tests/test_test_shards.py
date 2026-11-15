@@ -30,10 +30,24 @@ from scripts.test_shards import (
     validate_partition,
     validate_imported_test_case_aliases,
     validate_semantic_program_fixture_identities,
+    validate_impact_references,
 )
 
 
 class TestShardManifestTests(unittest.TestCase):
+    def test_impact_references_reject_missing_modules_and_suites_before_collection(self):
+        manifest = {'primary_shards': {'functional': ['test_known']},
+            'overlay_suites': {'smoke': ['test_known']}}
+        policy = {group: [{'id': group+'-rule', 'test_modules': ['test_known'],
+            'test_suites': ['smoke']}] for group in ('path_rules', 'symbol_rules')}
+        self.assertIsNone(validate_impact_references(manifest, policy))
+        for group in policy:
+            for field, invalid in (('test_modules', 'test_semantic_choices'), ('test_suites', 'missing-suite')):
+                with self.subTest(group=group, field=field):
+                    changed = deepcopy(policy); changed[group][0][field] = [invalid]
+                    with self.assertRaisesRegex(TestShardError, invalid):
+                        validate_impact_references(manifest, changed)
+
     def test_imported_helper_test_case_aliases_fail_before_matrix_collection(self):
         with TemporaryDirectory() as raw:
             root=Path(raw)

@@ -29,6 +29,9 @@ def source_counter_quantity_sequence(text,*,card_name,compile_fixed,allow_pronou
 
 
 def source_bound_sequence_result(binding,body,*,card_name,effect_template):
+    from .fixed_damage_life_sequences import binding_damage_life_result
+    damage_life=binding_damage_life_result(binding,body,card_name=card_name,effect_template=effect_template)
+    if damage_life is not None:return damage_life
     from .source_self_effect_templates import source_declaration_sequence
     declarations = source_declaration_sequence(body, card_name=card_name, compile_effect=effect_template)
     if declarations is not None:return declarations,True

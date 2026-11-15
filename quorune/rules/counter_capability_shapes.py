@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from ..keyword_counters import keyword_counter_mechanic
 from .node_capability_shapes import fixed_counter_target_schema_is_closed
+from .permanent_predicate_capability_shapes import direct_target_predicate_capabilities
 
 
 def fixed_counter_placement_group_node_capabilities(
@@ -63,6 +64,7 @@ def fixed_counter_placement_group_node_capabilities(
         schema["globally_distinct"] is not True or len(raw_groups) < 2
     ):
         return ()
+    predicate_dependencies = set()
     for index, raw_group in enumerate(raw_groups):
         if not isinstance(raw_group, Mapping):
             return ()
@@ -88,6 +90,7 @@ def fixed_counter_placement_group_node_capabilities(
             allow_commander=True,
         ):
             return ()
+        predicate_dependencies.update(direct_target_predicate_capabilities({**group, 'count': 1}, allow_commander=True))
 
     counter_mechanic = keyword_counter_mechanic(effect.get("counter"))
     if counter_mechanic is not None and counter_mechanic not in mechanics:
@@ -95,6 +98,7 @@ def fixed_counter_placement_group_node_capabilities(
     return (
         "counter.producer.fixed_permanent_group_effect",
         "counter.producer.fixed_effect",
+        *sorted(predicate_dependencies),
         *(("counter.characteristic.keyword",) if counter_mechanic else ()),
         "target.revalidate_resolution",
     )

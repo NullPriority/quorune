@@ -210,11 +210,35 @@ Keep at most two substantive branches active:
 - Slot B holds the next card batch in a separate worktree on an unpublished
   branch. Keep developing it while Slot A runs.
 
+With user-authorized shared development, two developers use the same Slot B
+checkout and branch, each owning a complete mechanic family. Follow the
+[shared editing protocol](../../AGENTS.md): atomic whole-file claims, brief
+central-file integration claims, one Git transaction mutex, and acknowledged
+freezes for shared checkout-wide mutations. Resolve the local helper and its
+operational state from the Git common directory; timestamps never authorize
+claim theft. Both developers continue card work, while only the publisher
+controls publication, full generation, protected merges and release blockers.
+
+At a delivery boundary, freeze briefly, commit a coherent source checkpoint and
+record its cut point. Establish that checkpoint on a separate candidate ref in
+Slot A; Git must never check out the development branch twice. Generation and
+bundle installation run only in the frozen candidate checkout. Both developers
+resume in Slot B during CI. Reconcile required candidate corrections under the
+normal ownership rules and, after the protected squash merge, carry only the
+preserved post-cut work onto verified main. Count distinct gained Oracle IDs
+once across the combined batch; there is no per-developer delivery quota.
+
 Alternate a consolidated defect-only pull request with a card-support pull
 request that adds at least 500 net distinct capability-closed cards. Group
 reproduced defects and keep each fix and its evidence independently reviewable.
 Resolve release blockers before merging affected work. Continue building card
 support when no defect batch is ready.
+
+Use certification waits for private card implementation and focused evidence.
+Keep a reproduced, reviewable defect queue so the next defect batch is ready
+without repeatedly interrupting card delivery for individual repairs. Measure
+throughput by retained whole-card gains per elapsed day, including time spent
+on defects, generation, certification and rework.
 
 Create Slot B from verified `origin/main` while Slot A is running:
 
@@ -381,9 +405,9 @@ database census in the same finalization run:
 to GitHub-hosted runners. Source-changing pull-request events and every `main`
 push first derive an affected-owner plan from schema-5 input declarations. A
 pre-corpus quick-gate phase records the affected tests for the ordinary PR
-matrix, but executes only runtime/compile validation, the generated manifest
-plan, compiler-identity sentinel and canonical semantic-transition policy
-validation before any census. The canonical mechanic-contract loader validates
+matrix, and runs runtime/compile validation, the generated manifest plan,
+compiler-identity and semantic-transition sentinels, and bounded owner
+contracts before any census. The canonical mechanic-contract loader validates
 the pinned effective date, source hash and rule references without opening the
 card database. Changed Python text readers require explicit encoding so Windows
 code pages cannot turn valid UTF-8 data into a late matrix failure. Gate processes
@@ -397,6 +421,13 @@ integrity, including both source-bound paid spell bodies and the combined
 cycle/discard public-action boundary, hybrid face-down probes and reviewed
 legacy text alternatives. Shared quantity grammar changes select only the exact adjacent
 exclusion and public-condition contract witnesses, not their whole modules.
+Compiler, rules, runtime and CardProgram changes also run self-hosted
+interaction and admission contracts. A small pinned fixture and bounded typed
+result checks preserve promoted original admission alongside genuinely
+unrepresented neighboring scopes before the corpus starts. Each selected
+witness provides its own fixture or constructs minimal records, so these
+checks do not need a global compact database build. The complete public
+regression matrix remains mandatory.
 The reusable-piece policy sentinel also validates interaction evidence against
 the statically discovered test inventory before any corpus generation. Exact
 qualified test IDs and existing legacy leaf IDs are retained; a wrong module
@@ -674,8 +705,23 @@ metadata. The pre-push hook verifies that receipt and blocks publication on
 either generated drift or architecture-policy failure without repeating the
 full corpus when the finalized inputs and outputs are identical.
 Before accepting either receipt or checkpoint push paths, the hook runs the
-existing changed-file text-I/O sentinel. A current generated receipt therefore
-cannot skip explicit-encoding validation for changed Python sources.
+repository's tracked-file and HEAD-ancestry safety scan before dependency
+validation, followed by the existing changed-file text-I/O sentinel. The same
+artifact scan starts both quick-gate plans, including cloud pre-corpus checks.
+It rejects oversized current or historical blobs, forbidden paths, and exposed
+secrets before costly generation. A current generated receipt cannot skip these
+checks. To run only this early scan:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_repository.py --tracked-only
+```
+
+Cloud source resolution checks out complete blob history so this ancestry scan
+can read historical object sizes directly. A blob-filtered checkout would fetch
+each missing historical blob separately while the scan runs.
+
+The default repository validator still performs all generated, architecture,
+documentation, and safety checks.
 
 Both ordinary receipt-based pushes and source checkpoints run the same cheap
 pre-corpus sentinels against the branch's main base. A current generated receipt
@@ -706,8 +752,10 @@ core.hooksPath`.
 The installer sets the local `core.hooksPath` to `.githooks` and refuses to
 overwrite another hook policy. The hook is a backstop that uses the
 worktree-local Python. It first runs `scripts/test_shards.py validate`, because
-an unassigned discovered test module makes PR planning fail before any matrix
-job can run. It next runs
+an unassigned discovered test module or an unknown module or suite reference in
+the change-impact policy makes PR planning fail before any matrix job can run.
+These references are checked before test collection and dependency inspection.
+It next runs
 `scripts/build_test_database.py validate-ci-dependencies`, so a compact-database
 card, Oracle ID, deck, fixture, or shard-closure omission fails before the push.
 It accepts the exact existing receipt before inferring another database. A

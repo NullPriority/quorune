@@ -54,7 +54,37 @@ An accepted arbiter action supplies the instructions for unregistered
 resolution. Its continuation carries those instructions and records no
 registered program use.
 
+Printed declare-attackers casting restrictions have a separate typed runtime
+component and capability from the resolution body. Both advertised actions and
+accepted casting proposals check the selected face and actual caster before
+payment. A requirement that the caster was attacked consumes a versioned,
+immutable declaration fact from the current combat, rather than current
+attackers or turn-wide history. Attacks on planeswalkers and battles do not
+satisfy that player requirement. Withdrawing the restriction owner or its
+compiler contribution leaves the complete source unready.
+
+Resolved single-creature attack requirements use the existing declaration-rule
+journal and maximum-requirement solver. Their closed instruction, creature
+target, declaration owner, duration and resolution revalidation dependencies
+are checked independently of declared coverage. They add no haste, override no
+attack restriction, and do not require optional attack payments. The resolved
+entry follows its recipient's battlefield incarnation through every combat of
+the turn and expires through ordinary cleanup.
+
 ## Closure layers
+
+An intrinsic Ascend spell declaration is checked independently before binding
+the following public self-replacement. It is not an unowned branch prefix;
+both the declaration and complete alternative branches retain their required
+capabilities. Fixed counter groups likewise declare every validated recipient
+predicate, including actual commander designation for optional commander targets.
+
+Optional discard payments under an action-limited trigger retain the outer
+optional-result owner and the independently closed mandatory payment. A
+conjoined damage/life result can be split only when its first compiled result
+is direct damage. Payments, conditions and reflexive instructions retain their
+complete child result, so declining a payment or countering the sole target
+cannot produce a life result outside that child.
 
 Implementation-component resolution caches immutable export names by exact
 decoded Python source in a bounded LRU. The capacity retains the registry's
@@ -128,6 +158,34 @@ registered semantic handler and runtime component. Missing declarations,
 handler schema/event drift, untrusted closure, or a fingerprint mismatch fail
 closed. The global inventories are metadata aggregations; family registries
 remain the execution owners.
+
+A component whose historical registration inventories several typed variants
+requires the dependencies of its validated represented variant. The inventory
+still retains every variant; an unknown payload or unregistered variant fails
+closed. Composed effects validate their original child target scope and source
+span before combining requirements. Quantity, condition and token producers
+retain the dependencies of the complete represented model. A typed normal and
+paid Overload pair can replace an unbound reviewed alternative only after both
+variants bind strictly and their source hashes, costs, targets and effects agree.
+An empty scoped scalar target resolves to no object only when the canonical
+stack target schema declares that exact group optional with a maximum of one.
+Missing target authority, mandatory roles, larger sets and substituted targets
+retain their rejection; an omitted optional attachment cannot block another
+independently legal instruction.
+
+Paid activation creature amounts use scalar version thirteen and an explicit
+versioned activation fact. The existing selected-cost owner captures the actual
+creature's signed battlefield characteristics before its sacrifice, together
+with the paid incarnation, source and semantic key. Resolution validates that
+fact against the committed cost; an ability copy retains it without another
+payment. The previous spell-cost scalar version keeps its spell-only scope.
+Unknown results, multi-creature prices and absent historical facts fail closed.
+Represented nonmana results may use that same fact in draw, mill, damage,
+token quantity or characteristics, source modifiers, counters and ordered
+fixed clauses. Projection validates every complete fixed result through its
+existing primitive owner and preserves the original target schema. A paid
+quantity does not confer target-selection, mana-ability or unknown-result
+authority. Source results remain bound to the activation's original incarnation.
 
 An activation-catalogue carrier with no resolution effects is structural
 discovery metadata, not a hidden legacy rules program. Preflight may recognize a printed Equip through its source-matching trusted keyword owner on the exact parsed ability line. The fixed price, target restriction and sorcery timing must agree; provisional discovery catalogs do not establish coverage. Source drift and missing keyword capability retain the residual. Preflight also uses the canonical activation-cost specializer for its normalized printed abilities. Complete keyword-only static lines are covered only by their trusted printed keyword owner; unrelated static siblings and unknown cost symbols keep their residuals. Binding validates its

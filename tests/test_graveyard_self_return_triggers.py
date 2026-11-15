@@ -57,12 +57,16 @@ class GraveyardSelfReturnCompilerTests(unittest.TestCase):
         self.assertEqual(('graveyard','dungeon.completed'), (node.active_zone,node.event))
         self.assertEqual({'field':'player','op':'eq','value':'$source.owner'}, node.event_condition)
         for text in ('When enchanted land is put into a graveyard, you may return this card from your graveyard to your hand.',
-                'At the beginning of your upkeep, you may return this card from your graveyard to the battlefield.',
                 'Whenever one or more artifacts you control enter, you may return this card from your graveyard to your hand.',
                 'At the beginning of your upkeep, you may return another card from your graveyard to your hand.'):
             with self.subTest(text=text):
                 ir=compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
                 self.assertNotEqual('exact',ir.status)
+        text = 'At the beginning of your upkeep, you may return this card from your graveyard to the battlefield.'
+        ir = compile_oracle_card(replace(query_record(text), type_line='Creature — Scout'),
+            capability_registry=load_default_capability_registry(), capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.assertNotIn(CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
 
 
 class GraveyardSelfReturnModelTests(unittest.TestCase):

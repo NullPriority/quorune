@@ -52,8 +52,11 @@ def normalize_public_replacement_text(text):
 
 
 def is_fixed_public_self_replacement(text,source_name,compile_effect):
-    return fixed_public_self_replacement_template(text,source_name=source_name,
-        compile_component=lambda body:compile_effect(body,card_name=source_name)) is not None
+    from .target_replacements import current_target_replacement_template
+    compile_component=lambda body:compile_effect(body,card_name=source_name)
+    return (fixed_public_self_replacement_template(text,source_name=source_name,
+        compile_component=compile_component) is not None
+        or current_target_replacement_template(text,compile_component=compile_component) is not None)
 
 
 def _alternative_body(base,alternative):
@@ -72,6 +75,9 @@ def _alternative_body(base,alternative):
 
 
 def fixed_public_self_replacement_template(text,*,source_name,compile_component):
+    from .procedure_variants import public_procedure_variant
+    procedure = public_procedure_variant(normalize_public_replacement_text(text), source_name=source_name, compile_component=compile_component)
+    if procedure is not None:return procedure
     text=normalize_public_replacement_text(text);positions=_top_level_positions(text,'If ')
     if positions is None or len(positions)!=1 or not text.endswith('.'):return None
     position=positions[0];before=text[:position].strip();after=text[position+3:]

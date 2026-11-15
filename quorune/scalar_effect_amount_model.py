@@ -29,6 +29,7 @@ PAID_SACRIFICE_MANA_VALUE_CONTEXT = 'paid_sacrifice_mana_value'
 
 
 class ScalarAmountOrigin(StrEnum):
+    PAID_ACTIVATION_CREATURE = 'paid_activation_creature_stat'
     PAID_SACRIFICE_CREATURE = 'paid_sacrifice_creature_stat'
     PAID_SACRIFICE_MANA_VALUE = 'paid_sacrifice_mana_value'
     REFLEXIVE_PAID_CREATURE = 'reflexive_paid_creature_stat'
@@ -69,8 +70,13 @@ class ScalarEffectAmountSpec:
     double_for_subtype: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in range(1, 13):
+        if type(self.schema_version) is not int or self.schema_version not in range(1, 14):
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version == 13) != (self.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE):
+            raise PublicQueryAmountError('Paid activation stats require their explicit scalar version')
+        if self.schema_version == 13 and (self.characteristic not in ('power', 'toughness')
+                or self.binding_id is not None):
+            raise PublicQueryAmountError('Paid activation stats read one sealed power or toughness')
         _validate_reflexive_paid_power(self)
         _validate_paid_sacrifice_mana_value(self)
         if (self.schema_version == 10) != (self.origin is ScalarAmountOrigin.HISTORY_COUNT):
@@ -131,6 +137,7 @@ class ScalarEffectAmountSpec:
             ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
             ScalarAmountOrigin.CAST_SPELL_MANA_VALUE, ScalarAmountOrigin.PAID_SACRIFICE_CREATURE,
             ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE,
+            ScalarAmountOrigin.PAID_ACTIVATION_CREATURE,
             ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
@@ -156,6 +163,11 @@ class ScalarEffectAmountSpec:
     @property
     def history_count_capabilities(self) -> tuple[str, ...]:
         return self.history_count.capability_dependencies if self.history_count is not None else ()
+
+    @property
+    def referenced_quantity_capabilities(self) -> tuple[str, ...]:
+        return tuple(sorted({*self.history_count_capabilities,
+            *(self.aggregate.capability_dependencies if self.aggregate is not None else ())}))
 
     def to_dict(self) -> dict[str, Any]:
         return {"kind": SCALAR_AMOUNT_KIND, "schema_version": self.schema_version,

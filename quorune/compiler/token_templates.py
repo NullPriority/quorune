@@ -20,6 +20,7 @@ from ..fixed_token_production import (
     predefined_token_identity,
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from ..keyword_abilities import triggered_keyword_grant
 from .fixed_token_production_templates import (
     extended_fixed_token_creation_effect_template,
 )
@@ -56,6 +57,7 @@ _COLOR_ORDER = "WUBRG"
 _CREATURE_TOKEN_KEYWORDS = frozenset(
     {
         "deathtouch",
+        "banding",
         "decayed",
         "defender",
         "double strike",
@@ -220,6 +222,7 @@ def _fixed_keyword_list(value: str | None) -> tuple[str, ...] | None:
         or any(
             keyword not in _CREATURE_TOKEN_KEYWORDS
             and re.fullmatch(r"toxic [1-9]\d*", keyword) is None
+            and triggered_keyword_grant(keyword) is None
             for keyword in keywords
         )
     ):
@@ -358,6 +361,9 @@ def _single_fixed_token_creation_effect_template(
             for fragment in decayed_ability_fragments()
         )
     for keyword in keywords:
+        triggered = triggered_keyword_grant(keyword)
+        if triggered is not None and keyword != 'prowess':
+            characteristics.setdefault('ability_fragments', []).append(triggered[1])
         toxic = re.fullmatch(r"toxic (?P<value>[1-9]\d*)", keyword)
         if toxic is not None:
             characteristics.setdefault("ability_fragments", []).append(
@@ -375,7 +381,7 @@ def _single_fixed_token_creation_effect_template(
         },
         mechanics=tuple(dict.fromkeys((
             "cr-111-tokens",
-            *("toxic" if keyword.startswith("toxic ") else keyword for keyword in keywords),
+            *(keyword.split()[0] if keyword.startswith(("toxic ","bushido ")) else keyword for keyword in keywords),
         ))),
     )
 
@@ -490,13 +496,15 @@ def fixed_token_creation_effect_template(
 
     from .attacking_token_results import fixed_attacking_token_template
     from .created_token_cleanup_templates import created_token_cleanup_template
+    from .fixed_token_choices import fixed_token_choice_template
 
     explicit_creator = re.match(r"^You\s+create\s+", text.lstrip(), re.IGNORECASE)
     if explicit_creator is not None:
         text = "Create " + text.lstrip()[explicit_creator.end():]
     cleanup = created_token_cleanup_template(text, compile_inner=fixed_token_creation_effect_template)
     attacking = fixed_attacking_token_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
-    return cleanup or attacking or _single_fixed_token_creation_effect_template(
+    choice = fixed_token_choice_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
+    return cleanup or attacking or choice or _single_fixed_token_creation_effect_template(
         text
     ) or _fixed_token_batch_creation_effect_template(text)
 

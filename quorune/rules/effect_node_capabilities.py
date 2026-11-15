@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Canonical dispatch to independently owned typed effect capability shapes."""
+
+from __future__ import annotations
 
 from typing import Any,Mapping,Sequence
 from ..attachment_references import AttachmentReferenceError, attachment_information_capabilities
@@ -8,7 +8,7 @@ from ..preparation_model import preparation_result_node_capabilities
 from ..emblem_program_model import compiled_emblem_node_capabilities
 from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .library_order_shapes import fixed_library_order_capabilities
-from .control_capability_shapes import fixed_control_node_capabilities
+from .control_capability_shapes import resolution_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
@@ -58,7 +58,7 @@ from .monarch_capability_shapes import fixed_monarch_node_capabilities
 from ..initiative_model import dungeon_choice_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .champion_capability_shapes import champion_node_capabilities
-from .transform_capability_shapes import source_transform_node_capabilities
+from .fixed_rule_action_coverage import transform_rule_action_capabilities
 from .class_level_capability_shapes import class_level_node_capabilities
 from .library_search_capability_shapes import fixed_library_search_node_capabilities, fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities
 from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
@@ -143,7 +143,7 @@ def effect_node_capabilities(
         earthbend_node_capabilities,
         suspect_node_capabilities,
         fixed_blight_node_capabilities,
-        fixed_control_node_capabilities,
+        resolution_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
         fixed_counter_placement_batch_node_capabilities,
@@ -185,7 +185,7 @@ def effect_node_capabilities(
         dungeon_choice_node_capabilities,
         ring_temptation_node_capabilities,
         champion_node_capabilities,
-        source_transform_node_capabilities,
+        transform_rule_action_capabilities,
         preparation_result_node_capabilities,
         class_level_node_capabilities,
         fixed_library_search_node_capabilities,

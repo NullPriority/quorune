@@ -38,7 +38,8 @@ _SOURCE_FIGHT = re.compile(
 _DIRECT_BITE = re.compile(
     r"^(?P<first>Target .+? you control) deals damage equal to (?P<multiple>twice )?its "
     r"power to (?P<second>any other target|any target|"
-    rf"another target {_QUALITY}|target {_QUALITY}|target creature or planeswalker)"
+    rf"another target {_QUALITY}|target {_QUALITY}|target creature or planeswalker|"
+    rf"up to one(?: other)? target {_QUALITY}|target player|another target creature, planeswalker, or battle)"
     r"(?P<relation> you don't control| an opponent controls)?\.?$",
     re.IGNORECASE,
 )
@@ -356,29 +357,33 @@ def _recipient_group(
         if source_exclusion:
             group["source_exclusion"] = True
         return group, False
+    if normalized == 'target player' and relation is None:
+        return {'id':'recipient','zones':['player'],'categories':['player'],'count':1}, False
+    optional = normalized.startswith('up to one ')
     quality = re.sub(
-        r"^(?:another target|target) ",
+        r"^(?:up to one(?: other)? target|another target|target) ",
         "",
         text,
         flags=re.IGNORECASE,
     )
-    if quality.casefold() == "creature or planeswalker":
-        return (
-            {
+    if quality.casefold() in {"creature or planeswalker", 'creature, planeswalker, or battle'}:
+        group = {
                 "id": "recipient",
                 "zones": ["battlefield"],
                 "categories": ["permanent"],
-                "types_any": ["creature", "planeswalker"],
+                "types_any": ["creature", "planeswalker"] + (['battle'] if 'battle' in quality.casefold() else []),
                 "controller_relation": _relation(relation),
                 "count": 1,
-            },
-            False,
-        )
+            }
+        if different_from is not None:group['different_from_groups'] = [different_from]
+        if source_exclusion:group['source_exclusion'] = True
+        return group, False
     group = _creature_group(
         group_id="recipient",
         quality=quality,
         relation=_relation(relation),
         source_exclusion=source_exclusion,
+        optional=optional,
     )
     if group is not None and different_from is not None:
         group["different_from_groups"] = [different_from]
@@ -401,7 +406,7 @@ def _direct_bite(
         allow_subtype_only=True,
     )
     other = "another target" in match.group("second").casefold() or (
-        match.group("second").casefold() == "any other target"
+        "other target" in match.group("second").casefold()
     )
     recipient = _recipient_group(
         match.group("second"),
@@ -598,6 +603,10 @@ def fixed_creature_power_damage_effect_template(
 ) -> FixedCreaturePowerDamageTemplate | None:
     """Lower one closed Fight or creature-power damage instruction."""
 
+    from .reciprocal_power_damage import reciprocal_power_damage_template
+    reciprocal = reciprocal_power_damage_template(text, card_name=card_name, allow_source_pronoun=allow_source_pronoun)
+    if reciprocal is not None:
+        return reciprocal
     normalized = " ".join(_REMINDER.sub("", text).split())
     stat_prep = _STAT_PREP_FIGHT.fullmatch(normalized)
     if stat_prep is not None:

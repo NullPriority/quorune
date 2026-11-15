@@ -19,6 +19,10 @@ def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_l
         span, source_name, printed_card_types, trusted_mechanics, capability_registry,
         capability_profile, residuals, compile_inner, effect_template,
         trigger_effect_template, trigger_node, material_line_for):
+    death_return = re.fullmatch(r'(?P<subject>[^".]+?) gains? (?P<keyword>persist|undying) until end of turn\.?',
+        material_line, re.I)
+    if death_return is not None:
+        material_line = death_return['subject'] + ' gains "' + death_return['keyword'] + '" until end of turn.'
     match = re.fullmatch(
         r'(?:Until end of turn, (?P<prefix>[^".]+?) gains? '
         r'"(?P<prefix_body>[^"\n]+)"|(?P<suffix>[^".]+?) gains? '
@@ -52,7 +56,13 @@ def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_l
         if query.keywords_none or not fixed_resolution_characteristic_query_is_closed(query, target_schema=None):
             return None
     inner_residuals = []
-    inner = compile_inner(node_id=node_id + ':granted', line=quoted,
+    inner_compiler = compile_inner
+    if death_return is not None:
+        from ..death_return import DeathReturnSpec
+        from .granted_keyword_event_nodes import _keyword_inner_node
+        spec = DeathReturnSpec.for_keyword(death_return['keyword'])
+        inner_compiler = lambda **values: _keyword_inner_node(spec, **values)
+    inner = inner_compiler(node_id=node_id + ':granted', line=quoted,
         material_line=material_line_for(quoted), span=span, card_name='Granted creature',
         type_line='Creature — Fixture', keywords=(), trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry, capability_profile=capability_profile,

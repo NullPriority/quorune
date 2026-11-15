@@ -15,6 +15,7 @@ OCCURRENCE_POWER_DAMAGE_VERSION = 3
 OCCURRENCE_POWER_DAMAGE_CONTEXT = "occurrence_power_damage_lki"
 OCCURRENCE_POWER_DAMAGE_SOURCE = "$context.card"
 OCCURRENCE_POWER_DAMAGE_LKI = f"$context.{OCCURRENCE_POWER_DAMAGE_CONTEXT}"
+ORIGINAL_SOURCE_RECIPIENT_VERSION = 4
 
 
 def occurrence_power_damage_in(value):
@@ -36,6 +37,10 @@ def creature_power_damage_multiplier(value: Mapping[str, Any]) -> int:
         return 1
     if (fields == {'schema_version'} and type(value['schema_version']) is int
             and value['schema_version'] == OCCURRENCE_POWER_DAMAGE_VERSION and value.get('kind') == 'bite'):
+        return 1
+    if (fields == {'schema_version'} and type(value['schema_version']) is int
+            and value['schema_version'] == ORIGINAL_SOURCE_RECIPIENT_VERSION
+            and value.get('kind') == 'bite' and value.get('recipient_is_original_source') is True):
         return 1
     if (fields != {'schema_version', 'power_multiplier'}
             or type(value['schema_version']) is not int or value['schema_version'] != 2

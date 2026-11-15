@@ -50,7 +50,13 @@ class RemoveManaSourceCounters:
     cost: SourceCounterRemovalCost
 
 
-ManaModeEffect: TypeAlias = DealDamageToController | PayLife | SacrificeManaSource | SkipActorUntap | RemoveManaSourceCounters
+@dataclass(frozen=True, slots=True)
+class SacrificeDepletedManaSource:
+    effect_index: int
+    counter_name: str
+
+
+ManaModeEffect: TypeAlias = DealDamageToController | PayLife | SacrificeManaSource | SkipActorUntap | RemoveManaSourceCounters | SacrificeDepletedManaSource
 
 
 def _exact_fields(
@@ -110,6 +116,14 @@ def _decode_counter_cost(effect,index):
     return RemoveManaSourceCounters(index,cost)
 
 
+def _decode_counter_depletion(effect: Mapping[str, Any], index: int) -> ManaModeEffect:
+    from .fixed_mana_results import FixedManaResultSpec
+    _exact_fields(effect,{'op','counter_name'},message='Counter-depletion mana results require their exact named counter')
+    try:result=FixedManaResultSpec('sacrifice_if_no_counters',schema_version=2,counter_name=effect['counter_name'])
+    except ValueError as exc:raise GameRuleError(str(exc)) from exc
+    return SacrificeDepletedManaSource(index,result.counter_name)
+
+
 _MODE_EFFECT_DECODERS: Mapping[
     str, Callable[[Mapping[str, Any], int], ManaModeEffect]
 ] = {
@@ -118,6 +132,7 @@ _MODE_EFFECT_DECODERS: Mapping[
     "sacrifice_source": _decode_sacrifice,
     'skip_actor_untap': _decode_skip_untap,
     'remove_source_counters': _decode_counter_cost,
+    'sacrifice_if_no_counters': _decode_counter_depletion,
 }
 
 
@@ -302,6 +317,12 @@ def apply_mana_mode_effects(
                 raise GameRuleError('Mana counter cost requires its controlled battlefield source')
             try:commit_counter_removals(host,plan_source_counter_removal_payment(host,source,effect.cost))
             except (SourceCounterActivationCostError,CounterRemovalError) as exc:raise GameRuleError(str(exc)) from exc
+        elif isinstance(effect,SacrificeDepletedManaSource):
+            card = host.state.cards.get(source.object_id) if source is not None else None
+            if (card is not None and card.zone == 'battlefield' and not card.phased_out
+                    and card.logical_object_id == source.logical_object_id and card.controller == seat
+                    and not card.counters.get(effect.counter_name,0)):
+                host.apply_effect({'op':'sacrifice','card':card.ref,'reason':'mana ability result'},actor=seat)
         elif isinstance(effect,SkipActorUntap):
             from .tap_state import prohibit_next_player_untap
             if source is None:raise GameRuleError('Next-actor untap mana result requires its original source')

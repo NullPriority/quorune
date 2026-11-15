@@ -1,0 +1,942 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Scryfall Oracle/rulings subset for offline fixed sacrifice count tests",
+  "cards": [
+    {
+      "oracle_id": "0868ebbb-2fe9-4f53-9697-acad8cda5ec1",
+      "name": "Greed's Gambit",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, you draw three cards, gain 6 life, and create three 2/1 black Bat creature tokens with flying.\nAt the beginning of your end step, you discard a card, lose 2 life, and sacrifice a creature.\nWhen this enchantment leaves the battlefield, you discard three cards, lose 6 life, and sacrifice three creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Monstrosity"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Ember Swallower",
+      "oracle_id": "0cdc86c4-8c68-4ba6-8165-511f32156a4c",
+      "oracle_text": "{5}{R}{R}: Monstrosity 3. (If this creature isn't monstrous, put three +1/+1 counters on it and it becomes monstrous.)\nWhen this creature becomes monstrous, each player sacrifices three lands of their choice.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2013-09-27",
+      "toughness": "5",
+      "type_line": "Creature — Elemental"
+    },
+    {
+      "oracle_id": "0da68ca2-07fd-4359-95a9-fb2f815e6ed0",
+      "name": "Wildfire",
+      "mana_cost": "{4}{R}{R}",
+      "cmc": 6.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each player sacrifices four lands of their choice. Wildfire deals 4 damage to each creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-05-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "name": "Voldaren Pariah // Abolisher of Bloodlines",
+      "mana_cost": "{3}{B}{B} // ",
+      "cmc": 5.0,
+      "type_line": "Creature — Vampire Horror // Creature — Eldrazi Vampire",
+      "oracle_text": "Voldaren Pariah: Flying\nSacrifice three other creatures: Transform this creature.\nMadness {B}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)\n//\nAbolisher of Bloodlines: Flying\nWhen this creature transforms into Abolisher of Bloodlines, target opponent sacrifices three creatures of their choice.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Madness"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2016-07-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{B}{B}",
+          "name": "Voldaren Pariah",
+          "oracle_text": "Flying\nSacrifice three other creatures: Transform this creature.\nMadness {B}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature — Vampire Horror"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Abolisher of Bloodlines",
+          "oracle_text": "Flying\nWhen this creature transforms into Abolisher of Bloodlines, target opponent sacrifices three creatures of their choice.",
+          "power": "6",
+          "toughness": "5",
+          "type_line": "Creature — Eldrazi Vampire"
+        }
+      ]
+    },
+    {
+      "oracle_id": "a6e720a2-9819-40ec-a811-7812898b531a",
+      "name": "Necrotic Hex",
+      "mana_cost": "{6}{B}",
+      "cmc": 7.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each player sacrifices six creatures of their choice. You create six tapped 2/2 black Zombie creature tokens.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b0967525-554b-41eb-b639-75fe36e0fe57",
+      "name": "Destructive Force",
+      "mana_cost": "{5}{R}{R}",
+      "cmc": 7.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each player sacrifices five lands of their choice. Destructive Force deals 5 damage to each creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-07-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f92673fe-cd73-48ae-bfbd-aa750582b80b",
+      "name": "Taste of Death",
+      "mana_cost": "{4}{B}{B}",
+      "cmc": 6.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Each player sacrifices three creatures of their choice. You create three Food tokens. (They're artifacts with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Food"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "name": "Dryad Arbor",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land Creature — Forest Dryad",
+      "oracle_text": "(This land isn't a spell, it's affected by summoning sickness, and it has \"{T}: Add {G}.\")",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Wall of Stone",
+      "oracle_id": "cd4cadb4-3156-49bd-b36e-12ba5c85938b",
+      "oracle_text": "Defender (This creature can't attack.)",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2003-07-28",
+      "toughness": "8",
+      "type_line": "Creature — Wall"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Sliver"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000701021008",
+      "name": "Generic Fixed Count Destination Ward",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "An ability that triggers when a creature becomes monstrous won't trigger if that creature isn't on the battlefield when its monstrosity ability resolves.",
+      "oracle_id": "0cdc86c4-8c68-4ba6-8165-511f32156a4c",
+      "published_at": "2013-09-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Monstrous isn't an ability that a creature has. It's just something true about that creature. If the creature stops being a creature or loses its abilities, it will continue to be monstrous.",
+      "oracle_id": "0cdc86c4-8c68-4ba6-8165-511f32156a4c",
+      "published_at": "2013-09-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature becomes monstrous, it can't become monstrous again. If the creature is already monstrous when the monstrosity ability resolves, nothing happens.",
+      "oracle_id": "0cdc86c4-8c68-4ba6-8165-511f32156a4c",
+      "published_at": "2013-09-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the last ability resolves, the active player will choose three lands they control, then each other player in turn order will do the same. Then all of those lands are sacrificed at the same time.",
+      "oracle_id": "0cdc86c4-8c68-4ba6-8165-511f32156a4c",
+      "published_at": "2013-09-15",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If the targeted opponent doesn't control three creatures as the triggered ability of Abolisher of Bloodlines resolves, that player sacrifices as many creatures as able."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you discard a card with madness to pay the cost of a spell or activated ability, that card's madness triggered ability (and the spell that card becomes, if you choose to cast it) will resolve before the spell or ability the discard paid for."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A spell cast for its madness cost is put onto the stack like any other spell. It can be countered, copied, and so on. As it resolves, it's put onto the battlefield if it's a permanent card or into its owner's graveyard if it's an instant or sorcery card."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a madness cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A card with madness that's discarded counts as having been discarded even though it's put into exile rather than a graveyard. If it was discarded to pay a cost, that cost is still paid. Abilities that trigger when a card is discarded will still trigger."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Casting a spell with madness ignores the timing rules based on the card's card type. For example, you can cast a sorcery with madness if you discard it during an opponent's turn."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Cards are discarded in a Magic game only from a player's hand. Effects that put cards into a player's graveyard from anywhere else do not cause those cards to be discarded."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you choose not to cast a card with madness when the madness triggered ability resolves, it's put into your graveyard. Madness doesn't give you another chance to cast it later."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you discard a card with madness while a spell or ability is resolving, it moves immediately to exile. Continue resolving that spell or ability, noting that the card you discarded is not in your graveyard at this time. Its madness triggered ability will be placed onto the stack once that spell or ability has completely resolved."
+    },
+    {
+      "oracle_id": "4399c284-e3fe-46b1-aa1f-15a2846858f5",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Madness works independently of why you're discarding the card. You could discard it to pay a cost, because a spell or ability tells you to, or because you have too many cards in your hand during your cleanup step. You can't discard a card with madness just because you want to, though."
+    },
+    {
+      "oracle_id": "a6e720a2-9819-40ec-a811-7812898b531a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Let's say everyone controls lots of creatures. As Necrotc Hex resolves, first the player whose turn it is (likely you) chooses which six creatures they'll sacrifice, then each other player in turn order does the same, knowing the choices of players before them. Then all creatures are sacrificed simultaneously. Finally, you'll create the six tapped Zombies."
+    },
+    {
+      "oracle_id": "a6e720a2-9819-40ec-a811-7812898b531a",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You'll create six tapped Zombies no matter how many creatures you sacrifice."
+    },
+    {
+      "oracle_id": "b0967525-554b-41eb-b639-75fe36e0fe57",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "First the player whose turn it is chooses five lands to sacrifice, then each other player in turn order does the same, then all chosen lands are sacrificed at the same time. After that, Destructive Force deals 5 damage to each creature."
+    },
+    {
+      "oracle_id": "f92673fe-cd73-48ae-bfbd-aa750582b80b",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "You create three Food tokens, no matter how many creatures were actually sacrificed, even if some or all players sacrificed no creatures."
+    },
+    {
+      "oracle_id": "f92673fe-cd73-48ae-bfbd-aa750582b80b",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If a player controls three or fewer creatures, that player sacrifices each creature they control."
+    },
+    {
+      "oracle_id": "f92673fe-cd73-48ae-bfbd-aa750582b80b",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "As Taste of Death resolves, first the player whose turn it is chooses three creatures they control, then each other player in turn order does the same, knowing the choices made before them. Then all the chosen creatures are sacrificed at the same time."
+    },
+    {
+      "oracle_id": "f92673fe-cd73-48ae-bfbd-aa750582b80b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "f92673fe-cd73-48ae-bfbd-aa750582b80b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "f92673fe-cd73-48ae-bfbd-aa750582b80b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed."
+    }
+  ]
+}

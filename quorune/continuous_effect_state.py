@@ -21,6 +21,7 @@ from .as_unblocked_rule import AsUnblockedAssignmentRule
 from .toughness_assignment_rule import ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import ResolvedBlockCapacityRule
 from .temporary_cast_rule_model import ResolvedCastRestriction
+from .next_spell_cost_model import ResolvedNextSpellCostReduction
 from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
@@ -183,7 +184,7 @@ def commit_continuous_effect(
     if not isinstance(
         effect,
         (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint,
-         ResolvedLinkedDepartureExile),
+         ResolvedLinkedDepartureExile, ResolvedNextSpellCostReduction),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -200,6 +201,19 @@ def commit_continuous_effect(
         )
     journal.append(effect)
     return effect
+
+
+def consume_continuous_effects(state: Any, effect_ids: Sequence[str]) -> int:
+    """Consume a validated exact subset through the canonical journal owner."""
+    if (not isinstance(effect_ids,(tuple,list)) or any(type(v) is not str or not v for v in effect_ids)
+            or len(effect_ids)!=len(set(effect_ids))):
+        raise ContinuousEffectStateError('Consumed effect identities must be unique nonempty strings')
+    if not effect_ids:return 0
+    journal=state.continuous_effects
+    if journal is None or not set(effect_ids)<={effect.effect_id for effect in journal}:
+        raise ContinuousEffectStateError('Consumed effect identity is unavailable')
+    journal[:]=[effect for effect in journal if effect.effect_id not in effect_ids]
+    return len(effect_ids)
 
 
 def _require_expiry_player(state: Any, player: str | None) -> None:
@@ -286,7 +300,7 @@ def apply_fixed_resolution_characteristics(
     """Commit a versioned fixed result through the existing multi-layer owner."""
     from .resolution_characteristic_model import (
         DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
-        FixedResolutionCardTypeAdditionSpec,
+        FixedResolutionCardTypeAdditionSpec, IndefiniteTargetLandAnimationSpec,
     )
     from .errors import GameRuleError
 
@@ -313,8 +327,13 @@ def apply_fixed_resolution_characteristics(
                 affected = (host._resolve_object(actor,selection,zones={'battlefield'}),)
             except GameRuleError:
                 return []
+        if isinstance(spec,IndefiniteTargetLandAnimationSpec):
+            land=affected[0]
+            if (land.phased_out or land.controller!=actor
+                    or 'land' not in host._type_parts(str(host._effective_card_data(land).get('type_line') or ''))[0]):
+                raise GameRuleError('Indefinite target land animation requires a current controlled land')
         source = resolution_effect_source(host, effect, fallback_card=affected[0] if affected else None)
-        timing = ((spec.duration, None, None) if isinstance(spec, FixedResolutionCardTypeAdditionSpec)
+        timing = ((spec.duration, None, None) if isinstance(spec, (FixedResolutionCardTypeAdditionSpec,IndefiniteTargetLandAnimationSpec))
                   else _characteristic_effect_timing(host, effect, actor=actor, source=source))
         if timing is None:
             return []

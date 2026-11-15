@@ -85,6 +85,8 @@ def _damage_subject(snapshot: Any) -> DamageSubject:
 
 
 def _prevention_scope(effect: Mapping[str, Any]) -> DamagePreventionScope:
+    from ..rules.target_controller_prevention import VERSION_FIELD,TARGET_FIELD,targeted_prevention_scope
+    if {VERSION_FIELD,TARGET_FIELD}.intersection(effect):return targeted_prevention_scope(effect)
     raw = effect.get("scope")
     if raw is None:
         return DamagePreventionScope()
@@ -407,6 +409,8 @@ def _apply_create_damage_prevention_shield(
     del operation
     try:
         from ..source_prevention import source_prevention_subject_unavailable
+        from ..rules.target_controller_prevention import VERSION_FIELD,TARGET_FIELD,targeted_prevention_player_unavailable
+        if {VERSION_FIELD,TARGET_FIELD}.intersection(effect) and targeted_prevention_player_unavailable(host,effect):return []
         if source_prevention_subject_unavailable(host, effect, actor=actor):return []
         from ..designation_prevention import unavailable_designation
         if unavailable_designation(effect.get('scope')):return []

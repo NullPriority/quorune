@@ -1,0 +1,1189 @@
+{
+  "cards": [
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Joint Assault",
+      "oracle_id": "0f719e56-5203-4138-bbe9-6a37b8ac2512",
+      "oracle_text": "Target creature gets +2/+2 until end of turn. If it's paired with a creature, that creature also gets +2/+2 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-05-04",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Flare of Faith",
+      "oracle_id": "13ebe447-1f8f-4b12-9e35-9d334a863c19",
+      "oracle_text": "Target creature gets +2/+2 until end of turn. If it's a Human, instead it gets +3/+3 and gains indestructible until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-09-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Replacement Legendary",
+      "oracle_id": "259f01ef-f2df-5ee7-9f31-b9c7182651de",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Spirit"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Divine Smite",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "oracle_text": "Target creature or planeswalker an opponent controls phases out. If that permanent is black, exile it instead. (If it phases out, treat it and anything attached to it as though they don't exist until its controller's next turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Ram Through",
+      "oracle_id": "4b1befff-48fa-47a3-832e-bdaf43495c02",
+      "oracle_text": "Target creature you control deals damage equal to its power to target creature you don't control. If the creature you control has trample, excess damage is dealt to that creature's controller instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Generic Conditional Kindred Griffin",
+      "oracle_id": "4faa4009-1d52-5821-8009-36c299a4374d",
+      "oracle_text": "",
+      "released_at": "2026-01-01",
+      "type_line": "Kindred Artifact — Griffin"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{W}",
+      "name": "Leonin Skyhunter",
+      "oracle_id": "517c7295-8ba2-47a6-a1c6-aee722f8ca88",
+      "oracle_text": "Flying",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2011-04-01",
+      "toughness": "2",
+      "type_line": "Creature — Cat Knight"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Regent's Authority",
+      "oracle_id": "54402930-84ea-4c3e-9880-ca631e47485f",
+      "oracle_text": "Target creature gets +2/+2 until end of turn. If it's an enchantment creature or legendary creature, instead put a +1/+1 counter on it and it gets +1/+1 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Generic Conditional Artifact",
+      "oracle_id": "55c4a576-8b83-509d-9b7f-ff2674ef88e9",
+      "oracle_text": "",
+      "released_at": "2026-01-01",
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Raise the Alarm",
+      "oracle_id": "5b2364d7-a811-4595-a1b4-224c70555ffa",
+      "oracle_text": "Create two 1/1 white Soldier creature tokens.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Ray of Enfeeblement",
+      "oracle_id": "647e5639-6339-48af-af96-e48729e1cad3",
+      "oracle_text": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Replacement Legendary Enchantment",
+      "oracle_id": "65b6f755-4fbb-5824-99d8-83e5f52dae92",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "toughness": "4",
+      "type_line": "Legendary Enchantment Creature — Spirit"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Bleed Dry",
+      "oracle_id": "6c3faf4f-83c1-4098-98b8-bae15d59b0de",
+      "oracle_text": "Target creature gets -13/-13 until end of turn. If that creature would die this turn, exile it instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Replacement White",
+      "oracle_id": "8308402e-1e65-57b4-80f9-c4f30d2cc2bb",
+      "oracle_text": "",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "toughness": "8",
+      "type_line": "Creature — Spirit"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Generic Conditional Construct",
+      "oracle_id": "91ca4644-b300-58aa-9c76-dd2c6a2e47cb",
+      "oracle_text": "",
+      "power": "2",
+      "released_at": "2026-01-01",
+      "toughness": "4",
+      "type_line": "Artifact Creature — Construct"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Imagecrafter",
+      "oracle_id": "9a0c6b4d-b16a-4849-9106-047b009a99b3",
+      "oracle_text": "{T}: Choose a creature type other than Wall. Target creature becomes that type until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2002-10-07",
+      "toughness": "1",
+      "type_line": "Creature — Human Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Olivia's Midnight Ambush",
+      "oracle_id": "a3b8a08b-5409-4d5f-9bab-8a7a6376a5b9",
+      "oracle_text": "Target creature gets -2/-2 until end of turn. If it's night, that creature gets -13/-13 until end of turn instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-09-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Replacement Enchantment",
+      "oracle_id": "afc1f3cb-6fd1-5853-8860-5f62967dd7c9",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "toughness": "4",
+      "type_line": "Enchantment Creature — Spirit"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Generic Conditional Human",
+      "oracle_id": "b091ac74-9056-594b-9886-d3aa75ed305a",
+      "oracle_text": "",
+      "power": "2",
+      "released_at": "2026-01-01",
+      "toughness": "4",
+      "type_line": "Creature — Human"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Generic Conditional Griffin",
+      "oracle_id": "b1113441-a83e-543c-8014-cb48fe2007fd",
+      "oracle_text": "",
+      "power": "2",
+      "released_at": "2026-01-01",
+      "toughness": "4",
+      "type_line": "Creature — Griffin"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Might of Old Krosa",
+      "oracle_id": "b50a6db0-16ce-4e98-afbd-ec37e1653e7c",
+      "oracle_text": "Target creature gets +2/+2 until end of turn. If you cast this spell during your main phase, that creature gets +4/+4 until end of turn instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Changeling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Universal Automaton",
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Shapeshifter"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Cycling"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Will of the All-Hunter",
+      "oracle_id": "dec281b4-e6d6-4b78-b755-358e07eb7c06",
+      "oracle_text": "Target creature gets +2/+2 until end of turn. If it's blocking, instead put two +1/+1 counters on it.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Solemnity",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "oracle_text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Joint Assault checks whether the target creature is paired only when it resolves. If it becomes unpaired later in the turn, neither creature will lose the bonus. Similarly, if it becomes paired later in the turn, the creature it’s paired with won’t gain the bonus.",
+      "oracle_id": "0f719e56-5203-4138-bbe9-6a37b8ac2512",
+      "published_at": "2012-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Joint Assault targets only one creature. If that creature is an illegal target when Joint Assault tries to resolve, it won’t resolve and none of its effects will happen. No creature will get +2/+2.",
+      "oracle_id": "0f719e56-5203-4138-bbe9-6a37b8ac2512",
+      "published_at": "2012-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "An attacking or blocking creature that phases out is removed from combat.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any continuous effects with a “for as long as” duration, such as that of Mind Flayer, ignore phased-out objects. If ignoring those objects causes the effect's conditions to no longer be met, the duration will expire.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "As a creature is phased out, Auras and Equipment attached to it also phase out at the same time. Those Auras and Equipment will phase in at the same time that creature does, and they'll phase in still attached to that creature.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choices made for permanents as they entered the battlefield are remembered when they phase in.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an opponent gains control of your nonblack creature, you phase it out with Divine Smite, and the duration of the control-change effect expires before it phases back in, your creature phases in under your control as that opponent's next untap step begins. If they leave the game before their next untap step, it phases in as the next untap step begins after their turn would have begun.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Permanents phase back in during their controller's untap step, immediately before that player untaps their permanents. Creatures that phase in this way are able to attack and pay a cost of {T} during that turn. If a permanent had counters on it when it phased out, it will have those counters when it phases back in.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Phased out permanents are treated as though they don't exist. They can't be the target of spells or abilities, their static abilities have no effect on the game, their triggered abilities can't trigger, they can't attack or block, and so on.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Phasing out doesn't cause any “leaves the battlefield” abilities to trigger. Similarly, phasing in won't cause any “enters the battlefield” abilities to trigger.",
+      "oracle_id": "3b06b242-caed-4c8f-b5ab-30e86061286e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Excess damage caused by a spell or ability is similar to how combat damage from a creature with trample is handled. Start with the amount of damage being dealt to the creature and determine what is “lethal.” This is the creature’s toughness minus the amount of damage that it already has marked on it, but ignoring any replacement or prevention effects that will modify this damage. Also ignore whether the creature has an ability such as indestructible that will result in it not being destroyed by this damage.",
+      "oracle_id": "4b1befff-48fa-47a3-832e-bdaf43495c02",
+      "published_at": "2020-04-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If either creature is an illegal target as Ram Through tries to resolve, the creature you control won’t deal damage to any creature or player.",
+      "oracle_id": "4b1befff-48fa-47a3-832e-bdaf43495c02",
+      "published_at": "2020-04-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature you control has deathtouch, 1 damage from it is lethal.",
+      "oracle_id": "4b1befff-48fa-47a3-832e-bdaf43495c02",
+      "published_at": "2020-04-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you’ve determined how much damage is excess, the creature you control simultaneously deals damage to the creature and to its controller. This damage may be modified by replacement or prevention effects.",
+      "oracle_id": "4b1befff-48fa-47a3-832e-bdaf43495c02",
+      "published_at": "2020-04-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it is both an enchantment creature and a legendary creature, you still only put one +1/+1 counter on it and it gets +1/+1 until end of turn.",
+      "oracle_id": "54402930-84ea-4c3e-9880-ca631e47485f",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Bleed Dry resolves, its effect causes the creature to be exiled any time it would die that turn, not just if it would die as a result of having toughness 0 or less.",
+      "oracle_id": "6c3faf4f-83c1-4098-98b8-bae15d59b0de",
+      "published_at": "2021-11-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The phrase \"if it's night\" refers to the day or night designation the game can have. It does not refer to whether or not it's dark outside as you play the game.",
+      "oracle_id": "a3b8a08b-5409-4d5f-9bab-8a7a6376a5b9",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect copies Might of Old Krosa while it's on the stack, the copy will give the creature only +2/+2, even if the original spell was cast during your main phase. This is because the copy is created on the stack and wasn't cast at all.",
+      "oracle_id": "b50a6db0-16ce-4e98-afbd-ec37e1653e7c",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature blocks, it remains a blocking creature through the end of combat step, even if the attacking creature dies or leaves combat.",
+      "oracle_id": "dec281b4-e6d6-4b78-b755-358e07eb7c06",
+      "published_at": "2020-04-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "Counters can be put on cards that aren't on the battlefield. Notably, suspended cards will still get time counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with infect has no effect on creatures or players. No -1/-1 counters are put on creatures, and no damage is marked on them. Players don’t get poison counters and they don’t lose life. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with wither has no effect on creatures. No -1/-1 counters are put on them, and no damage is marked on them. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with tribute is entering the battlefield, the chosen opponent can’t pay tribute even if they want to.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a replacement effect allows a player to modify or replace an event by putting counters on an artifact, creature, enchantment, or land, that player may apply that replacement effect. Counters won’t be put on the object, but if the original event is entirely replaced (such as by applying Soul-Scar Mage’s replacement effect), the original event won’t happen.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact, creature, enchantment, or land would enter the battlefield with counters on it at the same time that Solemnity enters the battlefield, Solemnity doesn’t stop it from getting those counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the cost of an ability or an additional cost of a spell requires putting counters on an artifact, creature, enchantment, or land, that cost can’t be paid. If a resolving spell or ability says that a player may put counters on one of those objects, that player can’t choose to do so.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity doesn’t remove any counters players or permanents already have.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity stops counters from being put on an artifact, creature, enchantment, or land as it enters the battlefield, as well as stopping counters from being put on them later.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While resolving a cumulative upkeep trigger of a permanent, you’ll fail to put a counter on that permanent, then you may pay for the age counters already on it. If it has no age counters on it, you may pay {0}.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Complete pinned current-target self-replacement sources and excluded neighbors; real action controls and vanilla public-trait fixtures"
+}

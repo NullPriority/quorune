@@ -313,6 +313,24 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
         registry.mark_evidence_verified("0" * 64)
         self.assertNotEqual("exact", self.compile(text, registry=registry, type_line="Creature — Test").status)
 
+    def test_optional_target_discard_preserves_the_separate_choice_owner(self):
+        text = "You may have target player discard a card."
+        self.assertIsNone(fixed_affected_player_discard_effect_template(text))
+        ir = self.compile(text, registry=load_default_capability_registry())
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        optional, = node.effects
+        self.assertEqual("offer_optional_effect", optional["op"])
+        self.assertEqual("$controller", optional["player"])
+        discard, = optional["effects"]
+        self.assertEqual("choose_cards_apnap", discard["op"])
+        self.assertEqual("$controller", discard["actor"])
+        self.assertEqual(["$target.0"], discard["players"])
+        self.assertEqual("discard", discard["then"])
+        self.assertEqual(1, discard["count"])
+        self.assertIn("effect.choice.optional_fixed", node.capability_dependencies)
+        self.assertIn(FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY, node.capability_dependencies)
+
     def test_unsupported_discard_choices_and_shape_mutations_fail_closed(self):
         unsupported = (
             "Target player discards a card at random.",
@@ -320,7 +338,7 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
             "Target player discards four cards.",
             "Target player discards all but one card from their hand.",
             "Target player reveals their hand and discards a card.",
-            "You may have target player discard a card.",
+            "You may have target player discard a card of a chosen type.",
             "Target player discards two cards at random, then draws two cards.",
             "Discard five cards.",
         )

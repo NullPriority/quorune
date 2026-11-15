@@ -13,7 +13,7 @@ from ..util import mana_cost_to_vector
 
 
 def fixed_alternative_activation_mana_cost(ability: ActivatedAbility) -> ActivatedAbility:
-    """Compile two complete ordinary-mana arms with one shared source tap."""
+    """Compile two ordinary-mana arms with a shared tap, or printed Equip."""
     if (ability.zones != ('battlefield',) or ability.mana_ability or ability.mana_cost_options
             or ability.untap_source or ability.discard_source or ability.sacrifice_source
             or ability.exile_source or ability.life_payment or ability.energy_payment
@@ -21,8 +21,10 @@ def fixed_alternative_activation_mana_cost(ability: ActivatedAbility) -> Activat
             or ability.source_counter_removal_cost is not None or ability.choices):
         return ability
     mana = r'(?:\{(?:0|[1-9][0-9]*|[WUBRGC])\})+'
-    match = re.fullmatch(rf'(?P<first>{mana}),\s*\{{T\}}\s+or\s+(?P<second>{mana}),\s*\{{T\}}',
-        ability.cost_text.strip(), re.I)
+    equip = ability.builtin_semantic_key == 'builtin:equip' and not ability.tap_source
+    tap = '' if equip else r',\s*\{T\}'
+    match = re.fullmatch(rf'(?P<first>{mana}){tap}\s+or\s+(?P<second>{mana}){tap}',
+                        ability.cost_text.strip(), re.I)
     if match is None:
         return ability
     options = []
@@ -34,7 +36,7 @@ def fixed_alternative_activation_mana_cost(ability: ActivatedAbility) -> Activat
     if options[0].requirements == options[1].requirements:
         return ability
     return replace(ability, mana=dict(options[0].requirements), mana_cost_options=tuple(options),
-        complex_symbols=(), uncompiled_costs=(), tap_source=True)
+        complex_symbols=(), uncompiled_costs=(), tap_source=not equip)
 
 
 def fixed_complex_activation_mana_cost(

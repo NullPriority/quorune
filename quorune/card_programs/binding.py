@@ -72,13 +72,17 @@ def bind_semantic_program_runtime(
             blockers.add(f"runtime_handler:unregistered:{handler_id}")
             continue
         component_identities.append(registered)
-        required.update(registered["capability_dependencies"])
+        from ..rules.keyword_runtime_requirements import registered_component_capabilities
+        try:required.update(registered_component_capabilities(descriptor,registered))
+        except (ValueError,TypeError) as exc:blockers.add(f'runtime_handler:invalid:{handler_id}:{exc}')
         if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('power_up') is not None:
             from ..power_up_model import POWER_UP_CAPABILITY
             required.add(POWER_UP_CAPABILITY)
         if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('announced_x_symbols') is not None:
-            from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY
-            required.add(ANNOUNCED_ACTIVATION_X_CAPABILITY)
+            from ..activation_x import activation_x_capabilities
+            ability = descriptor['ability']
+            required.update(activation_x_capabilities(symbols=ability['announced_x_symbols'],
+                sacrifice_source=ability.get('sacrifice_source', False), discard_cards=bool(ability.get('choices'))))
         if descriptor.get("schema_version") != registered["schema_version"]:
             blockers.add(f"runtime_handler:schema_mismatch:{handler_id}")
         if descriptor.get("event") != registered["event"]:

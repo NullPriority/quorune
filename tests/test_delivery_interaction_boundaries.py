@@ -32,7 +32,8 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'interaction-boundaries.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/delivery-interaction-boundary-cards.json'],path)
+            ROOT/'tests/fixtures/delivery-interaction-boundary-cards.json',
+            ROOT/'tests/fixtures/constructed-resolution-mana-saga-boundary.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Interaction boundaries',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
@@ -134,13 +135,18 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
     def test_exact_resolution_mana_fragment_does_not_admit_unowned_saga_and_replacement(self):
         s=self.session(764115)
         s.state.config.semantic_policy='trusted_only'
-        source=self.add(s.engine,'The Legend of Roku // Avatar Roku')
-        source.active_face='Avatar Roku'
+        source=self.add(s.engine,'Constructed Resolution Mana Saga Boundary')
+        promoted=self.add(s.engine,'The Legend of Roku // Avatar Roku')
+        promoted.active_face='Avatar Roku'
         control=self.add(s.engine,'Quirion Sentinel',zone='hand')
         private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         ir=compile_oracle_card(self.db.lookup(source.printed_name),
             capability_registry=self.registry,capability_profile='commander_review')
         capability='mana.production.fixed_resolution_choice'
+        promoted_ir=compile_oracle_card(self.db.lookup(promoted.printed_name),
+            capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',promoted_ir.status,promoted_ir.material_residuals)
+        self.assertTrue(self.binding(s,promoted)['strict_capability_ready'])
         self.assertTrue(any(capability in node.capability_dependencies
             for face in ir.faces for node in face.nodes))
         self.assertNotEqual('exact',ir.status)
@@ -166,7 +172,7 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         self.prepare(s,mana={'C':12,'G':1})
         self.checkpoint(s)
         self.assertEqual('battlefield',s.state.cards[source.object_id].zone)
-        self.assertIn('creature',s.engine._type_parts(s.engine._effective_card_data(source)['type_line'])[0])
+        self.assertIn('enchantment',s.engine._type_parts(s.engine._effective_card_data(source)['type_line'])[0])
         offers=self.actions(s)
         ability, = s.engine._activated_abilities(source)
         self.assertIsNone(ability.builtin_semantic_key)
@@ -190,8 +196,8 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         self.assertFalse(self.binding(s,source)['strict_capability_ready'])
         self.private_replay(s,private)
 
-        # The source catalogue discovers this printed price but has no
-        # executable token body. Reject before payment or stack mutation.
+        # The variable-firebending token body is outside the fixed recipe
+        # grammar. Reject before payment or stack mutation.
         command={'action_id':activation_id,'pay':'manual','payment':{'C':8}}
         card_ids=set(s.state.cards)
         mana=dict(s.state.players['A'].mana_pool)
@@ -204,4 +210,13 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         s=self.replay(s,load=True)
         self.assertFalse(s.state.stack)
         self.assertFalse(any(row['id']==activation_id for row in self.actions(s)))
+        self.private_replay(s,private)
+        action=next(row for row in self.actions(s) if row.get('source')==promoted.ref and row.get('kind')=='activate')
+        command={'action_id':action['id'],'pay':'manual','payment':{'C':8}}
+        self.reject(s,command,principal='pilot:D')
+        result=s.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(self.resolve(s))
+        dragon,=[c for c in s.state.cards.values() if c.is_token and c.controller=='A' and c.zone=='battlefield']
+        self.assertEqual((4,4),tuple(s.engine._numeric_stat(dragon.object_id,k) for k in ('power','toughness')))
+        self.assertIn('Flying',s.engine._effective_card_data(dragon)['keywords'])
         self.private_replay(s,private)

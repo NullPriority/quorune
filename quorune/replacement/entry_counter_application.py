@@ -8,6 +8,7 @@ from .immutable import thaw_value
 from .model import ReplacementEffectError
 from .operations import (AddAffectedObjectCounter,ApplyEntryCounterReplacement,GrantAffectedObjectSubtype,
     CreateAffectedObjectCounter,GrantAffectedObjectKeyword)
+from .tribute import OpenTributeEntryChoice,CompleteTributeEntryChoice,open_tribute_entry_choice,complete_tribute_entry_choice
 
 
 def add_entry_counters(event,payload,children,operation,*,effect_id):
@@ -46,6 +47,10 @@ def add_entry_counters(event,payload,children,operation,*,effect_id):
 
 
 def apply_entry_counter_operation(event,payload,children,operation,*,effect_id):
+    if isinstance(operation,(OpenTributeEntryChoice,CompleteTributeEntryChoice)):
+        (open_tribute_entry_choice if isinstance(operation,OpenTributeEntryChoice) else complete_tribute_entry_choice)(
+            event,payload,children,operation,effect_id=effect_id)
+        return
     if isinstance(operation,ApplyEntryCounterReplacement):
         from .application import apply_replacement
         matching=[i for i,child in enumerate(children) if child.event_id==operation.event_id]

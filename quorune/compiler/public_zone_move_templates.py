@@ -2,12 +2,14 @@ from __future__ import annotations
 
 """Closed Oracle grammar for fixed public-origin zone moves."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..creature_subtypes import canonical_creature_subtype
 from ..public_zone_moves import (
+    PUBLIC_AURA_ENTRY_VERSION,
     PublicBattlefieldController,
     PublicZoneDestination,
     PublicZoneMoveSetSpec,
@@ -167,6 +169,12 @@ def _relation(
             None,
             None,
         ),
+        " you don't control": (
+            PublicZoneRelationAxis.CONTROLLER,
+            PublicZoneSeatRelation.OPPONENTS,
+            None,
+            None,
+        ),
         " target player controls": (
             PublicZoneRelationAxis.CONTROLLER,
             PublicZoneSeatRelation.TARGET_PLAYER,
@@ -268,12 +276,12 @@ def _battlefield_set_template(
     destination: PublicZoneDestination,
 ) -> PublicZoneMoveSetTemplate | None:
     match = re.fullmatch(
-        rf"{action} (?:all|each) (?P<subject>.+?)"
+        rf"{action} (?P<quantifier>all|each) (?P<subject>.+?)"
         r"(?P<relation> target opponent controls| target player controls|"
         r" target opponent owns| target player owns| you control| you own|"
-        r" your opponents control| your opponents own)?"
+        r" you don't control| your opponents control| your opponents own)?"
         + (
-            r" to (?:their owners['’] hands|their owner['’]s hand|their hand)"
+            r" to (?:their owners['’] hands|their owner['’]s hand|their hand|its owner['’]s hand)"
             if destination is PublicZoneDestination.OWNER_HAND
             else ""
         )
@@ -283,7 +291,8 @@ def _battlefield_set_template(
     )
     if match is None:
         return None
-    parsed = fixed_affected_permanent_query(match.group("subject"))
+    parsed = fixed_affected_permanent_query(match.group("subject"),
+        singular=match['quantifier'].casefold() == 'each')
     relation = _relation(match.group("relation") or "")
     if parsed is None or relation is None:
         return None
@@ -340,7 +349,9 @@ def _battlefield_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
     )
 
 
-def _graveyard_card_query(subject: str) -> ObjectQuerySpec | None:
+def _graveyard_card_query(
+    subject: str, *, permanent_qualities: bool = False,
+) -> ObjectQuerySpec | None:
     normalized = " ".join(subject.casefold().split())
     fields: dict[str, Any] = {"zones": ("graveyard",)}
     if not normalized:
@@ -351,6 +362,19 @@ def _graveyard_card_query(subject: str) -> ObjectQuerySpec | None:
     elif normalized.startswith("basic "):
         fields["supertypes_all"] = ("basic",)
         normalized = normalized.removeprefix("basic ")
+    permanent_types = ("artifact", "battle", "creature", "enchantment", "land", "planeswalker")
+    if permanent_qualities and normalized == "nonland permanent":
+        if fields.get("supertypes_all") == ("basic",):
+            return None
+        return ObjectQuerySpec(**fields, types_any=permanent_types, excluded_types=("land",), token=False)
+    subtype = re.fullmatch(r"(?P<subtype>.+) (?P<domain>creature|permanent)", normalized)
+    if permanent_qualities and subtype is not None and not fields.get("supertypes_all") == ("basic",):
+        canonical = canonical_creature_subtype(subtype["subtype"])
+        if canonical is not None:
+            fields["subtypes_any"] = (canonical,)
+            fields["types_all" if subtype["domain"] == "creature" else "types_any"] = (
+                ("creature",) if subtype["domain"] == "creature" else permanent_types)
+            return ObjectQuerySpec(**fields, token=False)
     type_words = {
         "artifact": "artifact",
         "battle": "battle",
@@ -412,7 +436,8 @@ def _graveyard_public_move_template(
             else None
         )
     match = re.fullmatch(
-        r"(?P<verb>Return|Put) all (?:(?P<subject>.+?) )?cards from "
+        r"(?P<verb>Return|Put) all (?:(?P<subject>.+?) )?cards "
+        r"(?:with mana value (?P<mana_value>0|[1-9]\d*) or less )?from "
         r"(?P<scope>your graveyard|all graveyards) "
         r"(?P<direction>to|onto) (?P<destination>your hand|the battlefield)"
         r"(?P<tapped> tapped)?"
@@ -429,9 +454,17 @@ def _graveyard_public_move_template(
         verb == "put" and direction != "onto"
     ):
         return None
-    query = _graveyard_card_query(match.group("subject") or '')
+    battlefield_entry = destination_text == "the battlefield"
+    subject = match.group("subject") or ''
+    query = (_graveyard_card_query(subject, permanent_qualities=True)
+        if battlefield_entry else _graveyard_card_query(subject))
     if query is None:
         return None
+    if match["mana_value"] is not None:
+        maximum = int(match["mana_value"])
+        if not battlefield_entry or maximum > 20:
+            return None
+        query = replace(query, mana_value_max=maximum, token=False)
     destination = (
         PublicZoneDestination.OWNER_HAND
         if destination_text == "your hand"
@@ -439,7 +472,7 @@ def _graveyard_public_move_template(
     )
     types = set((*query.types_all, *query.types_any))
     if destination is PublicZoneDestination.BATTLEFIELD and (
-        not types or types.intersection({"artifact", "enchantment", "instant", "sorcery"})
+        not types or types.intersection({"instant", "sorcery"})
     ):
         return None
     scope = match.group("scope").casefold()
@@ -468,7 +501,7 @@ def _graveyard_public_move_template(
             ),
             battlefield_controller=battlefield_controller,
             battlefield_tapped=bool(match.group("tapped")),
-            schema_version=2,
+            schema_version=PUBLIC_AURA_ENTRY_VERSION if battlefield_entry else 2,
         )
     )
 

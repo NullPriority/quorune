@@ -53,7 +53,8 @@ def generated_ability_id(
         return granted
     if kind == 'spell_variant':
         suffix = str(node_id or '').rsplit(':', 1)[-1]
-        return f'spell:{face_id}:{suffix}' if suffix in {'overload', 'cleave'} else None
+        from ..spell_text_variants import SpellTextVariantKind
+        return f'spell:{face_id}:{suffix}' if suffix in {variant.value for variant in SpellTextVariantKind} else None
     if kind == "spell_ability":
         return f"spell:{face_id}"
     if kind in {"activated_ability", "mana_ability"}:

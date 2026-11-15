@@ -420,7 +420,7 @@ class PublicConditionSelfReplacementTests(unittest.TestCase):
         cases=[
             'Target creature gets +1/+1 until end of turn. If you have no cards in hand, another target creature gets +3/+3 until end of turn instead.',
             'Draw a card. If you have no cards in hand, draw X cards instead.',
-            'Target creature gets +1/+1 until end of turn. If that creature is green, it gets +3/+3 until end of turn instead.',
+            'Target creature gets +1/+1 until end of turn. If that creature has a name secretly chosen by an opponent, it gets +3/+3 until end of turn instead.',
             'Draw a card. If you cast this spell during your main phase, draw three cards instead.',
             'Draw a card. If you have no cards in hand, you may draw three cards instead.',
         ]
@@ -433,6 +433,31 @@ class PublicConditionSelfReplacementTests(unittest.TestCase):
         self.assertNotEqual('exact',ir.status);self.assertTrue(ir.material_residuals)
         ir,node=self.wrapper('Cabal Ritual');effect=deepcopy(node.effects[-1]);effect['effects'][0]['source']='wrong-source'
         with self.assertRaises(ValueError):validate_resolution_condition_instruction(effect)
+
+    def test_current_target_color_replacement_keeps_both_results_and_one_target_binding(self):
+        from test_bound_effect_programs import record
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        original=record('Target creature gets +1/+1 until end of turn. '
+            'If that creature is green, it gets +3/+3 until end of turn instead.','Instant')
+        ir=compile_oracle_card(original,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node,=ir.faces[0].nodes;effect,=node.effects
+        self.assertEqual('apply_if_public_condition',effect['op'])
+        self.assertEqual(17,effect['schema_version'])
+        self.assertEqual('$target.0',effect['condition_target'])
+        self.assertEqual(node.target_schema,effect['target_binding'])
+        self.assertEqual(['G'],effect['condition']['queries_any'][0]['colors_any'])
+        for field,amount in (('effects',3),('otherwise_effects',1)):
+            branch,=effect[field]
+            self.assertEqual({'op':'modify_stats_until_end_of_turn','card':'$target.0',
+                'power':amount,'toughness':amount},branch)
+        program=compile_best_available_card_program(self.db,original,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile='commander_review')
+        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+        self.assertEqual('capability_closed',binding['trust_basis'])
 
     def test_public_caster_draw_branch_delivers_private_cards_only_to_the_declared_target(self):
         for mode in (False,True):

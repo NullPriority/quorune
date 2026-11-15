@@ -458,6 +458,9 @@ class OwnGraveyardCardTargetSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "OwnGraveyardCardTargetSpec":
+        if isinstance(value,Mapping) and 'characteristic_forms_any' in value:
+            from ..graveyard_target_unions import mixed_graveyard_target_from_schema
+            return mixed_graveyard_target_from_schema(value)
         if not isinstance(value, Mapping):
             raise GraveyardCardTargetError(
                 "Graveyard target schema must be an object"
@@ -816,7 +819,8 @@ def public_graveyard_return_runtime_dependencies(program):
     schema = thaw_value(program.target_schema)
     public_scope = isinstance(schema, Mapping) and schema.get("zones") == ["graveyard"] and schema.get("owner_relation") == "any"
     if not public_scope and not any(effect.get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION for effect in returns):
-        return ()
+        from ..graveyard_target_unions import mixed_graveyard_target_dependencies
+        return mixed_graveyard_target_dependencies(schema)
     public_graveyard_return_target_spec(schema)
     required = public_graveyard_return_payload_dependencies(returns[0])
     if len(returns) != 1 or not required:
@@ -854,9 +858,11 @@ def targeted_own_graveyard_return_node_capabilities(
         or effect.get("card") != "$target.0"
     ):
         return ()
+    from ..graveyard_target_unions import mixed_graveyard_target_dependencies
     return (
         "card.return.own_graveyard_to_owner_hand",
         "target.revalidate_resolution",
+        *mixed_graveyard_target_dependencies(target_schema),
     )
 
 

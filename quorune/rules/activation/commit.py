@@ -477,12 +477,18 @@ def _pay_object_and_mana_costs(
             ability=ability,
             response=response,
         )
+        from .paid_characteristic_results import capture_activation_paid_creature_fact
+        paid_stat_context = capture_activation_paid_creature_fact(host, proposal, source, ability, response)
         paid_objects = _pay_selected_object_costs(host, proposal.seat, source, ability, response)
         special_cost_context = (
             (FIXED_COMBAT_RETURN_CONTEXT, combat_return_context)
             if combat_return_context is not None
             else None
         )
+        if paid_stat_context is not None:
+            if special_cost_context is not None:
+                raise ActivationProposalError('Paid creature stats cannot replace another selected-cost fact')
+            special_cost_context = paid_stat_context
     requirements = dict(thaw_json(proposal.requirements))
     details = thaw_json(proposal.details)
     raw_mana_option = details.get("mana_cost_option")

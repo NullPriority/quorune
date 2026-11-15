@@ -1,0 +1,928 @@
+{
+  "cards": [
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Granger Guildmage",
+      "oracle_id": "0230fdda-d916-457e-9dfd-61783fcf4652",
+      "oracle_text": "{R}, {T}: This creature deals 1 damage to any target and 1 damage to you.\n{W}, {T}: Target creature gains first strike until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Wizard"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Goblin Artillery",
+      "oracle_id": "06db7444-0225-48c8-ab04-d69ff06e97b6",
+      "oracle_text": "{T}: This creature deals 2 damage to any target and 3 damage to you.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2009-07-17",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Goblin Warrior"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Fireslinger",
+      "oracle_id": "0e5a5cee-d068-42cf-bf58-8e1360720be0",
+      "oracle_text": "{T}: This creature deals 1 damage to any target and 1 damage to you.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2014-12-05",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Daredevil's Billy Club",
+      "oracle_id": "654db13d-c7e4-4ee0-a87a-3635467f2f19",
+      "oracle_text": "When this Equipment enters, it deals 2 damage to any target and 1 damage to you.\nEquipped creature gets +1/+0 and has menace. (It can't be blocked except by two or more creatures.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact \u2014 Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Psionic Blast",
+      "oracle_id": "7f221ad6-7ec4-483d-a6b5-1456c95c1cad",
+      "oracle_text": "Psionic Blast deals 4 damage to any target and 2 damage to you.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-10-06",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Spicy Oatmeal Pizza",
+      "oracle_id": "9665f940-c0a4-4d3e-b889-8049cf549a4f",
+      "oracle_text": "When this artifact enters, it deals 4 damage to any target and 3 damage to you.\n{2}, {T}, Sacrifice this artifact: You gain 3 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-03-06",
+      "toughness": null,
+      "type_line": "Artifact \u2014 Food"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Orcish Cannoneers",
+      "oracle_id": "9ebf3eeb-1a1b-4b88-a760-887c2188d287",
+      "oracle_text": "{T}: This creature deals 2 damage to any target and 3 damage to you.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2008-09-22",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Orc Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Orcish Cannonade",
+      "oracle_id": "af224f6f-cedd-498f-a08e-7be0db5a11b7",
+      "oracle_text": "Orcish Cannonade deals 2 damage to any target and 3 damage to you.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-03-19",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Orcish Artillery",
+      "oracle_id": "c000811e-bde7-4840-a3bb-9714d5c977eb",
+      "oracle_text": "{T}: This creature deals 2 damage to any target and 3 damage to you.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Orc Warrior"
+    },
+    {
+      "card_faces": [],
+      "cmc": 1.0,
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Shadow Guildmage",
+      "oracle_id": "cdda63d7-e3ea-455c-b7d4-c6cfdda2703c",
+      "oracle_text": "{U}, {T}: Put target creature you control on top of its owner's library.\n{R}, {T}: This creature deals 1 damage to any target and 1 damage to you.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2006-10-06",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Wizard"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Char",
+      "oracle_id": "e57d90ad-2f54-46ca-8237-aa383353a0de",
+      "oracle_text": "Char deals 4 damage to any target and 2 damage to you.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2005-10-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Brothers of Fire",
+      "oracle_id": "ee9208e7-2075-45b9-9ed7-b18e1a280d79",
+      "oracle_text": "{1}{R}{R}: This creature deals 1 damage to any target and 1 damage to you.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-09-10",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Shaman"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature \u2014 Sliver"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bear"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Island"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Double"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}{R}",
+      "name": "Furnace of Rath",
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "oracle_text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-04",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "original_oracle_cards",
+  "rulings": [
+    {
+      "comment": "If the targeted permanent or player is an illegal target by the time Goblin Artillery's ability would resolve, the entire ability doesn't resolve. You won't be dealt any damage.",
+      "oracle_id": "06db7444-0225-48c8-ab04-d69ff06e97b6",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type.",
+      "oracle_id": "9665f940-c0a4-4d3e-b889-8049cf549a4f",
+      "published_at": "2026-01-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some spells and abilities that create Food tokens may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Food tokens.",
+      "oracle_id": "9665f940-c0a4-4d3e-b889-8049cf549a4f",
+      "published_at": "2026-01-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target of Spicy Oatmeal Pizza's first ability is illegal as the ability tries to resolve, it won't resolve and none of its effects will happen. You won't be dealt damage. (You can just tell your friends it wasn't that spicy.)",
+      "oracle_id": "9665f940-c0a4-4d3e-b889-8049cf549a4f",
+      "published_at": "2026-01-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whatever you do, don't eat the cards. (Also, don't make the pizzas pictured on the cards. You don't have the digestive system of a Ninja Turtle.)",
+      "oracle_id": "9665f940-c0a4-4d3e-b889-8049cf549a4f",
+      "published_at": "2026-01-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Pizza Face (a Legendary Artifact Creature \u2014 Food Mutant) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost). You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability.",
+      "oracle_id": "9665f940-c0a4-4d3e-b889-8049cf549a4f",
+      "published_at": "2026-01-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the chosen target is an illegal target by the time Orcish Cannonade tries to resolve, the spell doesn't resolve. You don't draw a card, but you also don't take 3 damage.",
+      "oracle_id": "af224f6f-cedd-498f-a08e-7be0db5a11b7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You do not take the 3 points of damage if the ability doesn't resolve because the target is illegal.",
+      "oracle_id": "c000811e-bde7-4840-a3bb-9714d5c977eb",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn\u2019t provide any additional benefit.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you change the creature type of a Sliver you control so it\u2019s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don\u2019t grant bonuses to your opponents\u2019 Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have two of these on the battlefield, the damage is multiplied by 4.",
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The multiplied damage counts in all ways as if it came from the original source. Furnace of Rath is not the source.",
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability damages multiple things, divide up the damage before applying this effect. This means you can\u2019t normally end up with an odd amount of damage on something.",
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The trample rules cause damage to be divided before it is doubled.",
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple effects modify how damage will be dealt, the player who would be dealt damage or the controller of the creature that would be dealt damage chooses the order to apply the effects. For example, Mending Hands says, \u201cPrevent the next 4 damage that would be dealt to any target this turn.\u201d Suppose a spell would deal 5 damage to a player who has cast Mending Hands targeting themselves. That player can either (a) prevent 4 damage first and then let Furnace of Rath double the remaining 1 damage, taking 2 damage, or (b) double the damage to 10 and then prevent 4 damage, taking 6 damage.",
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2005-08-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned original Oracle records and rulings; shared canonical payloads retained."
+}

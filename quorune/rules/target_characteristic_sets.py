@@ -82,31 +82,46 @@ def is_closed_target_characteristic_set_program(program):
 def characteristic_set_runtime_dependencies(program):
     """Payload-owned minimums also apply to composed and modal instructions."""
     dependencies=set()
-    def visit(value):
+    def visit(value,target_schema,coverage):
         if isinstance(value,Mapping):
+            definitions=value.get('modes')
+            if isinstance(definitions,Mapping) and any(isinstance(d,Mapping) and 'mechanics' in d for d in definitions.values()):
+                from .modal_capability_shapes import fixed_choose_one_modal_branches,fixed_nonrepeating_modal_branches
+                from ..compiler.modal_templates import FIXED_CHOOSE_ONE_MODAL_MECHANIC,FIXED_NONREPEATING_MODAL_MECHANIC
+                nonrepeating='min_modes' in value
+                owner=fixed_nonrepeating_modal_branches if nonrepeating else fixed_choose_one_modal_branches
+                mechanics={FIXED_NONREPEATING_MODAL_MECHANIC if nonrepeating else FIXED_CHOOSE_ONE_MODAL_MECHANIC}
+                for d in definitions.values():
+                    if not isinstance(d,Mapping) or not isinstance(d.get('mechanics'),(list,tuple)):
+                        raise ValueError('Modal characteristic result lacks its closed branch')
+                    mechanics.update(d['mechanics'])
+                branches=owner(effects=(),target_schema=value,mechanic_ids=tuple(sorted(mechanics)))
+                if branches is None:raise ValueError('Modal characteristic result has a malformed branch')
+                for branch in branches:visit(branch.effects,branch.target_schema,branch.mechanics)
+                return
             if value.get('op')==OPERATION and value.get('schema_version')==6:
                 fixed=value
                 if 'announced_target_count' in value:
                     from .any_number_target_shapes import any_number_target_node_capabilities
-                    required=any_number_target_node_capabilities(effects=(value,),target_schema=program.target_schema,mechanic_ids=program.coverage)
+                    required=any_number_target_node_capabilities(effects=(value,),target_schema=target_schema,mechanic_ids=coverage)
                     if not required:raise ValueError('Any-number characteristic result lacks its cardinality owner')
                     dependencies.update(required)
                     fixed={key:child for key,child in value.items() if key!='announced_target_count'}
                     fixed['maximum_targets']=2
                 if any(isinstance(value.get(field),Mapping) for field in ('power','toughness')):
                     from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
-                    context=public_query_amount_shape_context((value,),set(program.coverage),target_schema=program.target_schema)
+                    context=public_query_amount_shape_context((value,),set(coverage),target_schema=target_schema)
                     if context is None:raise ValueError('Target characteristic amount lacks its existing quantity owner')
                     fixed=context[0][0]
                 keywords=decode_target_characteristics(fixed)
                 dependencies.update((TARGET_CHARACTERISTIC_SET_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn','target.revalidate_resolution'))
                 dependencies.update(cap for keyword in keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])
             elif is_power_toughness_switch(value):
-                dependencies.update(power_toughness_switch_runtime_dependencies(value, target_schema=program.target_schema))
+                dependencies.update(power_toughness_switch_runtime_dependencies(value, target_schema=target_schema))
             elif is_fixed_stat_multiplier(value):
-                dependencies.update(fixed_stat_multiplier_runtime_dependencies(value, target_schema=program.target_schema))
-            for child in value.values():visit(child)
+                dependencies.update(fixed_stat_multiplier_runtime_dependencies(value, target_schema=target_schema))
+            for child in value.values():visit(child,target_schema,coverage)
         elif isinstance(value,(list,tuple)):
-            for child in value:visit(child)
-    visit((program.effects,program.target_schema))
+            for child in value:visit(child,target_schema,coverage)
+    visit((program.effects,program.target_schema),program.target_schema,program.coverage)
     return tuple(sorted(dependencies))

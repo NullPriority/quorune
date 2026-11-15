@@ -89,7 +89,9 @@ class DiscardResultCompilerTests(unittest.TestCase):
 
     def test_discard_result_compiler_rejects_filtered_unknown_and_unbound_counts(self):
         from quorune.compiler.discard_result_templates import discard_result_draw_template
-        for text in ('Discard any number of cards, then draw that many cards.', 'Discard your hand, then draw that many cards plus two.',
+        variable=discard_result_draw_template('Discard any number of cards, then draw that many cards.')
+        self.assertEqual(({'op':'discard_draw_up_to','schema_version':3,'maximum':'hand_size','draw_offset':0},),variable[1])
+        for text in ('Discard your hand, then draw that many cards plus two.',
                      'Each player on your team discards their hand, then draws that many cards.',
                      'That player discards their hand, then draws that many cards.',
                      'Discard your hand, then draw cards equal to the greatest number of cards a player discarded this way.',

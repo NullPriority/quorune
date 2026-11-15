@@ -156,6 +156,7 @@ def build_cast_cost_options(
     cast_type_line: str | None = None,
     suppress_source_costs: bool = False,
     resolving_exile_authority: bool = False,
+    ignore_timing: bool = False,
 ) -> tuple[CastCostOption, ...]:
     """Offer the selected face's payable choices under its current zone permission."""
     from .costs import _cast_cost_options_for_submission
@@ -166,7 +167,7 @@ def build_cast_cost_options(
     build = partial(_cast_cost_options_for_submission, host, seat, card, program,
         hint=hint, force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
         cast_type_line=cast_type_line, suppress_source_costs=suppress_source_costs,
-        resolving_exile_authority=resolving_exile_authority)
+        resolving_exile_authority=resolving_exile_authority,ignore_timing=ignore_timing)
     minimum = _static_library_top_minimum_x(host, seat, card, face_down=suppress_source_costs)
     if not (hint and minimum and submission.get('x') is None):
         return build(submission, minimum_library_x=minimum)

@@ -90,4 +90,20 @@ def read_evidence_document(path):
 
 
 def evidence_document_text(value):
-    return json.dumps(pack_evidence_document(value), indent=2, ensure_ascii=False, sort_keys=True)+'\n'
+    stored = pack_evidence_document(value)
+
+    def encoded(item, *, pretty=False):
+        return json.dumps(item, ensure_ascii=False, sort_keys=True,
+            **({'indent': 2} if pretty else {'separators': (',', ':')}))
+
+    # Keep metadata and each reference on one line so expanding the evidence
+    # inventory does not spend the repository blob budget on indentation.
+    document = encoded(stored['document'], pretty=True).replace('\n', '\n  ')
+    groups = []
+    for group in stored['groups']:
+        references = ',\n'.join('        ' + encoded(row) for row in group['references'])
+        groups.append('    {\n      "common": ' + encoded(group['common'])
+            + ',\n      "references": [\n' + references + '\n      ]\n    }')
+    body = '[\n' + ',\n'.join(groups) + '\n  ]' if groups else '[]'
+    return ('{\n  "document": ' + document + ',\n  "groups": ' + body
+        + ',\n  "storage_schema_version": 1\n}\n')

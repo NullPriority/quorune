@@ -13,6 +13,45 @@ from ...target_source import ability_targeting_source
 from ...targets import available_modes, target_plan
 
 
+def single_creature_target_price_plan(schema):
+    if schema is None or available_modes(schema):
+        raise ValueError('Target activation price requires one nonmodal creature target')
+    plan = target_plan(schema)
+    if len(plan.groups) != 1:
+        raise ValueError('Target activation price requires exactly one target group')
+    group, = plan.groups
+    creature = group.creature is True or 'creature' in group.types_all or group.types_any == ('creature',)
+    if (not creature or group.zones != ('battlefield',) or group.categories != ('permanent',)
+            or group.min_targets != 1 or group.max_targets != 1):
+        raise ValueError('Target activation price requires one required battlefield creature')
+    return plan
+
+
+def ability_local_target_cost_modifiers(host, seat, source, ability):
+    from ...activation_target_values import TargetActivationReduction
+    from ...activation_cost_modifiers import FixedActivationCostModifierSpec
+    from ...object_predicate import ObjectQuerySpec
+    from ...target_cost_subject import TargetCostSubjectSpec
+    reduction = getattr(ability, 'ability_local_mana_reduction', None)
+    if not isinstance(reduction, TargetActivationReduction):return ()
+    program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+    schema = ability.target_schema if ability.target_schema is not None else getattr(program, 'target_schema', None)
+    plan = single_creature_target_price_plan(schema)
+    candidates = host._target_candidate_map(seat, plan, acting_source=ability_targeting_source(host, source), source_ref=source.ref)
+    by_ref = {card.ref:card for card in host.state.cards.values() if card.zone == 'battlefield' and not card.phased_out}
+    result = []
+    for ref in candidates[plan.groups[0].group_id]:
+        card = by_ref[ref]
+        power = host._numeric_stat(card.object_id, 'power') if reduction.target_metric != 'color_count' else 0
+        colors = host._public_object_query_result(card, _maximum_layer=None).colors if reduction.target_metric == 'color_count' else ()
+        amount = reduction.amount(power=power, colors=colors)
+        if amount:
+            spec = FixedActivationCostModifierSpec(-amount, subject_relation='any', schema_version=2,
+                target_condition=TargetCostSubjectSpec('query', ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))))
+            result.append(ActivationCostModifierSource(f'{source.logical_object_id}:local-target-price:{ref}', spec, (ref,)))
+    return tuple(result)
+
+
 @dataclass(frozen=True, slots=True)
 class ActivationTargetCostWitness:
     modifiers: tuple

@@ -19,7 +19,13 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
     item = next((item for item in host.state.stack if item.ref == stack_ref), None)
     if item is None or item.controller != actor:
         raise TokenCopyRecipeError("Copy recipe requires its authoritative resolving stack item")
-    reference = copy_reference_snapshot(host, item, recipe)
+    target=effect.get('_copy_target')
+    if target is not None and (not isinstance(target,Mapping) or set(target)!={'schema_version','index'}
+            or type(target['schema_version']) is not int or target['schema_version']!=1
+            or recipe.origin!='target' or type(target['index']) is not int or not 0<=target['index']<len(item.targets)):
+        raise TokenCopyRecipeError('Modal copy target lost its bound announcement slot')
+    if target is not None and item.targets[target['index']] is None:return []
+    reference = copy_reference_snapshot(host, item, recipe,target_index=None if target is None else target['index'])
     snapshot = deepcopy(dict(reference["snapshot"]))
     modified = apply_copy_exception(snapshot["characteristics"], recipe.exception)
     snapshot["characteristics"] = modified

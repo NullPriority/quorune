@@ -20,6 +20,9 @@ _SUBJECT = re.compile(r'\btarget (?P<quality>(?:green |[A-Za-z\'’-]+ )?creatur
 def prepared_creature_power_damage_template(
     text: str, *, source_name: str, compile_atomic: Callable[[str], Compiled],
 ) -> Compiled | None:
+    from .conditional_target_preparation import conditional_prepared_power_template
+    conditional = conditional_prepared_power_template(text, source_name=source_name, compile_atomic=compile_atomic)
+    if conditional is not None:return conditional
     match = _SEQUENCE.fullmatch(text)
     if match is None:
         return None

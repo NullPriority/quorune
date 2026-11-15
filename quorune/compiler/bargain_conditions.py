@@ -8,6 +8,8 @@ from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC
 
 
 def bargain_same_target_template(text, *, source_name, compile_component):
+    procedure = bargain_procedure_template(text, compile_component=compile_component)
+    if procedure is not None:return procedure
     match = re.fullmatch(r'(?P<normal>.+?\.) If this spell was bargained, (?P<other>that creature .+)\.', text.strip(), re.I)
     if match is None:return None
     normal = compile_component(match['normal'])
@@ -29,3 +31,20 @@ def bargain_same_target_template(text, *, source_name, compile_component):
     except (ValueError, TypeError):return None
     return ('linked-bargain-same-target-v1', (wrapper,), deepcopy(schema),
         tuple(dict.fromkeys((RESOLUTION_CONDITION_MECHANIC, DECLARED_CAST_COST_MECHANIC, *ids, *normal[3]))))
+
+
+def bargain_procedure_template(text, *, compile_component):
+    from .procedure_variants import literal_procedure_variant, compiled_procedure_branches
+    variant = literal_procedure_variant(text)
+    if variant is None or variant.condition.casefold() != 'this spell was bargained':return None
+    branches = compiled_procedure_branches(variant, compile_component)
+    if branches is None:return None
+    normal, alternative = branches
+    wrapper = {'op': 'apply_if_public_condition', 'schema_version': 12, 'player': '$controller',
+        'condition': DeclaredCastCostCondition(DeclaredCastCostKind.BARGAIN, BARGAIN_INSTANCE).to_dict(),
+        'cast_fact': '$context.declared_cast_costs', 'effects': deepcopy(list(alternative[1])), 'mechanic_ids': list(alternative[3]),
+        'otherwise_effects': deepcopy(list(normal[1])), 'otherwise_mechanic_ids': list(normal[3])}
+    try:validate_declared_cost_instruction(wrapper)
+    except (ValueError, TypeError):return None
+    return ('linked-bargain-procedure-replacement-v1', (wrapper,), None,
+        tuple(dict.fromkeys((RESOLUTION_CONDITION_MECHANIC, DECLARED_CAST_COST_MECHANIC, *normal[3], *alternative[3]))))

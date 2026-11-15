@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections.abc import Mapping as MappingABC
 
 
 def special_trigger_envelope_capabilities(dependencies, mechanics):
@@ -51,6 +52,8 @@ def special_result_trigger_runtime_dependencies(program):
                 spec=FixedPublicStateConditionSpec.from_dict(value.get('condition'))
                 required.add('trigger.condition.fixed_public_state')
                 if spec.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:required.add('condition.creature.fixed_numeric_exists')
+                if getattr(spec.fact,'value',None)=='unique_player_maximum':required.add('condition.player.unique_maximum')
+                if getattr(spec.fact,'value',None)=='opponent_has_greater_metric':required.add('condition.player.opponent_greater_metric')
             for child in value.values():condition(child)
         elif isinstance(value,(list,tuple)):
             for child in value:condition(child)
@@ -60,6 +63,13 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    if 'conditional-target-power-preparation' in mechanics or any(e.get('op') == 'apply_if_public_condition' and e.get('schema_version') == 16 for e in effects):
+        from .conditional_target_preparation import conditional_prepared_power_capabilities
+        return conditional_prepared_power_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    if 'fixed-awaken-paid-body' in mechanics or isinstance(cost_schema,MappingABC) and 'awaken' in cost_schema:
+        from .awaken_shapes import awaken_node_capabilities
+        awaken=awaken_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
+        if awaken is not None:return awaken
     from .event_counter_threshold import EVENT_COUNTER_THRESHOLD_MECHANIC, event_counter_threshold_node_capabilities
     if EVENT_COUNTER_THRESHOLD_MECHANIC in mechanics:
         return event_counter_threshold_node_capabilities(effects, target_schema)
@@ -147,7 +157,7 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
         return public_quantity_mana_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC,RESOLUTION_CONDITION_OPERATION
     from .effect_shape_walkers import nested_effect_operations
-    if RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in nested_effect_operations(effects):
+    if 'sequential-public-conditions' not in mechanics and (RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in nested_effect_operations(effects)):
         from .resolution_condition_shapes import resolution_condition_node_capabilities
         return resolution_condition_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics,cost_schema=cost_schema)
     from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC

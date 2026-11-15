@@ -2,11 +2,12 @@ from __future__ import annotations
 
 """Immutable requests to the shared resolution-control owner."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 
 from ..continuous_effect_model import ContinuousEffectDuration
 from ..continuous_effect_state import ResolutionEffectSource
 from ..object_predicate import ObjectQuerySpec
+from ..owner_control_model import OwnerControlSpec
 from ..source_continuity import SourceContinuitySnapshot
 
 
@@ -73,4 +74,49 @@ class GainControlSetIntent:
             raise ValueError("Control-set haste requires its printed end-of-turn duration")
 
 
-ControlIntent = GainControlIntent | GainControlSetIntent
+@dataclass(frozen=True,slots=True)
+class GiveControlIntent:
+    actor: str
+    object_ref: str
+    controller: str
+    source: ResolutionEffectSource
+    reason: str
+    duration: ContinuousEffectDuration=field(init=False,default=ContinuousEffectDuration.ZONE_OBJECT)
+    history_snapshot: SourceContinuitySnapshot | None=field(init=False,default=None)
+    resolution_timestamp: int | None=field(init=False,default=None)
+
+    def __post_init__(self):
+        _validate_control(self.actor,self.actor,self.duration,self.source,self.reason)
+        if any(type(value) is not str or not value for value in (self.object_ref,self.controller)):
+            raise ValueError('Recipient control requires a permanent and explicit acquiring player')
+
+
+@dataclass(frozen=True,slots=True)
+class GiveControlSetIntent:
+    actor: str
+    controller: str
+    exclude_source_ref: str | None
+    source: ResolutionEffectSource
+    reason: str
+
+    def __post_init__(self):
+        _validate_control(self.actor,self.actor,ContinuousEffectDuration.ZONE_OBJECT,self.source,self.reason)
+        if type(self.controller) is not str or not self.controller:
+            raise ValueError('Recipient control set requires an explicit acquiring player')
+        if self.exclude_source_ref is not None and (type(self.exclude_source_ref) is not str or not self.exclude_source_ref):
+            raise ValueError('Recipient control set requires its original source reference')
+
+
+@dataclass(frozen=True,slots=True)
+class RestoreOwnerControlIntent:
+    actor: str
+    spec: OwnerControlSpec
+    source: ResolutionEffectSource
+    reason: str
+
+    def __post_init__(self):
+        _validate_control(self.actor,self.actor,ContinuousEffectDuration.ZONE_OBJECT,self.source,self.reason)
+        if not isinstance(self.spec,OwnerControlSpec):raise ValueError('Owner control requires its typed scope')
+
+
+ControlIntent = GainControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent

@@ -48,6 +48,8 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
             return (*attachment, None)
         from .suspect_templates import normalize_entering_source_suspect
         body = normalize_entering_source_suspect(body)
+    from .recipient_control_templates import normalized_source_recipient_control_body
+    body=normalized_source_recipient_control_body(body) or body
     compiled = fixed_announced_damage_template(body, card_name=card_name, allow_source_pronoun=True)
     compiled=compiled or source_scalar_effect_amount_template(body,source_name=card_name,
         event={'enters':'permanent.enter','dies':'creature.dies','leaves the battlefield':'permanent.leave'}[event_phrase],
@@ -132,6 +134,12 @@ def source_self_contextual_effect_template(
     compile_effect: Any = None,
 ) -> tuple[Any, ...] | None:
     """Delegate one source-bound body to its closed typed leaf owner."""
+    from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
+    if compile_effect is not None:
+        sequence=fixed_damage_life_sequence_template(text,compile_clause=lambda clause:
+            source_self_contextual_effect_template(clause,card_name=card_name,event_phrase=event_phrase,
+                compile_effect=compile_effect) or compile_effect(clause,card_name=card_name))
+        if sequence is not None:return sequence
 
     from .event_player_choice_templates import source_death_player_sacrifice_result
     sacrifice = source_death_player_sacrifice_result(text, event_phrase=event_phrase)

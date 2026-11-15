@@ -202,10 +202,12 @@ def unavailable_optional_equipment_attachment(host, raw_effect, effect) -> bool:
     return equipment is None or creature is None or not equipment_attachment_is_legal(host, equipment, creature)
 
 
-_FIXED_MANA = r"(?:\{(?:\d+|[WUBRGC])\})+"
+_FIXED_MANA = r"(?:\{(?:\d+|[WUBRGC](?:/[WUBRG]|/P)?|[WUBRG]/[WUBRG]/P|2/[WUBRG])\})+"
+_EQUIP_SUBTYPE = r"[A-Z][A-Za-z'-]*"
 _EQUIP = re.compile(
     rf"^Equip(?: (?P<restriction>creature token|commander|legendary creature|"
-    rf"[A-Z][A-Za-z'-]*))? (?P<cost>{_FIXED_MANA})"
+    rf"{_EQUIP_SUBTYPE}(?:(?:, {_EQUIP_SUBTYPE})?,? or {_EQUIP_SUBTYPE})?))? "
+    rf"(?P<cost>{_FIXED_MANA}(?: or {_FIXED_MANA})?)"
     r"(?P<once>\. Activate only once each turn\.)?\.?$",
 )
 _NONMANA_EQUIP = re.compile(
@@ -224,6 +226,11 @@ class FixedEquipAbilitySpec:
     restricted: bool
     once_per_turn: bool
     nonmana: bool = False
+    local_cost_text: str = ''
+
+    @property
+    def requires_catalog(self) -> bool:
+        return self.nonmana or bool(self.local_cost_text) or '/' in self.cost_text or ' or ' in self.cost_text
 
     @property
     def capability_id(self) -> str:
@@ -237,12 +244,17 @@ class FixedEquipAbilitySpec:
 
 
 def fixed_equip_ability_spec(text: str) -> FixedEquipAbilitySpec | None:
-    """Parse ordinary restricted mana or closed fixed nonmana Equip."""
+    """Parse fixed Equip prices and preserve an ability-local cost clause."""
 
     normalized = " ".join(text.strip().split())
     flavor = re.fullmatch(r"[A-Za-z][A-Za-z0-9 '’!?-]+\s+[—-]\s+(Equip(?: |[—-]).+)", normalized)
     if flavor is not None:
         normalized = flavor.group(1)
+    local_cost_text = ''
+    local = re.fullmatch(r'(.+?)\. (This ability costs [^.]+)\.?', normalized)
+    if local is not None:
+        normalized, local_cost_text = local.groups()
+        local_cost_text += '.'
     nonmana = _NONMANA_EQUIP.fullmatch(normalized)
     match = nonmana or _EQUIP.fullmatch(normalized)
     if match is None:
@@ -264,16 +276,17 @@ def fixed_equip_ability_spec(text: str) -> FixedEquipAbilitySpec | None:
         elif normalized == "legendary creature":
             schema["supertypes_any"] = ["legendary"]
         else:
-            subtype = canonical_creature_subtype(restriction)
-            if subtype is None:
+            subtypes = tuple(canonical_creature_subtype(value) for value in re.split(r',? or |, ', restriction))
+            if any(value is None for value in subtypes) or len(set(subtypes)) != len(subtypes):
                 return None
-            schema["subtypes_any"] = [subtype]
+            schema["subtypes_any"] = list(subtypes)
     return FixedEquipAbilitySpec(
         cost_text=match.group("cost"),
         target_schema=schema,
         restricted=restriction is not None,
         once_per_turn=match.group("once") is not None,
         nonmana=nonmana is not None,
+        local_cost_text=local_cost_text,
     )
 
 

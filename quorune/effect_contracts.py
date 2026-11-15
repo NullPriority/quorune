@@ -31,11 +31,13 @@ EFFECT_FAMILY_CONTRACTS = (
                 "goad",
                 "gain_class_level",
                 "increase_speed",
+                "set_day_night",
                 "mana",
                 "grant_next_spell_payment",
                 "grant_cast_cascade",
                 "next_spell_improvise",
                 "next_spell_uncounterable",
+                "grant_next_spell_cost_reduction",
                 "grant_uncounterable_hexproof_from_colors_until_end",
                 "veil_of_summer",
             }

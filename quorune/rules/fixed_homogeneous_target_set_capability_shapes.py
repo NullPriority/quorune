@@ -96,6 +96,9 @@ def fixed_homogeneous_target_set_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
+    if any('target_roles' in effect for effect in effects):
+        from .compound_target_sets import compound_target_set_node_capabilities
+        return compound_target_set_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not {
         FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,
@@ -260,11 +263,15 @@ def is_closed_announced_target_set_program(program: Any) -> bool:
     spell = str(getattr(program,"ability_id","")).startswith("spell:") and event == "resolve"
     if not spell:
         if event != "activate":return False
-        from ..activation_x import activation_x_symbols, ANNOUNCED_ACTIVATION_X_CAPABILITY
+        from ..activation_x import activation_x_symbols, activation_x_capabilities
         cost = program.cost_schema or {}
-        if (ANNOUNCED_ACTIVATION_X_CAPABILITY not in program.capability_dependencies
-                or type(cost.get("announced_x_symbols")) is not int
-                or activation_x_symbols(str(cost.get("text") or "")) != cost["announced_x_symbols"]):
+        if (type(cost.get("announced_x_symbols")) is not int
+                or not set(activation_x_capabilities(symbols=cost.get('announced_x_symbols'),
+                    sacrifice_source=cost.get('sacrifice_source',False),
+                    discard_cards=bool(cost.get('choices')))).issubset(program.capability_dependencies)
+                or activation_x_symbols(str(cost.get("text") or ""),
+                    allow_source_sacrifice=cost.get('sacrifice_source') is True,
+                    allow_fixed_discard=bool(cost.get('choices'))) != cost["announced_x_symbols"]):
             return False
     required = announced_target_set_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage)

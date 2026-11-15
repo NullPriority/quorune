@@ -5,6 +5,7 @@ from typing import Any, Mapping, TypeAlias
 
 from .immutable import FrozenMap, freeze_value, thaw_value
 from .amplify import AmplifyEntryOperation
+from .tribute import OpenTributeEntryChoice,CompleteTributeEntryChoice
 from ..devour import DevourSpec,DevourObject,DevourProposal
 
 
@@ -676,6 +677,8 @@ class ApplyEntryCounterReplacement:
 
 ReplacementOperation: TypeAlias = (
     SetField
+    | OpenTributeEntryChoice
+    | CompleteTributeEntryChoice
     | DevourEntryOperation
     | AmplifyEntryOperation
     | AddAmount
@@ -703,6 +706,8 @@ ReplacementOperation: TypeAlias = (
 
 _TYPED_OPERATION_TYPES = (
     SetField,
+    OpenTributeEntryChoice,
+    CompleteTributeEntryChoice,
     DevourEntryOperation,
     AmplifyEntryOperation,
     AddAmount,
@@ -956,6 +961,9 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
             "Replacement operations must be objects"
         )
     op = str(value.get("op") or "")
+    if op in {'open_tribute_entry_choice','complete_tribute_entry_choice'}:
+        try:return (OpenTributeEntryChoice if op=='open_tribute_entry_choice' else CompleteTributeEntryChoice).from_dict(value)
+        except ValueError as exc:raise ReplacementOperationError(str(exc)) from exc
     if op=='prepare_devour_entry':return DevourEntryOperation.from_dict(value)
     if op == "prepare_amplify_entry":
         try:

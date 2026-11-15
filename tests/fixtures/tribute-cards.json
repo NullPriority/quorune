@@ -1,0 +1,2011 @@
+{
+  "cards": [
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature \u2014 Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{G}",
+      "name": "Fanatic of Xenagos",
+      "oracle_id": "f1072af9-9e6f-45ce-8c4b-8e678e7da8ce",
+      "oracle_text": "Trample\nTribute 1 (As this creature enters, an opponent of your choice may put a +1/+1 counter on it.)\nWhen this creature enters, if tribute wasn't paid, it gets +1/+1 and gains haste until end of turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Centaur Warrior"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Flame-Wreathed Phoenix",
+      "oracle_id": "24b9204f-ecc8-472e-9296-f999adf1ab1b",
+      "oracle_text": "Flying\nTribute 2 (As this creature enters, an opponent of your choice may put two +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, it gains haste and \"When this creature dies, return it to its owner's hand.\"",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Phoenix"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Forest"
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000001",
+      "name": "Generic Entry Two Copies",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create two tokens that are copies of target creature you control.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bear"
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "name": "Hill Giant",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature \u2014 Giant",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Choose a background"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Lae'zel, Vlaakith's Champion",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "oracle_text": "If you would put one or more counters on a creature or planeswalker you control or on yourself, put that many plus one of each of those kinds of counters on that permanent or player instead.\nChoose a Background (You can have a Background as a second commander.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": "3",
+      "type_line": "Legendary Creature \u2014 Gith Warrior"
+    },
+    {
+      "oracle_id": "afeba4d7-b659-4fb1-84dd-27704fbb2621",
+      "name": "Master Biomancer",
+      "mana_cost": "{2}{G}{U}",
+      "type_line": "Creature \u2014 Elf Wizard",
+      "oracle_text": "Each other creature you control enters with a number of additional +1/+1 counters on it equal to this creature's power and as a Mutant in addition to its other types.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "afeba4d7-b659-4fb1-84dd-27704fbb2621",
+          "published_at": "2013-01-24",
+          "source": "wotc",
+          "comment": "To determine how many additional +1/+1 counters a creature enters with, use Master Biomancer's power as that creature is entering."
+        }
+      ]
+    },
+    {
+      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+      "name": "Mind Stone",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-09",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Nessian Demolok",
+      "oracle_id": "2341b59b-ce46-4efe-be94-c3851d3cd9e8",
+      "oracle_text": "Tribute 3 (As this creature enters, an opponent of your choice may put three +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, destroy target noncreature permanent.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Beast"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Fight",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Nessian Wilds Ravager",
+      "oracle_id": "fa1a5797-3076-48a4-b64b-ce3dfe2a3e7b",
+      "oracle_text": "Tribute 6 (As this creature enters, an opponent of your choice may put six +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, you may have this creature fight another target creature. (Each deals damage equal to its power to the other.)",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "6",
+      "type_line": "Creature \u2014 Hydra"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Oracle of Bones",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "oracle_text": "Haste\nTribute 2 (As this creature enters, an opponent of your choice may put two +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, you may cast an instant or sorcery spell from your hand without paying its mana cost.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Minotaur Shaman"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Ornitharch",
+      "oracle_id": "19639595-c59b-4233-a167-f5cffcb0e38b",
+      "oracle_text": "Flying\nTribute 2 (As this creature enters, an opponent of your choice may put two +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, create two 1/1 white Bird creature tokens with flying.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Archon"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}",
+      "name": "Pharagax Giant",
+      "oracle_id": "69a134f2-c0c4-496f-b354-8325437af8ca",
+      "oracle_text": "Tribute 2 (As this creature enters, an opponent of your choice may put two +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, this creature deals 5 damage to each opponent.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Giant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Power Conduit",
+      "oracle_id": "2e358f7e-c282-4b92-8255-1436c99cda49",
+      "oracle_text": "{T}, Remove a counter from a permanent you control: Choose one \u2014\n\u2022 Put a charge counter on target artifact.\n\u2022 Put a +1/+1 counter on target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-04-29",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000397",
+      "name": "Public Reanimate",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
+      "faces": []
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "banned",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Reanimate",
+      "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+      "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Shrike Harpy",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "oracle_text": "Flying\nTribute 2 (As this creature enters, an opponent of your choice may put two +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, target opponent sacrifices a creature of their choice.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Harpy"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Siren of the Fanged Coast",
+      "oracle_id": "c5e7ba95-c9b9-45e8-9551-dba892d90683",
+      "oracle_text": "Flying\nTribute 3 (As this creature enters, an opponent of your choice may put three +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, gain control of target creature.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Siren"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature \u2014 Sliver"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}",
+      "name": "Snake of the Golden Grove",
+      "oracle_id": "ef0c8193-8cbe-409e-9c2e-96b46ffcc420",
+      "oracle_text": "Tribute 3 (As this creature enters, an opponent of your choice may put three +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, you gain 4 life.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Snake"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Solemnity",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "oracle_text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Tribute"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Thunder Brute",
+      "oracle_id": "ee1d97e9-847d-4295-a9c1-7ce8006fb0bd",
+      "oracle_text": "Trample\nTribute 3 (As this creature enters, an opponent of your choice may put three +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, it gains haste until end of turn.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "5",
+      "type_line": "Creature \u2014 Cyclops"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Deathtouch",
+        "Flying",
+        "Lifelink"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Vampire Nighthawk",
+      "oracle_id": "feb244f8-bcb1-44cf-9940-2719221a7309",
+      "oracle_text": "Flying\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Vampire Shaman"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as its value.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \u201cwithout paying its mana cost,\u201d you can\u2019t pay alternative costs such as overload costs. You can, however, pay additional costs such as kicker costs. If the card has mandatory additional costs, you must pay those.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose to cast a split card with fuse without paying its mana cost, you may cast both halves.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you want to cast a card this way, you cast it as part of the resolution of the triggered ability. Timing restrictions based on the card\u2019s type (such as sorcery) are ignored. Other casting restrictions (such as \u201cCast [this card] only before attackers are declared\u201d) are not.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "0503fc7e-6819-4979-b0df-7de23de4558b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "19639595-c59b-4233-a167-f5cffcb0e38b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "19639595-c59b-4233-a167-f5cffcb0e38b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "19639595-c59b-4233-a167-f5cffcb0e38b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "19639595-c59b-4233-a167-f5cffcb0e38b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "19639595-c59b-4233-a167-f5cffcb0e38b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "19639595-c59b-4233-a167-f5cffcb0e38b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "2341b59b-ce46-4efe-be94-c3851d3cd9e8",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "2341b59b-ce46-4efe-be94-c3851d3cd9e8",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "2341b59b-ce46-4efe-be94-c3851d3cd9e8",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "2341b59b-ce46-4efe-be94-c3851d3cd9e8",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "2341b59b-ce46-4efe-be94-c3851d3cd9e8",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "2341b59b-ce46-4efe-be94-c3851d3cd9e8",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "24b9204f-ecc8-472e-9296-f999adf1ab1b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "24b9204f-ecc8-472e-9296-f999adf1ab1b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "24b9204f-ecc8-472e-9296-f999adf1ab1b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "24b9204f-ecc8-472e-9296-f999adf1ab1b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "24b9204f-ecc8-472e-9296-f999adf1ab1b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "24b9204f-ecc8-472e-9296-f999adf1ab1b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone's ability doesn't target the chosen creature.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "69a134f2-c0c4-496f-b354-8325437af8ca",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "69a134f2-c0c4-496f-b354-8325437af8ca",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "69a134f2-c0c4-496f-b354-8325437af8ca",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "69a134f2-c0c4-496f-b354-8325437af8ca",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "69a134f2-c0c4-496f-b354-8325437af8ca",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "69a134f2-c0c4-496f-b354-8325437af8ca",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The opponent you target with the triggered ability doesn\u2019t have to be the same opponent you chose to pay tribute or not.",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "9c38b337-487c-4cef-843b-b0a2ed3f1b27",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card in a graveyard has {X} in its mana cost, X is 0.",
+      "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If any abilities trigger on the creature entering the battlefield, those abilities resolve after you lose life. If losing life results in you losing the game, those abilities won't resolve.",
+      "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, the creature you control from Reanimate is exiled.",
+      "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life you lose is determined by the mana value of the card in your graveyard, not the creature once it's on the battlefield.",
+      "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You lose life after the creature is already on the battlefield. Any abilities it has that interact with loss of life, such as that of Platinum Emperion, apply to that loss of life.",
+      "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine how many additional +1/+1 counters a creature enters with, use Master Biomancer's power as that creature is entering.",
+      "oracle_id": "afeba4d7-b659-4fb1-84dd-27704fbb2621",
+      "published_at": "2013-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": " If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders' combined color identities.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won't usually be a creature anyway).",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "c5e7ba95-c9b9-45e8-9551-dba892d90683",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "c5e7ba95-c9b9-45e8-9551-dba892d90683",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "c5e7ba95-c9b9-45e8-9551-dba892d90683",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "c5e7ba95-c9b9-45e8-9551-dba892d90683",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "c5e7ba95-c9b9-45e8-9551-dba892d90683",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "c5e7ba95-c9b9-45e8-9551-dba892d90683",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn\u2019t provide any additional benefit.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you change the creature type of a Sliver you control so it\u2019s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don\u2019t grant bonuses to your opponents\u2019 Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "ee1d97e9-847d-4295-a9c1-7ce8006fb0bd",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "ee1d97e9-847d-4295-a9c1-7ce8006fb0bd",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "ee1d97e9-847d-4295-a9c1-7ce8006fb0bd",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "ee1d97e9-847d-4295-a9c1-7ce8006fb0bd",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "ee1d97e9-847d-4295-a9c1-7ce8006fb0bd",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "ee1d97e9-847d-4295-a9c1-7ce8006fb0bd",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "ef0c8193-8cbe-409e-9c2e-96b46ffcc420",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "ef0c8193-8cbe-409e-9c2e-96b46ffcc420",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "ef0c8193-8cbe-409e-9c2e-96b46ffcc420",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "ef0c8193-8cbe-409e-9c2e-96b46ffcc420",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "ef0c8193-8cbe-409e-9c2e-96b46ffcc420",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "ef0c8193-8cbe-409e-9c2e-96b46ffcc420",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Counters can be put on cards that aren't on the battlefield. Notably, suspended cards will still get time counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with infect has no effect on creatures or players. No -1/-1 counters are put on creatures, and no damage is marked on them. Players don\u2019t get poison counters and they don\u2019t lose life. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with wither has no effect on creatures. No -1/-1 counters are put on them, and no damage is marked on them. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with tribute is entering the battlefield, the chosen opponent can\u2019t pay tribute even if they want to.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a replacement effect allows a player to modify or replace an event by putting counters on an artifact, creature, enchantment, or land, that player may apply that replacement effect. Counters won\u2019t be put on the object, but if the original event is entirely replaced (such as by applying Soul-Scar Mage\u2019s replacement effect), the original event won\u2019t happen.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact, creature, enchantment, or land would enter the battlefield with counters on it at the same time that Solemnity enters the battlefield, Solemnity doesn\u2019t stop it from getting those counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the cost of an ability or an additional cost of a spell requires putting counters on an artifact, creature, enchantment, or land, that cost can\u2019t be paid. If a resolving spell or ability says that a player may put counters on one of those objects, that player can\u2019t choose to do so.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity doesn\u2019t remove any counters players or permanents already have.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity stops counters from being put on an artifact, creature, enchantment, or land as it enters the battlefield, as well as stopping counters from being put on them later.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While resolving a cumulative upkeep trigger of a permanent, you\u2019ll fail to put a counter on that permanent, then you may pay for the age counters already on it. If it has no age counters on it, you may pay {0}.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "f1072af9-9e6f-45ce-8c4b-8e678e7da8ce",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "f1072af9-9e6f-45ce-8c4b-8e678e7da8ce",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "f1072af9-9e6f-45ce-8c4b-8e678e7da8ce",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "f1072af9-9e6f-45ce-8c4b-8e678e7da8ce",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "f1072af9-9e6f-45ce-8c4b-8e678e7da8ce",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "f1072af9-9e6f-45ce-8c4b-8e678e7da8ce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent pays tribute, the creature will enter the battlefield with the specified number of +1/+1 counters on it. It won\u2019t enter the battlefield and then have the +1/+1 counters placed on it.",
+      "oracle_id": "fa1a5797-3076-48a4-b64b-ce3dfe2a3e7b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability has a target, that target will not be known while the creature spell with tribute is on the stack.",
+      "oracle_id": "fa1a5797-3076-48a4-b64b-ce3dfe2a3e7b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can\u2019t respond to the tribute decision before the creature enters the battlefield. That is, if the opponent doesn\u2019t pay tribute, the triggered ability will trigger before any player has a chance to remove the creature.",
+      "oracle_id": "fa1a5797-3076-48a4-b64b-ce3dfe2a3e7b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The choice of whether to pay tribute is made as the creature with tribute is entering the battlefield. At that point, it\u2019s too late to respond to the creature spell. For example, in a multiplayer game, opponents won\u2019t know whether tribute will be paid or which opponent will be chosen to pay tribute or not when deciding whether to counter the creature spell.",
+      "oracle_id": "fa1a5797-3076-48a4-b64b-ce3dfe2a3e7b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability will resolve even if the creature with tribute isn\u2019t on the battlefield at that time.",
+      "oracle_id": "fa1a5797-3076-48a4-b64b-ce3dfe2a3e7b",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check which player put counters on the entering creature, the player chosen to pay tribute puts those counters on it, not the creature\u2019s controller.",
+      "oracle_id": "fa1a5797-3076-48a4-b64b-ce3dfe2a3e7b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

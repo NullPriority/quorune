@@ -59,6 +59,12 @@ def replacement_tree_choice(
     def visit(
         current: ReplaceableEvent, path: tuple[int, ...]
     ) -> ReplacementTreeChoice | None:
+        from .tribute import pending_tribute_entry_choice
+        for index,child in enumerate(current.children):
+            if pending_tribute_entry_choice(child):
+                choice=replacement_choice(child,all_effects)
+                if choice is not None:
+                    return ReplacementTreeChoice(path=(*path,index),choice=choice)
         from .entry_counter_ordering import entry_counter_order_effects
         choice = replacement_choice(current, entry_counter_order_effects(current, all_effects))
         if choice is not None:
@@ -123,6 +129,7 @@ def next_batch_replacement_choice(
     batch: ReplacementEventBatch,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementBatchChoice | None:
+    from .tribute import pending_tribute_entry_choice
     all_effects = canonical_effects(effects)
     shield_effect_ids = {
         effect.effect_id
@@ -161,6 +168,7 @@ def next_batch_replacement_choice(
     chooser_index, event_id, event_index, pending = min(
         candidates,
         key=lambda value: (
+            not pending_tribute_entry_choice(value[3].choice.event),
             value[0],
             value[1],
             value[3].path,

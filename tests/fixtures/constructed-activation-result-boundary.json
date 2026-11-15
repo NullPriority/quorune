@@ -1,0 +1,23 @@
+{
+  "cards": [
+    {
+      "cmc": 1,
+      "color_identity": ["W"],
+      "colors": ["W"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "mana_cost": "{W}",
+      "name": "Constructed Unrepresented Activation",
+      "oracle_id": "fixture:constructed-unrepresented-activation",
+      "oracle_text": "{W}: Perform an unrepresented temporal rewrite.",
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "type_line": "Artifact"
+    }
+  ],
+  "fixture_kind": "constructed_rules_boundary",
+  "rulings": [],
+  "schema_version": 1,
+  "source": "Constructed fixed-price unknown-result control for result authority; not an Oracle original"
+}

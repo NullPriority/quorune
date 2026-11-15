@@ -16,6 +16,10 @@ from .static_runtime_nodes import runtime_handler_node
 
 def conditional_self_flash_nodes(*, node_id, line, material_line, span, source_name,
         capability_registry, capability_profile, residuals):
+    from .surcharge_flash_nodes import surcharge_flash_node
+    paid=surcharge_flash_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if paid is not None:return (paid,)
     text=re.sub(r'\s+\([^()]*\)\.?$','',material_line.strip()).rstrip('.')
     text=re.sub(r"^[A-Za-z][A-Za-z' ]{0,80} — ",'',text)
     patterns=(

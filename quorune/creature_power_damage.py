@@ -301,6 +301,7 @@ def _instruction(
         "_runtime_source",
         'schema_version',
         'power_multiplier',
+        'recipient_is_original_source',
     }
     required = {
         "op",
@@ -313,6 +314,8 @@ def _instruction(
         raise CreaturePowerDamageError("Creature-power damage shape is invalid")
     if effect.get("op") != CREATURE_POWER_DAMAGE_OPERATION:
         raise CreaturePowerDamageError("Creature-power damage operation is invalid")
+    if ('recipient_is_original_source' in effect) != (effect.get('schema_version') == 4):
+        raise CreaturePowerDamageError('Original-source recipient requires its explicit version')
     kind = effect.get("kind")
     if kind not in {"bite", "fight"}:
         raise CreaturePowerDamageError("Creature-power damage kind is invalid")
@@ -349,6 +352,13 @@ def resolve_creature_power_damage(
     kind, source_ref, target_ref, must_be_creature, multiplier = _instruction(effect)
     if source_ref is None or target_ref is None:
         return ()
+    if effect.get('schema_version') == 4:
+        from .reciprocal_power_damage import original_source_recipient_matches
+        try:
+            if not original_source_recipient_matches(host, effect):
+                return ()
+        except ValueError as exc:
+            raise CreaturePowerDamageError(str(exc)) from exc
     if kind == "fight":
         current_source = _current_creature(host, source_ref)
         if current_source is None:

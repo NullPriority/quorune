@@ -61,7 +61,7 @@ def bargain_entry_trigger_node(*, bargain_spec, node_id, line, material_line, sp
     match = re.fullmatch(r'When (?P<source>.+?) enters, if it was bargained, (?P<body>.+)', material_line.strip(), re.I)
     if match is None or not (source_self_permanent_type(match['source']) is not None or SourceReferenceSpec(card_name).matches(match['source'])):return None
     body = match['body']
-    if re.match(r'it (?:deals|gets|gains) ', body, re.I):body = card_name + body[2:]
+    if re.match(r'it (?:deals|gets|gains|fights) ', body, re.I):body = card_name + body[2:]
     template, effects, schema, result_ids = effect_template(body, card_name=card_name)
     if template is None:return None
     mechanics = ('cr-603-handling-triggered-abilities', 'fixed-typed-event-effect-trigger', DECLARED_CAST_COST_MECHANIC, *result_ids)

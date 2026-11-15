@@ -26,7 +26,8 @@ from .attached_granted_ability_nodes import (
 )
 from .activated_mana_nodes import _activated_effect_material
 from .activation_x_costs import announced_x_activation_cost, announced_x_activation_effect
-from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY, activation_x_symbols
+from ..activation_x import activation_x_capabilities, activation_x_symbols
+from ..activation_x_discard import activation_x_discard_count, validate_activation_x_discard
 from .fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
@@ -35,6 +36,7 @@ from .direct_target import (
     DIRECT_NONCREATURE_SUBTYPES,
     DirectPermanentTargetSpec,
     direct_permanent_target_spec,
+    _nontoken_subject_body, _closed_direct_characteristic_fields, _validate_direct_target_flags,
 )
 from .fixed_target_effect_sequences import (
     FIXED_TARGET_CHARACTERISTIC_KEYWORDS,
@@ -495,6 +497,20 @@ def grammar_source_fingerprint() -> str:
     from .independent_target_rows import independent_target_source_rows
     from .oracle_source_text import material_source_lines
     from .exert_nodes import exert_attack_nodes
+    from .awaken_spell_faces import awaken_resolution_body,compile_fixed_awaken_face
+    from ..awaken_model import FixedManaAwakenSpec
+    from ..rules.awaken_shapes import ordinary_awaken_body,awaken_node_capabilities,awaken_result_effects
+    from ..resolution_characteristic_model import IndefiniteTargetLandAnimationSpec
+    from ..target_clause_binding import scope_clause_target,scope_clause_effect,clause_target_roles_are_exact
+    from .mana_value_destruction import mana_value_destruction_template
+    from .destruction_templates import _singular_set_subject
+    from .declared_effect_amounts import _result_slot
+    from ..mana_value_filter import ManaValueFilter
+    from .target_set_result_sequences import target_set_result_sequence_template,_characteristic_prefix_sequence
+    from ..rules.target_set_result_sequences import target_set_result_sequence_capabilities,_characteristic_tail_capabilities
+    from .prevention_templates import _all_combat_damage
+    from ..rules.target_controller_prevention import (player_target_schema,targeted_controller_prevention_effect,
+        bound_prevention_player,targeted_controller_prevention_dependencies,targeted_controller_prevention_capabilities)
     values: Iterable[Any] = (
         FixedTargetCharacteristicsTemplate.__post_init__,
         FixedTargetCharacteristicsTemplate.compiled,
@@ -503,6 +519,7 @@ def grammar_source_fingerprint() -> str:
         DirectPermanentTargetSpec.from_target_schema,
         DirectPermanentTargetSpec.to_target_schema,
         direct_permanent_target_spec,
+        _nontoken_subject_body, _closed_direct_characteristic_fields, _validate_direct_target_flags,
         fixed_target_characteristics_effect_template,
         fixed_target_effect_sequence_template,
         fixed_target_characteristics_node_capabilities,
@@ -511,6 +528,16 @@ def grammar_source_fingerprint() -> str:
         rejected_target_effect_contracts,
         _without_parenthetical_reminder,
         cleave_bodies,
+        awaken_resolution_body,compile_fixed_awaken_face,ordinary_awaken_body,awaken_node_capabilities,
+        awaken_result_effects,FixedManaAwakenSpec.__post_init__,FixedManaAwakenSpec.from_dict,
+        IndefiniteTargetLandAnimationSpec.__post_init__,IndefiniteTargetLandAnimationSpec.from_dict,
+        scope_clause_target,scope_clause_effect,clause_target_roles_are_exact,
+        mana_value_destruction_template,_singular_set_subject,_result_slot,
+        ManaValueFilter.__post_init__,ManaValueFilter.from_dict,ManaValueFilter.matches,
+        target_set_result_sequence_template,_characteristic_prefix_sequence,
+        target_set_result_sequence_capabilities,_characteristic_tail_capabilities,
+        _all_combat_damage,player_target_schema,targeted_controller_prevention_effect,bound_prevention_player,
+        targeted_controller_prevention_dependencies,targeted_controller_prevention_capabilities,
         spell_body_fingerprint,
         variant_spec,
         _paired_spell_resolution_body,
@@ -526,6 +553,8 @@ def grammar_source_fingerprint() -> str:
         announced_x_activation_cost,
         announced_x_activation_effect,
         activation_x_symbols,
+        activation_x_capabilities,
+        activation_x_discard_count, validate_activation_x_discard,
         _required_capabilities,
         _composing_event_capabilities,
         _direct_player_attack_composition_capabilities,
@@ -577,6 +606,10 @@ def _paired_spell_resolution_body(record: CardRecord, node: OracleNode) -> str |
             or node.text != record.oracle_text or node.span.start != 0 or node.span.end != len(node.text)):
         raise TargetEffectAssuranceError('Paid spell audit requires one complete printed source')
     kind = kinds[0]
+    if kind is SpellTextVariantKind.AWAKEN:
+        from .awaken_spell_faces import awaken_resolution_body
+        try:return awaken_resolution_body(record,node)
+        except (KeyError,TypeError,ValueError) as exc:raise TargetEffectAssuranceError(str(exc)) from exc
     roles = set(node.runtime_coverage).intersection({kind.normal_role, kind.paid_role})
     paid = roles == {kind.paid_role}
     if (kind.boundary not in node.runtime_coverage or roles not in ({kind.normal_role}, {kind.paid_role})
@@ -605,7 +638,7 @@ def _paired_spell_resolution_body(record: CardRecord, node: OracleNode) -> str |
         body = bodies[int(paid)]
     elif paid:
         body = re.sub(r'\btarget\b', 'each', body, flags=re.I)
-    expected = (spec.overloaded_fingerprint if kind is SpellTextVariantKind.OVERLOAD else spec.cleaved_fingerprint) if paid else spec.normal_fingerprint
+    expected = getattr(spec,kind.paid_fingerprint_field) if paid else spec.normal_fingerprint
     if spell_body_fingerprint(node.effects, node.target_schema) != expected:
         raise TargetEffectAssuranceError('Paid spell audit lost its declared body fingerprint')
     return body
@@ -718,19 +751,20 @@ def _compiled_source_template(body, *, record, node, face_index, face_name):
     """Recover declared activation X from its complete printed cost owner."""
     compiled = _compiled_template(body, card_name=face_name or record.name)
     if node.kind != "activated_ability":
-        return compiled, None
+        return compiled, ()
     abilities = parse_activated_abilities(card_name=face_name or record.name,
         oracle_text=_without_parenthetical_reminder(node.text),
         keywords=_face_keywords(record, face_index))
     if len(abilities) != 1:
-        return compiled, None
+        return compiled, ()
     ability = announced_x_activation_cost(abilities[0])
     if ability.announced_x_symbols is None:
-        return compiled, None
+        return compiled, ()
     declared = announced_x_activation_effect(ability, source_name=face_name or record.name,
         text=body, compile_fixed=lambda text: _compiled_template(text, card_name=face_name or record.name)
         or (None, (), None, ()))
-    return declared or compiled, ANNOUNCED_ACTIVATION_X_CAPABILITY
+    return declared or compiled, activation_x_capabilities(symbols=ability.announced_x_symbols,
+        sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices))
 
 
 def _clause_count(body: str, template_id: str) -> int:
@@ -907,7 +941,7 @@ def _observation(
     face_name: str,
     body: str,
 ) -> TargetEffectObservation:
-    compiled, cost_capability = _compiled_source_template(body, record=record, node=node,
+    compiled, cost_capabilities = _compiled_source_template(body, record=record, node=node,
         face_index=face_index, face_name=face_name)
     if compiled is None or (
         compiled[0] != node.template_id
@@ -941,8 +975,7 @@ def _observation(
             "promoted target-effect node is outside the closed capability shape: "
             f"{record.oracle_id}:{face_id}:{node.node_id}"
         )
-    if cost_capability is not None:
-        required = tuple(sorted({*required, cost_capability}))
+    required = tuple(sorted({*required, *cost_capabilities}))
     required = tuple(sorted({*required, *_composing_event_capabilities(node,record=record,
         face_id=face_id,face_index=face_index,face_name=face_name)}))
     missing = sorted(set(required) - set(node.capability_dependencies))

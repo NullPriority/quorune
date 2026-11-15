@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 from common import DB_PATH, keep_all, load_assets, make_session
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.oracle_ir import (
     compile_oracle_card,
     register_generated_programs,
@@ -338,6 +338,89 @@ class ActivatedDrawCompilerTests(unittest.TestCase):
         )
         self.assertEqual("trusted", sequence_program.trust_level)
         self.assertFalse(sequence_program.requires_arbiter)
+
+
+class PairedOpponentDrawCompilerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.capabilities = load_default_capability_registry()
+
+    def compile(self, text, *, type_line="Sorcery"):
+        record = CardRecord(
+            oracle_id="fixture:paired-opponent-draw", name="Paired Draw Fixture",
+            mana_cost="{2}{W}", mana_value=3, type_line=type_line,
+            oracle_text=text, power="1" if "Creature" in type_line else None,
+            toughness="1" if "Creature" in type_line else None, loyalty=None,
+            defense=None, colors=("W",), color_identity=("W",), keywords=(),
+            produced_mana=(), layout="normal", released_at="2026-01-01",
+            legalities={"commander": "legal"}, faces=(), raw={},
+        )
+        return compile_oracle_card(record, capability_registry=self.capabilities,
+            capability_profile="commander_review")
+
+    def test_one_target_and_both_recipients_survive_spell_trigger_and_activation(self):
+        body = "You and target opponent each draw three cards."
+        for text, kind in (
+            (body, "Sorcery"),
+            ("{T}: " + body, "Artifact"),
+            ("When this creature enters, " + body.lower(), "Creature"),
+        ):
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=kind)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("draw-controller-and-target-opponent-v1", node.template_id)
+                self.assertEqual(text, text[node.span.start:node.span.end])
+                self.assertEqual(["$controller", "$target.0"], node.effects[0]["players"])
+                self.assertEqual("draw_each_player", node.effects[0]["op"])
+                self.assertEqual(3, node.effects[0]["count"])
+                self.assertEqual("opponent", node.target_schema["player_relation"])
+                self.assertEqual(1, node.target_schema["count"])
+                self.assertTrue({DRAW_CAPABILITY, "target.revalidate_resolution"}
+                    <= set(node.capability_dependencies))
+
+    def test_paired_draw_shape_does_not_admit_arbitrary_players_or_target_permissions(self):
+        from quorune.compiler.draw_templates import fixed_draw_effect_template
+        _, effects, schema, mechanics = fixed_draw_effect_template(
+            "You and target opponent each draw two cards.")
+
+        def capabilities(effect=effects[0], target=schema, rules=mechanics):
+            return fixed_draw_node_capabilities(effects=(effect,),
+                target_schema=target, mechanic_ids=rules)
+
+        self.assertEqual(("target.revalidate_resolution", DRAW_CAPABILITY), capabilities())
+        for fields in (
+            {"players": "$targets"}, {"players": []},
+            {"players": ["$controller", "$controller"]},
+            {"players": ["$controller", "$target.0", "$target.1"]},
+            {"players": ["$target.0", "$controller"]},
+            {"count": True}, {"count": 0}, {"count": -1},
+            {"count": "2"}, {"private": False}, {"scope": "each_player"},
+        ):
+            with self.subTest(effect=fields):
+                self.assertEqual((), capabilities(effect={**effects[0], **fields}))
+        for target in (None, {}, {**schema, "player_relation": "any"},
+            {**schema, "count": 2}, {**schema, "count": True}, {**schema, "optional": True}):
+            with self.subTest(target=target):
+                self.assertEqual((), capabilities(target=target))
+        self.assertEqual((), capabilities(rules=("cr-121-drawing-a-card",)))
+        self.assertEqual((), capabilities(rules=("cr-115-targets",)))
+
+    def test_paired_draw_leaf_rejects_open_or_different_recipient_grammar(self):
+        from quorune.compiler.draw_templates import fixed_draw_effect_template
+        for text in (
+            "You and target player each draw a card.",
+            "You and each opponent draw a card.",
+            "You and target opponent each draw X cards.",
+            "You and target opponent may each draw two cards.",
+            "You and target opponent each draw two cards, then discard a card.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_draw_effect_template(text))
+        for count, expected in (("a", 1), ("two", 2), ("5", 5)):
+            template = fixed_draw_effect_template(
+                f"You and target opponent each draw {count} cards.")
+            self.assertEqual(expected, template[1][0]["count"])
 
 
 class ActivatedDrawRuntimeTests(unittest.TestCase):

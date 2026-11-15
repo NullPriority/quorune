@@ -55,6 +55,15 @@ def paid_variant_program(host, normal, spec, kind):
     return paid
 
 
+def all_fixed_variant_cost_options(host,seat,card,program,**options):
+    result=[]
+    for kind in SpellTextVariantKind:
+        values=fixed_variant_cost_options(host,seat,card,program,kind=kind,**options)
+        if values is None:return None
+        result.extend(values)
+    return result
+
+
 def fixed_variant_cost_options(host, seat, card, program, *, kind, commander_tax,
         force_without_mana_cost, alternative_base, suppress_source_costs):
     try:
@@ -93,6 +102,13 @@ def select_variant_program(host, card, program, option, kind):
     if spec.to_dict() != normal.cost_schema[kind.value]:
         raise ValueError('The paid text choice no longer matches its source declaration')
     return paid_variant_program(host, normal, spec, kind)
+
+
+def validate_text_variant_commit(host,card,program,option):
+    from .model import CastProposalError
+    for kind in SpellTextVariantKind:
+        try:validate_variant_commit(host,card,program,option,kind)
+        except ValueError as exc:raise CastProposalError(str(exc),reason='stale_'+kind.value+'_variant') from exc
 
 
 def validate_variant_commit(host, card, program, option, kind):

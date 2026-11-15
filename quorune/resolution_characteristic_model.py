@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed values for one fixed multi-layer resolution characteristic result."""
 
 from dataclasses import dataclass, replace
+import re
 from typing import Any, Mapping
 
 from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
@@ -36,6 +37,9 @@ INDEFINITE_ENCHANTMENT_FORM_CAPABILITY = "continuous.resolution.indefinite_encha
 TARGET_CARD_TYPE_ADDITION_VERSION = 20
 TARGET_CARD_TYPE_ADDITION_MECHANIC = "fixed-target-card-type-addition"
 TARGET_CARD_TYPE_ADDITION_CAPABILITY = "continuous.resolution.fixed_target_card_type_addition"
+INDEFINITE_TARGET_LAND_ANIMATION_VERSION = 21
+INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC = "indefinite-target-land-animation"
+INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_target_land_animation"
 INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS = frozenset({
     INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_ENCHANTMENT_FORM_VERSION,
 })
@@ -44,6 +48,7 @@ RECIPIENT_MANA_VALUE = "recipient_mana_value"
 FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, TARGET_CARD_TYPE_ADDITION_VERSION,
+    INDEFINITE_TARGET_LAND_ANIMATION_VERSION,
     *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
@@ -232,6 +237,36 @@ class IndefiniteSourceAnimationSpec:
         return self.settings.layer_operations(granted_abilities=(
             ContinuousOperation("add_ability_fragment", ability_fragment_to_dict(protection)),
         ))
+
+
+@dataclass(frozen=True, slots=True)
+class IndefiniteTargetLandAnimationSpec:
+    """One resolution-bound land creature form that retains every prior type."""
+
+    settings: FixedResolutionCharacteristicsSpec
+    duration = ContinuousEffectDuration.ZONE_OBJECT
+
+    def __post_init__(self):
+        value=self.settings
+        if (not isinstance(value,FixedResolutionCharacteristicsSpec) or value.card_types!=("Creature",)
+                or not value.creature_subtypes or not value.retain_types or not value.retain_creature_subtypes
+                or value.remove_all_abilities or value.colors is not None):
+            raise ValueError('Indefinite target land animation requires a retaining creature form')
+
+    def to_dict(self):return {'settings':self.settings.to_dict()}
+
+    @classmethod
+    def from_dict(cls,value):
+        if not isinstance(value,Mapping) or set(value)!={'settings'}:
+            raise ValueError('Indefinite target land animation fields are closed')
+        return cls(FixedResolutionCharacteristicsSpec.from_dict(value['settings']))
+
+    @property
+    def capability_dependencies(self):
+        return tuple(sorted({INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY,'target.revalidate_resolution',
+            *(cap for keyword in self.settings.keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
+
+    def layer_operations(self):return self.settings.layer_operations()
 
 
 class IndefiniteEnchantmentFormSpec:
@@ -447,11 +482,19 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value.get("schema_version")
+    if type(version) is int and version == INDEFINITE_TARGET_LAND_ANIMATION_VERSION:
+        if value.get('op')!=CHARACTERISTIC_OPERATION or set(value)!=expected|{'card'}:
+            raise ValueError('Indefinite target land animation requires one closed instruction')
+        card=value['card']
+        if (type(card)is not str or not card or (card.startswith('$') if resolved else
+                re.fullmatch(r'\$target(?:\.[0-9]+|_group\.[A-Za-z0-9_:-]+\.[0-9]+)',card) is None)):
+            raise ValueError('Indefinite target land animation requires its bound target')
+        return IndefiniteTargetLandAnimationSpec.from_dict(value['characteristics']),card
     if type(version) is int and version == TARGET_CARD_TYPE_ADDITION_VERSION:
         if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
             raise ValueError("Target card type addition requires one closed instruction")

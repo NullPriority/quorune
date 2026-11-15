@@ -97,6 +97,11 @@ def refresh_entry_counter_permissions(event, payload, children):
     permissions = CounterPermissionSnapshot.from_dict(thaw_value(stored))
     excluded = event.entry_scope.reserved_zone_changes if event.entry_scope is not None else ()
     for index, child in enumerate(children):
+        if child.children:
+            nested=list(child.children)
+            refresh_entry_counter_permissions(event,payload,nested)
+            child=replace(child,children=tuple(nested))
+            children[index]=child
         if child.kind == 'counter.place' and child.payload.get('follows_zone_destination') is True:
             facts = thaw_value(child.payload)
             facts['target_zone'] = payload.get('destination')

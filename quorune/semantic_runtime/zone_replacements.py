@@ -66,6 +66,7 @@ from .self_entry_counters import (
 from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
 from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler, KeywordCounterEntryChoiceHandler
+from .tribute import TributeEntryHandler
 from .entry_designations import EntryDesignationHandler, LimitedCreatureTypeEntryDesignationHandler
 from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_handler, entry_copy_replacement_effects
@@ -490,6 +491,7 @@ def default_zone_change_replacement_registry(
             PreparationEntryHandler(),
             ReadAheadEntryChoiceHandler(),
             RiotEntryChoiceHandler(),
+            TributeEntryHandler(),
             KeywordCounterEntryChoiceHandler(),
             FixedKickedEntryHandler(),
             MultikickerEntryHandler(),
@@ -843,6 +845,7 @@ def _zone_change_snapshot_subjects(
             )
             subjects.append(
                 ZoneChangeSubjectSnapshot(
+                    active_players=tuple(host.active_seats),
                     object_id=card.object_id,
                     prospective_subject=card.object_id in prospective_objects and card.object_id not in host.state.cards,
                     object_ref=card.ref,

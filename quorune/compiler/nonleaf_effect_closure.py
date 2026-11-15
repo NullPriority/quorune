@@ -54,10 +54,9 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     if closed_random_discard_spell_result(program,recognizers=recognizers):return True
     from .waterbend_costs import closed_waterbend_spell_result
     if closed_waterbend_spell_result(program,recognizers=recognizers):return True
-    from ..rules.cleave_shapes import fixed_cleave_program_is_closed
-    if fixed_cleave_program_is_closed(program):return True
-    from ..rules.overload_shapes import fixed_overload_program_is_closed
-    if fixed_overload_program_is_closed(program):return True
+    from ..rules.spell_text_variant_shapes import fixed_variant_program_is_closed
+    from ..spell_text_variants import SpellTextVariantKind
+    if any(fixed_variant_program_is_closed(program,kind) for kind in SpellTextVariantKind):return True
     from ..rules.stack_spell_copy_shapes import fixed_stack_spell_copy_program_is_closed
     if fixed_stack_spell_copy_program_is_closed(program):return True
     from ..face_up_effect_model import face_up_node_capabilities
@@ -81,6 +80,7 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     from ..rules.affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
     from ..rules.fractional_player_result_shapes import half_life_node_capabilities, half_choice_node_capabilities
     from ..rules.prepared_creature_power_damage_shapes import prepared_creature_power_damage_capabilities
+    from ..rules.conditional_target_preparation import conditional_prepared_power_capabilities
     conditional = resolution_condition_node_capabilities(
         effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage, cost_schema=program.cost_schema,
     )
@@ -88,7 +88,7 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
         return True
     for resolver in (fixed_self_return_node_capabilities,random_discard_node_capabilities,linked_exile_return_node_capabilities,
                      fixed_affected_player_sacrifice_node_capabilities, half_life_node_capabilities, half_choice_node_capabilities,
-                     prepared_creature_power_damage_capabilities):
+                     prepared_creature_power_damage_capabilities, conditional_prepared_power_capabilities):
         required=resolver(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
         if required and set(required).issubset(program.capability_dependencies):return True
     return False

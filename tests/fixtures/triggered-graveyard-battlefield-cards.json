@@ -1,0 +1,1100 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Landfall",
+        "Flying",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Akoum Firebird",
+      "oracle_id": "10ab3102-43a3-4c60-8641-2c5a7c1e29c2",
+      "oracle_text": "Flying, haste\nThis creature attacks each combat if able.\nLandfall \u2014 Whenever a land you control enters, you may pay {4}{R}{R}. If you do, return this card from your graveyard to the battlefield.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2015-10-02",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Phoenix"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Bladewing's Thrall",
+      "oracle_id": "f068a0f3-48bc-4d5d-be79-c23c0be11c27",
+      "oracle_text": "This creature has flying as long as you control a Dragon.\nWhen a Dragon enters, you may return this card from your graveyard to the battlefield.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Zombie"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Landfall"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Bloodghast",
+      "oracle_id": "e97f9c2b-b41e-4f36-9245-77c0ac125647",
+      "oracle_text": "This creature can't block.\nThis creature has haste as long as an opponent has 10 or less life.\nLandfall \u2014 Whenever a land you control enters, you may return this card from your graveyard to the battlefield.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Vampire Spirit"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Craw Wurm",
+      "oracle_id": "6a462a69-3e42-41de-a3aa-a488d9f38d69",
+      "oracle_text": "",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2009-07-17",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Wurm"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Ferocious",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Flamewake Phoenix",
+      "oracle_id": "9e43805d-3576-47d4-9331-524869ab99d0",
+      "oracle_text": "Flying, haste\nThis creature attacks each combat if able.\nFerocious \u2014 At the beginning of combat on your turn, if you control a creature with power 4 or greater, you may pay {R}. If you do, return this card from your graveyard to the battlefield.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Phoenix"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Forest"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Forsaken Miner",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "oracle_text": "This creature can't block.\nWhenever you commit a crime, you may pay {B}. If you do, return this card from your graveyard to the battlefield. (Targeting opponents, anything they control, and/or cards in their graveyards is a crime.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Skeleton Rogue"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Island"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}",
+      "name": "Jaya's Phoenix",
+      "oracle_id": "c6a67820-5066-462f-a621-1ecab8bf4f97",
+      "oracle_text": "Flying, haste\nWhenever this creature deals combat damage to a player or planeswalker, copy the next loyalty ability you activate this turn when you activate it. You may choose new targets for the copy.\nWhenever you cast a planeswalker spell, you may return this card from your graveyard to the battlefield.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Phoenix"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Mountain"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Nether Traitor",
+      "oracle_id": "6f16c3ac-a9b8-47e6-b18b-ae37c74d44a0",
+      "oracle_text": "Haste\nShadow (This creature can block or be blocked by only creatures with shadow.)\nWhenever another creature is put into your graveyard from the battlefield, you may pay {B}. If you do, return this card from your graveyard to the battlefield.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Spirit"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Curse of the Walking Pox",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Poxwalkers",
+      "oracle_id": "e4275202-4960-4cde-b941-27be8163ad6e",
+      "oracle_text": "Deathtouch\nCurse of the Walking Pox \u2014 Whenever you cast a spell from anywhere other than your hand, return this card from your graveyard to the battlefield tapped.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-10-07",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Zombie"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Revitalize",
+      "oracle_id": "b1385b03-cb4b-4812-857f-7421f1df39af",
+      "oracle_text": "You gain 3 life.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-02-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Shivan Dragon",
+      "oracle_id": "711eea87-0fa3-46e0-a42b-fa5a86455f04",
+      "oracle_text": "Flying\n{R}: This creature gets +1/+0 until end of turn.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "5",
+      "type_line": "Creature \u2014 Dragon"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Silversmote Ghoul",
+      "oracle_id": "67d55b4f-944e-4376-93ed-1a240bca1eae",
+      "oracle_text": "At the beginning of your end step, if you gained 3 or more life this turn, return this card from your graveyard to the battlefield tapped.\n{1}{B}, Sacrifice this creature: Draw a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2021-04-23",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Zombie Vampire"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Think Twice",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "oracle_text": "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Vanguard of the Restless",
+      "oracle_id": "5564c782-be40-49fc-abc0-6cdcbaaa575a",
+      "oracle_text": "Flying\nSpirits you control get +1/+1 for each time you've cast your commander from the command zone this game.\nWhenever a Spirit you control enters, you may pay {2}{W}. If you do, return this card from your graveyard to the battlefield.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Spirit Knight"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If, during its controller's declare attackers step, Akoum Firebird is tapped or is affected by a spell or ability that says it can't attack, then it doesn't attack. If there's a cost associated with having it attack, its controller isn't forced to pay that cost. If they don't, Akoum Firebird doesn't have to attack.",
+      "oracle_id": "10ab3102-43a3-4c60-8641-2c5a7c1e29c2",
+      "published_at": "2015-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can respond to the triggered ability, but once it starts resolving and you decide whether to pay {4}{R}{R}, it's too late for anyone to respond.",
+      "oracle_id": "10ab3102-43a3-4c60-8641-2c5a7c1e29c2",
+      "published_at": "2015-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The landfall ability triggers only if Akoum Firebird is in your graveyard at the moment the land enters the battlefield.",
+      "oracle_id": "10ab3102-43a3-4c60-8641-2c5a7c1e29c2",
+      "published_at": "2015-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "A landfall ability doesn't trigger if a permanent already on the battlefield becomes a land.",
+      "oracle_id": "10ab3102-43a3-4c60-8641-2c5a7c1e29c2",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A landfall ability triggers whenever a land you control enters for any reason. It triggers whenever you play a land, as well as whenever a spell or ability puts a land onto the battlefield under your control.",
+      "oracle_id": "10ab3102-43a3-4c60-8641-2c5a7c1e29c2",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whenever a land you control enters, each landfall ability of the permanents you control will trigger. You can put them \u00a0\u00a0on the stack in any order. The last ability you put on the stack will be the first one to resolve (As a result, you can have those abilities resolve in the order of your choosing.).",
+      "oracle_id": "10ab3102-43a3-4c60-8641-2c5a7c1e29c2",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have more than one commander (probably because of a partner ability), Vanguard of the Restless's second ability counts the total number of times you've cast each of your commanders from the command zone.",
+      "oracle_id": "5564c782-be40-49fc-abc0-6cdcbaaa575a",
+      "published_at": "2026-03-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vanguard of the Restless's second ability counts each time you've cast your commander from the command zone, even the times it was countered or when your commander spell is still on the stack.",
+      "oracle_id": "5564c782-be40-49fc-abc0-6cdcbaaa575a",
+      "published_at": "2026-03-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Silversmote Ghoul isn't in your graveyard as your end step begins, its first ability won't trigger at all.",
+      "oracle_id": "67d55b4f-944e-4376-93ed-1a240bca1eae",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you haven't gained 3 life by the time your end step begins, Silversmote Ghoul's first ability won't trigger at all.",
+      "oracle_id": "67d55b4f-944e-4376-93ed-1a240bca1eae",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Silversmote Ghoul's first ability looks at how much life you've gained in the turn, even if it wasn't on the battlefield or in your graveyard when you gained life. It doesn't care if you also lost life, even if you lost more life than you gained.",
+      "oracle_id": "67d55b4f-944e-4376-93ed-1a240bca1eae",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "A token you own that dies is put into your graveyard before it ceases to exist.",
+      "oracle_id": "6f16c3ac-a9b8-47e6-b18b-ae37c74d44a0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Nether Traitor and another creature are put into your graveyard at the same time, Nether Traitor's ability won't trigger. This is because it must be in your graveyard before the creature dies in order for its ability that returns it to the battlefield to trigger.",
+      "oracle_id": "6f16c3ac-a9b8-47e6-b18b-ae37c74d44a0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "6f16c3ac-a9b8-47e6-b18b-ae37c74d44a0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple creatures are put into your graveyard at the same time, Nether Traitor's ability triggers for each of them. Once you return it to the battlefield, you may pay {B} for the other abilities as they resolve, but they'll have no effect if you do. Even if Nether Traitor returns to your graveyard, it's considered a new object and won't be returned.",
+      "oracle_id": "6f16c3ac-a9b8-47e6-b18b-ae37c74d44a0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Multiple instances of shadow on the same creature are redundant.",
+      "oracle_id": "6f16c3ac-a9b8-47e6-b18b-ae37c74d44a0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature has been blocked, that creature remains blocked and will deal and be dealt combat damage even if it gains or loses shadow or if the blocking creature gains or loses shadow.",
+      "oracle_id": "6f16c3ac-a9b8-47e6-b18b-ae37c74d44a0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Flamewake Phoenix's last ability will check at the start of your beginning of combat step to see if you control a creature with power 4 or greater. If you don't, the ability won't trigger at all. If it does trigger, the ability will check again as it tries to resolve. If you don't control a creature with power 4 or greater at that time, the ability won't resolve. You won't get a chance to pay {R}, and Flamewake Phoenix won't return to the battlefield.",
+      "oracle_id": "9e43805d-3576-47d4-9331-524869ab99d0",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Flamewake Phoenix can't attack for any reason (such as being tapped), then it doesn't attack. If there's a cost associated with having it attack, you're not forced to pay that cost, so it doesn't have to attack in that case either.",
+      "oracle_id": "9e43805d-3576-47d4-9331-524869ab99d0",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Copying a loyalty ability doesn't add or remove loyalty counters from any object.",
+      "oracle_id": "c6a67820-5066-462f-a621-1ecab8bf4f97",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the loyalty ability has -X in its cost, the copy uses the same value of X.",
+      "oracle_id": "c6a67820-5066-462f-a621-1ecab8bf4f97",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy of the loyalty ability resolves before the loyalty ability it's copying. It resolves even if that loyalty ability is countered.",
+      "oracle_id": "c6a67820-5066-462f-a621-1ecab8bf4f97",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player can commit only one crime per spell or ability they control. Targeting multiple opponents, permanents, spells, abilities, and/or cards with the same spell or ability doesn't constitute committing multiple crimes.",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player commits a crime as they cast a spell, activate an ability, or put a triggered ability on the stack that targets at least one opponent, at least one permanent, spell, or ability an opponent controls, and/or at least one card in an opponent's graveyard.",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Changing the target or targets of a spell or ability won't affect whether or not the controller of that spell or ability has committed a crime. Only the initial targets chosen for that spell or ability are used to determine whether or not its controller committed a crime.",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "For example, an ability that triggers when you cast a spell that targets an opponent will trigger at the same time as an ability that triggers whenever you commit a crime. Those abilities can be put on the stack in either order (if you control them both), and they'll both resolve before the spell that caused them to trigger.",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Forsaken Miner's last ability triggers only if Forsaken Miner is in your graveyard at the moment you cast a spell, activate an ability, or put a triggered ability on the stack with one or more targets that constitute a crime. For example, if you cast a sorcery spell that destroyed two target creatures and your targets were a creature controlled by an opponent and Forsaken Miner, Forsaken Miner's ability won't trigger. However, if you cast a spell with an additional cost of \"Sacrifice a creature\" and you sacrifice Forsaken Miner to pay that cost, Forsaken Miner's ability will trigger as long as you committed a crime with that spell.",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The spell or ability that constituted a crime doesn't have to have resolved yet or at all. As soon as you're finished casting the spell, activating the ability, or putting the triggered ability on the stack, you've committed a crime.",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose whether to pay {B} as the triggered ability is resolving. Once the ability starts resolving, it's too late for anyone to respond by removing Forsaken Miner from your graveyard to stop you from bringing it back.",
+      "oracle_id": "d37e0127-6f68-438e-8b9e-a71bb3c34733",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Bloodghast's landfall ability triggers only if it's already in your graveyard at the time a land enters under your control.",
+      "oracle_id": "e97f9c2b-b41e-4f36-9245-77c0ac125647",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A landfall ability doesn't trigger if a permanent already on the battlefield becomes a land.",
+      "oracle_id": "e97f9c2b-b41e-4f36-9245-77c0ac125647",
+      "published_at": "2025-07-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "A landfall ability triggers whenever a land you control enters for any reason. It triggers whenever you play a land, as well as whenever a spell or ability puts a land onto the battlefield under your control.",
+      "oracle_id": "e97f9c2b-b41e-4f36-9245-77c0ac125647",
+      "published_at": "2025-07-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whenever a land you control enters, each landfall ability of permanents you control will trigger. You can put them on the stack in any order. The last ability you put on the stack will be the first one to resolve. As a result, you can have those abilities resolve in the order of your choosing.",
+      "oracle_id": "e97f9c2b-b41e-4f36-9245-77c0ac125647",
+      "published_at": "2025-07-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The second ability of Bladewing's Thrall triggers even if a Dragon enters the battlefield under an opponent's control. The owner of Bladewing's Thrall, not the controller of that Dragon, will control Bladewing's Thrall.",
+      "oracle_id": "f068a0f3-48bc-4d5d-be79-c23c0be11c27",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -6,6 +6,25 @@ from .replacement.immutable import FrozenMap, thaw_value
 DISCARD_RESULT_OPERATION = 'discard_hands_then_draw'
 DISCARD_RESULT_CAPABILITY = 'zone.discard.whole_hand_result'
 DISCARD_RESULT_MECHANIC = 'whole-hand-discard-result'
+FIXED_SUBSET_DISCARD_DRAW_CAPABILITY = 'zone.discard.fixed_subset_draw'
+FIXED_SUBSET_DISCARD_DRAW_MECHANIC = 'fixed-subset-discard-draw'
+VARIABLE_SUBSET_DISCARD_DRAW_CAPABILITY = 'zone.discard.variable_subset_draw'
+VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC = 'variable-subset-discard-draw'
+
+
+def validate_fixed_subset_discard_draw(effect):
+    if (not isinstance(effect, Mapping) or set(effect)!={'op','schema_version','maximum'}
+            or effect['op']!='discard_draw_up_to' or type(effect['schema_version']) is not int
+            or effect['schema_version']!=2 or type(effect['maximum']) is not int or effect['maximum']<1):
+        raise ValueError('Fixed-subset discard/draw requires a closed schema-two positive bound')
+
+
+def validate_variable_subset_discard_draw(effect):
+    if (not isinstance(effect, Mapping) or set(effect)!={'op','schema_version','maximum','draw_offset'}
+            or effect['op']!='discard_draw_up_to' or type(effect['schema_version']) is not int
+            or effect['schema_version']!=3 or effect['maximum']!='hand_size'
+            or type(effect['draw_offset']) is not int or effect['draw_offset'] not in (0,1)):
+        raise ValueError('Variable-subset discard/draw requires a closed schema-three hand bound and offset')
 
 
 def validate_discard_draw(effect):

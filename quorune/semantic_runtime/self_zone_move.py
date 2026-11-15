@@ -94,11 +94,13 @@ class SelfZoneMoveEffectHandler:
     capability_dependencies: tuple[str, ...] = (SELF_ZONE_MOVE_CAPABILITY_ID,)
 
     def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
-        from ..rules.graveyard_self_return import GRAVEYARD_SELF_RETURN_VERSION,graveyard_self_return_dependencies
+        from ..rules.graveyard_self_return import GRAVEYARD_SELF_RETURN_VERSION,GRAVEYARD_SELF_ENTRY_VERSION,graveyard_self_return_dependencies
         try:graveyard_self_return_dependencies(effect)
         except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
         allowed = {"op", "origin", "destination", "tapped", "source_form", "_replacement_selections"}
         allowed.add(GRAVEYARD_SELF_RETURN_VERSION)
+        allowed.add(GRAVEYARD_SELF_ENTRY_VERSION)
+        allowed.add('_aura_target_ref')
         if set(effect) - allowed or not {"op", "origin", "destination", "tapped", "source_form"}.issubset(effect):
             raise SemanticNodeError("Self-zone-move effect has an invalid shape")
         if effect["op"] != self.operation:
@@ -121,6 +123,7 @@ class SelfZoneMoveEffectHandler:
                 tapped=effect["tapped"],
                 source_form=effect["source_form"],
                 replacement_selections=tuple(selections),
+                aura_target_ref=effect.get('_aura_target_ref'),
             )
         except SelfZoneMoveError as exc:
             raise SemanticNodeError(str(exc)) from exc

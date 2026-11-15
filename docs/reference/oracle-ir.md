@@ -10,6 +10,42 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+The compiler preserves the ownership boundary of optional and paid results.
+An optional discard followed by a printed if-paid draw can retain a mandatory
+discard instruction inside an optional result, including a successful-action
+turn limit. A payment or reflexive prefix remains attached to its complete
+child body; a damage-and-life conjunction is an independent sequence only
+when its first lowered operation is direct damage.
+
+`fixed-source-characteristic-tap-sequence-v1` binds a closed source
+characteristic clause and a tap or untap instruction to `$source.zone_object`.
+Runtime admission requires the ordered pair's leaf and keyword capabilities.
+Historical source and generic clause production identities retain their
+existing binding contract.
+
+`damage_fixed_set` can carry a version-one `fixed_target_controller_damage`
+descriptor with positive `target_amount` and `controller_amount`. Resolution
+binds one revalidated target and the ability controller to the existing typed
+per-recipient damage intent. Equal recipients combine before replacement.
+The descriptor has independent capability closure and cannot mix with group or
+announced-allocation encodings. Existing damage encodings retain their forms.
+
+Fixed predefined-token alternatives use `choose_option` with one canonical
+`create_token` instruction per branch. `fixed-token-definition-choice` requires
+its own capability together with every child definition dependency. Choice
+occurs during resolution and preserves the resolving controller after source
+departure. Ordinary single-token and simultaneous batch encodings are retained.
+Source-pinned reviewed trigger views retire only when complete branch definitions,
+chooser, targets and trigger contracts agree with the normally admitted current
+program. Presentation IDs and prompts may differ; result instructions may not.
+
+Mixed own-graveyard card targets serialize canonical
+`characteristic_forms_any` leaves under the ordinary graveyard-card target
+header. Each leaf constrains one known card type, subtype or supertype, and at
+least two such quality families are represented. Common owner, zone, count and
+mana-value constraints apply outside the disjunction. The mixed-form capability
+is required independently from ordinary return and target-revalidation owners.
+
 `oracle-ir-v680` accompanies the completed characteristic-query correctness
 transition. Existing type/color settings and conditional grant grammar remain
 unchanged. Runtime reads use the independent `characteristic_query_boundary_version`
@@ -253,6 +289,12 @@ caster relation, current origin/turn context, and only the represented public
 metric; it never retains Oracle prose as runtime authority. Unsupported target-
 relative, private, characteristic-cycle-sensitive, capped, or open-arithmetic
 forms remain source-spanned residuals.
+The closed `grant_next_spell_cost_reduction` instruction carries schema one,
+one public `spell_query` and an integer or independently typed `amount` producer.
+Its actor is the resolving controller. Public counts and current-or-last-known
+source stats resolve before the literal reduction enters the duration journal.
+The next eligible cast consumes that rule through the same cost provider used
+to advertise the action; the instruction does not grant a casting permission.
 Closed public trigger bindings serialize only a normalized event identity and
 typed predicates over sealed public facts. Current equipped relations,
 last-known attached-object death, prior controller, owner-relative graveyard
@@ -264,6 +306,35 @@ damage, token-entry, and graveyard-departure subscriptions use the same event
 and condition fields. Unsupported attachment, tap-state, first-time,
 once-per-turn, ambiguous, linked, chosen, or dynamic event forms remain
 residual.
+Fixed resolution payments retain their complete cost and if-paid clause before
+optional-result interpretation. A represented sacrifice, discard or mana cost
+with a paid source-counter result uses the existing typed payment and counter
+owners. A free optional counter remains a distinct effect. Source results retain
+their bound zone incarnation; an independent draw instruction still executes
+when the original source has left. Unsupported costs and result siblings remain
+material residuals.
+Fixed opponent draw instructions lower to the existing draw-each-player owner
+with a closed controller-relative recipient scope. A shared controller-and-
+opponents instruction additionally carries a positive fixed controller count;
+both counts execute in APNAP order rather than as separate player batches.
+The known standalone Saga reminder is nonexecuting with or without the final
+sacrifice sentence. A terminal source exile/return-transformed clause lowers to
+one linked pair with a closed schema-four spec and its own fine capability.
+The compiler still requires every other chapter and the back-face abilities to
+close independently; unsupported siblings keep the whole original unready.
+Fixed controller subset discards carry a schema-two `discard_draw_up_to`
+instruction and a positive `maximum`, under their own fine capability. The
+existing private choice and typed discard/draw owners execute it; canonical
+hand-reference ordering keeps pending choices stable across replay. Unknown
+quantities, recipient fields and result riders do not widen this shape.
+Any-number controller subset instructions use their own closed schema three,
+`hand_size` bound and zero-or-one `draw_offset`. The exact clause "It becomes
+day/night" carries a separate designation capability and delegates to the
+existing world owner; compound instructions still require every leaf to close.
+Fixed token characteristics retain their printed artifact/enchantment creature
+types independently from legendary. Supported intrinsic combat keywords carry
+matching typed fragments and their existing capability dependencies; omitted or
+mismatched instances do not produce a closed token definition.
 An exact same-zone two-event clause serializes its ordered subscriptions inside
 the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime

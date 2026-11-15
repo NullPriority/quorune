@@ -4,10 +4,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from collections.abc import Mapping
 
 
 DAY_NIGHT_CAPABILITY_ID = "card_form.day_night"
 DAY_NIGHT_MECHANIC_ID = "daybound-and-nightbound"
+DAY_NIGHT_DESIGNATION_OPERATION = "set_day_night"
+DAY_NIGHT_DESIGNATION_CAPABILITY = "game.day_night.fixed_designation"
+DAY_NIGHT_DESIGNATION_MECHANIC = "fixed-day-night-designation"
 DAYBOUND_TEMPLATE_ID = "daybound-static-v1"
 NIGHTBOUND_TEMPLATE_ID = "nightbound-static-v1"
 
@@ -27,6 +31,13 @@ class DayNightBoundMode(str, Enum):
 
 class DayNightError(ValueError):
     """A day/night descriptor, designation, or transition is malformed."""
+
+
+def validate_day_night_designation(effect):
+    if (not isinstance(effect, Mapping) or set(effect)!={'op','designation'}
+            or effect['op']!=DAY_NIGHT_DESIGNATION_OPERATION
+            or type(effect['designation']) is not str or effect['designation'] not in {'day','night'}):
+        raise DayNightError('Day/night instruction requires a closed designation enum')
 
 
 @dataclass(frozen=True, slots=True)

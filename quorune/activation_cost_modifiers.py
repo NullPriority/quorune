@@ -17,6 +17,7 @@ from .public_characteristic_aggregate_model import PublicCharacteristicAggregate
 from .target_cost_subject import TargetCostSubjectSpec
 from .power_up_model import reduce_power_up_requirements
 from .replacement.immutable import FrozenMap, thaw_value
+from .activation_target_values import TargetActivationReduction, TARGET_ACTIVATION_VALUE_CAPABILITY
 
 
 ACTIVATION_GENERIC_COST_CAPABILITY = 'activation.mana_cost.static_generic'
@@ -69,11 +70,56 @@ class ConditionalActivationReduction:
         return cls(value['generic'], FixedPublicStateConditionSpec.from_dict(value['condition']))
 
 
-AbilityLocalManaReduction = CharacteristicQuantitySpec | ConditionalActivationReduction | PublicCharacteristicAggregateSpec
+@dataclass(frozen=True, slots=True)
+class AbilityLocalPublicManaAdjustment:
+    """A closed public condition reduces mana, or hand size increases generic."""
+
+    mana: FrozenMap
+    direction: str
+    condition: FixedPublicStateConditionSpec | None = None
+    quantity: CharacteristicQuantitySpec | None = None
+
+    def __post_init__(self):
+        mana = reduce_power_up_requirements(self.mana, {})
+        if not any(mana.values()):
+            raise ValueError('Ability-local adjustment requires positive ordinary mana')
+        if self.direction == 'reduce':
+            if (self.quantity is not None or not isinstance(self.condition, FixedPublicStateConditionSpec)
+                    or self.condition.kind not in {
+                        FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_LEAST,
+                        FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_MOST,
+                        FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST}):
+                raise ValueError('Ability-local reduction requires a closed public hand or draw threshold')
+        elif self.direction == 'increase':
+            hand = CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+                query=ObjectQuerySpec(zones=('hand',)))
+            if self.condition is not None or self.quantity != hand or any(mana[key] for key in MANA_KEYS[1:]):
+                raise ValueError('Ability-local increase requires only generic mana per unqualified own hand card')
+        else:
+            raise ValueError('Ability-local adjustment direction is unsupported')
+        object.__setattr__(self, 'mana', mana)
+
+    def to_dict(self):
+        return {'schema_version': 2, 'mana': dict(self.mana), 'direction': self.direction,
+            'condition': self.condition.to_dict() if self.condition is not None else None,
+            'quantity': self.quantity.to_dict() if self.quantity is not None else None}
+
+    @classmethod
+    def from_dict(cls, value):
+        if (set(value) != {'schema_version', 'mana', 'direction', 'condition', 'quantity'}
+                or type(value['schema_version']) is not int or value['schema_version'] != 2):
+            raise ValueError('Ability-local public adjustment fields are incomplete or unknown')
+        return cls(FrozenMap(value['mana']), value['direction'],
+            FixedPublicStateConditionSpec.from_dict(value['condition']) if value['condition'] is not None else None,
+            CharacteristicQuantitySpec.from_dict(value['quantity']) if value['quantity'] is not None else None)
+
+
+AbilityLocalManaReduction = (CharacteristicQuantitySpec | ConditionalActivationReduction
+    | PublicCharacteristicAggregateSpec | AbilityLocalPublicManaAdjustment | TargetActivationReduction)
 
 
 def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -> None:
-    if isinstance(quantity, ConditionalActivationReduction):
+    if isinstance(quantity, (ConditionalActivationReduction, AbilityLocalPublicManaAdjustment, TargetActivationReduction)):
         return
     if isinstance(quantity, PublicCharacteristicAggregateSpec):
         if quantity.schema_version != 1 or quantity.controller_relation != 'source_controller':
@@ -95,7 +141,11 @@ def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -
 def ability_local_mana_reduction_from_dict(value: Mapping[str, Any]) -> AbilityLocalManaReduction:
     if not isinstance(value, Mapping):
         raise ValueError('Ability-local mana reduction must be a descriptor')
-    if 'condition' in value or 'generic' in value:
+    if 'target_metric' in value:
+        reduction = TargetActivationReduction.from_dict(value)
+    elif 'direction' in value or 'mana' in value:
+        reduction = AbilityLocalPublicManaAdjustment.from_dict(value)
+    elif 'condition' in value or 'generic' in value:
         reduction = ConditionalActivationReduction.from_dict(value)
     elif 'characteristic' in value:
         reduction = PublicCharacteristicAggregateSpec.from_dict(value)
@@ -111,6 +161,7 @@ def ability_local_reduction_origin_is_supported(zones, discard_source, reduction
 
 
 def ability_local_mana_reduction_capabilities(reduction: AbilityLocalManaReduction, zone: str) -> tuple[str, ...]:
+    if isinstance(reduction, TargetActivationReduction):return (TARGET_ACTIVATION_VALUE_CAPABILITY,)
     if isinstance(reduction, CharacteristicQuantitySpec) and zone == 'battlefield':
         return (ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,)
     raw = reduction.to_dict()

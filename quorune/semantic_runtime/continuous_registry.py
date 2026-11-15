@@ -11,6 +11,7 @@ from .continuous_components import (ContinuousEffectComponentRegistry, FixedPowe
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .station_symbols import StationSymbolsHandler
+    from .commander_keyword_grants import CommanderKeywordGrantHandler
     from .cipher import CipherEncodingGrantHandler
     from .conditional_flash import ConditionalFlashKeywordHandler
     from .negative_keyword_grants import DisjointNegativeKeywordGrantHandler
@@ -61,6 +62,7 @@ def default_continuous_effect_component_registry(
             FixedBasicTypeSettingHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
+            CommanderKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),
             FixedQueryProtectionGrantHandler(),
             FixedQueryCharacteristicProtectionGrantHandler(),

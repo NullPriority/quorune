@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .token_creation_intents import execute_token_creation_intent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
-from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent
+from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent
 from ..semantic_runtime.connive_intent import ConniveCompletedIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
 
@@ -145,7 +145,7 @@ from ..util import unique_preserving_order
 
 
 class SemanticChoiceIntentHostMixin:
-    def gain_control_intent(self, intent: GainControlIntent):
+    def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent):
         from ..control_effects import gain_control_of_refs, ControlEffectError
         try:
             return gain_control_of_refs(
@@ -158,10 +158,12 @@ class SemanticChoiceIntentHostMixin:
         except ControlEffectError as exc:
             raise GameRuleError(str(exc)) from exc
 
-    def gain_control_set_intent(self, intent: GainControlSetIntent):
-        from ..control_effects import execute_control_set, ControlEffectError
+    def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent | RestoreOwnerControlIntent):
+        from ..control_effects import execute_control_set,execute_recipient_control_set,execute_owner_control_restoration,ControlEffectError
         try:
-            return execute_control_set(self, intent)
+            if isinstance(intent,RestoreOwnerControlIntent):return execute_owner_control_restoration(self,intent)
+            if isinstance(intent,GiveControlSetIntent):return execute_recipient_control_set(self,intent)
+            return execute_control_set(self,intent)
         except ControlEffectError as exc:
             raise GameRuleError(str(exc)) from exc
 
@@ -267,6 +269,7 @@ class SemanticChoiceIntentHostMixin:
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                aura_target_refs=thaw_value(intent.aura_target_refs) if intent.aura_target_refs is not None else None,
                 replacement_selections=tuple(
                     thaw_value(value)
                     for value in intent.replacement_selections

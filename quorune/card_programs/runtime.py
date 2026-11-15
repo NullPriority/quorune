@@ -136,6 +136,16 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> int | None:
+        if condition.fact is FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM:
+            from ..player_maximum import current_player_maximum
+            from ..player_maximum_model import PlayerMaximumSpec
+            try:return int(current_player_maximum(self.state,PlayerMaximumSpec(condition.fact_parameter),public_object_resolver=self._public_object) is not None)
+            except ValueError:return None
+        if condition.fact is FixedPublicStateFact.OPPONENT_HAS_GREATER_METRIC:
+            from ..player_maximum import opponent_has_greater_metric
+            from ..player_maximum_model import PlayerMaximumSpec
+            try:return int(opponent_has_greater_metric(self.state,source.controller,PlayerMaximumSpec(condition.fact_parameter),public_object_resolver=self._public_object))
+            except ValueError:return None
         if condition.aggregate is not None:
             return self._power_aggregate_result(source, condition)
         if condition.history_query is not None:

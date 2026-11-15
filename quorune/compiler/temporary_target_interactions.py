@@ -250,6 +250,8 @@ def _chosen_keyword_template(
 
 def _condition(value: str) -> TargetConditionSpec | None:
     normalized = " ".join(value.casefold().split())
+    normalized = re.sub(r"^that creature\b", "it", normalized).replace("’", "'")
+    normalized = re.sub(r"^it is\b", "it's", normalized)
     if normalized in {"it's legendary", "it is legendary"}:
         return TargetConditionSpec(
             queries_any=(
@@ -270,6 +272,10 @@ def _condition(value: str) -> TargetConditionSpec | None:
         )
     if normalized == "it has a counter on it":
         return TargetConditionSpec(has_any_counter=True)
+    if normalized in {"it's a creature", "it's a token"}:
+        query = (ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+                 if normalized == "it's a creature" else ObjectQuerySpec(zones=("battlefield",), token=True))
+        return TargetConditionSpec(queries_any=(query,))
     if normalized in {"it's a goblin or orc", "it's a vampire", "it's a spirit"}:
         subtypes = {
             "it's a goblin or orc": ("goblin", "orc"),
@@ -297,6 +303,14 @@ def _condition(value: str) -> TargetConditionSpec | None:
                 ),
             )
         )
+    subtype_match = re.fullmatch(r"it's an? (?P<types>.+)", normalized)
+    if subtype_match is not None:
+        from ..creature_subtypes import canonical_creature_subtype
+        parts = subtype_match["types"].split(" or ")
+        subtypes = tuple(canonical_creature_subtype(part) for part in parts)
+        if 1 <= len(parts) <= 2 and all(subtype is not None for subtype in subtypes):
+            return TargetConditionSpec(queries_any=(ObjectQuerySpec(
+                zones=("battlefield",), subtypes_any=subtypes),))
     return None
 
 
@@ -307,29 +321,31 @@ def _with_condition(
 
 
 def linked_creature_subtype_stats_template(text: str):
-    """Bind a fixed stat rider to the previously announced creature."""
+    """Bind a fixed current-trait result; retain the original stat production."""
 
     from ..creature_subtypes import canonical_creature_subtype
 
-    match = re.fullmatch(
+    legacy = re.fullmatch(
         r"If that creature is an? (?P<subtype>.+?), it (?:also )?gets "
         r"(?P<stats>[+-]\d+/[+-]\d+) until end of turn\.",
         text, re.IGNORECASE,
     )
+    match = re.fullmatch(
+        r"If (?P<condition>.+?), (?:it|that creature) (?:also )?"
+        r"(?P<result>(?:gets|gains) .+?) until end of turn\.", text, re.IGNORECASE,
+    )
     if match is None:
         return None
-    subtype = canonical_creature_subtype(match["subtype"])
+    condition = _condition(match["condition"])
     result = fixed_target_characteristics_effect_template(
-        f"Target creature gets {match['stats']} until end of turn."
+        f"Target creature {match['result']} until end of turn."
     )
-    if subtype is None or result is None:
+    if condition is None or result is None:
         return None
     _, effects, schema, mechanics = result.compiled()
-    condition = TargetConditionSpec(queries_any=(
-        ObjectQuerySpec(zones=("battlefield",), subtypes_any=(subtype,)),
-    ))
+    legacy_subtype = canonical_creature_subtype(legacy["subtype"]) if legacy is not None else None
     return (
-        "linked-creature-subtype-stats-v1",
+        "linked-creature-subtype-stats-v1" if legacy_subtype is not None else "linked-current-target-characteristics-v1",
         tuple(_with_condition(effect, condition) for effect in effects),
         schema, (TEMPORARY_TARGET_INTERACTION_MECHANIC, *mechanics),
     )

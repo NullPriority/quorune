@@ -85,6 +85,8 @@ def compiled_self_cast_restriction_reason(host, actor, card, *, face_name=None):
         SELF_CAST_RESTRICTION_EVENT, SELF_CAST_RESTRICTION_HANDLER,
     )
     from .semantic_runtime.context import SemanticNodeError
+    from .declare_attack_cast_model import DECLARE_ATTACK_CAST_HANDLER
+    from .semantic_runtime.declare_attack_cast import DeclareAttackCastRestrictionHandler
 
     record = host.card_record(card)
     if record is None:
@@ -96,6 +98,13 @@ def compiled_self_cast_restriction_reason(host, actor, card, *, face_name=None):
                 or str(program.provenance.get('face_id') or '') != expected_face):
             continue
         for descriptor in program.handlers:
+            if descriptor.get('handler_id') == DECLARE_ATTACK_CAST_HANDLER:
+                if actor not in host.state.players:
+                    raise SemanticNodeError('Combat cast restriction requires the authenticated caster')
+                restriction = DeclareAttackCastRestrictionHandler().validate(descriptor)
+                if not restriction.permits(host.state, actor):
+                    return 'declare_attackers_cast_window'
+                continue
             if descriptor.get('handler_id') != SELF_CAST_RESTRICTION_HANDLER:
                 continue
             if actor not in host.state.players:
@@ -112,6 +121,7 @@ def conditional_flash_authorship(host,card, *, face_name=None):
     from .card_program_faces import program_matches_face
     from .semantic_runtime.conditional_flash import CONDITIONAL_FLASH_PERMISSION_HANDLER
     from .semantic_runtime.cast_permissions import FLASH_CAST_PERMISSION_HANDLER_ID
+    from .cast_timing import SURCHARGE_FLASH_HANDLER
     record=host.card_record(card)
     if record is None:return False,False
     conditional=printed=False
@@ -120,9 +130,29 @@ def conditional_flash_authorship(host,card, *, face_name=None):
         if not host.semantic_program_is_current_trusted(program) or not program_matches_face(
                 record,program,card,prospective_name=face_name):continue
         ids={value.get('handler_id') for value in program.handlers}
-        conditional |= CONDITIONAL_FLASH_PERMISSION_HANDLER in ids
+        conditional |= bool({CONDITIONAL_FLASH_PERMISSION_HANDLER,SURCHARGE_FLASH_HANDLER}&ids)
         printed |= FLASH_CAST_PERMISSION_HANDLER_ID in ids
     return conditional,printed
+
+
+def compiled_mana_surcharge_flash_spec(host,card):
+    """Read one current selected face's typed permission, never its Oracle text."""
+    from .card_program_faces import program_matches_face
+    from .cast_timing import SURCHARGE_FLASH_HANDLER
+    from .semantic_runtime.surcharge_flash import ManaSurchargeFlashPermissionHandler
+    if card.face_down:return None
+    record=host.card_record(card)
+    if record is None:return None
+    found=[];handler=ManaSurchargeFlashPermissionHandler()
+    for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,
+            active_zone=CAST_PERMISSION_ACTIVE_ZONE,event=CAST_PERMISSION_EVENT):
+        descriptors=[row for row in program.handlers if row.get('handler_id')==SURCHARGE_FLASH_HANDLER]
+        if (not descriptors or not host.semantic_program_is_current_trusted(program)
+                or not program_matches_face(record,program,card)):continue
+        found.extend(handler.validate(row) for row in descriptors)
+    if not found:return None
+    if len(set(found))!=1:raise ValueError('A face has conflicting mana-surcharge timing permissions')
+    return found[0]
 
 
 def compiled_conditional_flash_stack_effects(host,card):

@@ -37,7 +37,16 @@ def _fixed_target_fields(
     replacements: bool,
     additional_fields: tuple[str,...] = (),
 ) -> tuple[tuple[str, ...], int, str, tuple[Any, ...]]:
-    unknown = sorted(set(effect) - _COMMON_FIELDS - set(additional_fields))
+    extra = set(additional_fields)
+    if 'target_roles' in effect:
+        if (effect['target_roles'] is not True or 'announced_target_count' in effect
+                or operation not in {'destroy_targets','exile_permanent_targets','return_permanent_targets_to_owner_hand'}):
+            raise SemanticNodeError('Target roles require an owned simultaneous operation')
+        extra.add('target_roles')
+    if operation == 'destroy_targets' and 'regeneration_prohibited' in effect:
+        if effect['regeneration_prohibited'] is not True:raise SemanticNodeError('Regeneration prohibition must be true')
+        extra.add('regeneration_prohibited')
+    unknown = sorted(set(effect) - _COMMON_FIELDS - extra)
     if unknown:
         raise SemanticNodeError(
             "Fixed target-set effect has unknown fields: " + ", ".join(unknown)
@@ -52,7 +61,7 @@ def _fixed_target_fields(
     if (
         not isinstance(raw_cards, (list, tuple))
         or any(type(value) is not str or not value for value in raw_cards)
-        or len(raw_cards) != len(set(raw_cards))
+        or 'target_roles' not in effect and len(raw_cards) != len(set(raw_cards))
         or type(maximum) is not int
         or not (maximum >= 0 if variable else 1 <= maximum <= 6)
         or len(raw_cards) > maximum
@@ -60,6 +69,9 @@ def _fixed_target_fields(
         raise SemanticNodeError(
             "Fixed target-set effects require at most their unique target bound"
         )
+    if 'target_roles' in effect:
+        if not 2 <= maximum <= 4:raise SemanticNodeError('Target role bound is unsupported')
+        raw_cards = tuple(dict.fromkeys(raw_cards))
     raw_reason = effect.get("reason")
     if raw_reason is not None and (
         type(raw_reason) is not str or not raw_reason
@@ -134,6 +146,7 @@ class DestroyPermanentTargetSetHandler:
                 object_refs=cards,
                 reason=reason,
                 replacement_selections=selections,
+                regeneration_prohibited=effect.get('regeneration_prohibited',False),
             ),
         )
 

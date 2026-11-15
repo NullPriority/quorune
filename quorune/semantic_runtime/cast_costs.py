@@ -63,6 +63,7 @@ from .declared_cost_reductions import DeclaredCostReductionHandler
 from .targeted_spell_costs import TargetedSpellCostHandler
 from .activation_costs import FixedActivationCostModifierHandler, TargetedActivationCostModifierHandler, PublicQuantityActivationCostModifierHandler
 from ..activation_cost_modifiers import FixedActivationCostModifierSpec
+from ..next_spell_costs import active_next_spell_cost_reductions
 
 
 CONVOKE_ACTIVE_ZONE = "stack"
@@ -938,7 +939,7 @@ def active_fixed_spell_cost_reductions(
                             multiplier=None,
                         )
                     reductions.append(spec)
-    return tuple(reductions)
+    return tuple(reductions) + active_next_spell_cost_reductions(host,seat,card,cast_type_line,face_down_method)
 
 
 __all__ = [

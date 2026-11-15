@@ -1,0 +1,1199 @@
+{
+  "cards": [
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Squire's Lightblade",
+      "oracle_id": "0ea2a099-7c81-4012-8148-4d377f2d64e1",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains first strike until end of turn.\nEquipped creature gets +1/+0.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Barbed Bloodletter",
+      "oracle_id": "15febce7-8320-4591-9535-ef11c8adecc2",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains wither until end of turn. (It deals damage to creatures in the form of -1/-1 counters.)\nEquipped creature gets +1/+2.\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Hidden Blade",
+      "oracle_id": "37ec9b95-8c9a-4dd5-9ff2-3d6527984126",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. If that creature is an Assassin, it gains deathtouch until end of turn.\nEquipped creature gets +1/+0 and has first strike.\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Quick-Draw Dagger",
+      "oracle_id": "47b4dd69-0b2a-4dc3-99e8-f572fe049327",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains first strike until end of turn.\nEquipped creature gets +1/+1.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-04-29",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Celestial Armor",
+      "oracle_id": "4f1b68d7-7d16-4bb1-af5f-f1708b23ca73",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nWhen this Equipment enters, attach it to target creature you control. That creature gains hexproof and indestructible until end of turn.\nEquipped creature gets +2/+0 and has flying.\nEquip {3}{W} ({3}{W}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Stolen Stark Tech",
+      "oracle_id": "51023277-5434-4913-b9dc-df2a3fde1652",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)\nEquipped creature gets +1/+0.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}",
+      "name": "Phantom Blade",
+      "oracle_id": "58d5d563-cb60-4977-86cd-f32cd811aa77",
+      "oracle_text": "When this Equipment enters, attach it to up to one target creature you control. Destroy up to one other target creature.\nEquipped creature gets +1/+1 and has menace. (It can't be blocked except by two or more creatures.)\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Super Suit",
+      "oracle_id": "606092eb-8fe3-4ef7-aaf1-2d3b2687d27a",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. Untap that creature.\nEquipped creature gets +1/+2.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Fight",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Novel Nunchaku",
+      "oracle_id": "6d819742-3d02-4d60-9b10-82caa49a9d49",
+      "oracle_text": "When this Equipment enters, attach it to target creature you control. When you do, equipped creature fights up to one target creature an opponent controls. (Each deals damage equal to its power to the other.)\nEquipped creature gets +1/+1 and has trample.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-03-06",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Hunter's Bow",
+      "oracle_id": "810592fe-65f5-4c95-9d75-d6806e004903",
+      "oracle_text": "When this Equipment enters, attach it to target creature you control. That creature deals damage equal to its power to up to one target creature you don't control.\nEquipped creature has reach and ward {2}.\nEquip {1}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Assassin Gauntlet",
+      "oracle_id": "85d06533-3c0b-46a8-8fdb-379db9ae7e2e",
+      "oracle_text": "When this Equipment enters, attach it to up to one target creature you control. Tap all creatures target opponent controls.\nEquipped creature gets +1/+1 and has \"Whenever this creature deals combat damage to a player, draw a card, then discard a card.\"\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Twin Blades",
+      "oracle_id": "88b076a4-46ff-4a41-95a5-2821f4d8944d",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains double strike until end of turn.\nEquipped creature gets +1/+1.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Galadhrim Bow",
+      "oracle_id": "92225b59-4f39-4175-ad0d-88e96f4d906a",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. Untap that creature.\nEquipped creature gets +1/+2 and has reach.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Silver Shroud Costume",
+      "oracle_id": "b40138c3-48bc-4825-ae48-5fea95304088",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains shroud until end of turn. (It can't be the target of spells or abilities.)\nEquipped creature can't be blocked.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-26",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Bladed Battle-Fan",
+      "oracle_id": "c4614b6c-5e77-465f-996f-504121ea8eff",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains indestructible until end of turn.\nEquipped creature gets +1/+0.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Illvoi Light Jammer",
+      "oracle_id": "cbc0b136-544d-45a6-be3e-cd21a573bf19",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains hexproof until end of turn. (It can't be the target of spells or abilities your opponents control.)\nEquipped creature gets +1/+2.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Coral Sword",
+      "oracle_id": "d4f0dd14-bc2a-4c6d-bfd5-bc5838ab18a5",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains first strike until end of turn.\nEquipped creature gets +1/+0.\nEquip {1}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Hidden Footblade",
+      "oracle_id": "daed1b38-510b-4698-95c3-05c09f5fabe9",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains first strike until end of turn.\nEquipped creature gets +1/+0 and has haste.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Kicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Into the Roil",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "oracle_text": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nReturn target nonland permanent to its owner's hand. If this spell was kicked, draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Wither applies to any damage dealt to creatures by the affected creature. This includes combat damage as well as anything that causes that creature to deal noncombat damage, such as the effect of Assert Perfection.",
+      "oracle_id": "15febce7-8320-4591-9535-ef11c8adecc2",
+      "published_at": "2025-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "Quick-Draw Dagger doesn't enter the battlefield attached to a creature. Instead, the Equipment enters the battlefield and then a triggered ability attaches it to a creature. You may cast Quick-Draw Dagger even if you don't control any creatures.",
+      "oracle_id": "47b4dd69-0b2a-4dc3-99e8-f572fe049327",
+      "published_at": "2022-04-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature gains hexproof in response to a spell or ability controlled by an opponent that only targets that creature, then when that spell or ability tries to resolve, all of its targets will be illegal. As a result, that spell or ability won't resolve and none of its effects will happen.",
+      "oracle_id": "4f1b68d7-7d16-4bb1-af5f-f1708b23ca73",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Attaching Celestial Armor to a creature that has already been blocked won't cause it to become unblocked, even if one or more of the blocking creatures don't have flying or reach.",
+      "oracle_id": "4f1b68d7-7d16-4bb1-af5f-f1708b23ca73",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't choose a target creature an opponent controls for Novel Nunchaku's first ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when Novel Nunchaku is attached to the target creature you control this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal.",
+      "oracle_id": "6d819742-3d02-4d60-9b10-82caa49a9d49",
+      "published_at": "2026-01-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "If either creature is an illegal target as Hunter's Bow's first ability tries to resolve, the creature you control won't deal damage.",
+      "oracle_id": "810592fe-65f5-4c95-9d75-d6806e004903",
+      "published_at": "2024-07-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Attaching an Equipment with its enters-the-battlefield triggered ability isn't the same as using its equip ability. You don't pay mana for the attachment, and the timing restrictions for equip abilities don't apply.",
+      "oracle_id": "92225b59-4f39-4175-ad0d-88e96f4d906a",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature becomes an illegal target, the Equipment remains on the battlefield unattached, and no creatures are untapped.",
+      "oracle_id": "92225b59-4f39-4175-ad0d-88e96f4d906a",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Galadhrim Bow doesn't enter the battlefield attached to a creature. Instead, the Equipment enters the battlefield and then a triggered ability attaches it to a creature. You may cast Galadhrim Bow even if you don't control any creatures.",
+      "oracle_id": "92225b59-4f39-4175-ad0d-88e96f4d906a",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Attaching Silver Shroud Costume to a creature that has already been blocked won't cause it to become unblocked.",
+      "oracle_id": "b40138c3-48bc-4825-ae48-5fea95304088",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature that gains indestructible due to Bladed Battle-Fan's triggered ability will keep indestructible for the duration of the turn, even if Bladed Battle-Fan later becomes unattached.",
+      "oracle_id": "c4614b6c-5e77-465f-996f-504121ea8eff",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the targeted permanent is an illegal target by the time Into the Roil resolves, the entire spell doesn't resolve. You don't draw a card.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target nonland permanent is an illegal target by the time Into the Roil tries to resolve, the spell doesn't resolve. You don't draw a card if it was kicked.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Complete pinned Equipment attachment/followup originals and ordinary response controls, canonical duplicate metadata retained"
+}

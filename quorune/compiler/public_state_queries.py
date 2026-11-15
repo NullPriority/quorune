@@ -1496,6 +1496,9 @@ def fixed_public_state_condition(
     """Parse one closed condition without coupling it to a result body."""
 
     def compile_atomic(term):
+        from .player_maximum_templates import player_maximum_condition,opponent_more_metric_condition
+        maximum=player_maximum_condition(term) or opponent_more_metric_condition(term)
+        if maximum is not None:return maximum
         atomic=_fixed_public_state_condition(term,source_name=source_name)
         if atomic is not None:return atomic
         from .public_characteristic_aggregates import public_creature_power_threshold

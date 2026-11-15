@@ -167,8 +167,13 @@ class SelfZoneMoveIntent:
     tapped: bool
     source_form: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    aura_target_ref: str | None = None
 
     def __post_init__(self) -> None:
+        if self.aura_target_ref is not None and (
+            self.destination != 'battlefield' or type(self.aura_target_ref) is not str or not self.aura_target_ref
+        ):
+            raise SelfZoneMoveError('Self-zone Aura entry selection requires a battlefield destination and reference')
         if any(
             type(value) is not str or not value
             for value in (
@@ -237,6 +242,7 @@ def resolve_self_zone_move(
         tapped=intent.tapped if intent.destination == "battlefield" else None,
         reason="Activated self-zone movement resolved",
         semantic_events=True,
+        **({'aura_target_ref':intent.aura_target_ref} if intent.aura_target_ref is not None else {}),
         replacement_selections=intent.replacement_selections,
     )
     return card.ref if card.zone == intent.destination else None

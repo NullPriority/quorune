@@ -21,6 +21,7 @@ class CastingCostHostMixin:
         cast_type_line: str | None = None,
         suppress_source_costs: bool = False,
         resolving_exile_authority: bool = False,
+        ignore_timing: bool = False,
     ) -> list[dict[str, Any]]:
         return [
             option.to_dict()
@@ -36,6 +37,7 @@ class CastingCostHostMixin:
                 cast_type_line=cast_type_line,
                 suppress_source_costs=suppress_source_costs,
                 resolving_exile_authority=resolving_exile_authority,
+                ignore_timing=ignore_timing,
             )
         ]
 

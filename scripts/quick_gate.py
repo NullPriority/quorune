@@ -81,6 +81,7 @@ def build_plan(
     database = ROOT / "local" / "quick-gate" / "test-ci.sqlite3"
     steps = [
         QuickStep("python-runtime", (python, "scripts/validate_python_runtime.py")),
+        QuickStep("repository-artifacts", (python, "scripts/validate_repository.py", "--tracked-only")),
         QuickStep(
             "compile",
             (
@@ -175,6 +176,44 @@ def build_plan(
                 ),
             )
         )
+        if (any(path.startswith(('quorune/compiler/', 'quorune/rules/', 'quorune/card_programs/',
+                                'quorune/semantic_runtime/')) for path in paths)
+                or {'quorune/oracle_ir.py', 'tests/high_risk_interaction_support.py',
+                    'tests/test_high_risk_interaction_assurance.py',
+                    'tests/test_fixed_subset_discard_draw.py', 'tests/test_fixed_entwine.py',
+                    'tests/test_fixed_overload.py', 'tests/test_external_entry_tapped.py',
+                    'tests/test_fixed_cleave.py', 'tests/test_source_tap_duration.py',
+                    'tests/test_activation_result_authority.py',
+                    'tests/test_public_condition_self_replacements.py',
+                    'tests/test_optional_counter_payments.py',
+                    'tests/test_continuous_compiler_hardening.py', 'tests/test_scoped_target_colors.py',
+                    'tests/test_fixed_damage_effect_clauses.py', 'tests/test_discard_results.py',
+                    'platform/reusable-piece-interaction-evidence.json'}.intersection(paths)):
+            steps.append(QuickStep(
+                'interaction-boundary-promotion-contract',
+                (python, '-m', 'unittest', 'discover', '-s', 'tests', '-p',
+                 'test_high_risk_interaction_assurance.py', '-k', 'HighRiskPromotionSentinelTests'),
+            ))
+            steps.append(QuickStep(
+                'compiler-promotion-admission-contract',
+                (python, '-m', 'unittest',
+                 'tests.test_fixed_subset_discard_draw.FixedSubsetDiscardDrawCompilerTests.test_fixed_subset_route_is_versioned_and_rejects_adjacent_variants',
+                 'tests.test_fixed_entwine.FixedEntwineRuntimeTests.test_entwine_originals_require_complete_modes_and_normal_registration',
+                 'tests.test_fixed_overload.FixedOverloadRuntimeTests.test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration',
+                 'tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_originals_admit_only_the_complete_external_entry_family',
+                 'tests.test_external_entry_tapped.ExternalEntryTappedRuntimeTests.test_external_entry_unrepresented_target_domain_blocks_complete_admission',
+                 'tests.test_fixed_cleave.FixedCleaveRuntimeTests.test_all_original_cleave_sources_require_both_programs_and_normal_registration',
+                 'tests.test_source_tap_duration.SourceTapCompilerTests.test_nontoken_artifact_target_has_explicit_boolean_and_source_exclusion',
+                 'tests.test_activation_result_authority.ActivationResultAuthorityTests.test_catalogue_without_result_has_no_offer_and_rejects_before_payment',
+                 'tests.test_activation_result_authority.ActivationResultAuthorityTests.test_actual_cloudchaser_has_offered_and_accepted_color_result_authority',
+                 'tests.test_public_condition_self_replacements.PublicConditionSelfReplacementTests.test_same_target_source_schemas_and_opaque_siblings_fail_closed',
+                 'tests.test_public_condition_self_replacements.PublicConditionSelfReplacementTests.test_current_target_color_replacement_keeps_both_results_and_one_target_binding',
+                 'tests.test_optional_counter_payments.OptionalCounterPaymentCompilerTests.test_cost_clause_stays_whole_and_ordinary_optional_counter_keeps_legacy_shape',
+                 'tests.test_continuous_compiler_hardening.ClosedContinuousGrammarTests.test_original_commander_anthem_promotes_without_approximating_sibling',
+                 'tests.test_scoped_target_colors.ScopedColorCompilerTests.test_new_color_operands_are_closed_and_legacy_color_bytes_are_unchanged',
+                 'tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_whole_source_damage_life_composition_preserves_source_and_controller_roles',
+                 'tests.test_discard_results.DiscardResultCompilerTests.test_discard_result_compiler_rejects_filtered_unknown_and_unbound_counts'),
+            ))
         if {'quorune/compiler/target_player_sequences.py',
                 'quorune/compiler/bound_effect_programs.py',
                 'quorune/compiler/effect_template_composition.py'}.intersection(paths):

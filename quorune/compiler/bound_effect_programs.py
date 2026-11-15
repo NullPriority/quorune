@@ -158,6 +158,8 @@ def target_controller_zone_result_prefix_matches(effect: Mapping[str, Any]) -> b
 def _target_type_is_guaranteed(schema: Mapping[str, Any], kind: str) -> bool:
     if kind == "permanent" or kind in schema.get("types_all", ()):
         return True
+    if kind == "creature" and schema.get("creature") is True:
+        return True
     if tuple(schema.get("types_any", ())) == (kind,):
         return True
     land_choices = set(schema.get("subtypes_any", ()))
@@ -273,10 +275,18 @@ def _single_target_reference(text: str, compile_component: ComponentCompiler, *,
         if first[0] is None or not _public_single_target(schema):
             continue
         assert schema is not None
-        if conditional_tail is not None and (
-            clauses[-1] != conditional_tail[0] or not _target_type_is_guaranteed(schema, "creature")
-        ):
-            continue
+        if conditional_tail is not None:
+            if clauses[-1] != conditional_tail[0] or schema.get("categories") != ["permanent"]:
+                continue
+            if not _target_type_is_guaranteed(schema, "creature"):
+                from ..rules.temporary_target_interactions import TargetConditionSpec
+                try:
+                    conditions = tuple(TargetConditionSpec.from_dict(effect.get("target_condition"))
+                                       for effect in conditional_tail[1][1])
+                except (TypeError, ValueError):
+                    continue
+                if not conditions or not all(condition.guarantees_creature for condition in conditions):
+                    continue
         if len(clauses) == 2:
             tail = _target_controller_damage_tail(first, clauses[1], compile_component)
             if tail is not None:
@@ -371,6 +381,10 @@ def bound_effect_program_template(
                 fixed_result = _target_controller_fixed_result_program(clauses, compile_component)
                 if fixed_result is not None:
                     return fixed_result
+        from .target_recipient_results import target_recipient_result_template
+        recipient_result = target_recipient_result_template(normalized,compile_component=compile_component)
+        if recipient_result is not None:
+            return recipient_result
     if _UNSAFE_LINKAGE.search(linkage_text):
         clauses = _sentence_partition(normalized)
         if (

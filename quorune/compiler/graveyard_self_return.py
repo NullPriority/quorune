@@ -4,13 +4,16 @@ from dataclasses import replace
 from ..rules.source_references import SourceReferenceSpec
 from ..rules.graveyard_self_return import (
     GRAVEYARD_SELF_RETURN_CAPABILITY, GRAVEYARD_SELF_RETURN_EVENTS, GRAVEYARD_SELF_RETURN_VERSION,
+    GRAVEYARD_SELF_ENTRY_CAPABILITY, GRAVEYARD_SELF_ENTRY_EVENTS, GRAVEYARD_SELF_ENTRY_VERSION,
+    GRAVEYARD_SELF_ENTRY_MECHANIC,
 )
 
 
 def _return_body(body,card_name,*,optional):
     source='this card'+('|'+SourceReferenceSpec(card_name).regex_pattern if card_name else '')
-    return re.fullmatch(r'(?:you may )?return (?:'+source+r') from your graveyard to your hand\.?',body,re.I) if optional else re.fullmatch(
-        r'return (?:'+source+r') from your graveyard to your hand\.?',body,re.I)
+    match = re.fullmatch((r'(?:you may )?' if optional else '') + r'return (?:'+source+
+        r') from your graveyard to (?P<destination>your hand|the battlefield)(?P<tapped> tapped)?\.?', body, re.I)
+    return match if match is not None and (match['destination'].casefold() == 'the battlefield' or not match['tapped']) else None
 
 
 def graveyard_self_return_binding(text,*,card_name,compile_binding):
@@ -18,11 +21,13 @@ def graveyard_self_return_binding(text,*,card_name,compile_binding):
     if split is None:return None
     body=split['body']
     paid=re.fullmatch(r'you may pay (?P<mana>(?:\{(?:0|[1-9][0-9]*|[WUBRGC])\})+)\. If you do, (?P<result>return .+)',body,re.I)
-    if _return_body(paid['result'] if paid else body,card_name,optional=paid is None) is None:return None
+    result = _return_body(paid['result'] if paid else body,card_name,optional=paid is None)
+    if result is None:return None
+    battlefield = result['destination'].casefold() == 'the battlefield'
     if 'one or more' in split['head'].casefold():return None
     base=compile_binding(split['head']+', draw a card.')
-    if base is None or base.public_state_condition is not None:return None
-    if base.event.value not in GRAVEYARD_SELF_RETURN_EVENTS:
+    if base is None or not battlefield and base.public_state_condition is not None:return None
+    if base.event.value not in (GRAVEYARD_SELF_ENTRY_EVENTS if battlefield else GRAVEYARD_SELF_RETURN_EVENTS):
         return None
     if any(word in split['head'].casefold() for word in ('enchanted','equipped','this creature','this artifact','this enchantment')):return None
     condition=base.event_condition
@@ -32,7 +37,8 @@ def graveyard_self_return_binding(text,*,card_name,compile_binding):
         return '$source.owner' if value=='$source.controller' else value
     return replace(base,body=split['body'],public_active_zone='graveyard',public_condition=owner_relative(condition),
         public_mechanic=base.public_mechanic or (base.event_mechanics[0] if base.event_mechanics else 'cr-603-handling-triggered-abilities'),public_template_id='fixed-counter-graveyard-self-return-v1',
-        public_capabilities=tuple(dict.fromkeys((*base.explicit_capabilities,GRAVEYARD_SELF_RETURN_CAPABILITY))),
+        public_capabilities=tuple(dict.fromkeys((*base.explicit_capabilities,
+            GRAVEYARD_SELF_ENTRY_CAPABILITY if battlefield else GRAVEYARD_SELF_RETURN_CAPABILITY))),
         spell_subject=None,zone_subject=None)
 
 
@@ -44,6 +50,13 @@ def graveyard_self_return_result(binding,body,*,card_name):
 
         entry = fixed_source_graveyard_attacking_entry_template(body)
         return (entry, False) if entry is not None else None
-    if GRAVEYARD_SELF_RETURN_CAPABILITY not in binding.explicit_capabilities or _return_body(body,card_name,optional=False) is None:return None
+    result = _return_body(body,card_name,optional=False)
+    if result is None:return None
+    if result['destination'].casefold() == 'the battlefield':
+        if GRAVEYARD_SELF_ENTRY_CAPABILITY not in binding.explicit_capabilities:return None
+        return ('source-graveyard-battlefield-v1',({'op':'self_zone_move','origin':'graveyard',
+            'destination':'battlefield','tapped':bool(result['tapped']),'source_form':'card',
+            GRAVEYARD_SELF_ENTRY_VERSION:1},),None,(GRAVEYARD_SELF_ENTRY_MECHANIC,)),False
+    if GRAVEYARD_SELF_RETURN_CAPABILITY not in binding.explicit_capabilities:return None
     return ('source-graveyard-hand-v1',({'op':'self_zone_move','origin':'graveyard','destination':'hand',
         'tapped':False,'source_form':'card',GRAVEYARD_SELF_RETURN_VERSION:1},),None,('source-graveyard-hand-return',)),False

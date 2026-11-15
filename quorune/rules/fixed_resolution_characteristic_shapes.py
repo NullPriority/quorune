@@ -17,7 +17,8 @@ from ..keyword_abilities import (
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 from ..replacement.immutable import thaw_value
 from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, split_next_turn_effect
-from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION, TARGET_CARD_TYPE_ADDITION_VERSION
+from ..resolution_characteristic_model import (CHARACTERISTIC_OPERATION, TARGET_CARD_TYPE_ADDITION_VERSION,
+    TARGET_CARD_TYPE_ADDITION_CAPABILITY, TARGET_CARD_TYPE_ADDITION_MECHANIC)
 
 
 FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
@@ -204,6 +205,22 @@ def _runtime_stat_amount(value):
 
 def fixed_resolution_characteristics_runtime_dependencies(program):
     """Bind canonical public-set and attachment descriptors independently of declared owners."""
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+    families=[]
+    if any(is_attached_characteristic_effect(effect)
+            or effect.get('op')=='modify_all_matching_permanents_until_end_of_turn' and 'predicate' in effect
+            for effect in program.effects):
+        families.append((FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY,'cr-611-continuous-effects'))
+    if any(effect.get('op')==CHARACTERISTIC_OPERATION
+            and effect.get('schema_version')==TARGET_CARD_TYPE_ADDITION_VERSION for effect in program.effects):
+        families.append((TARGET_CARD_TYPE_ADDITION_CAPABILITY,TARGET_CARD_TYPE_ADDITION_MECHANIC))
+    composed_required=set()
+    for capability,mechanic in families:
+        composed=composed_spell_family_runtime_dependencies(program,capability=capability,mechanic=mechanic)
+        if composed is None:break
+        composed_required.update(composed)
+    else:
+        if families:return tuple(sorted(composed_required))
     required = set()
     for effect in program.effects:
         if effect.get("op") == CHARACTERISTIC_OPERATION and effect.get("schema_version") == TARGET_CARD_TYPE_ADDITION_VERSION:

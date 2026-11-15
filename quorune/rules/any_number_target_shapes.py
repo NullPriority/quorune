@@ -126,6 +126,10 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
 
 
 def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..resolution_color_model import TARGET_COLOR_SET_VERSION,TARGET_COLOR_SCOPE_MECHANIC
+    if any(e.get('schema_version')==TARGET_COLOR_SET_VERSION and e.get('op')=='apply_source_characteristics_until_end_of_turn' for e in effects):
+        from .resolution_colors import resolution_color_node_capabilities
+        return resolution_color_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=(TARGET_COLOR_SCOPE_MECHANIC,))
     if SELECTED_PLAYER_RESULT_MECHANIC in mechanic_ids:
         return selected_player_result_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if GRAVEYARD_LIBRARY_ORDER_MECHANIC in mechanic_ids:

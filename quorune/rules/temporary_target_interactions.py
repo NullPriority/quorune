@@ -92,6 +92,15 @@ class TargetConditionSpec:
             or any(object_matches_query(row, query) for query in self.queries_any)
         )
 
+    @property
+    def guarantees_creature(self) -> bool:
+        """Every matching alternative must explicitly require a creature."""
+        return bool(
+            not self.has_any_counter and self.queries_any
+            and all("creature" in query.types_all or query.types_any == ("creature",)
+                    for query in self.queries_any)
+        )
+
 
 __all__ = [
     "TEMPORARY_TARGET_INTERACTION_CAPABILITY",

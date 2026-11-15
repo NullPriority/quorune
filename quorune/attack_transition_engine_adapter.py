@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from typing import Any
+from .declare_attack_cast_model import declare_attack_cast_version
 
 from .ability_fragments import (
     AbilityFragmentError,
@@ -244,6 +245,8 @@ def commit_engine_attack_declaration(
             controller=controller,
             assignments=assignments,
             bands=bands,
+            capture_declared_players=declare_attack_cast_version(
+                getattr(engine.state, 'declare_attack_cast_version', None)) == 1,
         )
     except CombatRelationshipStateError as exc:
         raise StateInvariantError(str(exc)) from exc

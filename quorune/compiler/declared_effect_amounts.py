@@ -37,6 +37,7 @@ _LIBRARY_DEFINITION = re.compile(
 _X = re.compile(r"\bX\b")
 _SCALED_X = re.compile(r"\b(?P<scale>twice|two times|three times) X\b", re.I)
 _RESULT_FIELDS = {
+    'grant_next_spell_cost_reduction': ('amount',),
     'drain_opponent': ('amount',),
     'drain_each_opponent': ('amount',),
     'life_loss_then_gain_actual': ('amount',),
@@ -64,6 +65,8 @@ def _result_slot(operation: str, path: tuple[str, ...], *, cast_event_counter_ta
         operation == "create_token" and path in {("characteristics", "power"), ("characteristics", "toughness")}
     ) or (
         operation == "search" and counted_search_mana_value_slot(path)
+    ) or (
+        operation == "destroy_all" and path == ("set", "mana_value_filter", "value")
     ) or (
         cast_event_counter_targets and operation == "place_counters_on_targets" and path == ("amount",)
     )

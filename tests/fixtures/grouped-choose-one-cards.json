@@ -1,0 +1,1137 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{W}{U}",
+      "name": "Brokers Charm",
+      "oracle_id": "a90de2b8-4d71-4d0e-82b3-3b7ab194165b",
+      "oracle_text": "Choose one \u2014\n\u2022 Target creature you control gets +1/+0 until end of turn. It deals damage equal to its power to target creature or planeswalker an opponent controls.\n\u2022 Destroy target enchantment.\n\u2022 Draw two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-04-29",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Fight"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Bushwhack",
+      "oracle_id": "c61374e5-a7f6-455e-a40b-a481751b536b",
+      "oracle_text": "Choose one \u2014\n\u2022 Search your library for a basic land card, reveal it, put it into your hand, then shuffle.\n\u2022 Target creature you control fights target creature you don't control. (Each deals damage equal to its power to the other.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Fight"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{U}",
+      "name": "Decisive Denial",
+      "oracle_id": "2d0bd780-b754-44a3-894c-a9c8aa711f05",
+      "oracle_text": "Choose one \u2014\n\u2022 Target creature you control fights target creature you don't control. (Each deals damage equal to its power to the other.)\n\u2022 Counter target noncreature spell unless its controller pays {3}.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Forest"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Generic Grouped Duel",
+      "oracle_id": "9ec2eade-8765-5d3a-b33f-207a98cccdd4",
+      "oracle_text": "Choose one \u2014\n\u2022 Target creature fights another target creature.\n\u2022 You gain 2 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Sorcery",
+      "card_faces": []
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Giantfall",
+      "oracle_id": "77e5e7e3-b97b-4953-9df4-1aee509fbf2a",
+      "oracle_text": "Choose one \u2014\n\u2022 Target creature you control deals damage equal to its power to target creature an opponent controls.\n\u2022 Destroy target artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bear"
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "name": "Hill Giant",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature \u2014 Giant",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "It's Clobberin' Time!",
+      "oracle_id": "4a75ef46-c5ae-4b1a-a681-d439b01f6731",
+      "oracle_text": "Choose one \u2014\n\u2022 Target creature you control deals damage equal to its power to target creature an opponent controls.\n\u2022 Destroy target artifact or enchantment.\nRebound",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+      "name": "Mind Stone",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-09",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Fight"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Plow Through",
+      "oracle_id": "a5492d28-b1bf-408d-a048-8f200158d6b1",
+      "oracle_text": "Choose one \u2014\n\u2022 Target creature you control fights target creature an opponent controls. (Each deals damage equal to its power to the other.)\n\u2022 Destroy target Vehicle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Sky Skiff",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "oracle_text": "Flying\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": "3",
+      "type_line": "Artifact \u2014 Vehicle"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature \u2014 Sliver"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Deathtouch",
+        "Flying",
+        "Lifelink"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Vampire Nighthawk",
+      "oracle_id": "feb244f8-bcb1-44cf-9940-2719221a7309",
+      "oracle_text": "Flying\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Vampire Shaman"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Wall of Stone",
+      "oracle_id": "cd4cadb4-3156-49bd-b36e-12ba5c85938b",
+      "oracle_text": "Defender (This creature can't attack.)",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2003-07-28",
+      "toughness": "8",
+      "type_line": "Creature \u2014 Wall"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If the first mode is chosen and either target is an illegal target as Giantfall tries to resolve, the creature you control won't deal damage.",
+      "oracle_id": "77e5e7e3-b97b-4953-9df4-1aee509fbf2a",
+      "published_at": "2025-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one \u2014\" or the like), the copy will have the same mode. You can't choose a different one.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal).",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose the first mode and your creature is not a legal target as Brokers Charm resolves, no damage will be dealt.",
+      "oracle_id": "a90de2b8-4d71-4d0e-82b3-3b7ab194165b",
+      "published_at": "2022-04-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose the first mode and your opponent's creature or planeswalker is not a legal target as Brokers Charm resolves, your creature will still get +1/+0",
+      "oracle_id": "a90de2b8-4d71-4d0e-82b3-3b7ab194165b",
+      "published_at": "2022-04-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't choose the first mode for Brokers Charm unless your opponent has a creature or planeswalker to target.",
+      "oracle_id": "a90de2b8-4d71-4d0e-82b3-3b7ab194165b",
+      "published_at": "2022-04-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn\u2019t provide any additional benefit.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you change the creature type of a Sliver you control so it\u2019s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don\u2019t grant bonuses to your opponents\u2019 Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap more creatures than necessary to activate a crew ability.",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Oracle/rulings subset plus one explicit synthetic grouped-target contract, which is not a card support gain."
+}

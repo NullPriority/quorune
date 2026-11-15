@@ -31,7 +31,7 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
     if not _REPLACEMENT_MARKERS.search(material_line):
         if not _REPLACEMENT_MARKERS.search(line) or _balanced_reminder_delimiters(line):
             return None
-    if spell and printed_bargain_spec(record) is not None and compile_effect(material_line,card_name=source_name,bargain_available=True)[0]=='linked-bargain-same-target-v1':
+    if spell and printed_bargain_spec(record) is not None and compile_effect(material_line,card_name=source_name,bargain_available=True)[0] in {'linked-bargain-same-target-v1','linked-bargain-procedure-replacement-v1'}:
         return None
     if spell and is_fixed_spell_self_replacement(material_line,source_name,
             compile_effect,has_faces=bool(record.faces)):
@@ -59,6 +59,12 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
                     and COUNTER_DESTINATION_FIELD in effects[0]):
                 return None
     if spell:
+        if 'instead if ' in material_line.casefold() and re.search(r'\bThen (?:it|that creature) (?:fights|deals damage equal to its power to) ', material_line, re.I):
+            from ..rules.conditional_target_preparation import conditional_prepared_power_capabilities
+            compiled = compile_effect(material_line, card_name=source_name)
+            if compiled[0] == 'conditional-target-power-preparation-v1' and conditional_prepared_power_capabilities(
+                    effects=compiled[1], target_schema=compiled[2], mechanic_ids=compiled[3]):
+                return None
         from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
         if conditional_reanimation_entry_counter_template(material_line) is not None:
             return None

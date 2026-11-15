@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Next-spell cost reductions use the existing duration journal and public total-
+cost provider. A pending rule retains its resolving controller, spell predicate
+and resolved generic amount independently from its source's later state. Cost
+previews and preparatory mana choices do not consume it. Successful casting
+consumes every matching rule, including a rule that reduces no generic mana;
+other casters and nonmatching spells leave it pending. The canonical journal
+owner handles consumption and cleanup expiry. Historical next-spell flags keep
+their existing prepare-versus-commit behavior through the casting lifecycle.
+
 Closed two-clause effects also accept top-level comma-then and period-Then
 wording. The compiler retains each independently owned instruction and the
 complete target schema. Quoted and parenthetical rules stay nested; linked
@@ -167,9 +176,10 @@ independent target groups retain their unsupported boundaries.
 Typed semantic handlers execute one immediate CardProgram instruction. They
 translate a validated typed node and bounded immutable rules query into typed
 intents. Canonical engine or focused mutation owners commit those intents.
-The single-object `ZoneMoveIntent` and its frozen replacement selections live
-in `semantic_runtime/zone_move_intent.py`; the public intent catalog reexports
-the same type. Its explicit transition kind is data for the canonical zone
+The single-object, public-graveyard exile and public-set movement intent models
+live in `semantic_runtime/zone_move_intent.py`, alongside frozen replacement
+selections and per-Aura entry selections. The public intent catalog reexports
+the same types. The single-object intent's explicit transition kind is data for the canonical zone
 transaction, including sacrifice provenance and ordinary default movement.
 Handlers never receive mutable `GameState`, private projections, persistence
 objects, or unrestricted engine access.
@@ -295,6 +305,21 @@ Consecutive upkeep steps retain the disclosure. Ending it preserves learned
 identity and independent public-hand permissions. A later hand incarnation
 gets independent usage and reveal state.
 
+Announced activation X can compose with a fixed sacrifice of its own source,
+with or without a printed tap cost. The catalog keeps both the X symbol count
+and the existing sacrifice flag, validated against the entire printed cost.
+The combination requires its own capability as well as the ordinary X owner.
+The canonical activation transaction pays all costs atomically; its stack
+object retains the announced X and source information after sacrifice. Older
+ordinary X and fixed self-sacrifice descriptors keep their encoded forms.
+
+Fixed card-discard costs also compose with announced activation X. They retain
+the existing exact owned-hand query, a count of at most ten, and the canonical
+selected-cost transaction. The discard count is independent of X, including
+zero. The combination rejects random discard, restricted card predicates,
+variable counts and simultaneous source-sacrifice costs. Existing movement,
+replacement, disclosure and rollback owners remain authoritative.
+
 Selected-tap schema two adds fixed ordinary color alternatives to the existing
 controlled untapped permanent query. Its plan retains the ability source's
 allowed zone and logical identity; Forecast can use an owned hand source while
@@ -359,6 +384,14 @@ No state-based action runs between an immediate exile and return. In particular,
 Commander exile-to-command choice happens after immediate blink finishes, but
 may remove a delayed-return card from exile. Old records retain their pinned
 trust provenance; this new grammar does not reinterpret historical records.
+
+Schema four adds the separately gated immediate transformed-source return.
+The linked owner derives an eligible back face from the physical card and gives
+that face to the zone owner before entry processing. It retains the resolving
+controller, clears the old zone object's counters, and does not enter a front-
+face Saga before transforming it. Single-faced copies and tokens cannot use
+copied Saga text to acquire a returnable physical back face. Schemas one through
+three retain their exact descriptor fields and timing policies.
 
 Linked target cardinality is independent of source exclusion. The compiler
 captures an up-to bound and an other-object qualifier before canonicalizing
@@ -549,6 +582,25 @@ Only complete represented discard-and-draw bodies gain the committed-count
 binding; token, characteristic-dependent and selected-subset results require
 their own contracts.
 
+The fixed controller subset-and-draw compiler route uses the existing private
+`discard_draw_up_to` handler and simultaneous discard/draw ports. Its closed
+schema-two instruction carries a positive fixed maximum and canonicalizes the
+private hand reference order before recording the pending choice. Marker-free
+legacy instructions retain their existing payload and ordering. Selecting zero,
+including an empty hand, draws zero. Other-player selections and unrepresented
+result riders remain material.
+
+Schema three separately represents an any-number controller hand subset with a
+printed zero-or-one draw offset. Its bound is the materialized current hand,
+not a fixed ceiling; a zero selection or empty hand still receives the printed
+extra card. It reuses the same selection, discard and draw ports and keeps
+schema two and marker-free behavior unchanged.
+
+Exact resolving day/night instructions enter the existing designation and
+batch-transform owner. The designation and applicable bound faces settle before
+the next printed instruction. An unchanged designation creates no new change
+event. This direct instruction does not replace the ordinary untap-step rule.
+
 Departure relevance is determined from object identity, expected incarnation,
 and public zone before a pending characteristic is evaluated. Empty departure
 groups and unrelated references neither read values nor initialize continuation
@@ -636,6 +688,20 @@ transactions; none reparses Oracle text or owns the underlying counter or zone
 mutation. Broad legacy exile and return operations remain separate because they
 represent other origins, destinations, quantities, choices, or hidden-zone
 movement outside these closed direct-target grammars.
+Creature-power damage keeps its source and recipient as separate target roles.
+An omitted optional recipient produces no damage while legal preparation of
+the source still applies. Player-only and creature/planeswalker/battle domains
+retain their exact restrictions, and an explicit other recipient excludes the
+source creature. Target revalidation precedes the existing power reader and
+damage transaction; an illegal targeted source cannot supply departure LKI.
+Affected-permanent sets can additionally carry a closed `mana_value_filter`
+with a fixed equality or inequality. Stored instructions may use the existing
+announced-X or named source-counter amount at its value field. The amount
+owner materializes that value before selection; unresolved predicates cannot
+select even an empty set. The ordinary destruction transaction freezes the
+resulting membership and retains replacement and regeneration policy. Legacy
+sets omit the optional field and keep their encoded form; explicit null,
+malformed flags, unknown comparisons and unrepresented operands reject.
 
 Closed activated instructions to exile the enchanted creature use the same
 permanent-exile handler after resolving a version-two attachment reference.

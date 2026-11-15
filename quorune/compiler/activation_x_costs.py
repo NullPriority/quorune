@@ -6,16 +6,27 @@ from dataclasses import replace
 import re
 
 from ..activation_x import activation_x_symbols
+from ..activation_x_discard import activation_x_discard_count, validate_activation_x_discard
 from .declared_effect_amounts import declared_effect_amount_template
 
 
 def announced_x_activation_cost(ability):
     if ability.announced_x_symbols is not None:
         return ability
-    symbols = activation_x_symbols(ability.cost_text)
+    symbols = activation_x_symbols(ability.cost_text, allow_source_sacrifice=True, allow_fixed_discard=True)
+    if symbols is not None and activation_x_discard_count(ability.cost_text) is not None:
+        from .activated_zone_change_costs import fixed_activated_zone_change_cost
+        printed_cost = ability.cost_text
+        if activation_x_discard_count(printed_cost) == 1:
+            ability = replace(ability, cost_text=printed_cost.rpartition(', Discard ')[0]+', Discard a card')
+        ability = replace(fixed_activated_zone_change_cost(ability), cost_text=printed_cost)
+    try:
+        validate_activation_x_discard(ability)
+    except ValueError:
+        return ability
     if (symbols is None or ability.zones != ('battlefield',) or ability.mana_ability
             or set(ability.complex_symbols) != {'X'} or ability.uncompiled_costs
-            or ability.choices or ability.mana_cost_options or ability.waterbend is not None
+            or ability.mana_cost_options or ability.waterbend is not None
             or re.search(r"\bX (?:is|can't|cannot)\b|\bwhere X\b|\bspend only\b", ability.effect_text, re.I)):
         return ability
     return replace(ability, complex_symbols=(), announced_x_symbols=symbols)

@@ -170,8 +170,10 @@ def _copied_entry_effects(host, subject, source, target, values, *, form_key):
                 continue
             effects.extend(registry.subject_replacement_effects(descriptor, subject=copied_subject,
                 component_id=f'{program.key}:{index}'))
-    return tuple(replace(effect, effect_id=f'copied-entry:{target.ref}:{effect.effect_id}',
-        conditions={**dict(effect.conditions), 'entry_copy_form':{'eq':form_key}}) for effect in effects)
+    from ..replacement.tribute import copied_tribute_replacement
+    return tuple(copied_tribute_replacement(effect,prefix=f'copied-entry:{target.ref}:',form_key=form_key)
+        or replace(effect, effect_id=f'copied-entry:{target.ref}:{effect.effect_id}',
+            conditions={**dict(effect.conditions), 'entry_copy_form':{'eq':form_key}}) for effect in effects)
 
 
 def _copy_form_key(values):
@@ -235,7 +237,10 @@ def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
                     if next_key not in forms:
                         forms[next_key]=values
                         for effect in _copied_entry_effects(host,subject,source,target,values,form_key=next_key):
-                            effects[effect.effect_id+':'+next_key]=replace(effect,effect_id=effect.effect_id+':'+next_key)
+                            from ..replacement.tribute import copied_tribute_replacement
+                            bound=copied_tribute_replacement(effect,prefix=next_key+':',form_key=next_key)
+                            bound=bound or replace(effect,effect_id=effect.effect_id+':'+next_key)
+                            effects[bound.effect_id]=bound
                         queue.append((_copy_form_view(source,values),next_key))
                     effect_id=f'{descriptor["handler_id"]}:{subject.object_ref}:{program.key}:{index}:{key}:{target.ref}'
                     if any(counter.required_entry_type is not None for counter in subject.effect_entry_counters):

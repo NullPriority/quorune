@@ -71,6 +71,15 @@ boundary and remains absent when serialized. Checkpoint and manifest markers
 must agree; unknown and boolean values reject. The ordinary continuous-effect
 record still pins only the creatures affected at resolution.
 
+`declare_attack_cast_version: 1` captures the players directly attacked by a
+completed declaration in the current combat's `declared_player_attacks` fact.
+The fact survives attackers leaving combat and excludes attacks on a player's
+planeswalkers or battles, and creatures entering attacking. A new combat starts
+without the earlier declaration fact. Printed declare-attackers casting
+restrictions consume this occurrence only in that step after declaration.
+Historical absence stays absent and creates no new declaration fact. Unknown
+or boolean versions and manifest/checkpoint mismatches reject before replay.
+
 Ordinary fixed attacking-token results use
 `choose_fixed_attacking_token_destinations` with `token_entry_version: 1`.
 Their continuation retains the printed definition and tapped state, the
@@ -1053,13 +1062,17 @@ expires end-of-turn entries, and a new zone incarnation ends that object's
 entry. These entries affect current characteristics independently of copiable
 values.
 
-A resolved all-able-blocker requirement uses the additive exact
+A resolved attack-if-able or all-able-blocker requirement uses the additive exact
 `schema_version: 3` shape. Its `requirement` field replaces `restriction` and
 contains the historical self-scoped typed requirement payload. It locks exactly
 one battlefield incarnation and has no `live_query`. Unknown fields, mixed
 restriction and requirement payloads, other requirement kinds and malformed
 versions reject. It shares the same until-end-of-turn duration, cleanup,
 rollback and replay owner as the older forms.
+An attack-if-able entry contributes to each declare-attackers step during its
+turn, respects attack restrictions and optional costs, and leaves the defender
+choice to the attacking controller. Source departure does not end the entry;
+a new incarnation of the recipient does not inherit it.
 
 Resolved Detain uses `schema_version: 4` and `forbid_activations: true` on a
 locked attack-and-block prohibition. `expires_on_next_turn_of` binds the entry
@@ -1429,3 +1442,12 @@ checks. An occurrence-power child also retains its event card
 reference, logical identity, and `occurrence_power_damage_lki` snapshot. The
 child's own target declaration and any resolution-time count remain deferred
 to its stack frame. Version one reads the legacy child schema.
+
+Next-spell reductions add a schema-one journal record with
+`effect_kind: resolution_next_spell_cost_reduction`. It retains the effect and
+source identities, timestamp, resolving controller, public `spell_query`,
+nonnegative resolved `amount` and end-of-turn duration. The amount is not
+recomputed at casting. Accepted matching casts consume these records atomically;
+previews, failed commands and nonmatching casts preserve them. Source departure
+does not expire them, and ordinary cleanup removes unused records. Historical
+states without a duration journal retain that omission.

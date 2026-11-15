@@ -20,7 +20,7 @@ _REASON_FIELD = "reason"
 _MUTATING_TARGET_FIELDS = {
     **{operation: 'card' for operation in (
         'destroy', 'bounce', 'exile_permanent', 'tap', 'untap', 'place_counters',
-        'remove_counters', 'remove_all_counters', 'gain_control', 'regenerate',
+        'remove_counters', 'remove_all_counters', 'gain_control', 'give_control', 'regenerate',
         'sacrifice', 'apply_source_characteristics_until_end_of_turn',
         COMBAT_REMOVAL_OPERATION,
     )},

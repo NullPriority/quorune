@@ -25,7 +25,9 @@ from ..initiative_model import is_closed_initiative_program
 
 
 def is_closed_fixed_instruction_program(program):
+    from ..rules.fixed_damage_roles import is_closed_fixed_damage_role_program
     return any(recognizer(program) for recognizer in (
+        is_closed_fixed_damage_role_program,
         is_closed_created_token_counter_program,
         is_closed_distinct_sacrifice_program,
         is_closed_captured_draw_cast_program,

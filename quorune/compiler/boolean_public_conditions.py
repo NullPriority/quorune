@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from ..continuous_conditions import FixedPublicStateConditionKind,FixedPublicStateConditionSpec
+from ..continuous_conditions import FixedPublicStateConditionKind,FixedPublicStateConditionSpec,FixedPublicStateFact
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
 
 
@@ -33,6 +33,7 @@ def compose_public_conditions(text: str, *, compile_atomic, source_pattern: str)
 def public_condition_parts_result(condition,body):
     if condition is None:return None
     leaves=condition.leaf_conditions()
+    if any(leaf.fact is FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM for leaf in leaves):return None
     if any(leaf.kind in {
         FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
         FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST,

@@ -27,13 +27,16 @@ from .direct_target_fields import bound_mutation_target_overrides
 
 _INDEX_GROUP = "index"
 _TARGET_GROUP_REFERENCE = re.compile(
-    r"\$target_group\.(?P<group>clause_[0-3]|target_[0-9]+)"
+    r"\$target_group\.(?P<group>clause_[0-3]|target_[0-9]+|mode_[1-5]:[A-Za-z_][A-Za-z0-9_]*)"
     r"(?P<scalar>\.0|(?P<current_controller>\.current_controller\.0))?"
 )
 
 
 class SemanticValueHost(Protocol):
     state: Any
+    semantics: Any
+
+    def _stack_target_schema(self, item: Any, program: Any) -> Mapping[str, Any] | None: ...
 
     def _stack_source_ref(self, item: Any) -> str | None: ...
 
@@ -42,6 +45,20 @@ class SemanticValueHost(Protocol):
     def _type_parts(
         self, type_line: str
     ) -> tuple[set[str], set[str], set[str]]: ...
+
+
+def _empty_scalar_target_is_optional(host: SemanticValueHost, item: Any, name: str) -> bool:
+    from ..targets import target_plan
+    try:
+        program = host.semantics.get(item.semantic_key)
+        schema = host._stack_target_schema(item, program)
+        if schema is None:
+            return False
+        group = next((group for group in target_plan(schema, item.modes).groups
+            if group.group_id == name), None)
+    except (AttributeError, TypeError, ValueError, KeyError):
+        return False
+    return group is not None and group.min_targets == 0 and group.max_targets == 1
 
 
 def _resolve_target_group_reference(host: SemanticValueHost, match: re.Match[str], item: Any) -> Any:
@@ -60,6 +77,9 @@ def _resolve_target_group_reference(host: SemanticValueHost, match: re.Match[str
     if not match['scalar']:
         return [ref for ref in refs if ref is not None]
     original = original_groups.get(name) if isinstance(original_groups, Mapping) else None
+    if isinstance(original, (list, tuple)) and not original and not refs:
+        if _empty_scalar_target_is_optional(host, item, name):
+            return None
     if not isinstance(original, (list, tuple)) or len(original) != 1 or len(refs) > 1:
         raise SemanticNodeError('Scoped scalar target requires its one fixed role')
     ref = refs[0] if refs else None
@@ -119,6 +139,10 @@ def _resolve_attachment_reference(
 
 def _resolve_typed_semantic_value(host, value, item):
     """Delegate typed amounts and public predicates to their narrow owners."""
+    if value['kind']=='unique_player_maximum':
+        from ..player_maximum import resolve_player_maximum
+        try:return resolve_player_maximum(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value['kind']=='source_entry_x_amount':
         from ..entry_x_amount_model import resolve_entry_x_amount
         try:return resolve_entry_x_amount(value,item)
@@ -193,6 +217,12 @@ def _resolve_effect_mapping(host, value, item):
     from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
+        if 'fixed_target_role_damage' in value:
+            from ..rules.fixed_damage_roles import bind_fixed_damage_roles
+            value=bind_fixed_damage_roles(host,value,item)
+        if 'fixed_target_controller_damage' in value:
+            from ..rules.fixed_dual_damage import bind_fixed_dual_damage
+            value = {**value,'fixed_target_controller_damage':bind_fixed_dual_damage(host,value,item)}
         if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
             total, recipients = bind_announced_damage_recipients(host, value, item)
             value = {**value, "amount": total, ANNOUNCED_DAMAGE_EFFECT_FIELD: recipients}
@@ -244,14 +274,9 @@ def resolve_semantic_value(
         from ..rules.paid_mana_resolution import resolve_cast_mana_units
         try:return resolve_cast_mana_units(host,value,item)
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get('kind')=='target_controller_information':
-        from ..target_controller_information import resolve_target_controller_information
-        try:return resolve_target_controller_information(host,value,item)
-        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get('kind')=='occurrence_controller_information':
-        from ..target_controller_information import resolve_occurrence_controller_information
-        try:return resolve_occurrence_controller_information(host,value,item)
-        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind') in {
+            'target_controller_information','target_owner_information','occurrence_controller_information'}:
+        return _resolve_target_information_value(host,value,item)
     if isinstance(value, Mapping) and value.get('kind') == 'reflexive_trigger_program':
         from ..reflexive_trigger_model import ReflexiveTriggerProgram
         try:
@@ -260,7 +285,7 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','unique_player_maximum'):
         return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)
@@ -371,3 +396,15 @@ def resolve_semantic_value(
 
 
 __all__ = ["SemanticValueHost", "resolve_semantic_value"]
+
+
+def _resolve_target_information_value(host,value,item):
+    """Keep the related current, departure and physical-owner value codecs together."""
+    from ..target_controller_information import (
+        resolve_target_controller_information,resolve_target_owner_information,resolve_occurrence_controller_information,
+    )
+    reader={'target_controller_information':resolve_target_controller_information,
+        'target_owner_information':resolve_target_owner_information,
+        'occurrence_controller_information':resolve_occurrence_controller_information}[value['kind']]
+    try:return reader(host,value,item)
+    except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc

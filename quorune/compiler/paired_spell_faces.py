@@ -8,6 +8,17 @@ from .dependency_gate import dependency_gate
 from .ir_model import OracleFaceIR, OracleNode, SourceSpan
 
 
+def compile_fixed_text_variant_face(**arguments):
+    """Keep the paired-body source producers together under one compiler port."""
+    from .awaken_spell_faces import compile_fixed_awaken_face
+    from .cleave_spell_faces import compile_fixed_cleave_face
+    from .overload_spell_faces import compile_fixed_overload_face
+    for lower in (compile_fixed_awaken_face,compile_fixed_cleave_face,compile_fixed_overload_face):
+        face=lower(**arguments)
+        if face is not None:return face
+    return None
+
+
 def missing_paired_variant_residuals(ir, programs, kind):
     ability_ids = {program.ability_id for program in programs}
     return [{'face_id': face.face_id, 'residual_id': 'program_lowering:' + node.node_id,
@@ -29,7 +40,8 @@ def paired_spell_face(*, kind, face_id, face_name, oracle_text, material_rows, v
         return None
     gates = [dependency_gate(mechanics=mechanics, effects=effects, target_schema=targets,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
-        capability_profile=capability_profile, explicit_capabilities=(kind.capability,))
+        capability_profile=capability_profile, explicit_capabilities=(kind.capability,),
+        cost_schema={kind.value:spec.to_dict()} if kind is SpellTextVariantKind.AWAKEN else None)
         for _, effects, targets, mechanics in variants]
     if any(gate.blockers or gate.closure is None or len(gate.capabilities) < 2 for gate in gates):
         return None

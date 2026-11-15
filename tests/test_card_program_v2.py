@@ -461,16 +461,14 @@ class CardProgramV2Tests(unittest.TestCase):
 
         self.assertEqual(ORACLE_COMPILER_VERSION, current.compiler_version)
         self.assertEqual(
-            "unresolved", current.trust_closure["trust_basis"]
+            "capability_closed", current.trust_closure["trust_basis"]
         )
-        self.assertFalse(current.trust_closure['strict_capability_ready'])
+        self.assertTrue(current.trust_closure['strict_capability_ready'])
         self.assertEqual([], current.to_dict()['residuals'])
         self.assertTrue(current.abilities[0].capability_closure['trusted'])
         binding = bind_card_program_runtime(current, capability_registry=self.capabilities,
                                             profile='commander_review')
-        self.assertFalse(binding['strict_capability_ready'])
-        self.assertIn('runtime_typed_result_amount:invalid:Conditional recipient fields are closed',
-                      binding['ability_bindings'][0]['blockers'])
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
         self.assertIn(
             "damage.prevention.aftermath.damage",
             current.capability_dependencies,
@@ -480,6 +478,12 @@ class CardProgramV2Tests(unittest.TestCase):
         self.assertEqual(
             "deal_damage", choice["shield"]["aftermath"][0]["kind"]
         )
+        # A closed aftermath remains bound to its declared capability profile.
+        from quorune.card_programs import bind_semantic_program_runtime
+        ability = current.abilities[0]
+        rejected = bind_semantic_program_runtime(ability, capability_registry=self.capabilities, profile='traditional')
+        self.assertFalse(rejected['strict'])
+        self.assertIn('capability:closure_binding_mismatch', rejected['blockers'])
 
     def test_two_face_semantic_aliases_bind_to_exact_oracle_faces(self):
         program = _compile_best_available(

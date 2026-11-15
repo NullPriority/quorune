@@ -172,6 +172,29 @@ canonical checkout's pinned database, select that file with `--db` or
 Keep one substantive branch under certification and at most one independent
 next-batch worktree. Do not mix their changes.
 
+When the user authorizes two developers, both share the development checkout
+and its checked-out branch. Each owns a complete mechanic family and explicit
+whole-file claims, including new source, tests and fixtures. Use the local
+coordination helper under `shared-development` in the absolute Git common
+directory, resolved with `git rev-parse --path-format=absolute --git-common-dir`.
+Acquire claims and write transactions atomically; never steal old claims by age.
+Prepare central-file integrations first, then claim, reread, apply, validate and
+commit them before release. Dirty ownership requires an explicit transfer.
+Every index/HEAD mutation uses the shared Git transaction mutex, explicit owned
+paths and staged-diff inspection. Unexpected staged content must be reconciled.
+
+Shared checkout-wide mutations and global writers require a freeze request and
+explicit idle acknowledgments from affected developers, including confirmation
+that no mutating subprocess remains. Use isolated logs, temporary databases and
+ports; the pinned corpus stays read-only. Live-tree results are development
+feedback unless their relevant inputs remained protected for the whole run.
+The publisher remains a card developer and alone controls public refs, full
+generation, certification and protected merges. Use the other existing checkout
+for a frozen publisher-controlled candidate ref, never the shared development
+branch itself. Both developers resume in the shared tree during certification.
+Record the release cut point and preserve post-cut work when reconciling a
+squash merge onto verified main. The 500-card floor applies to the combined batch.
+
 Alternate a consolidated defect-only pull request with a card-support delivery
 that meets the 500-card floor. Keep the reproduced defects, fixes, and evidence
 independently reviewable. Resolve release blockers before merging the affected

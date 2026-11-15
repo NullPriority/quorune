@@ -1096,6 +1096,7 @@ class ZoneTransitionOwner:
         reason: str,
         log: bool = False,
         tapped: bool | None = None,
+        tapped_by_object: Mapping[str, bool] | None = None,
         destination_controllers: Mapping[str, str] | None = None,
         effect_entry_counters: Mapping[str, Sequence[EffectEntryCounter]] | None = None,
         aura_target_refs: Mapping[str, str] | None = None,
@@ -1108,6 +1109,10 @@ class ZoneTransitionOwner:
         attacking_entries: Mapping[str, Any] | None = None,
         library_order: LibraryArrivalOrder | None = None,
     ) -> list[CardInstance]:
+        tapped_entries = dict(tapped_by_object or {})
+        if (set(tapped_entries) - {oid for oid, dest in changes if dest == 'battlefield'}
+                or any(type(value) is not bool for value in tapped_entries.values())):
+            raise GameRuleError('Per-object tappedness must describe entering battlefield objects')
         library_owner = self._ordered_library_destination(changes, library_order) if library_order is not None else None
         if attacking_entries:
             from .rules.attacking_card_entry import AttackingEntryRecipient
@@ -1133,7 +1138,7 @@ class ZoneTransitionOwner:
         if changes:
             changes,prepared,kinds,source_snapshot=self._prepare_simultaneous_zone_batch(changes,controllers,aura_targets,faces,
                 tapped=tapped,effect_entry_counters=effect_entry_counters,replacement_selections=replacement_selections,
-                kinds=kinds,prepared_replacements=prepared_replacements,log=log)
+                kinds=kinds,prepared_replacements=prepared_replacements,log=log,tapped_by_object=tapped_entries)
         if damage_clears:
             from .damage_results import clear_damage_for_permanents
 
@@ -1284,7 +1289,7 @@ class ZoneTransitionOwner:
         return [card for card, _departure in snapshots]
 
     def _prepare_simultaneous_zone_batch(self,changes,controllers,aura_targets,faces,*,tapped,
-            effect_entry_counters,replacement_selections,kinds,prepared_replacements,log):
+            effect_entry_counters,replacement_selections,kinds,prepared_replacements,log,tapped_by_object=None):
         """Capture sources and validate every entry/sacrifice plan before movement."""
         entry_characteristics = {
             object_id: capture_prospective_entry_characteristics(
@@ -1308,7 +1313,7 @@ class ZoneTransitionOwner:
             self.host,
             tuple(changes),
             requested_tapped={
-                object_id: bool(tapped) if tapped is not None else False
+                object_id: (tapped_by_object or {}).get(object_id, bool(tapped) if tapped is not None else False)
                 for object_id, _destination in changes
             },
             destination_controllers={

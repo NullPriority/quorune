@@ -180,7 +180,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v979"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1054"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1077,6 +1077,11 @@ def _activated_or_fixed_event_trigger_node(
         span=span, card_name=card_name, effect_template=trigger_effect_template or effect_template, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     if bargain_entry is not None:return bargain_entry
+    from .compiler.tribute_nodes import tribute_unpaid_entry_node
+    tribute_entry=tribute_unpaid_entry_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        card_name=card_name,effect_template=trigger_effect_template or effect_template,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if tribute_entry is not None:return tribute_entry
     from .compiler.kicked_entry_trigger_nodes import fixed_source_entry_or_step_trigger_node
     source_entry = fixed_source_entry_or_step_trigger_node(
         node_id=node_id, line=line, material_line=material_line, span=span,
@@ -1136,20 +1141,13 @@ def _typed_whole_spell_face(
         material_rows=material_rows,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if paid is not None:return paid
-    from .compiler.cleave_spell_faces import compile_fixed_cleave_face
-    cleave = compile_fixed_cleave_face(record=record, face_id=face_id, face_name=face_name,
+    from .compiler.paired_spell_faces import compile_fixed_text_variant_face
+    alternative = compile_fixed_text_variant_face(record=record, face_id=face_id, face_name=face_name,
         oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals)
-    if cleave is not None:
-        return cleave
-    from .compiler.overload_spell_faces import compile_fixed_overload_face
-    overload = compile_fixed_overload_face(record=record, face_id=face_id, face_name=face_name,
-        oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
-        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
-        capability_profile=capability_profile, residuals=residuals)
-    if overload is not None:
-        return overload
+    if alternative is not None:
+        return alternative
     additional_cost_face = _typed_additional_cost_face(
         record,
         face_id,
@@ -1169,7 +1167,7 @@ def _typed_whole_spell_face(
         type_line=type_line, keywords=keywords, oracle_text=oracle_text, material_rows=material_rows,
         effect_template=effect_template, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals, compile_inner=_activated_or_fixed_event_trigger_node,
-        trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates)
+        trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates,compile_keyword=_keyword_nodes)
 
 
 def _face_trigger_compiler(record, material_rows, effect_template, face_name, permanent):

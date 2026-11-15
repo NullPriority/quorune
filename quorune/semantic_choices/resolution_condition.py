@@ -26,7 +26,7 @@ class PublicResolutionConditionHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = ("CR 109.5", "CR 608.2c", "CR 608.2h")
     capability_dependencies: tuple[str, ...] = (RESOLUTION_CONDITION_CAPABILITY,)
-    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding')
+    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding','condition_target')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -36,6 +36,12 @@ class PublicResolutionConditionHandler:
     test_modules: tuple[str, ...] = ("tests.test_resolution_public_conditions",)
 
     def prepare(self, effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+        if effect.get('schema_version') == 17:
+            from .target_replacements import prepare_current_target_replacement
+            return prepare_current_target_replacement(effect, context)
+        if effect.get('schema_version') == 16:
+            from .conditional_target_preparation import prepare_conditional_target
+            return prepare_conditional_target(effect, context)
         if effect.get('schema_version') == 12:
             from .declared_cost_conditions import prepare_declared_cost_condition
             return prepare_declared_cost_condition(effect, context)

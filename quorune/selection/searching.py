@@ -554,7 +554,10 @@ class HiddenSearchOwnerMixin:
                 ),
             },
         }
-        if entry_choice and str(effect.get("destination")) == "battlefield":
+        if effect.get('schema_version') == 5:
+            from ..search_allocation_model import SearchAllocationSpec
+            choice_schema.update(SearchAllocationSpec.from_effect(effect).choice_metadata())
+        if entry_choice and (str(effect.get("destination")) == "battlefield" or effect.get('schema_version')==4):
             choice_schema["entry_pay_life"] = "boolean"
             choice_schema["example"]["entry_pay_life"] = False
         return choice_schema
@@ -885,6 +888,7 @@ class HiddenSearchOwnerMixin:
     def _semantic_search_destination(
         effect: Mapping[str, Any],
     ) -> tuple[str, str, str | int]:
+        if effect.get('schema_version') == 5:return 'allocated', 'hand', 'top'
         destination_spec = str(effect.get("destination") or "hand")
         position: str | int = effect.get(
             "destination_position",
@@ -936,6 +940,9 @@ class HiddenSearchOwnerMixin:
             )
             selected_cards.append(card)
         owner = ZoneTransitionOwner(self)
+        if effect.get('schema_version') == 5:
+            from ..search_allocation import move_allocated_search_results
+            return move_allocated_search_results(self, context, selected_cards, replacement_selections)
         if is_counted_library_search(effect):
             self._validate_counted_search_effect(effect)
             if effect.get("shuffle_before_placement") is True:
@@ -1036,6 +1043,9 @@ class HiddenSearchOwnerMixin:
             "count": len(moved),
             "revealed": reveal,
         }
+        from ..search_allocation import allocated_search_result_details
+        allocation_details = allocated_search_result_details(effect, moved)
+        if reveal:public_details.update(allocation_details)
         if public_choice:
             public_details["objects"] = [card.ref for card in moved]
             if len(moved) == 1:
@@ -1056,6 +1066,7 @@ class HiddenSearchOwnerMixin:
             f"{seat} selected {len(moved)} private search object(s).",
             {
                 **public_details,
+                **allocation_details,
                 "objects": [card.ref for card in moved],
             },
             visibility=[seat, "analyst"],
@@ -1263,6 +1274,8 @@ class HiddenSearchOwnerMixin:
     def _complete_semantic_search(self, decision: Any) -> None:
         context = self._semantic_search_completion_context(decision)
         values, search_zones = self._semantic_search_selected_values(context)
+        from ..conditional_search_placement import materialize_conditional_search
+        context=materialize_conditional_search(self,context,values)
         destination_spec, destination, position = (
             self._semantic_search_destination(context.effect)
         )

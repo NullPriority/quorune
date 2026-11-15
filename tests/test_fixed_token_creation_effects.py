@@ -326,6 +326,63 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             self.assertFalse(binding["strict"])
             self.assertTrue(any(withdrawn in blocker for blocker in binding["blockers"]), binding["blockers"])
 
+    def test_fixed_firebending_token_keyword_keeps_one_independent_child_program(self):
+        from quorune.ability_fragments import (
+            CURRENT_ABILITY_FRAGMENT_COVERAGE, GrantedTriggeredAbilitySpec,
+            canonical_ability_fragments,
+        )
+        for index, (text, kind, amount) in enumerate((
+            ("Create two 2/2 red Soldier creature tokens with firebending 1.", "Sorcery", 1),
+            ("{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.", "Creature", 4),
+            ("When this enchantment enters, create a 2/2 red Soldier creature token with firebending 20.", "Enchantment", 20),
+            ('Create a 2/2 red Soldier creature token with "Firebending 1".', "Sorcery", 1),
+        )):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(token_record("Intrinsic Token Keyword", text, 979100 + index,
+                    type_line=kind), capability_registry=self.capabilities, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                outer, child = ir.faces[0].nodes
+                effect = next(effect for effect in outer.effects if effect["op"] == "create_token")
+                fragments = canonical_ability_fragments(effect["characteristics"]["ability_fragments"])
+                self.assertEqual(1, len(fragments))
+                self.assertIsInstance(fragments[0], GrantedTriggeredAbilitySpec)
+                self.assertIn(":token:", fragments[0].ability_id)
+                self.assertEqual("granted_triggered_ability", child.kind)
+                self.assertEqual("creature.attacks", child.event)
+                self.assertEqual("fixed-keyword-firebending-event-effect-v1", child.template_id)
+                self.assertEqual(("mana", "R", amount, "end_of_combat"),
+                    tuple(child.effects[0][key] for key in ("op", "color", "amount", "retain_until")))
+                self.assertNotIn(CURRENT_ABILITY_FRAGMENT_COVERAGE, child.runtime_coverage)
+                self.assertIn("trigger.keyword.firebending.fixed", child.capability_dependencies)
+                self.assertIn("token.creation.typed_ability_definition", outer.capability_dependencies)
+                if "flying" in text:
+                    self.assertEqual(["Flying"], effect["characteristics"]["keywords"])
+
+    def test_token_keyword_composition_rejects_unclosed_sources_counts_and_other_keywords(self):
+        for text in (
+            "Create a 2/2 red Soldier creature token with firebending 0.",
+            "Create a 2/2 red Soldier creature token with firebending 21.",
+            "Create a 2/2 red Soldier creature token with firebending X.",
+            "Create a 2/2 red Soldier creature token with firebending 1 and firebending 2.",
+            "Create a 2/2 red Soldier creature token with afflict 2.",
+            "Create a 2/2 red Soldier creature token with a mysterious ability and firebending 1.",
+            "Create a 2/2 red Soldier creature token with firebending 1. Take a mysterious action.",
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(token_record("Open Token Keyword", text, 979200),
+                    capability_registry=self.capabilities, capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+        text = "Create a 2/2 red Soldier creature token with firebending 1."
+        for owner in (
+            "quorune.compiler.typed_token_ability_nodes._fixed_token_keyword_shell",
+            "quorune.compiler.granted_keyword_event_nodes._keyword_inner_node",
+        ):
+            with self.subTest(omitted_owner=owner), patch(owner, return_value=None):
+                ir = compile_oracle_card(token_record("Missing Token Keyword Owner", text, 979201),
+                    capability_registry=self.capabilities, capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status)
+
     def test_query_defined_token_stats_require_complete_intrinsic_definitions(self):
         from quorune.ability_fragments import canonical_ability_fragments
         from quorune.characteristic_fragments import QueryPowerToughnessDefinitionSpec

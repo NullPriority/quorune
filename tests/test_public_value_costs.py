@@ -113,6 +113,7 @@ class PublicValueCostCompilerTests(unittest.TestCase):
 
         body = '{4}{W}, {T}: Draw a card.'
         for discount in ('{2} less to activate if you control a legendary creature.',
+                         '{2} less to activate if you have two or more cards in hand.',
                          '{X} less to activate, where X is the greatest power among creatures you control.'):
             with self.subTest(discount=discount):
                 text = f'{body} This ability costs {discount}'
@@ -130,7 +131,7 @@ class PublicValueCostCompilerTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'origin'):
                     ability_local_mana_reduction_runtime_dependencies(program)
 
-        for discount in ('{2} less to activate if you have two or more cards in hand.',
+        for discount in ('{2} less to activate if an opponent has two or more cards in hand.',
                          '{1} less to activate if it targets a creature with power 3 or less.',
                          '{X} less to activate, where X is the greatest power among creatures your opponents control.'):
             with self.subTest(unsupported=discount):

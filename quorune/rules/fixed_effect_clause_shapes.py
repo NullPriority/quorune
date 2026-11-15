@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .control_capability_shapes import fixed_control_node_capabilities
+from .control_capability_shapes import resolution_control_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .next_spell_payment import temporary_player_rule_node_capabilities
@@ -20,6 +20,8 @@ from .affected_player_sacrifice_capability_shapes import (
     fixed_affected_player_sacrifice_node_capabilities,
 )
 from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
+from .discard_result_shapes import discard_result_node_capabilities
+from .fixed_rule_action_coverage import fixed_day_night_designation_capabilities
 from ..random_discard import random_discard_node_capabilities
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
@@ -141,6 +143,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_day_night_designation_capabilities,
     preparation_result_node_capabilities,
     graveyard_return_choice_node_capabilities,
     fixed_land_untap_choice_capabilities,
@@ -168,8 +171,9 @@ _COMPONENT_RESOLVERS = (
     suspect_node_capabilities,
     fixed_resolution_characteristic_capabilities,
     whole_hand_discard_node_capabilities,
+    discard_result_node_capabilities,
     random_discard_node_capabilities,
-    fixed_control_node_capabilities,
+    resolution_control_node_capabilities,
     fixed_attachment_action_node_capabilities,
     fixed_source_characteristics_node_capabilities,
     fixed_target_effect_sequence_node_capabilities,
@@ -240,6 +244,7 @@ _COMPONENT_RESOLVERS = (
 
 
 def _contains_target_reference(value: Any) -> bool:
+    if isinstance(value,Mapping) and 'fixed_target_role_damage' in value:return True
     if isinstance(value, str):
         return (
             value in {"$target", "$targets"}
@@ -464,6 +469,23 @@ def fixed_effect_clause_sequence_node_capabilities(
             return ()
         dependencies.update(component)
     return tuple(sorted(dependencies))
+
+
+def source_characteristic_tap_runtime_dependencies(program):
+    """Version only the new source/tap producer; retain historical source v1 binding."""
+    from ..compiler.fixed_effect_clause_sequences import SOURCE_CHARACTERISTIC_TAP_TEMPLATE
+    if program.provenance.get('template_id')!=SOURCE_CHARACTERISTIC_TAP_TEMPLATE:return ()
+    if (program.target_schema is not None or len(program.effects)!=2
+            or program.effects[0].get('op')!='apply_source_characteristics_until_end_of_turn'
+            or program.effects[1].get('op') not in {'tap','untap'}
+            or any(effect.get('card')!='$source.zone_object' for effect in program.effects)):
+        raise ValueError('Source characteristic/tap production lost its source and ordered result scope')
+    required = fixed_effect_clause_sequence_node_capabilities(effects=program.effects,
+        target_schema=None,mechanic_ids=program.coverage)
+    if not required:raise ValueError('Source characteristic/tap production lacks complete leaf closure')
+    from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+    return tuple(sorted({*required,*(cap for keyword in program.effects[0].get('keywords',())
+        for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
 
 
 __all__ = [

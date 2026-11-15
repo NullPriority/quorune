@@ -9,6 +9,7 @@ from .zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
 
 
 LINKED_EXILE_RETURN_CAPABILITY = "zone.linked_exile_return.fixed"
+LINKED_TRANSFORMED_RETURN_CAPABILITY = "zone.linked_exile_return.transformed_source"
 LINKED_EXILE_RETURN_MECHANIC = "linked-exile-return"
 LINKED_EXILE_RETURN_OPERATION = "linked_exile_return"
 LINKED_RETURN_OPERATION = "return_linked_exiled_objects"
@@ -87,17 +88,23 @@ class LinkedExileReturnSpec:
     entry_counters: tuple[tuple[str, int], ...] = ()
     keywords: tuple[str, ...] = ()
     schema_version: int = 1
+    transformed: bool = False
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
             raise ValueError("Unsupported linked exile/return schema")
+        if type(self.transformed) is not bool:
+            raise ValueError("Linked transformed entry must be a boolean")
         if self.timing not in {"immediate", "next_end_step", "controller_next_end_step", "source_departure", LINKED_ABILITY_TIMING}:
             raise ValueError("Unsupported linked return timing")
-        version = {"source_departure": 2, LINKED_ABILITY_TIMING: 3}.get(self.timing, 1)
+        version = 4 if self.transformed else {"source_departure": 2, LINKED_ABILITY_TIMING: 3}.get(self.timing, 1)
         if self.schema_version != version:
             raise ValueError("Linked return timing requires its exact spec version")
-        if version != 1 and (self.controller != "owner" or self.tapped or self.entry_counters or self.keywords):
+        if version in {2, 3} and (self.controller != "owner" or self.tapped or self.entry_counters or self.keywords):
             raise ValueError("Departure and ability-pair returns have a fixed owner policy")
+        if version == 4 and (self.timing != "immediate" or self.controller != "actor"
+                             or self.tapped or self.entry_counters or self.keywords):
+            raise ValueError("Transformed source return requires an immediate controller entry")
         if self.controller not in {"owner", "actor"} or type(self.tapped) is not bool:
             raise ValueError("Linked return controller or tapped state is malformed")
         if len(set(name for name, _ in self.entry_counters)) != len(self.entry_counters):
@@ -111,16 +118,22 @@ class LinkedExileReturnSpec:
             raise ValueError("Delayed keyword-result riders are not represented")
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version": self.schema_version, "timing": self.timing,
+        value = {"schema_version": self.schema_version, "timing": self.timing,
                 "controller": self.controller, "tapped": self.tapped,
                 "entry_counters": [[name, amount] for name, amount in self.entry_counters],
                 "keywords": list(self.keywords)}
+        if self.schema_version == 4:
+            value["transformed"] = self.transformed
+        return value
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "LinkedExileReturnSpec":
-        if not isinstance(value, Mapping) or set(value) != {
+        fields = {
             "schema_version", "timing", "controller", "tapped", "entry_counters", "keywords",
-        }:
+        }
+        if isinstance(value, Mapping) and value.get("schema_version") == 4:
+            fields.add("transformed")
+        if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError("Linked exile/return spec has a closed schema")
         counters, keywords = value["entry_counters"], value["keywords"]
         if not isinstance(counters, (list, tuple)) or any(not isinstance(entry, (list, tuple)) or len(entry) != 2 for entry in counters):
@@ -129,4 +142,5 @@ class LinkedExileReturnSpec:
             raise ValueError("Linked return keywords must be strings")
         return cls(schema_version=value["schema_version"], timing=value["timing"],
                    controller=value["controller"], tapped=value["tapped"],
-                   entry_counters=tuple(tuple(entry) for entry in counters), keywords=tuple(keywords))
+                   entry_counters=tuple(tuple(entry) for entry in counters), keywords=tuple(keywords),
+                   transformed=value.get("transformed", False))

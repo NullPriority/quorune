@@ -12,6 +12,7 @@ from ..cast_timing import (
 )
 from ..rules.capabilities import load_default_capability_registry
 from ..continuous_conditions import FixedPublicStateConditionSpec
+from ..declare_attack_cast_model import DeclareAttackCastSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 
@@ -86,7 +87,7 @@ class ClassicFlashPermissionHandler(FlashCastPermissionHandler):
 
 
 class CastPermissionRegistry(
-    RuntimeComponentRegistry[object, CastTimingPermission | FixedPublicStateConditionSpec]
+    RuntimeComponentRegistry[object, CastTimingPermission | FixedPublicStateConditionSpec | DeclareAttackCastSpec]
 ):
     pass
 
@@ -95,8 +96,10 @@ class CastPermissionRegistry(
 def default_cast_permission_registry() -> CastPermissionRegistry:
     from .conditional_flash import ConditionalFlashPermissionHandler
     from .self_cast_restrictions import SelfCastRestrictionHandler
+    from .declare_attack_cast import DeclareAttackCastRestrictionHandler
+    from .surcharge_flash import ManaSurchargeFlashPermissionHandler
     registry = CastPermissionRegistry((FlashCastPermissionHandler(),ConditionalFlashPermissionHandler(),
-        SelfCastRestrictionHandler(),ClassicFlashPermissionHandler()))
+        SelfCastRestrictionHandler(),DeclareAttackCastRestrictionHandler(),ClassicFlashPermissionHandler(),ManaSurchargeFlashPermissionHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

@@ -65,6 +65,9 @@ class PublicZoneSeatRelation(str, Enum):
     TARGET_PLAYER = "target_player"
 
 
+PUBLIC_AURA_ENTRY_VERSION = 3
+
+
 _SET_FIELDS_V1 = frozenset(
     {
         "schema_version",
@@ -104,7 +107,7 @@ class PublicZoneMoveSetSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, PUBLIC_AURA_ENTRY_VERSION}:
             raise PublicZoneMoveError(
                 "Unsupported public zone-move set schema version"
             )
@@ -159,7 +162,7 @@ class PublicZoneMoveSetSpec:
             )
         if self.destination is PublicZoneDestination.BATTLEFIELD:
             if (
-                self.schema_version != 2
+                self.schema_version not in {2, PUBLIC_AURA_ENTRY_VERSION}
                 or self.origin is not PublicZoneOrigin.GRAVEYARD
                 or not isinstance(
                     self.battlefield_controller,
@@ -167,12 +170,14 @@ class PublicZoneMoveSetSpec:
                 )
             ):
                 raise PublicZoneMoveError(
-                    "Public battlefield entry requires a v2 graveyard set and controller policy"
+                    "Public battlefield entry requires a versioned graveyard set and controller policy"
                 )
         elif self.battlefield_controller is not None or self.battlefield_tapped:
             raise PublicZoneMoveError(
                 "Only battlefield destinations accept entry policies"
             )
+        if self.schema_version == PUBLIC_AURA_ENTRY_VERSION and self.destination is not PublicZoneDestination.BATTLEFIELD:
+            raise PublicZoneMoveError("Public zone-move version three is reserved for Aura-capable battlefield entry")
         if (
             self.schema_version == 1
             and self.origin is PublicZoneOrigin.GRAVEYARD
@@ -205,7 +210,7 @@ class PublicZoneMoveSetSpec:
             "exclude_source": self.exclude_source,
             "query": self.query.canonical_dict(),
         }
-        if self.schema_version == 2:
+        if self.schema_version in {2, PUBLIC_AURA_ENTRY_VERSION}:
             value.update(
                 {
                     "battlefield_controller": (
@@ -525,11 +530,16 @@ def resolve_public_zone_move_set(
     source_ref: str | None = None,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
     followup: PublicExileFollowup | None = None,
+    aura_target_refs: Mapping[str, str] | None = None,
 ) -> PublicZoneMoveSnapshot | CommittedQuantityFollowup:
     """Resolve a fixed public set through the canonical simultaneous owner."""
 
     _nonempty(actor, field="Public zone-move actor")
     _nonempty(reason, field="Public zone-move reason")
+    if aura_target_refs is not None and (
+        spec.schema_version != PUBLIC_AURA_ENTRY_VERSION or spec.destination is not PublicZoneDestination.BATTLEFIELD
+    ):
+        raise PublicZoneMoveError("Aura entry selections require version-three battlefield entry")
     rows = _exile_followup_rows(host, actor, spec, followup) if followup is not None else None
     snapshot = snapshot_public_zone_move_set(
         host, actor=actor, spec=spec, source_ref=source_ref, object_rows=rows,
@@ -582,6 +592,7 @@ def resolve_public_zone_move_set(
                 else None
             ),
             destination_controllers=controllers,
+            **({"aura_target_refs": aura_target_refs} if aura_target_refs is not None else {}),
             replacement_selections=replacement_selections,
         )
     host._log(
@@ -654,6 +665,7 @@ def exile_public_graveyard_card(
 
 
 __all__ = [
+    "PUBLIC_AURA_ENTRY_VERSION",
     "exile_public_graveyard_card",
     "FIXED_OWNER_ZONE_MOVE_CAPABILITY",
     "FIXED_OWNER_ZONE_MOVE_MECHANIC",

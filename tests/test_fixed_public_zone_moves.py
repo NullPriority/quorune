@@ -258,6 +258,80 @@ class FixedPublicZoneMoveModelTests(unittest.TestCase):
 
 
 class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
+    def test_public_artifact_enchantment_and_qualified_permanent_sets_preserve_their_queries(self):
+        registry = load_default_capability_registry()
+        cases = (
+            ("Return all artifact and enchantment cards from your graveyard to the battlefield.",
+                {"types_any": ("artifact", "enchantment")}),
+            ("Return all artifact, enchantment, and planeswalker cards from your graveyard to the battlefield.",
+                {"types_any": ("artifact", "enchantment", "planeswalker")}),
+            ("Return all Knight creature cards from your graveyard to the battlefield.",
+                {"types_all": ("creature",), "subtypes_any": ("knight",)}),
+            ("Return all Nightstalker permanent cards from your graveyard to the battlefield.",
+                {"subtypes_any": ("nightstalker",)}),
+            ("Return all nonland permanent cards with mana value 3 or less from your graveyard to the battlefield.",
+                {"excluded_types": ("land",), "mana_value_max": 3}),
+            ("Return all creature cards with mana value 0 or less from your graveyard to the battlefield.",
+                {"types_all": ("creature",), "mana_value_max": 0}),
+        )
+        for text, expected in cases:
+            with self.subTest(text=text):
+                template = public_zone_move_effect_template(text)
+                self.assertIsNotNone(template)
+                for field, value in expected.items():
+                    self.assertEqual(value, getattr(template.spec.query, field))
+                ir = compile_oracle_card(card_record(text), capability_registry=registry,
+                    capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertIn("attachment.aura.typed_restriction", ir.faces[0].nodes[0].capability_dependencies)
+                from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+                self.assertIn("attachment.aura.typed_restriction",
+                    typed_result_amount_runtime_dependencies(template.effects[0]))
+        for text in (
+            "Return all instant and enchantment cards from your graveyard to the battlefield.",
+            "Return all cards from your graveyard to the battlefield.",
+            "Return all creature cards with mana value 21 or less from your graveyard to the battlefield.",
+            "Return all creature cards with mana value X or less from your graveyard to the battlefield.",
+            "Return all mysterious creature cards from your graveyard to the battlefield.",
+            "Return all enchantment cards from all graveyards to the battlefield.",
+        ):
+            with self.subTest(unsupported=text):
+                self.assertIsNone(public_zone_move_effect_template(text))
+
+    def test_public_battlefield_aura_selection_maps_are_frozen_and_strict(self):
+        from quorune.aura.decisions import AuraEntryContinuation
+
+        spec = public_zone_move_effect_template(
+            "Return all enchantment cards from your graveyard to the battlefield.").spec
+        selections = {"object:first-aura": "existing-creature"}
+        intent = MovePublicZoneSetIntent(actor="A", spec=spec, reason="Aura set", aura_target_refs=selections)
+        selections["object:first-aura"] = "changed"
+        self.assertEqual("existing-creature", intent.aura_target_refs["object:first-aura"])
+        with self.assertRaises(TypeError):
+            intent.aura_target_refs["object:first-aura"] = "changed"
+        for malformed in ([], {"": "target"}, {"object:aura": ""}, {"object:aura": True}, {1: "target"}):
+            with self.subTest(selections=malformed), self.assertRaises(ValueError):
+                MovePublicZoneSetIntent(actor="A", spec=spec, reason="Aura set", aura_target_refs=malformed)
+            effect = {"op": "move_public_zone_set", "set": spec.to_dict(), "_aura_target_refs": malformed}
+            with self.subTest(saved_selections=malformed), self.assertRaises(ValueError):
+                AuraEntryContinuation(stack_ref="S", source_object_id="aura", source_logical_object_id="aura:0",
+                    controller="A", effect=effect, remaining=(), destination=None, note="Aura set",
+                    instruction_pointer=0, semantic_frame={}, spec={}, advertised_targets=("target",))
+        with self.assertRaises(ValueError):
+            replace(spec, destination=PublicZoneDestination.EXILE, battlefield_controller=None)
+        # A historical battlefield set keeps its byte shape and dependencies;
+        # it cannot silently acquire the new attachment continuation format.
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        legacy = replace(spec, schema_version=2)
+        self.assertEqual(legacy.to_dict(), PublicZoneMoveSetSpec.from_dict(legacy.to_dict()).to_dict())
+        self.assertNotIn("attachment.aura.typed_restriction", typed_result_amount_runtime_dependencies(
+            {"op": "move_public_zone_set", "source": "$source", "set": legacy.to_dict()}))
+        with self.assertRaises(ValueError):
+            MovePublicZoneSetIntent(actor="A", spec=legacy, reason="Legacy entry", aura_target_refs={})
+        exile = replace(legacy, destination=PublicZoneDestination.EXILE, battlefield_controller=None)
+        with self.assertRaises(ValueError):
+            MovePublicZoneSetIntent(actor="A", spec=exile, reason="Wrong destination", aura_target_refs={})
+
     @classmethod
     def setUpClass(cls):
         cls.capabilities = load_default_capability_registry()

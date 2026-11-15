@@ -7,6 +7,19 @@ from ..ability_fragments import (ability_fragment_from_dict,ProtectionSpec,Toxic
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,TRIGGERED_KEYWORD_GRANT_CAPABILITIES
 
 
+def registered_component_capabilities(descriptor,registered):
+    """Keep the inventory union, while binding one validated fragment variant."""
+    from ..semantic_runtime.ability_fragments import (
+        TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID,TriggerMultiplierAbilityFragmentHandler,
+    )
+    dependencies=tuple(registered['capability_dependencies'])
+    if descriptor.get('handler_id')!=TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID:return dependencies
+    fragment=TriggerMultiplierAbilityFragmentHandler().validate(descriptor)
+    if fragment.capability_id not in dependencies:
+        raise ValueError('Trigger multiplier variant has no registered owner')
+    return (fragment.capability_id,)
+
+
 def attached_keyword_runtime_dependencies(program):
     from ..semantic_runtime.attached_continuous import AttachedFixedCharacteristicsHandler
     handler=AttachedFixedCharacteristicsHandler();required=set()

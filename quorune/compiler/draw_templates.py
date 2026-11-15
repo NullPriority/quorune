@@ -201,26 +201,72 @@ def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
             },
             ("cr-121-drawing-a-card", "cr-115-targets"),
         )
-    match = re.fullmatch(
-        rf"each player draws (?P<count>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
-        normalized,
+    return _multiplayer_fixed_draw_template(normalized)
+
+
+def _multiplayer_fixed_draw_template(text: str) -> DrawEffectTemplate | None:
+    shared = re.fullmatch(
+        rf"you draw (?P<controller>{FIXED_COUNT_PATTERN}|twenty) cards? and "
+        rf"each opponent draws (?P<opponents>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
+        text,
         re.IGNORECASE,
     )
-    if match:
+    if shared is not None:
+        return (
+            "draw-controller-and-opponents-v1",
+            ({"op": "draw_each_player", "scope": "controller_and_opponents",
+              "count": fixed_number(shared.group("opponents")),
+              "controller_count": fixed_number(shared.group("controller"))},),
+            None,
+            ("cr-121-drawing-a-card",),
+        )
+    opponents = re.fullmatch(
+        rf"each opponent draws (?P<count>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
+        text,
+        re.IGNORECASE,
+    )
+    if opponents is not None:
+        return (
+            "draw-each-opponent-v1",
+            ({"op": "draw_each_player", "scope": "controller_opponents",
+              "count": fixed_number(opponents.group("count"))},),
+            None,
+            ("cr-121-drawing-a-card",),
+        )
+    match = re.fullmatch(
+        rf"you and target opponent each draw (?P<count>{FIXED_COUNT_PATTERN}) cards?\.?",
+        text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        each = re.fullmatch(
+            rf"each player draws (?P<count>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
+            text,
+            re.IGNORECASE,
+        )
+        if each is None:
+            return None
         return (
             "draw-each-player-v1",
-            (
-                {
-                    "op": "draw_each_player",
-                    "count": fixed_number(match.group("count")),
-                },
-            ),
+            ({"op": "draw_each_player", "count": fixed_number(each.group("count"))},),
             None,
-            (
-                "cr-121-drawing-a-card",
-            ),
+            ("cr-121-drawing-a-card",),
         )
-    return None
+    return (
+        "draw-controller-and-target-opponent-v1",
+        ({
+            "op": "draw_each_player",
+            "players": ["$controller", "$target.0"],
+            "count": fixed_number(match.group("count")),
+        },),
+        {
+            "zones": ["player"],
+            "categories": ["player"],
+            "player_relation": "opponent",
+            "count": 1,
+        },
+        ("cr-121-drawing-a-card", "cr-115-targets"),
+    )
 
 
 def static_draw_restriction_handler(

@@ -7,6 +7,8 @@ from .extra_turn_templates import fixed_extra_turn_effect_template
 from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
+from .day_night_nodes import fixed_day_night_designation_template
+from .next_spell_cost_templates import next_spell_cost_reduction_template
 from .hand_entry_templates import fixed_draw_then_hand_entry_template, fixed_private_hand_entry_followup_template
 from .attacking_card_entry_templates import fixed_attacking_card_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
@@ -38,6 +40,8 @@ from .fixed_attachment_templates import (
     targeted_equipment_attachment_template,
 )
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
+from .recipient_control_templates import recipient_control_effect_template
+from .owner_control_templates import owner_control_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
 from .conditional_exile_templates import conditional_source_exile_template
 from .amass_templates import fixed_amass_effect_template
@@ -207,15 +211,25 @@ def _source_context_resolution_template(
     if as_unblocked is not None:return as_unblocked
     permission=temporary_defender_permission_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=tuple(source_card_types))
     if permission is not None:return permission
+    from .hand_entry_collection_templates import private_hand_collection_template
+    collection = private_hand_collection_template(text)
+    if collection is not None:
+        return collection
     hand_entry=(fixed_attacking_card_entry_template(text) or fixed_private_hand_entry_followup_template(text)
         or fixed_draw_then_hand_entry_template(text))
     if hand_entry is not None:return hand_entry
+    next_cost=next_spell_cost_reduction_template(text,source_name=card_name,source_is_permanent=source_is_permanent)
+    if next_cost is not None:return next_cost
+    designation = fixed_day_night_designation_template(text)
+    if designation is not None:return designation
     discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)
     if mana is not None:
         return mana
+    recipient=owner_control_effect_template(text) or recipient_control_effect_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
+    if recipient is not None:return recipient
     control = fixed_control_effect_template(
         text, card_name=card_name, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types),
@@ -229,6 +243,12 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .search_allocation_templates import search_allocation_template
+    allocation = search_allocation_template(text)
+    if allocation is not None:return allocation
+    from .conditional_search_templates import conditional_search_effect_template
+    conditional_search=conditional_search_effect_template(text,source_name='This source')
+    if conditional_search is not None:return conditional_search
     from .graveyard_copy_cast_templates import graveyard_copy_cast_template
     from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
     from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
@@ -297,6 +317,39 @@ def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate
     return fixed_affected_player_hand_exile_effect_template(text)
 
 
+def _temporary_characteristic_resolution_template(
+    text: str, *, card_name: str, source_is_permanent: bool | None, source_card_types: Sequence[str],
+) -> CompiledEffectTemplate | None:
+    """Retain ordered source protection, keyword and source/target characteristic leaves."""
+    protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if protection_choice is not None:
+        return protection_choice
+    fixed_protection = source_fixed_protection_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if fixed_protection is not None:
+        return fixed_protection
+    source_choice = source_keyword_choice_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if source_choice is not None:
+        return source_choice.compiled()
+    fixed_source_characteristics = (
+        fixed_source_characteristics_effect_template(
+            text,
+            source_is_permanent=source_is_permanent,
+            source_card_types=tuple(source_card_types), source_name=card_name,
+        )
+    )
+    if fixed_source_characteristics is not None:
+        return fixed_source_characteristics.compiled()
+    fixed_target_characteristics = (
+        fixed_target_characteristics_effect_template(text)
+    )
+    if fixed_target_characteristics is not None:
+        return fixed_target_characteristics.compiled()
+    return None
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -306,6 +359,11 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .scoped_target_colors import scoped_target_color_template
+    color=scoped_target_color_template(text,compile_leaf=lambda clause:typed_resolution_effect_template(clause,
+        card_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types,
+        source_attachment_relation=source_attachment_relation))
+    if color is not None:return color
     suspect = suspect_effect_template(text, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
     if suspect is not None:
         return suspect
@@ -341,6 +399,12 @@ def typed_resolution_effect_template(
     controlled_return = controlled_return_template(text, source_is_permanent=source_is_permanent)
     if controlled_return is not None:
         return controlled_return
+    from .fixed_dual_damage_templates import fixed_dual_damage_template
+    from .fixed_damage_roles import fixed_damage_role_template
+    roles=fixed_damage_role_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
+    if roles is not None:return roles
+    dual_damage = fixed_dual_damage_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
+    if dual_damage is not None:return dual_damage.compiled()
     fixed_damage = fixed_damage_effect_template(text, card_name=card_name)
     if fixed_damage is not None:
         return fixed_damage.compiled()
@@ -373,6 +437,8 @@ def typed_resolution_effect_template(
     from .per_player_target_sets import per_player_target_set_template
     per_player=per_player_target_set_template(text)
     if per_player is not None:return per_player
+    from .compound_target_sets import compound_target_set_effect_template
+    if compound := compound_target_set_effect_template(text):return compound
     fixed_homogeneous_target_set = (
         fixed_homogeneous_target_set_effect_template(text)
     )
@@ -388,32 +454,9 @@ def typed_resolution_effect_template(
     fixed_counter_removal = fixed_counter_removal_effect_template(text)
     if fixed_counter_removal is not None:
         return fixed_counter_removal.compiled()
-    protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
-        source_card_types=tuple(source_card_types), source_name=card_name)
-    if protection_choice is not None:
-        return protection_choice
-    fixed_protection = source_fixed_protection_template(text, source_is_permanent=source_is_permanent,
-        source_card_types=tuple(source_card_types), source_name=card_name)
-    if fixed_protection is not None:
-        return fixed_protection
-    source_choice = source_keyword_choice_template(text, source_is_permanent=source_is_permanent,
-        source_card_types=tuple(source_card_types), source_name=card_name)
-    if source_choice is not None:
-        return source_choice.compiled()
-    fixed_source_characteristics = (
-        fixed_source_characteristics_effect_template(
-            text,
-            source_is_permanent=source_is_permanent,
-            source_card_types=tuple(source_card_types), source_name=card_name,
-        )
-    )
-    if fixed_source_characteristics is not None:
-        return fixed_source_characteristics.compiled()
-    fixed_target_characteristics = (
-        fixed_target_characteristics_effect_template(text)
-    )
-    if fixed_target_characteristics is not None:
-        return fixed_target_characteristics.compiled()
+    characteristic = _temporary_characteristic_resolution_template(text,card_name=card_name,
+        source_is_permanent=source_is_permanent,source_card_types=source_card_types)
+    if characteristic is not None:return characteristic
     temporary_declaration_restriction = (
         temporary_declaration_restriction_effect_template(
             text,

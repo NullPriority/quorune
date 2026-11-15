@@ -151,7 +151,7 @@ def _selected_players(effect, context):
 @dataclass(frozen=True, slots=True)
 class DrawEachPlayerHandler:
     handler_id: str = "generic.draw-each-player.v1"
-    schema_version: int = 1
+    schema_version: int = 2
     family: str = "zone.draw"
     operation: str = "draw_each_player"
     rule_references: tuple[str, ...] = ("121.1", "121.2")
@@ -164,9 +164,25 @@ class DrawEachPlayerHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        if "players" in effect and set(effect) - {"op", "players", "count", "private", "reason"}:
-            raise SemanticNodeError("Selected draw recipients conflict with another scope")
-        players = _selected_players(effect, context) if "players" in effect else context.query.apnap_order
+        if "scope" in effect:
+            shared = effect["scope"] == "controller_and_opponents"
+            fields = {"op", "scope", "count", "private", "reason"}
+            if shared:
+                fields.add("controller_count")
+            if ((not shared and effect["scope"] != "controller_opponents")
+                    or set(effect) - fields
+                    or shared and (type(effect.get("controller_count")) is not int
+                                   or effect["controller_count"] < 1)
+                    or _count(effect) < 1):
+                raise SemanticNodeError("Opponent draw recipients require a closed positive-count scope")
+            controller = context.query.require_known_seat(context.actor)
+            players = tuple(seat for seat in context.query.apnap_order if shared or seat != controller)
+        else:
+            if "controller_count" in effect:
+                raise SemanticNodeError("A controller draw count requires the shared recipient scope")
+            if "players" in effect and set(effect) - {"op", "players", "count", "private", "reason"}:
+                raise SemanticNodeError("Selected draw recipients conflict with another scope")
+            players = _selected_players(effect, context) if "players" in effect else context.query.apnap_order
         node = DrawEachPlayerNode(
             count=_count(effect),
             reason=_reason(effect, context),
@@ -177,7 +193,7 @@ class DrawEachPlayerHandler:
             intents=tuple(
                 DrawCardsIntent(
                     player=seat,
-                    count=node.count,
+                    count=effect.get("controller_count", node.count) if seat == context.actor else node.count,
                     reason=node.reason,
                     private=True,
                 )

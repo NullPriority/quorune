@@ -6,6 +6,7 @@ from ..discover_model import (NONLAND_SCAN_CAPABILITY, NONLAND_SCAN_OPERATION,
                               NONLAND_SCAN_STEP_OPERATION, NONLAND_SCAN_CAST_OPERATION)
 from .registry import SemanticChoiceRegistry
 from .composition_order import CompositionOrderHandler
+from .control_recipient import ControlRecipientChoiceHandler
 from .mutate import MutateMergeChoiceHandler
 from .created_token_counters import CREATED_TOKEN_ATTACHMENT_HANDLERS, CREATED_TOKEN_COUNTER_HANDLERS
 from .incubate import INCUBATE_HANDLERS
@@ -21,6 +22,7 @@ from .extort import ExtortChoiceHandler
 from .actual_life_transfer import ActualLifeTransferHandler
 from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
 from .object_selection import OBJECT_SELECTION_HANDLERS
+from .hand_entry_collections import PrivateHandCollectionHandler
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
 from .ordering import ORDERING_CHOICE_HANDLERS
 from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
@@ -120,12 +122,14 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,
+            PrivateHandCollectionHandler(),
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,
             *ORDERING_CHOICE_HANDLERS,
             *FIXED_TOP_ORDER_HANDLERS,
             TargetedGraveyardCastChoiceHandler(),
             *GRAVEYARD_COPY_HANDLERS,
             FixedLandUntapChoiceHandler(),
+            ControlRecipientChoiceHandler(),
             *SCRY_CHOICE_HANDLERS,
             *SURVEIL_CHOICE_HANDLERS,
             *FIXED_LIBRARY_SELECTION_CHOICE_HANDLERS,

@@ -33,8 +33,8 @@ _COLOR_SYMBOLS = {
 }
 _COLOR_ORDER = "WUBRG"
 _FIXED_INVESTIGATE = re.compile(
-    r"^Investigate(?: (?P<count>one|two|three|four|five|six|seven|eight|"
-    r"nine|ten|\d+) times)?\.?$",
+    r"^Investigate(?: (?:(?P<twice>twice)|(?P<count>one|two|three|four|five|six|seven|eight|"
+    r"nine|ten|\d+) times))?\.?$",
     re.IGNORECASE,
 )
 _FIXED_COPY_TOKEN = re.compile(
@@ -118,7 +118,7 @@ def _fixed_investigate_template(
     if match is None:
         return None
     count_text = match.group("count")
-    count = 1 if count_text is None else _positive_fixed_number(count_text)
+    count = 2 if match.group('twice') else 1 if count_text is None else _positive_fixed_number(count_text)
     if count is None:
         return None
     try:
@@ -325,11 +325,9 @@ def _fixed_named_token_template(
             return None
         characteristics = dict(inner.effect.get("characteristics") or {})
         type_line = str(characteristics.get("type_line") or "")
-        if not type_line.startswith("Token Creature"):
+        if re.fullmatch(r"Token (?:Artifact )?Creature(?: Enchantment)? — .+", type_line) is None:
             return None
-        characteristics["type_line"] = type_line.replace(
-            "Token Creature", "Token Legendary Creature", 1
-        )
+        characteristics["type_line"] = "Token Legendary " + type_line.removeprefix("Token ")
         return _copy_template(
             inner,
             template_id="create-fixed-named-legendary-creature-token-v1",

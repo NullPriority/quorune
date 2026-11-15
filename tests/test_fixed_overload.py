@@ -109,7 +109,9 @@ class FixedOverloadModelCompilerTests(unittest.TestCase):
         for change in ({'oracle_text': record.oracle_text + '\nInvent an unrepresented sibling.'},
                 {'mana_cost': '{X}{R}'}, {'layout': 'split'}):
             self.assertNotEqual('exact', self.compile(self.record(**change)).status)
-        unclosed_each = self.record(body='Target creature you control gets +0/+1 and gains hexproof until end of turn.')
+        combined_each = self.record(body='Target creature you control gets +0/+1 and gains hexproof until end of turn.')
+        self.assertEqual('exact', self.compile(combined_each).status)
+        unclosed_each = self.record(body='Target creature you control gains protection from each color until end of turn.')
         normal_only = replace(unclosed_each, oracle_text=unclosed_each.oracle_text.splitlines()[0], keywords=())
         self.assertEqual('exact', self.compile(normal_only).status)
         self.assertNotEqual('exact', self.compile(unclosed_each).status)
@@ -372,9 +374,11 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
 
     def test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration(self):
         expected = {'Mind Rake', 'Scale Up', 'Stirring Address', 'Mizzium Mortars', 'Dynacharge',
-                    'Electrickery', 'Dragonshift', "Mizzix's Mastery"}
+                    'Electrickery', 'Dragonshift', "Mizzix's Mastery", 'Blustersquall', 'Cyclonic Rift',
+                    'Damn', 'Downsize', 'Mizzium Skin', 'Vandalblast', 'Weapon Surge'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if 'Overload' in r.get('keywords', ())]
         self.assertEqual(27, len(rows))
+        session = self.session(70296008)
         for row in rows:
             with self.subTest(name=row['name']):
                 record = self.db.by_oracle_id(row['oracle_id'])
@@ -383,8 +387,7 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
                 self.assertEqual(row['name'] in expected, binding['strict_capability_ready'], binding)
                 if row['name'] in expected:
-                    session = self.session(70296008)
-                    source = self.add(session.engine, row['name'], zone='hand', ref='overload-original-table')
+                    source = self.add(session.engine, row['name'], zone='hand', ref='overload-original-table-'+record.oracle_id)
                     self.assert_closed(session, source)
                     from quorune.rules.casting.overload_costs import normal_overload_program, select_overload_cast_program
                     normal = session.engine.semantics.get(record.oracle_id + ':spell:front')
@@ -415,8 +418,8 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
             self.reject(session, 'cast:' + source.ref, cost_option='normal', targets=[], pay='auto')
 
     def test_overload_price_omission_preserves_admission_but_fails_native_underpayment_contract(self):
-        from quorune.rules.casting import overload_costs as owner
-        original = owner.overload_cost_options
+        from quorune.rules.casting import fixed_text_variant_costs as owner
+        original = owner.fixed_variant_cost_options
         changed = []
         def omitted(*args, **kwargs):
             result = original(*args, **kwargs)
@@ -426,7 +429,7 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
             return result
         result = unittest.TestResult()
         witness = type(self)('test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature')
-        with mock.patch.object(owner, 'overload_cost_options', omitted):
+        with mock.patch.object(owner, 'fixed_variant_cost_options', omitted):
             witness.run(result)
         self.assertTrue(changed)
         self.assertFalse(result.errors)

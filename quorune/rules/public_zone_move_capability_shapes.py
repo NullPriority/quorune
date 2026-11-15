@@ -18,11 +18,13 @@ from ..attachment_references import (
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 from ..public_zone_moves import (
+    PUBLIC_AURA_ENTRY_VERSION,
     FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     FIXED_OWNER_ZONE_MOVE_MECHANIC,
     GRAVEYARD_LIBRARY_TARGET_CAPABILITY,
     GRAVEYARD_LIBRARY_TARGET_FIELD,
     PublicZoneMoveError,
+    PublicZoneDestination,
     PublicZoneMoveSetSpec,
     PublicZoneSeatRelation,
 )
@@ -401,6 +403,23 @@ def triggered_source_exile_runtime_dependencies(program):
     return (_SOURCE_EXILE_BY_ZONE[zone][2],)
 
 
+def public_zone_move_set_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    """Keep public-set Aura entry owned even if source annotations are absent."""
+    spec = PublicZoneMoveSetSpec.from_dict(value["set"])
+    return (
+        "zone.move.fixed_public_set",
+        *object_query_capabilities(spec.query),
+        *(("attachment.aura.typed_restriction",) if spec.schema_version == PUBLIC_AURA_ENTRY_VERSION
+            and spec.destination is PublicZoneDestination.BATTLEFIELD else ()),
+    )
+
+
+def public_zone_move_set_runtime_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    """Do not retroactively add payload dependencies to historical set versions."""
+    spec = PublicZoneMoveSetSpec.from_dict(value["set"])
+    return public_zone_move_set_payload_dependencies(value) if spec.schema_version == PUBLIC_AURA_ENTRY_VERSION else ()
+
+
 def fixed_public_zone_move_set_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -408,6 +427,12 @@ def fixed_public_zone_move_set_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     mechanic_ids = tuple(mechanic_ids)
+    from .private_hand_entry_shapes import private_hand_collection_node_capabilities
+    collection = private_hand_collection_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+    if collection:
+        return collection
     private_hand = fixed_private_hand_entry_node_capabilities(
         effects=effects,
         target_schema=target_schema,
@@ -450,7 +475,7 @@ def fixed_public_zone_move_set_node_capabilities(
             result_caps = followup.capability_dependencies
     except (KeyError, TypeError, ValueError):
         return ()
-    dependencies = ("zone.move.fixed_public_set", *object_query_capabilities(spec.query), *result_caps)
+    dependencies = (*public_zone_move_set_payload_dependencies(effect), *result_caps)
     targeted = spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
     if targeted:
         if (

@@ -13,6 +13,46 @@ from scripts.quick_gate import build_plan
 
 class QuickGatePlanTests(unittest.TestCase):
     @patch('scripts.quick_gate.validate_partition')
+    def test_artifact_guard_precedes_expensive_checks_and_both_push_paths(self, _partition):
+        for phase in ('normal', 'pre-corpus'):
+            with self.subTest(phase=phase):
+                steps = build_plan(('docs/index.md',), phase=phase)['steps']
+                guard, = [step for step in steps if step.name == 'repository-artifacts']
+                self.assertEqual(('scripts/validate_repository.py', '--tracked-only'), guard.command[-2:])
+                self.assertLess(steps.index(guard), next(i for i, step in enumerate(steps)
+                    if step.name == 'generated-owner-plan'))
+        root = Path(__file__).resolve().parents[1]
+        hook = (root / '.githooks' / 'pre-push').read_text(encoding='utf-8')
+        guard = hook.index('"$ROOT/scripts/validate_repository.py" --tracked-only')
+        self.assertLess(guard, hook.index('validate-ci-dependencies'))
+        self.assertLess(guard, hook.index('QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON'))
+        self.assertLess(guard, hook.index('--verify-receipt'))
+
+    @patch('scripts.quick_gate.validate_partition')
+    def test_grammar_and_trust_changes_run_self_hosted_interaction_promotion_contract(self, _partition):
+        for source in ('quorune/compiler/fixed_damage_roles.py', 'quorune/rules/temporary_keyword_removal.py',
+                       'tests/high_risk_interaction_support.py', 'platform/reusable-piece-interaction-evidence.json'):
+            for phase in ('normal', 'pre-corpus'):
+                with self.subTest(source=source, phase=phase):
+                    plan = build_plan((source,), phase=phase)
+                    step, = [s for s in plan['steps'] if s.name == 'interaction-boundary-promotion-contract']
+                    self.assertEqual(('test_high_risk_interaction_assurance.py', '-k', 'HighRiskPromotionSentinelTests'), step.command[-3:])
+                    admission, = [s for s in plan['steps'] if s.name == 'compiler-promotion-admission-contract']
+                    self.assertEqual(('fixed_subset_discard_draw','fixed_entwine','fixed_overload',
+                                      'external_entry_tapped','external_entry_tapped','fixed_cleave',
+                                      'source_tap_duration','activation_result_authority','activation_result_authority',
+                                      'public_condition_self_replacements','public_condition_self_replacements',
+                                      'optional_counter_payments','continuous_compiler_hardening','scoped_target_colors',
+                                      'fixed_damage_effect_clauses','discard_results'),
+                                     tuple(command.split('.')[1].removeprefix('test_') for command in admission.command[3:]))
+                    self.assertTrue(all(command.startswith('tests.test_') for command in admission.command[3:]))
+                    if phase == 'pre-corpus':
+                        self.assertNotIn('affected-tests', [s.name for s in plan['steps']])
+                        self.assertNotIn('build-test-database', [s.name for s in plan['steps']])
+        unrelated = build_plan(('docs/index.md',), phase='pre-corpus')
+        self.assertNotIn('interaction-boundary-promotion-contract', [s.name for s in unrelated['steps']])
+
+    @patch('scripts.quick_gate.validate_partition')
     def test_player_sequence_changes_select_existing_compiler_consumers_before_census(self, _partition_validation):
         # This unit checks routing. Real partition validation remains covered by
         # the manifest owner and the normal/pre-corpus integration check below.

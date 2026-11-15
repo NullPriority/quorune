@@ -6,10 +6,21 @@ from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, DERIVED_CHARACTERISTIC_CAPABILITY, DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION,
     INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, TARGET_CARD_TYPE_ADDITION_VERSION, fixed_resolution_characteristic_instruction,
+    INDEFINITE_TARGET_LAND_ANIMATION_VERSION,
 )
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    from ..rules.compound_target_sets import compound_target_payload_dependencies
+    if compound := compound_target_payload_dependencies(value):return compound
+    if value.get('op') == 'fixed_library_selection':
+        from ..rules.library_selection_capability_shapes import fixed_library_selection_node_capabilities
+        owners = fixed_library_selection_node_capabilities(effects=(value,), target_schema=None, mechanic_ids=('fixed-library-selection',))
+        if not owners:raise ValueError('Fixed library selection requires its complete owned descriptor')
+        return owners
+    if 'mana_value_filter' in value:
+        from ..mana_value_filter import ManaValueFilter
+        return ManaValueFilter.from_dict(value['mana_value_filter']).capability_dependencies
     from ..rules.cast_cascade_grants import CAST_CASCADE_OPERATION, cast_cascade_payload_dependencies
     from ..rules.next_cast_counter_protection import (
         is_versioned_next_cast_protection, next_cast_protection_payload_dependencies,
@@ -49,7 +60,7 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
 
         return public_graveyard_return_payload_dependencies(value)
     if (value.get("op") == CHARACTERISTIC_OPERATION and type(version) is int
-            and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS | {TARGET_CARD_TYPE_ADDITION_VERSION}):
+            and version in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS | {TARGET_CARD_TYPE_ADDITION_VERSION,INDEFINITE_TARGET_LAND_ANIMATION_VERSION}):
         spec, _selection = fixed_resolution_characteristic_instruction(value)
         return spec.capability_dependencies
     if value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION:
@@ -81,13 +92,18 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         return (*destruction, *DestructionFollowup.from_dict(value["followup"]).capability_dependencies)
     if destruction:
         return destruction
-    if value.get("op") == "move_public_zone_set" and "followup" in value:
+    if value.get("op") == "move_public_zone_set":
+        from ..rules.public_zone_move_capability_shapes import public_zone_move_set_runtime_dependencies
+
+        dependencies = public_zone_move_set_runtime_dependencies(value)
+        if "followup" not in value:
+            return dependencies
         from ..public_zone_moves import PublicZoneMoveSetSpec
         from ..rules.public_exile_result_model import PublicExileFollowup
 
         followup = PublicExileFollowup.from_dict(value["followup"])
         followup.validate_move(PublicZoneMoveSetSpec.from_dict(value["set"]))
-        return followup.capability_dependencies
+        return (*dependencies, *followup.capability_dependencies)
     from ..rules.revealed_library_top import REVEAL_TOP_OPERATION, RevealedLibraryTopSpec
     if value.get("op") == REVEAL_TOP_OPERATION:
         return RevealedLibraryTopSpec.from_effect(value).capability_dependencies
@@ -95,6 +111,9 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
 
 
 def _damage_payload_dependencies(value, mechanics):
+    from ..rules.fixed_dual_damage import fixed_dual_damage_payload_dependencies
+    if 'fixed_target_controller_damage' in value:
+        return fixed_dual_damage_payload_dependencies(value,mechanics=mechanics)
     from ..announced_damage import (
         ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_EFFECT_FIELD, VariableDamageAllocationSpec,
         validate_announced_damage_effect,
@@ -165,9 +184,11 @@ def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, 
     )
 
     spec = ScalarEffectAmountSpec.from_dict(value)
+    from ..activation_paid_characteristic_model import ACTIVATION_PAID_STAT_CAPABILITY
     origin_capabilities = {
         ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE: SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,
         ScalarAmountOrigin.PAID_SACRIFICE_CREATURE: PAID_SACRIFICE_STAT_CAPABILITY,
+        ScalarAmountOrigin.PAID_ACTIVATION_CREATURE: ACTIVATION_PAID_STAT_CAPABILITY,
         ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE: PAID_SACRIFICE_MANA_VALUE_CAPABILITY,
         ScalarAmountOrigin.CAST_SPELL_MANA_VALUE: CAST_MANA_VALUE_CAPABILITY,
     }
@@ -177,6 +198,20 @@ def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, 
     if spec.binding_id is not None:
         required.add(DECLARED_AMOUNT_CAPABILITY)
     return tuple(sorted(required))
+
+
+def _token_creation_payload_dependencies(value, mechanics):
+    """Collect creation-specific counter, attachment, incubate and definition authority."""
+    from ..created_token_counter_model import created_token_counter_payload_dependencies
+    from ..rules.attachment_actions import created_token_attachment_payload_dependencies
+    from ..incubate_model import incubate_payload_dependencies
+    from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
+    return tuple(sorted({cap for owners in (
+        created_token_counter_payload_dependencies(value),
+        created_token_attachment_payload_dependencies(value),
+        incubate_payload_dependencies(value),
+        token_definition_payload_dependencies(value,mechanics),
+    ) for cap in owners}))
 
 
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
@@ -267,12 +302,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *fixed_payment_payload_dependencies(value))
         from ..resolution_mana_model import resolution_mana_choice_dependencies
         own = (*own, *resolution_mana_choice_dependencies(value))
-        from ..created_token_counter_model import created_token_counter_payload_dependencies
-        own = (*own, *created_token_counter_payload_dependencies(value))
-        from ..rules.attachment_actions import created_token_attachment_payload_dependencies
-        own = (*own, *created_token_attachment_payload_dependencies(value))
-        from ..incubate_model import incubate_payload_dependencies
-        own = (*own,*incubate_payload_dependencies(value))
+        from ..rules.commander_keyword_grants import commander_permanent_query_dependencies
+        own = (*own, *commander_permanent_query_dependencies(value))
+        own = (*own, *_token_creation_payload_dependencies(value,mechanics))
         from ..discover_model import discover_payload_dependencies
         own = (*own,*discover_payload_dependencies(value))
         own = (*own, *_zone_choice_payload_dependencies(value))
@@ -290,13 +322,13 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *ability_source_filter_dependencies(value))
         from ..designation_prevention import designation_predicate_dependencies
         own = (*own, *designation_predicate_dependencies(value))
-        from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
-        own = (*own, *token_definition_payload_dependencies(value,mechanics))
         from ..rules.attacking_token_results import attacking_token_payload_dependencies
         own = (*own, *attacking_token_payload_dependencies(value))
         from ..rules.created_token_cleanup_shapes import created_token_cleanup_payload_dependencies
         own = (*own, *created_token_cleanup_payload_dependencies(value))
         from ..source_prevention import source_prevention_dependencies
+        from ..rules.target_controller_prevention import targeted_controller_prevention_dependencies
+        own=(*own,*targeted_controller_prevention_dependencies(value))
         own = (*own, *source_prevention_dependencies(value))
         from ..conditional_recipient_model import conditional_recipient_capabilities
         own = (*own, *conditional_recipient_capabilities(value))

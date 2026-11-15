@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import DB_PATH, keep_all, load_assets, make_session
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.damage_templates import (
     FixedDamageEffectTemplate,
     FixedDamageRecipient,
@@ -291,6 +291,29 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_zero_is_untrusted()
+
+
+    def test_whole_source_damage_life_composition_preserves_source_and_controller_roles(self):
+        registry=load_default_capability_registry()
+        record=CardRecord(oracle_id='fixture:source-damage-life',name='Constructed Source Damage Life',
+            mana_cost='{R}',mana_value=1,type_line='Creature — Goblin',oracle_text='',power='1',toughness='1',
+            loyalty=None,defense=None,colors=('R',),color_identity=('R',),keywords=(),produced_mana=(),
+            layout='normal',released_at='2026-01-01',legalities={'commander':'legal'},faces=(),raw={})
+        body='It deals 2 damage to any target and you gain 2 life.'
+        self.assertIsNone(source_pronoun_damage_effect_template(body))
+        for prefix,event in (('Sacrifice this creature: ','activate'),
+                ('When this creature enters, ','permanent.enter.self')):
+            with self.subTest(event=event):
+                ir=compile_oracle_card(replace(record,oracle_text=prefix+body),
+                    capability_registry=registry,capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                node,=ir.faces[0].nodes;self.assertEqual(event,node.event)
+                self.assertEqual([{'op':'damage','source':'$source','target':'$target.0','amount':2},
+                    {'op':'life','player':'$controller','delta':2}],list(node.effects))
+                self.assertEqual(1,node.target_schema['count'])
+                blocked=compile_oracle_card(replace(record,oracle_text=prefix+body.replace('gain 2 life','gain X life')),
+                    capability_registry=registry,capability_profile='commander_review')
+                self.assertNotEqual('exact',blocked.status);self.assertTrue(blocked.material_residuals)
 
 
 class FixedDamageEffectCompilerTests(unittest.TestCase):
@@ -596,7 +619,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
             "When this creature dies, it deals 2 damage divided as you choose "
             "among two targets.",
             "When this creature enters, it deals 2 damage to any target and "
-            "you gain 2 life.",
+            "you gain X life.",
             "When another creature enters, it deals 1 damage to any target.",
         )
         for text in variants:
@@ -630,7 +653,7 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
             "It deals 2 damage divided as you choose among two targets.",
             "It deals 2 damage to itself.",
             "It deals 2 damage to target player or battle.",
-            "It deals 2 damage to any target and you gain 2 life.",
+            "It deals 2 damage to any target and you gain X life.",
         ):
             with self.subTest(effect=effect):
                 ir = self.compile(

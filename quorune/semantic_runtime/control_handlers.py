@@ -9,7 +9,7 @@ from ..continuous_effect_model import ContinuousEffectDuration
 from ..continuous_effect_state import ResolutionEffectSource
 from ..object_predicate import ObjectQuerySpec
 from .context import ReadOnlyHandlerContext, SemanticNodeError
-from .control_intents import GainControlIntent, GainControlSetIntent
+from .control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent
 from .direct_target_fields import validate_direct_target_effect
 from .intents import IntentPlan
 
@@ -92,4 +92,67 @@ class FixedControlSetHandler:
         return IntentPlan(self.operation, self.handler_id, (intent,))
 
 
-CONTROL_HANDLERS = (FixedControlHandler(), FixedControlSetHandler())
+@dataclass(frozen=True,slots=True)
+class RecipientControlHandler:
+    handler_id: str='generic.fixed-recipient-control.v1'
+    schema_version: int=1
+    family: str='effect.control.fixed_recipient'
+    operation: str='give_control'
+    rule_references: tuple[str,...]=('110.2','611.2a','613.1b','613.7','800.4a')
+    capability_dependencies: tuple[str,...]=('continuous.control.fixed_recipient',)
+
+    def lower(self,effect,context):
+        from ..recipient_control_model import validate_recipient_control_effect
+        try:
+            validate_recipient_control_effect(effect,allow_reason=True,resolved=True)
+            recipient=effect['controller'];card=effect['card']
+            if recipient is not None:context.query.require_known_seat(recipient)
+            source=_source(context)
+            if card is None or recipient is None or recipient not in context.query.active_seats:
+                return IntentPlan(self.operation,self.handler_id,(),result_shape='by_player')
+            intent=GiveControlIntent(context.actor,card,recipient,source,effect.get('reason',context.default_reason))
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+        return IntentPlan(self.operation,self.handler_id,(intent,))
+
+
+@dataclass(frozen=True,slots=True)
+class OwnerControlHandler:
+    handler_id: str='generic.fixed-owner-control.v1'
+    schema_version: int=1
+    family: str='effect.control.fixed_owner_restoration'
+    operation: str='restore_owner_control'
+    rule_references: tuple[str,...]=('110.2','111.2','608.2f','611.2a','613.1b','613.7b','800.4a')
+    capability_dependencies: tuple[str,...]=('continuous.control.fixed_owner_restoration',)
+
+    def lower(self,effect,context):
+        from ..owner_control_model import validate_owner_control_effect
+        try:
+            spec=validate_owner_control_effect(effect,allow_reason=True)
+            intent=RestoreOwnerControlIntent(context.actor,spec,_source(context),effect.get('reason',context.default_reason))
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+        return IntentPlan(self.operation,self.handler_id,(intent,),result_shape='by_player')
+
+
+@dataclass(frozen=True,slots=True)
+class RecipientControlSetHandler:
+    handler_id: str='generic.fixed-recipient-control-set.v1'
+    schema_version: int=1
+    family: str='effect.control.fixed_recipient_set'
+    operation: str='give_control_set'
+    rule_references: tuple[str,...]=('113.7a','400.7','608.2b','611.2a','611.2c','613.1b','613.7b')
+    capability_dependencies: tuple[str,...]=('continuous.control.fixed_recipient',)
+
+    def lower(self,effect,context):
+        from ..recipient_control_model import validate_recipient_control_set_effect
+        try:
+            validate_recipient_control_set_effect(effect,allow_reason=True)
+            recipient=effect['controller'];source=_source(context)
+            if recipient is not None:context.query.require_known_seat(recipient)
+            if recipient is None or recipient not in context.query.active_seats:
+                return IntentPlan(self.operation,self.handler_id,(),result_shape='by_player')
+            intent=GiveControlSetIntent(context.actor,recipient,effect['exclude_source'],source,effect.get('reason',context.default_reason))
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+        return IntentPlan(self.operation,self.handler_id,(intent,),result_shape='by_player')
+
+
+CONTROL_HANDLERS = (FixedControlHandler(), FixedControlSetHandler(),RecipientControlHandler(),OwnerControlHandler(),RecipientControlSetHandler())

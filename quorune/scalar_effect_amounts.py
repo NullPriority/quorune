@@ -265,7 +265,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             if not isinstance(previous, Mapping) or set(previous) != {"identity", "value"} or previous["identity"] != identity or type(previous["value"]) is not int or previous["value"] < 0:
                 raise PublicQueryAmountError("Scalar declaration changed identity or value")
             return spec.coefficient * previous["value"]
-    if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE:
+    if spec.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE:
+        from .activation_paid_characteristic_model import resolve_activation_paid_creature_stat
+        amount = resolve_activation_paid_creature_stat(item, spec.characteristic)
+    elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE:
         amount = _paid_creature_stat_amount(item, spec.characteristic)
     elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
         amount = _paid_sacrifice_mana_value(item)

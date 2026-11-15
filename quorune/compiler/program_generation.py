@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .reconfigure_nodes import is_closed_reconfigure_program
 from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
-from ..rules.control_capability_shapes import fixed_control_node_capabilities
+from ..rules.control_capability_shapes import resolution_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_affected_player_hand_exile_program
@@ -341,7 +341,7 @@ def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value.startswith("cr-") or value == DAMAGE_DEATH_EXILE_MECHANIC
+                if value.startswith("cr-") or value in {DAMAGE_DEATH_EXILE_MECHANIC,'fixed-target-controller-damage'}
             ),
         )
     )
@@ -527,9 +527,9 @@ def _is_closed_fixed_effect_clause_sequence_program(
 ) -> bool:
     """Recognize two independently closed effects in printed order."""
 
-    if program.provenance.get("template_id") != (
-        "fixed-effect-clause-sequence-v1"
-    ):
+    if program.provenance.get("template_id") not in {
+        "fixed-effect-clause-sequence-v1", 'fixed-source-characteristic-tap-sequence-v1',
+    }:
         return False
     required = set(
         fixed_effect_clause_sequence_node_capabilities(
@@ -1199,7 +1199,7 @@ def _is_closed_fixed_public_zone_move_set_program(program: SemanticProgram) -> b
 
 
 def _is_closed_fixed_control_program(program: SemanticProgram) -> bool:
-    return _node_capabilities_close_program(program, fixed_control_node_capabilities)
+    return _node_capabilities_close_program(program, resolution_control_node_capabilities)
 
 
 def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:

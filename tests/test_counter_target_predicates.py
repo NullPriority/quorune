@@ -239,9 +239,14 @@ class CounterTargetPredicateCompilerTests(unittest.TestCase):
         promoted='Put a +1/+1 counter on target artifact or Vehicle.'
         self.assertIsNotNone(fixed_counter_placement_effect_template(promoted,card_name='Fixture'))
         self.assertEqual('exact',self.compile(promoted).status)
+        nontoken = 'Put a +1/+1 counter on target nontoken creature.'
+        template = fixed_counter_placement_effect_template(nontoken,card_name='Fixture')
+        self.assertIsNotNone(template)
+        self.assertIs(template.target_schema['token'], False)
+        self.assertEqual('exact',self.compile(nontoken).status)
         unsupported = (
             "target modified creature",
-            "target nontoken creature",
+            "target nontoken creature with the chosen name",
             "target commander creature",
             "target equipped creature",
             "target enchanted creature",

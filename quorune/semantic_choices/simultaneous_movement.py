@@ -25,12 +25,28 @@ def commit_simultaneous_movement(host:Any,intent:MoveObjectsSimultaneouslyIntent
         entry={'tapped':intent.battlefield_tapped,'destination_controllers':{
             card.object_id:card.owner if intent.battlefield_controller is PublicBattlefieldController.OWNER else intent.actor
             for card in cards}}
+    from ..semantic_runtime.private_hand_entry_intent import PrivateHandEntryIntent
+    move_batch = host._move_cards_simultaneously
+    if isinstance(intent, PrivateHandEntryIntent):
+        from ..errors import GameRuleError
+        from ..object_query import object_matches_query, object_query_result
+        from ..zone_transitions import ZoneTransitionOwner
+        move_batch = ZoneTransitionOwner(host).move_cards_simultaneously
+        for card in cards:
+            effective = host._effective_card_data(card)
+            row = object_query_result(card, effective,
+                type_parts=host._type_parts(str(effective.get('type_line') or '')),
+                known_to_actor=True, attached_to_ref=None)
+            if (card.logical_object_id != intent.selected_identities[card.ref]
+                    or not object_matches_query(row, intent.selection.query)):
+                raise GameRuleError('Selected hand entry changed its incarnation or predicate')
+        entry['aura_target_refs'] = dict(intent.aura_target_refs)
     if intent.library_order is not None:
         by_ref = {card.ref: card.object_id for card in cards}
         entry["library_order"] = replace(
             intent.library_order, members=tuple(by_ref[ref] for ref in intent.library_order.members),
         )
-    host._move_cards_simultaneously(
+    move_batch(
         [
             (card.object_id, intent.destination)
             for card in cards

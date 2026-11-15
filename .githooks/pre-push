@@ -12,6 +12,10 @@ else
     exit 1
 fi
 
+# Check current artifacts and the pushed ancestry before dependency validation
+# or census work. A generated receipt cannot waive repository safety policy.
+"$PYTHON" "$ROOT/scripts/validate_repository.py" --tracked-only
+
 # A current generated receipt does not cover source text-I/O policy. Run the
 # existing cheap changed-file sentinel before accepting either push path.
 "$PYTHON" "$ROOT/scripts/quick_gate.py" --validate-text-io --base origin/main

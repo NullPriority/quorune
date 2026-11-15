@@ -3,6 +3,7 @@ from __future__ import annotations
 """Additive Game Record v3 state-semantics provenance facade."""
 
 from typing import Any, Mapping
+from .declare_attack_cast_model import declare_attack_cast_version
 
 from .cast_event_type_model import cast_event_type_snapshot_fields, read_cast_event_type_snapshot_version
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
@@ -36,6 +37,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
     departed_turns = getattr(state, "departed_turn_boundary_version", None)
     unearth = unearth_leave_replacement_version(getattr(state, "unearth_leave_replacement_version", None))
     return {
+        **({'declare_attack_cast_version': 1}
+           if declare_attack_cast_version(getattr(state, 'declare_attack_cast_version', None)) == 1 else {}),
         **({'legend_rule_choice_version': legend} if legend is not None else {}),
         **({"stack_resolution_authority_version": stack_authority} if stack_authority is not None else {}),
         **({"departed_turn_boundary_version": departed_turns} if departed_turns is not None else {}),
@@ -116,6 +119,11 @@ def validate_state_versions(
     format_value = manifest.get("format")
     if not isinstance(format_value, Mapping):
         raise ValueError("Record format provenance is malformed")
+    declared_attack = format_value.get('declare_attack_cast_version')
+    if (('declare_attack_cast_version' in format_value
+            and (type(declared_attack) is not int or declared_attack != 1))
+            or declared_attack != declare_attack_cast_version(getattr(state, 'declare_attack_cast_version', None))):
+        raise ValueError('Declared attack cast-window provenance does not match the checkpoint')
     if read_mana_source_counter_payment_version(format_value)!=getattr(state,'mana_source_counter_payment_version',None):
         raise ValueError('Mana source-counter payment provenance does not match the initial checkpoint')
     if read_mana_cost_order_version(format_value)!=mana_cost_order_version(getattr(state,'mana_cost_order_version',None)):

@@ -149,6 +149,9 @@ def dispatch_zone_change_occurrence(
         record_zone_change_history(host, occurrence, events=events)
     for event in events:
         context = event.context
+        if event.kind=='permanent.enter':
+            from .tribute_entry_results import tribute_entry_context
+            context={**dict(context),**tribute_entry_context(card,occurrence)}
         if composition_departures and event.kind == "permanent.leave":
             from .event_card_return import event_library_departure_context
 

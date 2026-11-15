@@ -10,6 +10,9 @@ from ..resolution_characteristic_model import TARGET_CARD_TYPE_ADDITION_VERSION
 
 
 def is_closed_resolution_characteristic_program(program):
+    from ..rules.resolution_colors import resolution_color_node_capabilities
+    if owned:=resolution_color_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage):
+        return set(owned)<=set(program.capability_dependencies)
     if len(program.effects) == 1 and program.effects[0].get("schema_version") == TARGET_CARD_TYPE_ADDITION_VERSION:
         required = fixed_resolution_characteristic_capabilities(
             effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,

@@ -1,0 +1,700 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Anara, Wolvid Familiar",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "oracle_text": "During your turn, commanders you control have indestructible. (Effects that say \"destroy\" don't destroy them. A creature with indestructible can't be destroyed by damage.)\nPartner (You can have two commanders if both have partner.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Wolf Beast"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Control Magic",
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-06-09",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Falthis, Shadowcat Familiar",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "oracle_text": "Commanders you control have menace and deathtouch.\nPartner (You can have two commanders if both have partner.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Nightmare Cat"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Guardian Augmenter",
+      "oracle_id": "d925e560-faa1-40a9-b25a-47065ee891e6",
+      "oracle_text": "Flash\nCommander creatures you control get +2/+2.\nCommanders you control have hexproof.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "2",
+      "type_line": "Creature — Troll Wizard"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "restricted",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{U}",
+      "name": "Shorikai, Genesis Engine",
+      "oracle_id": "e2962883-6daf-4a84-af73-917afc73092c",
+      "oracle_text": "{1}, {T}: Draw two cards, then discard a card. Create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"\nCrew 8 (Tap any number of creatures you control with total power 8 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "8",
+      "type_line": "Legendary Artifact — Vehicle"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Sliver"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Aegis of the Emperor",
+        "Vigilance",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Vexilus Praetor",
+      "oracle_id": "e3a65df1-ba3a-4635-a321-8cab9a1f0740",
+      "oracle_text": "Flash\nVigilance\nAegis of the Emperor — Commanders you control have protection from everything.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-10-07",
+      "toughness": "4",
+      "type_line": "Creature — Custodes Warrior"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue.",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined.",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander.",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes.",
+      "oracle_id": "6a0b1b7e-1a93-4c00-be94-8fa56af57468",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Anara's first ability affects commanders you control even if you don't own them. It doesn't affect your commander if another player controls it.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to a commander you control may become lethal if Anara leaves the battlefield during that turn.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Anara is your commander, its first ability affects itself during your turn.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes.",
+      "oracle_id": "a59ff932-f758-476e-ba31-0623bd748231",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "published_at": "2016-06-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Being a commander is not a copiable characteristic; these effects do not apply to copies of a player's commander.",
+      "oracle_id": "d925e560-faa1-40a9-b25a-47065ee891e6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "These effects apply to any commanders you control, not just your own commander.",
+      "oracle_id": "d925e560-faa1-40a9-b25a-47065ee891e6",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Protection from everything means that commanders you control can't be the target of any spells or abilities, they can't be blocked, nothing can be attached to them, and all damage that would be dealt to them is prevented. They can still be affected in other ways (such as by Their Name is Death, for example).",
+      "oracle_id": "e3a65df1-ba3a-4635-a321-8cab9a1f0740",
+      "published_at": "2022-10-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

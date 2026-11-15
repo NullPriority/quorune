@@ -88,6 +88,7 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
     for object_id in creation.objects:
         card = host.state.cards[object_id]
         data = host._effective_card_data(card)
+        from .tribute_entry_results import tribute_entry_identity_context
         contexts.append({
             "card": card.ref,
             "card_object_identity": card.logical_object_id,
@@ -102,6 +103,7 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
             "token": True,
             "tapped": card.tapped,
             "reason": reason,
+            **tribute_entry_identity_context(card,card.logical_object_id),
         })
     return tuple(contexts)
 

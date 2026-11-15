@@ -296,6 +296,12 @@ def fixed_damage_node_capabilities(
     if "cr-120-damage" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if 'fixed_target_role_damage' in effect:
+        from .fixed_damage_roles import fixed_damage_role_node_capabilities
+        return fixed_damage_role_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if 'fixed_target_controller_damage' in effect:
+        from .fixed_dual_damage import fixed_dual_damage_node_capabilities
+        return fixed_dual_damage_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     if ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
         return _announced_damage_capabilities(effect, target_schema, mechanics)
     if DAMAGE_DEATH_EXILE_FIELD in effect:

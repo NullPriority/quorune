@@ -22,6 +22,7 @@ from ..ability_fragments import (
 )
 from ..adventure import ADVENTURE_COVERAGE
 from ..cast_face_offers import OMEN_COVERAGE
+from ..keyword_abilities import triggered_keyword_grant
 from ..compiler.token_templates import (
     FIXED_TOKEN_DEFINITION_BATCH_MECHANIC,
     fixed_token_creation_effect_template,
@@ -104,6 +105,9 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
     Copy recipes keep their separate owner. Legacy token references without an
     explicit definition retain their existing compatibility path.
     """
+    if isinstance(value, Mapping) and value.get('op')=='choose_option':
+        from .fixed_token_choices import fixed_token_choice_payload_dependencies
+        return fixed_token_choice_payload_dependencies(value,mechanics)
     if isinstance(value, Mapping) and value.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
         return distributed_token_creation_payload_dependencies(value)
     targeted = (
@@ -173,6 +177,7 @@ def token_decayed_definition_dependencies(
 
 _CREATURE_KEYWORDS = frozenset(
     {
+        "Banding",
         "Deathtouch",
         "Decayed",
         "Defender",
@@ -333,7 +338,7 @@ def _fixed_creature_effect_closure(
         return None
     name = effect.get("name")
     if not isinstance(name, str) or re.fullmatch(
-        r"[A-Z][A-Za-z']*(?:[ -][A-Z][A-Za-z']*)*", name
+        r"[A-Z][A-Za-z']*(?:[ -](?:[A-Z][A-Za-z']*|the|of|and|to|a|an|in|on|at|for))*", name
     ) is None:
         return None
     type_line = str(characteristics.get("type_line") or "")
@@ -348,7 +353,7 @@ def _fixed_creature_effect_closure(
         not isinstance(keywords, list)
         or any(
             not isinstance(keyword, str)
-            or (keyword not in _CREATURE_KEYWORDS and re.fullmatch(r"Toxic [1-9]\d*", keyword) is None)
+            or (keyword not in _CREATURE_KEYWORDS and re.fullmatch(r"Toxic [1-9]\d*", keyword) is None and triggered_keyword_grant(keyword) is None)
             for keyword in keywords
         )
         or len(keywords) != len(set(keywords))
@@ -357,7 +362,7 @@ def _fixed_creature_effect_closure(
     capabilities = {"token.creation.fixed_definition"}
     mechanics = {
         _TOKEN_MECHANIC,
-        *("toxic" if keyword.startswith("Toxic ") else keyword.casefold() for keyword in keywords),
+        *(keyword.split()[0].casefold() if keyword.startswith(("Toxic ","Bushido ")) else keyword.casefold() for keyword in keywords),
     }
     subtype_text = type_line.split(" — ", 1)[1]
     default_name = fixed_ordinary_token_name(subtype_text) if name_version is not None else subtype_text
@@ -378,8 +383,8 @@ def _fixed_creature_effect_closure(
         capabilities.update(query_defined_token_stat_dependencies(characteristics))
     except (AbilityFragmentError, TypeError, ValueError):
         return None
-    from .token_prowess_requirements import token_prowess_definition_dependencies
-    try:capabilities.update(token_prowess_definition_dependencies(characteristics))
+    from .token_prowess_requirements import token_triggered_keyword_definition_dependencies, token_combat_fragment_is_declared
+    try:capabilities.update(token_triggered_keyword_definition_dependencies(characteristics))
     except (TypeError,ValueError):return None
     typed_ability_definition = False
     typed_ability_fragment = False
@@ -396,7 +401,7 @@ def _fixed_creature_effect_closure(
                 return None
             capabilities.add('trigger.keyword.prowess')
         elif isinstance(fragment, CombatKeywordTriggerSpec):
-            if fragment != decayed_trigger:
+            if fragment != decayed_trigger and not token_combat_fragment_is_declared(fragment,keywords):
                 return None
         elif isinstance(fragment, DeclarationRestrictionTemplate):
             if "Decayed" in keywords and fragment == decayed_restriction:
@@ -724,6 +729,9 @@ def fixed_token_creation_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: set[str],
 ) -> tuple[str, ...]:
+    if 'fixed-token-definition-choice' in mechanic_ids:
+        from .fixed_token_choices import fixed_token_choice_node_capabilities
+        return fixed_token_choice_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if {'paid-entry-copy-offspring', 'paid-entry-copy-squad'} & set(mechanic_ids):
         from .paid_entry_copy_shapes import paid_entry_copy_node_capabilities
         return paid_entry_copy_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
@@ -827,6 +835,8 @@ def fixed_token_creation_covered_mechanics(
     """Return mechanics owned by the closed token-production capabilities."""
 
     covered: set[str] = set()
+    if 'token.creation.fixed_definition_choice' in capability_ids:
+        covered.add('fixed-token-definition-choice')
     if 'token.creation.defined_transforming' in capability_ids:
         covered.add('cr-111-tokens')
     if "token.creation.fixed_definition" in capability_ids:
@@ -903,11 +913,13 @@ def token_creation_component_mechanics(effects, parent_mechanics):
         return parent_mechanics
     if "target" in effect and "cr-115-targets" in parent_mechanics:
         mechanics.add("cr-115-targets")
-    if (TYPED_TOKEN_ABILITY_MECHANIC_ID in parent_mechanics and effect.get('op') == 'create_token'
+    if (effect.get('op') == 'create_token'
             and isinstance(characteristics, Mapping) and characteristics.get('ability_fragments')):
         closure = _fixed_token_effect_closure(effect)
-        if closure is not None and TYPED_TOKEN_ABILITY_CAPABILITY_ID in closure[0]:
-            mechanics.add(TYPED_TOKEN_ABILITY_MECHANIC_ID)
+        if closure is not None:
+            mechanics.update(set(closure[1])-{TYPED_TOKEN_ABILITY_MECHANIC_ID})
+            if TYPED_TOKEN_ABILITY_MECHANIC_ID in parent_mechanics and TYPED_TOKEN_ABILITY_CAPABILITY_ID in closure[0]:
+                mechanics.add(TYPED_TOKEN_ABILITY_MECHANIC_ID)
     try:
         if effect.get('op') == 'choose_fixed_attacking_token_destinations':
             from .attacking_token_results import attacking_token_result_closure, ATTACKING_TOKEN_MECHANIC

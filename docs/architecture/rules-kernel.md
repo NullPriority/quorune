@@ -723,6 +723,15 @@ spell payment apply the result once after mana production. Result-bearing
 activations are irreversible for mana undo and retain ordinary transactional
 rollback, replacement continuations and replay.
 
+Counter-depletion results use fixed-result schema two to pin one named counter
+to the same ability's source-counter cost. After that cost and mana production,
+the canonical sacrifice effect moves the original controlled battlefield
+incarnation to its owner's graveyard only if that named counter is absent.
+Other counter kinds do not keep the source, and unrelated counter removal does
+not run this result. Historical schema-one damage and untap results retain
+their original representations. The conditional result has its own capability
+boundary and cannot be substituted for a sacrifice cost or state-based action.
+
 Automatic mana payment also accepts a represented fixed-output ability whose
 only nonmana cost is sacrificing its source without tapping it. Discovery and
 commit share current source eligibility and ability-condition checks. Such a

@@ -19,6 +19,8 @@ from .model import (
 )
 from .operations import (
     AmplifyEntryOperation,
+    OpenTributeEntryChoice,
+    CompleteTributeEntryChoice,
     DevourEntryOperation,
     ENTRY_OBJECT_SELECTION_OPERATIONS,
     AddAmount,
@@ -395,6 +397,12 @@ def _retarget_zone_counter_children(
         else None
     )
     for index, child in enumerate(children):
+        if child.children:
+            from dataclasses import replace
+            nested=list(child.children)
+            _retarget_zone_counter_children(event,payload,nested)
+            child=replace(child,children=tuple(nested))
+            children[index]=child
         if (
             child.kind != "counter.place"
             or child.affected_object is None
@@ -645,7 +653,8 @@ def _apply_operation(
             )
         )
         return entry_scope
-    if isinstance(operation,(ApplyEntryCounterReplacement,CreateAffectedObjectCounter,GrantAffectedObjectSubtype,GrantAffectedObjectKeyword)):
+    if isinstance(operation,(ApplyEntryCounterReplacement,CreateAffectedObjectCounter,GrantAffectedObjectSubtype,GrantAffectedObjectKeyword,
+            OpenTributeEntryChoice,CompleteTributeEntryChoice)):
         from .entry_counter_application import apply_entry_counter_operation
         apply_entry_counter_operation(event,payload,children,operation,effect_id=effect_id)
         return entry_scope

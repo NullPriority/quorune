@@ -45,6 +45,8 @@ AMOUNT_MECHANIC_CAPABILITIES = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (PUBLIC_QUE
                                MULTIKICKER_AMOUNT_MECHANIC:(MULTIKICKER_AMOUNT_CAPABILITY,'casting.multikicker.fixed_mana'),
                                MANA_COLOR_AMOUNT_MECHANIC:(MANA_COLOR_AMOUNT_CAPABILITY,)}
 AMOUNT_MECHANIC_CAPABILITIES[CAST_MANA_VALUE_MECHANIC]=(CAST_MANA_VALUE_CAPABILITY,)
+from ..activation_paid_characteristic_model import ACTIVATION_PAID_STAT_CAPABILITY, ACTIVATION_PAID_STAT_MECHANIC
+AMOUNT_MECHANIC_CAPABILITIES[ACTIVATION_PAID_STAT_MECHANIC]=(ACTIVATION_PAID_STAT_CAPABILITY,)
 
 CompiledEffectTemplate = tuple[
     str | None,
@@ -315,6 +317,7 @@ def _query_characteristic_candidate(
 
 
 _AMOUNT_FIELDS = {
+    "grant_next_spell_cost_reduction": "amount",
     "drain_opponent": "amount",
     "drain_each_opponent": "amount",
     "life_loss_then_gain_actual": "amount",
@@ -675,11 +678,13 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.closed_effect_program_shapes import closed_effect_program_node_capabilities
     from ..rules.surveil_capability_shapes import fixed_surveil_node_capabilities
     from ..rules.fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities
-    from ..rules.fixed_controller_effect_shapes import fixed_controller_effect_sequence_node_capabilities
+    from ..rules.fixed_controller_effect_shapes import (fixed_controller_effect_sequence_node_capabilities,
+        fixed_counter_controller_effect_sequence_node_capabilities)
     from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
     from ..rules.attack_event_results import attack_event_characteristic_capabilities
     from ..rules.casting_additional_costs import fixed_creature_sacrifice_price, fixed_single_sacrifice_price
     from ..rules.fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
+    from ..rules.mill_capability_shapes import fixed_mill_node_capabilities
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
@@ -720,6 +725,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_damage_node_capabilities,
             fixed_draw_node_capabilities,
             fixed_scry_node_capabilities,
+            fixed_mill_node_capabilities,
             fixed_surveil_node_capabilities,
             fixed_life_node_capabilities,
             fixed_token_creation_node_capabilities,
@@ -730,12 +736,16 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_counter_placement_node_capabilities,
             fixed_counter_placement_target_set_node_capabilities,
             fixed_player_counter_placement_node_capabilities,
+            *((fixed_counter_controller_effect_sequence_node_capabilities,)
+              if ACTIVATION_PAID_STAT_MECHANIC in program.coverage else ()),
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
               if target_mana_value_sequence or
-              {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
+              {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC,
+               ACTIVATION_PAID_STAT_MECHANIC}.intersection(program.coverage) else ()),
             *((fixed_controller_effect_sequence_node_capabilities,)
-              if {MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC}
+              if {MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC, PAID_SACRIFICE_MANA_VALUE_MECHANIC,
+                  ACTIVATION_PAID_STAT_MECHANIC}
               .intersection(program.coverage) else ()),
             *((fixed_resolution_mana_capabilities,) if paid_mana_value else ()),
         )

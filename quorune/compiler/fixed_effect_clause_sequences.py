@@ -9,6 +9,7 @@ from typing import Any, Callable, Mapping
 
 
 FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC = "fixed-effect-clause-sequence"
+SOURCE_CHARACTERISTIC_TAP_TEMPLATE = 'fixed-source-characteristic-tap-sequence-v1'
 
 CompiledEffectTemplate = tuple[
     str | None,
@@ -76,7 +77,14 @@ def _top_level_scope_text(text: str) -> str:
 
 def _two_sentence_clauses(text: str) -> tuple[str, str] | None:
     """Retain period grammar and close two top-level printed-order clauses."""
+    from .fixed_damage_life_sequences import fixed_damage_life_clauses
+    if damage_life:=fixed_damage_life_clauses(text):return damage_life
     existing = _period_sentence_clauses(text)
+    if existing is not None:
+        source = re.fullmatch(r'(?P<subject>this [A-Za-z]+) (?:gets|gains) [^.]+\.',existing[0],re.I)
+        action = re.fullmatch(r'(?P<action>Tap|Untap) it\.',existing[1],re.I)
+        if source is not None and action is not None:
+            return existing[0],f"{action['action']} {source['subject']}."
     if 'then' not in text.casefold() or (existing is not None and not re.match(r'Then\b',existing[1],re.I)):
         return existing
     normalized = text.strip()
@@ -145,6 +153,11 @@ class FixedEffectClauseSequenceTemplate:
 
     @property
     def template_id(self) -> str:
+        first,second = self._effects
+        if (self._target_schema is None and first.get('op')=='apply_source_characteristics_until_end_of_turn'
+                and first.get('card')=='$source.zone_object' and second.get('card')=='$source.zone_object'
+                and second.get('op') in {'tap','untap'}):
+            return SOURCE_CHARACTERISTIC_TAP_TEMPLATE
         return "fixed-effect-clause-sequence-v1"
 
     @property
@@ -182,6 +195,12 @@ def fixed_effect_clause_sequence_template(
         or FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC in mechanics
         for template_id, effects, _target_schema, mechanics in compiled
     ):
+        return None
+    from .fixed_damage_life_sequences import fixed_damage_life_clauses
+    if (fixed_damage_life_clauses(text) is not None
+            and compiled[0][1][0].get('op') not in {'damage', 'damage_fixed_set', 'damage_each_opponent'}):
+        # A conjoined life result inside a payment, optional result or condition
+        # belongs to that instruction, rather than the surrounding trigger.
         return None
     targeted = tuple(
         target_schema

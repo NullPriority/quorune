@@ -289,10 +289,38 @@ def fixed_draw_node_capabilities(
     if (
         target_schema is None
         and operation == "draw_each_player"
+        and set(effect) == {"op", "count", "scope", "controller_count"}
+        and effect.get("scope") == "controller_and_opponents"
+        and _positive_int(effect.get("controller_count"))
+        and _positive_int(effect.get("count"))
+    ):
+        return ("zone.draw.library_to_hand",)
+    if (
+        target_schema is None
+        and operation == "draw_each_player"
+        and set(effect) == {"op", "count", "scope"}
+        and effect.get("scope") == "controller_opponents"
+        and _positive_int(effect.get("count"))
+    ):
+        return ("zone.draw.library_to_hand",)
+    if (
+        target_schema is None
+        and operation == "draw_each_player"
         and set(effect) == {"op", "count"}
         and _positive_int(effect.get("count"))
     ):
         return ("zone.draw.library_to_hand",)
+    if (
+        operation == "draw_each_player"
+        and set(effect) == {"op", "players", "count"}
+        and effect.get("players") == ["$controller", "$target.0"]
+        and _positive_int(effect.get("count"))
+        and dict(target_schema or {}) in _DRAW_TARGET_SCHEMAS
+        and target_schema.get("player_relation") == "opponent"
+        and type(target_schema.get("count")) is int
+        and "cr-115-targets" in mechanics
+    ):
+        return ("target.revalidate_resolution", "zone.draw.library_to_hand")
     if operation not in {"draw", "offer_draw"}:
         return ()
     expected_fields = (
@@ -1047,7 +1075,7 @@ def fixed_source_characteristics_node_capabilities(
         from .defender_permission_effect import temporary_defender_permission_capabilities
         return temporary_defender_permission_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if any(effect.get('op') == CHARACTERISTIC_OPERATION
-           and effect.get('schema_version') == FIXED_TARGET_COLOR_VERSION for effect in effects):
+           and effect.get('schema_version') in {FIXED_TARGET_COLOR_VERSION,22,23} for effect in effects):
         from .resolution_characteristic_shapes import fixed_target_color_node_capabilities
         return fixed_target_color_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(effect.get('op') == CHARACTERISTIC_OPERATION
@@ -1172,6 +1200,10 @@ def temporary_declaration_restriction_node_capabilities(
         return (*dependencies, NEXT_TURN_EFFECT_CAPABILITY) if dependencies else ()
     kind = effect.get("restriction")
     if isinstance(kind, Mapping):
+        from ..temporary_attack_requirement_model import TEMPORARY_ATTACK_REQUIREMENT_KIND
+        if kind.get('kind') == TEMPORARY_ATTACK_REQUIREMENT_KIND:
+            from .temporary_attack_requirements import temporary_attack_requirement_node_capabilities
+            return temporary_attack_requirement_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
         from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND
         if kind.get('kind') == TEMPORARY_ALL_BLOCKER_KIND:
             from .temporary_all_blockers import temporary_all_blocker_node_capabilities

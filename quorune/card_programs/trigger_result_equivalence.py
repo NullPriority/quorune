@@ -11,6 +11,52 @@ from ..rules.public_zone_move_capability_shapes import public_graveyard_card_exi
 from ..targets import target_plan
 
 
+def fixed_graveyard_self_entry_views_equal(current, old):
+    """Retire one closed legacy optional return after complete typed admission."""
+    from ..rules.graveyard_self_return import (
+        GRAVEYARD_SELF_ENTRY_CAPABILITY, GRAVEYARD_SELF_ENTRY_VERSION,
+        graveyard_self_return_runtime_dependencies,
+    )
+    if (current.active_zone != 'graveyard' or old.active_zone != 'graveyard'
+            or current.event != old.event or current.target_schema is not None or old.target_schema is not None
+            or len(current.effects) != 1 or len(old.effects) != 1):return False
+    outer, previous = current.effects[0], old.effects[0]
+    if (set(outer) != {'op', 'player', 'effects'} or outer['op'] != 'offer_optional_effect'
+            or outer['player'] != '$controller' or not isinstance(outer['effects'], (list, tuple))
+            or list(outer['effects']) != [{'op': 'self_zone_move', 'origin': 'graveyard',
+                'destination': 'battlefield', 'tapped': False, 'source_form': 'card', GRAVEYARD_SELF_ENTRY_VERSION: 1}]):return False
+    if (set(previous) != {'op', 'player', 'prompt', 'options', 'then_by_choice'}
+            or previous['op'] != 'choose_option' or previous['player'] != '$controller'
+            or type(previous['prompt']) is not str or not previous['prompt']
+            or not isinstance(previous['options'], (list, tuple)) or len(previous['options']) != 2
+            or not isinstance(previous['then_by_choice'], Mapping)):return False
+    options = previous['options']
+    if any(not isinstance(row, Mapping) or set(row) != {'id', 'label'}
+           or any(type(row[k]) is not str or not row[k] for k in row) for row in options):return False
+    ids = [row['id'] for row in options]
+    branches = previous['then_by_choice']
+    if len(set(ids)) != 2 or set(branches) != set(ids):return False
+    populated = [branch for branch in branches.values() if branch]
+    if (len(populated) != 1 or not isinstance(populated[0], (list, tuple)) or len(populated[0]) != 1
+            or not isinstance(populated[0][0], Mapping)
+            or any(not isinstance(branch, (list, tuple)) for branch in branches.values())):return False
+    move = dict(populated[0][0])
+    reason = move.pop('reason', '')
+    if (type(reason) is not str or move != {'op': 'move_if_in_zone', 'card': '$source',
+            'from': 'graveyard', 'destination': 'battlefield', 'controller': '$controller'}):return False
+    # A card in its graveyard has no battlefield controller; "you" is its owner.
+    condition = old.event_condition
+    if condition is not None and condition != {'field': 'controller', 'op': 'eq', 'value': '$source.controller'}:
+        return False
+    expected = None if condition is None else {**condition, 'value': '$source.owner'}
+    if current.event_condition != expected:return False
+    try:
+        required = graveyard_self_return_runtime_dependencies(current)
+    except (ValueError, TypeError, KeyError):return False
+    return (GRAVEYARD_SELF_ENTRY_CAPABILITY in required
+        and set(required) <= set(current.capability_dependencies))
+
+
 def _graveyard_card_target(schema):
     required = {'zones', 'categories', 'count'}
     if (not isinstance(schema, Mapping) or not required <= set(schema)
@@ -64,4 +110,45 @@ def _optional_graveyard_search_views_equal(current, old):
 
 def fixed_trigger_results_equal(current, old):
     return (fixed_graveyard_exile_views_equal(current, old)
-        or _optional_graveyard_search_views_equal(current, old))
+        or _optional_graveyard_search_views_equal(current, old)
+        or fixed_graveyard_self_entry_views_equal(current, old)
+        or fixed_token_choice_results_equal(current,old))
+
+
+def _fixed_token_choice_results(program):
+    from copy import deepcopy
+    from ..fixed_token_production import historical_unnamed_token_view
+    from ..rules.token_creation_capability_shapes import _fixed_token_effect_closure
+    if program.target_schema is not None or len(program.effects)!=1:return None
+    choice = program.effects[0]
+    if (not isinstance(choice,Mapping) or set(choice)!={'op','player','prompt','options','then_by_choice'}
+            or choice['op']!='choose_option' or choice['player']!='$controller'
+            or type(choice['prompt']) is not str or not choice['prompt']):return None
+    options,branches = choice['options'],choice['then_by_choice']
+    if not isinstance(options,(list,tuple)) or not 2<=len(options)<=4 or not isinstance(branches,Mapping):return None
+    result,ids = {},set()
+    for option in options:
+        if (not isinstance(option,Mapping) or set(option)!={'id','label'}
+                or any(type(option[k]) is not str or not option[k] for k in option)
+                or option['id'].casefold()!=option['label'].casefold()
+                or option['id'] in ids or option['label'].casefold() in result):return None
+        ids.add(option['id']);branch = branches.get(option['id'])
+        if not isinstance(branch,(list,tuple)) or len(branch)!=1 or not isinstance(branch[0],Mapping):return None
+        token = deepcopy(dict(branch[0]));reason = token.pop('reason','')
+        if (type(reason) is not str or token.get('quantity')!=1 or type(token.get('quantity')) is not int
+                or 'tapped' in token or _fixed_token_effect_closure(token) is None):return None
+        former = historical_unnamed_token_view(token['name'],token['characteristics'])
+        if former is not None:token['name'],token['characteristics'] = former
+        if token['name'].casefold()!=option['label'].casefold():return None
+        result[option['label'].casefold()] = token
+    return result if ids==set(branches) else None
+
+
+def fixed_token_choice_results_equal(current,old):
+    """Normalize presentation IDs only after complete typed branch comparison."""
+    from ..rules.fixed_token_choices import fixed_token_choice_node_capabilities
+    required = fixed_token_choice_node_capabilities(effects=current.effects,
+        target_schema=current.target_schema,mechanic_ids=current.coverage)
+    if not required or not set(required)<=set(current.capability_dependencies):return False
+    current_results,old_results = (_fixed_token_choice_results(program) for program in (current,old))
+    return current_results is not None and current_results==old_results

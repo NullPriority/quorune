@@ -110,6 +110,9 @@ def fixed_activated_mana_node(
         from ..fixed_mana_results import FIXED_MANA_RESULT_CAPABILITY
         capabilities.append(FIXED_MANA_RESULT_CAPABILITY)
         if spec.result.kind=='skip_actor_untap':capabilities.append('untap.step.exert_player')
+        if spec.result.schema_version == 2:
+            from ..fixed_mana_results import COUNTER_DEPLETION_RESULT_CAPABILITY
+            capabilities.append(COUNTER_DEPLETION_RESULT_CAPABILITY)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     capabilities.extend(activated_ability_cost_capabilities(ability))
@@ -153,7 +156,7 @@ def fixed_activated_mana_node(
         ),
         cost=activated_ability_cost(ability),
         handlers=(fixed_mana_handler_descriptor(spec),),
-        mechanics=(
+        mechanics=(('mana-source-counter-depletion',) if spec.result is not None and spec.result.schema_version == 2 else ()) + (
             ("exhaust",)
             if ability.activation_limit is ActivationLimit.EXHAUST_ONCE
             else ()
@@ -284,8 +287,16 @@ def _activated_effect_residuals(
     line: str,
     span: SourceSpan,
     residuals: list[OracleResidual],
+    target_schema=None,
 ) -> list[str]:
     residual_ids: list[str] = []
+    from ..activation_target_values import TargetActivationReduction
+    from ..rules.activation.targeted_costs import single_creature_target_price_plan
+    if isinstance(ability.ability_local_mana_reduction, TargetActivationReduction):
+        try:single_creature_target_price_plan(target_schema)
+        except ValueError as exc:
+            residual_ids.append(append_residual(residuals, kind='cost', text=line, span=span,
+                reason=str(exc), blockers=('one required creature target for ability-local price',)))
     if not ability.compiled_cost:
         residual_ids.append(
             append_residual(
@@ -332,12 +343,19 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     'order_library_top','shuffle_controller_library',
     'create_token_then_counters',
     'discard_hands_then_draw',
+    'discard_draw_up_to',
+    'set_day_night',
+    'grant_next_spell_cost_reduction',
     'prohibit_casting_until_end_of_turn',
     'return_random_graveyard_cards',
     "copy_stack_item",
     'create_role_token',
     "gain_control",
     "gain_control_set",
+    "give_control",
+    "give_control_set",
+    "restore_owner_control",
+    "choose_control_recipient",
     "amass",
     "apply_source_characteristics_until_end_of_turn",
     "attach",
@@ -411,7 +429,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "lose_life_each_opponent",
     "mill",
     "move_public_zone_set",
-    "put_card_from_hand", "move",
+    "put_card_from_hand", "put_cards_from_hand", "move",
     "modify_all_matching_permanents_until_end_of_turn",
     "modify_stats_until_end_of_turn",
     "scry", "set_public_tap_state",
@@ -463,6 +481,7 @@ def _activated_effect_dependency_gate(
                 "fixed-controller-effect-sequence",
                 "fixed-target-player-effect-sequence",
                 "fixed-counter-controller-effect-sequence",
+                "shared-target-set-result-sequence",
                 "fixed-resolution-control",
                 "fixed-effect-clause-sequence",
                 "fixed-extra-turn-after-current",
@@ -470,6 +489,7 @@ def _activated_effect_dependency_gate(
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
                 "temporary-source-protection-choice",
+                "fixed-target-color-scope",
                 "opposing-graveyard-return-then-targeted-result",
             }.intersection(mechanics)
         )
@@ -675,6 +695,10 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
+    sequence=fixed_damage_life_sequence_template(text,compile_clause=lambda clause:_compiled_activated_effect(
+        clause,card_name=card_name,effect_template=effect_template))
+    if sequence is not None:return sequence
     if text.casefold().startswith("add "):
         from .fixed_stack_spell_copy import next_cast_copy_template
 
@@ -788,14 +812,10 @@ def activated_oracle_node(
         mechanics = ("self-zone-move",)
         handlers = (self_zone_move_handler_descriptor(self_zone_move),)
     else:
-        from .activation_x_costs import announced_x_activation_effect
-        compiled_x = announced_x_activation_effect(ability, source_name=card_name, text=effect_material,
+        from .activation_paid_sacrifice_results import compile_activation_result
+        template, effects, target_schema, mechanics = compile_activation_result(
+            ability, source_name=card_name, text=effect_material,
             compile_fixed=lambda text: _compiled_activated_effect(text, card_name=card_name, effect_template=effect_template))
-        template, effects, target_schema, mechanics = compiled_x or _compiled_activated_effect(
-            effect_material,
-            card_name=card_name,
-            effect_template=effect_template,
-        )
     from .waterbend_costs import closed_waterbend_source_result
     template,effects,target_schema,mechanics=closed_waterbend_source_result(ability,(template,effects,target_schema,mechanics))
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
@@ -806,6 +826,7 @@ def activated_oracle_node(
         line=line,
         span=span,
         residuals=residuals,
+        target_schema=target_schema,
     )
     lowerable = not residual_ids and (
         template is not None or ability.mana_ability

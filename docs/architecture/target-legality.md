@@ -61,6 +61,12 @@ A direct token target checks token status independently of card type. A printed
 creature or artifact qualifier adds that type test. Controller, tapped status,
 and entry during the current turn use the same public predicates at selection
 and resolution.
+The same predicate can exclude tokens from a represented permanent domain.
+Nontoken type disjunctions exclude tokens from every branch; nonland and
+nontoken qualifiers remain independent requirements. Copying a card does not
+make a token into a nontoken, and copying a token does not change a card's
+nontoken identity. The compiler emits a strict Boolean token field and retains
+all other controller, source-exclusion, type and timing restrictions.
 
 Target snapshots retain the selected object's identity and zone-change counter.
 During resolution, `semantic_runtime/direct_target_fields.py` checks that
@@ -201,6 +207,13 @@ unnamed counter presence, and name or attachment relations remain residual.
 Ability-presence wording remains outside this target grammar and must use the
 shared layer-6 ability-applicability query rather than a family-specific check.
 
+Public graveyard card-set queries use the same current mana-value fact through
+an explicitly versioned `ObjectQuerySpec` upper bound. The closed form selects
+physical cards at fixed bounds from zero through twenty. It does not widen the
+battlefield power/toughness predicate or admit a hidden-zone, variable-value,
+or receiver-union query. Older query wire shapes retain their exact fields;
+only the new card predicate carries `mana_value_max`.
+
 Three positive current-turn damage facts are represented for creature targets:
 the current incarnation was dealt damage, dealt damage to any recipient, or
 dealt damage to the acting player. The canonical damage transaction records
@@ -220,6 +233,12 @@ for all other targets. This represents cards chosen from a single graveyard;
 it does not expose hidden zones or create a general relational-target grammar.
 
 ## Copied target decisions
+
+For a fixed Choose one spell, the selected mode contributes its complete
+grouped target plan. Group-local predicates and exclusions remain separate,
+while the selected child's global distinctness and same-player constraints
+reach both availability and command validation. Unselected modes contribute
+no targets or constraints. Copying keeps the chosen mode and per-group count.
 
 Separate printed occurrences of `target` retain separate groups. The same
 object may fill each unqualified occurrence when it meets each predicate;

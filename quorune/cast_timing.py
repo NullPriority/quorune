@@ -10,6 +10,9 @@ PRINTED_FLASH_CAPABILITY = "timing.cast.printed_flash"
 CLASSIC_FLASH_CAPABILITY = "casting.permission.classic_flash_cleanup"
 CLASSIC_FLASH_HANDLER = "permission.cast.classic-flash-cleanup.v1"
 CLASSIC_FLASH_MARK = "classic_flash_cleanup"
+SURCHARGE_FLASH_HANDLER = "permission.cast.mana-surcharge-flash.v1"
+SURCHARGE_FLASH_CAPABILITY = "timing.cast.mana_surcharge_flash"
+SURCHARGE_FLASH_OPTION_FIELD = "mana_surcharge_flash"
 PRINTED_FLASH_MECHANIC = PRINTED_FLASH_CAPABILITY.rsplit(".", 1)[1].removeprefix(
     "printed_"
 )
@@ -17,6 +20,29 @@ PRINTED_FLASH_MECHANIC = PRINTED_FLASH_CAPABILITY.rsplit(".", 1)[1].removeprefix
 
 class CastTimingPermissionError(ValueError):
     """A compiled cast-timing permission is malformed or unsupported."""
+
+
+@dataclass(frozen=True, slots=True)
+class ManaSurchargeFlashSpec:
+    """One fixed additional generic price for this face's timing permission."""
+
+    generic: int
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise CastTimingPermissionError('Unsupported mana-surcharge timing version')
+        if type(self.generic) is not int or self.generic <= 0:
+            raise CastTimingPermissionError('Instant-timing surcharge must be positive fixed generic mana')
+
+    def to_dict(self):
+        return {'schema_version':self.schema_version,'generic':self.generic}
+
+    @classmethod
+    def from_dict(cls,value):
+        if not isinstance(value,Mapping) or set(value)!={'schema_version','generic'}:
+            raise CastTimingPermissionError('Mana-surcharge timing fields are closed')
+        return cls(**value)
 
 
 @dataclass(frozen=True, slots=True)

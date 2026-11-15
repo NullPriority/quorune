@@ -137,6 +137,7 @@ class MassDestructionEffectTemplate:
         return (
             "destroy",
             "destroy-fixed-set",
+            *(self.spec.mana_value_filter.mechanic_ids if self.spec.mana_value_filter is not None else ()),
             *(
                 ("cr-115-targets",)
                 if self.target_schema is not None
@@ -230,10 +231,34 @@ def _split_type_list(text: str) -> tuple[str, ...] | None:
     return values if len(values) == len(words) else None
 
 
+def _singular_set_subject(subject: str) -> str | None:
+    prefix='other ' if subject.startswith('other ') else ''
+    body=subject.removeprefix(prefix) if prefix else subject
+    terms=body.replace(', and ', ', ').replace(' and ', ', ').split(', ')
+    if (2<=len(terms)<=4 and len(set(terms))==len(terms)
+            and all(term in _MASS_DESTRUCTION_CARD_TYPES for term in terms)):
+        return prefix+', '.join(term+'s' for term in terms)
+    match = re.fullmatch(
+        r"(?P<prefix>(?:other )?(?:[a-z]+ )?)"
+        r"(?P<kind>artifact|battle|creature|enchantment|land|permanent|planeswalker)"
+        r"(?P<tail> with flying| without flying)?", subject,
+    )
+    if match is None:
+        return None
+    return match['prefix'] + match['kind'] + 's' + (match['tail'] or '')
+
+
 def fixed_affected_permanent_query(
     subject: str,
+    *, singular: bool = False,
 ) -> tuple[ObjectQuerySpec, bool] | None:
     phrase = " ".join(subject.casefold().split())
+    if singular:
+        existing = fixed_affected_permanent_query(phrase)
+        if existing is not None:
+            return existing
+        phrase = _singular_set_subject(phrase)
+        return fixed_affected_permanent_query(phrase) if phrase is not None else None
     exclude_source = False
     if phrase.startswith("other "):
         exclude_source = True
@@ -359,19 +384,21 @@ def mass_destruction_effect_template(
         None,
         "they",
         "those creatures",
+        "a creature destroyed this way",
         "creatures destroyed this way",
     }:
         return None
     match = re.fullmatch(
-        r"destroy (?:all|each) (?P<subject>.+?)"
+        r"destroy (?P<quantifier>all|each) (?P<subject>.+?)"
         r"(?P<controller> target opponent controls| target player controls|"
-        r" you control| your opponents control)?\.?",
+        r" you control| you don't control| your opponents control)?\.?",
         destruction,
         re.IGNORECASE,
     )
     if match is None:
         return None
-    parsed = fixed_affected_permanent_query(match.group("subject"))
+    parsed = fixed_affected_permanent_query(match.group("subject"),
+        singular=match['quantifier'].casefold() == 'each')
     if parsed is None:
         return None
     query, exclude_source = parsed
@@ -381,7 +408,7 @@ def mass_destruction_effect_template(
     controller = (match.group("controller") or "").casefold()
     if controller == " you control":
         relation = PermanentControllerRelation.ACTOR
-    elif controller == " your opponents control":
+    elif controller in {" your opponents control", " you don't control"}:
         relation = PermanentControllerRelation.OPPONENTS
     elif controller in {" target player controls", " target opponent controls"}:
         relation = PermanentControllerRelation.TARGET_PLAYER

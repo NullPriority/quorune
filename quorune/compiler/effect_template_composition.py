@@ -86,6 +86,9 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .mana_value_destruction import mana_value_destruction_template
+        mana_value=mana_value_destruction_template(body,source_name=card_name,cast_x_available=cast_x_available)
+        if mana_value is not None:return mana_value
         duration = match_tapped_source_duration(body, card_name=card_name, source_context=source_context)
         if duration is not None:
             tapped = tapped_source_untap_restraint_template(duration) or tapped_source_characteristics_template(
@@ -312,6 +315,11 @@ def reviewed_effect_template_composition(
         )
         if conditional is not None:
             return conditional
+        from .sequential_public_conditions import sequential_public_condition_template
+        sequential=sequential_public_condition_template(text,source_name=source_name,compile_component=lambda body:
+            reviewed_effect_template_composition(body,source_name=source_name,compile_atomic=compile_atomic,
+                compile_fixed=compile_fixed,cast_x_available=cast_x_available,forbid_public_x=forbid_public_x,allow_conditions=False))
+        if sequential is not None:return sequential
     query_amount = public_query_effect_amount_template(
         text, source_name=source_name, compile_fixed=compile_fixed,
     )

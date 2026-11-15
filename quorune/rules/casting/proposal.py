@@ -117,6 +117,7 @@ class CastProposalHost(CastCostHost, Protocol):
         cast_type_line: str | None = None,
         suppress_source_costs: bool = False,
         resolving_exile_authority: bool = False,
+        ignore_timing: bool = False,
     ) -> list[dict[str, Any]]: ...
 
 
@@ -402,8 +403,9 @@ def _combined_cast_timing_permissions(
     face_name: str | None,
     face_down: bool,
     include_classic: bool=True,
+    include_surcharge: bool=True,
 ) -> tuple[Any, ...]:
-    from ...cast_timing import CLASSIC_FLASH_HANDLER
+    from ...cast_timing import CLASSIC_FLASH_HANDLER,SURCHARGE_FLASH_HANDLER
     printed = (
         ()
         if face_down
@@ -412,7 +414,8 @@ def _combined_cast_timing_permissions(
             card,
             face_name=face_name,
             actor=actor,
-            exclude_handler_ids=() if include_classic else (CLASSIC_FLASH_HANDLER,),
+            exclude_handler_ids=(() if include_classic else (CLASSIC_FLASH_HANDLER,))
+                +(() if include_surcharge else (SURCHARGE_FLASH_HANDLER,)),
         )
     )
     return (
@@ -582,6 +585,7 @@ def _cast_program_and_cost(
     cost_query = dict(response=response, force_without_mana_cost=request.force_without_mana_cost,
         alternative_base=alternative_base, cast_type_line=type_line if method_spec is not None else None,
         suppress_source_costs=suppress_source_costs)
+    if request.ignore_timing:cost_query['ignore_timing']=True
     if (request.during_resolution and request.authorized_from_zone == "exile"
             and request.authorized_cost_option is None and not request.force_without_mana_cost):
         cost_query["resolving_exile_authority"] = True
@@ -945,6 +949,7 @@ def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type
         }
     authority = {"force_without_mana_cost": True} if resolving_payment == "free" else (
         {"resolving_exile_authority": True} if resolving_payment == "paid" else {})
+    if resolving_payment is not None:authority['ignore_timing']=True
     return tuple(
         CastCostOption.from_dict(value)
         for value in host._cast_cost_options(

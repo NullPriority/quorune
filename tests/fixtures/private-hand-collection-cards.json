@@ -1,0 +1,670 @@
+{
+  "cards": [
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{G}{G}{G}",
+      "name": "Ghalta, Stampede Tyrant",
+      "oracle_id": "b8f16311-be5a-4648-b024-849a61dff0bc",
+      "oracle_text": "Trample\nWhen Ghalta enters, put any number of creature cards from your hand onto the battlefield.",
+      "power": "12",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "12",
+      "type_line": "Legendary Creature \u2014 Elder Dinosaur"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Entwine"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{G}{G}",
+      "name": "Tooth and Nail",
+      "oracle_id": "382b7873-e78d-473b-8346-d92d16e8f634",
+      "oracle_text": "Choose one \u2014\n\u2022 Search your library for up to two creature cards, reveal them, put them into your hand, then shuffle.\n\u2022 Put up to two creature cards from your hand onto the battlefield.\nEntwine {2} (Choose both if you pay the entwine cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{G}{G}",
+      "name": "Last March of the Ents",
+      "oracle_id": "3999cd64-ff5c-4e2c-8aa6-d14f9f8a2b4c",
+      "oracle_text": "This spell can't be countered.\nDraw cards equal to the greatest toughness among creatures you control, then put any number of creature cards from your hand onto the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 9.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{G}{G}{G}",
+      "name": "Myojin of Life's Web",
+      "oracle_id": "8e3eafd7-5823-4cc1-bdb8-c456580e395a",
+      "oracle_text": "Myojin of Life's Web enters with a divinity counter on it if you cast it from your hand.\nMyojin of Life's Web has indestructible as long as it has a divinity counter on it.\nRemove a divinity counter from Myojin of Life's Web: Put any number of creature cards from your hand onto the battlefield.",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2004-10-01",
+      "toughness": "8",
+      "type_line": "Legendary Creature \u2014 Spirit"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Read Ahead"
+      ],
+      "layout": "saga",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{G}{G}",
+      "name": "The World Spell",
+      "oracle_id": "f5186d3f-52b2-43ef-be11-d183ab765663",
+      "oracle_text": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI, II \u2014 Look at the top seven cards of your library. You may reveal a non-Saga permanent card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\nIII \u2014 Put up to two non-Saga permanent cards from your hand onto the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Saga"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Vigilance",
+        "Exhaust"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{G}",
+      "name": "Redshift, Rocketeer Chief",
+      "oracle_id": "582c7e54-d64c-4ffb-ae5f-d2752b3ed10b",
+      "oracle_text": "Vigilance\n{T}: Add X mana of any one color, where X is Redshift's power. Spend this mana only to activate abilities.\nExhaust \u2014 {10}{R}{G}: Put any number of permanent cards from your hand onto the battlefield. (Activate each exhaust ability only once.)",
+      "power": "2",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2025-02-14",
+      "toughness": "3",
+      "type_line": "Legendary Creature \u2014 Goblin Pilot"
+    },
+    {
+      "card_faces": [],
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Hardened Scales",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Clone",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2013-07-19",
+      "toughness": "0",
+      "type_line": "Creature \u2014 Shapeshifter"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection Two",
+      "oracle_id": "8fd321c8-cb8b-5c6a-92f0-c6f4018011b3",
+      "oracle_text": "Put up to two creature cards from your hand onto the battlefield.",
+      "released_at": "2026-01-01",
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection All",
+      "oracle_id": "94cb91fd-8167-5cf2-ba01-6a2d77304de2",
+      "oracle_text": "Put any number of permanent cards from your hand onto the battlefield.",
+      "released_at": "2026-01-01",
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection Lands",
+      "oracle_id": "ff4a2107-3108-5059-afaf-8278aa8a8a26",
+      "oracle_text": "Put any number of land cards from your hand onto the battlefield tapped.",
+      "released_at": "2026-01-01",
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection Non Saga",
+      "oracle_id": "8c355895-35bc-5554-87a8-5b546f46f1a1",
+      "oracle_text": "Put up to two non-Saga permanent cards from your hand onto the battlefield.",
+      "released_at": "2026-01-01",
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection Watcher",
+      "oracle_id": "c6132ddf-8e0b-5b01-8d8d-26765eb9370c",
+      "oracle_text": "Whenever another creature you control enters, you gain 1 life.",
+      "power": "2",
+      "released_at": "2026-01-01",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection Counter",
+      "oracle_id": "e30801fc-87ec-509a-a3ba-fce44aad56f0",
+      "oracle_text": "This creature enters with a +1/+1 counter on it.",
+      "power": "2",
+      "released_at": "2026-01-01",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection Aura",
+      "oracle_id": "05ee0acf-d3c3-5400-a41b-af8c3c2614e7",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.",
+      "released_at": "2026-01-01",
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Generic Collection Scalar",
+      "oracle_id": "cdaa8c5b-1fbf-57a9-9e01-401f3f5f304f",
+      "oracle_text": "You may put a creature card from your hand onto the battlefield.",
+      "released_at": "2026-01-01",
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "In a Commander game where this card is your commander, casting it from the Command zone does not count as casting it from your hand.",
+      "oracle_id": "8e3eafd7-5823-4cc1-bdb8-c456580e395a",
+      "published_at": "2013-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "As a Saga with read ahead enters the battlefield, its controller chooses a number from one to that Saga\u2019s greatest chapter number. The Saga enters the battlefield with the chosen number of lore counters. Neither choosing the number nor putting the counters on the Saga use the stack, and neither can be responded to.",
+      "oracle_id": "f5186d3f-52b2-43ef-be11-d183ab765663",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an ability triggers whenever you activate an exhaust ability, that ability resolves before the exhaust ability resolves.",
+      "oracle_id": "582c7e54-d64c-4ffb-ae5f-d2752b3ed10b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exhaust ability of a permanent is activated, and then that permanent leaves the battlefield and returns to the battlefield, it becomes a new object so its exhaust ability can be activated again.",
+      "oracle_id": "582c7e54-d64c-4ffb-ae5f-d2752b3ed10b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Exhaust abilities can be activated any time you could normally activate an ability.",
+      "oracle_id": "582c7e54-d64c-4ffb-ae5f-d2752b3ed10b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone's ability doesn't target the chosen creature.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned original records with complete Oracle and rulings; constructed private simultaneous-entry controls"
+}
