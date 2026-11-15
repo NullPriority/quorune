@@ -22705,7 +22705,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1942,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "3f48efe42c0b878d225cbe77df7f4a785d61e798312a9c18c802f97bc536d767",
+      "source_fingerprint": "e6d4c8d25c8f8d6785289761d6bb8eb9b281917159616d65f5513fa3bc8cbee7",
       "uncovered_high_risk_pairs": 112
     },
     "migration_queue": [],
@@ -23094,7 +23094,7 @@
           "visibility": "dunder"
         }
       ],
-      "logical_lines": 343874,
+      "logical_lines": 343886,
       "methods": {
         "dunder": 1019,
         "private": 1098,
@@ -28934,6 +28934,13 @@
           "physical_lines": 102
         },
         {
+          "file": "quorune/rules/evidence_storage.py",
+          "functions_and_methods": 6,
+          "language": "python",
+          "logical_lines": 89,
+          "physical_lines": 109
+        },
+        {
           "file": "quorune/rules/qualified_attacks.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -29562,13 +29569,6 @@
           "language": "python",
           "logical_lines": 77,
           "physical_lines": 95
-        },
-        {
-          "file": "quorune/rules/evidence_storage.py",
-          "functions_and_methods": 5,
-          "language": "python",
-          "logical_lines": 77,
-          "physical_lines": 93
         },
         {
           "file": "quorune/rules/fixed_damage_roles.py",
@@ -37426,7 +37426,7 @@
           "physical_lines": 1678
         }
       ],
-      "physical_lines": 382253,
+      "physical_lines": 382269,
       "python_file_count": 1985,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -37444,7 +37444,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 7787,
+      "top_level_functions": 7788,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -69603,7 +69603,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1498,
     "compiler_module_physical_lines": 1566,
-    "compiler_version": "oracle-ir-v1050",
+    "compiler_version": "oracle-ir-v1054",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -70349,7 +70349,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 904,
         "exact_nodes": 1016,
-        "fingerprint": "86d5f4cb7f98880f2c2dc17bdcd1d28921f0f79dff9b00f45ff4306e23400956",
+        "fingerprint": "683ec77d1206c99ba2acb977f31dcf305113578638b77e6d9e129c31e2eaa891",
         "grammar_source_fingerprint": "64beb0600a6f710305e3b13310c37ef7bb2bb35395998810765b2a5ee6220b44",
         "identity_fingerprint": "68fd04a3e59f24eeb12394f6552acf46410c0b707083623d25d60cae73053729",
         "present": true,
@@ -70361,7 +70361,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 929,
         "exact_nodes": 1054,
-        "fingerprint": "dd20e79e0e2d59bb11bad8898d828efa3208e58c5beea5bfb89f3755c3beed57",
+        "fingerprint": "7ba7f82082669da895943ebad3275aefea6ec51eae9cb28479bc6533e13e5215",
         "grammar_source_fingerprint": "64beb0600a6f710305e3b13310c37ef7bb2bb35395998810765b2a5ee6220b44",
         "identity_fingerprint": "654a384ebc9daaca1af3de26d11293ba9243a32532277b4b9eec1bff8914526a",
         "present": true,
@@ -70380,7 +70380,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "22dc99b870eac4c104bb331ff4603a3cd21597443e688e99ddab8ba04fe7f7a4",
+      "fingerprint": "7ea2f3d2bc4f2d9df0c9778c49988225260b2b961ac3f3a6b7b98094752ecf86",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -70924,7 +70924,7 @@
       "generic-search-v1": 7,
       "generic-search-v2": 7,
       "interaction-kernel": 14,
-      "oracle-ir-v1050": 30,
+      "oracle-ir-v1054": 30,
       "replacement-choice-nested-events": 1,
       "reviewed-predefined-token-name-correction": 1,
       "v0.8-artifact-engine-family": 22,
@@ -71241,8 +71241,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 13324,
-      "discovered_total": 16633,
+      "conventional_ast_cases": 13329,
+      "discovered_total": 16638,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 370,

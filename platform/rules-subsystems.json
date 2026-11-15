@@ -10069,7 +10069,7 @@
         "zone.single_owner_move.fixed_destination",
         "zone.single_owner_move.graveyard_library_target"
       ],
-      "compiler_version": "oracle-ir-v1050",
+      "compiler_version": "oracle-ir-v1054",
       "family_ids": [
         "activated_cost:complete-alternate-additional-cost-grammar",
         "activated_cost:restricted-payment-predicates",
