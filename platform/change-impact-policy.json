@@ -15171,6 +15171,23 @@
         "test_temporary_declaration_restriction_effects",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-mana-evoke-incarnation-identity",
+      "patterns": [
+        "quorune/evoke.py",
+        "quorune/engine.py",
+        "quorune/trigger_discovery.py",
+        "quorune/stack_resolution.py",
+        "quorune/compiler/casting_payment_keyword_nodes.py",
+        "tests/test_fixed_mana_evoke_identity.py",
+        "tests/fixtures/fixed-mana-evoke-identity-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_mana_evoke_identity",
+        "test_casting_payment_keywords",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

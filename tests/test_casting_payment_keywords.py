@@ -263,7 +263,7 @@ class CastingPaymentKeywordCompilerTests(unittest.TestCase):
                 ir = self.compile(text, keywords=("Evoke",))
                 self.assertEqual("exact", ir.status)
                 node = ir.faces[0].nodes[0]
-                self.assertEqual("fixed-mana-evoke-v1", node.template_id)
+                self.assertEqual("fixed-mana-evoke-v2", node.template_id)
                 lowered = default_cast_cost_component_registry().lower(
                     node.handlers[0], None
                 )[0]

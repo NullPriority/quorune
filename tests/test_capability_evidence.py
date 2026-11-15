@@ -6,6 +6,9 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 
+from quorune.rules import evidence as evidence_owner
+from scripts import update_capability_evidence as evidence_generator
+
 from quorune.rules.capabilities import (
     CapabilityRegistry,
     CapabilityRegistryError,
@@ -233,6 +236,46 @@ class CapabilityEvidenceTests(unittest.TestCase):
             "positive evidence does not cover supported profiles",
         ):
             validate_capability_evidence_index(changed, registry=registry)
+
+
+
+
+class AssuranceSchemaVersionBoundaryTests(unittest.TestCase):
+    def registry_value(self):
+        # No capabilities or gameplay claims are needed to test a format marker.
+        return {'schema_version':1,'registry_version':1,'effective_date':'2026-08-07',
+            'source_sha256':'0'*64,'profiles':['commander_review'],'aggregates':[],'capabilities':[]}
+
+    def index(self,version,registry):
+        value={'schema_version':version,'registry_fingerprint':registry.fingerprint,
+            'declaration_source_fingerprint':'0'*64,'declarations':[]}
+        value['fingerprint']=evidence_owner.capability_evidence_fingerprint(value)
+        return value
+
+    def test_index_rejects_boolean_versions_and_retains_existing_numeric_v1(self):
+        registry=CapabilityRegistry(self.registry_value())
+        for version in (1,1.0):
+            with self.subTest(valid_version=version):
+                value=self.index(version,registry)
+                self.assertEqual(value['fingerprint'],evidence_owner.validate_capability_evidence_index(value,registry=registry))
+        for version in (True,False,2,'1'):
+            with self.subTest(invalid_version=version):
+                value=self.index(version,registry)
+                with self.assertRaisesRegex(evidence_owner.CapabilityEvidenceError,'schema_version'):
+                    evidence_owner.validate_capability_evidence_index(value,registry=registry)
+
+    def test_generator_rejects_boolean_versions_and_retains_existing_numeric_v1(self):
+        for version in (1,1.0):
+            with self.subTest(valid_version=version):
+                result=evidence_generator.build_index(registry_value=self.registry_value(),
+                    declaration_source={'schema_version':version,'declarations':[]},discovered_test_ids=set())
+                self.assertIs(type(result['schema_version']),int)
+                self.assertEqual(1,result['schema_version'])
+        for version in (True,False,2,'1'):
+            with self.subTest(invalid_version=version):
+                with self.assertRaisesRegex(evidence_generator.EvidenceGenerationError,'schema_version'):
+                    evidence_generator.build_index(registry_value=self.registry_value(),
+                        declaration_source={'schema_version':version,'declarations':[]},discovered_test_ids=set())
 
 
 if __name__ == "__main__":

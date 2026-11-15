@@ -248,7 +248,7 @@ def fixed_mana_evoke_keyword_node(
         event="cast.cost",
         lowerable=ordinary,
         exact=ordinary and not residual_ids,
-        template_id="fixed-mana-evoke-v1" if ordinary else None,
+        template_id="fixed-mana-evoke-v2" if ordinary else None,
         handlers=(evoke_handler_descriptor(spec),) if spec is not None else (),
         runtime_coverage=(
             "fixed_mana_evoke_alternate_cost",

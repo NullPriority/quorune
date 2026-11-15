@@ -50,7 +50,7 @@ class FixedManaEvokeSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise EvokeError("Unsupported fixed-mana Evoke schema version")
         if type(self.ability_id) is not str or _ABILITY_ID.fullmatch(self.ability_id) is None:
             raise EvokeError("Evoke ability ID must be abN")
@@ -121,7 +121,7 @@ class FixedManaEvokeSpec:
                 "label": f"Evoke {self.cost_text}",
                 "requirements": thaw_value(requirements),
                 "evoke_fingerprint": self.fingerprint,
-                EVOKE_PAYMENT_FIELD: evoke_payment_marker(),
+                EVOKE_PAYMENT_FIELD: evoke_payment_marker(schema_version=self.schema_version),
             }
             for index, requirements in enumerate(self.mana_variants, start=1)
         )
@@ -144,12 +144,15 @@ def compile_fixed_mana_evoke(
         oracle_line=oracle_line,
         cost_text=cost_text,
         mana_variants=variants,
+        schema_version=2,
     )
 
 
-def evoke_payment_marker() -> dict[str, Any]:
+def evoke_payment_marker(*, schema_version: int = 1) -> dict[str, Any]:
+    if type(schema_version) is not int or schema_version not in {1, 2}:
+        raise EvokeError("Unsupported Evoke payment marker version")
     return {
-        "schema_version": 1,
+        "schema_version": schema_version,
         "kind": EVOKE_MECHANIC_ID,
         "sacrifice_on_entry": True,
     }
@@ -160,10 +163,50 @@ def validate_evoke_payment_marker(value: Any) -> bool:
         isinstance(value, Mapping)
         and set(value) == {"schema_version", "kind", "sacrifice_on_entry"}
         and type(value["schema_version"]) is int
-        and value["schema_version"] == 1
+        and value["schema_version"] in {1, 2}
         and value["kind"] == EVOKE_MECHANIC_ID
         and value["sacrifice_on_entry"] is True
     )
+
+
+def evoke_payment_annotation(marker: Mapping[str, Any]) -> bool | dict[str, Any]:
+    if not validate_evoke_payment_marker(marker):
+        raise EvokeError("Malformed Evoke payment marker")
+    return True if marker["schema_version"] == 1 else dict(marker)
+
+
+def is_evoked_annotation(value: Any) -> bool:
+    return value is True or (validate_evoke_payment_marker(value) and value["schema_version"] == 2)
+
+
+def evoke_sacrifice_source_reference(context: Mapping[str, Any]) -> str:
+    if "evoke_source_identity_version" not in context:
+        return "$source"
+    if (type(context["evoke_source_identity_version"]) is not int
+            or context["evoke_source_identity_version"] != 2 or context.get("evoke") is not True
+            or type(context.get("source_logical_object_id")) is not str
+            or not context["source_logical_object_id"]):
+        from .errors import GameRuleError
+        raise GameRuleError("The Evoke source identity context is malformed")
+    return "$source.zone_object"
+
+
+def evoke_sacrifice_effect(context: Mapping[str, Any], *, source: Any,
+                           controller: str) -> dict[str, Any] | None:
+    reference = evoke_sacrifice_source_reference(context)
+    if reference == "$source.zone_object" and (
+        source is None or source.zone != "battlefield" or source.phased_out
+        or source.logical_object_id != context["source_logical_object_id"]
+        or source.controller != controller
+    ):
+        return None
+    return {"op": "sacrifice_if_present", "card": reference}
+
+
+def evoke_sacrifice_effects(item: Any, cards: Mapping[str, Any]) -> list[dict[str, Any]]:
+    effect = evoke_sacrifice_effect(item.context, source=cards.get(item.source_object_id),
+                                   controller=item.controller)
+    return [effect] if effect is not None else []
 
 
 __all__ = [
@@ -178,4 +221,9 @@ __all__ = [
     "evoke_payment_marker",
     "fixed_mana_variants",
     "validate_evoke_payment_marker",
+    "evoke_payment_annotation",
+    "is_evoked_annotation",
+    "evoke_sacrifice_source_reference",
+    "evoke_sacrifice_effect",
+    "evoke_sacrifice_effects",
 ]

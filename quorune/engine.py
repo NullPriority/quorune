@@ -3,6 +3,7 @@ from .characteristic_read_frames import characteristic_read_method
 
 from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
+from .evoke import evoke_sacrifice_effects
 from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
 from .rules.exert import exert_offer_rows,prepare_exert_costs,commit_exert_costs
 
@@ -3351,7 +3352,7 @@ class CommanderEngine(
         if item.semantic_key == "builtin:sacrifice-source":
             self._begin_resolve_item(
                 item,
-                [{"op": "sacrifice_if_present", "card": "$source"}],
+                evoke_sacrifice_effects(item, self.state.cards),
                 None,
                 note="Mishra delayed sacrifice",
             )

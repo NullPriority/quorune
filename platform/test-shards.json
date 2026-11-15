@@ -760,6 +760,7 @@
       "test_fixed_counter_keyword_activations",
       "test_fixed_entwine",
       "test_fixed_keyword_event_effects",
+      "test_fixed_mana_evoke_identity",
       "test_fixed_mana_value_target_predicates",
       "test_fixed_nonmana_equip",
       "test_fixed_self_cost_surfaces",

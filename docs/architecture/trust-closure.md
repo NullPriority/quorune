@@ -253,6 +253,12 @@ Validated public-quantity mana descriptors delegate their nested producer to
 the mana-production owner. Their codec forbids result declaration bindings and
 scalar arithmetic; a similar-looking result value cannot use that delegation.
 
+Rule assurance schema selectors distinguish JSON booleans from numeric
+version markers. An evidence index or declaration source cannot select
+version one with `true`, including when the rest of its fingerprinted
+contents are valid. Existing numeric version-one encodings retain their
+reader behavior; generators emit the canonical integer marker.
+
 Session creation, one synchronous save including derived review publication,
 and one synchronous Game Record replay share one validated read-only capability
 registry/evidence snapshot across their nested trust checks. This is an
