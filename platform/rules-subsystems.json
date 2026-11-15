@@ -9765,9 +9765,9 @@
       "capability_ids": [],
       "compiler_version": "oracle-ir-v1071",
       "family_ids": [],
-      "measurement_id": null,
       "non_harvest_reason": "Correct fixed-mana Evoke source-incarnation binding and reject boolean assurance schema selectors while preserving historical replay contracts.",
-      "transition_id": "oracle-ir-v1071-consolidated-source-identity-and-assurance-defects"
+      "transition_id": "oracle-ir-v1071-consolidated-source-identity-and-assurance-defects",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {
