@@ -2,6 +2,8 @@ from __future__ import annotations
 from .event_counter_reference import event_counter_recipient_context
 from .rules.block_trigger_multiplicity import block_trigger_already_collected
 from .entry_copy import copiable_oracle_id
+from .evoke import is_evoked_annotation
+from .keyword_abilities import normalized_characteristic_keywords
 
 import copy
 import hashlib
@@ -1217,6 +1219,7 @@ def _shared_evoke_trigger_item(
     source: CardInstance,
     event: str,
     context: Mapping[str, Any],
+    *, characteristics: Mapping[str, Any],
 ) -> StackItem | None:
     """Materialize Evoke's universal sacrifice trigger from its cast marker."""
 
@@ -1224,10 +1227,12 @@ def _shared_evoke_trigger_item(
         event != "permanent.enter"
         or str(context.get("card") or "") != source.ref
         or source.zone != "battlefield"
-        or source.annotations.get("evoked") is not True
+        or not is_evoked_annotation(source.annotations.get("evoked"))
     ):
         return None
-    source.annotations.pop("evoked", None)
+    evoked = source.annotations.pop("evoked", None)
+    if isinstance(evoked, Mapping) and "evoke" not in normalized_characteristic_keywords(characteristics):
+        return None
     ref = host._next_ref("S")
     return StackItem(
         stack_id=host._stable_runtime_id("stack", ref),
@@ -1243,6 +1248,7 @@ def _shared_evoke_trigger_item(
             "event_context": copy.deepcopy(dict(context)),
             "source_logical_object_id": source.logical_object_id,
             "evoke": True,
+            **({"evoke_source_identity_version": 2} if isinstance(evoked, Mapping) else {}),
         },
     )
 
@@ -1413,7 +1419,7 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
 
 def _source_may_observe_event(source, event, programs):
     """Reject only sources with neither a subscription nor a shared keyword path."""
-    if (event == 'spell.cast' or source.annotations.get('evoked') is True
+    if (event == 'spell.cast' or is_evoked_annotation(source.annotations.get('evoked'))
             or source.annotations.get('fixed_blitz_designation') is not None):
         return True
     return any(
@@ -1450,7 +1456,7 @@ def dispatch_semantic_event(
             sources=participation_sources,source_characteristics=source_characteristics,
             ability_characteristics=characteristics,active_zone=active_zone)
         if prevented:continue
-        evoke_item = _shared_evoke_trigger_item(host, source, event, context)
+        evoke_item = _shared_evoke_trigger_item(host, source, event, context, characteristics=characteristics)
         if evoke_item is not None:
             triggered.append(evoke_item)
             triggered.extend(

@@ -502,7 +502,7 @@ def build_index(
         raise EvidenceGenerationError(
             "Capability evidence declaration source fields are invalid"
         )
-    if declaration_source.get("schema_version") != 1:
+    if isinstance(declaration_source.get("schema_version"), bool) or declaration_source.get("schema_version") != 1:
         raise EvidenceGenerationError(
             "Unsupported capability evidence declaration schema_version"
         )

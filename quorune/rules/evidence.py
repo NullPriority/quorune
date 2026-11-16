@@ -104,7 +104,7 @@ def validate_capability_evidence_index(
 
     raw = json.loads(json.dumps(dict(value)))
     _exact_fields(raw, _INDEX_FIELDS, field="capability evidence index")
-    if raw.get("schema_version") != CAPABILITY_EVIDENCE_SCHEMA_VERSION:
+    if isinstance(raw.get("schema_version"), bool) or raw.get("schema_version") != CAPABILITY_EVIDENCE_SCHEMA_VERSION:
         raise CapabilityEvidenceError(
             "Unsupported capability evidence schema_version"
         )

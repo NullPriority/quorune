@@ -4779,6 +4779,11 @@ Fixed ordinary or colored-hybrid `Evoke` costs lower to typed alternative-cost
 branches carrying one immutable payment marker. Permanent-spell resolution
 turns that marker into an ordinary normalized entry-trigger occurrence, so its
 sacrifice uses the shared APNAP trigger batch and canonical sacrifice effect.
+New fixed-mana descriptors use version two and emit a version-two payment marker.
+The entry trigger retains the original battlefield incarnation and resolving
+controller. A returned or recontrolled source cannot be sacrificed by that old
+trigger. Historical version-one descriptors keep their existing payment and
+resolution behavior.
 Nonmana Evoke remains unsupported except for an exact reviewed typed override;
 variable, Phyrexian, snow, granted, removed, and equivalent-text forms remain
 outside this compiler family.

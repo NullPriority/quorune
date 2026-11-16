@@ -10,6 +10,14 @@ concern: "game-record"
 
 # Game Record v3
 
+Fixed-mana Evoke descriptor version two emits payment-marker version two and
+records `evoke_source_identity_version: 2` with the source battlefield incarnation.
+Resolution requires that same incarnation under the trigger controller; blink,
+control changes, phasing and departure leave the source untouched. Historical
+descriptor-one/payment-one records keep their stored source behavior and exact
+replay. An absent identity version preserves other builtin source sacrifices;
+declared boolean, missing-source or unknown-version identity contexts reject.
+
 Current checkpoints and record formats carry
 `mana_source_counter_payment_version: 1`. Automatic mana source discovery and
 commit then enforce the same exact named source-counter costs as explicit

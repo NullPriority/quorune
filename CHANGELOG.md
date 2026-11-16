@@ -20,6 +20,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind new fixed-mana Evoke sacrifice triggers to the original battlefield
+  incarnation and trigger controller. Preserve returned or recontrolled
+  creatures and retain exact replay of historical descriptor-one recipes.
+  Reject boolean assurance schema selectors while preserving numeric version-one
+  reader compatibility.
+
 - Collect legend-rule keep choices in surviving APNAP order before committing
   the simultaneous state-based departures. Preserve collected keeps across
   replacement and physical-ordering choices, reject stale continuations, and

@@ -14886,7 +14886,7 @@
           "one ordinary APNAP-compatible sacrifice trigger",
           "transactional sacrifice-if-present resolution"
         ],
-        "summary": "Offer one source-pinned fixed ordinary or colored-hybrid Evoke alternative cost and materialize its sacrifice-on-entry ability through the shared triggered-ability owner."
+        "summary": "Offer one source-pinned fixed ordinary or colored-hybrid Evoke alternative cost and materialize its sacrifice-on-entry ability through the shared triggered-ability owner. New fixed-mana Evoke descriptors and payment markers use version two. Entry seals the exact battlefield incarnation and trigger controller; blink, source absence, phasing or later control changes prevent the old trigger from sacrificing another object. Historical descriptor-one/payment-one recipes preserve their prior execution and replay."
       },
       "blockers": [],
       "dependencies": [],
@@ -14898,35 +14898,70 @@
         "quorune.semantic_runtime.cast_costs.EvokeCostHandler",
         "quorune.compiled_cast_costs.compiled_evoke_specs",
         "quorune.rules.casting.costs._with_evoke_cost",
-        "quorune.trigger_discovery._shared_evoke_trigger_item"
+        "quorune.trigger_discovery._shared_evoke_trigger_item",
+        "quorune.evoke.evoke_sacrifice_effect",
+        "quorune.evoke.evoke_sacrifice_source_reference",
+        "quorune.evoke.evoke_sacrifice_effects"
       ],
-      "implementation_mutation_rationale": "test_evoke_nonmana_descriptor_and_raw_cost_fail_closed rejects widened cost grammar and test_evoke_cost_marks_and_sacrifices_on_entry rejects removal of the typed marker or shared trigger.",
+      "implementation_mutation_rationale": "test_evoke_nonmana_descriptor_and_raw_cost_fail_closed rejects widened cost grammar and test_evoke_cost_marks_and_sacrifices_on_entry rejects removal of the typed marker or shared trigger. The fresh original-action blink witness kills omission of source-incarnation binding.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_evoke_uses_shared_trigger_owner_with_reviewed_override"
+        "test_both_original_trigger_orders_draw_and_sacrifice_the_same_entered_object",
+        "test_evoke_uses_shared_trigger_owner_with_reviewed_override",
+        "test_former_controller_cannot_sacrifice_the_actual_donated_incarnation",
+        "test_historical_descriptor_one_keeps_its_recorded_blink_result_on_current_replay",
+        "test_normal_original_cast_draws_without_an_evoke_sacrifice",
+        "test_original_evoke_sacrifice_does_not_consume_a_blinked_incarnation"
       ],
       "multiplayer_tests": [
-        "test_evoke_trigger_uses_ordinary_apnap_batching"
+        "test_evoke_trigger_uses_ordinary_apnap_batching",
+        "test_former_controller_cannot_sacrifice_the_actual_donated_incarnation",
+        "test_original_evoke_sacrifice_does_not_consume_a_blinked_incarnation"
       ],
       "negative_tests": [
-        "test_evoke_nonmana_descriptor_and_raw_cost_fail_closed"
+        "test_current_source_identity_control_zone_and_phase_all_remain_required",
+        "test_declared_identity_version_cannot_downgrade_or_omit_its_source",
+        "test_evoke_nonmana_descriptor_and_raw_cost_fail_closed",
+        "test_former_controller_cannot_sacrifice_the_actual_donated_incarnation",
+        "test_marker_codecs_preserve_legacy_true_and_seal_new_identity",
+        "test_original_evoke_sacrifice_does_not_consume_a_blinked_incarnation"
       ],
       "official_rules": [
         "601.2f",
         "601.2g",
         "601.2h",
         "702.74",
-        "702.74a"
+        "702.74a",
+        "400.7",
+        "403.4",
+        "603.3b",
+        "701.21a"
       ],
       "positive_tests": [
+        "test_both_original_trigger_orders_draw_and_sacrifice_the_same_entered_object",
+        "test_evoke_cost_marks_and_sacrifices_on_entry",
         "test_fixed_and_hybrid_evoke_compile_to_typed_cost_options",
-        "test_evoke_cost_marks_and_sacrifices_on_entry"
+        "test_former_controller_cannot_sacrifice_the_actual_donated_incarnation",
+        "test_historical_descriptor_one_keeps_its_recorded_blink_result_on_current_replay",
+        "test_new_compilation_versions_identity_without_changing_mana_choices",
+        "test_normal_original_cast_draws_without_an_evoke_sacrifice",
+        "test_original_evoke_sacrifice_does_not_consume_a_blinked_incarnation"
       ],
       "privacy_tests": [
-        "test_evoke_offer_keeps_hand_identity_private"
+        "test_both_original_trigger_orders_draw_and_sacrifice_the_same_entered_object",
+        "test_evoke_offer_keeps_hand_identity_private",
+        "test_former_controller_cannot_sacrifice_the_actual_donated_incarnation",
+        "test_historical_descriptor_one_keeps_its_recorded_blink_result_on_current_replay",
+        "test_normal_original_cast_draws_without_an_evoke_sacrifice",
+        "test_original_evoke_sacrifice_does_not_consume_a_blinked_incarnation"
       ],
       "replay_tests": [
-        "test_evoke_cast_and_trigger_replay_exactly"
+        "test_both_original_trigger_orders_draw_and_sacrifice_the_same_entered_object",
+        "test_evoke_cast_and_trigger_replay_exactly",
+        "test_former_controller_cannot_sacrifice_the_actual_donated_incarnation",
+        "test_historical_descriptor_one_keeps_its_recorded_blink_result_on_current_replay",
+        "test_normal_original_cast_draws_without_an_evoke_sacrifice",
+        "test_original_evoke_sacrifice_does_not_consume_a_blinked_incarnation"
       ],
       "required_evidence": [
         "positive",
@@ -14942,7 +14977,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -97376,7 +97411,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 877,
+  "registry_version": 878,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

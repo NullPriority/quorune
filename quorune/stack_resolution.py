@@ -17,7 +17,7 @@ from .stack_resolution_authority_model import (
     stack_resolution_authority_version,
 )
 from .errors import StateInvariantError
-from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
+from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker, evoke_payment_annotation
 from .model import CardInstance, StackItem
 from .rules.casting.face_queries import prospective_cast_record
 from .rules.spell_self_exile import (
@@ -299,7 +299,7 @@ def _complete_stack_resolution(
         item.context.get(EVOKE_PAYMENT_FIELD)
     )
     if evoked:
-        card.annotations["evoked"] = True
+        card.annotations["evoked"] = evoke_payment_annotation(item.context[EVOKE_PAYMENT_FIELD])
     final_destination = fixed_cast_lifecycle_resolution_destination(item, destination) or "graveyard"
     host.move_card(
         card.object_id,
