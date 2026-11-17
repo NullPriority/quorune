@@ -760,6 +760,7 @@
     "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/history-entry-counters.json",
     "tests/fixtures/hybrid-resolution-payment-cards.json",
+    "tests/fixtures/inactive-life-effect-cards.json",
     "tests/fixtures/increment-cards.json",
     "tests/fixtures/incubate-cards.json",
     "tests/fixtures/independent-target-clause-cards.json",

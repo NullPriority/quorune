@@ -432,6 +432,11 @@ when the source has left, returned or changed controller, because the printed
 unless instruction has no intervening source-presence condition. A successful
 cost payment suppresses the default even when a replacement redirects its cards.
 
+A resolving life effect ignores a known recipient who has left the game and
+continues independent instructions. Such a recipient creates no life-change
+record or gain/loss event. Unknown recipients still fail validation; life
+payments and the low-level state owner continue requiring active players.
+
 A fixed semantic-choice life gain uses `LifeChangeIntent` rather than writing a
 life total directly. The intent host prepares the canonical life-change batch;
 its life-intent delegate also accepts one immutable simultaneous loss batch.

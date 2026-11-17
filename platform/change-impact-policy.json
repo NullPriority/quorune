@@ -15188,6 +15188,27 @@
         "test_casting_payment_keywords",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "inactive-life-effect-recipient",
+      "patterns": [
+        "quorune/effect_runtime/life_effects.py",
+        "quorune/semantic_choices/life_intent_commit.py",
+        "tests/test_life_effect_runtime.py",
+        "tests/fixtures/inactive-life-effect-cards.json"
+      ],
+      "test_modules": [
+        "test_life_effect_runtime",
+        "test_life_state",
+        "test_life_change",
+        "test_fixed_player_life_effects"
+      ],
+      "checks": [
+        "compile",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ]
     }
   ],
   "risk_rules": [
