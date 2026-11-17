@@ -23094,7 +23094,7 @@
           "visibility": "dunder"
         }
       ],
-      "logical_lines": 343931,
+      "logical_lines": 343937,
       "methods": {
         "dunder": 1019,
         "private": 1098,
@@ -24531,6 +24531,13 @@
           "physical_lines": 468
         },
         {
+          "file": "quorune/effect_runtime/life_effects.py",
+          "functions_and_methods": 14,
+          "language": "python",
+          "logical_lines": 420,
+          "physical_lines": 463
+        },
+        {
           "file": "quorune/mana_activation.py",
           "functions_and_methods": 22,
           "language": "python",
@@ -24550,13 +24557,6 @@
           "language": "python",
           "logical_lines": 418,
           "physical_lines": 456
-        },
-        {
-          "file": "quorune/effect_runtime/life_effects.py",
-          "functions_and_methods": 14,
-          "language": "python",
-          "logical_lines": 417,
-          "physical_lines": 458
         },
         {
           "file": "quorune/combat_damage_assignment.py",
@@ -29417,6 +29417,13 @@
           "physical_lines": 87
         },
         {
+          "file": "quorune/semantic_choices/life_intent_commit.py",
+          "functions_and_methods": 2,
+          "language": "python",
+          "logical_lines": 80,
+          "physical_lines": 84
+        },
+        {
           "file": "quorune/compiler/room_bindings.py",
           "functions_and_methods": 5,
           "language": "python",
@@ -29576,13 +29583,6 @@
           "language": "python",
           "logical_lines": 77,
           "physical_lines": 86
-        },
-        {
-          "file": "quorune/semantic_choices/life_intent_commit.py",
-          "functions_and_methods": 2,
-          "language": "python",
-          "logical_lines": 77,
-          "physical_lines": 80
         },
         {
           "file": "quorune/source_untap_rule_model.py",
@@ -37426,7 +37426,7 @@
           "physical_lines": 1678
         }
       ],
-      "physical_lines": 382324,
+      "physical_lines": 382333,
       "python_file_count": 1985,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -50648,7 +50648,7 @@
         {
           "condition": "set(effect) - {\"op\", \"players\", field, \"reason\", \"_runtime_source\", \"_replacement_selections\"}",
           "file": "quorune/effect_runtime/life_effects.py",
-          "line": 139,
+          "line": 144,
           "string_literals": [
             "_replacement_selections",
             "_runtime_source",
@@ -65009,7 +65009,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 64,
+        "primary_test_count": 65,
         "primary_tests": [
           "test_all_kind_counter_doubling",
           "test_capability_implementation_mutations",
@@ -65052,6 +65052,7 @@
           "test_history_entry_counters",
           "test_intrinsic_entry_counters",
           "test_keyword_counter_composition",
+          "test_life_effect_runtime",
           "test_life_gain_prohibitions",
           "test_life_state",
           "test_loyalty_counter_cost_replacements",
@@ -66972,7 +66973,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 203,
+        "primary_test_count": 204,
         "primary_tests": [
           "test_ability_source_counter_targets",
           "test_ability_word_event_triggers",
@@ -67558,7 +67559,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 318,
+        "primary_test_count": 319,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_activation_cost_modifiers",
@@ -70380,7 +70381,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "ecafbb4358d1a84e53ceb6261f3e73794df19dad4820c1fef3d3438ff77d0a88",
+      "fingerprint": "2466920cd15435907872ed1b8438b7913152542beced4f874d462c87a68ae0ed",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -71241,14 +71242,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 13342,
-      "discovered_total": 16651,
+      "conventional_ast_cases": 13346,
+      "discovered_total": 16655,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 370,
         "fuzz_named": 1,
         "privacy_or_projection_named": 146,
-        "replay_named": 838,
+        "replay_named": 839,
         "server_named": 98
       },
       "reconciles": true,
