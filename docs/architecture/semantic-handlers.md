@@ -432,6 +432,11 @@ when the source has left, returned or changed controller, because the printed
 unless instruction has no intervening source-presence condition. A successful
 cost payment suppresses the default even when a replacement redirects its cards.
 
+A resolving life effect ignores a known recipient who has left the game and
+continues independent instructions. Such a recipient creates no life-change
+record or gain/loss event. Unknown recipients still fail validation; life
+payments and the low-level state owner continue requiring active players.
+
 A fixed semantic-choice life gain uses `LifeChangeIntent` rather than writing a
 life total directly. The intent host prepares the canonical life-change batch;
 its life-intent delegate also accepts one immutable simultaneous loss batch.
@@ -803,3 +808,9 @@ See [ADR 0006](../adr/0006-typed-semantic-handler-boundary.md),
 [ADR 0029](../adr/0029-typed-permanent-exile.md),
 [ADR 0030](../adr/0030-typed-stack-counter.md), and
 [ADR 0053](../adr/0053-typed-own-graveyard-return-to-hand.md).
+
+Fixed attacking-token effects whose controller is not an attacking player
+commit their ordinary token-creation preparation intent before automatic
+continuation. The tokens retain their printed tapped state and receive no
+combat assignments. The legacy manual-completion shape remains available;
+existing effect versions and cleanup ownership retain their contracts.

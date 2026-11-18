@@ -22,6 +22,10 @@ def apply_life_loss_batch_intent(host, intent: LifeLossBatchIntent) -> int:
 
 
 def apply_life_change_intent(host, intent: LifeChangeIntent) -> int:
+    player = host.state.players.get(intent.player)
+    if player is not None and intent.player not in host.active_seats:
+        # This effect does nothing to an absent recipient; payments use separate owners.
+        return int(player.life)
     try:
         prepared = prepare_life_change_batch(
             host,

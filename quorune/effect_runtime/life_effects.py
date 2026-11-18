@@ -66,6 +66,11 @@ def _commit(
     source = effect.get("source")
     source_ref = str(source) if source is not None else None
     cause = str(effect.get("cause") or reason or "effect")
+    if effect.get('cause') != 'cost':
+        # A departed player cannot be affected; independent instructions still resolve.
+        # Unknown players remain in the batch so the canonical validator rejects them.
+        changes = tuple(change for change in changes
+            if change.player not in host.state.players or change.player in host.active_seats)
     selections = effect.get("_replacement_selections") or ()
     if not isinstance(selections, Sequence) or isinstance(
         selections, (str, bytes)

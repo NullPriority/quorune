@@ -22705,7 +22705,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1942,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "55b1fa49cbadf0a67e0aaa7639d1ac092fbf603a80b98d69d191fd60754401ae",
+      "source_fingerprint": "5342ec9a7fcf0a8a5dfcaa796a48cd2bd34970aaab8dd6fc239549a88c9ccea0",
       "uncovered_high_risk_pairs": 112
     },
     "migration_queue": [],
@@ -23094,7 +23094,7 @@
           "visibility": "dunder"
         }
       ],
-      "logical_lines": 343931,
+      "logical_lines": 343943,
       "methods": {
         "dunder": 1019,
         "private": 1098,
@@ -24531,6 +24531,13 @@
           "physical_lines": 468
         },
         {
+          "file": "quorune/effect_runtime/life_effects.py",
+          "functions_and_methods": 14,
+          "language": "python",
+          "logical_lines": 420,
+          "physical_lines": 463
+        },
+        {
           "file": "quorune/mana_activation.py",
           "functions_and_methods": 22,
           "language": "python",
@@ -24550,13 +24557,6 @@
           "language": "python",
           "logical_lines": 418,
           "physical_lines": 456
-        },
-        {
-          "file": "quorune/effect_runtime/life_effects.py",
-          "functions_and_methods": 14,
-          "language": "python",
-          "logical_lines": 417,
-          "physical_lines": 458
         },
         {
           "file": "quorune/combat_damage_assignment.py",
@@ -28955,6 +28955,13 @@
           "physical_lines": 106
         },
         {
+          "file": "quorune/semantic_choices/fixed_attacking_tokens.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 89,
+          "physical_lines": 96
+        },
+        {
           "file": "quorune/semantic_runtime/station_abilities.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -29200,13 +29207,6 @@
           "physical_lines": 95
         },
         {
-          "file": "quorune/semantic_choices/fixed_attacking_tokens.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 83,
-          "physical_lines": 90
-        },
-        {
           "file": "quorune/transmute.py",
           "functions_and_methods": 7,
           "language": "python",
@@ -29417,6 +29417,13 @@
           "physical_lines": 87
         },
         {
+          "file": "quorune/semantic_choices/life_intent_commit.py",
+          "functions_and_methods": 2,
+          "language": "python",
+          "logical_lines": 80,
+          "physical_lines": 84
+        },
+        {
           "file": "quorune/compiler/room_bindings.py",
           "functions_and_methods": 5,
           "language": "python",
@@ -29576,13 +29583,6 @@
           "language": "python",
           "logical_lines": 77,
           "physical_lines": 86
-        },
-        {
-          "file": "quorune/semantic_choices/life_intent_commit.py",
-          "functions_and_methods": 2,
-          "language": "python",
-          "logical_lines": 77,
-          "physical_lines": 80
         },
         {
           "file": "quorune/source_untap_rule_model.py",
@@ -37426,7 +37426,7 @@
           "physical_lines": 1678
         }
       ],
-      "physical_lines": 382324,
+      "physical_lines": 382339,
       "python_file_count": 1985,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -50648,7 +50648,7 @@
         {
           "condition": "set(effect) - {\"op\", \"players\", field, \"reason\", \"_runtime_source\", \"_replacement_selections\"}",
           "file": "quorune/effect_runtime/life_effects.py",
-          "line": 139,
+          "line": 144,
           "string_literals": [
             "_replacement_selections",
             "_runtime_source",
@@ -60056,7 +60056,7 @@
         {
           "condition": "set(effect) - {'op', '_replacement_selections'} - set(self.continuation_fields) or actor not in query.active_seats",
           "file": "quorune/semantic_choices/fixed_attacking_tokens.py",
-          "line": 62,
+          "line": 68,
           "string_literals": [
             "_replacement_selections",
             "op"
@@ -65009,7 +65009,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 64,
+        "primary_test_count": 65,
         "primary_tests": [
           "test_all_kind_counter_doubling",
           "test_capability_implementation_mutations",
@@ -65052,6 +65052,7 @@
           "test_history_entry_counters",
           "test_intrinsic_entry_counters",
           "test_keyword_counter_composition",
+          "test_life_effect_runtime",
           "test_life_gain_prohibitions",
           "test_life_state",
           "test_loyalty_counter_cost_replacements",
@@ -66972,7 +66973,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 203,
+        "primary_test_count": 204,
         "primary_tests": [
           "test_ability_source_counter_targets",
           "test_ability_word_event_triggers",
@@ -67558,7 +67559,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 318,
+        "primary_test_count": 319,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_activation_cost_modifiers",
@@ -69603,7 +69604,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1498,
     "compiler_module_physical_lines": 1566,
-    "compiler_version": "oracle-ir-v1071",
+    "compiler_version": "oracle-ir-v1072",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -70349,7 +70350,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 904,
         "exact_nodes": 1016,
-        "fingerprint": "72779bcb9d814f48b79fb3f66073b6643fdbac6ca43953b942bda47f0f269978",
+        "fingerprint": "c5c4e304a29ca74da49e10297d8915ac50a1e22694c1668ade876dac9fd7fc79",
         "grammar_source_fingerprint": "64beb0600a6f710305e3b13310c37ef7bb2bb35395998810765b2a5ee6220b44",
         "identity_fingerprint": "68fd04a3e59f24eeb12394f6552acf46410c0b707083623d25d60cae73053729",
         "present": true,
@@ -70361,7 +70362,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 929,
         "exact_nodes": 1054,
-        "fingerprint": "de0b3650b8cea3c5bc77d38e395d55c97f706ddcda57a17181984c200c77449b",
+        "fingerprint": "44af94c9bc7fa6001b7a0e5bbd26f1b29d7a554e64a1e10c85d8c043d58661f9",
         "grammar_source_fingerprint": "64beb0600a6f710305e3b13310c37ef7bb2bb35395998810765b2a5ee6220b44",
         "identity_fingerprint": "654a384ebc9daaca1af3de26d11293ba9243a32532277b4b9eec1bff8914526a",
         "present": true,
@@ -70380,7 +70381,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "ecafbb4358d1a84e53ceb6261f3e73794df19dad4820c1fef3d3438ff77d0a88",
+      "fingerprint": "5e35ff1bf1885ba5e5d85cc0f8e89e3ae11b7ff2149d28ce097a71de3fddc3c2",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -70924,7 +70925,7 @@
       "generic-search-v1": 7,
       "generic-search-v2": 7,
       "interaction-kernel": 14,
-      "oracle-ir-v1071": 30,
+      "oracle-ir-v1072": 30,
       "replacement-choice-nested-events": 1,
       "reviewed-predefined-token-name-correction": 1,
       "v0.8-artifact-engine-family": 22,
@@ -71241,14 +71242,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 13342,
-      "discovered_total": 16651,
+      "conventional_ast_cases": 13347,
+      "discovered_total": 16656,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 370,
         "fuzz_named": 1,
         "privacy_or_projection_named": 146,
-        "replay_named": 838,
+        "replay_named": 840,
         "server_named": 98
       },
       "reconciles": true,
