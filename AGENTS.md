@@ -195,13 +195,38 @@ branch itself. Both developers resume in the shared tree during certification.
 Record the release cut point and preserve post-cut work when reconciling a
 squash merge onto verified main. The 500-card floor applies to the combined batch.
 
-Alternate a consolidated defect-only pull request with a card-support delivery
-that meets the 500-card floor. Keep the reproduced defects, fixes, and evidence
-independently reviewable. Resolve release blockers before merging the affected
-work. Continue developing cards on the private next-batch branch during
-protected generation and CI. Fetch and rebase onto verified `origin/main` when
-it advances and before publication. Preserve the previous private head and
-recheck measured card bindings and affected behavior after rebasing.
+Target retained capability-closed cards per elapsed day and active development
+hour. Aim for approximately 80% of active effort on reusable card/effect
+implementation and focused behavioral evidence, and 20% on independent defects,
+publication, coordination and measured delivery improvements. Use available
+defect capacity for cards when no ready defect work exists. Verified correctness,
+privacy, security and replay failures take priority over this allocation. Use
+actual session data when reporting effort percentages or active hours.
+
+Publish according to readiness and risk. Correct defects introduced or exposed
+by a family before publishing it. Consolidate independent defects when warranted
+without holding unrelated card production. Card-support deliveries retain the
+combined 500-card floor and every certification requirement.
+
+Both developers continually select and complete eligible families, keeping one
+active family each and identifying an independent next candidate. Complete the
+focused implementation and evidence, commit owned changes, release completed
+claims and begin the next family without waiting for reassignment. A family
+awaiting shared integration, evidence-index refresh, generation, certification or
+merge is pending integration: preserve its checkpoint, record the precise
+remaining obligation, release claims no longer needed and immediately select
+independent work. Behavioral evidence remains pending until the required native
+tests pass.
+
+The publisher checks asynchronous candidate results briefly at useful work
+boundaries and repairs actionable failures with scoped changes. Never hold the
+Git mutex or central-file claims throughout pipeline execution. Preserve post-cut
+work when propagating fixes and reconciling verified main. Neither developer
+independently switches, resets or rebases the shared checkout; the publisher
+coordinates history changes through an acknowledged freeze. Use the existing
+durable handoff record for current family, latest private commit, completed
+families, pending evidence, measured gains, exact blocker and next action. Label
+unmeasured gains and unknown effort. Use existing measurements for status updates.
 
 Keep the filesystem equally bounded. The normal layout is the canonical
 `C:\Code Projects\Quorune` checkout plus, only while Slot B is active, one

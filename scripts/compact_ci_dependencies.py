@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import json
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Iterable, Mapping
+from types import MappingProxyType
 
 from quorune.util import normalize_card_name
 from scripts.source_syntax import SourceFiles, SyntaxSnapshot
@@ -506,16 +507,72 @@ def _function_inventory(tree: ast.AST) -> tuple[tuple[int, int, str], ...]:
 
 
 class DependencySourceScope:
-    """Share only syntax facts; requirement and binding contexts stay per module."""
+    """Reuse immutable source-local facts in one build; binding contexts stay per module."""
 
     def __init__(self) -> None:
         self.files = SourceFiles()
         self._functions: dict[ast.AST, tuple[tuple[int, int, str], ...]] = {}
+        self._resolved: dict[Path, Path] = {}
+        self._file_exists: dict[Path, bool] = {}
+        self._imports: dict[tuple[Path, Path], tuple[Path, ...]] = {}
+        self._classes: dict[ast.AST, tuple[ast.ClassDef, ...]] = {}
+        self._database_modes: dict[ast.AST, tuple[Mapping, Mapping]] = {}
+        self._environments: dict[tuple[ast.AST, Path], Mapping] = {}
 
     def functions(self, tree: ast.AST) -> tuple[tuple[int, int, str], ...]:
         if tree not in self._functions:
             self._functions[tree] = _function_inventory(tree)
         return self._functions[tree]
+
+    def resolved(self, path: Path) -> Path:
+        if path not in self._resolved:
+            self._resolved[path] = path.resolve()
+        return self._resolved[path]
+
+    def is_file(self, path: Path) -> bool:
+        if path not in self._file_exists:
+            self._file_exists[path] = path.is_file()
+        return self._file_exists[path]
+
+    def support_imports(self, path: Path, *, root: Path) -> tuple[Path, ...]:
+        key = (path, root)
+        if key not in self._imports:
+            parsed = self.files.read(path)
+            candidates = []
+            for node in parsed.syntax.walk():
+                modules = []
+                if isinstance(node, ast.ImportFrom) and node.module:
+                    modules.append(node.module)
+                elif isinstance(node, ast.Import):
+                    modules.extend(alias.name for alias in node.names)
+                for module in modules:
+                    leaf = module.removeprefix("tests.").split(".")[0]
+                    candidate = root / "tests" / f"{leaf}.py"
+                    if self.is_file(candidate):
+                        candidates.append(candidate)
+            self._imports[key] = tuple(candidates)
+        return self._imports[key]
+
+    def class_nodes(self, tree: ast.AST, *, syntax: SyntaxSnapshot) -> tuple[ast.ClassDef, ...]:
+        if tree not in self._classes:
+            self._classes[tree] = tuple(node for node in syntax.walk() if isinstance(node, ast.ClassDef))
+        return self._classes[tree]
+
+    def database_modes(self, parsed) -> tuple[Mapping, Mapping]:
+        tree = parsed.tree
+        if tree not in self._database_modes:
+            modes = _database_modes(tree, syntax=parsed.syntax, functions=self.functions(tree))
+            self._database_modes[tree] = tuple(MappingProxyType(dict(part)) for part in modes)
+        return self._database_modes[tree]
+
+    def environments(self, parsed, *, root: Path) -> Mapping:
+        key = (parsed.tree, root)
+        if key not in self._environments:
+            values = _environments(parsed.tree, root=root, syntax=parsed.syntax,
+                functions=self.functions(parsed.tree))
+            self._environments[key] = MappingProxyType({name: MappingProxyType(dict(value))
+                for name, value in values.items()})
+        return self._environments[key]
 
 
 def _environments(
@@ -752,27 +809,16 @@ def _wrapper_inventory(
 def _local_support_paths(
     test_path: Path, *, root: Path, sources: DependencySourceScope | None = None,
 ) -> tuple[Path, ...]:
-    tests_root = root / "tests"
     visited: set[Path] = set()
     sources = DependencySourceScope() if sources is None else sources
 
     def visit(path: Path) -> None:
-        resolved = path.resolve()
-        if resolved in visited or not path.is_file():
+        resolved = sources.resolved(path)
+        if resolved in visited or not sources.is_file(path):
             return
         visited.add(resolved)
-        parsed = sources.files.read(path)
-        for node in parsed.syntax.walk():
-            modules: list[str] = []
-            if isinstance(node, ast.ImportFrom) and node.module:
-                modules.append(node.module)
-            elif isinstance(node, ast.Import):
-                modules.extend(alias.name for alias in node.names)
-            for module in modules:
-                leaf = module.removeprefix("tests.").split(".")[0]
-                candidate = tests_root / f"{leaf}.py"
-                if candidate.is_file():
-                    visit(candidate)
+        for candidate in sources.support_imports(path, root=root):
+            visit(candidate)
 
     visit(test_path)
     return tuple(sorted((Path(path) for path in visited), key=lambda path: path.as_posix()))
@@ -817,8 +863,7 @@ def discover_module_requirements(
     except (OSError, SyntaxError, UnicodeDecodeError) as exc:
         return (), (), (f"Cannot parse {test_path.relative_to(root)}: {exc}",)
     modes_by_path = {
-        path: _database_modes(value.tree, syntax=value.syntax,
-            functions=sources.functions(value.tree))
+        path: sources.database_modes(value)
         for path, value in parsed.items()
     }
     combined_class_modes = {
@@ -830,9 +875,7 @@ def discover_module_requirements(
     while changed:
         changed = False
         for value in parsed.values():
-            for node in value.syntax.walk():
-                if not isinstance(node, ast.ClassDef):
-                    continue
+            for node in sources.class_nodes(value.tree, syntax=value.syntax):
                 inherited = next(
                     (
                         combined_class_modes[_call_name(base)]
@@ -866,7 +909,7 @@ def discover_module_requirements(
         walk = value.syntax.walk
         relative = path.relative_to(root).as_posix()
         functions = sources.functions(tree)
-        environments = _environments(tree, root=root, syntax=value.syntax, functions=functions)
+        environments = sources.environments(value, root=root)
         local_class_modes, name_modes = modes_by_path[path]
         class_modes = {**combined_class_modes, **local_class_modes}
         function_parameters: dict[str, set[str]] = {}

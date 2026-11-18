@@ -57,6 +57,18 @@ from scripts.verify_main_broad_ci import (
 
 
 class CiPipelineTests(unittest.TestCase):
+    def test_selected_matrices_follow_configured_shard_order_instead_of_mapping_order(self):
+        from unittest.mock import patch
+        manifest = load_manifest()
+        expected = list(reversed([name for name in manifest['execution_order'] if name != 'generated-validation']))
+        reordered = {**manifest, 'execution_order': ['generated-validation', *expected]}
+        for path in ('.github/workflows/ci.yml', 'quorune/compiler/program_generation.py'):
+            with self.subTest(path=path), patch('scripts.ci_plan.load_manifest', return_value=reordered):
+                rows = selected_test_plan(classify_changes([path]))['python_matrix']['include']
+                selected = {row['shard'] for row in rows}
+                self.assertGreater(len(selected), 1)
+                self.assertEqual([name for name in expected if name in selected], [row['shard'] for row in rows])
+
     def test_pre_corpus_validates_pinned_contracts_without_opening_the_database(self):
         from unittest import mock
         from scripts.quick_gate import build_plan, implicit_text_encoding_lines
