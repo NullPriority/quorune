@@ -40,6 +40,7 @@ class FixedAttackingTokenDestinationHandler:
 
     def prepare(self, effect, context):
         _validate_effect(effect, context.actor)
+        plan = None
         if effect.get('token_entry_version') == 2:
             from ..created_token_cleanup import CreatedTokenCleanupPlan
             from ..created_token_cleanup_model import CreatedTokenCleanupSpec
@@ -52,6 +53,11 @@ class FixedAttackingTokenDestinationHandler:
             return SemanticChoicePreparation(request=None,
                 continuation_effect=FrozenMap({**dict(effect), '_choice_actor': context.actor,
                     '_outside_combat': True, '_stack_label': context.stack_label}),
+                preparation_intents=(CreateTokenIntent(actor=context.actor, controller=context.actor,
+                    name=effect['name'], quantity=effect['quantity'], tapped=effect['tapped'],
+                    token_cleanup=plan, characteristics=FrozenMap(effect['characteristics']),
+                    reason=str(context.stack_label or 'Token creation'),
+                    replacement_selections=tuple(effect.get('_replacement_selections', ()))),),
                 auto_continue=AutoContinue(reason='controller is not an attacking player'))
         return prepare_attacking_destinations(effect, context, operation=self.operation,
             label='entering', prefix='attacking')

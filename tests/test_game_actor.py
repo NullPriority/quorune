@@ -87,28 +87,41 @@ class GameActorTests(unittest.IsolatedAsyncioTestCase):
             await actor.observe("pilot:A")
 
     async def test_persistence_failure_sends_no_ack_and_fails_closed(self):
+        # These bounds detect a deadlock; command preparation has no five-second SLA.
+        watchdog_seconds = 30
+        save_started = threading.Event()
+        release_failure = threading.Event()
+
         class BrokenPersistence:
             def save(self, service):
+                save_started.set()
+                if not release_failure.wait(timeout=watchdog_seconds):
+                    raise TimeoutError("test did not release persistence failure")
                 raise OSError("disk unavailable")
 
         session, service = self.make_service(32004)
         manager = GameManager()
         actor = await manager.add(service, persistence=BrokenPersistence())
-        envelope = self.envelope(session)
+        command = asyncio.create_task(actor.command("pilot:A", self.envelope(session)))
         try:
+            self.assertTrue(await asyncio.to_thread(save_started.wait, watchdog_seconds))
+            self.assertFalse(command.done(), "A command must not be acknowledged before persistence completes")
+            release_failure.set()
             with self.assertRaisesRegex(
                 GameActorUnavailable, "failed durable command commit"
             ):
-                await asyncio.wait_for(
-                    actor.command("pilot:A", envelope), timeout=5
-                )
+                await asyncio.wait_for(command, timeout=watchdog_seconds)
             self.assertEqual(1, len(session.commands))
             with self.assertRaisesRegex(
                 GameActorUnavailable, "requires recovery"
             ):
-                await asyncio.wait_for(actor.poll(), timeout=5)
+                await asyncio.wait_for(actor.poll(), timeout=watchdog_seconds)
         finally:
-            await asyncio.wait_for(manager.close(), timeout=5)
+            release_failure.set()
+            if not command.done():
+                command.cancel()
+            await asyncio.gather(command, return_exceptions=True)
+            await asyncio.wait_for(manager.close(), timeout=watchdog_seconds)
 
     async def test_slow_persistence_keeps_progress_observable_before_ack(self):
         # These are deadlock watchdogs, not a persistence performance budget.

@@ -191,6 +191,9 @@ class AttackingTokenDestinationModelTests(unittest.TestCase):
     def test_nonattacking_controller_creates_printed_tokens_without_combat_assignments(self):
         handler, _, query, _, prepared = self.setup_choice(2, allowed=False)
         self.assertIsNone(prepared.request)
+        self.assertEqual(1, len(prepared.preparation_intents))
+        self.assertEqual(2, prepared.preparation_intents[0].quantity)
+        self.assertEqual((), prepared.preparation_intents[0].attacking_assignments)
         result = handler.complete(SimpleNamespace(effect=prepared.continuation_effect), {}, query)
         self.assertEqual(2, result.intents[0].quantity)
         self.assertTrue(result.intents[0].tapped)
@@ -251,6 +254,30 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         self.assertFalse(s.act('pilot:A', incomplete).ok)
         self.assertEqual(before, authoritative_state_hash(s.state))
         self.assertTrue(s.act('pilot:A', command).ok)
+
+
+    def test_actual_copied_fixed_token_trigger_creates_for_nonattacking_controller_and_replays(self):
+        s=self.session(508400399);source=self.add(s.engine,'Leonin Warleader',zone='hand')
+        self.add(s.engine,'Fervor');self.assert_closed(s,source)
+        self.prepare(s,mana={'C':2,'W':2});self.checkpoint(s)
+        self.cast_for(s,'A',source);self.assertIsNone(self.resolve(s))
+        self.attack(s,[(source,'C')])
+        original=next(item for item in s.state.stack if item.kind=='triggered_ability' and item.source_object_id==source.object_id)
+        # Prepare the canonical copy boundary without admitting an unsupported utility card.
+        s.engine._copy_stack_item(controller='B',target=original,targets=[],target_groups={},
+            reason='Fixed-token nonattacking-controller interaction')
+        self.checkpoint(s);decision=self.resolve(s)
+        cats=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.controller=='B'
+            and card.object_kind=='token' and 'cat' in {str(value).casefold() for value in
+                s.engine._type_parts(str(s.engine._effective_card_data(card).get('type_line') or ''))[1]}]
+        self.assertEqual(2,len(cats))
+        self.assertTrue(all(card.tapped and card.object_id not in s.state.combat.attackers for card in cats))
+        self.assertEqual('semantic.choice',decision.kind)
+        self.choose_destinations(s,('C','C'));self.assertIsNone(self.resolve(s))
+        self.assertEqual(2,len([card for card in s.state.cards.values() if card.zone=='battlefield'
+            and card.controller=='A' and card.object_kind=='token' and 'cat' in {str(value).casefold()
+                for value in s.engine._type_parts(str(s.engine._effective_card_data(card).get('type_line') or ''))[1]}]))
+        self.replay(s,load=True)
 
     def test_actual_hero_entry_before_battle_cry_uses_live_attackers_without_attack_events(self):
         s = self.session(508400301); self.trim_opening_hand(s)
