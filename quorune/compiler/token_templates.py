@@ -22,6 +22,7 @@ from ..fixed_token_production import (
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from ..keyword_abilities import triggered_keyword_grant
+from ..standard_token_abilities import TOKEN_ABILITY_PROFILE_FIELD
 from .fixed_token_production_templates import (
     extended_fixed_token_creation_effect_template,
 )
@@ -535,6 +536,8 @@ def _fixed_additional_token_definition(text: str) -> Mapping[str, Any] | None:
         name, characteristics = predefined_token_identity(
             str(definition["name"]), {field: value for field, value in definition.items() if field != "name"},
         )
+        if TOKEN_ABILITY_PROFILE_FIELD in characteristics:
+            characteristics["ability_profile"] = characteristics.pop(TOKEN_ABILITY_PROFILE_FIELD)
         return {"name": name, **characteristics}
     template=_single_fixed_token_creation_effect_template('Create a '+text+'.')
     if template is None:return None

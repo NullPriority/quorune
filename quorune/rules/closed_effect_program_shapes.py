@@ -122,6 +122,69 @@ def closed_effect_program_node_capabilities(
     return tuple(sorted(dependencies))
 
 
+def _ordered_body_runtime_dependencies(program, schema):
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+    from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
+
+    composed = composed_spell_family_runtime_dependencies(
+        program, capability=CLOSED_EFFECT_PROGRAM_CAPABILITY, mechanic=CLOSED_EFFECT_PROGRAM_MECHANIC,
+    )
+    if composed is not None:
+        if CLOSED_EFFECT_PROGRAM_CAPABILITY not in composed:
+            raise ValueError("Composed ordered programs require the closed component owner")
+        return composed
+
+    effects = program.effects
+    mechanics = set(program.coverage) | {CLOSED_EFFECT_PROGRAM_MECHANIC}
+    if effects and effects[-1].get("op") == "apply_if_public_condition":
+        from .resolution_condition_shapes import RESOLUTION_CONDITION_MECHANIC, resolution_condition_node_capabilities
+
+        owned = resolution_condition_node_capabilities(
+            effects=effects, target_schema=schema,
+            mechanic_ids=mechanics | {RESOLUTION_CONDITION_MECHANIC},
+            cost_schema=getattr(program, "cost_schema", None),
+        )
+        if CLOSED_EFFECT_PROGRAM_CAPABILITY not in owned:
+            raise ValueError("Conditional ordered programs require their complete prefix and branches")
+        return owned
+
+    suffix_dependencies = ()
+    if any(effect.get("op") == "encode_cipher" for effect in effects):
+        from ..cipher_model import CIPHER_CAPABILITY, CIPHER_HANDLER
+
+        if (
+            effects[-1] != {"op": "encode_cipher"}
+            or getattr(program, "event", None) != "resolve"
+            or getattr(program, "active_zone", None) != "stack"
+            or sum(effect.get("op") == "encode_cipher" for effect in effects) != 1
+            or not any(handler.get("handler_id") == CIPHER_HANDLER for handler in getattr(program, "handlers", ()))
+        ):
+            raise ValueError("Ordered Cipher programs require one terminal owned encoding instruction")
+        effects = effects[:-1]
+        suffix_dependencies = (CIPHER_CAPABILITY,)
+
+    if not 2 <= len(effects) <= 8:
+        raise ValueError("Closed ordered programs require two to eight effects")
+    if any(isinstance(value, Mapping) and value.get("kind") == HALF_QUANTITY_KIND
+           for effect in effects for value in (effect.get("amount"), effect.get("count"))):
+        owned = closed_effect_program_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=program.coverage,
+        )
+        if not owned:
+            raise ValueError("Ordered fractional effects require all closed result owners")
+    else:
+        context = public_query_amount_shape_context(effects, mechanics, target_schema=schema)
+        if context is None:
+            raise ValueError("Ordered programs require their validated amount shapes")
+        effects, mechanics = context
+        owned = closed_effect_program_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=mechanics,
+        )
+        if not owned:
+            raise ValueError("Ordered programs require every complete child owner")
+    return tuple(sorted({*owned, *suffix_dependencies}))
+
+
 def closed_effect_program_runtime_dependencies(program):
     """Keep the persisted ordered-program kind bound to its mutation owner."""
     if any('optional_target_result' in effect for effect in program.effects):
@@ -203,28 +266,7 @@ def closed_effect_program_runtime_dependencies(program):
         if CLOSED_EFFECT_PROGRAM_CAPABILITY not in owned:
             raise ValueError('Paid ordered programs require a closed payment and complete child sequence')
         return owned
-    if not 2 <= len(program.effects) <= 8:
-        raise ValueError('Closed ordered programs require two to eight effects')
-    if any(isinstance(value, Mapping) and value.get("kind") == HALF_QUANTITY_KIND
-           for effect in program.effects for value in (effect.get("amount"), effect.get("count"))):
-        owned = closed_effect_program_node_capabilities(
-            effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
-        )
-        if not owned:
-            raise ValueError("Ordered fractional effects require all closed result owners")
-        return owned
-    from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
-    context = public_query_amount_shape_context(program.effects,
-        set(program.coverage) | {CLOSED_EFFECT_PROGRAM_MECHANIC}, target_schema=schema)
-    if context is None:
-        raise ValueError('Ordered programs require their validated amount shapes')
-    effects, mechanics = context
-    owned = closed_effect_program_node_capabilities(
-        effects=effects, target_schema=schema, mechanic_ids=mechanics,
-    )
-    if not owned:
-        raise ValueError('Ordered programs require every complete child owner')
-    return owned
+    return _ordered_body_runtime_dependencies(program, schema)
 
 
 __all__ = [
