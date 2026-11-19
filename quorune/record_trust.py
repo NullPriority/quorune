@@ -51,6 +51,16 @@ def submit_with_resolution_capture(engine, initial, *, token, principal, action,
     return result, capture.snapshot()
 
 
+def command_card_program_fingerprints(
+    semantics: SemanticRegistry, semantic_keys: Iterable[str],
+) -> dict[str, str]:
+    """Bind fingerprints for programs exercised by a single command."""
+    keys = tuple(semantic_keys)
+    if not keys:
+        return {}
+    return semantics.card_program_fingerprints_for_keys(keys)
+
+
 def validate_command_card_programs_used(command_semantics, semantics, *, sequence):
     recorded = command_semantics.get('card_programs_used')
     if recorded is None:return
@@ -58,7 +68,7 @@ def validate_command_card_programs_used(command_semantics, semantics, *, sequenc
         raise ValueError(f'Malformed CardProgram provenance at command {sequence}')
     keys = [str(value.get('key')) for value in command_semantics.get('programs_used', [])
         if isinstance(value, Mapping) and value.get('key')]
-    current = semantics.card_program_fingerprints_for_keys(keys)
+    current = command_card_program_fingerprints(semantics, keys)
     if {str(key):str(value) for key, value in recorded.items()} != current:
         raise ValueError(f'CardProgram fingerprint mismatch at command {sequence}')
 
@@ -458,10 +468,8 @@ def rebase_command_semantics_provenance(
             programs_used.append(program_row)
         semantics["programs_used"] = programs_used
         semantics["card_program_schema_version"] = 2
-        semantics["card_programs_used"] = (
-            registry.card_program_fingerprints_for_keys(
-                str(value["key"]) for value in programs_used
-            )
+        semantics["card_programs_used"] = command_card_program_fingerprints(
+            registry, (str(value["key"]) for value in programs_used),
         )
         row["semantics"] = semantics
         result.append(row)

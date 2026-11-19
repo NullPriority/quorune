@@ -37,6 +37,7 @@ jobs:
       windows_max_parallel: ${{ steps.impact.outputs.windows_max_parallel }}
       ci_peak_jobs: ${{ steps.impact.outputs.ci_peak_jobs }}
       ci_job_headroom: ${{ steps.impact.outputs.ci_job_headroom }}
+      compact_dependency_artifact_id: ${{ steps.compact_artifact.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -105,7 +106,18 @@ jobs:
           --require-support-delivery
           --format markdown >> "${GITHUB_STEP_SUMMARY}"
       - name: Validate compact card and deck dependency closure
-        run: python scripts/build_test_database.py validate-ci-dependencies
+        run: >-
+          python scripts/build_test_database.py validate-ci-dependencies
+          ${{ steps.impact.outputs.windows_full == 'true' && '--emit-artifact local/pr-compact-dependencies' || '' }}
+      - id: compact_artifact
+        if: steps.impact.outputs.windows_full == 'true'
+        name: Publish exact-source compact dependency artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-compact-dependencies-${{ github.run_id }}-${{ github.run_attempt }}
+          path: local/pr-compact-dependencies
+          if-no-files-found: error
+          retention-days: 14
 
   python:
     name: PR / Python / ${{ matrix.suite }}
@@ -288,12 +300,32 @@ jobs:
           cache: pip
       - name: Install package and test dependencies
         run: python -m pip install -e . -r requirements-dev.txt
+      - name: Require the PR Plan compact dependency artifact
+        if: matrix.shard != 'generated-validation'
+        env:
+          COMPACT_DEPENDENCY_ARTIFACT_ID: ${{ needs.plan.outputs.compact_dependency_artifact_id }}
+        run: |
+          if ($env:COMPACT_DEPENDENCY_ARTIFACT_ID -notmatch '\A[1-9][0-9]*\z') {
+            throw 'PR Plan did not publish a compact dependency artifact'
+          }
+      - name: Download the PR Plan compact dependency artifact
+        if: matrix.shard != 'generated-validation'
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ needs.plan.outputs.compact_dependency_artifact_id }}
+          merge-multiple: true
+          path: local/pr-compact-dependencies
+      - name: Verify the compact dependency artifact against this checkout
+        if: matrix.shard != 'generated-validation'
+        run: python scripts/build_test_database.py validate-ci-dependencies --verify-artifact local/pr-compact-dependencies
+      - name: Compare the independently computed Windows dependency report
+        if: matrix.shard == 'generated-validation'
+        run: python scripts/build_test_database.py validate-ci-dependencies --emit-artifact local/windows-compact-dependencies
       - name: Validate manifest, runtime, and build isolated card database
         shell: pwsh
         run: |
           python scripts/test_shards.py validate
           python scripts/validate_python_runtime.py
-          python scripts/build_test_database.py validate-ci-dependencies
           python scripts/build_test_database.py build-ci `
             --output "data/test-ci-windows-${{ matrix.shard }}.sqlite3"
       - id: validator_runtime

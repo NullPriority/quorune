@@ -17,7 +17,11 @@ from quorune.util import stable_json
 from scripts.compact_ci_dependencies import (
     fixture_paths as dependency_fixture_paths,
 )
-from scripts.compact_ci_report import build_dependency_report
+from scripts.compact_ci_report import (
+    build_dependency_report,
+    store_dependency_artifact,
+    verify_dependency_artifact,
+)
 
 
 COMPACT_CI_FIXTURE_MANIFEST = (
@@ -272,7 +276,10 @@ def main() -> int:
     build_ci.add_argument("--output", required=True, type=Path)
 
     subparsers.add_parser("validate-ci")
-    subparsers.add_parser("validate-ci-dependencies")
+    validate_dependencies = subparsers.add_parser("validate-ci-dependencies")
+    artifact_mode = validate_dependencies.add_mutually_exclusive_group()
+    artifact_mode.add_argument("--emit-artifact", type=Path)
+    artifact_mode.add_argument("--verify-artifact", type=Path)
 
     args = parser.parse_args()
     if args.command == "export":
@@ -299,10 +306,16 @@ def main() -> int:
     elif args.command == "validate-ci":
         result = validate_compact_ci_consumers()
     else:
-        result = build_dependency_report(root=ROOT)
+        result = (
+            verify_dependency_artifact(artifact_dir=args.verify_artifact, root=ROOT)
+            if args.verify_artifact is not None
+            else build_dependency_report(root=ROOT)
+        )
         if not result["closed"]:
             print(json.dumps(result, indent=2, sort_keys=True))
             return 1
+        if args.emit_artifact is not None:
+            store_dependency_artifact(result, artifact_dir=args.emit_artifact, root=ROOT)
         result = {
             "closed": True,
             "modules_inspected": result["modules_inspected"],

@@ -44,6 +44,7 @@ from quorune import (
 )
 from quorune.preflight import semantic_preflight
 from quorune.record import database_fingerprint
+from quorune.rules.evidence import _capability_validation_snapshot
 from quorune.runtime import (
     GameActor,
     GameLifecycleConflict,
@@ -1010,33 +1011,33 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             )
             if profile not in {"commander_duel", "commander_multiplayer"}:
                 raise StoreConflict("Room has an unsupported format profile")
-            session = CommanderSession.create(
-                runtime.card_db,
-                decks,
-                first_player="A",
-                seed=seed,
-                config=GameConfig(
-                    seed=seed,
-                    profile=profile,
-                    review_profile="commander_review",
-                    semantic_policy="trusted_only",
-                    # Browser clients receive every empty priority capability.
-                    # Their saved auto-pass preference may submit that ordinary
-                    # command, while full-control users can hold priority.
-                    auto_pass_empty_priority=False,
-                    manual_active_main_phase=True,
-                    # Browser tables expose a durable complete public log.
-                    # Retain every engine event in the private Game Record;
-                    # the public endpoint separately filters visibility and
-                    # strips authoritative details.
-                    trace_level="debug",
-                ),
-            )
-            service = _BrowserGameService(
-                session,
-                idempotency=runtime.idempotency,
-            )
-            runtime.records.save(service)
+            with _capability_validation_snapshot():
+                session = CommanderSession.create(
+                    runtime.card_db,
+                    decks,
+                    first_player="A",
+                    config=GameConfig(
+                        seed=seed,
+                        profile=profile,
+                        review_profile="commander_review",
+                        semantic_policy="trusted_only",
+                        # Browser clients receive every empty priority capability.
+                        # Their saved auto-pass preference may submit that ordinary
+                        # command, while full-control users can hold priority.
+                        auto_pass_empty_priority=False,
+                        manual_active_main_phase=True,
+                        # Browser tables expose a durable complete public log.
+                        # Retain every engine event in the private Game Record;
+                        # the public endpoint separately filters visibility and
+                        # strips authoritative details.
+                        trace_level="debug",
+                    ),
+                )
+                service = _BrowserGameService(
+                    session,
+                    idempotency=runtime.idempotency,
+                )
+                runtime.records.save(service)
             runtime.store.commit_started_game(
                 room_id,
                 session.state.game_id,

@@ -35,6 +35,7 @@ from quorune.util import stable_json
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.rules.bound_effect_program_shapes import bound_effect_program_node_capabilities
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+from quorune.rules.evidence import _capability_validation_snapshot
 from quorune.session import CommanderSession
 from quorune.semantics import SemanticRegistry
 from scripts.build_test_database import build_fixture_database
@@ -630,6 +631,7 @@ class BoundEffectProgramRuntimeTests(unittest.TestCase):
             self.assertTrue(result.ok, result.summary)
         self.fail("Bound effect program did not resolve")
 
+    @_capability_validation_snapshot()
     def replay(self, session, *, load=False):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/"bound-program"

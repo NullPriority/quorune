@@ -235,16 +235,36 @@ class GameRecordV3Tests(unittest.TestCase):
             self.assertTrue(replay_record(path, self.db, verify=True)['ok'])
 
     def test_nonsemantic_action_records_without_loading_unused_binding_registry(self):
+        from quorune.record_trust import validate_command_card_programs_used
+
         session = make_session(self.db, self.mishra, self.zimone, players=2,
                                seed=31001, auto_pass_empty=False)
         principal = session.pending_principals()[0]
         session.packet(principal, full=True)
-        with patch("quorune.record_trust.load_default_capability_registry",
-                   side_effect=AssertionError("unused semantic provenance input")):
-            result = session.act(principal, {"action_id":"keep"})
-        self.assertTrue(result.ok, result.summary)
-        self.assertEqual(1, len(session.commands))
-        self.assertNotIn("programs_used", session.commands[0])
+        registry = session.engine.semantics
+        with (
+            patch(
+                "quorune.record_trust.load_default_capability_registry",
+                side_effect=AssertionError("unused semantic provenance input"),
+            ),
+            patch.object(
+                registry, "card_programs",
+                side_effect=AssertionError("unused CardProgram catalog"),
+            ),
+        ):
+            result = session.act(principal, {"action_id": "keep"})
+            self.assertTrue(result.ok, result.summary)
+            self.assertEqual(1, len(session.commands))
+            self.assertNotIn("programs_used", session.commands[0])
+            recorded = session.commands[0]["semantics"]
+            self.assertEqual([], recorded["programs_used"])
+            self.assertEqual({}, recorded["card_programs_used"])
+            validate_command_card_programs_used(recorded, registry, sequence=1)
+            with self.assertRaisesRegex(ValueError, "CardProgram fingerprint mismatch at command 1"):
+                validate_command_card_programs_used(
+                    {**recorded, "card_programs_used": {"unused-program": "0" * 64}},
+                    registry, sequence=1,
+                )
 
     def test_archived_control_provenance_is_rejected_before_historical_commands(self):
         # The sanitized recipe is extracted from a genuine pre-repair record,

@@ -57,6 +57,13 @@ registration path and retains fresh session state. Enable it only for measured
 consumers and verify original-card composition, missing registration, and session
 isolation before relying on the timing change.
 
+The cast and zone counter trigger, keyword entry counter, and Saga
+progression fixtures use their class's validated capability registry for
+ordinary registration of added cards. Each session builds fresh game state
+and uses its session and replay validation paths.
+The public-zone move fixture reuses its class registry for explicit
+promotions of fixture programs.
+
 Public-reference lookup resolves identity before the fallback effective-name
 query. Profile the same real-action and replay witness before and after a
 lookup change, and retain wrong-zone, wrong-owner, wrong-controller, duplicate
@@ -123,6 +130,22 @@ the context is cleared on exceptions as well as success. This removes repeated
 invariant verification from replay-heavy checks while retaining per-command
 provenance comparisons and exact final state hashes.
 
+Browser room startup shares one verified capability snapshot between
+session creation and the first durable save. The synchronous scope ends
+before the game manager accepts the session.
+
+A synchronous deck preflight shares one verified capability snapshot across
+program registration, runtime binding, and the final trust report. Separate
+reports still read the current registry and evidence.
+
+The shared native replay fixture uses one verified snapshot while saving,
+verifying the exact record, and optionally loading its continuation. Each
+fixture invocation compares authoritative state hashes for replay and load.
+
+A command with no semantic program keys records an empty fingerprint map
+directly. The replay manifest audits the complete catalog. Commands with
+program keys still compare every recorded program fingerprint.
+
 The corpus owner compiles one local IR and CardProgram per full-corpus record,
 then feeds its full and Commander coverage views through their canonical
 counters. Commander membership uses the database's existing filter, not a second
@@ -146,6 +169,15 @@ Changes to harvest metric readers also run the prerequisite-budget witness
 before corpus generation. Its synthetic history uses each probe's recorded
 gain basis, so eligibility and exhausted-budget controls exercise the same
 contract as production.
+
+Validated bundle ranking builds one family index for the current frontier.
+It uses the same index for cohort fingerprints, retirement evidence, and
+gain counts. Each invocation reads the current frontier and preserves the
+canonical fingerprint and ranking results.
+
+Scheduler tests that set up both the interaction exit and harvest
+transition mutate one independent fixture copy. Each scenario retains
+its own nested inputs.
 
 Architecture capsule generation reads and parses the current test import
 inventory once per report, then applies each subsystem's unchanged import
@@ -609,6 +641,8 @@ original base-frontier identity remains available. A changed measurement
 contract uses a new registered probe version while retaining the previous
 version for historical receipts. The cohort owner then measures the corrected
 programs against that original frontier instead of reusing the older bound.
+The current attached-quote probe uses the compiler's material line and requires
+one exact activation, mana ability, or trigger inside the attachment shell.
 Upgrading an unpublished legacy prediction to generated measurement preserves
 that same transition identity only when its complete semantic receipt matches
 the committed checkpoint and durable main does not contain the transition.
@@ -860,6 +894,22 @@ pre-push paths enforce the same closure. A missing fixture therefore fails at
 the dependency boundary instead of surfacing much later as unrelated runtime
 test errors.
 
+For a full Windows pull-request matrix, PR Plan publishes its audited compact
+dependency report with the existing generated-owner receipt. Functional Windows
+jobs download the artifact by the ID emitted from that plan in the same
+workflow run. Each job checks the current source and upstream owner identities,
+the exact committed report content, and the transferred file hashes before
+building its isolated compact database. The Windows generated-validation shard
+independently rebuilds and compares the full report. The Windows compatibility,
+main-smoke, nightly, and local validation paths continue to run their existing
+closure checks.
+
+During local generated finalization, a later stabilization pass can reuse
+its compact dependency write after checking the source tree, upstream owner
+outputs, and report bytes against the first successful write. Changes to
+those inputs trigger a fresh audit. The final compact report freshness
+check runs in the ordinary check phase.
+
 The full `scripts/local_merge_gate.py` is not a default development step. Run a
 broad local gate only when the user explicitly asks or while diagnosing a
 CI-only/release-critical persistence, replay, privacy, or packaging failure.
@@ -1006,7 +1056,11 @@ runtime branches, and transient integration chronology belong to GitHub and the
 untracked certification receipt. The generated readiness report fingerprints
 its actual source, package, stable test-shard inventory, rules, and CardProgram
 inputs. Exact tracked-source equivalence belongs only to the certification
-receipt and main-smoke verification. Environment-sensitive executed-test totals
+receipt and main-smoke verification. Review a downloaded exact-head receipt locally
+with `scripts/certification_receipt.py verify-pr-archive`. The command computes
+generated-output fingerprints under Linux checkout settings from the clean
+PR head and its Git attributes. The successful GitHub run and protected merge
+gate govern publication. Environment-sensitive executed-test totals
 remain CI metrics rather than tracked readiness state.
 
 Deterministic failures that escape the quick gate are recorded in

@@ -32,6 +32,11 @@ from quorune.compiler.activation_restriction_templates import (
 from quorune.compiler.activation_mana_costs import (
     fixed_complex_activation_mana_cost,
 )
+from quorune.compiler.attached_granted_ability_nodes import (
+    GRANTED_ACTIVATED_ABILITY_KIND,
+    GRANTED_MANA_ABILITY_KIND,
+    GRANTED_TRIGGERED_ABILITY_KIND,
+)
 from quorune.compiler.cast_cost_modifier_templates import (
     self_spell_cost_reduction_handler,
     static_fixed_spell_cost_reduction_handler,
@@ -328,6 +333,9 @@ _PROBE_FIXED_ALL_DAMAGE_PREVENTION = (
 _PROBE_ATTACHED_QUOTED_ABILITY_GRANT = (
     "attached-quoted-ability-grant-existing-owner-v1"
 )
+_PROBE_ATTACHED_QUOTED_ABILITY_GRANT_V2 = (
+    "attached-quoted-ability-grant-existing-owner-v2"
+)
 _PROBE_SOURCE_COMBAT_GROWTH_TRIGGER = (
     "fixed-source-combat-growth-trigger-existing-owner-v1"
 )
@@ -545,6 +553,7 @@ _PUBLIC_EVENT_BINDING_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
 )
 _PROBE_IDS = {
     _PROBE_ATTACHED_QUOTED_ABILITY_GRANT,
+    _PROBE_ATTACHED_QUOTED_ABILITY_GRANT_V2,
     _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER,
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
@@ -2295,6 +2304,7 @@ def _attached_quoted_ability_grant_measurement(
 ) -> dict[str, Any]:
     """Measure only exact inner programs inside accepted attachment shells."""
 
+    legacy_probe = probe_id == _PROBE_ATTACHED_QUOTED_ABILITY_GRANT
     cards_by_id: dict[str, Mapping[str, Any]] = {}
     quote_carriers_by_card: dict[str, list[Mapping[str, Any]]] = {}
     parsed_by_card: dict[str, list[Mapping[str, Any]]] = {}
@@ -2310,6 +2320,8 @@ def _attached_quoted_ability_grant_measurement(
             if ability.get("status") == "exact":
                 continue
             source = _source_line(record, ability)
+            if not legacy_probe:
+                source = _without_parenthetical_reminder(source)
             lowered = source.casefold()
             if (
                 lowered.startswith(
@@ -2365,7 +2377,13 @@ def _attached_quoted_ability_grant_measurement(
                 for node in line_nodes
                 if node.exact and node.kind.startswith("granted_")
             ]
-            if outer and len(inner) == 1:
+            if outer and len(inner) == 1 and (
+                legacy_probe or inner[0].kind in {
+                    GRANTED_ACTIVATED_ABILITY_KIND,
+                    GRANTED_MANA_ABILITY_KIND,
+                    GRANTED_TRIGGERED_ABILITY_KIND,
+                }
+            ):
                 represented.append(ability)
                 exact_node_count += 2
         if represented:
@@ -5649,7 +5667,10 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
-    if probe_id == _PROBE_ATTACHED_QUOTED_ABILITY_GRANT:
+    if probe_id in (
+        _PROBE_ATTACHED_QUOTED_ABILITY_GRANT,
+        _PROBE_ATTACHED_QUOTED_ABILITY_GRANT_V2,
+    ):
         return _attached_quoted_ability_grant_measurement(
             frontier=frontier,
             bundle_id=bundle_id,

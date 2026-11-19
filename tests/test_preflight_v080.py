@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
 from common import keep_all, load_assets, register_current_fixture_programs
 from quorune import CommanderSession, GameConfig
@@ -14,7 +15,8 @@ from quorune.preflight import (
 )
 from quorune.record import pause_reason_for_state
 from quorune.report import derive_review
-from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+from quorune.rules.evidence import _VALIDATION_REGISTRY
 from quorune.semantics import SemanticProgram, SemanticRegistry
 
 
@@ -88,7 +90,12 @@ class SemanticPreflightV2Tests(unittest.TestCase):
         self.assertNotEqual('fully_playable',row['status'])
 
     def test_preflight_v2_records_exact_sources_and_material_fields(self):
-        report = semantic_preflight(self.db, self.zimone)
+        with patch.object(
+            CapabilityRegistry, "from_path", wraps=CapabilityRegistry.from_path,
+        ) as loader:
+            report = semantic_preflight(self.db, self.zimone)
+        self.assertEqual(1, loader.call_count)
+        self.assertIsNone(_VALIDATION_REGISTRY.get())
         self.assertEqual(3, report["schema_version"])
         self.assertEqual("commander_review", report["capability_profile"])
         self.assertEqual(

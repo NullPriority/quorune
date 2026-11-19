@@ -1,13 +1,29 @@
 from __future__ import annotations
 
+from contextlib import redirect_stdout
+from hashlib import sha256
+from io import StringIO
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest import mock
 
 from common import ROOT
-from scripts.compact_ci_report import build_dependency_report
+from quorune.util import stable_json
+from scripts import build_test_database as database_builder
+from scripts.compact_ci_report import (
+    COMPACT_CI_REPORT_PATH,
+    build_dependency_report,
+    report_markdown,
+    store_dependency_artifact,
+)
+from scripts import update_compact_ci_dependencies as compact_writer
+from scripts.finalize_generated import check_all, write_until_stable
+from scripts.generated_artifacts import load_manifest
+from scripts.generated_owner_cache import GeneratedOwnerCacheError
 
 
 def card(name: str, oracle_id: str, *, text: str = "") -> dict[str, object]:
@@ -96,6 +112,203 @@ class TemporaryDependencyRepository:
             root=self.root,
             source_fingerprint="0" * 64,
         )
+
+
+class CompactDependencyArtifactTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        folder = Path(temporary.name).resolve()
+        self.root = folder / "repository"
+        self.root.mkdir()
+        self.artifact = folder / "artifact"
+        TemporaryDependencyRepository(
+            self.root,
+            cards=[card("Fixture Card", "00000000-0000-4000-8000-000000000001")],
+            source='db.lookup("Fixture Card")\n',
+        )
+
+        manifest = json.loads((ROOT / "platform/generated-artifacts.json").read_bytes())
+        by_id = {row["id"]: row for row in manifest["generators"]}
+        compact = by_id["compact-ci-card-dependencies"]
+        upstream = by_id["ci-escape-report"]
+        self.upstream = self.root / "coverage/upstream.json"
+        compact["depends_on"] = [upstream["id"]]
+        upstream["outputs"] = ["coverage/upstream.json"]
+        manifest["generators"] = [upstream, compact]
+        (self.root / "platform/generated-artifacts.json").write_text(
+            json.dumps(manifest), encoding="utf-8",
+        )
+        self.source = self.root / "README.md"
+        self.source.write_text("Original tracked source\n", encoding="utf-8")
+        (self.root / ".gitattributes").write_text(
+            "*.json text eol=lf\n*.md text eol=lf\n", encoding="utf-8",
+        )
+        self.json_output = self.root / COMPACT_CI_REPORT_PATH
+        self.markdown_output = self.json_output.with_suffix(".md")
+        self.json_output.parent.mkdir()
+        for path in (self.json_output, self.markdown_output, self.upstream):
+            path.write_text("{}\n", encoding="utf-8")
+        subprocess.run(["git", "init", "-q"], cwd=self.root, check=True)
+        subprocess.run(
+            ["git", "-c", "core.safecrlf=false", "add", "."],
+            cwd=self.root, check=True,
+        )
+
+        self.report = build_dependency_report(root=self.root)
+        self.assertTrue(self.report["closed"])
+        self.json_output.write_text(stable_json(self.report) + "\n", encoding="utf-8", newline="\n")
+        self.markdown_output.write_text(report_markdown(self.report), encoding="utf-8", newline="\n")
+
+    def cli(self, *arguments):
+        argv = ["build_test_database.py", "validate-ci-dependencies", *arguments]
+        output = StringIO()
+        with (
+            mock.patch.object(database_builder, "ROOT", self.root),
+            mock.patch.object(sys, "argv", argv),
+            redirect_stdout(output),
+        ):
+            self.assertEqual(0, database_builder.main())
+        return json.loads(output.getvalue())
+
+    def test_compact_artifact_cli_checks_contents_and_preserves_consumer_line_endings(self):
+        self.assertEqual(
+            self.cli(), self.cli("--emit-artifact", str(self.artifact)),
+        )
+        converted = {}
+        for path in (self.json_output, self.markdown_output):
+            converted[path] = path.read_bytes().replace(b"\n", b"\r\n")
+            path.write_bytes(converted[path])
+        with mock.patch.object(
+            database_builder, "build_dependency_report",
+            side_effect=AssertionError("A verified artifact must avoid the full audit"),
+        ):
+            summary = self.cli("--verify-artifact", str(self.artifact))
+        self.assertTrue(summary["closed"])
+        self.assertEqual(1, summary["fixture_count"])
+        self.assertEqual(converted, {path: path.read_bytes() for path in converted})
+
+    def test_compact_artifact_rejects_changed_declared_inputs_and_upstream_outputs(self):
+        self.cli("--emit-artifact", str(self.artifact))
+        for path in (self.root / "tests/test_fixture.py", self.upstream):
+            with self.subTest(path=path.name):
+                original = path.read_bytes()
+                path.write_bytes(original + b"\n")
+                try:
+                    with self.assertRaisesRegex(GeneratedOwnerCacheError, "stale"):
+                        self.cli("--verify-artifact", str(self.artifact))
+                finally:
+                    path.write_bytes(original)
+
+    def test_compact_artifact_rejects_corrupt_output_and_missing_files(self):
+        self.cli("--emit-artifact", str(self.artifact))
+        archived = self.artifact / COMPACT_CI_REPORT_PATH
+        archived.write_bytes(archived.read_bytes() + b"\n")
+        with self.assertRaisesRegex(GeneratedOwnerCacheError, "corrupt"):
+            self.cli("--verify-artifact", str(self.artifact))
+        receipt_path = self.artifact / "_owner_receipt.json"
+        receipt = json.loads(receipt_path.read_bytes())
+        output = receipt["outputs"][COMPACT_CI_REPORT_PATH.as_posix()]
+        output["raw_sha256"] = sha256(archived.read_bytes()).hexdigest()
+        receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+        with self.assertRaisesRegex(GeneratedOwnerCacheError, "corrupt"):
+            self.cli("--verify-artifact", str(self.artifact))
+        archived.unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.cli("--verify-artifact", str(self.artifact))
+        (self.artifact / "_owner_receipt.json").unlink()
+        with self.assertRaisesRegex(GeneratedOwnerCacheError, "missing or malformed"):
+            self.cli("--verify-artifact", str(self.artifact))
+
+    def test_compact_artifact_requires_current_source_beyond_the_owner_input_groups(self):
+        self.cli("--emit-artifact", str(self.artifact))
+        self.source.write_text("Changed tracked source\n", encoding="utf-8")
+        with self.assertRaisesRegex(GeneratedOwnerCacheError, "current source tree"):
+            self.cli("--verify-artifact", str(self.artifact))
+        with self.assertRaisesRegex(GeneratedOwnerCacheError, "current source tree"):
+            store_dependency_artifact(
+                self.report, artifact_dir=self.artifact, root=self.root,
+            )
+
+    def test_compact_artifact_producer_rejects_stale_generated_report(self):
+        self.markdown_output.write_text("Stale report\n", encoding="utf-8")
+        with self.assertRaisesRegex(GeneratedOwnerCacheError, "open or stale"):
+            self.cli("--emit-artifact", str(self.artifact))
+        self.assertFalse(self.artifact.exists())
+
+
+    def run_finalization(self, change_second_pass=None):
+        manifest = self.root / "platform/generated-artifacts.json"
+        specs = load_manifest(manifest, root=self.root)
+        calls = []
+
+        def runner(owner, command):
+            mode = command[-1]
+            calls.append((owner, mode))
+            if owner == "ci-escape-report" and mode == "--write":
+                count = calls.count((owner, mode))
+                if count == 1:
+                    self.upstream.write_text('{"revision": 1}\n', encoding="utf-8")
+                elif count == 2 and change_second_pass is not None:
+                    change_second_pass()
+                return 0
+            if owner == "compact-ci-card-dependencies":
+                with (
+                    mock.patch.object(compact_writer, "ROOT", self.root),
+                    mock.patch.object(compact_writer, "JSON_OUTPUT", self.json_output),
+                    mock.patch.object(compact_writer, "MARKDOWN_OUTPUT", self.markdown_output),
+                    mock.patch.object(sys, "argv", ["update_compact_ci_dependencies.py", mode]),
+                    redirect_stdout(StringIO()),
+                ):
+                    return compact_writer.main()
+            return 0
+
+        with redirect_stdout(StringIO()):
+            result = write_until_stable(
+                specs, database=None, include_manual=False,
+                max_passes=3, root=self.root, runner=runner,
+            )
+            self.assertEqual((), check_all(specs, runner=runner))
+        self.assertEqual(1, calls.count(("compact-ci-card-dependencies", "--check")))
+        return result, calls.count(("compact-ci-card-dependencies", "--write"))
+
+    def test_generated_finalization_reuses_a_stable_compact_write_with_full_freshness_check(self):
+        self.markdown_output.write_text("Stale report\n", encoding="utf-8")
+        result, writes = self.run_finalization()
+        self.assertEqual(2, result["passes"])
+        self.assertEqual(1, writes)
+        self.assertNotIn("compact-ci-card-dependencies", result["executed_by_pass"][1])
+
+        next_run, next_writes = self.run_finalization()
+        self.assertEqual(1, next_run["passes"])
+        self.assertEqual(1, next_writes)
+
+    def test_generated_finalization_reruns_compact_write_after_upstream_changes(self):
+        def mutate():
+            self.upstream.write_text('{"revision": 2}\n', encoding="utf-8")
+
+        result, writes = self.run_finalization(mutate)
+        self.assertEqual(3, result["passes"])
+        self.assertEqual(2, writes)
+
+    def test_generated_finalization_reruns_compact_write_after_report_corruption(self):
+        def mutate():
+            self.markdown_output.write_text("Corrupt report\n", encoding="utf-8")
+
+        result, writes = self.run_finalization(mutate)
+        self.assertEqual(2, result["passes"])
+        self.assertEqual(2, writes)
+        self.assertEqual(report_markdown(self.report), self.markdown_output.read_text(encoding="utf-8"))
+
+    def test_generated_finalization_reruns_compact_write_after_other_tracked_source_changes(self):
+        def mutate():
+            self.source.write_text("Different tracked source\n", encoding="utf-8")
+
+        result, writes = self.run_finalization(mutate)
+        self.assertEqual(3, result["passes"])
+        self.assertEqual(2, writes)
+        updated = json.loads(self.json_output.read_bytes())
+        self.assertNotEqual(self.report["source_tree_fingerprint"], updated["source_tree_fingerprint"])
 
 
 class DependencySyntaxScopeTests(unittest.TestCase):

@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-from typing import Callable, Mapping, Sequence
+from typing import TYPE_CHECKING, Callable, Mapping, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +29,9 @@ from scripts.generated_finalization_receipt import (
     write_finalization_receipt,
 )
 from scripts.validate_python_runtime import require_supported_python
+
+if TYPE_CHECKING:
+    from scripts.generated_owner_cache import OwnerArtifactReceipt
 
 
 class GeneratedFinalizationError(RuntimeError):
@@ -67,6 +70,16 @@ def output_snapshot(
     return snapshot
 
 
+def _current_compact_write_receipt(root: Path) -> OwnerArtifactReceipt | None:
+    from scripts.compact_ci_report import current_dependency_report_receipt
+    from scripts.generated_owner_cache import GeneratedOwnerCacheError
+
+    try:
+        return current_dependency_report_receipt(root=root)
+    except (GeneratedOwnerCacheError, OSError, ValueError, subprocess.CalledProcessError):
+        return None
+
+
 def _write_pass(
     specs: Sequence[GeneratorSpec],
     *,
@@ -74,7 +87,9 @@ def _write_pass(
     include_manual: bool,
     selected_ids: frozenset[str] | None,
     runner: CommandRunner,
-) -> tuple[str, ...]:
+    root: Path,
+    compact_receipt: OwnerArtifactReceipt | None,
+) -> tuple[tuple[str, ...], OwnerArtifactReceipt | None]:
     executed: list[str] = []
     checked_transition = False
     for spec in topological_order(specs):
@@ -97,13 +112,28 @@ def _write_pass(
             if code:
                 raise GeneratedFinalizationError(f'pre-corpus semantic-transition policy failed ({code})')
             checked_transition = True
+        compact_writer = (
+            spec.id == "compact-ci-card-dependencies"
+            and spec.reuse_policy == "safe"
+            and tuple(command[1:]) == ("scripts/update_compact_ci_dependencies.py", "--write")
+        )
+        if (
+            compact_writer
+            and compact_receipt is not None
+            and _current_compact_write_receipt(root) == compact_receipt
+        ):
+            print(f"[{spec.id}] reusing this finalization's verified write", flush=True)
+            continue
+
         returncode = runner(spec.id, command)
         if returncode:
             raise GeneratedFinalizationError(
                 f"generated writer failed: {spec.id} ({returncode})"
             )
         executed.append(spec.id)
-    return tuple(executed)
+        if compact_writer:
+            compact_receipt = _current_compact_write_receipt(root)
+    return tuple(executed), compact_receipt
 
 
 def stabilization_ids(
@@ -146,6 +176,7 @@ def write_until_stable(
     changed_by_pass: list[tuple[str, ...]] = []
     executed_by_pass: list[tuple[str, ...]] = []
     selected_ids = initial_selected_ids
+    compact_receipt = None
     for pass_number in range(1, max_passes + 1):
         # A topological first pass already places every database-backed corpus
         # output before its declared consumers. Rebuilding the full corpus on
@@ -154,12 +185,14 @@ def write_until_stable(
         # descendants, using each database generator's safe derived-only
         # writer when it has one.
         pass_database = database if pass_number == 1 else None
-        executed = _write_pass(
+        executed, compact_receipt = _write_pass(
             specs,
             database=pass_database,
             include_manual=include_manual,
             selected_ids=selected_ids,
             runner=runner,
+            root=root,
+            compact_receipt=compact_receipt,
         )
         after = output_snapshot(specs, root=root)
         changed = tuple(
