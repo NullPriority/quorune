@@ -4,6 +4,7 @@ import json
 import subprocess
 import sys
 import unittest
+from unittest.mock import patch
 
 from quorune.work_selection_evidence import ADMISSION_RECOVERY_IDS
 from tests.common import ROOT
@@ -14,6 +15,8 @@ from scripts.validate_pr_body import (
     validate_status_changes,
 )
 from scripts.pr_evidence import (
+    CAPABILITY_CLOSED_IDENTITY_FIELD,
+    _capability_closed_retention,
     build_pr_evidence,
     render_pr_evidence_markdown,
     semantic_evidence_metadata,
@@ -94,6 +97,79 @@ Validate pull-request descriptions before expensive certification jobs begin.
 
 
 class PullRequestBodyPolicyTests(unittest.TestCase):
+    def test_capability_closed_retention_exposes_losses_at_zero_net_gain(self):
+        closed = ("exact", "trusted", "capability_closed")
+        reviewed = ("exact", "trusted", "legacy_reviewed")
+        base = {
+            "card_data_snapshot": {"schema_version": 1},
+            "cards_considered": 3,
+            "capability_closed_programs": 2,
+            "_card_states": {"retained": closed, "lost": closed, "gained": reviewed},
+        }
+        head = {**base, "_card_states": {"retained": closed, "lost": reviewed, "gained": closed}}
+        self.assertEqual(
+            {"gained_oracle_ids": ["gained"], "lost_oracle_ids": ["lost"]},
+            _capability_closed_retention(base, head),
+        )
+
+        with self.assertRaisesRegex(PullRequestEvidenceError, "counts disagree"):
+            _capability_closed_retention(base, {**head, "capability_closed_programs": 3})
+
+        legacy = {**head, "_card_states": {**head["_card_states"], "lost": ("exact", "trusted", "")}}
+        self.assertIsNone(_capability_closed_retention(base, legacy))
+        self.assertIsNone(_capability_closed_retention(base, {**head, "card_data_snapshot": {"schema_version": 2}}))
+
+    def test_optional_capability_closed_summary_must_match_exact_evidence(self):
+        label = CAPABILITY_CLOSED_IDENTITY_FIELD
+        value = "gained `1` and lost `1` on the pinned roster"
+        supplied = f"## Generated base/head evidence\n\n- {label}: {value}\n"
+        changed = supplied.replace("lost `1`", "lost `0`")
+        duplicate = changed + f"- {label}: {value}\n"
+        earlier = "## Generated base/head evidence\n"
+        with patch("scripts.validate_pr_body.pr_evidence_markdown_fields", side_effect=lambda fields: dict(fields)):
+            expected = {label: value}
+            self.assertEqual((), validate_generated_evidence(supplied, expected))
+            self.assertEqual((), validate_generated_evidence(earlier, expected))
+            self.assertEqual(
+                ("stale-pr-evidence",),
+                tuple(f.code for f in validate_generated_evidence(changed, expected)),
+            )
+            self.assertEqual(
+                ("stale-pr-evidence",),
+                tuple(f.code for f in validate_generated_evidence(duplicate, expected)),
+            )
+            self.assertEqual(
+                ("stale-pr-evidence",),
+                tuple(f.code for f in validate_generated_evidence(supplied, {})),
+            )
+
+    def test_pr_receipt_comparison_reuses_only_identical_report_bytes(self):
+        from scripts import harvest_outcome_history as history
+
+        shared = ("shared-oid", b'{"shared": true}')
+        before = {"shared.json": shared, "edited.json": ("same-oid", b'{"value": 1}')}
+        after = {"shared.json": shared, "edited.json": ("same-oid", b'{"value": 2}')}
+        paths = (("shared.json", False), ("edited.json", False))
+
+        def receipt(*, commit, reports, shared_blob_receipts=None):
+            return {
+                "commit": commit,
+                "reports": reports,
+                "blobs": {path: {"hash": path} for path in reports},
+                "reused_receipts": shared_blob_receipts,
+            }
+
+        with patch.object(history, "_report_specs", return_value=paths), patch.object(
+            history, "_blobs", side_effect=(before, after)
+        ), patch.object(history, "_receipt_from_reports", side_effect=receipt), patch.object(
+            history, "_json_object", wraps=history._json_object
+        ) as decode:
+            base, head = history._receipt_pair(ROOT, "base", "head")
+        self.assertEqual(3, decode.call_count)
+        self.assertIs(base["reports"]["shared.json"][2], head["reports"]["shared.json"][2])
+        self.assertEqual({"value": 2}, head["reports"]["edited.json"][2])
+        self.assertEqual({"shared.json": base["blobs"]["shared.json"]}, head["reused_receipts"])
+
     def test_support_delivery_requires_500_actual_net_whole_cards(self) -> None:
         catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 500}}}
         evidence = {"cards": {"capability_closed": 499},

@@ -35,12 +35,11 @@ in those logs. A missing log is not execution evidence: distinguish jobs with
 no runner and no steps from jobs whose output still needs inspection. Retain
 published attempts in elapsed-time observations.
 
-Refresh the manifest's launch order when observed shard durations change. Keep
-generated validation first and prioritize functional shards by the larger
-completed Ubuntu or Windows job duration. Preserve primary assignments,
-overlays, worker counts and concurrency limits. A scheduling model with fixed
-durations estimates an opportunity; the next complete pipeline establishes the
-observed result.
+Refresh the manifest's launch order from completed Ubuntu and Windows job
+durations. Keep generated validation first and rank functional shards by their
+combined duration. Compare the projected overall finish at the existing runner
+limits. Preserve primary assignments, overlays, worker counts and concurrency
+limits. The next complete pipeline establishes the observed result.
 
 Prefer removing repeated deterministic computation while retaining its inputs,
 outputs, and validation contract. Implementation-component validation, for

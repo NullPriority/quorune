@@ -16,6 +16,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.pr_evidence import (
+    CAPABILITY_CLOSED_IDENTITY_FIELD,
     pr_evidence_markdown_fields,
 )
 
@@ -184,12 +185,17 @@ def _sections(body: str) -> tuple[dict[str, str], tuple[str, ...]]:
     return values, tuple(duplicates)
 
 
-def _field_values(section: str) -> dict[str, str]:
+def _field_values(
+    section: str, *, duplicate_fields: set[str] | None = None
+) -> dict[str, str]:
     values: dict[str, str] = {}
     for line in _HTML_COMMENT.sub("", section).splitlines():
         match = re.match(r"^\s*-\s+([^:]+):\s*(.*?)\s*$", line)
         if match:
-            values[match.group(1).strip()] = match.group(2).strip()
+            label = match.group(1).strip()
+            if duplicate_fields is not None and label in values:
+                duplicate_fields.add(label)
+            values[label] = match.group(2).strip()
     return values
 
 
@@ -423,11 +429,19 @@ def validate_generated_evidence(
     section = sections.get("Generated base/head evidence")
     if section is None:
         return ()
-    actual = _field_values(section)
+    duplicates: set[str] = set()
+    actual = _field_values(section, duplicate_fields=duplicates)
     expected = pr_evidence_markdown_fields(evidence)
     failures = []
+    if CAPABILITY_CLOSED_IDENTITY_FIELD not in actual:
+        expected.pop(CAPABILITY_CLOSED_IDENTITY_FIELD, None)
+    elif CAPABILITY_CLOSED_IDENTITY_FIELD not in expected:
+        failures.append(PolicyFailure(
+            "stale-pr-evidence",
+            "capability-closed identity changes require complete matching pinned rosters",
+        ))
     for label, value in expected.items():
-        if actual.get(label) != value:
+        if label in duplicates or actual.get(label) != value:
             failures.append(
                 PolicyFailure(
                     "stale-pr-evidence",

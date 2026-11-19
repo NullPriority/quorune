@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import argparse
 import ast
+from collections import OrderedDict
 import hashlib
 import json
 from pathlib import Path
 import sys
+from threading import Lock
 from typing import Any, Mapping
 
 
@@ -402,27 +404,51 @@ def _hash(value: Any) -> str:
     return hashlib.sha256(stable_json(value).encode("utf-8")).hexdigest()
 
 
+_TEST_ID_CACHE_LIMIT = 2048
+_TEST_ID_CACHE: OrderedDict[tuple[str, bytes], tuple[tuple[str, str], ...]] = OrderedDict()
+_TEST_ID_CACHE_LOCK = Lock()
+
+
+def _test_ids_in_source(filename: str, source: str) -> tuple[tuple[str, str], ...]:
+    key = (filename, hashlib.sha256(source.encode("utf-8")).digest())
+    with _TEST_ID_CACHE_LOCK:
+        cached = _TEST_ID_CACHE.get(key)
+        if cached is not None:
+            _TEST_ID_CACHE.move_to_end(key)
+            return cached
+
+    module = f"tests.{Path(filename).stem}"
+    tree = ast.parse(source, filename=filename)
+    identities = []
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if node.name.startswith("test_"):
+                identities.append((node.name, f"{module}.{node.name}"))
+        elif isinstance(node, ast.ClassDef):
+            for child in node.body:
+                if isinstance(
+                    child, (ast.FunctionDef, ast.AsyncFunctionDef)
+                ) and child.name.startswith("test_"):
+                    identities.append((child.name, f"{module}.{node.name}.{child.name}"))
+    result = tuple(identities)
+    with _TEST_ID_CACHE_LOCK:
+        _TEST_ID_CACHE[key] = result
+        _TEST_ID_CACHE.move_to_end(key)
+        if len(_TEST_ID_CACHE) > _TEST_ID_CACHE_LIMIT:
+            _TEST_ID_CACHE.popitem(last=False)
+    return result
+
+
 def discover_tests(root: Path) -> dict[str, str]:
     """Return unique bare-name to fully qualified unittest IDs."""
-
     discovered: dict[str, list[str]] = {}
     for path in sorted((root / "tests").glob("test_*.py")):
-        module = f"tests.{path.stem}"
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in tree.body:
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node.name.startswith("test_"):
-                    discovered.setdefault(node.name, []).append(
-                        f"{module}.{node.name}"
-                    )
-            elif isinstance(node, ast.ClassDef):
-                for child in node.body:
-                    if isinstance(
-                        child, (ast.FunctionDef, ast.AsyncFunctionDef)
-                    ) and child.name.startswith("test_"):
-                        discovered.setdefault(child.name, []).append(
-                            f"{module}.{node.name}.{child.name}"
-                        )
+        # Every scan reads the current contents. Only per-file syntax facts
+        # can be reused, so added and removed files affect the global check.
+        for name, test_id in _test_ids_in_source(
+            str(path), path.read_text(encoding="utf-8")
+        ):
+            discovered.setdefault(name, []).append(test_id)
     ambiguous = {
         name: ids for name, ids in discovered.items() if len(ids) != 1
     }

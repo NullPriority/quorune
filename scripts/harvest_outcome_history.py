@@ -270,6 +270,7 @@ def _receipt_from_reports(
     *,
     commit: str,
     reports: Mapping[str, tuple[str, bytes, dict[str, Any]]],
+    shared_blob_receipts: Mapping[str, Mapping[str, str]] | None = None,
 ) -> dict[str, Any]:
     program = reports[_PROGRAM_PATH][2]
     oracle = reports[_ORACLE_PATH][2]
@@ -390,7 +391,9 @@ def _receipt_from_reports(
     return {
         "commit": commit,
         "blobs": {
-            path: {
+            path: dict(shared_blob_receipts[path])
+            if shared_blob_receipts is not None and path in shared_blob_receipts
+            else {
                 "git_blob_oid": oid,
                 "raw_sha256": hashlib.sha256(raw).hexdigest(),
                 "semantic_sha256": _semantic_report_sha256(
@@ -445,18 +448,46 @@ def _report_specs() -> tuple[tuple[str, bool], ...]:
     )
 
 
-def _receipt(root: Path, commit: str) -> dict[str, Any]:
-    reports: dict[str, tuple[str, bytes, dict[str, Any]]] = {}
-    report_specs = _report_specs()
-    blobs = _blobs(root, commit, tuple(path for path, _compressed in report_specs))
-    for path, compressed in report_specs:
+def _decode_reports(
+    blobs: Mapping[str, tuple[str, bytes]],
+    *,
+    already_decoded: Mapping[str, dict[str, Any]] | None = None,
+) -> dict[str, tuple[str, bytes, dict[str, Any]]]:
+    reports = {}
+    for path, compressed in _report_specs():
         oid, raw = blobs[path]
-        reports[path] = (
-            oid,
-            raw,
-            _json_object(raw, path, compressed=compressed),
+        value = (
+            already_decoded[path]
+            if already_decoded is not None and path in already_decoded
+            else _json_object(raw, path, compressed=compressed)
         )
-    return _receipt_from_reports(commit=commit, reports=reports)
+        reports[path] = (oid, raw, value)
+    return reports
+
+
+def _receipt(root: Path, commit: str) -> dict[str, Any]:
+    paths = tuple(path for path, _compressed in _report_specs())
+    return _receipt_from_reports(commit=commit, reports=_decode_reports(_blobs(root, commit, paths)))
+
+
+def _receipt_pair(
+    root: Path, base_commit: str, head_commit: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    paths = tuple(path for path, _compressed in _report_specs())
+    base_blobs = _blobs(root, base_commit, paths)
+    head_blobs = _blobs(root, head_commit, paths)
+    identical = {path for path in paths if base_blobs[path] == head_blobs[path]}
+    base_reports = _decode_reports(base_blobs)
+    base = _receipt_from_reports(commit=base_commit, reports=base_reports)
+    shared_reports = {path: base_reports[path][2] for path in identical}
+    shared_receipts = {path: base["blobs"][path] for path in identical}
+    del base_reports
+    head = _receipt_from_reports(
+        commit=head_commit,
+        reports=_decode_reports(head_blobs, already_decoded=shared_reports),
+        shared_blob_receipts=shared_receipts,
+    )
+    return base, head
 
 
 def _worktree_receipt(root: Path) -> dict[str, Any]:
