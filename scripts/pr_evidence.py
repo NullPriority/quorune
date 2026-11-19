@@ -23,7 +23,7 @@ from quorune.work_selection_evidence import (
 from scripts.harvest_outcome_history import (
     _canonical_commit,
     _public_receipt,
-    _receipt,
+    _receipt_pair,
     _transition_metrics,
     HarvestOutcomeHistoryError,
     validated_semantic_transition_declaration,
@@ -32,6 +32,7 @@ from scripts.harvest_outcome_history import (
 
 
 PR_EVIDENCE_SCHEMA_VERSION = 1
+CAPABILITY_CLOSED_IDENTITY_FIELD = "Capability-closed identity changes"
 DEFAULT_METADATA_PATH = "platform/rules-subsystems.json"
 _VERIFIED_ADMISSION_RECOVERY = "verified_admission_recovery_oracle_ids"
 _COMPILER_VERSION = re.compile(r"^oracle-ir-v(?P<version>\d+)$")
@@ -299,6 +300,36 @@ def _printed_name_count(audit: Mapping[str, Any]) -> int:
     return len(helpers)
 
 
+def _capability_closed_retention(
+    base: Mapping[str, Any], head: Mapping[str, Any],
+) -> dict[str, list[str]] | None:
+    before = base["_card_states"]
+    after = head["_card_states"]
+    if (
+        base["card_data_snapshot"] != head["card_data_snapshot"]
+        or before.keys() != after.keys()
+        or len(before) != base["cards_considered"]
+        or len(after) != head["cards_considered"]
+        or not all(row[2] for row in before.values())
+        or not all(row[2] for row in after.values())
+    ):
+        return None
+
+    base_closed = {card for card, row in before.items() if row[2] == "capability_closed"}
+    head_closed = {card for card, row in after.items() if row[2] == "capability_closed"}
+    if (
+        len(base_closed) != base["capability_closed_programs"]
+        or len(head_closed) != head["capability_closed_programs"]
+    ):
+        raise PullRequestEvidenceError(
+            "Pinned frontier and census capability-closed card counts disagree"
+        )
+    return {
+        "gained_oracle_ids": sorted(head_closed - base_closed),
+        "lost_oracle_ids": sorted(base_closed - head_closed),
+    }
+
+
 def build_pr_evidence(
     root: str | Path,
     *,
@@ -358,8 +389,7 @@ def build_pr_evidence(
 
     verified_recovery = None
     try:
-        base_receipt = _receipt(repository, base_commit)
-        head_receipt = _receipt(repository, head_commit)
+        base_receipt, head_receipt = _receipt_pair(repository, base_commit, head_commit)
         transition = _transition_metrics(base_receipt, head_receipt)
         if ADMISSION_RECOVERY_IDS in source_metadata:
             if declaration["compiler_version"] != head_receipt["compiler_version"]:
@@ -544,6 +574,9 @@ def build_pr_evidence(
     }
     if verified_recovery is not None:
         payload[_VERIFIED_ADMISSION_RECOVERY] = verified_recovery
+    retention = _capability_closed_retention(base_receipt, head_receipt)
+    if retention is not None:
+        payload["capability_closed_retention"] = retention
     payload["fingerprint"] = hashlib.sha256(
         stable_json(payload).encode("utf-8")
     ).hexdigest()
@@ -597,7 +630,7 @@ def pr_evidence_markdown_fields(evidence: Mapping[str, Any]) -> dict[str, str]:
             f"`{value['binary_files_changed']}`"
         )
 
-    return {
+    fields = {
         "Represented family IDs": _ids(metadata["family_ids"], reason),
         "Represented capability IDs": _ids(
             metadata["capability_ids"], reason
@@ -688,6 +721,13 @@ def pr_evidence_markdown_fields(evidence: Mapping[str, Any]) -> dict[str, str]:
             "--format markdown`"
         ),
     }
+    retention = evidence.get("capability_closed_retention")
+    if retention is not None:
+        fields[CAPABILITY_CLOSED_IDENTITY_FIELD] = (
+            f"gained `{len(retention['gained_oracle_ids'])}` and "
+            f"lost `{len(retention['lost_oracle_ids'])}` on the pinned roster"
+        )
+    return fields
 
 
 def render_pr_evidence_markdown(evidence: Mapping[str, Any]) -> str:

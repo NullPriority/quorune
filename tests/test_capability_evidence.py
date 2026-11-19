@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+import os
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
@@ -29,6 +31,48 @@ from scripts.update_capability_evidence import (
     discover_tests,
 )
 from quorune.rules.evidence_storage import read_evidence_document
+
+
+class EvidenceTestDiscoveryTests(unittest.TestCase):
+    def test_evidence_test_discovery_reuses_only_current_source_contents(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            tests = root / "tests"
+            tests.mkdir()
+            source = tests / "test_controls.py"
+            original = "class Case:\n    async def test_left(self):\n        pass\n"
+            source.write_text(original, encoding="utf-8", newline="\n")
+            timestamp = source.stat()
+
+            with patch.object(evidence_generator.ast, "parse",
+                              wraps=evidence_generator.ast.parse) as parse:
+                first = discover_tests(root)
+                self.assertEqual({"test_left": "tests.test_controls.Case.test_left"}, first)
+                first.clear()
+                self.assertEqual({"test_left": "tests.test_controls.Case.test_left"}, discover_tests(root))
+                self.assertEqual(1, parse.call_count)
+
+            renamed = original.replace("test_left", "test_next")
+            source.write_text(renamed, encoding="utf-8", newline="\n")
+            os.utime(source, ns=(timestamp.st_atime_ns, timestamp.st_mtime_ns))
+            self.assertEqual(timestamp.st_size, source.stat().st_size)
+            self.assertEqual(timestamp.st_mtime_ns, source.stat().st_mtime_ns)
+            expected = {"test_next": "tests.test_controls.Case.test_next"}
+            self.assertEqual(expected, discover_tests(root))
+
+            duplicate = tests / "test_other.py"
+            duplicate.write_text(renamed, encoding="utf-8")
+            with self.assertRaisesRegex(EvidenceGenerationError, "requires unique test names"):
+                discover_tests(root)
+            duplicate.unlink()
+            self.assertEqual(expected, discover_tests(root))
+
+            source.write_text(renamed.replace("):", ") "), encoding="utf-8", newline="\n")
+            os.utime(source, ns=(timestamp.st_atime_ns, timestamp.st_mtime_ns))
+            with self.assertRaises(SyntaxError):
+                discover_tests(root)
+            source.unlink()
+            self.assertEqual({}, discover_tests(root))
 
 
 class CapabilityEvidenceTests(unittest.TestCase):
