@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 import pytest
+import scripts.test_shards as shard_owner
 
 from scripts.pytest_shard_plugin import (
     canonical_collection,
@@ -32,6 +35,186 @@ from scripts.test_shards import (
     validate_semantic_program_fixture_identities,
     validate_impact_references,
 )
+
+
+class TestModuleSyntaxFactCacheTests(unittest.TestCase):
+    def setUp(self):
+        shard_owner._cached_test_module_facts.cache_clear()
+
+    @staticmethod
+    def manifest(*names):
+        return {'primary_shards': {'functional': list(names)}, 'overlay_suites': {}}
+
+    def test_repeated_checks_reuse_facts_from_current_content(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root/'test_example.py').write_text(
+                "SemanticProgram(oracle_id=card.oracle_id, ability_id='fixture')\n", encoding='utf-8')
+            parser = shard_owner.ast.parse
+            with patch.object(shard_owner.ast, 'parse', wraps=parser) as observed:
+                manifest = self.manifest('test_example')
+                self.assertEqual(1, validate_partition(manifest, tests_root=root)['test_modules'])
+                self.assertEqual(1, validate_semantic_program_fixture_identities(root))
+                validate_imported_test_case_aliases(root)
+                self.assertEqual(1, validate_partition(manifest, tests_root=root)['test_modules'])
+                self.assertEqual(1, observed.call_count)
+
+    def test_same_size_and_time_source_changes_cannot_reuse_an_old_verdict(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            source = root/'test_example.py'
+            valid = "SemanticProgram(oracle_id=card.oracle_id, ability_id='fixture')\n"
+            invalid = valid.replace('ability_id', 'notability')
+            self.assertEqual(len(valid), len(invalid))
+            source.write_text(valid, encoding='utf-8')
+            manifest = self.manifest('test_example')
+            validate_partition(manifest, tests_root=root)
+            before = source.stat()
+            source.write_text(invalid, encoding='utf-8')
+            os.utime(source, ns=(before.st_atime_ns, before.st_mtime_ns))
+            self.assertEqual(before.st_size, source.stat().st_size)
+            self.assertEqual(before.st_mtime_ns, source.stat().st_mtime_ns)
+            for _ in range(2):
+                with self.assertRaisesRegex(TestShardError, 'explicit ability_id'):
+                    validate_partition(manifest, tests_root=root)
+            source.write_text(valid, encoding='utf-8')
+            validate_partition(manifest, tests_root=root)
+
+    def test_import_and_helper_class_changes_are_rechecked(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            helper = root/'test_helper.py'
+            owner = root/'test_owner.py'
+            helper.write_text('import unittest\nclass HelperTests(unittest.TestCase):\n'
+                              '    def test_example(self): pass\n', encoding='utf-8')
+            owner.write_text('import test_helper as helpers\n', encoding='utf-8')
+            validate_imported_test_case_aliases(root)
+            owner.write_text('from tests.test_helper import HelperTests as Borrowed\n', encoding='utf-8')
+            with self.assertRaisesRegex(TestShardError, 'test_owner:1:Borrowed'):
+                validate_imported_test_case_aliases(root)
+            helper.write_text('class HelperTests:\n    def test_example(self): pass\n', encoding='utf-8')
+            validate_imported_test_case_aliases(root)
+            helper.write_text('from unittest import TestCase\nclass HelperTests(TestCase):\n'
+                              '    async def test_example(self): pass\n', encoding='utf-8')
+            with self.assertRaisesRegex(TestShardError, 'duplicate collection'):
+                validate_imported_test_case_aliases(root)
+
+    def test_new_deleted_and_renamed_files_keep_partition_checks_current(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            first = root/'test_first.py'
+            second = root/'test_second.py'
+            first.write_text('pass\n', encoding='utf-8')
+            validate_partition(self.manifest('test_first'), tests_root=root)
+            second.write_text('pass\n', encoding='utf-8')
+            with self.assertRaisesRegex(TestShardError, 'missing'):
+                validate_partition(self.manifest('test_first'), tests_root=root)
+            validate_partition(self.manifest('test_first', 'test_second'), tests_root=root)
+            first.unlink()
+            with self.assertRaisesRegex(TestShardError, 'unknown'):
+                validate_partition(self.manifest('test_first', 'test_second'), tests_root=root)
+            validate_partition(self.manifest('test_second'), tests_root=root)
+            second.rename(root/'test_renamed.py')
+            with self.assertRaises(TestShardError):
+                validate_partition(self.manifest('test_second'), tests_root=root)
+            validate_partition(self.manifest('test_renamed'), tests_root=root)
+
+    def test_invalid_syntax_encoding_and_missing_current_source_reject_after_success(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            source = root/'test_example.py'
+            source.write_text('pass\n', encoding='utf-8')
+            manifest = self.manifest('test_example')
+            validate_partition(manifest, tests_root=root)
+            source.write_text('def broken(\n', encoding='utf-8')
+            with self.assertRaisesRegex(TestShardError, 'Unable to inspect'):
+                validate_partition(manifest, tests_root=root)
+            source.write_bytes(b'\xff')
+            with self.assertRaisesRegex(TestShardError, 'Unable to inspect'):
+                validate_partition(manifest, tests_root=root)
+            source.unlink()
+            with self.assertRaisesRegex(TestShardError, 'Unable to inspect'):
+                shard_owner._read_test_module_facts(source)
+            source.write_text('pass\n', encoding='utf-8')
+            validate_partition(manifest, tests_root=root)
+
+    def test_changed_parser_and_walk_policy_cannot_reuse_prior_success(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root/'test_example.py').write_text('pass\n', encoding='utf-8')
+            manifest = self.manifest('test_example')
+            validate_partition(manifest, tests_root=root)
+            for provider in ('parse', 'walk'):
+                with self.subTest(provider=provider):
+                    with patch.object(shard_owner.ast, provider, side_effect=SyntaxError('changed policy')):
+                        with self.assertRaisesRegex(TestShardError, 'Unable to inspect'):
+                            validate_partition(manifest, tests_root=root)
+            validate_partition(manifest, tests_root=root)
+
+    def test_in_place_analysis_code_change_cannot_reuse_prior_success(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root/'test_example.py').write_text('pass\n', encoding='utf-8')
+            manifest = self.manifest('test_example')
+            validate_partition(manifest, tests_root=root)
+            original = shard_owner._analyze_test_module.__code__
+            def reject(*args):
+                raise SyntaxError('changed analysis')
+            try:
+                shard_owner._analyze_test_module.__code__ = reject.__code__
+                with self.assertRaisesRegex(TestShardError, 'Unable to inspect'):
+                    validate_partition(manifest, tests_root=root)
+            finally:
+                shard_owner._analyze_test_module.__code__ = original
+            validate_partition(manifest, tests_root=root)
+
+    def test_shared_summaries_are_immutable(self):
+        with TemporaryDirectory() as raw:
+            source = Path(raw)/'test_example.py'
+            source.write_text('import unittest\nfrom test_helper import HelperTests\n'
+                              'class Example(unittest.TestCase):\n    def test_example(self): pass\n',
+                              encoding='utf-8')
+            facts = shard_owner._read_test_module_facts(source)
+            with self.assertRaises(AttributeError):facts.semantic_program_count = 42
+            with self.assertRaises(AttributeError):facts.test_case_classes.add('Injected')
+            with self.assertRaises(AttributeError):facts.missing_ability_id_lines.append(9)
+            with self.assertRaises(TypeError):facts.imported_names[0] = ('changed', 'name', 'name', 1)
+            self.assertEqual(frozenset({'Example'}),
+                             shard_owner._read_test_module_facts(source).test_case_classes)
+
+    def test_cache_eviction_is_bounded_and_reintroduced_source_is_parsed(self):
+        with TemporaryDirectory() as raw:
+            source = Path(raw)/'test_example.py'
+            limit = shard_owner._cached_test_module_facts.cache_parameters()['maxsize']
+            self.assertIsInstance(limit, int)
+            self.assertGreater(limit, 0)
+            self.assertLess(limit, 10000)
+            parser = shard_owner.ast.parse
+            with patch.object(shard_owner.ast, 'parse', wraps=parser) as observed:
+                for index in range(limit + 1):
+                    source.write_text(f'value = {index}\n', encoding='utf-8')
+                    shard_owner._read_test_module_facts(source)
+                self.assertLessEqual(shard_owner._cached_test_module_facts.cache_info().currsize, limit)
+                before = observed.call_count
+                source.write_text('value = 0\n', encoding='utf-8')
+                shard_owner._read_test_module_facts(source)
+                self.assertEqual(before + 1, observed.call_count)
+
+    def test_separate_directory_roots_keep_separate_import_scopes(self):
+        with TemporaryDirectory() as raw:
+            left = Path(raw)/'left'
+            right = Path(raw)/'right'
+            left.mkdir()
+            right.mkdir()
+            for root in (left, right):
+                (root/'test_owner.py').write_text('from test_helper import HelperTests\n', encoding='utf-8')
+            (left/'test_helper.py').write_text('import unittest\nclass HelperTests(unittest.TestCase):\n'
+                                             '    def test_example(self): pass\n', encoding='utf-8')
+            (right/'test_helper.py').write_text('class HelperTests:\n    def test_example(self): pass\n',
+                                              encoding='utf-8')
+            with self.assertRaisesRegex(TestShardError, 'duplicate collection'):
+                validate_imported_test_case_aliases(left)
+            validate_imported_test_case_aliases(right)
 
 
 class TestShardManifestTests(unittest.TestCase):

@@ -151,6 +151,70 @@ class DependencySyntaxScopeTests(unittest.TestCase):
             (root / 'tests/test_first.py').unlink()
             self.assertIn('Missing test source', owner.discover_module_requirements('test_first', root=root)[2][0])
 
+    def test_shared_helper_keeps_each_consumers_inherited_database_mode(self):
+        from scripts import compact_ci_dependencies as owner
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve(); tests = root / 'tests'; tests.mkdir()
+            (tests / 'compact_base.py').write_text(
+                'class Fixture:\n @classmethod\n def setUpClass(cls):\n  cls.db=CardDatabase(DB_PATH)\n', encoding='utf-8')
+            local = tests / 'local_base.py'
+            local.write_text('class Fixture:\n @classmethod\n def setUpClass(cls):\n'
+                '  build_fixture_database([], path)\n  cls.db=CardDatabase(path)\n', encoding='utf-8')
+            (tests / 'shared.py').write_text(
+                'class Shared(Fixture):\n def pick(self,name):\n  return self.db.lookup(name)\n', encoding='utf-8')
+            for module, base, name in [('test_first', 'compact_base', 'First Card'),
+                    ('test_second', 'local_base', 'Second Card')]:
+                (tests / (module + '.py')).write_text(f'from {base} import Fixture\nfrom shared import Shared\n'
+                    f'class Use(Shared):\n def test_case(self):\n  self.pick("{name}")\n', encoding='utf-8')
+            scope = owner.DependencySourceScope()
+            first, dynamic, errors = owner.discover_module_requirements('test_first', root=root, sources=scope)
+            self.assertFalse(dynamic + errors); self.assertEqual({'First Card'}, {r.value for r in first})
+            second, dynamic, errors = owner.discover_module_requirements('test_second', root=root, sources=scope)
+            self.assertFalse(dynamic + errors); self.assertFalse(second)
+            self.assertEqual({'test_first'}, {r.provenance.module for r in first})
+            # The next build must see a changed receiver mode in that same helper.
+            local.write_text('class Fixture:\n @classmethod\n def setUpClass(cls):\n'
+                '  cls.db=CardDatabase(DB_PATH)\n', encoding='utf-8')
+            changed, dynamic, errors = owner.discover_module_requirements('test_second', root=root)
+            self.assertFalse(dynamic + errors); self.assertEqual({'Second Card'}, {r.value for r in changed})
+
+    def test_cached_source_facts_are_immutable_and_root_dependent_values_stay_separate(self):
+        from scripts import compact_ci_dependencies as owner
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve(); helper = self.sources(root)
+            scope = owner.DependencySourceScope(); parsed = scope.files.read(helper)
+            environments = scope.environments(parsed, root=root)
+            with self.assertRaises(TypeError): environments['new'] = {}
+            with self.assertRaises(TypeError): environments['<module>']['ROOT'] = ('polluted',)
+            modes = scope.database_modes(parsed)
+            with self.assertRaises(TypeError): modes[0]['Injected'] = 'local'
+            with self.assertRaises(TypeError): modes[1][('pick', 'db')] = 'local'
+            other = scope.environments(parsed, root=root / 'other')
+            self.assertEqual((root.as_posix(),), environments['<module>']['ROOT'])
+            self.assertEqual(((root / 'other').as_posix(),), other['<module>']['ROOT'])
+            first, _, errors = owner.discover_module_requirements('test_first', root=root, sources=scope)
+            self.assertFalse(errors); self.assertEqual({'First Card'}, {r.value for r in first})
+
+    def test_fresh_scope_observes_import_additions_removals_and_cycles(self):
+        from scripts import compact_ci_dependencies as owner
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve(); tests = root / 'tests'; tests.mkdir()
+            (tests / 'test_case.py').write_text('from extra import pick\ndef test_case(db):\n'
+                ' pick(db,"New Card")\n', encoding='utf-8')
+            self.assertFalse(owner.discover_module_requirements('test_case', root=root)[0])
+            helper = tests / 'extra.py'
+            helper.write_text('import middle\ndef pick(db,name):\n return db.lookup(name)\n', encoding='utf-8')
+            (tests / 'middle.py').write_text('import extra\n', encoding='utf-8')
+            rows, dynamic, errors = owner.discover_module_requirements('test_case', root=root)
+            self.assertFalse(dynamic + errors); self.assertEqual({'New Card'}, {r.value for r in rows})
+            helper.unlink()
+            self.assertFalse(owner.discover_module_requirements('test_case', root=root)[0])
+            helper.write_text('def (\n', encoding='utf-8')
+            self.assertIn('Cannot parse', owner.discover_module_requirements('test_case', root=root)[2][0])
+
 
 class FixtureAliasPriorityTests(unittest.TestCase):
     def index(self, root, cards):

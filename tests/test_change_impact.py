@@ -14,6 +14,17 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_shared_promotion_and_amount_owners_select_their_existing_retention_witnesses(self):
+        cases = {
+            'quorune/compiler/program_generation.py': {'test_support_integration_retention', 'test_qualified_quantity_retention', 'test_batch_admission_retention'},
+            'quorune/compiler/nonleaf_effect_closure.py': {'test_qualified_quantity_retention', 'test_batch_admission_retention'},
+            'quorune/rules/effect_node_capabilities.py': {'test_qualified_quantity_retention', 'test_batch_admission_retention'},
+            'quorune/compiler/declared_effect_amounts.py': {'test_qualified_quantity_retention'},
+        }
+        for path, expected in cases.items():
+            with self.subTest(owner=path):
+                self.assertLessEqual(expected, set(classify_changes([path]).test_modules))
+
     def test_manifest_zone_sources_select_current_zone_contracts(self):
         expected = {
             "test_entry_designations",

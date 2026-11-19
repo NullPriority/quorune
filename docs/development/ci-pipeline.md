@@ -228,17 +228,32 @@ normal ownership rules and, after the protected squash merge, carry only the
 preserved post-cut work onto verified main. Count distinct gained Oracle IDs
 once across the combined batch; there is no per-developer delivery quota.
 
-Alternate a consolidated defect-only pull request with a card-support pull
-request that adds at least 500 net distinct capability-closed cards. Group
-reproduced defects and keep each fix and its evidence independently reviewable.
-Resolve release blockers before merging affected work. Continue building card
-support when no defect batch is ready.
+Publish according to readiness and risk. Card-support pull requests add at
+least 500 net distinct capability-closed cards and retain every certification
+requirement. Correct family defects before publishing that family. Consolidate
+independent defects when warranted and keep unrelated card production moving.
 
-Use certification waits for private card implementation and focused evidence.
-Keep a reproduced, reviewable defect queue so the next defect batch is ready
-without repeatedly interrupting card delivery for individual repairs. Measure
-throughput by retained whole-card gains per elapsed day, including time spent
-on defects, generation, certification and rework.
+Aim for approximately 80% of active effort on reusable card/effect implementation
+and focused behavioral evidence, and 20% on independent defects, publication,
+coordination and measured delivery improvements. Use unused defect capacity for
+cards. Verified correctness, privacy, security and replay failures take priority.
+Measure retained whole-card gains per elapsed day and active development hour.
+Report active hours and effort allocation only when session evidence supports them.
+
+Each developer keeps one active family and an independent next candidate. After
+focused work and owned changes are committed, release completed claims and select
+independent work without waiting for reassignment. Families waiting on shared
+integration, evidence-index refresh, generation, certification or merge are
+pending integration. Preserve the checkpoint and precise remaining obligation in
+the existing handoff record, release unneeded claims and continue card work.
+Unfinished behavioral evidence remains pending until the tests actually pass.
+
+Keep the candidate frozen while checking asynchronous publication results briefly
+at useful work boundaries. Never retain the Git mutex or central-file claims for
+pipeline execution. Coordinate shared checkout history changes through a short
+acknowledged freeze; neither developer independently switches, resets or rebases
+it. Preserve post-cut work during fixes and main reconciliation. Avoid repeated
+polling, CI sleeps, unchanged status rewrites and censuses performed only for status.
 
 Create Slot B from verified `origin/main` while Slot A is running:
 
@@ -755,6 +770,14 @@ worktree-local Python. It first runs `scripts/test_shards.py validate`, because
 an unassigned discovered test module or an unknown module or suite reference in
 the change-impact policy makes PR planning fail before any matrix job can run.
 These references are checked before test collection and dependency inspection.
+Partition validation also checks explicit ability identities in semantic-program
+fixtures and imported helper `TestCase` aliases. These checks share immutable
+per-module syntax facts. Every request reads the current UTF-8 source and checks
+directory membership, the supplied partition, and cross-module imports. Equal source content and analysis policy may reuse one of at
+most 2,048 retained summaries within the process. The summaries contain no
+mutable AST nodes or cached partition verdicts. Source changes, including changes
+that preserve file size and timestamp, and changed parser or analysis policy
+produce fresh facts. Unreadable or malformed current source continues to reject.
 It next runs
 `scripts/build_test_database.py validate-ci-dependencies`, so a compact-database
 card, Oracle ID, deck, fixture, or shard-closure omission fails before the push.
@@ -824,6 +847,12 @@ database builder. The generated
 `coverage/compact-ci-card-dependencies.json` and `.md` companions record the
 current identities, owners, source provenance, and per-shard closure; they do
 not duplicate card payloads.
+
+One dependency report reuses each source file's immutable local import edges,
+syntax, function inventories, database assignments, and constant environments. Inherited database modes, wrapper resolution, requirements and
+provenance remain specific to each consuming module. A new report creates a
+fresh scope and observes changed, added, removed or malformed helpers. The cache lasts for one build. Every report checks fixture, declaration, alias,
+and shard closure.
 
 Pull-request planning runs this validation before functional matrices are
 released, and Windows, main-smoke, nightly, quick-gate, local-gate, and

@@ -9898,7 +9898,8 @@
         "quorune/compiler/fixed_resolution_characteristic_queries.py",
         "quorune/rules/fixed_resolution_characteristic_shapes.py",
         "tests/test_support_integration_retention.py",
-        "tests/fixtures/support-integration-retention-cards.json"
+        "tests/fixtures/support-integration-retention-cards.json",
+        "quorune/compiler/program_generation.py"
       ],
       "test_modules": [
         "test_support_integration_retention",
@@ -11441,7 +11442,11 @@
         "quorune/compiler/live_battlefield_quantities.py",
         "tests/test_qualified_quantity_retention.py",
         "tests/qualified_quantity_retention_fixture.py",
-        "tests/fixtures/qualified-quantity-retention-cards.json"
+        "tests/fixtures/qualified-quantity-retention-cards.json",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/rules/effect_node_capabilities.py"
       ],
       "test_modules": [
         "test_qualified_quantity_retention",
@@ -13500,7 +13505,10 @@
         "quorune/rules/fixed_effect_payment_shapes.py",
         "quorune/rules/temporary_target_interaction_shapes.py",
         "tests/test_batch_admission_retention.py",
-        "tests/fixtures/batch-admission-retention-cards.json"
+        "tests/fixtures/batch-admission-retention-cards.json",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/rules/effect_node_capabilities.py"
       ],
       "test_modules": [
         "test_batch_admission_retention",

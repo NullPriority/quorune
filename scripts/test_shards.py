@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import ast
 from collections import Counter
+from dataclasses import dataclass
+from functools import lru_cache
 import hashlib
 import json
 import os
@@ -113,6 +115,72 @@ def validate_impact_references(manifest: Mapping, policy: Mapping) -> None:
         raise TestShardError('Unknown change-impact test references: ' + json.dumps(unknown, sort_keys=True))
 
 
+@dataclass(frozen=True, slots=True)
+class _TestModuleFacts:
+    semantic_program_count: int
+    missing_ability_id_lines: tuple[int, ...]
+    test_case_classes: frozenset[str]
+    imported_names: tuple[tuple[str, str, str, int], ...]
+
+
+def _analyze_test_module(text, filename, parse_source, walk_tree, syntax_types):
+    (Call, Name, Attribute, Constant, ClassDef, FunctionDef, AsyncFunctionDef,
+     ImportFrom, Facts) = syntax_types
+    tree = parse_source(text, filename=filename)
+    checked = 0
+    missing = []
+    for node in walk_tree(tree):
+        if not isinstance(node, Call):
+            continue
+        called_name = (node.func.id if isinstance(node.func, Name)
+                       else node.func.attr if isinstance(node.func, Attribute) else None)
+        if called_name != "SemanticProgram":
+            continue
+        keywords = {keyword.arg: keyword.value for keyword in node.keywords
+                    if keyword.arg is not None}
+        oracle_id = keywords.get("oracle_id")
+        if oracle_id is None:
+            continue
+        checked += 1
+        literal_test_identity = isinstance(oracle_id, Constant) and isinstance(oracle_id.value, str)
+        if not literal_test_identity and "ability_id" not in keywords:
+            missing.append(node.lineno)
+    test_classes = frozenset(
+        node.name for node in tree.body if isinstance(node, ClassDef)
+        and any(isinstance(base, Attribute) and base.attr == "TestCase"
+                or isinstance(base, Name) and base.id == "TestCase" for base in node.bases)
+        and any(isinstance(child, (FunctionDef, AsyncFunctionDef))
+                and child.name.startswith("test_") for child in node.body)
+    )
+    imports = tuple(
+        (node.module.removeprefix("tests."), alias.name, alias.asname or alias.name, node.lineno)
+        for node in tree.body if isinstance(node, ImportFrom) and node.module
+        for alias in node.names
+    )
+    return Facts(checked, tuple(missing), test_classes, imports)
+
+
+@lru_cache(maxsize=2048)
+def _cached_test_module_facts(text, filename, analyzer, analyzer_code,
+                              parse_source, walk_tree, syntax_types):
+    # The code object also invalidates in-place changes to the analysis policy.
+    return analyzer(text, filename, parse_source, walk_tree, syntax_types)
+
+
+def _read_test_module_facts(path: Path) -> _TestModuleFacts:
+    try:
+        # Always read current contents; timestamps and prior verdicts are not authority.
+        text = path.read_text(encoding="utf-8")
+        return _cached_test_module_facts(
+            text, str(path), _analyze_test_module, _analyze_test_module.__code__,
+            ast.parse, ast.walk,
+            (ast.Call, ast.Name, ast.Attribute, ast.Constant, ast.ClassDef,
+             ast.FunctionDef, ast.AsyncFunctionDef, ast.ImportFrom, _TestModuleFacts),
+        )
+    except (OSError, UnicodeDecodeError, SyntaxError) as exc:
+        raise TestShardError(f"Unable to inspect test module {path}") from exc
+
+
 def validate_semantic_program_fixture_identities(
     tests_root: Path = TESTS,
 ) -> int:
@@ -121,37 +189,9 @@ def validate_semantic_program_fixture_identities(
     checked = 0
     violations: list[str] = []
     for path in sorted(tests_root.glob("test_*.py")):
-        try:
-            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        except (OSError, UnicodeDecodeError, SyntaxError) as exc:
-            raise TestShardError(f"Unable to inspect test module {path}") from exc
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.Call):
-                continue
-            called_name = (
-                node.func.id
-                if isinstance(node.func, ast.Name)
-                else node.func.attr
-                if isinstance(node.func, ast.Attribute)
-                else None
-            )
-            if called_name != "SemanticProgram":
-                continue
-            keywords = {
-                keyword.arg: keyword.value
-                for keyword in node.keywords
-                if keyword.arg is not None
-            }
-            oracle_id = keywords.get("oracle_id")
-            if oracle_id is None:
-                continue
-            checked += 1
-            literal_test_identity = (
-                isinstance(oracle_id, ast.Constant)
-                and isinstance(oracle_id.value, str)
-            )
-            if not literal_test_identity and "ability_id" not in keywords:
-                violations.append(f"{path.name}:{node.lineno}")
+        facts = _read_test_module_facts(path)
+        checked += facts.semantic_program_count
+        violations.extend(f"{path.name}:{line}" for line in facts.missing_ability_id_lines)
     if violations:
         raise TestShardError(
             "SemanticProgram fixtures using a runtime Oracle ID require an "
@@ -162,37 +202,14 @@ def validate_semantic_program_fixture_identities(
 
 def validate_imported_test_case_aliases(tests_root: Path = TESTS) -> None:
     """Imported TestCase globals are collected again by unittest's module loader."""
-    trees = {}
-    for path in sorted(tests_root.glob("test_*.py")):
-        try:
-            trees[path.stem] = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        except (OSError, UnicodeDecodeError, SyntaxError) as exc:
-            raise TestShardError(f"Unable to inspect test module {path}") from exc
-    test_classes = {
-        name: {
-            node.name for node in tree.body if isinstance(node, ast.ClassDef)
-            and any(
-                isinstance(base, ast.Attribute) and base.attr == "TestCase"
-                or isinstance(base, ast.Name) and base.id == "TestCase"
-                for base in node.bases
-            )
-            and any(
-                isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
-                and child.name.startswith("test_") for child in node.body
-            )
-        }
-        for name, tree in trees.items()
-    }
+    modules = {path.stem: _read_test_module_facts(path)
+               for path in sorted(tests_root.glob("test_*.py"))}
     failures = []
-    for name, tree in trees.items():
-        for node in tree.body:
-            if not isinstance(node, ast.ImportFrom) or not node.module:
-                continue
-            imported_module = node.module.removeprefix("tests.")
-            imported_classes = test_classes.get(imported_module, set())
-            for alias in node.names:
-                if alias.name in imported_classes:
-                    failures.append(f"{name}:{node.lineno}:{alias.asname or alias.name}")
+    for name, facts in modules.items():
+        for imported_module, imported_name, local_name, line in facts.imported_names:
+            imported = modules.get(imported_module)
+            if imported is not None and imported_name in imported.test_case_classes:
+                failures.append(f"{name}:{line}:{local_name}")
     if failures:
         raise TestShardError(
             "Imported helper TestCase classes duplicate collection; import the module instead: "
