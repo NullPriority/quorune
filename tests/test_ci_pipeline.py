@@ -1093,6 +1093,37 @@ class CiPipelineTests(unittest.TestCase):
         self.assertNotIn("continue-on-error", broad_python)
         self.assertIn("continue-on-error: true", broad_browser)
 
+    def test_full_windows_compact_reuse_is_bound_to_the_current_pr_plan(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        plan = workflow.split("\n  plan:\n", 1)[1].split("\n  python:\n", 1)[0]
+        windows = workflow.split("\n  windows_full:\n", 1)[1].split("\n  windows_package:\n", 1)[0]
+
+        self.assertIn("compact_dependency_artifact_id: ${{ steps.compact_artifact.outputs.artifact-id }}", plan)
+        self.assertIn("--emit-artifact local/pr-compact-dependencies", plan)
+        self.assertIn("pr-compact-dependencies-${{ github.run_id }}-${{ github.run_attempt }}", plan)
+        self.assertIn("if-no-files-found: error", plan)
+        download = windows.split(
+            "      - name: Download the PR Plan compact dependency artifact\n", 1,
+        )[1].split("      - ", 1)[0]
+        self.assertIn("artifact-ids: ${{ needs.plan.outputs.compact_dependency_artifact_id }}", download)
+        self.assertIn("merge-multiple: true", download)
+        self.assertIn("path: local/pr-compact-dependencies", download)
+        self.assertIn("PR Plan did not publish a compact dependency artifact", windows)
+
+        def step(name):
+            return windows.split(f"      - name: {name}\n", 1)[1].split("      - ", 1)[0]
+
+        reuse = step("Verify the compact dependency artifact against this checkout")
+        self.assertIn("if: matrix.shard != 'generated-validation'", reuse)
+        self.assertIn("validate-ci-dependencies --verify-artifact local/pr-compact-dependencies", reuse)
+        full = step("Compare the independently computed Windows dependency report")
+        self.assertIn("if: matrix.shard == 'generated-validation'", full)
+        self.assertIn("scripts/update_compact_ci_dependencies.py --check", full)
+        build = "Validate manifest, runtime, and build isolated card database"
+        self.assertIn("scripts/build_test_database.py build-ci", step(build))
+        self.assertLess(windows.index(reuse), windows.index(f"name: {build}"))
+        self.assertLess(windows.index(full), windows.index(f"name: {build}"))
+
     def test_main_broad_certifier_installs_collection_dependencies(self):
         workflow = (ROOT / ".github/workflows/main-broad.yml").read_text(
             encoding="utf-8"

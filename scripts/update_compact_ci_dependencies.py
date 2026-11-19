@@ -10,13 +10,14 @@ if str(ROOT) not in sys.path:
 
 from quorune.util import stable_json
 from scripts.compact_ci_report import (
+    COMPACT_CI_REPORT_PATH,
     build_dependency_report,
     report_markdown,
 )
 
 
-JSON_OUTPUT = ROOT / "coverage/compact-ci-card-dependencies.json"
-MARKDOWN_OUTPUT = ROOT / "coverage/compact-ci-card-dependencies.md"
+JSON_OUTPUT = ROOT / COMPACT_CI_REPORT_PATH
+MARKDOWN_OUTPUT = JSON_OUTPUT.with_suffix(".md")
 
 
 def render() -> dict[Path, str]:

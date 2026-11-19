@@ -4,6 +4,7 @@ import io
 import json
 from dataclasses import replace
 from pathlib import Path
+import subprocess
 from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
@@ -25,8 +26,11 @@ from scripts.certification_receipt import (
     successful_pr_runs,
     validate_receipt,
     verify_main_certification,
+    verify_pr_archive,
     wait_for_previous_pr_certification,
 )
+from scripts.generated_artifacts import GeneratorSpec
+from scripts.generated_finalization_receipt import generated_outputs_fingerprint
 from scripts.source_tree_fingerprint import (
     tracked_ref_source_fingerprint,
     tracked_worktree_source_fingerprint,
@@ -354,6 +358,56 @@ class CertificationReceiptTests(unittest.TestCase):
             archive.writestr("extra.txt", "unexpected")
         with self.assertRaisesRegex(CertificationReceiptError, "only"):
             receipt_from_archive(stream.getvalue())
+
+    def test_local_pr_archive_verifies_linux_output_bytes_from_windows_checkout(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+
+            def git(*args):
+                return subprocess.check_output(["git", *args], cwd=root).decode().strip()
+
+            git("init", "-q")
+            git("config", "user.email", "test@example.invalid")
+            git("config", "user.name", "Certification Test")
+            git("config", "core.autocrlf", "false")
+            (root / ".gitattributes").write_bytes(b"* text=auto\n")
+            output = root / "owned.txt"
+            output.write_bytes(b"generated\n")
+            git("add", ".gitattributes", "owned.txt")
+            git("commit", "-qm", "fixture")
+            head = git("rev-parse", "HEAD")
+            specs = (GeneratorSpec(
+                id="owned", depends_on=(), outputs=("owned.txt",),
+                check=("unused.py", "--check"), write=("unused.py", "--write"),
+                write_with_database=None, write_policy="automatic",
+            ),)
+            expected = replace(
+                receipt(), exact_head_sha=head,
+                source_tree_fingerprint=tracked_ref_source_fingerprint(root, head),
+                generated_outputs_fingerprint=generated_outputs_fingerprint(specs, root=root),
+            )
+            archive_bytes = io.BytesIO()
+            with zipfile.ZipFile(archive_bytes, "w") as archive:
+                archive.writestr(RECEIPT_FILENAME, json.dumps(expected.to_dict()))
+            git("config", "core.autocrlf", "true")
+            output.unlink()
+            git("checkout-index", "--index", "--", "owned.txt")
+            self.assertEqual(b"generated\r\n", output.read_bytes())
+            self.assertEqual("", git("status", "--porcelain"))
+            self.assertNotEqual(
+                expected.generated_outputs_fingerprint,
+                generated_outputs_fingerprint(specs, root=root),
+            )
+            args = {
+                "repository": expected.repository, "pull_request": expected.pull_request,
+                "exact_head_sha": head, "workflow_run_id": expected.workflow_run_id,
+                "root": root,
+            }
+            with patch("scripts.certification_receipt.load_manifest", return_value=specs):
+                self.assertEqual(expected, verify_pr_archive(archive_bytes.getvalue(), **args))
+                output.write_bytes(b"changed\r\n")
+                with self.assertRaisesRegex(CertificationReceiptError, "clean checkout"):
+                    verify_pr_archive(archive_bytes.getvalue(), **args)
 
     def test_prior_exact_head_lookup_validates_receipt_before_reuse(self):
         prior = receipt()

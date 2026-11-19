@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import hashlib
 import json
 from pathlib import Path
@@ -8,6 +9,7 @@ from typing import Mapping
 
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckLoader
+from quorune.util import stable_json
 from scripts.compact_ci_dependencies import (
     DynamicSite,
     Provenance,
@@ -17,6 +19,16 @@ from scripts.compact_ci_dependencies import (
     index_fixture_ownership,
     load_dependency_manifest,
 )
+from scripts.generated_artifacts import GeneratorSpec, load_input_groups, load_manifest
+from scripts.generated_owner_cache import (
+    GeneratedOwnerCacheError,
+    OwnerArtifactReceipt,
+    OwnerInputIdentity,
+    build_owner_receipt,
+    owner_input_identity,
+    read_owner_receipt,
+    store_owner_artifact,
+)
 from scripts.source_tree_fingerprint import (
     SOURCE_TREE_FINGERPRINT_ALGORITHM,
     tracked_worktree_source_fingerprint,
@@ -25,6 +37,7 @@ from scripts.test_shards import load_manifest as load_test_shards
 
 
 REPORT_SCHEMA_VERSION = 1
+COMPACT_CI_REPORT_PATH = Path("coverage/compact-ci-card-dependencies.json")
 
 
 def _policy_text_fingerprint(path: Path) -> str:
@@ -297,6 +310,86 @@ def build_dependency_report(
         "closure_by_shard": closure_by_shard,
         "closed": closed,
     }
+
+
+def _dependency_artifact_owner(root: Path) -> tuple[GeneratorSpec, OwnerInputIdentity]:
+    manifest = root / "platform/generated-artifacts.json"
+    specs = load_manifest(manifest, root=root)
+    owner = next(spec for spec in specs if spec.id == "compact-ci-card-dependencies")
+    identity = owner_input_identity(
+        owner, specs=specs, input_groups=load_input_groups(manifest),
+        root=root, database=None,
+    )
+    return owner, identity
+
+
+def _dependency_report_receipt(root: Path) -> OwnerArtifactReceipt:
+    owner, identity = _dependency_artifact_owner(root)
+    return build_owner_receipt(owner, identity, root=root)
+
+
+def current_dependency_report_receipt(*, root: Path) -> OwnerArtifactReceipt:
+    """Bind the current closed report to its source, upstream owners and outputs."""
+    report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+    _require_current_dependency_report(report, root=root)
+    return _dependency_report_receipt(root)
+
+
+def store_dependency_artifact(
+    report: Mapping[str, object], *, artifact_dir: Path, root: Path,
+) -> None:
+    """Publish the full audit using the existing generated-owner receipt."""
+    _require_current_dependency_report(report, root=root)
+    json_output = root / COMPACT_CI_REPORT_PATH
+    if (
+        json_output.read_text(encoding="utf-8") != stable_json(report) + "\n"
+        or json_output.with_suffix(".md").read_text(encoding="utf-8") != report_markdown(report)
+    ):
+        raise GeneratedOwnerCacheError("Compact dependency report is open or stale")
+    owner, identity = _dependency_artifact_owner(root)
+    store_owner_artifact(owner, identity, artifact_dir=artifact_dir, root=root)
+
+
+def verify_dependency_artifact(
+    *, artifact_dir: Path, root: Path,
+) -> dict[str, object]:
+    """Verify a trusted producer's compact audit against the current checkout."""
+    receipt = read_owner_receipt(artifact_dir / "_owner_receipt.json")
+    current = _dependency_report_receipt(root)
+    current_outputs = tuple((path, oid) for path, _, oid in current.outputs)
+    artifact_outputs = tuple((path, oid) for path, _, oid in receipt.outputs)
+    if (
+        replace(receipt, outputs=current.outputs) != current
+        or artifact_outputs != current_outputs
+    ):
+        raise GeneratedOwnerCacheError("Compact dependency artifact is stale for this checkout")
+
+    for relative, raw_hash, _ in receipt.outputs:
+        archive_bytes = (artifact_dir / relative).read_bytes()
+        checkout_bytes = (root / relative).read_bytes()
+        if (
+            hashlib.sha256(archive_bytes).hexdigest() != raw_hash
+            or archive_bytes.replace(b"\r\n", b"\n") != checkout_bytes.replace(b"\r\n", b"\n")
+        ):
+            raise GeneratedOwnerCacheError(f"Compact dependency artifact output is corrupt: {relative}")
+
+    report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+    _require_current_dependency_report(report, root=root)
+    return report
+
+
+def _require_current_dependency_report(report: object, *, root: Path) -> None:
+    if (
+        not isinstance(report, Mapping)
+        or type(report.get("schema_version")) is not int
+        or report["schema_version"] != REPORT_SCHEMA_VERSION
+        or report.get("closed") is not True
+        or report.get("source_tree_fingerprint_algorithm") != SOURCE_TREE_FINGERPRINT_ALGORITHM
+        or report.get("source_tree_fingerprint") != tracked_worktree_source_fingerprint(root)
+    ):
+        raise GeneratedOwnerCacheError(
+            "Compact dependency artifact does not cover the current source tree"
+        )
 
 
 def report_markdown(report: Mapping[str, object]) -> str:

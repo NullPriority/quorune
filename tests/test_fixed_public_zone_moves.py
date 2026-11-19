@@ -1052,23 +1052,6 @@ class _RuntimeBase(unittest.TestCase):
         engine._issue_priority("A", hints)
         return source, action
 
-    def promote_fixture(self, engine, name: str):
-        record = self.db.lookup(name)
-        for program in engine.semantics.programs_for_oracle(record.oracle_id):
-            engine.semantics.remove(program.key)
-        return register_generated_programs(
-            self.db,
-            engine.semantics,
-            (record,),
-            trust_level="trusted",
-            capability_registry=load_default_capability_registry(),
-            capability_profile=engine.state.config.review_profile,
-            promote_exact_runtime_handlers=True,
-            promote_exact_trigger_programs=True,
-            promote_exact_effect_programs=True,
-            promote_exact_capability_declarations=True,
-        )
-
     def ready_activation(
         self,
         session,
@@ -1186,6 +1169,28 @@ class _RuntimeBase(unittest.TestCase):
 
 
 class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
+    @classmethod
+    def setUpClass(cls):
+        cls.promotion_capabilities = load_default_capability_registry()
+        super().setUpClass()
+
+    def promote_fixture(self, engine, name: str):
+        record = self.db.lookup(name)
+        for program in engine.semantics.programs_for_oracle(record.oracle_id):
+            engine.semantics.remove(program.key)
+        return register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="trusted",
+            capability_registry=self.promotion_capabilities,
+            capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+
     def test_original_blinding_light_registers_its_exact_tap_set(self):
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program

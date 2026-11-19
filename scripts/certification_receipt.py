@@ -3,11 +3,13 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from datetime import datetime
+import hashlib
 import io
 import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import sys
 import time
 from typing import Any, Mapping
@@ -17,17 +19,19 @@ from urllib.request import build_opener, HTTPRedirectHandler, Request
 import zipfile
 
 try:
-    from scripts.generated_artifacts import load_manifest
-    from scripts.generated_finalization_receipt import generated_outputs_fingerprint
+    from scripts.generated_artifacts import all_outputs, load_manifest
+    from scripts.generated_finalization_receipt import (
+        _fingerprint_entries, generated_outputs_fingerprint,
+    )
     from scripts.source_tree_fingerprint import (
         SOURCE_TREE_FINGERPRINT_ALGORITHM,
         tracked_ref_source_fingerprint,
         tracked_worktree_source_fingerprint,
     )
 except ModuleNotFoundError:  # Direct execution from scripts/.
-    from generated_artifacts import load_manifest  # type: ignore[no-redef]
+    from generated_artifacts import all_outputs, load_manifest  # type: ignore[no-redef]
     from generated_finalization_receipt import (  # type: ignore[no-redef]
-        generated_outputs_fingerprint,
+        _fingerprint_entries, generated_outputs_fingerprint,
     )
     from source_tree_fingerprint import (  # type: ignore[no-redef]
         SOURCE_TREE_FINGERPRINT_ALGORITHM,
@@ -543,6 +547,50 @@ def receipt_from_archive(raw: bytes) -> CertificationReceipt:
     return CertificationReceipt.from_dict(value)
 
 
+def verify_pr_archive(
+    raw: bytes,
+    *,
+    repository: str,
+    pull_request: int,
+    exact_head_sha: str,
+    workflow_run_id: int,
+    root: Path = ROOT,
+) -> CertificationReceipt:
+    """Compare a downloaded receipt with the exact PR head's Linux checkout."""
+    receipt = receipt_from_archive(raw)
+    try:
+        head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root).decode().strip()
+        changes = subprocess.check_output(
+            ["git", "status", "--porcelain", "--untracked-files=no"], cwd=root,
+        )
+        if head != exact_head_sha or changes:
+            raise CertificationReceiptError("A clean checkout of the exact PR head is required")
+
+        specs = load_manifest(root / "platform/generated-artifacts.json", root=root)
+        entries = []
+        for path in sorted(all_outputs(specs)):
+            # The certification checkout uses Linux line endings and Git attributes.
+            data = subprocess.check_output(
+                ["git", "-c", "core.autocrlf=false", "-c", "core.eol=lf",
+                 "cat-file", "--filters", f"{head}:{path}"],
+                cwd=root,
+            )
+            entries.append((path, hashlib.sha256(data).hexdigest()))
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise CertificationReceiptError("Unable to read the exact PR checkout") from exc
+
+    validate_receipt(
+        receipt,
+        repository=repository,
+        pull_request=pull_request,
+        exact_head_sha=exact_head_sha,
+        workflow_run_id=workflow_run_id,
+        evaluated_source_tree_fingerprint=tracked_ref_source_fingerprint(root, head),
+        evaluated_generated_outputs_fingerprint=_fingerprint_entries(entries),
+    )
+    return receipt
+
+
 class _CertificationRedirectHandler(HTTPRedirectHandler):
     def redirect_request(
         self,
@@ -871,6 +919,12 @@ def main(argv: list[str] | None = None) -> int:
     reuse.add_argument("--exact-head-sha", required=True)
     reuse.add_argument("--workflow-run-id", type=int, required=True)
     reuse.add_argument("--output", required=True)
+    archive = subparsers.add_parser("verify-pr-archive")
+    archive.add_argument("--repository", required=True)
+    archive.add_argument("--pull-request", type=int, required=True)
+    archive.add_argument("--exact-head-sha", required=True)
+    archive.add_argument("--workflow-run-id", type=int, required=True)
+    archive.add_argument("--artifact", type=Path, required=True)
     verify = subparsers.add_parser("verify-main")
     verify.add_argument("--repository", required=True)
     verify.add_argument("--merge-sha", required=True)
@@ -881,10 +935,24 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
-        if args.operation != "create" and not token:
+        if args.operation not in {"create", "verify-pr-archive"} and not token:
             raise CertificationReceiptError(
                 "GH_TOKEN or GITHUB_TOKEN is required"
             )
+        if args.operation == "verify-pr-archive":
+            try:
+                raw = args.artifact.read_bytes()
+            except OSError as exc:
+                raise CertificationReceiptError("Certification archive is unreadable") from exc
+            receipt = verify_pr_archive(
+                raw,
+                repository=args.repository,
+                pull_request=args.pull_request,
+                exact_head_sha=args.exact_head_sha,
+                workflow_run_id=args.workflow_run_id,
+            )
+            print(json.dumps(receipt.to_dict(), sort_keys=True))
+            return 0
         if args.operation == "create":
             required_value = json.loads(args.required_jobs_json)
             if (

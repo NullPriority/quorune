@@ -35,7 +35,12 @@ from .record import (
     utc_now,
     write_record,
 )
-from .record_trust import capture_stack_resolution_inputs,resolved_semantic_execution_provenance_rows,submit_with_resolution_capture
+from .record_trust import (
+    capture_stack_resolution_inputs,
+    command_card_program_fingerprints,
+    resolved_semantic_execution_provenance_rows,
+    submit_with_resolution_capture,
+)
 from .review_artifacts import write_review_artifacts
 from .semantics import SemanticRegistry
 
@@ -710,10 +715,8 @@ class CommanderSession:
             self.engine, events=self.state.events, before_event_sequence=before_event_sequence,
             before_stack_items=resolution_inputs, capability_profile=self.state.config.review_profile,
         )
-        card_programs_used = (
-            self.engine.semantics.card_program_fingerprints_for_keys(
-                row["key"] for row in programs_used
-            )
+        card_programs_used = command_card_program_fingerprints(
+            self.engine.semantics, (row["key"] for row in programs_used),
         )
         retry_count = sum(
             row.get("decision_id") == (decision.decision_id if decision else None)

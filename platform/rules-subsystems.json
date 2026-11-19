@@ -3543,7 +3543,7 @@
             "unsupported outer conditions, dynamic characteristic amounts, attachment-relative quantities, and noncreature attached subjects"
           ],
           "measurement_status": "generated_probe",
-          "measurement_probe_id": "attached-quoted-ability-grant-existing-owner-v1"
+          "measurement_probe_id": "attached-quoted-ability-grant-existing-owner-v2"
         },
         {
           "bundle_id": "bundle:fixed-source-combat-growth-triggers",

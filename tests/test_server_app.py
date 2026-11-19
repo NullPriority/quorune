@@ -146,6 +146,12 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual("Bob tab", cookie_fallback.json()["guest"]["display_name"])
 
     def test_two_player_room_starts_as_commander_duel(self):
+        from unittest.mock import patch
+
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import _VALIDATION_REGISTRY
+        from quorune.runtime import GameManager
+
         alice, _ = self.guest("Duel A")
         bob, _ = self.guest("Duel B")
         carol, _ = self.guest("Duel C")
@@ -186,10 +192,21 @@ class ServerApplicationTests(unittest.TestCase):
                 },
             )
             self.assertEqual(200, uploaded.status_code, uploaded.text)
-        started = self.client.post(
-            f"/api/v1/rooms/{room['room_id']}/start",
-            headers=self.auth(alice),
-        )
+        add = GameManager.add
+
+        async def checked_add(manager, *args, **kwargs):
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            return await add(manager, *args, **kwargs)
+
+        with (
+            patch.object(CapabilityRegistry, "from_path", wraps=CapabilityRegistry.from_path) as loader,
+            patch.object(GameManager, "add", checked_add),
+        ):
+            started = self.client.post(
+                f"/api/v1/rooms/{room['room_id']}/start",
+                headers=self.auth(alice),
+            )
+        self.assertEqual(1, loader.call_count)
         self.assertEqual(200, started.status_code, started.text)
         self.assertEqual("commander_duel", started.json()["profile"])
         game_id = started.json()["game_id"]

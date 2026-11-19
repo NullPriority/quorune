@@ -730,8 +730,13 @@ class FixedKeywordEntryRuntimeTests(unittest.TestCase):
     ) -> CardInstance:
         record = self.db.lookup(name)
         from common import register_current_fixture_programs
-        register_current_fixture_programs(self.db, engine.semantics, (record,),
-                                          profile=engine.state.config.review_profile)
+        register_current_fixture_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            capability_registry=self.capabilities,
+            profile=engine.state.config.review_profile,
+        )
         current_controller = controller or seat
         public = zone in {"battlefield", "graveyard", "exile", "command", "stack"}
         card = CardInstance(

@@ -32,6 +32,7 @@ from .rules.capabilities import (
     CapabilityRegistry,
     load_default_capability_registry,
 )
+from .rules.evidence import _capability_validation_snapshot
 
 
 PREFLIGHT_SCHEMA_VERSION = 3
@@ -901,6 +902,7 @@ def _deck_preflight_rows(
     return cards, card_programs
 
 
+@_capability_validation_snapshot()
 def semantic_preflight(
     db: CardDatabase,
     deck_or_source: DeckDefinition | str | Path,

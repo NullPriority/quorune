@@ -259,6 +259,69 @@ class BundleFingerprintBatchTests(unittest.TestCase):
         reversed_frontier = {**frontier, "cards": list(reversed(frontier["cards"]))}
         self.assertEqual(actual, owner._bundle_measurement_fingerprints(reversed_frontier, bundles))
 
+    def test_indexed_ranking_preserves_reports_and_skips_unrelated_gain_rows(self):
+        owner, frontier, bundles = self.fixture()
+        partial = {
+            **bundles[0],
+            "bundle_id": "fixture:partial",
+            "member_family_ids": ["a", "missing"],
+        }
+        unmeasured = {
+            **bundles[1],
+            "bundle_id": "fixture:unmeasured",
+            "measurement_probe_id": None,
+        }
+        policies = [
+            {
+                **bundle,
+                "estimated_implementation_hours": 2,
+                "estimated_generation_hours": 1,
+            }
+            for bundle in [*bundles, partial, unmeasured]
+        ]
+        weights = {
+            "complete_card": 10,
+            "exact_ability": 5,
+            "material_residual": 3,
+            "one_additional_blocker_card": 2,
+            "two_additional_blocker_card": 1,
+        }
+        outcome = {
+            "probe_id": partial["measurement_probe_id"],
+            "cohort_fingerprint": self.reference(owner, frontier, partial),
+            "decision": "retired_below_harvest_floor",
+            "grants_gameplay_trust": False,
+            "complete_card_gain": 0,
+            "affected_commander_cards": 2,
+            "exact_ability_gain": 1,
+            "material_residual_reduction": 0,
+            "one_additional_blocker_cards": 0,
+            "two_additional_blocker_cards": 0,
+        }
+        measurements = {partial["bundle_id"]: outcome}
+        expected = owner.candidate_frontier_measurements(
+            frontier, policies, weights, measurements,
+        )
+        index = owner._index_frontier_families(frontier["cards"])
+        fingerprints = owner._bundle_measurement_fingerprints(
+            frontier, policies, family_index=index,
+        )
+        with mock.patch.object(
+            owner, "_bundle_frontier_gains", wraps=owner._bundle_frontier_gains,
+        ) as gains:
+            actual = owner._candidate_frontier_measurements(
+                frontier, policies, weights, measurements,
+                completed_bundle_ids=(),
+                indexed_families=index[0],
+                validated_fingerprints=fingerprints,
+            )
+        self.assertEqual(expected, actual)
+        self.assertEqual(len(actual), gains.call_count)
+        for call in gains.call_args_list:
+            scanned, _ = call.args
+            self.assertTrue(scanned)
+            self.assertTrue(all(card["oracle_id"] != "unrelated" for card in scanned))
+
     def test_next_batch_reads_relevant_mutations_and_ignores_unrelated_cards(self):
         owner, frontier, bundles = self.fixture()
         original = owner._bundle_measurement_fingerprints(frontier, bundles)
@@ -872,16 +935,23 @@ def _without_pending_harvest_transition(inputs):
     return updated
 
 
+def _satisfy_interaction_exit(owned_inputs):
+    interaction = owned_inputs["reusable_piece_delta"]["interaction_coverage"]
+    interaction["covered_high_risk_pairs"] = interaction["applicable_high_risk_pairs"]
+    return owned_inputs
+
+
 def _with_satisfied_interaction_exit(inputs):
     """Ranking fixtures control unrelated assurance debt explicitly."""
-    updated = deepcopy(inputs)
-    interaction = updated["reusable_piece_delta"]["interaction_coverage"]
-    interaction["covered_high_risk_pairs"] = interaction["applicable_high_risk_pairs"]
-    return updated
+    return _satisfy_interaction_exit(deepcopy(inputs))
+
+
+def _with_satisfied_exit_and_no_pending_transition(inputs):
+    return _satisfy_interaction_exit(_without_pending_harvest_transition(inputs))
 
 
 def _with_dependency_ready_compiler_harvest(inputs):
-    updated = _with_satisfied_interaction_exit(_without_pending_harvest_transition(inputs))
+    updated = _with_satisfied_exit_and_no_pending_transition(inputs)
     updated["reusable_piece_interactions"]["pairs"] = [
         row
         for row in updated["reusable_piece_interactions"]["pairs"]
@@ -1069,6 +1139,36 @@ class RulesSchedulerSourcePolicyTests(unittest.TestCase):
                             "must identify one harvest",
                         ):
                             update_rules_scheduler.main()
+
+
+class WorkSelectionFixtureIsolationTests(unittest.TestCase):
+    def test_combined_harvest_fixture_copies_once_and_preserves_input(self):
+        inputs = {
+            "harvest_outcome_history": {
+                "semantic_outcome_status": "pending",
+                "pending_transition": {"destination": "fixture"},
+                "fingerprint": "fixture",
+            },
+            "reusable_piece_delta": {
+                "interaction_coverage": {
+                    "covered_high_risk_pairs": 1,
+                    "applicable_high_risk_pairs": 3,
+                },
+            },
+            "card_unlock_frontier": {"family_candidates": [{"affected_cards": 4}]},
+        }
+        original = deepcopy(inputs)
+        separate = _with_satisfied_interaction_exit(_without_pending_harvest_transition(inputs))
+        with mock.patch(f"{__name__}.deepcopy", wraps=deepcopy) as clone:
+            combined = _with_satisfied_exit_and_no_pending_transition(inputs)
+        clone.assert_called_once_with(inputs)
+        self.assertEqual(separate, combined)
+
+        combined["harvest_outcome_history"]["semantic_outcome_status"] = "changed"
+        combined["reusable_piece_delta"]["interaction_coverage"]["covered_high_risk_pairs"] = 0
+        combined["card_unlock_frontier"]["family_candidates"][0]["affected_cards"] = 5
+        self.assertEqual(original, inputs)
+        self.assertEqual("current", separate["harvest_outcome_history"]["semantic_outcome_status"])
 
 
 class RulesSchedulerTests(unittest.TestCase):
@@ -4830,6 +4930,68 @@ class RulesSchedulerTests(unittest.TestCase):
             ],
         )
 
+    def test_attached_grant_probe_normalizes_reminders_and_requires_its_inner_kind(self):
+        from scripts.work_selection_cohort_measurements import _measurement
+        from test_qualified_zone_event_queries import query_record
+
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        bundle = next(
+            row for row in coverage["candidate_bundles"]
+            if row["bundle_id"] == "bundle:attached-quoted-ability-grants"
+        )
+        current = "attached-quoted-ability-grant-existing-owner-v2"
+        legacy = "attached-quoted-ability-grant-existing-owner-v1"
+        self.assertEqual(current, bundle["measurement_probe_id"])
+        triggered = (
+            'Equipped creature gets +1/+1, has "Whenever this creature deals '
+            'combat damage to a player, draw a card," and is a Rogue in addition '
+            'to its other types.'
+        )
+        reminded = (
+            triggered + " (The attached creature owns the ability (even after transfer).)"
+        )
+        static = 'Equipped creature has "Creatures you control get +1/+0."'
+        cases = (
+            (legacy, reminded, 0),
+            (current, triggered, 1),
+            (current, reminded, 1),
+            (current, reminded + " Unrepresented material instruction.", 0),
+            (legacy, static, 1),
+            (current, static, 0),
+        )
+        thresholds = {
+            "minimum_complete_card_gain": 1,
+            "minimum_exact_ability_gain": 1,
+            "minimum_material_residual_reduction": 1,
+        }
+        for probe, text, expected in cases:
+            with self.subTest(probe=probe, text=text):
+                record = replace(
+                    query_record(text),
+                    name="Generic Attached Quote Probe",
+                    type_line="Artifact — Equipment",
+                )
+                frontier = {"cards": [{
+                    "oracle_id": record.oracle_id,
+                    "abilities": [{
+                        "ability_id": "front:n1",
+                        "source_line": 1,
+                        "face_id": "front",
+                        "status": "unresolved",
+                        "residuals": [{"residual_id": "fixture:r1"}],
+                    }],
+                }]}
+                measured = _measurement(
+                    frontier=frontier,
+                    bundle={**bundle, "measurement_probe_id": probe},
+                    cards_by_oracle_id={record.oracle_id: record},
+                    coverage=thresholds,
+                    cohort_fingerprint="fixture-fingerprint",
+                )
+                self.assertEqual(expected, measured["complete_card_gain"])
+                self.assertEqual(expected, measured["affected_commander_cards"])
+                self.assertFalse(measured["grants_gameplay_trust"])
+
     def test_static_declaration_composition_probe_requires_integrated_exact_node(
         self,
     ):
@@ -6612,7 +6774,7 @@ class RulesSchedulerTests(unittest.TestCase):
             )
 
     def test_measurement_freshness_ignores_unrelated_frontier_churn(self):
-        inputs = _with_satisfied_interaction_exit(_without_pending_harvest_transition(self.work_inputs))
+        inputs = _with_satisfied_exit_and_no_pending_transition(self.work_inputs)
         coverage = self.catalog["work_selection"]["coverage_family"]
         baseline = validated_candidate_frontier_measurements(
             inputs["card_unlock_frontier"], coverage["candidate_bundles"],
@@ -6882,7 +7044,7 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
     def test_covered_fail_closed_pressure_does_not_create_false_foreground(self):
-        inputs = _with_satisfied_interaction_exit(_without_pending_harvest_transition(self.work_inputs))
+        inputs = _with_satisfied_exit_and_no_pending_transition(self.work_inputs)
         reviewed_comparisons = _reviewed_frontier_comparisons(inputs)
         inputs["card_unlock_frontier"]["family_candidates"] = [
             {

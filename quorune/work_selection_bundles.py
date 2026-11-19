@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import re
-from typing import Any, Collection, Mapping, Sequence
+from collections import Counter
+from typing import Any, Callable, Collection, Mapping, Sequence
 
 from quorune.util import stable_json
 from quorune.work_selection_common import (
@@ -543,15 +544,11 @@ def _measurement_payload_fingerprint(
     return digest.hexdigest()
 
 
-def _bundle_measurement_fingerprints(
-    frontier: Mapping[str, Any], bundle_policies: Sequence[Mapping[str, Any]],
-) -> dict[str, str]:
-    """Index current family references once within one validation invocation."""
-    cards = frontier.get("cards")
-    if not isinstance(cards, list):
-        raise WorkSelectionBundleError(
-            "Card frontier lacks complete bundle card rows"
-        )
+_FrontierFamilyIndex = tuple[dict[str, set[int]], list[tuple[set[str], ...]]]
+
+
+def _index_frontier_families(cards: Sequence[Mapping[str, Any]]) -> _FrontierFamilyIndex:
+    """Keep row positions so repeated Oracle IDs retain distinct evidence."""
     family_cards: dict[str, set[int]] = {}
     ability_families: list[tuple[set[str], ...]] = []
     for index, card in enumerate(cards):
@@ -566,6 +563,22 @@ def _bundle_measurement_fingerprints(
         ability_families.append(tuple(current_ability_families))
         for family in families:
             family_cards.setdefault(family, set()).add(index)
+    return family_cards, ability_families
+
+
+def _bundle_measurement_fingerprints(
+    frontier: Mapping[str, Any], bundle_policies: Sequence[Mapping[str, Any]],
+    *, family_index: _FrontierFamilyIndex | None = None,
+) -> dict[str, str]:
+    """Hash the current cohorts using one index of frontier family references."""
+    cards = frontier.get("cards")
+    if not isinstance(cards, list):
+        raise WorkSelectionBundleError(
+            "Card frontier lacks complete bundle card rows"
+        )
+    if family_index is None:
+        family_index = _index_frontier_families(cards)
+    family_cards, ability_families = family_index
     family_rows = {str(row.get('family_id') or ''): row
         for row in frontier.get('family_candidates', [])}
     serialized_projections: dict[tuple[int, tuple[int, ...]], tuple[str, str]] = {}
@@ -605,6 +618,45 @@ def candidate_frontier_measurements(
     *,
     completed_bundle_ids: Collection[str] = (),
 ) -> list[dict[str, Any]]:
+    return _candidate_frontier_measurements(
+        frontier, bundle_policies, weights, cohort_measurements,
+        completed_bundle_ids=completed_bundle_ids,
+    )
+
+
+def _current_measurement_gains(
+    outcome: object,
+    *,
+    cohort_fingerprint: str,
+    probe_id: str | None,
+) -> dict[str, int] | None:
+    """Use measured gains only for the matching frontier and probe."""
+    if (
+        not isinstance(outcome, Mapping)
+        or outcome.get("cohort_fingerprint") != cohort_fingerprint
+        or outcome.get("probe_id") != probe_id
+    ):
+        return None
+    return {
+        "affected_cards": int(outcome["affected_commander_cards"]),
+        "exact_cards": int(outcome["complete_card_gain"]),
+        "exact_abilities": int(outcome["exact_ability_gain"]),
+        "material_residuals": int(outcome["material_residual_reduction"]),
+        "one_additional_blocker_cards": int(outcome["one_additional_blocker_cards"]),
+        "two_additional_blocker_cards": int(outcome["two_additional_blocker_cards"]),
+    }
+
+
+def _candidate_frontier_measurements(
+    frontier: Mapping[str, Any],
+    bundle_policies: Sequence[Mapping[str, Any]],
+    weights: Mapping[str, int],
+    cohort_measurements: Mapping[str, Mapping[str, Any]],
+    *,
+    completed_bundle_ids: Collection[str],
+    indexed_families: Mapping[str, set[int]] | None = None,
+    validated_fingerprints: Mapping[str, str] | None = None,
+) -> list[dict[str, Any]]:
     family_rows = {
         str(row.get("family_id") or ""): row
         for row in frontier.get("family_candidates", [])
@@ -616,6 +668,7 @@ def candidate_frontier_measurements(
         )
     result = []
     completed = set(completed_bundle_ids)
+    fingerprints = validated_fingerprints or {}
     for bundle_policy in bundle_policies:
         bundle_id = str(bundle_policy["bundle_id"])
         if bundle_id in completed:
@@ -624,11 +677,32 @@ def candidate_frontier_measurements(
         missing = sorted(set(member_ids) - set(family_rows))
         if len(missing) == len(member_ids):
             continue
+        relevant_cards = cards
+        if indexed_families is not None:
+            positions: set[int] = set()
+            for family_id in member_ids:
+                positions.update(indexed_families.get(family_id, ()))
+            relevant_cards = [cards[position] for position in sorted(positions)]
+
+        outcome = cohort_measurements.get(bundle_id)
+        fingerprint = fingerprints.get(bundle_id)
+
+        def current_fingerprint() -> str:
+            nonlocal fingerprint
+            if fingerprint is None:
+                fingerprint = _bundle_measurement_fingerprint(
+                    frontier, bundle_policy, relevant_cards,
+                )
+            return fingerprint
+
         if missing:
-            outcome = cohort_measurements.get(bundle_id)
-            if _current_empty_cohort_retires_bundle(frontier, bundle_policy, outcome):
+            if _current_empty_cohort_retires_bundle(
+                bundle_policy, outcome, current_fingerprint,
+            ):
                 continue
-            if _current_retired_cohort_covers_completed_members(frontier, bundle_policy, outcome):
+            if _current_retired_cohort_covers_completed_members(
+                bundle_policy, outcome, current_fingerprint,
+            ):
                 member_ids = [value for value in member_ids if value in family_rows]
             else:
                 raise WorkSelectionBundleError(
@@ -636,35 +710,15 @@ def candidate_frontier_measurements(
                     + ", ".join(missing)
                 )
         members = [family_rows[value] for value in member_ids]
-        frontier_gains = _bundle_frontier_gains(cards, set(member_ids))
-        outcome = cohort_measurements.get(bundle_id)
-        cohort_fingerprint = bundle_measurement_fingerprint(
-            frontier, bundle_policy
+        frontier_gains = _bundle_frontier_gains(relevant_cards, set(member_ids))
+        cohort_fingerprint = current_fingerprint()
+        measured_gains = _current_measurement_gains(
+            outcome,
+            cohort_fingerprint=cohort_fingerprint,
+            probe_id=bundle_policy.get("measurement_probe_id"),
         )
-        measurement_outcome_current = bool(
-            isinstance(outcome, Mapping)
-            and outcome.get("cohort_fingerprint") == cohort_fingerprint
-            and outcome.get("probe_id")
-            == bundle_policy.get("measurement_probe_id")
-        )
-        gains = (
-            {
-                "affected_cards": int(outcome["affected_commander_cards"]),
-                "exact_cards": int(outcome["complete_card_gain"]),
-                "exact_abilities": int(outcome["exact_ability_gain"]),
-                "material_residuals": int(
-                    outcome["material_residual_reduction"]
-                ),
-                "one_additional_blocker_cards": int(
-                    outcome["one_additional_blocker_cards"]
-                ),
-                "two_additional_blocker_cards": int(
-                    outcome["two_additional_blocker_cards"]
-                ),
-            }
-            if measurement_outcome_current
-            else frontier_gains
-        )
+        measurement_outcome_current = measured_gains is not None
+        gains = frontier_gains if measured_gains is None else measured_gains
         lowerable_occurrences = sum(
             int(row.get("lowerable_untrusted_abilities") or 0)
             for row in members
@@ -736,13 +790,16 @@ def candidate_frontier_measurements(
     return result
 
 
-def _current_empty_cohort_retires_bundle(frontier, bundle_policy, outcome) -> bool:
+def _current_empty_cohort_retires_bundle(
+    bundle_policy: Mapping[str, Any], outcome: object,
+    current_fingerprint: Callable[[], str],
+) -> bool:
     """Only a current independently measured empty scope retires partial debt."""
     if not isinstance(outcome, Mapping):
         return False
     return bool(
         outcome.get("probe_id") == bundle_policy.get("measurement_probe_id")
-        and outcome.get("cohort_fingerprint") == bundle_measurement_fingerprint(frontier, bundle_policy)
+        and outcome.get("cohort_fingerprint") == current_fingerprint()
         and outcome.get("decision") == "retired_below_harvest_floor"
         and all(type(outcome.get(field)) is int and outcome[field] == 0 for field in (
             "affected_commander_cards", "complete_card_gain", "exact_ability_gain",
@@ -752,12 +809,15 @@ def _current_empty_cohort_retires_bundle(frontier, bundle_policy, outcome) -> bo
     )
 
 
-def _current_retired_cohort_covers_completed_members(frontier, bundle_policy, outcome) -> bool:
+def _current_retired_cohort_covers_completed_members(
+    bundle_policy: Mapping[str, Any], outcome: object,
+    current_fingerprint: Callable[[], str],
+) -> bool:
     if not isinstance(outcome, Mapping):
         return False
     return bool(
         outcome.get("probe_id") == bundle_policy.get("measurement_probe_id")
-        and outcome.get("cohort_fingerprint") == bundle_measurement_fingerprint(frontier, bundle_policy)
+        and outcome.get("cohort_fingerprint") == current_fingerprint()
         and outcome.get("decision") == "retired_below_harvest_floor"
         and outcome.get("grants_gameplay_trust") is False
         and type(outcome.get("complete_card_gain")) is int and outcome["complete_card_gain"] == 0
@@ -777,7 +837,15 @@ def validated_candidate_frontier_measurements(
     *,
     completed_bundle_ids: Collection[str] = (),
 ) -> list[dict[str, Any]]:
-    fingerprints = _bundle_measurement_fingerprints(frontier, bundle_policies)
+    cards = frontier.get("cards")
+    if not isinstance(cards, list):
+        raise WorkSelectionBundleError(
+            "Card frontier lacks complete bundle card rows"
+        )
+    index = _index_frontier_families(cards)
+    fingerprints = _bundle_measurement_fingerprints(
+        frontier, bundle_policies, family_index=index,
+    )
     try:
         measurements = validate_work_selection_cohort_measurements(
             cohort_measurement_artifact,
@@ -788,12 +856,19 @@ def validated_candidate_frontier_measurements(
         )
     except WorkSelectionCohortMeasurementError as exc:
         raise WorkSelectionBundleError(str(exc)) from exc
-    return candidate_frontier_measurements(
+    # Ambiguous policy IDs cannot share a validated fingerprint.
+    bundle_counts = Counter(str(bundle["bundle_id"]) for bundle in bundle_policies)
+    return _candidate_frontier_measurements(
         frontier,
         bundle_policies,
         weights,
         measurements,
         completed_bundle_ids=completed_bundle_ids,
+        indexed_families=index[0],
+        validated_fingerprints={
+            bundle_id: fingerprint for bundle_id, fingerprint in fingerprints.items()
+            if bundle_counts[bundle_id] == 1
+        },
     )
 
 
